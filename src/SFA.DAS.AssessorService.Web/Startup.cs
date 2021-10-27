@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
@@ -31,11 +32,11 @@ namespace SFA.DAS.AssessorService.Web
     { 
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
 
-        public Startup(IConfiguration config, ILogger<Startup> logger, IHostingEnvironment env)
+        public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
             _config = config;
             _logger = logger;
@@ -183,7 +184,7 @@ namespace SFA.DAS.AssessorService.Web
             return container.GetInstance<IServiceProvider>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             MappingStartup.AddMappings();
             if (env.IsDevelopment())
