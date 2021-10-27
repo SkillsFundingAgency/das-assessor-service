@@ -66,6 +66,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CertificateFirstNameViewModelValidator.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Validators\CertificateRecipientViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateRecipientViewModelValidator.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Validators\CertificateUlnViewModelValidator.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -90,6 +95,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ChooseStandardViewModelValidator.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Certificate\Declaration.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Declaration.resx</DependentUpon>
     </Compile>
     <Compile Update="Resources\Views\Certificate\PrivateDeclaration.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -219,7 +229,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Declaration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Declaration - Copy.Designer.cs</LastGenOutput>
+      <LastGenOutput>Declaration.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Check.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
