@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         };
                     }
                     )
-                    .AddJsonOptions(options =>
+                    .AddNewtonsoftJson(options =>
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;

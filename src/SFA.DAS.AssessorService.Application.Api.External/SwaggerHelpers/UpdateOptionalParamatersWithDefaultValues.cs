@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
     {
         private readonly JsonSerializer _jsonSerializer;
 
-        public UpdateOptionalParamatersWithDefaultValues(IOptions<MvcJsonOptions> mvcJsonOptions)
+        public UpdateOptionalParamatersWithDefaultValues(IOptions<MvcNewtonsoftJsonOptions> mvcJsonOptions)
         {
             _jsonSerializer = JsonSerializer.CreateDefault(mvcJsonOptions.Value.SerializerSettings);
         }
