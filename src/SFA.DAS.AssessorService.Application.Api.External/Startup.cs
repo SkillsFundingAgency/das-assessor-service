@@ -101,7 +101,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 services.AddHttpContextAccessor();
 
                 services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .ConfigureApiBehaviorOptions(options =>
                     {
                         options.InvalidModelStateResponseFactory = context =>
