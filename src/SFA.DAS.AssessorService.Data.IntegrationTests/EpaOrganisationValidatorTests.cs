@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -20,7 +21,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
+            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var unitOfWork = new UnitOfWork(databaseConnection);
+
+            _validationRepository = new RegisterValidationRepository(unitOfWork);
+            
             _organisationId1 = "EPA0088";
             _ukprn1 = 876533;
             _ukprn2 = 9888;
