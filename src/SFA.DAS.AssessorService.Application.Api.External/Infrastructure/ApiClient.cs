@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 try
                 {
-                    return await response.Content.ReadAsAsync<T>();
+                    return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
                 }
                 catch (Exception ex)
                 {
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 try
                 {
-                    return await response.Content.ReadAsAsync<U>();
+                    return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
                 }
                 catch (Exception ex)
                 {
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 try
                 {
-                    return await response.Content.ReadAsAsync<U>();
+                    return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
                 }
                 catch (Exception ex)
                 {
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 try
                 {
-                    return await response.Content.ReadAsAsync<T>();
+                    return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
                 }
                 catch (Exception ex)
                 {
