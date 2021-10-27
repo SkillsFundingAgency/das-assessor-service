@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -42,11 +43,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         private const string SERVICE_NAME = "SFA.DAS.AssessorService";
         private const string VERSION = "1.0";
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
         private readonly bool _useSandbox;
 
-        public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
+        public Startup(IWebHostEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
@@ -244,7 +245,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             return container.GetInstance<IServiceProvider>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             try
             {
