@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
     public class TestWebConfiguration : IWebConfiguration
     {
+        public string Environment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication ApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AzureApiAuthentication AzureApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

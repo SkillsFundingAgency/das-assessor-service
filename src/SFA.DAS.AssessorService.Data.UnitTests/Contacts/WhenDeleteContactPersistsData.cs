@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using FizzWare.NBuilder;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FizzWare.NBuilder;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
-{   
+{
     public class WhenDeleteContactPersistsData
     {
         private Mock<AssessorDbContext> _mockDbContext = new Mock<AssessorDbContext>();
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             _mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult((Moq.It.IsAny<int>())));
 
-            var contactRepository = new ContactRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
+            var contactRepository = new ContactRepository(_mockDbContext.Object, new Mock<IUnitOfWork>().Object);
 
             await contactRepository.Delete("1234");
         }

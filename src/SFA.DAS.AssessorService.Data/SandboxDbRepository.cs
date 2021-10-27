@@ -5,19 +5,23 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class SandboxDbRepository : ISandboxDbRepository
+    public class SandboxDbRepository : Repository, ISandboxDbRepository
     {
         private readonly SqlBulkCopyOptions _bulkCopyOptions;
         private readonly IWebConfiguration _config;
         private readonly ILogger<SandboxDbRepository> _logger;
 
-        public SandboxDbRepository(IWebConfiguration config, ILogger<SandboxDbRepository> logger)
+        private const string AzureResource = "https://database.windows.net/";
+
+        public SandboxDbRepository(IUnitOfWork unitOfWork, IWebConfiguration config, ILogger<SandboxDbRepository> logger)
+            : base(unitOfWork)
         {
             _config = config;
             _logger = logger;
@@ -31,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 _logger.LogInformation("Proceeding with rebuilding of ExternalApiSandbox...");
 
-                using (var destinationSqlConnection = new SqlConnection(_config.SandboxSqlConnectionString))
+                using (var destinationSqlConnection = SandboxSqlConnection(_config.SandboxSqlConnectionString))
                 {
                     if (!destinationSqlConnection.State.HasFlag(ConnectionState.Open)) destinationSqlConnection.Open();
 
@@ -214,40 +218,48 @@ namespace SFA.DAS.AssessorService.Data
             if (transaction is null) throw new ArgumentNullException(nameof(transaction));
             if (tablesToCopy is null) throw new ArgumentNullException(nameof(tablesToCopy));
 
-            using (var sourceSqlConnection = new SqlConnection(_config.SqlConnectionString))
+
+
+            foreach (var table in tablesToCopy)
             {
-                if (!sourceSqlConnection.State.HasFlag(ConnectionState.Open)) sourceSqlConnection.Open();
+                _logger.LogDebug($"\tSyncing table: {table}");
 
-                foreach (var table in tablesToCopy)
-                {
-                    _logger.LogDebug($"\tSyncing table: {table}");
-                    
-
-                    using (var commandSourceData = new SqlCommand(
-                        @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 
+                using (var commandSourceData = new SqlCommand(
+                    @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 
                         WHERE table_name = ''' + @tableName + ''' AND column_name IN ( ''StandardUId'' , ''Id'')';
 
                         EXEC sp_executesql @subQuery, N'@sort_column varchar(100) out', @sort_column out
 
                         SELECT @sqlQuery = 'SELECT * FROM ' + @tableName + ' ORDER BY ' + @sort_column;
-                        Exec(@sqlQuery)", sourceSqlConnection))
-                    {
-                        commandSourceData.Parameters.AddWithValue("@tableName", table);
-                        commandSourceData.Parameters.AddWithValue("@subQuery", string.Empty);
-                        commandSourceData.Parameters.AddWithValue("@sqlQuery", string.Empty);
-                        commandSourceData.Parameters.AddWithValue("@sort_column", string.Empty);
+                        Exec(@sqlQuery)", _unitOfWork.Connection as SqlConnection))
+                {
+                    commandSourceData.Parameters.AddWithValue("@tableName", table);
+                    commandSourceData.Parameters.AddWithValue("@subQuery", string.Empty);
+                    commandSourceData.Parameters.AddWithValue("@sqlQuery", string.Empty);
+                    commandSourceData.Parameters.AddWithValue("@sort_column", string.Empty);
 
-                        using (var reader = commandSourceData.ExecuteReader())
+                    if (!_unitOfWork.Connection.State.HasFlag(ConnectionState.Open)) _unitOfWork.Connection.Open();
+
+                    using (var reader = commandSourceData.ExecuteReader())
+                    {
+                        using (var bulkCopy = new SqlBulkCopy(transaction.Connection, _bulkCopyOptions, transaction))
                         {
-                            using (var bulkCopy = new SqlBulkCopy(transaction.Connection, _bulkCopyOptions, transaction))
-                            {
-                                bulkCopy.DestinationTableName = table;
-                                bulkCopy.WriteToServer(reader);
-                            }
+                            bulkCopy.DestinationTableName = table;
+                            bulkCopy.WriteToServer(reader);
                         }
                     }
                 }
             }
+        }
+
+        private SqlConnection SandboxSqlConnection(string sqlConnectionString)
+        {
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            return new SqlConnection
+            {
+                ConnectionString = sqlConnectionString,
+                AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
+            };
         }
     }
 }
