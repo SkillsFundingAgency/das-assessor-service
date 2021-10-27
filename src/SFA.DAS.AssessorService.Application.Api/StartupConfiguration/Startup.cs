@@ -1,4 +1,4 @@
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using JWT;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -272,7 +272,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 
                 app.UseRequestLocalization();
                 app.UseHealthChecks("/health");
-                app.UseMvc();
             }
             catch (Exception e)
             {
