@@ -65,12 +65,11 @@ namespace SFA.DAS.AssessorService.Web
             services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
             
