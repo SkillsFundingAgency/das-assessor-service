@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Types</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Types</RepositoryUrl>
