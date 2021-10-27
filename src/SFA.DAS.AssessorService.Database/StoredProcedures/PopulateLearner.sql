@@ -16,9 +16,9 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		WITH LatestVersions
 		AS (
-			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, Larscode, Duration
+			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, LarsCode, Duration
 			  FROM (
-			   SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration, 
+			   SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, LarsCode, ProposedTypicalDuration Duration, 
 					  ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber 
 				 FROM Standards
 				WHERE VersionApprovedForDelivery IS NOT NULL
@@ -34,7 +34,7 @@ BEGIN
 			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode 
 			WHERE ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
-			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated))
+			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.LastUpdated))
 			
 			UNION
 			
@@ -42,7 +42,7 @@ BEGIN
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode 
 			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
-			  AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
+			  AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.LastUpdated)
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		,
@@ -53,7 +53,7 @@ BEGIN
 				  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
 				  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
 				  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
-				  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
+				  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUidFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
 				  ,lv1.StandardReference
 				  ,lv1.Title StandardName
 				  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
@@ -73,7 +73,7 @@ BEGIN
 			SELECT ApprenticeshipId
 				  ,FirstName
 				  ,LastName
-				  ,ULN
+				  ,Uln
 				  ,TrainingCode
 				  ,TrainingCourseVersion
 				  ,TrainingCourseVersionConfirmed
@@ -94,7 +94,7 @@ BEGIN
 			FROM (
 				SELECT *
 					-- apply rules to determine the chronologically latest Apprenticeship record
-					,ROW_NUMBER() OVER (PARTITION BY ULN, TrainingCode ORDER BY 
+					,ROW_NUMBER() OVER (PARTITION BY Uln, TrainingCode ORDER BY 
 					   CASE 
 					   -- if StopDate of previous record is before Startdate of current record then prefer current record
 					   WHEN StopDate_1 IS NOT NULL AND EOMONTH(StartDate) >= EOMONTH(StopDate_1) THEN 0 
@@ -124,7 +124,7 @@ BEGIN
 					SELECT ApprenticeshipId
 					  ,FirstName
 					  ,LastName
-					  ,ap1.ULN
+					  ,ap1.Uln
 					  ,TrainingCode
 					  ,TrainingCourseVersion
 					  ,TrainingCourseVersionConfirmed
@@ -146,10 +146,10 @@ BEGIN
 							WHEN PauseDate IS NOT NULL THEN 6
 							WHEN CompletionDate IS NOT NULL THEN 2 
 							ELSE (CASE WHEN PaymentStatus = 1 THEN 1 ELSE 0 END) END CompletionStatus 
-					  ,LAG(UKPRN, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS UKPRN_1
-					  ,LAG(StartDate, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StartDate_1
-					  ,LAG(EndDate, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
-					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
+					  ,LAG(UKPRN, 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS UKPRN_1
+					  ,LAG(StartDate, 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS StartDate_1
+					  ,LAG(EndDate, 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
+					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
 					FROM ApprovalsExtract ap1
  					JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
 					WHERE 1=1
@@ -207,7 +207,7 @@ BEGIN
 				il1.LastUpdated LatestIlrs,
 				ax1.LastUpdated LatestApprovals
 		  FROM ax1 
-		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
+		  JOIN il1 ON ax1.Uln = il1.Uln  AND il1.StdCode = ax1.TrainingCode	
 		  WHERE il1.FundingModel != 99
 			AND ax1.CompletionStatus != 0
 		  
@@ -251,10 +251,10 @@ BEGIN
 				il1.LastUpdated LatestIlrs,
 				null LatestApprovals
 		  FROM il1 
-		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
-		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
+		  LEFT JOIN ax1 ON ax1.Uln = il1.Uln  AND il1.StdCode = ax1.TrainingCode
+		  WHERE (il1.FundingModel = 99 OR ax1.Uln IS NULL)
 		) upd
-		ON (lm1.uln = upd.uln AND lm1.StdCode = upd.StdCode)
+		ON (lm1.Uln = upd.Uln AND lm1.StdCode = upd.StdCode)
 
 		WHEN MATCHED THEN UPDATE
 		SET 
