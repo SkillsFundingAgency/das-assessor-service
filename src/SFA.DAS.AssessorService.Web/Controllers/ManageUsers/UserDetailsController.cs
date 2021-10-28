@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -19,11 +19,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     public class UserDetailsController : ManageUsersBaseController
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IMapper _mapper;
 
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) 
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IMapper mapper,
+            IOrganisationsApiClient organisationsApiClient) 
             : base(contactsApiClient, httpContextAccessor)
         {
             _organisationsApiClient = organisationsApiClient;
+            _mapper = mapper;
         }
 
         [HttpGet("/ManageUsers/{contactId}")]
@@ -37,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 return Unauthorized();
             }
 
-            var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
+            var vm = _mapper.Map<UserViewModel>(securityCheckpoint.contact);
 
             vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(contactId);
             
@@ -62,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 
         private async Task<UserViewModel> GetUserViewModel(Guid userid, (bool isValid, ContactResponse contact) securityCheckpoint)
         {
-            var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
+            var vm = _mapper.Map<UserViewModel>(securityCheckpoint.contact);
 
             vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(userid);
 

@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Web.AutoMapperProfiles;
@@ -11,8 +13,12 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
     public static class MappingStartup
     {
-        public static void AddMappings()
+        public static void AddMappings(this IServiceCollection services)
         {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            services.AddAutoMapper(assemblies);
+
+            /*
             Mapper.Reset();
 
             Mapper.Initialize(cfg =>
@@ -34,6 +40,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 cfg.AddProfile<CharityTrusteeProfile>();
                 cfg.AddProfile<RoatpOrganisationProfile>();
             });
+            */
         }
     }
 }
