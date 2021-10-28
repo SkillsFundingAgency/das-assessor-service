@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     public class EpaController : ControllerBase
     {
         private const int MAX_EPAS_IN_REQUEST = 25;
-        private readonly string MAX_EPAS_IN_REQUEST_ERROR_MESSAGE = $"Batch limited to {MAX_EPAS_IN_REQUEST} requests";
+        private readonly string _maxEpasInRequestErrorMessage = $"Batch limited to {MAX_EPAS_IN_REQUEST} requests";
 
         private readonly ILogger<EpaController> _logger;
         private readonly IHeaderInfo _headerInfo;
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         {
             if(request.Count() > MAX_EPAS_IN_REQUEST)
             {
-                ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, MAX_EPAS_IN_REQUEST_ERROR_MESSAGE);
+                ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, _maxEpasInRequestErrorMessage);
                 return StatusCode(error.StatusCode, error);
             }
 
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         {
             if (request.Count() > MAX_EPAS_IN_REQUEST)
             {
-                ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, MAX_EPAS_IN_REQUEST_ERROR_MESSAGE);
+                ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, _maxEpasInRequestErrorMessage);
                 return StatusCode(error.StatusCode, error);
             }
 
