@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+//using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using NLog.Web;
 
 namespace SFA.DAS.AssessorService.Web
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web
             IWebHostEnvironment hostingEnvironment = null;
 
             return WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .ConfigureServices(
                     services =>
                     {
@@ -37,6 +38,7 @@ namespace SFA.DAS.AssessorService.Web
                             .Where(x => x.ServiceType == typeof(IWebHostEnvironment))
                             .Select(x => (IWebHostEnvironment) x.ImplementationInstance)
                             .First();
+                        
                     })
                 .UseStartup<Startup>()
                 .UseUrls("https://localhost:5015")
