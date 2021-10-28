@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
@@ -81,10 +82,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v1", new Info { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
                     c.EnableAnnotations();
                     c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
-                    c.OperationFilter<ExamplesOperationFilter>();
+                    //c.OperationFilter<ExamplesOperationFilter>();  @ToDo: ExamplesOperationFilter is no longer accessible - fix this
                     c.SchemaFilter<NullableSchemaFilter>();
                     c.SchemaFilter<SwaggerRequiredSchemaFilter>();
                     c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
