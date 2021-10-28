@@ -24,12 +24,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly ILogger<CertificateController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IMapper _mapper;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IStandardVersionClient _standardVersionClient;
         private readonly ISessionService _sessionService;
         private readonly ISearchOrchestrator _searchOrchestrator;
 
-        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, IMapper mapper,
             ICertificateApiClient certificateApiClient,
             IStandardVersionClient standardVersionClient,
             ISessionService sessionService,
@@ -37,6 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _mapper = mapper;
             _certificateApiClient = certificateApiClient;
             _standardVersionClient = standardVersionClient;
             _sessionService = sessionService;
@@ -158,7 +160,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
                 StandardUId = startCertificateRequest.StandardUId,
-                Versions = Mapper.Map<List<StandardVersionViewModel>>(versions),
+                Versions = _mapper.Map<List<StandardVersionViewModel>>(versions),
                 Options = options
             };
 

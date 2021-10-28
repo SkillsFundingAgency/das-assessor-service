@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web
         {
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            //services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry();
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddAndConfigureAuthentication(Configuration, _logger, _env);
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web
                         $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
 
                     services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        //.PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")   // @todo
                         .SetApplicationName("AssessorApply");
                     services.AddDistributedRedisCache(options =>
                     {
@@ -124,7 +124,9 @@ namespace SFA.DAS.AssessorService.Web
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHealthChecks();
-            
+
+            services.AddMappings();
+
             return ConfigureIoc(services);
         }        
 
@@ -186,7 +188,6 @@ namespace SFA.DAS.AssessorService.Web
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
