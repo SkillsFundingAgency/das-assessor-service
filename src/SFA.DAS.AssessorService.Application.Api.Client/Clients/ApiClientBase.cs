@@ -15,9 +15,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public abstract class ApiClientBase : IDisposable
     {
-        protected ITokenService TokenService;
+        protected ITokenService _tokenService;
         private readonly ILogger<ApiClientBase> _logger;
-        protected HttpClient HttpClient;
+        protected HttpClient _httpClient;
 
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
 
@@ -30,13 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
             _logger = logger;
-
-            TokenService = tokenService;
-
-            HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
-
-            
-
+            _tokenService = tokenService;
+            _httpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
+           
             _retryPolicy = HttpPolicyExtensions
                     .HandleTransientHttpError()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
@@ -45,11 +41,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
-            TokenService = tokenService;
-
+            _tokenService = tokenService;
             _logger = logger;
-
-            HttpClient = httpClient;
+            _httpClient = httpClient;
 
             _retryPolicy = HttpPolicyExtensions
                 .HandleTransientHttpError()
@@ -92,9 +86,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
                 clonedRequest.Headers.Add("Accept", "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });
 
@@ -153,9 +147,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     clonedRequest.Headers.Add("Accept", mediaType);
                 }
                 clonedRequest.Content = content;
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });
 
@@ -181,9 +175,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             var result = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });
 
@@ -220,9 +214,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 clonedRequest.Headers.Add("Accept", "application/json");
                 clonedRequest.Content = new StringContent(serializeObject,
                     System.Text.Encoding.UTF8, "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });
            
@@ -238,9 +232,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);               
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });        
 
@@ -256,9 +250,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });
             
@@ -274,9 +268,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await HttpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest);
 
             });
 
@@ -297,7 +291,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public void Dispose()
         {
-            HttpClient?.Dispose();
+            _httpClient?.Dispose();
         }
     }
 }
