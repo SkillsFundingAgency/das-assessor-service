@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -31,8 +32,12 @@ namespace SFA.DAS.AssessorService.Application.Api
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
+                .ConfigureServices(
+                    services =>
+                    {
+                        services.AddApplicationInsightsTelemetry();
+                    })
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .UseKestrel()
                 .UseNLog();
         }
