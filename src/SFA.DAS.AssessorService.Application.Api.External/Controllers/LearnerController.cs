@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
 using SFA.DAS.AssessorService.Domain.Consts;
 using Swashbuckle.AspNetCore.Annotations;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "The current Learner.", typeof(GetLearner))]
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.ApiResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from retrieving the Learner.", typeof(ApiResponse))]
-        [SwaggerOperation("Get Learner", "Gets the specified Learner.", Produces = new string[] { "application/json" })]
+        [SwaggerOperation("Get Learner", "Gets the specified Learner.")]
         public async Task<IActionResult> GetLearner(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
             var getRequest = new GetBatchLearnerRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };

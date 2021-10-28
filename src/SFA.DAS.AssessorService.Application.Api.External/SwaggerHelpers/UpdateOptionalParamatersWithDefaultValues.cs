@@ -1,19 +1,16 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {
@@ -26,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
             _jsonSerializer = JsonSerializer.CreateDefault(mvcJsonOptions.Value.SerializerSettings);
         }
 
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (operation.Parameters == null) return;
             var parameterValuePairs = context.ApiDescription.ParameterDescriptions
@@ -41,7 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
                     if (defaultValue != null)
                     {
                         var jValue = (JValue)JValue.FromObject(defaultValue, _jsonSerializer);
-                        parameter.Extensions.Add("default", jValue.Value);
+
+                        // .NetCore 3.1 upgrade @ToDo: test this change
+                        //parameter.Extensions.Add("default", jValue.Value);
+                        parameter.Extensions.Add("default", new OpenApiString(jValue.Value.ToString()));
                     }
                     else
                     {

@@ -1,11 +1,11 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class GetOptionsForStandardResponseExample : IExamplesProvider
+    public class GetOptionsForStandardResponseExample : IExamplesProvider<StandardOptions>
     {
-        public object GetExamples()
+        public StandardOptions GetExamples()
         {
             return new StandardOptions 
             { 

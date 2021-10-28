@@ -1,4 +1,5 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
+﻿using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Reflection;
@@ -7,13 +8,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {
     public class NullableSchemaFilter : ISchemaFilter
     {
-        public void Apply(Schema schema, SchemaFilterContext context)
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
+            /*
+             // @ToDo: Come back to this and see if we still need to have a specific customisation for Nullable<T>
             if (schema.Properties is null) return;
 
             foreach (var schemaProperty in schema.Properties)
             {
-                var property = context.SystemType.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var property = context.Type.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                 if (property != null && property.PropertyType.IsConstructedGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
@@ -23,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
                     schemaProperty.Value.Example = null;
                 }
             }
+            */
         }
     }
 }
