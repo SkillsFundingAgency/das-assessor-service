@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
 
-        protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 // NOTE: Struct values are valid JSON. For example: 'True'
                 var json = await result.Content.ReadAsStringAsync();
-                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
+                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
             }
             else if (result.StatusCode == HttpStatusCode.NotFound)
             {
