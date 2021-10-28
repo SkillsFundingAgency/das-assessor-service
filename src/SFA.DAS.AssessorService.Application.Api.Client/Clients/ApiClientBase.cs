@@ -15,11 +15,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public abstract class ApiClientBase : IDisposable
     {
-        protected ITokenService _tokenService;
         private readonly ILogger<ApiClientBase> _logger;
-        protected HttpClient _httpClient;
-
+        private readonly ITokenService _tokenService;
+        private readonly HttpClient _httpClient;
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
+
+        protected ITokenService TokenService => _tokenService;
+        protected HttpClient HttpClient => _httpClient;
+
 
         protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
