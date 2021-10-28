@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
                 cfg.AddProfile<CreateBatchCertificateRequestProfile>();
                 cfg.AddProfile<CreateBatchCertificateResponseProfile>();
                 cfg.AddProfile<GetBatchCertificateResponseProfile>();
+                cfg.AddProfile<GetBatchCertificateLogResponseProfile>();
                 cfg.AddProfile<SubmitBatchCertificateRequestProfile>();
                 cfg.AddProfile<SubmitBatchCertificateResponseProfile>();
                 cfg.AddProfile<UpdateBatchCertificateRequestProfile>();

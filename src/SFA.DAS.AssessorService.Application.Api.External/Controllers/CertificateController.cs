@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.External.Helpers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
@@ -62,6 +63,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
                 {
+                    if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed)
+                    {
+                        response.Certificate.Delivered = new Delivered { Status = "WaitingForDelivery" };
+                    }
+                    else
+                    {
+                        var logsResponse = await _apiClient.GetCertificateLogs(response.Certificate.CertificateData.CertificateReference);
+
+                        var deliveryLogs = logsResponse.CertificateLogs.Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered);
+
+                        response.Certificate.Delivered = Mapper.Map<CertificateLog, Delivered>(deliveryLogs.OrderByDescending(log => log.EventTime).FirstOrDefault();
+                    }
+
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
                 }
                 else // status could be Draft or Deleted (or Privately Funded statuses)

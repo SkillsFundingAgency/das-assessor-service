@@ -178,6 +178,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
         }
 
+        public virtual async Task<GetCertificateLogsResponse> GetCertificateLogs(string certificateReference)
+        {
+            var apiResponse = await Get<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateLogsResponse>($"/api/v1/certificates/batch/logs/{certificateReference}");
+
+            return Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateLogsResponse, GetCertificateLogsResponse>(apiResponse);
+        }
+
         public virtual async Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request)
         {
             var apiRequest = Mapper.Map<IEnumerable<CreateBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.ExternalApi.Certificates.CreateBatchCertificateRequest>>(request);
