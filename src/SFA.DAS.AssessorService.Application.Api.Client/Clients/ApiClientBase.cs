@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -23,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         private readonly ILogger<ApiClientBase> _logger;
         protected HttpClient HttpClient;
 
-        private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
+        private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
 
         protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
@@ -39,9 +35,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
 
+            
+
             _retryPolicy = HttpPolicyExtensions
                     .HandleTransientHttpError()
-//                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
