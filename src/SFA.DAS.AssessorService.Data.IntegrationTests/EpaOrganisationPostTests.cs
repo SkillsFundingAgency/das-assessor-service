@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -8,6 +6,8 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -26,9 +26,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            _repository = new RegisterRepository(_databaseService.WebConfiguration, new Mock<ILogger<RegisterRepository>>().Object);
-            _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
-            _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var unitOfWork = new UnitOfWork(databaseConnection);
+
+            _repository = new RegisterRepository(unitOfWork, new Mock<ILogger<RegisterRepository>>().Object);
+            _validationRepository = new RegisterValidationRepository(unitOfWork);
+            _queryRepository = new RegisterQueryRepository(unitOfWork);
+
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
             _organisationTypeId = 5;

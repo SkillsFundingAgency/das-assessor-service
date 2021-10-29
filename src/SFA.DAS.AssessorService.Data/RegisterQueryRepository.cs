@@ -1,26 +1,21 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using SFA.DAS.AssessorService.Settings;
+﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.ApplyTypes;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class RegisterQueryRepository : IRegisterQueryRepository
+    public class RegisterQueryRepository : Repository, IRegisterQueryRepository
     {
-        private readonly IWebConfiguration _configuration;
-
-        public RegisterQueryRepository(IWebConfiguration configuration)
+        public RegisterQueryRepository(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
-            _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
@@ -28,106 +23,71 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType] where Status <> 'Deleted'  order by id");
-                return orgTypes;
-            }
+            var orgTypes = await _unitOfWork.Connection.QueryAsync<OrganisationType>(
+                @"select * from [OrganisationType] where Status <> 'Deleted' order by id", 
+                transaction: _unitOfWork.Transaction);
+            
+            return orgTypes;
         }
 
         public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var deliveryAreas = await _unitOfWork.Connection.QueryAsync<DeliveryArea>(
+                "select * from [DeliveryArea] order by ordering");
 
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea] order by ordering");
-                return deliveryAreas;
-            }
-         }
+            return deliveryAreas;
+        }
 
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
-                    "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
+            var sql =
+                "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
                     "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.Id = @id";
-                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {id});
-                var org = orgs.FirstOrDefault();
-                return org;
-            }
+
+            var org = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<EpaOrganisation>(sql, new { id });
+
+            return org;
         }
 
         public async Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
-                    "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
+            var sql =
+                "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
                     "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.EndPointAssessorOrganisationId = @organisationId";
-                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {organisationId});
-                var org = orgs.FirstOrDefault();
-                return org;
-            }
+
+            var org = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<EpaOrganisation>(sql, new { organisationId });
+            
+            return org;
         }
 
         public async Task<string> EpaOrganisationIdCurrentMaximum()
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                const string sqlToGetHighestOrganisationId = @"select max(CAST( replace(EndPointAssessorOrganisationId,'EPA','') AS int)) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' 
-                                                        and isnumeric(replace(EndPointAssessorOrganisationId,'EPA','')) = 1";
-                return await connection.ExecuteScalarAsync<string>(sqlToGetHighestOrganisationId);
-            }
+            var sql = @"select max(CAST(replace(EndPointAssessorOrganisationId,'EPA','') AS int)) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' 
+                        and isnumeric(replace(EndPointAssessorOrganisationId,'EPA','')) = 1";
+
+            return await _unitOfWork.Connection.ExecuteScalarAsync<string>(sql);
         }
 
         public async Task<int> EpaContactUsernameHighestCounter()
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+            var sql = "select max(convert(int,replace(username,'unknown-',''))) highestCounter from [Contacts] where username like 'unknown-%' and isnumeric(replace(username,'unknown-','')) = 1";
 
-                const string sqlToGetHighestUsernameCounter = "select max(convert(int,replace(username,'unknown-',''))) highestCounter from [Contacts]  where username like 'unknown-%' and isnumeric(replace(username,'unknown-','')) = 1";
-                var maxCounter = await connection.ExecuteScalarAsync<int?>(sqlToGetHighestUsernameCounter);
+            var maxCounter = await _unitOfWork.Connection.ExecuteScalarAsync<int?>(sql);
 
-                return maxCounter ?? 100;
-            }
+            return maxCounter ?? 100;
         }
 
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations()
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var assessmentOrganisationSummaries =
-                    await connection.QueryAsync<AssessmentOrganisationSummary>(
-                        "select EndPointAssessorOrganisationId as Id, " +
+            var assessmentOrganisationSummaries =
+                await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(
+                    "select EndPointAssessorOrganisationId as Id, " +
                         "EndPointAssessorName as Name, " +
                         "EndPointAssessorUkprn as ukprn, " +
                         "OrganisationData, " +
@@ -139,19 +99,14 @@ namespace SFA.DAS.AssessorService.Data
                         "left join OrganisationType ot " +
                         "on ot.id = o.OrganisationTypeId " +
                         "and ot.Status = 'Live'");
-                return assessmentOrganisationSummaries;
-            }
+
+            return assessmentOrganisationSummaries;
         }
 
         public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "SELECT C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
+            var sql =
+                "SELECT C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
                     "C.DisplayName, C.email, C.Status, C.UpdatedAt, C.Username, C.PhoneNumber, " +
                     "CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END AS IsPrimaryContact " +
                     "from contacts C  left outer join Organisations O on " +
@@ -159,39 +114,28 @@ namespace SFA.DAS.AssessorService.Data
                     "where C.EndPointAssessorOrganisationId = @organisationId " +
                     "order by CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END DESC";
 
-                return await connection.QueryAsync<AssessmentOrganisationContact>(sql, new {organisationId});
-            }
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationContact>(sql, new { organisationId });
         }
 
         public async Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "SELECT C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
+            var sql =
+                "SELECT C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
                     "C.DisplayName, C.email, C.Status, C.UpdatedAt, C.Username, C.PhoneNumber, C.GivenNames as FirstName, C.FamilyName as LastName, " +
                     "CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END AS IsPrimaryContact " +
                     "from contacts C  left outer join Organisations O on " +
                     "C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "where convert(varchar(50),C.Id) = @contactId ";
 
-                var contacts = await connection.QueryAsync<AssessmentOrganisationContact>(sql, new {contactId});
-                return contacts.FirstOrDefault();
-            }
+            var contact = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<AssessmentOrganisationContact>(sql, new { contactId });
+
+            return contact;
         }
 
         public async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "SELECT top 1 C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
+            var sql =
+                "SELECT top 1 C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
                     "C.DisplayName, C.email, C.Status, C.UpdatedAt, C.Username, C.PhoneNumber, " +
                     "CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END AS IsPrimaryContact " +
                     "from contacts C  left outer join Organisations O on " +
@@ -199,94 +143,83 @@ namespace SFA.DAS.AssessorService.Data
                     "where C.EndPointAssessorOrganisationId = @organisationId " +
                     "order by CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END DESC";
 
-                var contact = await connection.QuerySingleAsync<AssessmentOrganisationContact>(sql, new {organisationId});
+            var contact = await _unitOfWork.Connection.QuerySingleAsync<AssessmentOrganisationContact>(sql, new { organisationId });
 
-                return contact;
-            }
+            return contact;
         }
-        
+
         public async Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sqlForOrganisationsByStandardId =
-                    "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name,  O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
+            var sql =
+                "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name,  O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
                     "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
                     " FROM [Organisations] O " +
                     "JOIN OrganisationStandard  OS ON OS.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE OS.StandardCode = @standardId";
-                return await connection.QueryAsync<EpaOrganisation>(sqlForOrganisationsByStandardId, new {standardId});
-            }
+
+            return await _unitOfWork.Connection.QueryAsync<EpaOrganisation>(sql, new { standardId });
         }
 
         public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
         {
             IEnumerable<OrganisationStandardSummary> organisationStandardSummaries;
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+
+            var query = 
+                @"SELECT 
+	                os.Id, EndPointAssessorOrganisationId AS OrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, ContactId, OrganisationStandardData, StandardReference
+                  FROM 
+	                [OrganisationStandard] os 
+                  WHERE 
+	                EndPointAssessorOrganisationId = @organisationId
+
+                  SELECT
+	                sc.Id, StandardId, ReferenceNumber, Title, StandardData, DateAdded, DateUpdated, DateRemoved, IsLive
+                  FROM 
+	                [OrganisationStandard] os 
+	                INNER JOIN [StandardCollation] sc ON os.StandardCode = sc.StandardId
+                  WHERE 
+	                EndPointAssessorOrganisationId = @organisationId
+
+                  SELECT StandardCode, osda.DeliveryAreaId 
+                  FROM 
+	                [OrganisationStandard] os 
+	                INNER JOIN [OrganisationStandardDeliveryArea] osda on os.Id = osda.OrganisationStandardId 
+                  WHERE
+	                EndPointAssessorOrganisationId = @organisationId 
+                  
+                  SELECT 
+	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
+                  FROM 
+	                [dbo].[OrganisationStandardVersion] osv
+	                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
+	                INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+                        AND o.EndPointAssessorOrganisationId = @organisationId
+	                INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
+                  WHERE 
+	                osv.Status = 'Live' AND os.status = 'Live' 
+	                AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
+	                AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+
+            using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                organisationStandardSummaries = multi.Read<OrganisationStandardSummary>();
+                var standardCollations = multi.Read<StandardCollation>()?.ToDictionary(a => a.StandardId);
+                var deliveryAreas = multi.Read().Select(a => new { a.StandardCode, a.DeliveryAreaId })?.GroupBy(a => a.StandardCode);
+                var organisationStandardVersions = multi.Read<OrganisationStandardVersion>()?.GroupBy(a => a.LarsCode);
 
-                var query = @"
-                    SELECT 
-	                    os.Id, EndPointAssessorOrganisationId AS OrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, ContactId, OrganisationStandardData, StandardReference
-                    FROM 
-	                    [OrganisationStandard] os 
-                    WHERE 
-	                    EndPointAssessorOrganisationId = @organisationId
-
-                    SELECT
-	                    sc.Id, StandardId, ReferenceNumber, Title, StandardData, DateAdded, DateUpdated, DateRemoved, IsLive
-                    FROM 
-	                    [OrganisationStandard] os 
-	                    INNER JOIN [StandardCollation] sc ON os.StandardCode = sc.StandardId
-                    WHERE 
-	                    EndPointAssessorOrganisationId = @organisationId
-
-                    SELECT StandardCode, osda.DeliveryAreaId 
-                    FROM 
-	                    [OrganisationStandard] os 
-	                    INNER JOIN [OrganisationStandardDeliveryArea] osda on os.Id = osda.OrganisationStandardId 
-                    WHERE
-	                    EndPointAssessorOrganisationId = @organisationId 
-                    
-                    SELECT 
-	                    osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
-                    FROM 
-	                    [dbo].[OrganisationStandardVersion] osv
-	                    INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
-	                    INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
-                            AND o.EndPointAssessorOrganisationId = @organisationId
-	                    INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
-                    WHERE 
-	                    osv.Status = 'Live' AND os.status = 'Live' 
-	                    AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
-	                    AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
-
-                using (var multi = await connection.QueryMultipleAsync(query, new { organisationId }))
+                foreach (var organisationStandardSummary in organisationStandardSummaries)
                 {
-                    organisationStandardSummaries = multi.Read<OrganisationStandardSummary>();
-                    var standardCollations = multi.Read<StandardCollation>()?.ToDictionary(a => a.StandardId);
-                    var deliveryAreas = multi.Read().Select(a => new { a.StandardCode, a.DeliveryAreaId })?.GroupBy(a => a.StandardCode);
-                    var organisationStandardVersions = multi.Read<OrganisationStandardVersion>()?.GroupBy(a => a.LarsCode);
+                    organisationStandardSummary.StandardCollation = standardCollations[organisationStandardSummary.StandardCode];
 
-                    foreach (var organisationStandardSummary in organisationStandardSummaries)
-                    {
-                        organisationStandardSummary.StandardCollation = standardCollations[organisationStandardSummary.StandardCode];
-                        
-                        organisationStandardSummary.DeliveryAreas = deliveryAreas?
-                            .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
-                            .Select(a => (int)a.DeliveryAreaId)
-                            .ToList() ?? new List<int>();
-                        
-                        organisationStandardSummary.StandardVersions = organisationStandardVersions?
-                            .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
-                            .ToList() ?? new List<OrganisationStandardVersion>();
-                    }
+                    organisationStandardSummary.DeliveryAreas = deliveryAreas?
+                        .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
+                        .Select(a => (int)a.DeliveryAreaId)
+                        .ToList() ?? new List<int>();
+
+                    organisationStandardSummary.StandardVersions = organisationStandardVersions?
+                        .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
+                        .ToList() ?? new List<OrganisationStandardVersion>();
                 }
             }
 
@@ -295,28 +228,18 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sqlForStandardByOrganisationStandardId =
-                    "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
-                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData "+
+            var sql =
+                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
+                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
                     "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
-                return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationStandardId, new {organisationStandardId});
-            }
+
+            return await _unitOfWork.Connection.QuerySingleAsync<OrganisationStandard>(sql, new { organisationStandardId });
         }
 
         public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    @"WITH VersionApply AS
+            var sql =
+                @"WITH VersionApply AS
                     (--Apply records for specific versions
                         SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
                         SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
@@ -356,98 +279,66 @@ namespace SFA.DAS.AssessorService.Data
                         WHERE
                             so1.IFateReferenceNumber = @standardReference  
                         ORDER BY so1.Version;";
-                return await connection.QueryAsync<AppliedStandardVersion>(
+
+            return await _unitOfWork.Connection.QueryAsync<AppliedStandardVersion>(
                     sql, new { organisationId = organisationId, standardReference = standardReference });
-            }
         }
 
         public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisationStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "SELECT EffectiveFrom, EffectiveTo " +
+            var sql =
+                "SELECT EffectiveFrom, EffectiveTo " +
                     "FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = @organisationId and StandardCode = @standardId";
-                return await connection.QueryAsync<OrganisationStandardPeriod>(sql, new {organisationId, standardId});
-            }
+
+            return await _unitOfWork.Connection.QueryAsync<OrganisationStandardPeriod>(sql, new { organisationId, standardId });
         }
 
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            if (!int.TryParse(ukprn.Replace(" ",""), out int ukprnNumeric))
+            if (!int.TryParse(ukprn.Replace(" ", ""), out int ukprnNumeric))
             {
                 return new List<AssessmentOrganisationSummary>();
             }
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
 
-                var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
+            var sql =
+                  "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE o.EndPointAssessorUkprn = @ukprnNumeric";
 
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {ukprnNumeric});
-                return assessmentOrganisationSummaries;
-            }
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { ukprnNumeric });
         }
+
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+            var sql =
+                  "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
+                + "FROM [Organisations] o "
+                + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
+                + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
 
-                var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
-                    + "FROM [Organisations] o "
-                    + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
-                    + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
-                    + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
-
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}" });
-                return assessmentOrganisationSummaries;
-            }
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { organisationId = $"{organisationId.Replace(" ", "")}" });
         }
 
         public async Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, pc.Email as Email "
+            var sql =
+                "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, pc.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] pc ON pc.Username = o.PrimaryContact AND pc.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
 
-                var organisation = await connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email});
-                return organisation;
-            }
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email });
         }
+
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string searchString)
         {
-            var connectionString = _configuration.SqlConnectionString;
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
+            var sql =
+                "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
@@ -456,99 +347,58 @@ namespace SFA.DAS.AssessorService.Data
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @searchString "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') like @searchString "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString ";
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {searchString =$"%{searchString.Replace(" ","")}%" } );
-                return assessmentOrganisationSummaries;
-            }
+
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
         }
 
         public async Task<EpaContact> GetContactByContactId(Guid contactId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+            var sql =
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Id = @contactId";
-                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
-                return contact;
-            }
+
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
         }
 
         public async Task<EpaContact> GetContactByEmail(string email)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+            var sql =
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Email = @email";
-                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { email });
-                return contact;
-            }
+
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { email });
         }
 
         public async Task<EpaContact> GetContactBySignInId(string signinId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+            var sql =
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where SigninId = @signinId";
-                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { signinId });
-                return contact;
-            }
+
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { signinId });
         }
 
         public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(
             int organisationStandardId)
         {
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-                var sql =
-                    "select *  from organisationStandardDeliveryArea" +
+            var sql =
+                "select *  from organisationStandardDeliveryArea" +
                     " where OrganisationStandardId = @organisationStandardId";
-                var deliveryAreas =
-                    await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new {organisationStandardId});
-                return deliveryAreas;
-            }
+
+            return await _unitOfWork.Connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new { organisationStandardId });
         }
 
 
         public async Task<string> GetEpaOrgIdByEndPointAssessmentName(string name)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                name = name.Replace(" ", "");
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
+            var sql =
                     "SELECT  O.EndPointAssessorOrganisationId " +
-                    " FROM [Organisations] O " 
+                    " FROM [Organisations] O "
                     + "WHERE replace(o.EndPointAssessorName, ' ','') like @name "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @name "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @name ";
-                var orgs = await connection.QueryAsync<string>(sqlForMainDetails, new { name });
-                var org = orgs.FirstOrDefault();
-                return org;
-            }
+
+            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(sql, new { name });
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -12,9 +14,14 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class ApprovalsExtractRepository : Repository, IApprovalsExtractRepository
     {
-        public ApprovalsExtractRepository(IUnitOfWork unitOfWork)
+        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly ILogger<ApprovalsExtractRepository> _logger;
+
+        public ApprovalsExtractRepository(IUnitOfWork unitOfWork, IRoatpApiClient roatpApiClient, ILogger<ApprovalsExtractRepository> logger)
             : base(unitOfWork)
         {
+            _roatpApiClient = roatpApiClient;
+            _logger = logger;
         }
 
         public async Task<DateTime?> GetLatestExtractTimestamp()
@@ -134,6 +141,67 @@ namespace SFA.DAS.AssessorService.Data
             {
                 throw ex;
             }
+        }
+
+        public async Task InsertProvidersFromApprovalsExtract()
+        {
+            var missingUkprns = await UkprnsInExtractNotInProviders();
+            await RefreshProviders(missingUkprns);
+        }
+
+        public async Task RefreshProviders()
+        {
+            var allUkprns = await UkprnsInProviders();
+            await RefreshProviders(allUkprns);
+        }
+
+        private async Task RefreshProviders(IEnumerable<int> ukprns)
+        {
+            // Get the provider name from RoATP and update Providers table.
+
+            foreach (var ukprn in ukprns)
+            {
+                var name = await GetProviderName(ukprn);
+
+                if(!string.IsNullOrWhiteSpace(name))
+                {
+                    var existingName = await _unitOfWork.Connection.ExecuteScalarAsync<string>("SELECT Name FROM Providers WHERE Ukprn = @Ukprn;", new { Ukprn = ukprn });
+                    if (string.IsNullOrWhiteSpace(existingName))
+                    {
+                        await _unitOfWork.Connection.ExecuteAsync("INSERT INTO Providers (Ukprn, Name, UpdatedOn) VALUES (@Ukprn, @Name, @UpdatedOn)", new { Ukprn = ukprn, Name = name, UpdatedOn = DateTime.UtcNow });
+                    }
+                    else
+                    {
+                        if (name != existingName)
+                        {
+                            await _unitOfWork.Connection.ExecuteAsync("UPDATE Providers SET Name = @Name, UpdatedOn = @UpdatedOn WHERE Ukprn = @Ukprn", new { Ukprn = ukprn, Name = name, UpdatedOn = DateTime.UtcNow });
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task<IEnumerable<int>> UkprnsInExtractNotInProviders()
+        {
+            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM ApprovalsExtract WHERE Ukprn NOT IN (SELECT DISTINCT Ukprn FROM Providers)");
+            return ukprns;
+        }
+
+        private async Task<IEnumerable<int>> UkprnsInProviders()
+        {
+            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT Ukprn FROM Providers");
+            return ukprns;
+        }
+
+        private async Task<string> GetProviderName(int ukprn)
+        {
+            var provider = (await _roatpApiClient.SearchOrganisationByUkprn(ukprn)).FirstOrDefault();
+            if (provider == null)
+            {
+                _logger.LogError($"Training provider {ukprn} not found in RoATP.");
+            }
+
+            return provider?.ProviderName;
         }
     }
 }

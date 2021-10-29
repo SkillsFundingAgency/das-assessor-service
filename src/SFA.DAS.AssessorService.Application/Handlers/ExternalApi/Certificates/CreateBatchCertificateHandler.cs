@@ -14,9 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -28,10 +25,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<CreateBatchCertificateHandler> _logger;
         private readonly IStandardService _standardService;
-        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly IProvidersRepository _providersRepository;
 
         public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository,
-            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService, IRoatpApiClient roatpApiClient)
+            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, 
+            ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService, IProvidersRepository providersRepository)
         {
             _certificateRepository = certificateRepository;
             _learnerRepository = learnerRepository;
@@ -39,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _standardService = standardService;
-            _roatpApiClient = roatpApiClient;
+            _providersRepository = providersRepository;
         }
 
         public async Task<Certificate> Handle(CreateBatchCertificateRequest request, CancellationToken cancellationToken)
@@ -111,39 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
         {
-            Provider provider;
-            OrganisationSearchResult searchResult = null;
-            try
-            {
-                searchResult = await _roatpApiClient.GetOrganisationByUkprn(ukprn);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Unable to get Provider from AssessmentOrgsApi. Ukprn: {ukprn}");
-            }
-
-            if (searchResult is null)
-            {
-                // see if we can get it from Organisation Table
-                var org = await _organisationQueryRepository.GetByUkPrn(ukprn);
-
-                if (org != null)
-                {
-                    provider = new Provider { ProviderName = org.EndPointAssessorName, Ukprn = ukprn };
-                }
-                else
-                {
-                    // see whether there are any previous certificates with this ukrpn and a ProviderName....
-                    var previousProviderName = await _certificateRepository.GetPreviousProviderName(ukprn);
-                    provider = new Provider { ProviderName = previousProviderName ?? "Unknown", Ukprn = ukprn };
-                }
-            }
-            else
-            {
-                provider = new Provider { ProviderName = searchResult.ProviderName, Ukprn = ukprn };
-            }
-
-            return provider;
+            return await _providersRepository.GetProvider(ukprn);
         }
 
         private CertificateData CombineCertificateData(CertificateData data, Domain.Entities.Learner learner, Standard standard, Provider provider, StandardOptions options, Certificate certificate)
@@ -182,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 StandardLevel = standard.Level,
                 StandardPublicationDate = standard.EffectiveFrom,
                 FullName = $"{learner.GivenNames} {learner.FamilyName}",
-                ProviderName = provider.ProviderName,
+                ProviderName = provider.Name,
 
                 ContactName = data.ContactName,
                 ContactOrganisation = data.ContactOrganisation,
