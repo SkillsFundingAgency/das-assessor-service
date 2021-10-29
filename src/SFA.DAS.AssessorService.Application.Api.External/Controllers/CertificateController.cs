@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
                         var deliveryLogs = logsResponse.CertificateLogs.Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered);
 
-                        response.Certificate.Delivered = Mapper.Map<CertificateLog, Delivered>(deliveryLogs.OrderByDescending(log => log.EventTime).FirstOrDefault();
+                        response.Certificate.Delivered = Mapper.Map<CertificateLog, Delivered>(deliveryLogs.OrderByDescending(log => log.EventTime).FirstOrDefault());
                     }
 
                     response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;

@@ -31,6 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
         private Mock<IValidator<GetBatchCertificateRequest>> _mockGetBatchValidator;
         private Mock<IValidator<SubmitBatchCertificateRequest>> _mockSubmitBatchValidator;
         private Mock<IValidator<DeleteBatchCertificateRequest>> _mockDeleteBatchValidator;
+        private Mock<IValidator<GetBatchCertificateLogsRequest>> _mockGetBatchLogsValidator;
+
         private CertificateBatchController _certificateBatchController;
 
         [SetUp]
@@ -42,10 +44,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             _mockGetBatchValidator = new Mock<IValidator<GetBatchCertificateRequest>>();
             _mockSubmitBatchValidator = new Mock<IValidator<SubmitBatchCertificateRequest>>();
             _mockDeleteBatchValidator = new Mock<IValidator<DeleteBatchCertificateRequest>>();
+            _mockGetBatchLogsValidator = new Mock<IValidator<GetBatchCertificateLogsRequest>>();
 
             _certificateBatchController = new CertificateBatchController(_mockMediator.Object,
                 _mockGetBatchValidator.Object, _mockCreateBatchValidator.Object,
-                _mockUpdateBatchValidator.Object, _mockSubmitBatchValidator.Object, _mockDeleteBatchValidator.Object);
+                _mockUpdateBatchValidator.Object, _mockSubmitBatchValidator.Object, _mockDeleteBatchValidator.Object, _mockGetBatchLogsValidator.Object);
         }
 
         #region CreateCertificates

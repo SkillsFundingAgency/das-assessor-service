@@ -56,7 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
                 Mock.Of<IValidator<CreateBatchCertificateRequest>>(),
                 Mock.Of<IValidator<UpdateBatchCertificateRequest>> (),
                 Mock.Of<IValidator<SubmitBatchCertificateRequest>>(),
-                Mock.Of<IValidator<DeleteBatchCertificateRequest>>());
+                Mock.Of<IValidator<DeleteBatchCertificateRequest>>(),
+                Mock.Of<IValidator<GetBatchCertificateLogsRequest>>());
         }
 
         [Test, MoqAutoData]
