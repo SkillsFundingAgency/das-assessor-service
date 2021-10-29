@@ -107,10 +107,10 @@
 
     function populateAddress(address) {
         var addressFields = {
-            '.address-manual-input-address-line-1': address.house + ' ' + address.street,
-            '.address-manual-input-address-line-2': address.locality,
-            '.address-manual-input-address-line-3': address.town,
-            '.address-manual-input-address-line-4': address.county,
+            '.address-manual-input-address-line-1': address.addressLine1,
+            '.address-manual-input-address-line-2': address.addressLine2,
+            '.address-manual-input-address-line-3': address.addressLine3,
+            '.address-manual-input-address-line-4': address.town,
             '.address-manual-input-postcode': address.postcode
         };
 

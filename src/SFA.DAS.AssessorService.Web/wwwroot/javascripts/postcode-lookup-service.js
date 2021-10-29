@@ -104,9 +104,9 @@
   function populateAddress(address) {
     var addressFields = {
       Employer: address.organisation,
-      AddressLine1: address.address.house + ' ' + address.street,
-      AddressLine2: address.locality,
-      AddressLine3: address.county,
+      AddressLine1: address.addressLine1,
+      AddressLine2: address.addressLine2,
+      AddressLine3: address.addressLine3,
       City: address.town,
       Postcode: address.postcode
     };

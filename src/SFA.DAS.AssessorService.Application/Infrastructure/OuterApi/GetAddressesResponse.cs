@@ -19,11 +19,11 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("uprn")]
         public string Uprn { get; set; }
 
-        [JsonProperty("house")]
-        public string House { get; set; }
+        [JsonProperty("premises")]
+        public string Premises { get; set; }
 
-        [JsonProperty("street")]
-        public string Street { get; set; }
+        [JsonProperty("thoroughfare")]
+        public string Thoroughfare { get; set; }
 
         [JsonProperty("organisation")]
         public string Organisation { get; set; }
@@ -39,6 +39,15 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("postcode")]
         public string Postcode { get; set; }
+
+        [JsonProperty("addressline1")]
+        public string AddressLine1 { get; set; }
+
+        [JsonProperty("addressline2")]
+        public string AddressLine2 { get; set; }
+
+        [JsonProperty("addressline3")]
+        public string AddressLine3 { get; set; }
 
         [JsonProperty("longitude")]
         public double? Longitude { get; set; }
