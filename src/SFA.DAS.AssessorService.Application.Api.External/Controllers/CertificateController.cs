@@ -70,9 +70,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 {
                     var logsResponse = await _apiClient.GetCertificateLogs(response.Certificate.CertificateData.CertificateReference);
 
-                    var deliveryLogs = logsResponse.CertificateLogs.Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered);
+                    var mostRecentDeliveryLog = logsResponse.CertificateLogs
+                        .Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered)
+                        .OrderByDescending(log => log.EventTime)
+                        .FirstOrDefault();
 
-                    response.Certificate.Delivered = Mapper.Map<CertificateLog, Delivered>(deliveryLogs.OrderByDescending(log => log.EventTime).FirstOrDefault());
+                    if (mostRecentDeliveryLog != null)
+                    {
+                        response.Certificate.Delivered = new Delivered 
+                        {
+                            DeliveryDate = mostRecentDeliveryLog.EventTime,
+                            Status = mostRecentDeliveryLog.Status
+                        };
+                    }
                 }
 
                 response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;

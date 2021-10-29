@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 ValidationErrors = validationErrors
             };
 
-            if (!validationErrors.Any() && isRequestValid)
+            if (isRequestValid)
             {
                 var response = await _mediator.Send(request);
 

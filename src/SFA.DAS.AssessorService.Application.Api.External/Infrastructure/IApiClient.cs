@@ -1,7 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
