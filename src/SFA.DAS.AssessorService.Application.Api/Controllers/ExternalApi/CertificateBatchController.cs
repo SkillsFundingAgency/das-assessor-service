@@ -86,6 +86,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         }
 
         [HttpGet("logs/{certificateReference}", Name = "GetCertificateLogs")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateLogsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetBatchCertificateLogs(string certificateReference)
         {
             var request = new GetBatchCertificateLogsRequest
