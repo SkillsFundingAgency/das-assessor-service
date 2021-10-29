@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
 {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             var mockSet = CreateMockSet();
             CreateMockDbCOntext(mockSet);
 
-            _contactRepository = new ContactRepository(_assessorDbContext.Object, new Mock<IDbConnection>().Object);
+            _contactRepository = new ContactRepository(_assessorDbContext.Object, new Mock<IUnitOfWork>().Object);
             _result = _contactRepository.CreateNewContact(contactCreateDomainModel).Result;
 
         }

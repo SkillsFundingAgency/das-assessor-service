@@ -2,6 +2,8 @@
 {
     public interface IWebConfiguration
     {
+        string Environment { get; set; }
+
         ApiAuthentication ApiAuthentication { get; set; }
         AzureApiAuthentication AzureApiAuthentication { get; set; }
         ClientApiAuthentication AssessorApiAuthentication { get; set; }

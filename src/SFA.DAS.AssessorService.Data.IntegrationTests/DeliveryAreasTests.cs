@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -18,7 +18,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupDeliveryAreasTests()
         {
-            _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var unitOfWork = new UnitOfWork(databaseConnection);
+
+            _repository = new RegisterQueryRepository(unitOfWork);
+
             _deliveryArea1 = new DeliveryAreaModel { Id = 10, Status = "Live", Area = "North West" };
             _deliveryArea2 = new DeliveryAreaModel { Id = 20, Status = "New", Area = "Some Other" };
             var deliveryAreas = new List<DeliveryAreaModel> { _deliveryArea1, _deliveryArea2 };

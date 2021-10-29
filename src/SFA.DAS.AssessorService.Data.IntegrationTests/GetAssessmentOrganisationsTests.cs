@@ -24,7 +24,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var unitOfWork = new UnitOfWork(databaseConnection);
+
+            _repository = new RegisterQueryRepository(unitOfWork);
+
             _organisationId1 = "EPA0001";
             _organisationId2 = "EPA005";
             _organisation1 = new OrganisationModel

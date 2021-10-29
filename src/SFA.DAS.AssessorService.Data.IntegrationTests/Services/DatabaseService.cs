@@ -16,10 +16,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
      
         public DatabaseService()
         {
-           
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
+            
             WebConfiguration = new TestWebConfiguration
             {
                 SqlConnectionString = Configuration.GetConnectionString("SqlConnectionStringTest")
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 var sqlConnectionStringTest = Configuration.GetConnectionString("SqlConnectionStringTest");
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(sqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
-                return new AssessorDbContext(option.Options);
+                return new AssessorDbContext(new SqlConnection(sqlConnectionStringTest), option.Options);
             }
         }
 
@@ -108,7 +108,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 return result;
             }
         }
-
 
         public void Execute(string sql, TestModel model)
         {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -12,18 +6,21 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class ContactRepository : IContactRepository
+    public class ContactRepository : Repository, IContactRepository
     {
         private readonly AssessorDbContext _assessorDbContext;
-        private readonly IDbConnection _connection;
 
-        public ContactRepository(AssessorDbContext assessorDbContext, IDbConnection connection)
+        public ContactRepository(AssessorDbContext assessorDbContext, IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
             _assessorDbContext = assessorDbContext;
-            _connection = connection;
         }
 
         public async Task<Contact> CreateNewContact(Contact newContact)
@@ -88,19 +85,24 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task CreateContactLog(Guid userId, Guid contactId, string logType, object logData)
         {
-            await _connection.ExecuteAsync(@"INSERT INTO ContactLogs (DateTime, UserId, ContactId, ContactLogType, ContactLogDetails) 
-                                                                   VALUES (GETUTCDATE(), @userId, @contactId, @logType, @logDataString)"
-                , new {userId, contactId, logType, logDataString = logData == null ? "" : JsonConvert.SerializeObject(logData)});
+            await _unitOfWork.Connection.ExecuteAsync(
+                @"INSERT INTO ContactLogs (DateTime, UserId, ContactId, ContactLogType, ContactLogDetails) 
+                  VALUES (GETUTCDATE(), @userId, @contactId, @logType, @logDataString)"
+                , new { userId, contactId, logType, logDataString = logData == null ? "" : JsonConvert.SerializeObject(logData) });
         }
 
         public async Task RemoveContactFromOrganisation(Guid contactId)
         {
-            await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", new {contactId});
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", 
+                new { contactId });
         }
 
         public async Task UpdateOrganisationId(Guid contactId, Guid? organisationId)
         {
-            await _connection.ExecuteAsync("UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId", new {contactId, organisationId});
+            await _unitOfWork.Connection.ExecuteAsync(
+                "UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId", 
+                new { contactId, organisationId });
         }
 
         public async Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId)
@@ -122,7 +124,6 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-
         public async Task Update(UpdateContactRequest updateContactRequest)
         {
             var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == updateContactRequest.UserName);
@@ -143,8 +144,6 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        
-        
         public async Task UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
         {
             var contactEntity =
@@ -193,7 +192,7 @@ namespace SFA.DAS.AssessorService.Data
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Username == userName);
 
-            contactEntity.OrganisationId = organisationEntity.Id;            
+            contactEntity.OrganisationId = organisationEntity.Id;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
