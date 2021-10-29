@@ -4,6 +4,8 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {
+        [JsonIgnore] public string Environment { get; set; }
+
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
 
         [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }

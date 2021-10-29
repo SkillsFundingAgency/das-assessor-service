@@ -1,15 +1,12 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -30,7 +27,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var unitOfWork = new UnitOfWork(databaseConnection);
+
+            _repository = new RegisterQueryRepository(unitOfWork);
+
             _organisationId1 = "EPA00010";
             _organisationId2 = "EPA0050";
             _organisationId3 = "EPA0060";

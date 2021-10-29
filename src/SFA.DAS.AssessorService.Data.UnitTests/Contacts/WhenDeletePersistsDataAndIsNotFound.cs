@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
-{  
+{
     public class WhenDeletePersistsDataAndIsNotFound
     {
         private Exception _exception;
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             var mockSet = contacts.CreateMockSet(contacts);
             var mockDbContext = CreateMockDbContext(mockSet);
 
-            var contactRepository = new ContactRepository(mockDbContext.Object, new Mock<IDbConnection>().Object);
+            var contactRepository = new ContactRepository(mockDbContext.Object, new Mock<IUnitOfWork>().Object);
 
             try
             {
