@@ -59,43 +59,42 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 return NoContent();
             }
-            else
+            
+            if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
             {
-                if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
+                if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed)
                 {
-                    if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed)
-                    {
-                        response.Certificate.Delivered = new Delivered { Status = "WaitingForDelivery" };
-                    }
-                    else
-                    {
-                        var logsResponse = await _apiClient.GetCertificateLogs(response.Certificate.CertificateData.CertificateReference);
-
-                        var deliveryLogs = logsResponse.CertificateLogs.Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered);
-
-                        response.Certificate.Delivered = Mapper.Map<CertificateLog, Delivered>(deliveryLogs.OrderByDescending(log => log.EventTime).FirstOrDefault());
-                    }
-
-                    response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
+                    response.Certificate.Delivered = new Delivered { Status = "WaitingForDelivery" };
                 }
-                else // status could be Draft or Deleted (or Privately Funded statuses)
-				{
-                    var certificateData = response.Certificate.CertificateData;
+                else
+                {
+                    var logsResponse = await _apiClient.GetCertificateLogs(response.Certificate.CertificateData.CertificateReference);
 
-                    if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
-					{
-                        var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+                    var deliveryLogs = logsResponse.CertificateLogs.Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered);
 
-                        var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
-
-                        if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, hasOptions))
-                        {
-                            response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
-                        }
-                    }
+                    response.Certificate.Delivered = Mapper.Map<CertificateLog, Delivered>(deliveryLogs.OrderByDescending(log => log.EventTime).FirstOrDefault());
                 }
-                return Ok(response.Certificate);
+
+                response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
             }
+            else // status could be Draft or Deleted (or Privately Funded statuses)
+			{
+                var certificateData = response.Certificate.CertificateData;
+
+                if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
+				{
+                    var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+
+                    var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
+
+                    if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, hasOptions))
+                    {
+                        response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
+                    }
+                }
+            }
+
+            return Ok(response.Certificate);
         }
 
         [HttpPost]
