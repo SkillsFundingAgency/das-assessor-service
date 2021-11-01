@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -65,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web
             services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); /*options.EnableEndpointRouting = false;*/ })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
@@ -91,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web
                         $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
 
                     services.AddDataProtection()
-                        //.PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")   // @todo
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
                         .SetApplicationName("AssessorApply");
                     services.AddDistributedRedisCache(options =>
                     {
@@ -198,25 +197,34 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseHttpsRedirection();
-            
+
             app.UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseHealthChecks("/health")
-                /*
-                 * // During .Net Core 2.1 => 3.1 migration - warning that UseMVC with routes is not compatible with endpoint routing
+                
+                .UseRouting()
+                .UseEndpoints(endpoints => 
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller}/{action}/{id?}");
+                });
+
+                
+                 // During .Net Core 2.1 => 3.1 migration - warning that UseMVC with routes is not compatible with endpoint routing
+                 /*
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(
                         name: "default",
                         template: "{controller}/{action}/{id?}",
                         defaults: new { controller = "Home", action = "Index" }
-                        //,constraints: new { controller = new NotEqualRouteContraint("find-an-assessment-opportunity") }
                         );
-                })
-                */;
+                });
+                 */
         }        
     }
 }
