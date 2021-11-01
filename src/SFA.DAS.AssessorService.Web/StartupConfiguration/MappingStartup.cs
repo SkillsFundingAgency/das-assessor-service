@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         public static void AddMappings(this IServiceCollection services)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            services.AddAutoMapper(assemblies);
+            //services.AddAutoMapper(assemblies);
 
             /*
             Mapper.Reset();
