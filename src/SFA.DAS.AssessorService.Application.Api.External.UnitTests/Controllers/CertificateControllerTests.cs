@@ -94,6 +94,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         {
             _response.Certificate.Status.CurrentStatus = CertificateStatus.Printed;
 
+            _mockApiClient.Setup(client => client.GetCertificate(It.IsAny<GetBatchCertificateRequest>()))
+                .ReturnsAsync(_response);
+
             var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
             var certificate = result.Value as Certificate;
