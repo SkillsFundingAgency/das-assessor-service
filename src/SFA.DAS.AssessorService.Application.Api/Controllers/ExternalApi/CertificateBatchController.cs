@@ -31,9 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         private readonly IValidator<UpdateBatchCertificateRequest> _updateValidator;
         private readonly IValidator<SubmitBatchCertificateRequest> _submitValidator;
         private readonly IValidator<DeleteBatchCertificateRequest> _deleteValidator;
-        private readonly IValidator<GetBatchCertificateLogsRequest> _getLogsValidator;
 
-        public CertificateBatchController(IMediator mediator, IValidator<GetBatchCertificateRequest> getValidator, IValidator<CreateBatchCertificateRequest> createValidator, IValidator<UpdateBatchCertificateRequest> updateValidator, IValidator<SubmitBatchCertificateRequest> submitValidator, IValidator<DeleteBatchCertificateRequest> deleteValidator, IValidator<GetBatchCertificateLogsRequest> getLogsValidator)
+        public CertificateBatchController(IMediator mediator, IValidator<GetBatchCertificateRequest> getValidator, IValidator<CreateBatchCertificateRequest> createValidator, IValidator<UpdateBatchCertificateRequest> updateValidator, IValidator<SubmitBatchCertificateRequest> submitValidator, IValidator<DeleteBatchCertificateRequest> deleteValidator)
         {
             _mediator = mediator;
             _getValidator = getValidator;
@@ -41,7 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             _updateValidator = updateValidator;
             _submitValidator = submitValidator;
             _deleteValidator = deleteValidator;
-            _getLogsValidator = getLogsValidator;
         }
 
         [HttpGet("{uln}/{lastname}/{standardId}/{ukPrn}")]
@@ -54,7 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             {
                 Uln = uln,
                 FamilyName = lastname,
-                UkPrn = ukPrn
+                UkPrn = ukPrn,
+                IncludeLogs = true
             };
 
             var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId });
@@ -82,41 +81,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 getResponse.Certificate = await _mediator.Send(request);
             }
 
-            return Ok(getResponse);
-        }
-
-        [HttpGet("logs/{certificateReference}", Name = "GetCertificateLogs")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateLogsResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetBatchCertificateLogs(string certificateReference)
-        {
-            var request = new GetBatchCertificateLogsRequest
-            {
-                CertificateReference = certificateReference
-            };
-
-            var validationResult = await _getLogsValidator.ValidateAsync(request);
-            var isRequestValid = validationResult.IsValid;
-            var validationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-
-            GetBatchCertificateLogsResponse getResponse = new GetBatchCertificateLogsResponse
-            {
-                CertificateReference = request.CertificateReference,
-                ValidationErrors = validationErrors
-            };
-
-            if (isRequestValid)
-            {
-                var response = await _mediator.Send(request);
-
-                getResponse.CertificateLogs = response.CertificateLogs.Select(log => new BatchCertificateLog
-                {
-                    EventTime = log.EventTime,
-                    Status = log.Status
-                });
-            }
-                
             return Ok(getResponse);
         }
 

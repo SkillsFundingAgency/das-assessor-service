@@ -108,59 +108,59 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             certificate.Delivered.DeliveryDate.Should().BeNull();
         }
 
-        [Test, MoqAutoData]
-        public async Task When_RequestingCertificate_And_CertificateStatusIsNotDelivered_Then_DeliveryStatusIsNotDelivered(long uln, string familyName, string standard)
-        {
-            _certificateResponse.Certificate.Status.CurrentStatus = CertificateStatus.NotDelivered;
+        //[Test, MoqAutoData]
+        //public async Task When_RequestingCertificate_And_CertificateStatusIsNotDelivered_Then_DeliveryStatusIsNotDelivered(long uln, string familyName, string standard)
+        //{
+        //    _certificateResponse.Certificate.Status.CurrentStatus = CertificateStatus.NotDelivered;
 
-            _logsResponse = _fixture.Build<GetCertificateLogsResponse>()
-                .With(x => x.ValidationErrors, new List<string>())
-                .With(x => x.CertificateLogs, new List<CertificateLog> {
-                        _fixture.Build<CertificateLog>()
-                        .With(x => x.Status, CertificateStatus.NotDelivered).Create()
-                }).Create();
+        //    _logsResponse = _fixture.Build<GetCertificateLogsResponse>()
+        //        .With(x => x.ValidationErrors, new List<string>())
+        //        .With(x => x.CertificateLogs, new List<CertificateLog> {
+        //                _fixture.Build<CertificateLog>()
+        //                .With(x => x.Status, CertificateStatus.NotDelivered).Create()
+        //        }).Create();
 
-            _mockApiClient.Setup(client => client.GetCertificateLogs(It.IsAny<string>()))
-                .ReturnsAsync(_logsResponse);
+        //    _mockApiClient.Setup(client => client.GetCertificateLogs(It.IsAny<string>()))
+        //        .ReturnsAsync(_logsResponse);
 
-            var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
+        //    var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
-            var certificate = result.Value as Certificate;
+        //    var certificate = result.Value as Certificate;
 
-            certificate.Delivered.Status.Should().Be(CertificateStatus.NotDelivered);
-            certificate.Delivered.DeliveryDate.Should().Be(_logsResponse.CertificateLogs.First().EventTime);
-        }
+        //    certificate.Delivered.Status.Should().Be(CertificateStatus.NotDelivered);
+        //    certificate.Delivered.DeliveryDate.Should().Be(_logsResponse.CertificateLogs.First().EventTime);
+        //}
 
-        [Test, MoqAutoData]
-        public async Task When_RequestingCertificate_And_LogsContainNotDeliveredAndDelivered_Then_DeliveryStatusIsDelivered(long uln, string familyName, string standard)
-        {
-            _certificateResponse.Certificate.Status.CurrentStatus = CertificateStatus.Delivered;
+        //[Test, MoqAutoData]
+        //public async Task When_RequestingCertificate_And_LogsContainNotDeliveredAndDelivered_Then_DeliveryStatusIsDelivered(long uln, string familyName, string standard)
+        //{
+        //    _certificateResponse.Certificate.Status.CurrentStatus = CertificateStatus.Delivered;
 
-            var deliveredLog = _fixture.Build<CertificateLog>()
-                .With(x => x.Status, CertificateStatus.Delivered)
-                .With(x => x.EventTime, DateTime.Now)
-                .Create();
+        //    var deliveredLog = _fixture.Build<CertificateLog>()
+        //        .With(x => x.Status, CertificateStatus.Delivered)
+        //        .With(x => x.EventTime, DateTime.Now)
+        //        .Create();
 
-            _logsResponse = _fixture.Build<GetCertificateLogsResponse>()
-                .With(x => x.ValidationErrors, new List<string>())
-                .With(x => x.CertificateLogs, new List<CertificateLog> {
-                        _fixture.Build<CertificateLog>()
-                            .With(x => x.Status, CertificateStatus.NotDelivered)
-                            .With(x => x.EventTime, DateTime.Now.AddDays(-2))
-                            .Create(),
-                        deliveredLog
-                }).Create();
+        //    _logsResponse = _fixture.Build<GetCertificateLogsResponse>()
+        //        .With(x => x.ValidationErrors, new List<string>())
+        //        .With(x => x.CertificateLogs, new List<CertificateLog> {
+        //                _fixture.Build<CertificateLog>()
+        //                    .With(x => x.Status, CertificateStatus.NotDelivered)
+        //                    .With(x => x.EventTime, DateTime.Now.AddDays(-2))
+        //                    .Create(),
+        //                deliveredLog
+        //        }).Create();
 
-            _mockApiClient.Setup(client => client.GetCertificateLogs(It.IsAny<string>()))
-                .ReturnsAsync(_logsResponse);
+        //    _mockApiClient.Setup(client => client.GetCertificateLogs(It.IsAny<string>()))
+        //        .ReturnsAsync(_logsResponse);
 
-            var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
+        //    var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
-            var certificate = result.Value as Certificate;
+        //    var certificate = result.Value as Certificate;
 
-            certificate.Delivered.Status.Should().Be(CertificateStatus.Delivered);
-            certificate.Delivered.DeliveryDate.Should().BeCloseTo(deliveredLog.EventTime);
-        }
+        //    certificate.Delivered.Status.Should().Be(CertificateStatus.Delivered);
+        //    certificate.Delivered.DeliveryDate.Should().BeCloseTo(deliveredLog.EventTime);
+        //}
 
         [Test, MoqAutoData]
         public async Task When_CreatingCertificateRecord_WithTooManyRequestsInBatch_CallsApi_Then_ReturnApiResponseWithResponseCode403()

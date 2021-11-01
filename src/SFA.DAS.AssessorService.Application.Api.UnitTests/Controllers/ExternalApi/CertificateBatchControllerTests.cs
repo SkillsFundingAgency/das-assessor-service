@@ -9,17 +9,13 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
-using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Exceptions;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.ExternalApi
@@ -32,7 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
         private Mock<IValidator<GetBatchCertificateRequest>> _mockGetBatchValidator;
         private Mock<IValidator<SubmitBatchCertificateRequest>> _mockSubmitBatchValidator;
         private Mock<IValidator<DeleteBatchCertificateRequest>> _mockDeleteBatchValidator;
-        private Mock<IValidator<GetBatchCertificateLogsRequest>> _mockGetBatchLogsValidator;
 
         private CertificateBatchController _certificateBatchController;
 
@@ -45,57 +40,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             _mockGetBatchValidator = new Mock<IValidator<GetBatchCertificateRequest>>();
             _mockSubmitBatchValidator = new Mock<IValidator<SubmitBatchCertificateRequest>>();
             _mockDeleteBatchValidator = new Mock<IValidator<DeleteBatchCertificateRequest>>();
-            _mockGetBatchLogsValidator = new Mock<IValidator<GetBatchCertificateLogsRequest>>();
 
             _certificateBatchController = new CertificateBatchController(_mockMediator.Object,
                 _mockGetBatchValidator.Object, _mockCreateBatchValidator.Object,
-                _mockUpdateBatchValidator.Object, _mockSubmitBatchValidator.Object, _mockDeleteBatchValidator.Object, _mockGetBatchLogsValidator.Object);
+                _mockUpdateBatchValidator.Object, _mockSubmitBatchValidator.Object, _mockDeleteBatchValidator.Object);
         }
 
-        [Test, MoqAutoData]
-        public async Task WhenCallingGetCertificateLogs_AndValidatorResultIsValid_ThenGetCertificateLogs(string certificateReference, List<BatchCertificateLog> logs)
-        {
-            _mockGetBatchLogsValidator.Setup(v => v.ValidateAsync(It.Is<GetBatchCertificateLogsRequest>(r => r.CertificateReference == certificateReference),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ValidationResult());
-
-            var response = new GetBatchCertificateLogsResponse
-            {
-                CertificateReference = certificateReference,
-                CertificateLogs = logs,
-                ValidationErrors = null
-            };
-
-            _mockMediator.Setup(m => m.Send(It.IsAny<GetBatchCertificateLogsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(response);
-
-            var controllerResult = await _certificateBatchController.GetBatchCertificateLogs(certificateReference) as OkObjectResult;
-
-            _mockMediator.Verify(m => m.Send(It.Is<GetBatchCertificateLogsRequest>(r => r.CertificateReference == certificateReference),
-                It.IsAny<CancellationToken>()), Times.Once);
-
-            var logsResponse = controllerResult.Value as GetBatchCertificateLogsResponse;
-
-            logsResponse.CertificateLogs.Should().BeEquivalentTo(logs);
-        }
-
-
-        [Test, MoqAutoData]
-        public async Task WhenCallingGetCertificate_AndValidatorReturnsInvalid_ThenReturnErrors(string certificateReference, List<ValidationFailure> errors)
-        {
-            _mockGetBatchLogsValidator.Setup(v => v.ValidateAsync(It.Is<GetBatchCertificateLogsRequest>(r => r.CertificateReference == certificateReference),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ValidationResult(errors));
-
-            var controllerResult = await _certificateBatchController.GetBatchCertificateLogs(certificateReference) as OkObjectResult;
-
-            _mockMediator.Verify(m => m.Send(It.Is<GetBatchCertificateLogsRequest>(r => r.CertificateReference == certificateReference),
-                It.IsAny<CancellationToken>()), Times.Never);
-
-            var logsResponse = controllerResult.Value as GetBatchCertificateLogsResponse;
-
-            logsResponse.ValidationErrors.Should().HaveCount(errors.Count);
-        }
         #region CreateCertificates
 
         [Test, MoqAutoData]

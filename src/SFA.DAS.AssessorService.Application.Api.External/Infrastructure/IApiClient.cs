@@ -15,7 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         Task<ApiResponse> DeleteEpa(DeleteBatchEpaRequest request);
 
         Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request);
-        Task<GetCertificateLogsResponse> GetCertificateLogs(string certificateReference);
         Task<IEnumerable<CreateCertificateResponse>> CreateCertificates(IEnumerable<CreateBatchCertificateRequest> request);
         Task<IEnumerable<UpdateCertificateResponse>> UpdateCertificates(IEnumerable<UpdateBatchCertificateRequest> request);
         Task<IEnumerable<SubmitCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request);
