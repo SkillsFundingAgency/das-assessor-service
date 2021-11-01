@@ -24,8 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
     public class CertificateControllerTests
     {
         private Fixture _fixture;
-        private GetCertificateResponse _certificateResponse;
-        private GetCertificateLogsResponse _logsResponse;
+        private GetCertificateResponse _response;
 
         private Mock<IApiClient> _mockApiClient;
         private Mock<IHeaderInfo> _headerInfo;
@@ -37,19 +36,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         {
             _fixture = new Fixture();
 
-            _certificateResponse = _fixture.Build<GetCertificateResponse>()
+            _response = _fixture.Build<GetCertificateResponse>()
                 .With(r => r.ValidationErrors, new List<string>())
                 .Create();
-
-            _logsResponse = new GetCertificateLogsResponse { ValidationErrors = new List<string>()};
 
             _mockApiClient = new Mock<IApiClient>();
             _headerInfo = new Mock<IHeaderInfo>();
             _headerInfo.SetupGet(s => s.Ukprn).Returns(_fixture.Create<int>());
             _headerInfo.SetupGet(s => s.Email).Returns(_fixture.Create<string>());
-
-            _mockApiClient.Setup(client => client.GetCertificate(It.IsAny<GetBatchCertificateRequest>()))
-               .ReturnsAsync(_certificateResponse);
 
             _controller = new CertificateController(Mock.Of<ILogger<CertificateController>>(), _headerInfo.Object, _mockApiClient.Object);
         }
@@ -58,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         public async Task When_RequestingCertificate_And_CertificateExists_Then_ReturnCertificateWithResponseCode200(long uln, string familyName, string standard)
         {
             _mockApiClient.Setup(client => client.GetCertificate(It.Is<GetBatchCertificateRequest>(r => r.FamilyName == familyName && r.Uln == uln && r.Standard == standard)))
-                .ReturnsAsync(_certificateResponse);
+                .ReturnsAsync(_response);
             
             var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
@@ -66,16 +60,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
             var model = result.Value as Certificate;
 
-            model.CertificateData.Should().BeEquivalentTo(_certificateResponse.Certificate.CertificateData);
+            model.CertificateData.Should().BeEquivalentTo(_response.Certificate.CertificateData);
         }
 
         [Test, MoqAutoData]
         public async Task When_RequestingCertificate_And_CertificateDoesNotExist_Then_ReturnResponseCode204(long uln, string familyName, string standard)
         {
-            _certificateResponse.Certificate = null;
+            _response.Certificate = null;
 
             _mockApiClient.Setup(client => client.GetCertificate(It.IsAny<GetBatchCertificateRequest>()))
-                .ReturnsAsync(_certificateResponse);
+                .ReturnsAsync(_response);
 
             var result = await _controller.GetCertificate(uln, familyName, standard) as NoContentResult;
 
@@ -85,10 +79,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [Test, MoqAutoData]
         public async Task When_RequestingCertificate_And_LearnerDoesNotExist_Then_ReturnResponseCode403(long uln, string familyName, string standard)
         {
-            _certificateResponse.ValidationErrors = new List<string> { "Validation Error" };
+            _response.ValidationErrors = new List<string> { "Validation Error" };
 
             _mockApiClient.Setup(client => client.GetCertificate(It.IsAny<GetBatchCertificateRequest>()))
-                .ReturnsAsync(_certificateResponse);
+                .ReturnsAsync(_response);
 
             var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
@@ -98,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [Test, MoqAutoData]
         public async Task When_RequestingCertificate_And_CertificateStatusIsPrinted_Then_DeliveryStatusIsWaitingForDelivery(long uln, string familyName, string standard)
         {
-            _certificateResponse.Certificate.Status.CurrentStatus = CertificateStatus.Printed;
+            _response.Certificate.Status.CurrentStatus = CertificateStatus.Printed;
 
             var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
