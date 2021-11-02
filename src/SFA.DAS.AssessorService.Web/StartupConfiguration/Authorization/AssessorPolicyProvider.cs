@@ -42,9 +42,10 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         public Task<AuthorizationPolicy> GetFallbackPolicyAsync()
         {
             // @ToDo: GetFallbackPolicyAsync is a new interface method as a result of the .Net Core 3.1 migration.
-            // Leave unimplemented for now to get the code to build, come back to it before testing.
-
-            throw new System.NotImplementedException();
+            // gets triggered due to having to add .UseAuthorization between UseRouting and UseEndpoints
+            // copy GetDefaultPolicyAsync and see if that works
+            
+            return FallbackPolicyProvider.GetFallbackPolicyAsync();
         }
     }
 }
