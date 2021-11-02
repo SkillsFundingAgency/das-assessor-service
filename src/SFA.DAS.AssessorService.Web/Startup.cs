@@ -205,27 +205,16 @@ namespace SFA.DAS.AssessorService.Web
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseHealthChecks("/health")
-                
+
                 .UseRouting()
+                .UseAuthorization()
                 .UseEndpoints(endpoints => 
                 {
                     endpoints.MapControllerRoute(
                         name: "default",
-                        pattern: "{controller}/{action}/{id?}");
+                        pattern: "{controller}/{action}/{id?}",
+                        defaults: new { controller = "Home", action = "Index" });
                 });
-
-                
-                 // During .Net Core 2.1 => 3.1 migration - warning that UseMVC with routes is not compatible with endpoint routing
-                 /*
-                .UseMvc(routes =>
-                {
-                    routes.MapRoute(
-                        name: "default",
-                        template: "{controller}/{action}/{id?}",
-                        defaults: new { controller = "Home", action = "Index" }
-                        );
-                });
-                 */
         }        
     }
 }
