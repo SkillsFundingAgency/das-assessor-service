@@ -42,6 +42,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 
         public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
 
+        public bool IsStandardVersionWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal && ApplyData.Apply.Versions != null && ApplyData.Apply.Versions.Any();
+       
         public bool IsOrganisationWithdrawalApplication => ApplicationType == ApplicationTypes.OrganisationWithdrawal;
         
         public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;

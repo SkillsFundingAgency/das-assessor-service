@@ -767,7 +767,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Submitted(Guid Id)
         {
-            var application = await _applicationApiClient.GetApplication(Id);
+           var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel(application)
             {
                 ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,

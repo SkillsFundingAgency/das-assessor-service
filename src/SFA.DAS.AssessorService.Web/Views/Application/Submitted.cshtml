@@ -32,6 +32,21 @@
                             <p class="govuk-panel__body"> You have requested to withdraw from the register of end-point assessment organisations.</p>
                         }
 
+                        @if (Model.IsStandardVersionWithdrawalApplication) 
+                        { 
+                            <div class="govuk-!-margin-bottom-4">
+                                <span class="govuk-!-font-size-24">Standard version(s) withdrawal request submitted for</span>
+                                <br />
+                                <strong>@Model.StandardName</strong>
+
+                                @if (Model.Versions != null)
+                                {
+                                    <br />
+                                    <span class="govuk-!-font-size-19">Version @string.Join(", ", Model.Versions)</span>
+                                }
+                            </div>
+                        }
+                         
                         <div class="govuk-panel__body">
                             Your reference number
                             <br>

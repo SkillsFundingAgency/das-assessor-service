@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         public bool IsWithdrawalApplication => _applicationResponse.IsWithdrawalApplication;
 
         public bool IsStandardWithdrawalApplication => _applicationResponse.IsStandardWithdrawalApplication;
+        public bool IsStandardVersionWithdrawalApplication => _applicationResponse.IsStandardVersionWithdrawalApplication;
 
         public bool IsOrganisationWithdrawalApplication => _applicationResponse.IsOrganisationWithdrawalApplication;
 
