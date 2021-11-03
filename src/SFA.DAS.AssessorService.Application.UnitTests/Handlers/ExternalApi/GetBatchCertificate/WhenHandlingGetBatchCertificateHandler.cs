@@ -37,7 +37,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         [SetUp]
         public void SetUp()
         {
-            _request = Builder<GetBatchCertificateRequest>.CreateNew().Build();
+            _request = Builder<GetBatchCertificateRequest>.CreateNew()
+                .With(r => r.IncludeLogs = true)
+                .Build();
 
             _certificateData = Builder<CertificateData>.CreateNew()
                 .With(d => d.LearnerFamilyName = _request.FamilyName)
@@ -71,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _mockStandardRepository.Setup(sr => sr.GetEpaoRegisteredStandards(_organisationResponse.EndPointAssessorOrganisationId, It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(_registeredStandards);
 
-            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName))
+            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName, _request.IncludeLogs))
                 .ReturnsAsync(_certResponse);
             
             _mockCertificateRepository.Setup(cr => cr.GetCertificateLogsFor(_certResponse.Id))
@@ -99,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         [Test]
         public async Task And_CertificateIsNull_Then_ReturnNull()
         {
-            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName))
+            _mockCertificateRepository.Setup(cr => cr.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName, _request.IncludeLogs))
                 .ReturnsAsync((Certificate)null);
 
             var result = await _handler.Handle(_request, CancellationToken.None);

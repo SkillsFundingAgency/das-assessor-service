@@ -120,10 +120,33 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)
         {
-            return await _context.Certificates
+           return await _context.Certificates
                 .Include(q => q.CertificateBatchLog)
                 .SingleOrDefaultAsync(c =>
                 c.Uln == uln && c.StandardCode == standardCode);
+        }
+
+        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, bool includeLogs)
+        {
+            Certificate certificate;
+            
+            if (includeLogs)
+            {
+                certificate = await _context.Certificates
+                   .Include(q => q.CertificateBatchLog)
+                   .Include(q => q.CertificateLogs)
+                   .SingleOrDefaultAsync(c =>
+                   c.Uln == uln && c.StandardCode == standardCode);
+            }
+            else
+            {
+                certificate = await GetCertificate(uln, standardCode);
+            }
+            
+            if (certificate is null)
+                return certificate;
+
+            return CheckCertificateData(certificate, familyName) ? certificate : null;
         }
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName)
@@ -160,7 +183,6 @@ namespace SFA.DAS.AssessorService.Data
 
             return existingCert;
         }
-
 
         public async Task<bool> CertifciateExistsForUln(long uln)
         {
