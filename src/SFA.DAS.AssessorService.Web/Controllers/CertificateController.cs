@@ -60,9 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 UkPrn = int.Parse(ukprn),
                 StandardCode = vm.StdCode,
                 Uln = vm.Uln,
-                Username = username,
-                StandardUId = vm.StandardUId,
-                CourseOption = vm.Option
+                Username = username
             };
 
             async Task RetrieveAndPopulateStandardOptions(string standardUId)

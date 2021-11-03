@@ -74,8 +74,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithSingleVersionNoOptions_GoesToDeclaration(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standard)
         {
             CertificateSession setSession = new CertificateSession();
-            model.StandardUId = string.Empty;
-            model.Option = string.Empty;
             learner.Version = null;
             learner.Option = null;
 
@@ -112,8 +110,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithMultipleVersions_GoesToVersionPage(CertificateStartViewModel model, LearnerDetailResult learner, IEnumerable<StandardVersion> standards)
         {
             CertificateSession setSession = new CertificateSession();
-            model.StandardUId = string.Empty;
-            model.Option = string.Empty;
             learner.Version = null;
             learner.Option = null;
 
@@ -148,8 +144,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithOneVersion_WithOptions_GoesToOptionPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standard, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
-            model.StandardUId = string.Empty;
-            model.Option = string.Empty;
             learner.Version = null;
             learner.Option = null;
 
@@ -185,8 +179,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithOneVersion_WithOneOption_GoesToDeclarationPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standard, StandardOptions options, string option)
         {
             CertificateSession setSession = new CertificateSession();
-            model.StandardUId = string.Empty;
-            model.Option = string.Empty;
             learner.Version = null;
             learner.Option = null;
 
@@ -228,7 +220,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public async Task WhenStartingANewCertificate_WithVersionAndOptionSetFromApprovals_GoesToDeclarationPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standardVersion, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
-            standardVersion.StandardUId = model.StandardUId;
             learner.Version = standardVersion.Version;
 
             _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(It.IsAny<int>(), It.IsAny<long>(), false))
@@ -273,7 +264,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public async Task WhenStartingANewCertificate_WithVersionSetFromApprovals_OptionRequiredButNotSet_GoesToOptionsPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion version, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
-            model.Option = string.Empty;
             version.LarsCode = model.StdCode;
             learner.Version = version.Version;
             learner.Option = string.Empty;
@@ -304,7 +294,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                     && m.Username == Username 
                     && m.UkPrn == Ukprn
                     && m.StandardUId == version.StandardUId 
-                    && m.CourseOption == string.Empty)));
+                    && m.CourseOption == null)));
 
             setSession.CertificateId.Should().Be(CertificateId);
             setSession.Uln.Should().Be(model.Uln);
