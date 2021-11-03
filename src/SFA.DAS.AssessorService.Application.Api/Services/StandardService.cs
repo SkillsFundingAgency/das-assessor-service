@@ -24,19 +24,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _standardRepository = standardRepository;
         }
 
-        public async Task<IEnumerable<StandardCollation>> GetAllStandards()
-        {
-            var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardCollation>>("StandardCollations");
-
-            if (results != null)
-                return results;
-
-            var standardCollations = await _standardRepository.GetStandardCollations();
-
-            await _cacheService.SaveToCache("StandardCollations", standardCollations, 8);
-            return standardCollations;
-        }
-
         public async Task<IEnumerable<Standard>> GetAllStandardVersions()
         {
             var results = await _cacheService.RetrieveFromCache<IEnumerable<Standard>>("Standards");
@@ -77,22 +64,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             return standards;
-        }
-
-        public async Task<StandardCollation> GetStandard(int standardId)
-        {
-            StandardCollation standardCollation = null;
-
-            try
-            {
-                standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"STANDARD COLLATION: Failed to get for standard id: {standardId}");
-            }
-
-            return standardCollation;
         }
 
         public async Task<Standard> GetStandardVersionById(string id, string version = null)
@@ -157,23 +128,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             return standard;
         }
-
-        public async Task<StandardCollation> GetStandard(string referenceNumber)
-        {
-            StandardCollation standardCollation = null;
-
-            try
-            {
-                standardCollation = await _standardRepository.GetStandardCollationByReferenceNumber(referenceNumber);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"STANDARD COLLATION: Failed to get for standard reference: {referenceNumber}");
-            }
-
-            return standardCollation;
-        }
-
 
         public async Task<IEnumerable<StandardOptions>> GetAllStandardOptions()
         {

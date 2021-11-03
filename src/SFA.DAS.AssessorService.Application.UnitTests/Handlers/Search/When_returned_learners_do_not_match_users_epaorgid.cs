@@ -39,8 +39,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             standardService.Setup(c => c.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
                 .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard One", Version = "1.0", LarsCode = 1 },
                                                             new OrganisationStandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 } });
-            standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
-                .ReturnsAsync(new StandardCollation { Title = "Standard Title", StandardData = new StandardData { Level = 2 } });
+            standardService.Setup(c => c.GetStandardVersionById(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new Standard { Title = "Standard Title", Level = 2 });
 
 
             var organisationRepository = new Mock<IOrganisationQueryRepository>();
@@ -84,8 +84,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                                           new OrganisationStandardVersion { Title = "Standard Two", Version = "1.0", LarsCode = 2 },
                                                           new OrganisationStandardVersion { Title = "Standard Three", Version = "1.0", LarsCode = 3 }});
 
-            standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
-                .ReturnsAsync(new StandardCollation { Title = "Standard Title", StandardData = new StandardData { Level = 2 } });
+            standardService.Setup(c => c.GetStandardVersionById(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new Standard { Title = "Standard Title", Level = 2 });
 
 
             var organisationRepository = new Mock<IOrganisationQueryRepository>();

@@ -24,7 +24,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<bool> UpdateStandardData(Guid Id, int standardCode, string referenceNumber, string standardName, List<string> versions, string standardApplicationType = null);
         Task<bool> ResetApplicationToStage1(Guid applicationId);
 
-        Task<List<StandardCollation>> GetStandards();
         Task<List<DeliveryArea>> GetQuestionDataFedOptions();
     }
 }

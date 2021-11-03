@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? VersionEarliestStartDate { get; set; }
+        public DateTime? VersionLatestStartDate { get; set; }
         public DateTime? VersionLatestEndDate { get; set; }
         public IEnumerable<string> Options { get; set; }
         public bool EPAChanged { get; set; }
@@ -35,6 +36,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
+                VersionLatestStartDate = standard.VersionLatestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
                 StandardPageUrl = standard.StandardPageUrl
