@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using IdentityModel.Client;
+//using IdentityModel.Client;  @ ToDo: removed during .net Core 3.1 upgrade
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;

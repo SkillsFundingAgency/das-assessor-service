@@ -2,8 +2,10 @@
 using JWT;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -134,7 +136,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         {
                             var basePath = AppContext.BaseDirectory;
                             var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                            config.IncludeXmlComments(xmlPath);
+                            //config.IncludeXmlComments(xmlPath);  // @todo put this back once the auth issue sorted
                         }
 
                         if (!_env.IsDevelopment())
@@ -235,7 +237,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                   .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                //@ToDo:  temporarily commented out as part of .Net 3.1 upgrade whilst CharityCommission WSDL service not regenerated. Uncomment once done.
+                //config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
                 // End of SOAP Services
 
@@ -273,6 +276,19 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 
                 app.UseRequestLocalization();
                 app.UseHealthChecks("/health");
+
+                // .Net Core 3.1 upgrade - new routing config, including disabling auth in dev.
+                app.UseRouting();
+                app.UseAuthentication();
+                app.UseAuthorization();
+                app.UseEndpoints(endpoints =>
+                {
+                    if (env.IsDevelopment())
+                        endpoints.MapControllers().WithMetadata(new AllowAnonymousAttribute());
+                    else
+                        endpoints.MapControllers();
+                });
+                // end .Net Core 3.1 upgrade
             }
             catch (Exception e)
             {
