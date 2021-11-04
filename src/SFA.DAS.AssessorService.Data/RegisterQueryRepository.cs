@@ -173,14 +173,6 @@ namespace SFA.DAS.AssessorService.Data
                   WHERE 
 	                EndPointAssessorOrganisationId = @organisationId
 
-                  SELECT
-	                sc.Id, StandardId, ReferenceNumber, Title, StandardData, DateAdded, DateUpdated, DateRemoved, IsLive
-                  FROM 
-	                [OrganisationStandard] os 
-	                INNER JOIN [StandardCollation] sc ON os.StandardCode = sc.StandardId
-                  WHERE 
-	                EndPointAssessorOrganisationId = @organisationId
-
                   SELECT StandardCode, osda.DeliveryAreaId 
                   FROM 
 	                [OrganisationStandard] os 
@@ -204,14 +196,11 @@ namespace SFA.DAS.AssessorService.Data
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
             {
                 organisationStandardSummaries = multi.Read<OrganisationStandardSummary>();
-                var standardCollations = multi.Read<StandardCollation>()?.ToDictionary(a => a.StandardId);
                 var deliveryAreas = multi.Read().Select(a => new { a.StandardCode, a.DeliveryAreaId })?.GroupBy(a => a.StandardCode);
                 var organisationStandardVersions = multi.Read<OrganisationStandardVersion>()?.GroupBy(a => a.LarsCode);
 
                 foreach (var organisationStandardSummary in organisationStandardSummaries)
                 {
-                    organisationStandardSummary.StandardCollation = standardCollations[organisationStandardSummary.StandardCode];
-
                     organisationStandardSummary.DeliveryAreas = deliveryAreas?
                         .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
                         .Select(a => (int)a.DeliveryAreaId)

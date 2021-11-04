@@ -62,9 +62,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             
             _standardService = new Mock<IStandardService>();
-            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1, StandardCollation = new StandardCollation { StandardId = _id1, Title = _expectedTitle1 } };
-            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2, StandardCollation = new StandardCollation { StandardId = _id2, Title = _expectedTitle2 } };
-            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3, StandardCollation = new StandardCollation { StandardId = _id3, Title = _expectedTitle3 } };
+            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1};
+            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2};
+            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3};
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
@@ -105,7 +105,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode1);
             Assert.AreEqual(effectiveFrom1, standard.EffectiveFrom);
             Assert.AreEqual(null, standard.EffectiveTo);
-            Assert.AreEqual(_expectedTitle1, standard.StandardCollation.Title);
         }
 
         [Test]
@@ -115,7 +114,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode2);
             Assert.AreEqual(effectiveFrom2, standard.EffectiveFrom);
             Assert.AreEqual(effectiveTo2, standard.EffectiveTo);
-            Assert.AreEqual(_expectedTitle2, standard.StandardCollation.Title);
         }
     }
 }
