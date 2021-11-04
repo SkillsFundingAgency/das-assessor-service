@@ -35,8 +35,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             
             var userid = _httpContextAccessor.HttpContext.User.FindFirst("UserId").Value;
 
-            var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
-            
             var privilegeRequested = (await _contactsApiClient.GetPrivileges()).FirstOrDefault(p => p.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
             if (privilegeRequested is null || !privilegeRequested.Enabled)
             {   
@@ -53,6 +51,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             }
             else
             {
+                // @ToDo: .Net Core Upgrade - line below was moved down from line 37 as only needed here and is throwing NPE. Investigate auth.
+                var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
+
                 var deniedContext = new PrivilegeAuthorizationDeniedContext
                 {
                     PrivilegeId = privilegeRequested.Id,
