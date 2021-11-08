@@ -99,10 +99,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             var email = contactToNotify.Email;
             var contactname = contactToNotify.DisplayName;
             var standard = applyData.Apply.StandardName;
+            var standardreference = applyData.Apply.StandardReference;
             var version = applyData.Apply.Versions.First();
 
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardOptin);
-            await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, standard, version }), cancellationToken);
+            await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, standard, standardreference, version }), cancellationToken);
         }
     }
 }
