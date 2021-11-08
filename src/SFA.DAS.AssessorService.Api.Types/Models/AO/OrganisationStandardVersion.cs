@@ -17,6 +17,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? DateVersionApproved { get; set; }
         public string Comments { get; set; }
         public string Status { get; set; }
+        public int VersionMajor { get; set; }
+        public int VersionMinor { get; set; }
 
         public static explicit operator OrganisationStandardVersion(Domain.Entities.OrganisationStandardVersion version)
         {

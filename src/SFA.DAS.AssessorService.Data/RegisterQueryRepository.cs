@@ -181,7 +181,7 @@ namespace SFA.DAS.AssessorService.Data
 	                EndPointAssessorOrganisationId = @organisationId 
                   
                   SELECT 
-	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
+	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status, s.VersionMajor, s.VersionMinor
                   FROM 
 	                [dbo].[OrganisationStandardVersion] osv
 	                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
