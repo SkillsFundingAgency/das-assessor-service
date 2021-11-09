@@ -142,8 +142,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             mockCertificateLog
                .Setup(m => m.AddAsync(It.IsAny<CertificateLog>(), It.IsAny<CancellationToken>()))
-               .Callback((CertificateLog entity, CancellationToken token) => { certificateLogs.Add(entity); })
-               .Returns((CertificateLog entity, CancellationToken token) => Task.FromResult((EntityEntry<CertificateLog>)null));           
+               .Callback((CertificateLog entity, CancellationToken token) => { certificateLogs.Add(entity); });
+            //.Returns((CertificateLog entity, CancellationToken token) => Task.FromResult((EntityEntry<CertificateLog>)null));      // @ToDo: .Net Core 3.1 upgrade - uncomment and fix this
 
             return mockCertificateLog;
         }

@@ -98,9 +98,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             var mockSet = new Mock<DbSet<Certificate>>();
 
-            mockSet.As<IAsyncEnumerable<Certificate>>()
-                .Setup(m => m.GetEnumerator())
-                .Returns(new TestAsyncEnumerator<Certificate>(certificates.GetEnumerator()));
+            //mockSet.As<IAsyncEnumerable<Certificate>>()
+                // .Setup(m => m.GetEnumerator())// @ToDo: .Net Core 3.1 upgrade - uncomment and fix this
+                //.Returns(new TestAsyncEnumerator<Certificate>(certificates.GetEnumerator()));
 
             mockSet.As<IQueryable<Certificate>>()
                 .Setup(m => m.Provider)
