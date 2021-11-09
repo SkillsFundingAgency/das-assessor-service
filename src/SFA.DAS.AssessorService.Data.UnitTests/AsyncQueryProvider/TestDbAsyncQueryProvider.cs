@@ -39,9 +39,9 @@ internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
         return new TestAsyncEnumerable<TResult>(expression);
     }
 
-    public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
+    public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(Execute<TResult>(expression));
+        throw new System.NotImplementedException(); // @ToDo: .Net Core 3.1 upgrade 
     }
 }
 
@@ -58,6 +58,11 @@ internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>,
     public IAsyncEnumerator<T> GetEnumerator()
     {
         return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+    }
+
+    public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        throw new System.NotImplementedException();   // @ToDo: .Net Core 3.1 upgrade 
     }
 
     IQueryProvider IQueryable.Provider
@@ -91,5 +96,15 @@ internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
     public Task<bool> MoveNext(CancellationToken cancellationToken)
     {
         return Task.FromResult(_inner.MoveNext());
+    }
+
+    public ValueTask<bool> MoveNextAsync()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        throw new System.NotImplementedException();
     }
 }
