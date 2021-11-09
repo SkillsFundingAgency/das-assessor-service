@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private Mock<ISessionService> _mockSessionService;
         private Mock<ISearchOrchestrator> _mockSearchOrchestrator;
         private CertificateController _certificateController;
+        private IMapper _mapper;
 
         private const int Ukprn = 123456;
         private const string Username = "TestProviderUsername";
@@ -39,11 +40,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [SetUp]
         public void SetUp()
         {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
+            var config = new MapperConfiguration(opts =>
             {
-                cfg.CreateMap<StandardVersionViewModel, StandardVersion>();
+                opts.CreateMap<StandardVersionViewModel, StandardVersion>();
             });
+            _mapper = config.CreateMapper();
 
             _mockStandardVersionClient = new Mock<IStandardVersionClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
@@ -63,6 +64,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _certificateController = new CertificateController(
                 Mock.Of<ILogger<CertificateController>>(),
                 _mockContextAccessor.Object,
+                _mapper,
                 _mockCertificateApiClient.Object,
                 _mockStandardVersionClient.Object,
                 _mockSessionService.Object,
@@ -98,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEmpty();
-            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { _mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
@@ -133,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEmpty();
-            setSession.Versions.Should().BeEquivalentTo(Mapper.Map<List<StandardVersionViewModel>>(standards));
+            setSession.Versions.Should().BeEquivalentTo(_mapper.Map<List<StandardVersionViewModel>>(standards));
         }
 
         [Test, MoqAutoData]
@@ -163,7 +165,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
-            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { _mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateOption");
             result.ActionName.Should().Be(CertificateActions.Option);
@@ -197,7 +199,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEquivalentTo(options.CourseOption.ToList());
-            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { _mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
@@ -230,7 +232,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
             setSession.Options.Should().BeEquivalentTo(new List<string> { model.Option });
-            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standard) });
+            setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { _mapper.Map<StandardVersionViewModel>(standard) });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
