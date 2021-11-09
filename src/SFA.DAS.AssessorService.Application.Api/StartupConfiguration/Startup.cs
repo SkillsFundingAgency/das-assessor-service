@@ -114,6 +114,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     options.RequestCultureProviders.Clear();
                 });
 
+                services.Configure<IISServerOptions>(options => { options.AutomaticAuthentication = false; });
+
                 IMvcBuilder mvcBuilder;
                 if (_env.IsDevelopment())
                     mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
