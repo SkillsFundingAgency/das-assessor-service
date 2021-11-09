@@ -29,19 +29,40 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         [Test]
         public void Then_search_result_is_returned()
         {
-            SetUpCertificateAndLogEntries();
+            SetUpCertificateAndLogEntries(12);
 
             var result = SearchHandler.Handle(new SearchQuery { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
 
             result.Count.Should().Be(1); 
         }
 
-        private void SetUpCertificateAndLogEntries()
+        [Test]
+        public void and_learnername_does_not_match_then_search_result_is_not_returned()
+        {
+            SetUpCertificateAndLogEntries(12);
+
+            var result = SearchHandler.Handle(new SearchQuery { Surname = "UnknownName", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
+
+            result.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void and_standard_is_not_approved_then_search_result_is_not_returned()
+        {
+            SetUpCertificateAndLogEntries(27);
+
+            var result = SearchHandler.Handle(new SearchQuery { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
+
+            result.Count.Should().Be(0);
+        }
+
+        private void SetUpCertificateAndLogEntries(int standardCode)
         {
             var certificateData = Builder<CertificateData>.CreateNew()
                 .With(x => x.LearnerFamilyName = "Lamora").Build();
 
             var certificate = Builder<Certificate>.CreateNew()
+                .With(x => x.StandardCode = standardCode)
                 .With(x => x.CertificateData = JsonConvert.SerializeObject(certificateData))
                 .Build();
 
