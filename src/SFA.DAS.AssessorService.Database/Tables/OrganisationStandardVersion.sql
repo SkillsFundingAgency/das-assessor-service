@@ -2,7 +2,7 @@
 CREATE TABLE [OrganisationStandardVersion]
 (
 	[StandardUId] VARCHAR(20) NOT NULL ,
-	[Version] DECIMAL(18,1) NULL,    
+	[Version] NVARCHAR(20) NULL,    
 	[OrganisationStandardId] INT NOT NULL, 
 	[EffectiveFrom] DATETIME NULL,
 	[EffectiveTo] DATETIME NULL,
