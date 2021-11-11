@@ -42,6 +42,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             try
             {
+                // Remove out of unit of work due to crossover betwen EF, Dapper and UnitOfWorkTransaction Conflict
+                // It's also a Read so has no impact in that case.
+                var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
+
                 _unitOfWork.Begin();
 
                 var orgStandard = await _repository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
@@ -66,7 +70,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var orgStandardVersion = (OrganisationStandardVersion)entity;
 
                 var application = await _applyRepository.GetApply(request.ApplicationId);
-                var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
                 var standard = await _standardRepository.GetStandardVersionByStandardUId(request.StandardUId);
 
                 application.ApplicationStatus = ApplicationStatus.Approved;

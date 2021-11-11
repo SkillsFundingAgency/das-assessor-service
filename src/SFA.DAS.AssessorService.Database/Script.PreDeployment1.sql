@@ -19,3 +19,5 @@
     When a script has been deployed to PROD it can be disabled by removing the reference below and optionally retained
     under the PreDeploymentScripts folder for future reference.
 */
+
+:r .\PreDeploymentScripts\ClearOrgStandardVersionColumn.sql

@@ -4,8 +4,8 @@ CREATE PROCEDURE [dbo].[PopulateLearner]
 AS
 BEGIN 
    DECLARE 
-		@overlaptimeIlr int = -30, -- days to allow for an overlap on ILR submissions changes
-		@overlaptimeApx int = -5,  -- days to allow for an overlap on Approvals changes
+		@overlaptimeIlr int = -15, -- days to allow for an overlap on ILR submissions changes
+		@overlaptimeApx int = -15, -- days to allow for an overlap on Approvals changes
 		@upserted int = 0;
 		
 	BEGIN 

@@ -34,3 +34,6 @@ GO
 
 CREATE NONCLUSTERED INDEX [IX_ApprovalsExtract_LastUpdated] ON [ApprovalsExtract] ([LastUpdated]) INCLUDE ([TrainingCode], [Uln] )
 GO
+
+CREATE NONCLUSTERED INDEX [IX_ApprovalsExtract_Ukprn] ON [ApprovalsExtract] ([Ukprn])
+GO
