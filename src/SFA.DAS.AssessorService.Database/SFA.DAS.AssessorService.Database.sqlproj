@@ -175,8 +175,8 @@
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
-    <None Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
     <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
+    <None Include="PostDeploymentScripts\SV-1290-RemoveOldStandardCollationTables.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -200,7 +200,6 @@
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
-    <None Include="PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

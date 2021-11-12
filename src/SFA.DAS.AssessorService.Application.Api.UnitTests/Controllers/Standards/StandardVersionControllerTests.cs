@@ -201,6 +201,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 Level = standard.Level,
                 EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
+                LastDateStarts = standard.LastDateStarts,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
                 VersionLatestStartDate = standard.VersionLatestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,

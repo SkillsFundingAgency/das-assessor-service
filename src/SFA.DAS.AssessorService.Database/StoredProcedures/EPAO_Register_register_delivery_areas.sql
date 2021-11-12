@@ -31,23 +31,25 @@ while exists(select * from #OrganisationStandardDeliveryAreaDetails where Delive
   update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = @details where OrganisationStandardId = @osId
   set @Details = null
   END
+;
+WITH Standards_CTE as(
+select ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor, VersionMinor) seq, * from Standards)
 
 select os.EndPointAssessorOrganisationId EPA_organisation_identifier,
   o.EndPointAssessorName as 'EPA_organisation (lookup auto-populated)',
   os.StandardCode as Standard_Code,
-  sc.Title as 'StandardName (lookup auto-populated)',
+  scte.Title as 'StandardName (lookup auto-populated)',
   dad.DeliveryAreaList as Delivery_area,
   JSON_Value(os.OrganisationStandardData,'$.DeliveryAreasComments') as Comments
   --,os.EffectiveTo
  from OrganisationStandard os 
 inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId  and o.[Status] = 'Live'
-left outer join StandardCollation sc on os.StandardCode = sc.StandardId
+left outer join Standards_CTE scte on os.StandardCode = scte.LarsCode
 left outer join #OrganisationStandardDeliveryAreaDetails dad on dad.OrganisationStandardId = os.Id
 where DeliveryAreaList is not null
 and o.EndPointAssessorOrganisationId <> 'EPA0000'
 and os.[Status] = 'Live'
 and (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
-order by o.EndPointAssessorOrganisationId, sc.Title
+order by o.EndPointAssessorOrganisationId, scte.Title
 
 drop table #OrganisationStandardDeliveryAreaDetails
-

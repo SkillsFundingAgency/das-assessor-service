@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public int Level { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
+        public DateTime? LastDateStarts { get; set; }
         public DateTime? VersionEarliestStartDate { get; set; }
         public DateTime? VersionLatestStartDate { get; set; }
         public DateTime? VersionLatestEndDate { get; set; }
@@ -35,6 +36,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 Level = standard.Level,
                 EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
+                LastDateStarts = standard.LastDateStarts,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
                 VersionLatestStartDate = standard.VersionLatestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,

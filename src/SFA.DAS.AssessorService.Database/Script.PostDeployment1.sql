@@ -27,23 +27,24 @@
 -- CON-3359
 :r .\PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql
 
--- SV-1249
-:r .\PostDeploymentScripts\RecreateStandardVersion.sql
-
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
 -- AB 31/07/19 Still seeing existance of certs without Standard reference (need to understand why)
 -- ****************************************************************************
 -- AB 10/05/21 Keeping this for now to patch FAILs recorded via the API
+;
+WITH Standards_CTE AS(
+SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * from Standards)
+
 MERGE INTO certificates ma1
 USING (
-SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.ReferenceNumber) newData
+SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference', st1.IFateReferenceNumber) newData
   FROM [Certificates] ce1 
-  JOIN [StandardCollation] st1 ON ce1.StandardCode = st1.StandardId
-  WHERE st1.ReferenceNumber IS NOT NULL 
+  JOIN Standards_CTE st1 ON ce1.StandardCode = st1.LarsCode and st1.seq = 1
+  WHERE st1.IFateReferenceNumber IS NOT NULL 
   AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
---SV-429 Updating Import Settings
-:r .\PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql
+--SV-1290 Remove Un-necessary tbles
+:r .\PostDeploymentScripts\SV-1290-RemoveOldStandardCollationTables.sql
