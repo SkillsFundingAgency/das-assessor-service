@@ -51,9 +51,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _id1 = 1;
             _id2 = 2;
             _id3 = 3;
-            _expectedTitle1 = "Standard 1";
-            _expectedTitle2 = "Standard 2";
-            _expectedTitle3 = "Standard 3";
             _expectedDeliveryAreas = new List<int> { 1, 2 };
             
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
