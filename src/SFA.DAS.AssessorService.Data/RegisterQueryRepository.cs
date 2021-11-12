@@ -217,7 +217,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
             var sql =
-                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
+                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, StandardReference as IFateReferenceNumber, EffectiveFrom, EffectiveTo, " +
                     "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
                     "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
 
