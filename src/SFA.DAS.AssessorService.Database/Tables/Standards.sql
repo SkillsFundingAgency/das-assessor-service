@@ -31,3 +31,7 @@
 	[EqaProviderContactEmail] VARCHAR(500) NULL,
 	[OverviewOfRole] VARCHAR(500)
 )
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Standards_LarsCode_VersionLatestStartDate] ON [Standards] ([LarsCode],[VersionLatestStartDate])
+GO

@@ -95,11 +95,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         }
 
-        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
+        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, string likedSurname, IEnumerable<int> approvedStandards, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
             var certificates = certificateRepository.GetDraftAndCompletedCertificatesFor(request.Uln).Result;
             logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
+
+            // Don't match up existing standards if paramters for filtering not passed in.
+            if (string.IsNullOrWhiteSpace(likedSurname) || approvedStandards == null || approvedStandards.Count() == 0)
+                return searchResults;
 
             var searchingEpao = _organisationRepository.Get(request.EpaOrgId).Result;
 
@@ -120,7 +124,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 foreach (var certificate in certificates)
                 {
+                    // Don't return certficate if the EPAO isn't able to assess that standard
+                    if (!approvedStandards.Contains(certificate.StandardCode))
+                        continue;
+
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    
+                    // Don't return certificate if the name does not match.
+                    if (!string.Equals(certificateData.LearnerFamilyName.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
+                        continue;
 
                     // Create a new search result as it would be when returned by the Learner record
                     var searchResult = new SearchResult
