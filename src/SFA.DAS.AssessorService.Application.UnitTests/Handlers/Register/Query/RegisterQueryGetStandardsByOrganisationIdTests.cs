@@ -40,10 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private int _id2;
         private int _id3;
         private List<int> _expectedDeliveryAreas;
-        private string _expectedTitle1;
-        private string _expectedTitle2;
-        private string _expectedTitle3;
-
+        
         [SetUp]
         public void Setup()
         {
