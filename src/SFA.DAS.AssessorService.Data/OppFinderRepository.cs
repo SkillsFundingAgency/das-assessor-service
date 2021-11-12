@@ -140,7 +140,7 @@ namespace SFA.DAS.AssessorService.Data
                 "OppFinder_Update_StandardSummary",
                 param: null,
                 transaction: _unitOfWork.Transaction,
-                commandTimeout: 60,
+                commandTimeout: 0,
                 commandType: CommandType.StoredProcedure);
         }
     }
