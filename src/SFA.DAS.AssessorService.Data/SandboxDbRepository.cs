@@ -173,7 +173,7 @@ namespace SFA.DAS.AssessorService.Data
                           WHERE Number < 9 
                         ),
                 WITH Standards_CTE as(
-                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * from Standards)
+                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE LarsCode != 0)
 
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
                         SELECT
