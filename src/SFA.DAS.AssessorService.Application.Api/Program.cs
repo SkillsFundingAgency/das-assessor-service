@@ -38,7 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Api
                         services.AddApplicationInsightsTelemetry();
                     })
                 .UseStartup<Startup>()
-                .UseKestrel()
                 .UseNLog();
         }
     }
