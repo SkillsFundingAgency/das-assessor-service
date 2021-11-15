@@ -45,7 +45,7 @@
                         "/locations",
                     dataType: "json",
                     data: {
-                        query: request.term
+                        query: request.term.trim()
                     },
                     timeout: 5000,
                     success: function (data) {
