@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var versionsResult = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
 
-            if (!string.IsNullOrEmpty(learner.Version))
+            if (learner.VersionConfirmed && !string.IsNullOrEmpty(learner.Version))
             {
                 var version = versionsResult.First(v => v.Version == learner.Version);
 
