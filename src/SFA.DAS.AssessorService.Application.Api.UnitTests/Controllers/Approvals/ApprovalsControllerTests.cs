@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using AutoFixture.NUnit3;
+using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Handlers.Approvals;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,11 +41,44 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
 
             var mockMediator = new Mock<IMediator>();
             var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
-            var importApprovalsRequest = new ImportApprovalsRequest();
 
             // Act.
 
             var controllerResult = await cut.GatherAndStoreApprovals() as ObjectResult;
+
+            // Assert.
+
+            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingApprovalsLearnerRecord_ThenGetAppovalsLearnerRecordHandlerIsCalled(int stdCode, long uln)
+        {
+            // Arrange.
+
+            var mockMediator = new Mock<IMediator>();
+            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+
+            // Act.
+
+            var controllerResult = await cut.GetLearner(stdCode, uln) as ObjectResult;
+
+            // Assert.
+
+            mockMediator.Verify(m => m.Send(It.Is<GetApprovalsLearnerRecordRequest>(s => s.StdCode == stdCode && s.Uln == uln), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test, AutoData]
+        public async Task When_GettingAprovalsLearnerRecordHasNoErrors_Then_ReturnOK(int stdCode, long uln)
+        {
+            // Arrange.
+
+            var mockMediator = new Mock<IMediator>();
+            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+
+            // Act.
+
+            var controllerResult = await cut.GetLearner(stdCode, uln) as ObjectResult;
 
             // Assert.
 
