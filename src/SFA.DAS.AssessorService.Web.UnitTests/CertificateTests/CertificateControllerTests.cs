@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Learner;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
     {
         private Mock<IStandardVersionClient> _mockStandardVersionClient;
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
-        private Mock<ILearnerDetailsApiClient> _mockLearnerApiClient;
+        private Mock<IApprovalsLearnerApiClient> _mockLearnerApiClient;
         private Mock<IHttpContextAccessor> _mockContextAccessor;
         private Mock<ISessionService> _mockSessionService;
         private CertificateController _certificateController;
@@ -47,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             _mockStandardVersionClient = new Mock<IStandardVersionClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
-            _mockLearnerApiClient = new Mock<ILearnerDetailsApiClient>();
+            _mockLearnerApiClient = new Mock<IApprovalsLearnerApiClient>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
             _mockSessionService = new Mock<ISessionService>();
 
@@ -71,15 +72,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithSingleVersionNoOptions_GoesToDeclaration(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standard)
+        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithSingleVersionNoOptions_GoesToDeclaration(CertificateStartViewModel model, ApprovalsLearnerResult learner, StandardVersion standard)
         {
             CertificateSession setSession = new CertificateSession();
             learner.Version = null;
-            learner.Option = null;
+            learner.CourseOption = null;
 
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(new StandardOptions());
-            _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(model.StdCode, model.Uln, false)).ReturnsAsync(learner);
+            _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(model.StdCode, model.Uln)).ReturnsAsync(learner);
 
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
@@ -107,14 +108,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithMultipleVersions_GoesToVersionPage(CertificateStartViewModel model, LearnerDetailResult learner, IEnumerable<StandardVersion> standards)
+        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithMultipleVersions_GoesToVersionPage(CertificateStartViewModel model, ApprovalsLearnerResult learner, IEnumerable<StandardVersion> standards)
         {
             CertificateSession setSession = new CertificateSession();
             learner.Version = null;
-            learner.Option = null;
+            learner.CourseOption = null;
 
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(standards);
-            _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(model.StdCode, model.Uln, false)).ReturnsAsync(learner);
+            _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(model.StdCode, model.Uln)).ReturnsAsync(learner);
 
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
@@ -141,15 +142,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithOneVersion_WithOptions_GoesToOptionPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standard, StandardOptions options)
+        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithOneVersion_WithOptions_GoesToOptionPage(CertificateStartViewModel model, ApprovalsLearnerResult learner, StandardVersion standard, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
             learner.Version = null;
-            learner.Option = null;
+            learner.CourseOption = null;
 
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
-            _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(model.StdCode, model.Uln, false)).ReturnsAsync(learner);
+            _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(model.StdCode, model.Uln)).ReturnsAsync(learner);
 
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
@@ -176,17 +177,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithOneVersion_WithOneOption_GoesToDeclarationPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standard, StandardOptions options, string option)
+        public async Task WhenStartingANewCertificate_WithoutApprovalsData_WithOneVersion_WithOneOption_GoesToDeclarationPage(CertificateStartViewModel model, ApprovalsLearnerResult learner, StandardVersion standard, StandardOptions options, string option)
         {
             CertificateSession setSession = new CertificateSession();
             learner.Version = null;
-            learner.Option = null;
+            learner.CourseOption = null;
 
             options.CourseOption = new List<string> { option };
 
             _mockStandardVersionClient.Setup(s => s.GetStandardVersionsByLarsCode(model.StdCode)).ReturnsAsync(new List<StandardVersion> { standard });
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(options);
-            _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(model.StdCode, model.Uln, false)).ReturnsAsync(learner);
+            _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(model.StdCode, model.Uln)).ReturnsAsync(learner);
 
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
@@ -217,12 +218,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithVersionAndOptionSetFromApprovals_GoesToDeclarationPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion standardVersion, StandardOptions options)
+        public async Task WhenStartingANewCertificate_WithVersionAndOptionSetFromApprovals_GoesToDeclarationPage(CertificateStartViewModel model, ApprovalsLearnerResult learner, StandardVersion standardVersion, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
             learner.Version = standardVersion.Version;
 
-            _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(It.IsAny<int>(), It.IsAny<long>(), false))
+            _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(It.IsAny<int>(), It.IsAny<long>()))
                 .ReturnsAsync(learner);
 
             _mockStandardVersionClient.Setup(c => c.GetStandardVersionsByLarsCode(It.IsAny<int>()))
@@ -248,12 +249,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                     && m.Username == Username 
                     && m.UkPrn == Ukprn
                     && m.StandardUId == standardVersion.StandardUId 
-                    && m.CourseOption == learner.Option)));
+                    && m.CourseOption == learner.CourseOption)));
 
             setSession.CertificateId.Should().Be(CertificateId);
             setSession.Uln.Should().Be(model.Uln);
             setSession.StandardCode.Should().Be(model.StdCode);
-            setSession.Options.Should().BeEquivalentTo(new List<string> { learner.Option });
+            setSession.Options.Should().BeEquivalentTo(new List<string> { learner.CourseOption });
             setSession.Versions.Should().BeEquivalentTo(new List<StandardVersionViewModel> { Mapper.Map<StandardVersionViewModel>(standardVersion) });
 
             result.ControllerName.Should().Be("CertificateDeclaration");
@@ -261,14 +262,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         }
 
         [Test, MoqAutoData]
-        public async Task WhenStartingANewCertificate_WithVersionSetFromApprovals_OptionRequiredButNotSet_GoesToOptionsPage(CertificateStartViewModel model, LearnerDetailResult learner, StandardVersion version, StandardOptions options)
+        public async Task WhenStartingANewCertificate_WithVersionSetFromApprovals_OptionRequiredButNotSet_GoesToOptionsPage(CertificateStartViewModel model, ApprovalsLearnerResult learner, StandardVersion version, StandardOptions options)
         {
             CertificateSession setSession = new CertificateSession();
             version.LarsCode = model.StdCode;
             learner.Version = version.Version;
-            learner.Option = string.Empty;
+            learner.CourseOption = string.Empty;
 
-            _mockLearnerApiClient.Setup(c => c.GetLearnerDetail(It.IsAny<int>(), It.IsAny<long>(), false))
+            _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(It.IsAny<int>(), It.IsAny<long>()))
                 .ReturnsAsync(learner);
 
             _mockStandardVersionClient.Setup(c => c.GetStandardVersionsByLarsCode(It.IsAny<int>()))

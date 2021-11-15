@@ -27,13 +27,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IStandardVersionClient _standardVersionClient;
         private readonly ISessionService _sessionService;
-        private readonly ILearnerDetailsApiClient _learnerApiClient;
+        private readonly IApprovalsLearnerApiClient _learnerApiClient;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient,
             IStandardVersionClient standardVersionClient,
             ISessionService sessionService,
-            ILearnerDetailsApiClient learnerApiClient)
+            IApprovalsLearnerApiClient learnerApiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
             }
 
-            var learner = await _learnerApiClient.GetLearnerDetail(vm.StdCode, vm.Uln, false);
+            var learner = await _learnerApiClient.GetLearnerRecord(vm.StdCode, vm.Uln);
 
             var versionsResult = await _standardVersionClient.GetStandardVersionsByLarsCode(vm.StdCode);
 
@@ -90,10 +90,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 startCertificateRequest.StandardUId = version.StandardUId;
                 versions.Add(version);
 
-                if (!string.IsNullOrEmpty(learner.Option))
+                if (!string.IsNullOrEmpty(learner.CourseOption))
                 {
-                    options.Add(learner.Option);
-                    startCertificateRequest.CourseOption = learner.Option;
+                    options.Add(learner.CourseOption);
+                    startCertificateRequest.CourseOption = learner.CourseOption;
                 }
                 else
                 {
