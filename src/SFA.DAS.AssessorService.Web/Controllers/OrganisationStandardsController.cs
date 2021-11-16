@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     if(financialDueDate.HasValue && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
                     {
                         model.FinancialInfoStage1Expired = true;
-                        model.FinancialAssessmentUrl = this.Url.Action("Section", "Application", new { Id = $"{organisation.Id}", sequenceNo = 1, sectionNo = 3 });
+                        model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
                     }
                 }
             }
