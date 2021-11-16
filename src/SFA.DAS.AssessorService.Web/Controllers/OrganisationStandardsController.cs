@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                             organisation.OrganisationId, pageIndex ?? 1, 10);
 
                     var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
-                    if(null != financialDueDate && financialDueDate.HasValue && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
+                    if(null != financialDueDate && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
                     {
                         model.FinancialInfoStage1Expired = true;
                         model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
