@@ -18,17 +18,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
     [TestFixture]
     public class ApprovalsControllerTests
     {
-        [Test]
-        public async Task When_PostToImportingApprovals_Then_ImportApprovalsHandlerIsCalled()
+        [Test, AutoData]
+        public async Task When_PostToImportingApprovals_Then_ImportApprovalsHandlerIsCalled(Mock<IMediator> mockMediator)
         {
             // Arrange.
-
-            var mockMediator = new Mock<IMediator>();
-            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+            var sut = SetupApprovalsController(mediator: mockMediator);
 
             // Act.
 
-            var controllerResult = await cut.GatherAndStoreApprovals() as ObjectResult;
+            var controllerResult = await sut.GatherAndStoreApprovals() as ObjectResult;
 
             // Assert.
 
@@ -39,13 +37,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         public async Task When_GatherAndStoreApprovalsHasNoErrors_Then_ReturnOK()
         {
             // Arrange.
-
-            var mockMediator = new Mock<IMediator>();
-            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+            var sut = SetupApprovalsController();
 
             // Act.
 
-            var controllerResult = await cut.GatherAndStoreApprovals() as ObjectResult;
+            var controllerResult = await sut.GatherAndStoreApprovals() as ObjectResult;
 
             // Assert.
 
@@ -53,16 +49,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         }
 
         [Test, AutoData]
-        public async Task When_GettingApprovalsLearnerRecord_ThenGetAppovalsLearnerRecordHandlerIsCalled(int stdCode, long uln)
+        public async Task When_GettingApprovalsLearnerRecord_ThenGetAppovalsLearnerRecordHandlerIsCalled(int stdCode, long uln, Mock<IMediator> mockMediator)
         {
             // Arrange.
-
-            var mockMediator = new Mock<IMediator>();
-            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
-
+            var sut = SetupApprovalsController(mediator: mockMediator);
+            
             // Act.
-
-            var controllerResult = await cut.GetLearner(stdCode, uln) as ObjectResult;
+            var controllerResult = await sut.GetLearner(stdCode, uln) as ObjectResult;
 
             // Assert.
             mockMediator.Verify(m => m.Send(It.Is<GetApprovalsLearnerRecordRequest>(s => s.StdCode == stdCode && s.Uln == uln), It.IsAny<CancellationToken>()), Times.Once);
@@ -72,14 +65,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         public async Task When_GettingAprovalsLearnerRecordHasNoErrors_Then_ReturnOK(int stdCode, long uln, ApprovalsLearnerResult result)
         {
             // Arrange.
-
-            var mockMediator = new Mock<IMediator>();
-            mockMediator.Setup(s => s.Send(It.IsAny<GetApprovalsLearnerRecordRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(result);
-            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+            var sut = SetupApprovalsController(result);
 
             // Act.
-
-            var controllerResult = await cut.GetLearner(stdCode, uln) as ObjectResult;
+            var controllerResult = await sut.GetLearner(stdCode, uln) as ObjectResult;
 
             // Assert.
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
@@ -89,15 +78,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         public async Task When_GettingAprovalsLearnerRecordNotFound_Then_ReturnNotFound(int stdCode, long uln)
         {
             // Arrange.
-            var mockMediator = new Mock<IMediator>();
-            mockMediator.Setup(s => s.Send(It.IsAny<GetApprovalsLearnerRecordRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(((ApprovalsLearnerResult)(null)));
-            var cut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+            var sut = SetupApprovalsController();
 
             // Act.
-            var controllerResult = await cut.GetLearner(stdCode, uln) as NotFoundResult;
+            var controllerResult = await sut.GetLearner(stdCode, uln) as NotFoundResult;
 
             // Assert.
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+        }
+
+        private ApprovalsController SetupApprovalsController(ApprovalsLearnerResult result = null, Mock<IMediator> mediator = null)
+        {
+            var mockMediator = mediator ?? new Mock<IMediator>();
+            mockMediator.Setup(s => s.Send(It.IsAny<GetApprovalsLearnerRecordRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+            var sut = new ApprovalsController(Mock.Of<ILogger<ApprovalsController>>(), mockMediator.Object);
+
+            return sut;
         }
     }
 }
