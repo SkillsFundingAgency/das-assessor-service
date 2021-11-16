@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                             organisation.OrganisationId, pageIndex ?? 1, 10);
 
                     var financialAssessmentExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
-                    if (null != financialAssessmentExempt && !financialAssessmentExempt.Value)
+                    if (null == financialAssessmentExempt || !financialAssessmentExempt.Value)
                     {
                         var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
                         if (null != financialDueDate && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
