@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models.Learner
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Learner
 {
     public class ApprovalsLearnerResult
     {
