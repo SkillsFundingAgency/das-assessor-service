@@ -5,6 +5,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface IApprovalsLearnerApiClient
     {
-        Task<ApprovalsLearnerResult> GetLearnerRecord(int larsCode, long uln);
+        Task<ApprovalsLearnerResult> GetLearnerRecord(int stdCode, long uln);
     }
 }
