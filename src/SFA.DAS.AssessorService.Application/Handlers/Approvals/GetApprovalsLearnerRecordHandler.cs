@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 
             var approvalsRecord = new ApprovalsLearnerResult()
             {
-                Uln = request.Uln,
+                Uln = learner.Uln,
                 FamilyName = learner.FamilyName,
                 GivenNames = learner.GivenNames,
                 StandardCode = learner.StdCode,

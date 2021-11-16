@@ -42,7 +42,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetLearner(int stdCode, long uln)
         {
-            return Ok(await _mediator.Send(new GetApprovalsLearnerRecordRequest(stdCode, uln)));
+            var record = await _mediator.Send(new GetApprovalsLearnerRecordRequest(stdCode, uln));
+
+            if (record == null) return NotFound();
+
+            return Ok(record);
         }
     }
 }
