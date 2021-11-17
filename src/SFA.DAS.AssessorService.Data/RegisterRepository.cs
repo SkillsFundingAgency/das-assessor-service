@@ -101,9 +101,9 @@ namespace SFA.DAS.AssessorService.Data
 
             if (null != organisationStandard.StandardVersions)
             {
-                foreach (var version in organisationStandard.StandardVersions)
+                foreach (var standardVersion in organisationStandard.StandardVersions)
                 {
-                    var standardUid = $"{organisationStandard.StandardReference.Trim()}_{version.Trim()}";
+                    var standardUid = $"{organisationStandard.StandardReference.Trim()}_{standardVersion.Version.Trim()}";
 
                     await _unitOfWork.Connection.ExecuteAsync(
                         "INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
@@ -111,11 +111,11 @@ namespace SFA.DAS.AssessorService.Data
                             new
                             {
                                 standardUid,
-                                version,
+                                standardVersion.Version,
                                 OrganisationStandardId = orgStandardId,
-                                organisationStandard.EffectiveFrom,
-                                organisationStandard.EffectiveTo,
-                                DateVersionApproved = organisationStandard.DateStandardApprovedOnRegister,
+                                standardVersion.EffectiveFrom,
+                                standardVersion.EffectiveTo,
+                                DateVersionApproved = standardVersion.DateVersionApproved,
                                 organisationStandard.Comments
                             });
                 }
