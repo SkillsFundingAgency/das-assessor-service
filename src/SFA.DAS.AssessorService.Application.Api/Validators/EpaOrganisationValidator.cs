@@ -590,7 +590,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (!validationResult.IsValid) return validationResult;
 
             //  SV-658 / SV-659 Now that we have versions, this will check will include versions too.
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardVersionAlreadyExists(request.OrganisationId, request.StandardCode, request.StandardVersions), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardVersionAlreadyExists(request.OrganisationId, request.StandardCode, request.StandardVersions.Select(v => v.Version).ToList()), validationResult, ValidationStatusCode.AlreadyExists);
             if (!validationResult.IsValid) return validationResult;
 
             var standard = GetStandard(request.StandardCode.ToString()).Result;

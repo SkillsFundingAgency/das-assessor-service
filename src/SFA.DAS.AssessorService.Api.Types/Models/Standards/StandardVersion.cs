@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string StandardUId { get; set; }
         public string Title { get; set; }
         public string Version { get; set; }
+        public int VersionMajor { get; set; }
+        public int VersionMinor { get; set; }
         public string IFateReferenceNumber { get; set; }
         public int LarsCode { get; set; }
         public int Level { get; set; }
@@ -31,6 +33,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 StandardUId = standard.StandardUId,
                 Title = standard.Title,
                 Version = standard.Version,
+                VersionMajor = standard.VersionMajor,
+                VersionMinor = standard.VersionMinor,
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,

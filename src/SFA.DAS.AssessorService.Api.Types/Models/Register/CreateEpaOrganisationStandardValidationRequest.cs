@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
@@ -9,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
     {
         public string OrganisationId { get; set; }
         public int StandardCode { get; set; }
-        public List<string> StandardVersions { get; set; }
+        public List<OrganisationStandardVersion> StandardVersions { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public string ContactId { get; set; }
