@@ -61,8 +61,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         await _standardsApiClient.GetEpaoRegisteredStandards(
                             organisation.OrganisationId, pageIndex ?? 1, 10);
 
-                    var financialAssessmentExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
-                    if (null == financialAssessmentExempt || !financialAssessmentExempt.Value)
+                    var financialAssessmentExempt = !string.IsNullOrWhiteSpace(organisation.FinancialReviewStatus) && (organisation.FinancialReviewStatus == ApplyTypes.FinancialReviewStatus.Exempt);
+                    if (!financialAssessmentExempt)
                     {
                         var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
                         if (null != financialDueDate && (financialDueDate.Value.Date < DateTime.UtcNow.Date))

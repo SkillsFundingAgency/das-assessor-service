@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var organisationId = request.OrganisationId;
             _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{organisationId}]");
             var org = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationId);
+
+            if (null != org)
+            {
+                AssessorService.Api.Types.Models.AO.OrganisationType orgType = null;
+                var orgTypes = await _registerQueryRepository.GetOrganisationTypes();
+                if (orgTypes != null)
+                {
+                    orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
+                }
+                org.FinancialReviewStatus = Helpers.FinancialReviewStatusHelper.IsFinancialExempt(org.OrganisationData?.FHADetails.FinancialExempt, org.OrganisationData?.FHADetails.FinancialDueDate, orgType) ? ApplyTypes.FinancialReviewStatus.Exempt : ApplyTypes.FinancialReviewStatus.Required;
+            }
 
             return org ?? null;
         }  
