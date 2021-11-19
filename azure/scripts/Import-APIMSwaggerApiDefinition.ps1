@@ -50,7 +50,7 @@ try {
 
     # --- Import swagger definition
     Write-Host "Updating API $ApiId\$ServiceName from definition $SwaggerSpecificationUrl"
-    Import-AzApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
+    Import-AzApiManagementApi -Context $Context -SpecificationFormat "OpenApi" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
 } catch {
    throw $_
 }
