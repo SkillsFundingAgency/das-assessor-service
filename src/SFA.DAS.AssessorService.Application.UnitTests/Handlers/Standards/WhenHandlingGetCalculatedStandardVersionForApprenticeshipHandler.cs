@@ -88,7 +88,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             GetCalculatedStandardVersionForApprenticeshipRequest request,
             IEnumerable<Standard> standards,
             DateTime baseDate,
-            int baseVersion,
+            int versionMajor,
+            int versionMinor,
             int larsCode,
             Domain.Entities.Learner learnerRecord,
             GetCalculatedStandardVersionForApprenticeshipHandler sut)
@@ -100,11 +101,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             
             foreach (var s in standards)
             {
-                s.Version = baseVersion.ToString();
+                s.Version = string.Concat(versionMajor, '.', versionMinor);
+                s.VersionMajor = versionMajor;
+                s.VersionMinor = versionMinor;
                 s.VersionLatestStartDate = baseDate;
                 s.LarsCode = larsCode;
                 
-                baseVersion++;
+                versionMajor++;
                 baseDate = baseDate.AddYears(1);
             }
 
