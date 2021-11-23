@@ -10,6 +10,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public int LarsCode { get; set; }
         public string IFateReferenceNumber { get; set; }
         public string Version { get; set; }
+        public int VersionMajor { get; set; }
+        public int VersionMinor { get; set; }
         public int Level { get; set; }
         public int OrganisationStandardId { get; set; }
         public DateTime? EffectiveFrom { get; set; }
