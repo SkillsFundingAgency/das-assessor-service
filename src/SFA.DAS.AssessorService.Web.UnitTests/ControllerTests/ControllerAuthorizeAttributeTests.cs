@@ -16,7 +16,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ControllerTests
         {
             "AccountController",
             "HomeController",
-            "OppFinderController"
+            "OppFinderController",
+            "LocationsController"
         };
 
         [Test]
