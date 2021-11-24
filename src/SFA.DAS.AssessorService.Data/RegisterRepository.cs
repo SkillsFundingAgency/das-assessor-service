@@ -103,14 +103,12 @@ namespace SFA.DAS.AssessorService.Data
             {
                 foreach (var standardVersion in organisationStandard.StandardVersions)
                 {
-                    var standardUid = $"{organisationStandard.StandardReference.Trim()}_{standardVersion.Version.Trim()}";
-
                     await _unitOfWork.Connection.ExecuteAsync(
                         "INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
                             "VALUES(@StandardUid, @Version, @OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, 'Live')",
                             new
                             {
-                                standardUid,
+                                StandardUId = standardVersion.StandardUId,
                                 standardVersion.Version,
                                 OrganisationStandardId = orgStandardId,
                                 standardVersion.EffectiveFrom,
