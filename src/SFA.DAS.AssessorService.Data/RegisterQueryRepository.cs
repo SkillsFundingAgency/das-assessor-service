@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             IEnumerable<OrganisationStandardSummary> organisationStandardSummaries;
 
-            var query = 
+            var query =
                 @"SELECT 
 	                os.Id, EndPointAssessorOrganisationId AS OrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, ContactId, OrganisationStandardData, StandardReference
                   FROM 
@@ -199,7 +199,8 @@ namespace SFA.DAS.AssessorService.Data
                   WHERE 
 	                osv.Status = 'Live' AND os.status = 'Live' 
 	                AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
-	                AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+	                AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE()) 
+                  ORDER BY LarsCode, VersionMajor, VersionMinor";
 
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
             {

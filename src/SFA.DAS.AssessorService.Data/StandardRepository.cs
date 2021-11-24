@@ -613,7 +613,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                         INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
                         WHERE osv.Status = 'Live' AND os.status = 'Live' AND os.StandardCode = @larsCode
                         AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
-                        AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+                        AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())
+                        ORDER BY s.VersionMajor, s.VersionMinor";
 
             var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandardVersion>(
                 sql,
