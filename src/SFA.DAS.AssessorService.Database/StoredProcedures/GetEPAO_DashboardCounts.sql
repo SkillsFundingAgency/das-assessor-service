@@ -7,7 +7,7 @@ BEGIN
 	FROM (
 		-- The active records from ilr
 		SELECT 0 Assessments, COUNT(*) Pipeline, 0 Standards
-		FROM [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL, @pipelineCutoff)
+		FROM [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL, @pipelineCutOff)
 		-- 
 		UNION ALL
 		-- add in the created certificates (by epaOrgId)

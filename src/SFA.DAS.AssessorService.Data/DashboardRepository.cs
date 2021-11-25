@@ -6,22 +6,24 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class DashboardRepository : IDashboardRepository
+    public class DashboardRepository : Repository, IDashboardRepository
     {
-        private readonly IDbConnection _connection;
-
-        public DashboardRepository(IDbConnection connection)
+        public DashboardRepository(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
-            _connection = connection;
         }
 
         public async Task<EpaoDashboardResult> GetEpaoDashboard(string endPointAssessorOrganisationId, int pipelineCutoff)
         {
-            var result = await _connection.QuerySingleAsync<EpaoDashboardResult>("GetEPAO_DashboardCounts", new
-            {
-                epaOrgId = endPointAssessorOrganisationId,
-                pipelineCutoff = pipelineCutoff
-            }, commandType: CommandType.StoredProcedure);
+            var result = await _unitOfWork.Connection.QuerySingleAsync<EpaoDashboardResult>(
+                "GetEPAO_DashboardCounts", 
+                new
+                {
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutoff = pipelineCutoff
+                },
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
 
             return result;
         }

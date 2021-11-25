@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         {
             _logger.LogDebug($"GetEpaoPipelineStandardsExtractHandler: EpaoId = {request.EpaoId}");
             
-            var result = await _standardRepository.GetEpaoPipelineStandardsExtract(request.EpaoId, _config.PipelineCutoff);
+            var result = await _standardRepository.GetEpaoPipelineStandardsExtract(request.EpaoId, request.StandardFilterId, request.ProviderFilterId, request.EPADateFilterId, _config.PipelineCutoff);
 
             var response = result.Select(o =>
                 new EpaoPipelineStandardsExtractResponse
@@ -35,7 +35,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMMM yyyy"),
                     Pipeline = o.Pipeline,
                     StandardName = o.Title,
-                    ProviderUkPrn = o.ProviderUkPrn
+                    StandardVersion = o.Version,
+                    ProviderUkPrn = o.ProviderUkPrn,
+                    ProviderName = o.ProviderName.Replace("\"", "\"\"")
                 }).ToList();
 
             return response;

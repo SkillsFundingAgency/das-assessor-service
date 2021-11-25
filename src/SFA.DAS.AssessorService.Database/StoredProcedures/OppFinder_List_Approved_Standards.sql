@@ -25,6 +25,7 @@ BEGIN
 		StandardCode, 
 		StandardReference, 
 		StandardName, 
+		Versions,
 		SUM(Learners) ActiveApprentices, 
 		MAX(TotalEPAOs) RegisteredEPAOs,
 		Sector,
@@ -54,7 +55,7 @@ BEGIN
 			CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
 		)
 	GROUP BY 
-		StandardCode, StandardReference, StandardName, Sector, StandardLevel
+		StandardCode, StandardReference, StandardName, Versions, Sector, StandardLevel
 
 	-- the total number of results is returned as an out parameter
 	SELECT @TotalCount = (SELECT MAX(TotalCount) FROM #Results)
@@ -64,6 +65,7 @@ BEGIN
 		StandardCode, 
 		StandardReference, 
 		StandardName, 
+		Versions,
 		ActiveApprentices, 
 		RegisteredEPAOs,
 		TotalCount = COUNT(1) OVER()

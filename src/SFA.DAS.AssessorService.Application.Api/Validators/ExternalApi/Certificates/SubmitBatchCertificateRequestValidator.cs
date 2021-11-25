@@ -97,6 +97,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         {
                             context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is missing mandatory data"));
                         }
+
+                        var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);
+                        if (null != requestedLearner)
+                        {
+                            if (requestedLearner.VersionConfirmed && !string.IsNullOrWhiteSpace(requestedLearner.Version) && !string.IsNullOrWhiteSpace(certificateData.Version))
+                            {
+                                if (requestedLearner.Version.Trim().ToUpperInvariant() != certificateData.Version.Trim().ToUpperInvariant())
+                                {
+                                    context.AddFailure(new ValidationFailure("CertificateData", "Certificate update is required as version has changed on Learner record"));
+                                }
+                            }
+                            if (!string.IsNullOrWhiteSpace(requestedLearner.CourseOption) && !string.IsNullOrWhiteSpace(certificateData.CourseOption))
+                            {
+                                if (requestedLearner.CourseOption.Trim().ToUpperInvariant() != certificateData.CourseOption.Trim().ToUpperInvariant())
+                                {
+                                    context.AddFailure(new ValidationFailure("CertificateData", "Certificate update is required as course option has changed on Learner record"));
+                                }
+                            }
+                        }
                     }
                 });
             });

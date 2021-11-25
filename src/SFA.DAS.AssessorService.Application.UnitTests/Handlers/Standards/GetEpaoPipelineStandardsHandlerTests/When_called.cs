@@ -40,18 +40,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards.GetEp
             var fixture = new Fixture();
             
             _mockRepository
-                .Setup(r => r.GetEpaoPipelineStandards(epaoId, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()))
+                .Setup(r => r.GetEpaoPipelineStandards(epaoId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()))
                 .ReturnsAsync(new EpaoPipelineStandardsResult { PageOfResults = fixture.CreateMany<EpaoPipelineStandard>(count).ToList(), TotalCount = count });
 
             _mockConfig
                 .Setup(r => r.PipelineCutoff).Returns(6);
 
             // Act
-            var result = await _sut.Handle(new EpaoPipelineStandardsRequest(epaoId, string.Empty, string.Empty, 1, 10), new CancellationToken());
+            var result = await _sut.Handle(new EpaoPipelineStandardsRequest(epaoId, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, 1, 10), new CancellationToken());
 
             // Assert
             _mockRepository
-                .Verify(r => r.GetEpaoPipelineStandards(epaoId, 6, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()), Times.Once);
+                .Verify(r => r.GetEpaoPipelineStandards(epaoId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), 6, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()), Times.Once);
 
             result.Items.Count().Should().Be(count);
         }

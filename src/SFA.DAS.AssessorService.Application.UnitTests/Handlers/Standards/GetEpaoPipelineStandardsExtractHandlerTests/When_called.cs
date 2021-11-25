@@ -40,18 +40,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards.GetEp
             var fixture = new Fixture();
             
             _mockRepository
-                .Setup(r => r.GetEpaoPipelineStandardsExtract(epaoId, It.IsAny<int>()))
+                .Setup(r => r.GetEpaoPipelineStandardsExtract(epaoId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
                 .ReturnsAsync(fixture.CreateMany<EpaoPipelineStandardExtract>(count).ToList());
 
             _mockConfig
                 .Setup(r => r.PipelineCutoff).Returns(6);
 
             // Act
-            var result = await _sut.Handle(new EpaoPipelineStandardsExtractRequest(epaoId), new CancellationToken());
+            var result = await _sut.Handle(new EpaoPipelineStandardsExtractRequest(epaoId, string.Empty, string.Empty, string.Empty), new CancellationToken());
 
             // Assert
             _mockRepository
-                .Verify(r => r.GetEpaoPipelineStandardsExtract(epaoId, 6), Times.Once);
+                .Verify(r => r.GetEpaoPipelineStandardsExtract(epaoId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), 6), Times.Once);
 
             result.Count().Should().Be(count);
         }

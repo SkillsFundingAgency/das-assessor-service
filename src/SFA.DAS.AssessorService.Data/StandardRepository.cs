@@ -643,7 +643,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return results;
         }
 
-        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, int pipelineCutoff, string orderBy, string orderDirection, int pageSize, int? pageIndex)
+        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId,
+            int pipelineCutoff, string orderBy, string orderDirection, int pageSize, int? pageIndex)
         {
             IEnumerable<EpaoPipelineStandard> epaoPipelines;
             var epaoPipelineStandardsResult = new EpaoPipelineStandardsResult
@@ -652,12 +653,28 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 TotalCount = 0
             };
 
+            if (string.IsNullOrWhiteSpace(standardFilterId) || standardFilterId.Trim().ToUpper() == "ALL")
+            {
+                standardFilterId = null;
+            }
+            if (string.IsNullOrWhiteSpace(providerFilterId) || providerFilterId.Trim().ToUpper() == "ALL")
+            {
+                providerFilterId = null;
+            }
+            if (string.IsNullOrWhiteSpace(epaDateFilterId) || epaDateFilterId.Trim().ToUpper() == "ALL")
+            {
+                epaDateFilterId = null;
+            }
+
             var skip = ((pageIndex ?? 1) - 1) * pageSize;
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandard>(
                 "GetEPAO_Pipelines",
                 param: new
                 {
                     epaOrgId = endPointAssessorOrganisationId,
+                    standardFilterId = standardFilterId,
+                    providerFilterId = providerFilterId,
+                    epaDateFilterId = epaDateFilterId,
                     pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
@@ -690,13 +707,61 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return epaoPipelineStandardsResult;
         }
 
-        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, int pipelineCutoff)
+        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId, int pipelineCutOff)
+        {
+            var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardFilter>(
+                "GetEPAO_Pipelines_StandardFilter",
+                param: new
+                {
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutOff = pipelineCutOff
+                },
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            return result?.ToList();
+        }
+
+        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId, int pipelineCutOff)
+        {
+            var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardFilter>(
+                "GetEPAO_Pipelines_ProviderFilter",
+                param: new
+                {
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutOff = pipelineCutOff
+                },
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            return result?.ToList();
+        }
+
+        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId, int pipelineCutOff)
+        {
+            var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardFilter>(
+                "GetEPAO_Pipelines_EPADateFilter",
+                param: new
+                {
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutOff = pipelineCutOff
+                },
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            return result?.ToList();
+        }
+
+        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId, int pipelineCutoff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardExtract>(
                 "GetEPAO_Pipelines_Extract",
                 param: new
                 {
                     epaOrgId = endPointAssessorOrganisationId,
+                    standardFilterId = standardFilterId,
+                    providerFilterId = providerFilterId,
+                    epaDateFilterId = epaDateFilterId,
                     pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
@@ -887,13 +952,20 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("Route");
             dataTable.Columns.Add("VersionMajor");
             dataTable.Columns.Add("VersionMinor");
+            dataTable.Columns.Add("IntegratedDegree");
+            dataTable.Columns.Add("EqaProviderName");
+            dataTable.Columns.Add("EqaProviderContactName");
+            dataTable.Columns.Add("EqaProviderContactEmail]");
+            dataTable.Columns.Add("OverviewOfRole]");
 
             foreach (var standard in standards)
             {
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, standard.VersionMajor, standard.VersionMinor);
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, 
+                    standard.VersionMajor, standard.VersionMinor,
+                    standard.IntegratedDegree, standard.EqaProviderName, standard.EqaProviderContactName, standard.EqaProviderContactEmail, standard.OverviewOfRole);
             }
 
             return dataTable;

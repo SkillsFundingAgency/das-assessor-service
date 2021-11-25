@@ -1,24 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
+using System;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
     public class AssessorDbContext : DbContext
     {
+        private readonly IDbConnection _connection;
+
         public AssessorDbContext()
         {
         }
 
-        public AssessorDbContext(DbContextOptions<AssessorDbContext> options)
+        public AssessorDbContext(IDbConnection connection, DbContextOptions<AssessorDbContext> options)
             : base(options)
         {
+            _connection = connection;
         }
 
         public virtual DbSet<Certificate> Certificates { get; set; }
@@ -36,6 +40,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
+        public virtual DbSet<Provider> Providers { get; set; }
 
         public override int SaveChanges()
         {
@@ -67,6 +72,12 @@ namespace SFA.DAS.AssessorService.Data
         public virtual void MarkAsModified<T>(T item) where T : class
         {
             Entry(item).State = EntityState.Modified;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(_connection as DbConnection, options =>
+                 options.EnableRetryOnFailure(3).CommandTimeout(300));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -129,7 +140,10 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<DeliveryArea>()
                 .ToTable("DeliveryArea");
 
-            
+            modelBuilder.Entity<Provider>()
+                .ToTable("Providers")
+                .HasKey(c => new { c.Ukprn });
+
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }
 
