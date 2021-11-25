@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<EpaoDashboardResult> GetEpaoDashboard(string endPointAssessorOrganisationId, int pipelineCutoff)
         {
             var result = await _unitOfWork.Connection.QuerySingleAsync<EpaoDashboardResult>(
-                "GetEPAO_DashboardCounts", 
+                "GetEPAO_DashboardCounts",
                 new
                 {
                     epaOrgId = endPointAssessorOrganisationId,

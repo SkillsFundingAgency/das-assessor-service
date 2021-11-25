@@ -59,8 +59,8 @@ RETURN
 				-- most recent activity (approval/ILR submission) is no more than 6(?) months ago
 				OR (CompletionStatus = 1 AND LastUpdated >= DATEADD(month, -6, GETDATE()) )
 				)
-			-- limit Pipeline to where the Estimated End Date is no more than 12 months in the past until it's made configurable
-			AND EstimatedEndDate >= DATEADD(month, -@pipelineCutOff ,GETDATE())
+			-- limit Pipeline to the Estimated End Date is no more than the configurable pipeline cut off.
+			AND EstimatedEndDate >= DATEADD(month, -@pipelineCutOff, GETDATE())
 		) [PipelineInfo]
 		INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].Ukprn 
 
