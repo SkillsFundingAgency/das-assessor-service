@@ -1,10 +1,11 @@
 ﻿-- NOTE limits to filter out of date learner records
---6 months over-run on lapsed learner data updates
---6 months allowed to overrun beyond estimated end date	
+-- Allow 6 months over-run on lapsed learner data updates
+-- Allow configurable months to overrun beyond estimated end date
 CREATE FUNCTION [dbo].[EPAO_Func_Get_PipelineInfo]
 (	
 	@epaOrgId NVARCHAR(12),
-	@stdCode INT
+	@stdCode INT,
+	@pipelineCutOff INT
 )
 RETURNS TABLE 
 AS
@@ -33,7 +34,7 @@ RETURN
 		INNER JOIN 
 			-- must have at least one live version of a standard for the given EPAO
 			   (SELECT DISTINCT StandardCode FROM OrganisationStandard os1
-				  JOIN OrganisationStandardVersion osv ON osv.OrganisationStandardId = os1.id
+				  JOIN OrganisationStandardVersion osv ON osv.OrganisationStandardId = os1.Id
 				 WHERE os1.Status = 'Live' 
 					AND (os1.EffectiveTo IS NULL OR os1.EffectiveTo >= GETDATE())
 					AND osv.Status = 'Live' 
@@ -48,7 +49,7 @@ RETURN
 		WHERE 1=1
 			-- exclude already created certificates (by uln and standardcode)
 			AND [ExistingCertificate].Uln IS NULL	  -- only include learner data for the given EPAO which is Active, or completed
-			AND EPAORgID = @epaOrgId
+			AND EpaOrgId = @epaOrgId
 			-- and for continuing or recently completed Apprenticeships
 			AND CompletionStatus IN (1,2)
 			-- limit pipeline to completed, or continuing learning that has not yet lapsed
@@ -58,8 +59,8 @@ RETURN
 				-- most recent activity (approval/ILR submission) is no more than 6(?) months ago
 				OR (CompletionStatus = 1 AND LastUpdated >= DATEADD(month, -6, GETDATE()) )
 				)
-			-- limit Pipeline to where the Estimated End Date is no more than 12 months in the past until it's made configurable
-			AND EstimatedEndDate >= DATEADD(month, -12 ,GETDATE())
+			-- limit Pipeline to the Estimated End Date is no more than the configurable pipeline cut off.
+			AND EstimatedEndDate >= DATEADD(month, -@pipelineCutOff, GETDATE())
 		) [PipelineInfo]
 		INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].Ukprn 
 
