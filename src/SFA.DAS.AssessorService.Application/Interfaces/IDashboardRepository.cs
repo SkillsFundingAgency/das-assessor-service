@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IDashboardRepository
     {
-        Task<EpaoDashboardResult> GetEpaoDashboard(string endPointAssessorOrganisationId);
+        Task<EpaoDashboardResult> GetEpaoDashboard(string endPointAssessorOrganisationId, int pipelineCutoff);
     }
 
     public class EpaoDashboardResult

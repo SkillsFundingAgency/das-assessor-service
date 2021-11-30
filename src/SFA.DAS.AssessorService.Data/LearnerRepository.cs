@@ -39,14 +39,15 @@ namespace SFA.DAS.AssessorService.Data
                   transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode = null)
+        public async Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode, int pipelineCutoff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<int>(
                 "GetEPAO_Pipelines_Count",
                 param: new
                 {
                     epaOrgId,
-                    stdCode
+                    stdCode,
+                    pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);

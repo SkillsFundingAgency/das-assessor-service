@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Learner;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,16 +15,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
     public class When_called
     {
         private GetPipelinesCountHandler _sut;
+        private Mock<IWebConfiguration> _mockConfig;
         private Mock<ILearnerRepository> _mockLearnerRepository;
         private Mock<ILogger<GetPipelinesCountHandler>> _mockLogger;
 
         [SetUp]
         public void Arrange()
         {
+            _mockConfig = new Mock<IWebConfiguration>();
             _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockLogger = new Mock<ILogger<GetPipelinesCountHandler>>();
+            
 
-            _sut = new GetPipelinesCountHandler(_mockLearnerRepository.Object, _mockLogger.Object); 
+            _sut = new GetPipelinesCountHandler(_mockConfig.Object, _mockLearnerRepository.Object, _mockLogger.Object); 
         }
 
         [TestCase("EPA0200", 287, 5)]
@@ -32,15 +36,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         {
             // Arrange
             _mockLearnerRepository
-                .Setup(r => r.GetEpaoPipelinesCount(epaoId, stdCode))
+                .Setup(r => r.GetEpaoPipelinesCount(epaoId, stdCode, It.IsAny<int>()))
                 .ReturnsAsync(count);
+
+            _mockConfig
+                .Setup(r => r.PipelineCutoff).Returns(6);
 
             // Act
             var result = await _sut.Handle(new GetPipelinesCountRequest(epaoId, stdCode), new CancellationToken());
 
             // Assert
             _mockLearnerRepository
-                .Verify(r => r.GetEpaoPipelinesCount(epaoId, stdCode), Times.Once);
+                .Verify(r => r.GetEpaoPipelinesCount(epaoId, stdCode, 6), Times.Once);
 
             result.Should().Be(count);
         }
