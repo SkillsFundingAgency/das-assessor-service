@@ -23,7 +23,8 @@
 
         string ReferenceFormat { get; set; }
         string FeedbackUrl { get; set; }
-        
+        int PipelineCutoff { get; set; }
+
         #region For External API Sandbox
         string SandboxSqlConnectionString { get; set; }
         ApiAuthentication SandboxApiAuthentication { get; set; }
