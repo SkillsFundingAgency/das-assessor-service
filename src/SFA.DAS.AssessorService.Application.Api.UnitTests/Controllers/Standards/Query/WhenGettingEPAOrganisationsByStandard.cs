@@ -22,9 +22,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 {
     public class WhenGettingEPAOrganisationsByStandard
     {
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task Then_If_The_Standard_Id_Is_Not_Supplied_A_Bad_Request_Is_Returned(
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             //Act
             var actual = await controller.GetEpaosByStandard(0);
@@ -35,11 +35,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             Assert.IsNotNull(actualResult);
         }
 
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task Then_If_There_Is_No_Data_Returned_A_Not_Found_Result_Is_Returned(
             int standardCode,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             //Arrange
             mediator
@@ -60,12 +60,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             Assert.IsNotNull(actualResult);
         }
 
-        [Test, RecursiveMoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, RecursiveMoqAutoData]
         public async Task Then_If_There_Is_Data_It_Is_Returned_In_Response(
             int standardCode,
             List<Organisation> epaOrganisations,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             //Arrange
             Mapper.Reset();

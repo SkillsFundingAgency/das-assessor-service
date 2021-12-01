@@ -19,13 +19,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 {
     public class EpaControllerTests
     {
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task When_CreatingEpaRecord_CallsInternalApi_Then_ReturnEpaResponseWithResponseCode200(
             [Frozen] Mock<IHeaderInfo> headerInfo,
             [Frozen] Mock<IApiClient> apiClient,
             CreateEpaRequest request,
             IEnumerable<CreateEpaResponse> response,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             apiClient.Setup(client => client.CreateEpas(It.Is<IEnumerable<CreateBatchEpaRequest>>(s =>
@@ -46,10 +46,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             model.Should().BeEquivalentTo(response);
         }
 
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task When_CreatingEpaRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
             CreateEpaRequest request,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             var requests = new List<CreateEpaRequest>();
@@ -66,13 +66,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
         }
 
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task When_UpdatingEpaRecord_CallsInternalApi_Then_ReturnEpaResponseWithResponseCode200(
             [Frozen] Mock<IHeaderInfo> headerInfo,
             [Frozen] Mock<IApiClient> apiClient,
             UpdateEpaRequest request,
             IEnumerable<UpdateEpaResponse> response,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             apiClient.Setup(client => client.UpdateEpas(It.Is<IEnumerable<UpdateBatchEpaRequest>>(s =>
@@ -95,10 +95,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         }
 
 
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task When_UpdatingEpaRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
             UpdateEpaRequest request,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             var requests = new List<UpdateEpaRequest>();
@@ -115,13 +115,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             ((ApiResponse)result.Value).Message.Should().Be("Batch limited to 25 requests");
         }
 
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task When_DeletingEpaRecord_CallsInternalApi_Then_ReturnResponseCode204(
             [Frozen] Mock<IHeaderInfo> headerInfo,
             [Frozen] Mock<IApiClient> apiClient,
             long uln, string familyName, string standard, string epaReference,
             ApiResponse response,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             response = null;
@@ -137,12 +137,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         }
 
 
-        [Test, MoqAutoData, Ignore("Temporary ignore during .Net Core 3.1 upgrade")]
+        [Test, MoqAutoData]
         public async Task When_DeletingEpaRecord_CallsInternalApi_AndItErrors_Then_ReturnErrorResponseCode(
             [Frozen] Mock<IHeaderInfo> headerInfo,
             [Frozen] Mock<IApiClient> apiClient,
             long uln, string familyName, string standard, string epaReference,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             var response = new ApiResponse((int)HttpStatusCode.BadRequest);
