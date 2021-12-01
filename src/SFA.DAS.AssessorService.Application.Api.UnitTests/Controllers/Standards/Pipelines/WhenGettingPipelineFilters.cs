@@ -37,10 +37,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             }
             , 14, 1, 10);
 
-        [Test, MoqAutoData, Ignore("Temporary ignore due to AutoFixture changes needed during Net Core 3.1 migration")]
+        [Test, MoqAutoData]
         public async Task Then_If_OrgId_Not_Supplied_Return_BadRequest(
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
@@ -62,11 +62,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             actualResult.Should().NotBeNull();
         }
 
-        [Test, MoqAutoData, Ignore("Temporary ignore due to AutoFixture changes needed during Net Core 3.1 migration")]
+        [Test, MoqAutoData]
         public async Task Then_If_No_Pipeline_Data_Return_Ok_No_Data(
             string epaoId,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
@@ -99,11 +99,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             actualModel.EPADateFilterItems.Should().BeEmpty();
         }
 
-        [Test, MoqAutoData, Ignore("Temporary ignore due to AutoFixture changes needed during Net Core 3.1 migration")]
+        [Test, MoqAutoData]
         public async Task Then_If_Pipeline_Data_Exists_Return_Ok_With_Filters(
             string epaoId,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
