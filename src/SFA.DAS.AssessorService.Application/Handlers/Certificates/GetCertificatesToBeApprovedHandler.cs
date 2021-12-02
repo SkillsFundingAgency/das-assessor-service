@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
@@ -18,19 +17,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesToBeApprovedHandler> _logger;
+        private readonly IProvidersRepository _providersRepository;
 
         public GetCertificatesToBeApprovedHandler(ICertificateRepository certificateRepository,
-            IRoatpApiClient roatpApiClient,
             IContactQueryRepository contactQueryRepository,
-            ILogger<GetCertificatesToBeApprovedHandler> logger)
+            ILogger<GetCertificatesToBeApprovedHandler> logger,
+            IProvidersRepository providersRepository)
         {
             _certificateRepository = certificateRepository;
-            _roatpApiClient = roatpApiClient;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
+            _providersRepository = providersRepository;
         }
 
         public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetToBeApprovedCertificatesRequest request,
@@ -66,13 +65,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     if (certificateData.ProviderName == null)
                     {
-                        var provider = (await _roatpApiClient.SearchOrganisationByUkprn(certificate.ProviderUkPrn)).FirstOrDefault();
+                        var provider = await _providersRepository.GetProvider(certificate.ProviderUkPrn);
                         if (provider == null)
                         {
                             throw new EntityNotFoundException($"Training provider {certificate.ProviderUkPrn} not found", null);
                         }
                             
-                        trainingProviderName = provider?.ProviderName;
+                        trainingProviderName = provider?.Name;
                         await _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
                     }
                     else

@@ -4,6 +4,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Dashboard
 {
     public class GetEpaoDashboardRequest : IRequest<GetEpaoDashboardResponse>
     {
-        public string EndPointAssessorOrganisationId { get; set; }
+        public string EpaoId { get; set; }
     }
 }

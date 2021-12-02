@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    @if (Model.Response.Items.Any())
+    @if (Model.Response.Items.Any() || Model.FilterApplied)
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -25,63 +25,166 @@
             </div>
             <div class="govuk-grid-column-one-third">
                 <div class="govuk-form-group align-button-right">
-                    <form asp-controller="OrganisationStandards" asp-action="ExportEpaPipelineAsCsv" method="get">
-                        <button type="submit" class="govuk-button">Download as csv</button>
-                    </form>
                 </div>
             </div>
         </div>
+        <form method="get" action="" class="das-filter-panel">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="das-pane govuk-!-margin-bottom-3">
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-one-third">
+                                <div class="govuk-form-group">
+                                    @Html.LabelFor(m => m.SelectedStandard, new { @class = "govuk-label" })
+                                    @Html.DropDownListFor(m => m.SelectedStandard, new SelectList(Model.StandardFilter, "Id", "Value"), new { @class = "govuk-select govuk-!-width-full" })
+                                </div>
+                            </div>
+                            <div class="govuk-grid-column-one-third">
+                                <div class="govuk-form-group">
+                                    @Html.LabelFor(m => m.SelectedProvider, new { @class = "govuk-label" })
+                                    @Html.DropDownListFor(m => m.SelectedProvider, new SelectList(Model.ProviderFilter, "Id", "Value"), new { @class = "govuk-select govuk-!-width-full" })
+                                </div>
+                            </div>
+                            <div class="govuk-grid-column-one-third">
+                                <div class="govuk-form-group">
+                                    @Html.LabelFor(m => m.SelectedEPADate, new { @class = "govuk-label" })
+                                    @Html.DropDownListFor(m => m.SelectedEPADate, new SelectList(Model.EPADateFilter, "Id", "Value"), new { @class = "govuk-select govuk-!-width-full" })
+                                </div>
+                            </div>
+                        </div>
+                        <button class="govuk-button govuk-!-margin-0" type="submit">Apply filters</button>
+                        @if(Model.FilterApplied)
+                        {
+                            <span class="govuk-body" style="margin-left: 15px; line-height: 2em;">
+                                <a asp-controller="OrganisationStandards" asp-action="pipelines">Clear filters</a>
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <table id="pipeline" class="govuk-table govuk-table--small responsive striped">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">
-                                @Localizer["Standard"]
-                            </th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">
-                                @Localizer["Apprentices"]
-                            </th>
-                        @if (Model.Response.Items.Any())
-                        {
-                            <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
-                                <a
-                                    class="govuk-link govuk-link--no-visited-state"
-                                    asp-controller="OrganisationStandards"
-                                    asp-action="OrderPipeline"
-                                    asp-route-pageIndex="@(Model.Response.PageIndex)"
-                                    asp-route-orderBy="EstimateDate"
-                                    asp-route-orderDirection="@(Model.OrderDirection)"
-                                >
-                                    @Localizer["Estimated EPA date"]
-                                </a>
-                            </th>
-                        }
-                        else
-                        {
-                            <th class="govuk-table__header govuk-table__header--numeric" aria-sort="@(Model.OrderDirection)">
-                                @Localizer["Estimated Gateway"]
-                            </th>
-                        }
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body" scope="col">
-                    @foreach (var item in Model.Response.Items)
-                    {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["StandardName"]">
-                                @Html.DisplayFor(modelItem => item.StandardName)
-                            </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["Apprenticeds"]">
-                                @Html.DisplayFor(modelItem => item.Pipeline)
-                            </td>
-                            <td class="govuk-table__cell das-no-wrap govuk-table__cell--numeric govuk-!-font-weight-bold" data-label="@Localizer["EstimatedDate"]" data-sort-value="@Localizer["EstimatedDate"]">
-                                @Html.DisplayFor(modelItem => item.EstimatedDate)
-                            </td>
-                        </tr>
+
+                @if (Model.Response.Items.Any())
+                {
+                    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+                        <div class="govuk-grid-column-two-thirds">
+                            <p class="govuk-body"></p>
+                        </div>
+                        <div class="govuk-grid-column-one-third das-text-align-right">
+                            <a asp-controller="OrganisationStandards"
+                               asp-action="ExportEpaPipelineAsCsv"
+                               asp-route-selectedStandard="@Model.SelectedStandard"
+                               asp-route-selectedProvider="@Model.SelectedProvider"
+                               asp-route-selectedEPADate="@Model.SelectedEPADate"
+                               class="govuk-body govuk-link" aria-label="Download data as CSV">
+                                @if (Model.FilterApplied)
+                                {
+                                    <text>Download filtered data (CSV)</text>
+                                }
+                                else
+                                {
+                                    <text>Download all data (CSV)</text>
+                                }
+                            </a>
+                        </div>
+                    </div>
+                    <table id="pipeline" class="govuk-table govuk-table--small responsive" aria-label="Pipeline table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">
+                                    @Localizer["Standard"]
+                                </th>
+                                <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                                    @Localizer["Apprentices"]
+                                </th>
+                                <th class="govuk-table__header govuk-table__header--numeric" scope="col">
+                                    @Localizer["UKPRN"]
+                                </th>
+                                <th class="govuk-table__header" scope="col">
+                                    @Localizer["Training Provider"]
+                                </th>
+                                @if (Model.Response.Items.Any())
+                                {
+                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col" aria-sort="@(Model.OrderDirection)">
+                                        @Localizer["Estimated EPA date"]
+                                    </th>
+                                }
+                                else
+                                {
+                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col" aria-sort="@(Model.OrderDirection)">
+                                        @Localizer["Estimated Gateway"]
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var item in Model.Response.Items)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["StandardName"]">
+                                        @Html.DisplayFor(modelItem => item.StandardName)
+                                        @if (!string.IsNullOrWhiteSpace(item.StandardVersion))
+                                        {
+                                            <br /><text>Version </text>@Html.DisplayFor(modelItem => item.StandardVersion)
+                                        }
+                                    </td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["Apprentices"]">
+                                        @Html.DisplayFor(modelItem => item.Pipeline)
+                                    </td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="@Localizer["UKPRN"]">
+                                        @Html.DisplayFor(modelItem => item.UKPRN)
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="@Localizer["TrainingProvider"]">
+                                        @Html.DisplayFor(modelItem => item.TrainingProvider)
+                                    </td>
+                                    <td class="govuk-table__cell das-no-wrap govuk-table__cell--numeric govuk-!-font-weight-bold" data-label="@Localizer["EstimatedDate"]" data-sort-value="@Localizer["EstimatedDate"]">
+                                        @Html.DisplayFor(modelItem => item.EstimatedDate)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                <p class="govuk-body">
+                    @{
+                        var standardFilterApplied = !string.IsNullOrWhiteSpace(Model.SelectedStandard) && Model.SelectedStandard != "ALL";
+                        var providerFilterApplied = !string.IsNullOrWhiteSpace(Model.SelectedProvider) && Model.SelectedProvider != "ALL";
+                        var epaDateFilterApplied = !string.IsNullOrWhiteSpace(Model.SelectedEPADate) && Model.SelectedEPADate != "ALL";
                     }
-                    </tbody>
-                </table>
+                    0 apprentice records matching
+                    @if (standardFilterApplied)
+                    {
+                        <strong>@Model.StandardFilter.FirstOrDefault(m => m.Id == Model.SelectedStandard)?.Value</strong>
+                    }
+                    @if (providerFilterApplied)
+                    {
+                        if (standardFilterApplied)
+                        {
+                            if (epaDateFilterApplied)
+                            {
+                                <text>,</text>
+                            }
+                            else
+                            {
+                                <text>and</text>
+                            }
+                        }
+                        <strong>@Model.ProviderFilter.FirstOrDefault(m => m.Id == Model.SelectedProvider)?.Value</strong>
+                    }
+                    @if (epaDateFilterApplied)
+                    {
+                        if (standardFilterApplied || providerFilterApplied)
+                        {
+                            <text>and</text>
+                        }
+                        <strong>@Model.EPADateFilter.FirstOrDefault(m => m.Id == Model.SelectedEPADate)?.Value</strong>
+                    }
+                </p>
+                }
             </div>
         </div>
     }
@@ -92,9 +195,10 @@
                 <p class="govuk-body">
                     Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
                 </p>
-                <div class="info-summary">
-                    <h3 class="govuk-heading-m">Your pipeline is empty.</h3>
-                </div>
+				<div class="info-summary">
+					<h3 class="govuk-heading-m">Your pipeline is empty.</h3>
+					<div class="govuk-body">Your pipeline is empty because your organisation does not currently have any apprentices waiting to be assessed.</div>
+				</div>
             </div>
         </div>
     }
@@ -108,9 +212,12 @@
                     @if (Model.Response.HasPreviousPage)
                     {
                         <a asp-action="Pipeline"
-                        asp-controller="OrganisationStandards"
-                        asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
-                        class="govuk-link previous">
+                           asp-controller="OrganisationStandards"
+                           asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
+                           asp-route-selectedStandard="@Model.SelectedStandard"
+                           asp-route-selectedProvider="@Model.SelectedProvider"
+                           asp-route-selectedEPADate="@Model.SelectedEPADate"
+                           class="govuk-link previous">
                             <i class="arrow-button icon-left-open">&#xe800;</i>
                             <span class="description">Previous <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="prevPage">@(Model.Response.PageIndex - 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
@@ -120,9 +227,12 @@
                     @if (Model.Response.HasNextPage)
                     {
                         <a asp-controller="OrganisationStandards"
-                        asp-action="Pipeline"
-                        asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
-                        class="govuk-link next">
+                           asp-action="Pipeline"
+                           asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
+                           asp-route-selectedStandard="@Model.SelectedStandard"
+                           asp-route-selectedProvider="@Model.SelectedProvider"
+                           asp-route-selectedEPADate="@Model.SelectedEPADate"
+                           class="govuk-link next">
                             <i class="arrow-button icon-right-open">&#xe801;</i>
                             <span class="description">Next <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="nextPage">@(Model.Response.PageIndex + 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>

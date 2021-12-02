@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly CharityCommissionApiClient _charityCommissionApiClient;
         private readonly IMediator _mediator;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, RoatpApiClient roatpApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, IRoatpApiClient roatpApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;

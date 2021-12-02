@@ -4,13 +4,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class GetPipelinesCountRequest : IRequest<int>
     {
-        public GetPipelinesCountRequest(string endpointAssessmentOrganisationId, int? standardCode)
+        public GetPipelinesCountRequest(string epaoId, int? standardCode)
         {
-            EndpointAssessmentOrganisationId = endpointAssessmentOrganisationId;
+            EpaoId = epaoId;
             StandardCode = standardCode;
         }
 
-        public string EndpointAssessmentOrganisationId { get; }
+        public string EpaoId { get; }
         public int? StandardCode { get; }
     }
 }

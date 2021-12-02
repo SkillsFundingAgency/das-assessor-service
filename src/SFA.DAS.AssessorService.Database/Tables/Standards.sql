@@ -13,16 +13,25 @@
 	[LastDateStarts] DATETIME NULL,
 	[EffectiveFrom] DATETIME NULL,
 	[EffectiveTo] DATETIME NULL, 
-    [VersionEarliestStartDate] DATETIME NULL, 
-    [VersionLatestStartDate] DATETIME NULL, 
-    [VersionLatestEndDate] DATETIME NULL, 
-    [VersionApprovedForDelivery] DATETIME NULL, 
-    [ProposedTypicalDuration] INT NOT NULL, 
-    [ProposedMaxFunding] INT NOT NULL,
+	[VersionEarliestStartDate] DATETIME NULL, 
+	[VersionLatestStartDate] DATETIME NULL, 
+	[VersionLatestEndDate] DATETIME NULL, 
+	[VersionApprovedForDelivery] DATETIME NULL, 
+	[ProposedTypicalDuration] INT NOT NULL, 
+	[ProposedMaxFunding] INT NOT NULL,
 	[EPAChanged] BIT NOT NULL DEFAULT 0,
 	[StandardPageUrl] VARCHAR(500) NULL, 
-    [TrailBlazerContact] VARCHAR(500) NULL, 
-    [Route] VARCHAR(500) NULL,
+	[TrailBlazerContact] VARCHAR(500) NULL, 
+	[Route] VARCHAR(500) NULL,
 	[VersionMajor] INT NOT NULL DEFAULT 0,
-	[VersionMinor] INT NOT NULL DEFAULT 0
+	[VersionMinor] INT NOT NULL DEFAULT 0,
+	[IntegratedDegree] VARCHAR(500) NULL,
+	[EqaProviderName] VARCHAR(500) NULL,
+	[EqaProviderContactName] VARCHAR(500) NULL,
+	[EqaProviderContactEmail] VARCHAR(500) NULL,
+	[OverviewOfRole] VARCHAR(500)
 )
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Standards_LarsCode_VersionLatestStartDate] ON [Standards] ([LarsCode],[VersionLatestStartDate])
+GO

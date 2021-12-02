@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,18 +10,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 {
     public class GetPipelinesCountHandler : IRequestHandler<GetPipelinesCountRequest, int>
     {
+        private readonly IWebConfiguration _config;
         private readonly ILearnerRepository _learnerRepository;
         private readonly ILogger<GetPipelinesCountHandler> _logger;
+        
 
-        public GetPipelinesCountHandler(ILearnerRepository learnerRepository, ILogger<GetPipelinesCountHandler> logger)
+        public GetPipelinesCountHandler(IWebConfiguration config, ILearnerRepository learnerRepository, ILogger<GetPipelinesCountHandler> logger)
         {
+            _config = config;
             _learnerRepository = learnerRepository;
             _logger = logger;
         }
 
         public async Task<int> Handle(GetPipelinesCountRequest request, CancellationToken cancellationToken)
         {
-            return await _learnerRepository.GetEpaoPipelinesCount(request.EndpointAssessmentOrganisationId, request.StandardCode);
+            _logger.LogDebug($"GetPipelinesCountHandler: EpaoId = {request.EpaoId}, StandardCode = {request.StandardCode}");
+            
+            return await _learnerRepository.GetEpaoPipelinesCount(request.EpaoId, request.StandardCode, _config.PipelineCutoff);
         }
     }
 }

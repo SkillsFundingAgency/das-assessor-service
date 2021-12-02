@@ -2,6 +2,7 @@
 (
     [Ukprn] BIGINT NOT NULL PRIMARY KEY,
     [Name] NVARCHAR(200) NOT NULL,
+    [UpdatedOn] DATETIME NULL
 )
 GO
 

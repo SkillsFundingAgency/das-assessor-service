@@ -6,7 +6,7 @@
 --	c. List of EPAOS by region, Active Learners by Region and Completed Assessments by Region 
 --	   with details of all EPAOs (can be over 30!)
 --
-CREATE PROCEDURE [OppFinder_Update_StandardSummary]
+CREATE PROCEDURE OppFinder_Update_StandardSummary
 AS
 
 SET NOCOUNT ON;
@@ -21,133 +21,215 @@ BEGIN
 	-- there are some specifically excluded Standards
 	DECLARE @Exclusions TABLE
 	(
-		[StandardName] nvarchar(500),
-		[StandardReference] nvarchar(10)
+		StandardName nvarchar(500),
+		StandardReference nvarchar(10)
 	) 
 	
 	INSERT INTO @Exclusions(StandardName, StandardReference)
 	EXEC OppFinder_Exclusions 
 
+	DECLARE @StandardsCore TABLE
+	(
+		 StandardCode INT NULL, 
+		 StandardReference nvarchar(10) NULL,
+		 StandardName nvarchar(500) NOT NULL,
+		 StandardLevel INT NULL,
+		 Duration INT NULL,
+		 Sector nvarchar(500) NOT NULL,
+		 Versions nvarchar(500) NULL
+	);
+
+	INSERT INTO @StandardsCore (StandardCode, StandardReference,StandardName, StandardLevel, Sector, Versions)
+	SELECT StandardCode, stv.StandardReference, stv.StandardName, StandardLevel, Sector, Versions
+	FROM (
+		SELECT st1.LarsCode StandardCode
+			  ,st1.IFateReferenceNumber StandardReference
+			  ,Title StandardName
+			  ,Level StandardLevel
+			  ,Route Sector
+			  ,AllVersions Versions
+			  ,ROW_NUMBER() OVER(PARTITION BY st1.IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) AS RowNumber
+		FROM Standards st1
+		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ', ') WITHIN GROUP (ORDER BY VersionMajor , VersionMinor) AS AllVersions 
+			   FROM Standards 
+			   WHERE VersionApprovedForDelivery IS NOT NULL
+			   GROUP BY IFateReferenceNumber ) sv1 ON sv1.IFateReferenceNumber = st1.IFateReferenceNumber
+		 WHERE 1=1
+		 -- only one version of a Standard should be "Approved for delivery" at any one time, and it should be the latest, but 
+		   AND ISNULL(Status, '') = 'Approved for delivery' 
+		   AND ISNULL(IntegratedDegree, '') <> 'integrated degree'
+		   AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() )
+		   -- When LARS set LastDateStarts to EffectiveFrom Date this is because there is no EPAO for this standard, so we want EPAOs to see the Opportunity!
+		   AND (LastDateStarts IS NULL OR LastDateStarts = EffectiveFrom)
+	) stv 
+	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
+	WHERE RowNumber = 1
+	  AND ex1.StandardName IS NULL;
+
 	BEGIN TRY;
 	
-	DELETE FROM [StandardSummary];
+	DELETE FROM StandardSummary WHERE 1=1;
 	
-	INSERT INTO [StandardSummary]
+	INSERT INTO StandardSummary
 	-- combine results FROM 4 subqueries
-	SELECT StandardCode, Total.StandardReference, Total.StandardName, StandardLevel, Sector, Region, Ordering, SUM(Learners) Learners, SUM(Assessments) Assessments, SUM(TotalEPAOs) TotalEPAOs,SUM(EndPointAssessors) EndPointAssessors, ISNULL(MAX(EndPointAssessorList),'') EndPointAssessorList, GETDATE() UpdatedAt
-	FROM (
+	SELECT ac.StandardCode, ac.StandardReference, ac.StandardName, ac.StandardLevel, ac.Sector, 
+		   Total.Region, Total.Ordering, Total.Learners, Total.Assessments, Total.TotalEPAOs, Total.EndPointAssessors, 
+		   Total.EndPointAssessorList, GETDATE() UpdatedAt, ac.Versions
+	FROM @StandardsCore ac		  
+	JOIN (
 
-	-- Active Learners by Standard and Region
-		SELECT StdCode StandardCode, ReferenceNumber StandardReference, Title StandardName, JSON_VALUE(StandardData, '$.Category') Sector, JSON_VALUE(StandardData,'$.Level') StandardLevel
-				,ISNULL(Area,'Other') Region, ISNULL(Ordering,10) Ordering, Learners, 0 Assessments, 0 TotalEPAOs, 0 EndPointAssessors, NULL EndPointAssessorList
+	SELECT StandardReference, Region, Ordering, SUM(Learners) Learners, SUM(Assessments) Assessments, SUM(TotalEPAOs) TotalEPAOs,SUM(EndPointAssessors) EndPointAssessors, 
+			ISNULL(MAX(EndPointAssessorList),'') EndPointAssessorList
+	FROM (
+		-- Active Learners by Standard and Region and version
+		SELECT ab1.StandardReference
+			  ,ISNULL(Area,'Other') Region, ISNULL(Ordering,10) Ordering, Learners
+			  ,0 Assessments
+			  ,0 TotalEPAOs
+			  ,0 EndPointAssessors
+			  ,NULL EndPointAssessorList
 		FROM (
-			SELECT COUNT(*) Learners,  StdCode, ISNULL(pc1.DeliveryAreaId ,0) DeliveryAreaId 
+			SELECT COUNT(*) Learners,  StandardReference, ISNULL(pc1.DeliveryAreaId ,0) DeliveryAreaId 
 			FROM (
-			-- ILR data that is in the future (has not been completed or withdrawn and does not have a cert)
-				SELECT il1.StdCode, il1.DelLocPostCode
-				FROM Ilrs il1 
-				JOIN (SELECT StandardId, CONVERT(numeric,JSON_VALUE([StandardData],'$.Duration')) Duration 
-						FROM [StandardCollation] 
-						WHERE 1=1 
-						AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
-						AND (
-							JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
-							JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
-							JSON_VALUE(StandardData,'$.LastDateForNewStarts') IS NULL 
-						)
-				) st1 ON st1.StandardId = il1.StdCode
-				LEFT JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = il1.EpaOrgId
-				LEFT JOIN Certificates ce1 ON ce1.StandardCode = il1.StdCode and ce1.Uln = il1.Uln 
+				-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
+				SELECT le1.StandardReference, le1.DelLocPostCode
+				FROM Learner le1 
+				LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
 				WHERE ce1.Uln IS NULL
-				AND il1.CompletionStatus = 1
-				AND (CASE WHEN il1.PlannedEndDate > GETDATE() THEN EOMONTH(il1.PlannedEndDate) ELSE EOMONTH(DATEADD(month, st1.Duration, il1.LearnStartDate)) END) >= DATEADD(month,-3,GETDATE())
+				AND le1.FundingModel != 99
+				AND le1.CompletionStatus = 1
+				AND le1.EstimatedEndDate >= DATEADD(month,-6,GETDATE())
 			) il2
 			LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = dbo.OppFinder_GetPostCodePrefix(DelLocPostCode)
-			GROUP BY StdCode, ISNULL(pc1.DeliveryAreaId ,0) 
+			GROUP BY StandardReference, ISNULL(pc1.DeliveryAreaId ,0) 
 		) ab1
 		LEFT JOIN DeliveryArea de1 on de1.Id = ab1.DeliveryAreaId
-		JOIN StandardCollation sc1 on sc1.StandardId = ab1.StdCode
 
-
-		UNION 
+		UNION ALL
 
 		-- EPAOs by Region
-		SELECT sc1.StandardId StandardCode, sc1.ReferenceNumber StandardReference, sc1.Title 'StandardName',JSON_VALUE(sc1.StandardData, '$.Category') Sector, JSON_VALUE(sc1.StandardData, '$.Level') StandardLevel 
-				,os1.Region, os1.Ordering, 0 Learners, 0 Assessments, os1.TotalEPAOs, os1.EndPointAssessors, os1.EndPointAssessorList
-		FROM StandardCollation sc1
-		JOIN (
-			SELECT os1.StandardCode ,ISNULL(Area,'Other') Region, de1.Ordering, TotalEPAOs, COUNT(*) EndPointAssessors
+		SELECT StandardReference, Region, Ordering
+			  ,0 Learners
+			  ,0 Assessments
+			  ,TotalEPAOs
+			  ,EndPointAssessors
+			  ,EndPointAssessorList
+		FROM (
+
+			SELECT os1.StandardReference ,ISNULL(Area,'Other') Region, de1.Ordering, TotalEPAOs, COUNT(*) EndPointAssessors
 					,'{"EPAOS":['+STRING_AGG (CAST('"'+EndPointAssessorName+'"' as NVARCHAR(MAX)), ',') WITHIN GROUP (ORDER BY EndPointAssessorName ASC)+']}' AS EndPointAssessorList 
 			FROM (
-				SELECT COUNT(*)  OVER (PARTITION BY os2.StandardCode) TotalEPAOs,os2.* 
+				SELECT COUNT(*) OVER (PARTITION BY os2.StandardReference) TotalEPAOs,os2.* 
 				FROM OrganisationStandard os2 
+				JOIN (SELECT DISTINCT OrganisationStandardId 
+						FROM OrganisationStandardVersion 
+					   WHERE status = 'Live' AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() ) 
+					 ) osv ON os2.id = osv.OrganisationStandardId
 				WHERE os2.Status = 'Live' 
-				AND (os2.EffectiveTo IS NULL OR os2.EffectiveTo > GETDATE()) 
+				  AND (os2.EffectiveTo IS NULL OR os2.EffectiveTo > GETDATE() ) 
 			) os1 
 			JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = os1.EndPointAssessorOrganisationId
 			JOIN OrganisationStandardDeliveryArea od1 ON os1.Id = od1.OrganisationStandardId
 			JOIN DeliveryArea de1 on de1.Id = od1.DeliveryAreaId
-			GROUP BY os1.StandardCode ,TotalEPAOs, ISNULL(Area,'Other'), de1.Ordering
-		) os1 ON sc1.StandardId = os1.StandardCode
-		WHERE 1=1 
-		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
-		AND (
-			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
-			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
-			JSON_VALUE(StandardData,'$.LastDateForNewStarts') IS NULL 
-		) 
+			GROUP BY os1.StandardReference ,TotalEPAOs, ISNULL(Area,'Other'), de1.Ordering
 
+		) epaos
 
-		UNION 
+		UNION ALL
 
 		-- All Regions by All Active Standards
-		SELECT sc1.StandardId StandardCode, sc1.ReferenceNumber StandardReference, sc1.Title StandardName,JSON_VALUE(sc1.StandardData, '$.Category') Sector, JSON_VALUE(sc1.StandardData, '$.Level') StandardLevel 
+		SELECT sc1.StandardReference
 				,ISNULL(Area,'Other') Region, de1.Ordering, 0 Learners, 0 Assessments, 0 TotalEPAOs, 0 EndPointAssessors, NULL EndPointAssessorList
-		FROM StandardCollation sc1
+		FROM (SELECT DISTINCT IFateReferenceNumber StandardReference FROM Standards WHERE VersionApprovedForDelivery IS NOT NULL)  sc1
 		CROSS JOIN DeliveryArea de1
-		WHERE 1=1 
-		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
-		AND (
-			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
-			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
-			JSON_VALUE(StandardData,'$.LastDateForNewStarts') IS NULL 
-		)
 
+		UNION ALL
 
-		UNION
-
-	-- Assessments
-		SELECT StandardCode,  ReferenceNumber StandardReference, Title StandardName, JSON_VALUE(StandardData, '$.Category') Sector, JSON_VALUE(StandardData,'$.Level') StandardLevel
+		-- Assessments
+		SELECT od1.StandardReference
 				,ISNULL(Area,'Other') Region, ISNULL(Ordering,10) Ordering, 0 Learners, COUNT(*) Assessments, 0 TotalEPAOs, 0 EndPointAssessors, NULL EndPointAssessorList
 		FROM (
-			SELECT ce1.StandardCode,  ISNULL(ISNULL(il1.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
-			FROM [Certificates] ce1
-			LEFT JOIN Ilrs il1 ON il1.StdCode = ce1.StandardCode AND il1.Uln = ce1.Uln
-			WHERE 1=1
-			AND IsPrivatelyFunded = 0
-			AND ce1.[Status] NOT IN ('Deleted','Draft')
+
+			SELECT JSON_VALUE(ce1.CertificateData,'$.StandardReference') StandardReference,  ISNULL(ISNULL(le1.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
+			  FROM Certificates ce1
+			LEFT JOIN Learner le1 ON le1.StdCode = ce1.StandardCode AND le1.Uln = ce1.Uln
+			WHERE  ce1.Status NOT IN ('Deleted','Draft')
+			  AND IsPrivatelyFunded = 0
+
 		) od1
 		LEFT JOIN PostCodeRegion pc1 on pc1.PostCodePrefix = dbo.OppFinder_GetPostCodePrefix(od1.DelLocPostCode)
 		LEFT JOIN DeliveryArea de1 on de1.Id = pc1.DeliveryAreaId
-		JOIN StandardCollation sc1 On sc1.StandardId = od1.StandardCode
-		WHERE 1=1
-		AND [dbo].[OppFinder_Is_Approved_StandardStatus](StandardData) = 1
-		AND	(
-			JSON_VALUE(StandardData,'$.EffectiveTo') IS NULL OR
-			JSON_VALUE(StandardData,'$.EffectiveTo') > GETDATE() OR
-			JSON_VALUE(StandardData,'$.LastDateForNewStarts') IS NULL 
-		)
-		GROUP BY StandardCode,  ReferenceNumber, Title, JSON_VALUE(StandardData, '$.Category'), JSON_VALUE(StandardData,'$.Level'), ISNULL(Area,'Other'), ISNULL(Ordering,10) 
-
-
-	) Total
-	-- exclude specific standard references
-	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = Total.StandardReference
-	WHERE NOT (Region = 'Other' AND Learners = 0)
-	AND ex1.StandardName IS NULL
-	GROUP BY StandardCode, Total.StandardReference, Total.StandardName, Sector, StandardLevel, Region,Ordering 
-	ORDER BY StandardCode, Ordering;
+		GROUP BY od1.StandardReference, ISNULL(Area,'Other'), ISNULL(Ordering,10) 
+	) ab1
+	WHERE NOT (Region = 'Other' AND Learners = 0 AND Assessments = 0)
+	GROUP BY StandardReference, Region, Ordering
+	) Total On Total.StandardReference = ac.StandardReference
+	ORDER BY StandardReference, Ordering
 	
+	
+	-- populate the StandardVersionSummary table
+	DELETE FROM StandardVersionSummary WHERE 1=1;
+	
+	INSERT INTO StandardVersionSummary
+	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
+	SELECT st1.Larscode StandardCode
+		,st1.IfateReferenceNumber StandardReference
+		,st1.Version
+		,ActiveApprentices
+		,CompletedAssessments
+		,EndPointAssessors
+		,GETDATE() UpdatedAt
+	FROM Standards st1 
+	JOIN @StandardsCore ac ON ac.StandardReference = st1.IfateReferenceNumber
+	JOIN (
+		SELECT StandardUId
+			  ,MAX(ActiveApprentices) ActiveApprentices
+			  ,MAX(CompletedAssessments) CompletedAssessments
+			  ,MAX(EndPointAssessors) EndPointAssessors
+		FROM (	
+			-- EPAOs 
+			SELECT osv.StandardUId, COUNT(DISTINCT EndPointAssessorOrganisationId) AS EndPointAssessors, 0 CompletedAssessments, 0 ActiveApprentices
+			FROM OrganisationStandardVersion osv
+			INNER JOIN OrganisationStandard os ON osv.OrganisationStandardId = os.Id
+			WHERE os.Status = 'Live' 
+			  AND osv.Status = 'Live'
+			  AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE()) 
+			  AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())
+			GROUP BY osv.StandardUId
+
+			UNION ALL
+			
+			-- Assessments
+			SELECT StandardUId, 0 EndPointAssessors, COUNT(*) AS CompletedAssessments, 0 ActiveApprentices
+			FROM Certificates 
+			WHERE IsPrivatelyFunded = 0
+			  AND Status NOT IN ('Deleted','Draft')
+			GROUP BY StandardUId
+			
+			UNION ALL
+
+			-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
+			SELECT le1.StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, COUNT(*) AS ActiveApprentices
+			FROM Learner le1
+			LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
+			WHERE ce1.Uln IS NULL
+			  AND le1.FundingModel != 99
+			  AND le1.CompletionStatus = 1
+			  AND le1.EstimatedEndDate >= DATEADD(month,-6,GETDATE())
+			GROUP BY le1.StandardUId
+
+			UNION ALL
+
+			-- all versions of all standards
+			SELECT StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, 0 AS ActiveApprentices
+			FROM Standards
+			WHERE VersionApprovedForDelivery IS NOT NULL 
+		
+		) ct1 GROUP BY StandardUid
+		
+	) vt1 ON vt1.StandardUId = st1.StandardUId
+	
+  
 	END TRY
 	BEGIN CATCH;
 		-- Some basic error handling

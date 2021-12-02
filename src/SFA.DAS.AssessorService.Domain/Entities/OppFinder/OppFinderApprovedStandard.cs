@@ -7,5 +7,6 @@
         public string StandardReference { get; set; }
         public int ActiveApprentices { get; set; }
         public int RegisteredEPAOs { get; set; }
+        public string Versions { get; set; }
     }
 }

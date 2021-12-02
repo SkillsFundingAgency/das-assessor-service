@@ -6,15 +6,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Api.Types.Models.ProviderRegister;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
@@ -24,18 +20,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILearnerRepository _learnerRepository;
-        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly IProvidersRepository _providersRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
         private readonly int PrivateFundingModelNumber = 99;
 
-        public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IRoatpApiClient roatpApiClient,
+        public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IProvidersRepository providersRepository,
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
         {
             _certificateRepository = certificateRepository;
             _learnerRepository = learnerRepository;
-            _roatpApiClient = roatpApiClient;
+            _providersRepository = providersRepository;
             _organisationQueryRepository = organisationQueryRepository;
             _logger = logger;
             _standardService = standardService;
@@ -132,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certData.LearnerFamilyName = learner.FamilyName;
             certData.LearningStartDate = learner.LearnStartDate;
             certData.FullName = $"{learner.GivenNames} {learner.FamilyName}";
-            certData.ProviderName = provider.ProviderName;
+            certData.ProviderName = provider.Name;
                         
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;
@@ -180,40 +176,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
         {
-            Provider provider;
-            OrganisationSearchResult searchResult = null;
-            try
-            {
-                searchResult = await _roatpApiClient.GetOrganisationByUkprn(ukprn);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Unable to get Provider from AssessmentOrgsApi. Ukprn: {ukprn}");
-            }
-
-            if (searchResult is null)
-            {
-                // see if we can get it from Organisation Table
-                var org = await _organisationQueryRepository.GetByUkPrn(ukprn);
-
-                if (org != null)
-                {
-                    provider = new Provider { ProviderName = org.EndPointAssessorName, Ukprn = ukprn };
-                }
-                else
-                {
-                    // see whether there are any previous certificates with this ukrpn and a ProviderName....
-                    var previousProviderName = await _certificateRepository.GetPreviousProviderName(ukprn);
-                    provider = new Provider { ProviderName = previousProviderName ?? "Unknown", Ukprn = ukprn };
-                }
-            }
-            else
-            {
-                provider = new Provider { ProviderName = searchResult.ProviderName, Ukprn = ukprn };
-            }
-
-            return provider;
+            return await _providersRepository.GetProvider(ukprn);
         }
     }
-
 }

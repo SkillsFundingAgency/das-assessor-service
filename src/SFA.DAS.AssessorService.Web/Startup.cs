@@ -167,6 +167,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
+                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);

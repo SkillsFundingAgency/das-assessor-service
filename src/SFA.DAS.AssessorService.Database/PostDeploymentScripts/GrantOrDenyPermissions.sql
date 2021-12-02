@@ -11,6 +11,9 @@ GO
 GRANT ALTER ON [dbo].[Ilrs] TO [database_maintenance] AS [dbo]
 GO
 
+GRANT ALTER ON [dbo].[Learner] TO [database_maintenance] AS [dbo]
+GO
+
 GRANT EXECUTE ON [dbo].[DatabaseMaintenance] TO [database_maintenance] AS [dbo]
 GO
 

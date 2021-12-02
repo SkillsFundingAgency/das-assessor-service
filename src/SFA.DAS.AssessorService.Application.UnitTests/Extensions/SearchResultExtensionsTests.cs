@@ -70,9 +70,25 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [Test]
         public void When_MatchingExistingCompletedStandard_And_ResultFoundByCertificate_Then_AddCertificateToSearchResults()
         {
-            MatchUpExistingCompletedStandards();
+            MatchUpExistingCompletedStandards("LearnerFamilyName", new int[] { 27 });
 
             _searchResults.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void When_MatchingExistingCompletedStandard_And_ResultFoundByCertificate_But_CertifcateName_Does_Not_Match_NotFound()
+        {
+            MatchUpExistingCompletedStandards("UnknownFamilyName", new int[] { 27 });
+
+            _searchResults.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void When_MatchingExistingCompletedStandard_And_ResultFoundByCertificate_But_StandardNotApproved_NotFound()
+        {
+            MatchUpExistingCompletedStandards("LearnerFamilyName", new int[] { 19 });
+
+            _searchResults.Count.Should().Be(0);
         }
 
         [Test]
@@ -82,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 
             var certificate = _certificates.FirstOrDefault(c => c.Uln == _searchResults.First().Uln);
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            
+
             // Rework such that certificate data is populatedwhen it's a fail for option and version
             certificateData.OverallGrade = CertificateGrade.Fail;
             certificate.Status = CertificateStatus.Submitted;
@@ -156,9 +172,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             VerifyExtraInformationHasNotBeenAdded();
         }
 
-        private void MatchUpExistingCompletedStandards()
+        private void MatchUpExistingCompletedStandards(string likedSurame = null, IEnumerable<int> approvedStandards = null)
         {
-            _searchResults.MatchUpExistingCompletedStandards(_searchQuery,
+            _searchResults.MatchUpExistingCompletedStandards(_searchQuery, likedSurame, approvedStandards,
                             _mockCertificateRepository.Object,
                             _mockContactQueryRepository.Object,
                             _mockOrganisationQueryRepository.Object,
@@ -215,10 +231,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 
         private void SetUpCertificateAndLogEntries(bool includeSubmitted = false, bool createByApi = false)
         {
-            _certificateData = Builder<CertificateData>.CreateNew().Build();
+            _certificateData = Builder<CertificateData>.CreateNew()
+                .With(x => x.LearnerFamilyName = "LearnerFamilyName")
+                .Build();
 
             _certificate = Builder<Certificate>.CreateNew()
                 .With(x => x.CertificateData = JsonConvert.SerializeObject(_certificateData))
+                .With(x => x.StandardCode = 27)
                 .With(r => r.Uln = 1111111111)
                 .With(x => x.CreatedBy = createByApi ? "API" : "username@epao.co.uk")
             .Build();
@@ -235,7 +254,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                     .With(x => x.EventTime = DateTime.UtcNow.AddDays(-1))
                     .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
                 .Build().ToList();
-             
+
             if (includeSubmitted)
             {
                 certificateLogEntries.Add(Builder<CertificateLog>.CreateNew()
@@ -253,7 +272,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         {
             _searchingContact = Builder<Contact>.CreateNew()
                 .With(c => c.OrganisationId = _searchingOrganisation.Id).Build();
-            
+
             _mockContactQueryRepository.Setup(r => r.GetContact(It.IsAny<string>()))
                 .ReturnsAsync(_searchingContact);
         }

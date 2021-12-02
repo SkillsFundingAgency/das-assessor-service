@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
         [JsonRequired] public string FeedbackUrl { get; set; }
         [JsonRequired] public string ReferenceFormat { get; set; }
+        [JsonRequired] public int PipelineCutoff { get; set; }
 
         #region For External API Sandbox
         [JsonRequired] public string SandboxSqlConnectionString { get; set; }

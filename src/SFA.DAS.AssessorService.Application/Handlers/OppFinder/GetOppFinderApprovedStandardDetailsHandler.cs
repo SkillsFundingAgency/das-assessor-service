@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -25,33 +26,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<GetOppFinderApprovedStandardDetailsResponse> Handle(GetOppFinderApprovedStandardDetailsRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Retreiving approved standard details: {(request.StandardCode.HasValue ? request.StandardCode.ToString() : request.StandardReference)}");
+            _logger.LogInformation($"Retrieving approved standard details: {request.StandardReference}");
 
-            var result = await _oppFinderRepository.GetOppFinderApprovedStandardDetails(request.StandardCode, request.StandardReference);
+            var result = await _oppFinderRepository.GetOppFinderApprovedStandardDetails(request.StandardReference);
 
             if (result.OverviewResult == null)
                 return null;
 
-            string eqaProvider, eqaProviderLink = string.Empty;
+            string eqaProvider;
 
             if (await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactEmail }))
             {
                 eqaProvider = result.OverviewResult?.EqaProviderContactEmail;
-                eqaProviderLink = $"mailto:{result.OverviewResult?.EqaProviderContactEmail}";
             }
             else if (await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactName }))
             {
                 eqaProvider = result.OverviewResult?.EqaProviderContactName;
-                eqaProviderLink = $"mailto:{result.OverviewResult?.EqaProviderContactName}";
             }
             else
             {
                 eqaProvider = result.OverviewResult?.EqaProviderName;
-
-                if (await _mediator.Send(new ValidationRequest { Type = "websitelink", Value = result.OverviewResult?.EqaProviderWebLink }))
-                {
-                    eqaProviderLink = result.OverviewResult?.EqaProviderWebLink;
-                }
             }
 
             var approvedForDeliveryValidDate = DateTime
@@ -79,7 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 Trailblazer = result.OverviewResult?.Trailblazer,
                 StandardPageUrl = result.OverviewResult?.StandardPageUrl,
                 EqaProvider = eqaProvider,
-                EqaProviderLink = eqaProviderLink,
                 RegionResults = result.RegionResults?.ConvertAll(p => new OppFinderApprovedStandardDetailsRegionResult
                 {
                     Region = p.Region,
@@ -87,6 +80,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                         .TrimStart(new char[] { '[', '"' })
                         .TrimEnd(new char[] { ']', '"' })
                         .Split(new string[] { "\",\"" }, StringSplitOptions.None),
+                    EndPointAssessors = p.EndPointAssessors,
+                    ActiveApprentices = p.ActiveApprentices,
+                    CompletedAssessments = p.CompletedAssessments
+                }),
+                VersionResults = result.VersionResults?.ConvertAll(p => new OppFinderApprovedStandardDetailsVersionResult
+                {
+                    Version = p.Version,
                     EndPointAssessors = p.EndPointAssessors,
                     ActiveApprentices = p.ActiveApprentices,
                     CompletedAssessments = p.CompletedAssessments

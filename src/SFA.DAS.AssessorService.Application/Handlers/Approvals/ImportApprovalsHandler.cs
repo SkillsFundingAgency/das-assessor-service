@@ -89,6 +89,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                 var learnerCount = await _approvalsExtractRepository.PopulateLearner();
                 _logger.LogInformation($"Finished Running Populate Learner");
 
+                // 7. Update providers cache
+
+                await _approvalsExtractRepository.InsertProvidersFromApprovalsExtract();
+
                 _logger.LogInformation($"Approvals import completed successfully. {count} record(s) read from outer api, {learnerCount} records inserted to Learner table.");
             }
             catch (Exception ex)

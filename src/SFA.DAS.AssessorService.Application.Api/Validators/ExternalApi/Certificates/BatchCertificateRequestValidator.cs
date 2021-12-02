@@ -41,11 +41,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         var standardOptions = await standardService.GetStandardOptionsByStandardId(standard.StandardUId);
                         var noOptions = standardOptions == null || !standardOptions.HasOptions();
                         var hasOptions = standardOptions != null && standardOptions.HasOptions();
+                        var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);
+                        var courseOption = m.CertificateData?.CourseOption;
+                        if(null != requestedLearner && !string.IsNullOrWhiteSpace(requestedLearner.CourseOption))
+                        {
+                            courseOption = requestedLearner.CourseOption;
+                        }
                         if (noOptions && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
                         {
                             context.AddFailure(new ValidationFailure("CourseOption", $"No course option available for this Standard and version. Must be empty"));
                         }
-                        else if (hasOptions && !standardOptions.CourseOption.Any(o => o.Equals(m.CertificateData?.CourseOption, StringComparison.InvariantCultureIgnoreCase)))
+                        else if (hasOptions && !standardOptions.CourseOption.Any(o => o.Equals(courseOption, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             string courseOptionsString = string.Join(", ", standardOptions.CourseOption);
                             context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard and version. Must be one of the following: {courseOptionsString} where {courseOptionsString} depends on the standard code, and can be obtained with GET /api/v1/standard/options/{standard.LarsCode}/{standard.Version}"));

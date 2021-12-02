@@ -11,5 +11,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<GetStandardsListItem>> GetActiveStandards();
         Task<IEnumerable<GetStandardsListItem>> GetDraftStandards();
         Task<GetAllLearnersResponse> GetAllLearners(DateTime? sinceTime, int batchNumber, int batchSize);
+        Task<GetAddressesResponse> GetAddresses(string query);
     }
 }

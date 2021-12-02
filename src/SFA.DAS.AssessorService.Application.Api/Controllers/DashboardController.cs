@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetEpaoDashboard(string epaoId)
         {
             _logger.LogInformation($"Received request to retrieve Dashboard for EPAO: {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoDashboardRequest { EndPointAssessorOrganisationId = epaoId }));
+            return Ok(await _mediator.Send(new GetEpaoDashboardRequest { EpaoId = epaoId }));
         }
     }
 }
