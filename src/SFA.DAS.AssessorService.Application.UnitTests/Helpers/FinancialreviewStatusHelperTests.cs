@@ -8,10 +8,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
 {
     public class FinancialreviewStatusHelperTests
     {
-        // Hard coded dates instead of relative to Now() because tests need to be discoverable by TestRunner at build time.
-        // See: https://github.com/nunit/nunit3-vs-adapter/issues/734
-        private static DateTime? pastDate = new DateTime(2020, 01, 01);
-        private static DateTime? futureDate = new DateTime(2999, 01, 01);
+        private static DateTime? pastDate = DateTime.Now.AddYears(-1);
+        private static DateTime? futureDate = DateTime.Now.AddYears(1);
 
         public class FinancialExemptionCases
         {
