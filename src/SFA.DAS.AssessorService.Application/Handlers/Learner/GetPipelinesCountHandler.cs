@@ -24,7 +24,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         public async Task<int> Handle(GetPipelinesCountRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"GetPipelinesCountHandler: EpaoId = {request.EpaoId}, StandardCode = {request.StandardCode}");
+            if (request.StandardCode.HasValue)
+            {
+                _logger.LogDebug($"GetPipelinesCountHandler: EpaoId = {request.EpaoId}, StandardCode = {request.StandardCode}");
+            }
+            else
+            {
+                _logger.LogDebug($"GetPipelinesCountHandler: EpaoId = {request.EpaoId}");
+            }
             
             return await _learnerRepository.GetEpaoPipelinesCount(request.EpaoId, request.StandardCode, _config.PipelineCutoff);
         }

@@ -29,12 +29,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetLearnerDetailRequest(stdCode, uln, allLogs)));
         }
 
-
-        [HttpGet("pipelines-count/{epaOrgId}/{stdCode?}", Name = "GetPipelinesCount")]
+        [HttpGet("pipelines-count/{epaOrgId}", Name = "GetPipelinesCount")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetPipelinesCount(string epaOrgId, int? stdCode = null)
+        public async Task<IActionResult> GetPipelinesCount(string epaOrgId)
+        {
+            return Ok(await _mediator.Send(new GetPipelinesCountRequest(epaOrgId, null)));
+        }
+
+        [HttpGet("pipelines-count/{epaOrgId}/{stdCode}", Name = "GetPipelinesCount")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetPipelinesCountForStandard(string epaOrgId, int? stdCode = null)
         {
             return Ok(await _mediator.Send(new GetPipelinesCountRequest(epaOrgId, stdCode)));
         }
