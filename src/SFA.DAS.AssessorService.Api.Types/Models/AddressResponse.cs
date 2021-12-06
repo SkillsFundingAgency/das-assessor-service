@@ -1,7 +1,11 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models
+﻿using System.Linq;
+
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class AddressResponse
     {
+        private const string NoResultsFoundText = "No results found";
+
         public string Uprn { get; set; }
         public string Organisation { get; set; }
         public string Premises { get; set; }
@@ -17,12 +21,15 @@
         public double? Latitude { get; set; }
         public double? Match { get; set; }
 
-        public string Text => 
-            $"{Organisation}{(string.IsNullOrWhiteSpace(Organisation) ? "" : ", ")}" +
-            $"{AddressLine1}, " +
-            $"{AddressLine2}{(string.IsNullOrWhiteSpace(AddressLine2) ? "" : ", ")}" +
-            $"{AddressLine3}{(string.IsNullOrWhiteSpace(AddressLine3) ? "" : ", ")}" +
-            $"{Town}{(string.IsNullOrWhiteSpace(Town) ? "" : ", ")}" +
-            $"{Postcode}";
+        public string Text
+        {
+            get
+            {
+                string[] addressParts = new string[] { Organisation, AddressLine1, AddressLine2, AddressLine3, Town, Postcode };
+                return string.Join(", ", addressParts.Where(p => !string.IsNullOrWhiteSpace(p)));
+            }
+        }
+
+        public static AddressResponse NoResultsFound => new AddressResponse { Town = NoResultsFoundText };
     }
 }

@@ -104,7 +104,7 @@
     <Content Update="Views\Account\_AccountScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Certificate\AddressSummary.cshtml">
+    <Content Update="Views\Certificate\ConfirmAddress.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>
@@ -130,6 +130,9 @@
     <EmbeddedResource Update="Resources\Validators\CertificateCheckViewModelValidator.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CertificateCheckViewModelValidator.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\CertificateSendToViewModelValidator.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateVersionViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -180,7 +183,11 @@
     <EmbeddedResource Update="Resources\Validators\SearchQueryViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
+    <EmbeddedResource Update="Resources\Views\Certificate\ConfirmAddress.en.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\SendTo.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Version.en.resx">
@@ -219,7 +226,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Declaration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Declaration - Copy.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Check.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>

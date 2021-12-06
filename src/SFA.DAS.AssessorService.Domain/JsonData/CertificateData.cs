@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData
@@ -12,6 +14,10 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
         public DateTime? StandardPublicationDate { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CertificateSendTo SendTo { get; set; }
+        
         public string ContactName { get; set; }
         public string ContactOrganisation { get; set; }
         public string ContactAddLine1 { get; set; }
@@ -48,5 +54,23 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string EpaOutcome { get; set; }
         public bool? Resit { get; set; }
         public bool? Retake { get; set; }
+    }
+
+    public enum CertificateSendTo
+    {
+        None,
+        Apprentice,
+        Employer
+    }
+
+    public class CertificateSendToEnumConverter : StringEnumConverter
+    {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (string.IsNullOrEmpty(reader.Value.ToString()))
+                return CertificateSendTo.None;
+
+            return base.ReadJson(reader, objectType, existingValue, serializer);
+        }
     }
 }

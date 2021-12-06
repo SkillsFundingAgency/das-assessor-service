@@ -29,8 +29,12 @@ namespace SFA.DAS.AssessorService.Web.Validators
                     .WithMessage(localizer["CityCannotBeEmpty"]);
                 RuleFor(vm => vm.AddressLine1).NotEmpty()
                     .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
-                RuleFor(vm => vm.Name).NotEmpty()
-                    .WithMessage(localizer["NameCannotBeEmpty"]);
+
+                When(vm => vm.SendTo == Domain.JsonData.CertificateSendTo.Employer, () =>
+                {
+                    RuleFor(vm => vm.Name).NotEmpty()
+                        .WithMessage(localizer["NameCannotBeEmpty"]);
+                });
                 
                 When(vm => vm.SelectedGrade != null, () =>
                 {

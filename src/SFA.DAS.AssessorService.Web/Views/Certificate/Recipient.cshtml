@@ -20,7 +20,7 @@ else
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
    
-            <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateRecipient">
+            <form class="js-disable-on-submit" method="post" asp-controller="CertificateRecipient">
                 @Html.HiddenFor(c => c.Id)
 
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
@@ -79,8 +79,3 @@ else
         </div>
     </div>
 </main>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
-}

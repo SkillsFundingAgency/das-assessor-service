@@ -6,6 +6,7 @@ using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using System.Linq;
@@ -163,6 +164,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         [TestCase(CertificateGrade.Distinction)]
         public void When_SelectedGradeIsPass_And_AddressInformationIsNotGiven_Then_ValidatorReturnsInvalid(string certificateGrade)
         {
+            _viewModel.SendTo = CertificateSendTo.Employer;
             _viewModel.SelectedGrade = certificateGrade;
             _viewModel.Name = null;
             _viewModel.AddressLine1 = null;

@@ -5,8 +5,9 @@
         public const string Start = "Start";
         public const string Restart = "Restart";
         public const string Address = "Address";
-        public const string AddressSummary = "AddressSummary";
+        public const string ConfirmAddress = "ConfirmAddress";
         public const string Date = "Date";
+        public const string SendTo = "SendTo";
         public const string FirstName = "FirstName";
         public const string LastName = "LastName";
         public const string LearnerStartDate = "LearnerStartDate";
