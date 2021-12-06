@@ -6,6 +6,7 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -27,12 +28,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateReference = "00010001",
                         StandardCode = 12,
                         CertificateData =
-                            JsonConvert.SerializeObject(new CertificateData {OverallGrade = "Distinction"})
+                            JsonConvert.SerializeObject(new CertificateData {OverallGrade = "Distinction"}),
+                        CertificateLogs = GetCertificateLogs()
                     }
                 });
 
             CertificateRepository.Setup(r => r.GetCertificateLogsFor(It.IsAny<Guid>()))
-                .ReturnsAsync(new List<CertificateLog>());
+                .ReturnsAsync(GetCertificateLogs());
 
             LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
                 .ReturnsAsync(new List<Domain.Entities.Learner> {new Domain.Entities.Learner() {StdCode = 12, FamilyName = "Lamora"}});
@@ -48,6 +50,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new CancellationToken()).Result;
             result.Count.Should().Be(1);
             result[0].CertificateReference.Should().Be("00010001");
+        }
+
+        private List<CertificateLog> GetCertificateLogs()
+        {
+            return new List<CertificateLog>
+            {
+                new CertificateLog
+                {
+                    CertificateData = JsonConvert.SerializeObject(new CertificateData
+                    {
+                        OverallGrade = "Distinction",
+                        AchievementDate = DateTime.UtcNow.AddDays(-2)
+                    }),
+                    Action = CertificateActions.Submit,
+                    EventTime = DateTime.UtcNow.AddDays(-1)
+                }
+            };
         }
     }
 }

@@ -258,6 +258,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             if (includeSubmitted)
             {
                 certificateLogEntries.Add(Builder<CertificateLog>.CreateNew()
+                    .With(x => x.CertificateData = JsonConvert.SerializeObject(_certificate))
                     .With(x => x.Status = CertificateStatus.Submitted)
                     .With(x => x.Action = CertificateActions.Submit)
                     .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
