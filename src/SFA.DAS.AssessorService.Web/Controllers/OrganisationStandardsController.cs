@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards;
 
@@ -47,24 +49,36 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-            var epaoRegisteredStandardsResponse =
-                new PaginatedList<GetEpaoRegisteredStandardsResponse>(new List<GetEpaoRegisteredStandardsResponse>(), 0,
-                    1, 1);
+            var model = new ApprovedStandardsWithVersionsViewModel();
+            
             try
             {
                 var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
-                    epaoRegisteredStandardsResponse =
+                {
+                    model.ApprovedStandardsWithVersions =
                         await _standardsApiClient.GetEpaoRegisteredStandards(
                             organisation.OrganisationId, pageIndex ?? 1, 10);
+
+                    var financialAssessmentExempt = !string.IsNullOrWhiteSpace(organisation.FinancialReviewStatus) && (organisation.FinancialReviewStatus == ApplyTypes.FinancialReviewStatus.Exempt);
+                    if (!financialAssessmentExempt)
+                    {
+                        var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
+                        if (null != financialDueDate && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
+                        {
+                            model.FinancialInfoStage1Expired = true;
+                            model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
+                        }
+                    }
+                }
             }
             catch (EntityNotFoundException)
             {
                 return RedirectToAction("NotRegistered", "Home");
             }
 
-            return View("Index", epaoRegisteredStandardsResponse);
+            return View("Index", model);
         }
 
         [HttpGet]
