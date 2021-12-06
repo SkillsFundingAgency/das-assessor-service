@@ -111,15 +111,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 foreach (var searchResult in searchResults)
                 {
-
                     var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode);
-
-                    var hasPreviousSubmission = certificate.CertificateLogs.Any(l => l.Action == CertificateActions.Submit);
-
-                    if (certificate != null && hasPreviousSubmission)
+                    
+                    if (certificate != null)
                     {
-                        searchResult.PopulateCertificateBasicInformation(certificate);
-                        searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+                        var hasPreviousSubmission = certificate.CertificateLogs.Any(l => l.Action == CertificateActions.Submit);
+
+                        if (hasPreviousSubmission)
+                        {
+                            searchResult.PopulateCertificateBasicInformation(certificate);
+                            searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, contactRepository, certificate, searchingEpao, logger);
+                        }
                     }
                 }
             }
@@ -150,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     };
 
                     searchResult.PopulateCertificateBasicInformation(certificate);
-                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, contactRepository, certificate, searchingEpao, logger);
 
                     searchResults.Add(searchResult);
                 }
@@ -187,16 +189,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         }
 
         public static SearchResult PopulateCertificateExtraInformationDependingOnPermission(this SearchResult searchResult,
-            SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository,
+            SearchQuery request, IContactQueryRepository contactRepository,
             Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
         {
-            var certificateLogs = certificate.CertificateLogs;
 
-            logger.LogInformation($"MatchUpExistingCompletedStandards After GetCertificateLogsFor CertificateId {certificate.Id}");
-            
-            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+            var createdLogEntry = certificate.CertificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
 
-            var submittedLogEntry = certificateLogs.Where(l => l.Action == CertificateActions.Submit)
+            var submittedLogEntry = certificate.CertificateLogs.Where(l => l.Action == CertificateActions.Submit)
                 .OrderByDescending(l => l.EventTime)
                 .FirstOrDefault();
 
@@ -208,7 +207,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
             var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
 
-            var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
+            var lastUpdatedLogEntry = certificate.CertificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
             var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
 
             logger.LogInformation($"MatchUpExistingCompletedStandards After GetContact for CertificateId {certificate.Id}");
