@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
@@ -48,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return await SaveViewModel(vm,
                     returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
-                    nextAction: RedirectToAction("ConfirmAddress"),
+                    nextAction: RedirectToAction("ConfirmAddress", "CertificateAddress"),
                     action: CertificateActions.Address);
             }
             else
