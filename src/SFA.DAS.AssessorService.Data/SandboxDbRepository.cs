@@ -272,7 +272,7 @@ namespace SFA.DAS.AssessorService.Data
             return new SqlConnection
             {
                 ConnectionString = sqlConnectionString,
-                //AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
+                AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
             };
         }
     }
