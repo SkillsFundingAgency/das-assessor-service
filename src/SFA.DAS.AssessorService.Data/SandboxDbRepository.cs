@@ -75,6 +75,10 @@ namespace SFA.DAS.AssessorService.Data
         {
             _logger.LogInformation("Step 0: Tear Down Database");
 
+            // repopulated in Step 7
+            transaction.Connection.Execute(
+                @"  DELETE FROM Learner;", transaction: transaction);
+
             // repopulated in Step 6
             transaction.Connection.Execute(
                 @"  DELETE FROM CertificateLogs;
