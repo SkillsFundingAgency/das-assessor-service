@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data
                         Step4_OrganisationStandard_Data(transaction);
                         Step5_Obfuscate_Personal_Data(transaction);
                         Step6_Generate_Test_Data(transaction);
+                        Step7_GenerateLearner(transaction);
 
                         transaction.Commit();
                     }
@@ -212,6 +213,15 @@ namespace SFA.DAS.AssessorService.Data
             _logger.LogInformation("Step 6: Completed");
         }
 
+        private void Step7_GenerateLearner(SqlTransaction transaction)
+        {
+            _logger.LogInformation("Step 7: Populating learner data");
+
+            transaction.Connection.Execute("EXEC PopulateLearner", transaction: transaction);
+
+            _logger.LogInformation("Step 7: Completed");
+        }
+
         private void BulkCopyData(SqlTransaction transaction, List<string> tablesToCopy)
         {
             // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlbulkcopy
@@ -258,7 +268,7 @@ namespace SFA.DAS.AssessorService.Data
             return new SqlConnection
             {
                 ConnectionString = sqlConnectionString,
-                AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
+                //AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
             };
         }
     }
