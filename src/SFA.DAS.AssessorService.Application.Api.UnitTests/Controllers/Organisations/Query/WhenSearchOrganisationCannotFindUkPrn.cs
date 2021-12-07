@@ -16,8 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         [SetUp]
         public void Arrange()
         {
-
-
             Setup();
 
             _organisation = Builder<Organisation>.CreateNew().Build();
