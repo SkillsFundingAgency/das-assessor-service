@@ -240,6 +240,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var statuses = new[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
             return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
+                .Include(c => c.CertificateLogs)
                 .ToListAsync();
         }
 

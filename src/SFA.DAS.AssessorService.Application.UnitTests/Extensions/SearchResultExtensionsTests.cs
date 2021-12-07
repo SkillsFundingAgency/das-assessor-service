@@ -185,11 +185,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         {
             if (correctOrganisation)
             {
-                _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockCertificateRepository.Object, _mockContactQueryRepository.Object, _certificate, _searchingOrganisation, Mock.Of<ILogger<SearchHandler>>());
+                _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockContactQueryRepository.Object, _certificate, _searchingOrganisation, Mock.Of<ILogger<SearchHandler>>());
             }
             else
             {
-                _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockCertificateRepository.Object, _mockContactQueryRepository.Object, _certificate, new Organisation(), Mock.Of<ILogger<SearchHandler>>());
+                _searchResult.PopulateCertificateExtraInformationDependingOnPermission(_searchQuery, _mockContactQueryRepository.Object, _certificate, new Organisation(), Mock.Of<ILogger<SearchHandler>>());
 
             }
         }
@@ -242,30 +242,30 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                 .With(x => x.CreatedBy = createByApi ? "API" : "username@epao.co.uk")
             .Build();
 
-            _certificates = new List<Certificate> { _certificate };
-
-            _mockCertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(_searchQuery.Uln))
-                .ReturnsAsync(_certificates);
-
             var certificateLogEntries = Builder<CertificateLog>.CreateListOfSize(1)
-                .All()
-                    .With(x => x.CertificateId = _certificate.Id)
-                    .With(x => x.Status = CertificateStatus.Draft)
-                    .With(x => x.EventTime = DateTime.UtcNow.AddDays(-1))
-                    .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
-                .Build().ToList();
+               .All()
+                   .With(x => x.CertificateId = _certificate.Id)
+                   .With(x => x.Status = CertificateStatus.Draft)
+                   .With(x => x.EventTime = DateTime.UtcNow.AddDays(-1))
+                   .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
+               .Build().ToList();
 
             if (includeSubmitted)
             {
                 certificateLogEntries.Add(Builder<CertificateLog>.CreateNew()
+                    .With(x => x.CertificateData = JsonConvert.SerializeObject(_certificate))
                     .With(x => x.Status = CertificateStatus.Submitted)
                     .With(x => x.Action = CertificateActions.Submit)
                     .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")
                     .With(x => x.EventTime = DateTime.UtcNow).Build());
             }
 
-            _mockCertificateRepository.Setup(r => r.GetCertificateLogsFor(_certificate.Id))
-                .ReturnsAsync(certificateLogEntries);
+            _certificate.CertificateLogs = certificateLogEntries;
+
+            _certificates = new List<Certificate> { _certificate };
+
+            _mockCertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(_searchQuery.Uln))
+                .ReturnsAsync(_certificates);
         }
 
         private void SetUpContactQuery()
