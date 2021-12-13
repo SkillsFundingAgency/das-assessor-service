@@ -93,12 +93,14 @@ namespace SFA.DAS.AssessorService.Data
             dataTable.Columns.Add("UKPRN");
             dataTable.Columns.Add("LearnRefNumber");
             dataTable.Columns.Add("PaymentStatus");
+            dataTable.Columns.Add("EmployerAccountId");
+            dataTable.Columns.Add("EmployerName");
 
             foreach (var ae in approvalsExtract)
             {
                 dataTable.Rows.Add(ae.ApprenticeshipId, ae.FirstName, ae.LastName, ae.ULN, ae.TrainingCode, ae.TrainingCourseVersion, ae.TrainingCourseVersionConfirmed,
                     ae.TrainingCourseOption, ae.StandardUId, ae.StartDate, ae.EndDate, ae.CreatedOn, ae.UpdatedOn, ae.StopDate,
-                    ae.PauseDate, ae.CompletionDate, ae.UKPRN, ae.LearnRefNumber, ae.PaymentStatus);
+                    ae.PauseDate, ae.CompletionDate, ae.UKPRN, ae.LearnRefNumber, ae.PaymentStatus, ae.EmployerAccountId, ae.EmployerName);
             }
 
             return dataTable;
@@ -163,7 +165,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var name = await GetProviderName(ukprn);
 
-                if(!string.IsNullOrWhiteSpace(name))
+                if (!string.IsNullOrWhiteSpace(name))
                 {
                     var existingName = await _unitOfWork.Connection.ExecuteScalarAsync<string>("SELECT Name FROM Providers WHERE Ukprn = @Ukprn;", new { Ukprn = ukprn });
                     if (string.IsNullOrWhiteSpace(existingName))
