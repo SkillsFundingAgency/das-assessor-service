@@ -297,8 +297,8 @@ BEGIN
 			 lm1.ApprovalsPaymentStatus = upd.ApprovalsPaymentStatus,
 			 lm1.LatestIlrs = upd.LatestIlrs,
 			 lm1.LatestApprovals = upd.LatestApprovals,
-			 lm1.LatestIlrs = upd.EmployerAccountId,
-			 lm1.LatestApprovals = upd.EmployerName
+			 lm1.EmployerAccountId = upd.EmployerAccountId,
+			 lm1.EmployerName = upd.EmployerName
 		WHEN NOT MATCHED THEN
 		INSERT (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
 				Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 

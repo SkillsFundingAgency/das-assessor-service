@@ -19,7 +19,7 @@
     [UKPRN] INT NULL,
     [LearnRefNumber] NVARCHAR(50) NULL,
     [PaymentStatus] SMALLINT NULL,
-    [EmployerAccountId ] BIGINT NULL, 
-    [EmployerName ] NVARCHAR(100) NULL
+    [EmployerAccountId] BIGINT NULL, 
+    [EmployerName] NVARCHAR(100) NULL
 )
 GO
