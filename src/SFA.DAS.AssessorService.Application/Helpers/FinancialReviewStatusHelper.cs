@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
                 {
                     orgType = orgTypes.FirstOrDefault(x => x.Id == org.OrganisationTypeId);
                 }
-                org.FinancialReviewStatus = Helpers.FinancialReviewStatusHelper.IsFinancialExempt(org.OrganisationData?.FHADetails.FinancialExempt, org.OrganisationData?.FHADetails.FinancialDueDate, orgType) ? ApplyTypes.FinancialReviewStatus.Exempt : ApplyTypes.FinancialReviewStatus.Required;
+                org.FinancialReviewStatus = Helpers.FinancialReviewStatusHelper.IsFinancialExempt(org.OrganisationData?.FHADetails?.FinancialExempt, org.OrganisationData?.FHADetails?.FinancialDueDate, orgType) ? ApplyTypes.FinancialReviewStatus.Exempt : ApplyTypes.FinancialReviewStatus.Required;
             }
         }
     }
