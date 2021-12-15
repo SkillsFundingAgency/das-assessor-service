@@ -1,11 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -20,10 +21,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger = logger;
         }
 
-        public async Task<EpaOrganisation> Handle(GetAssessmentOrganisationByIdRequest request, CancellationToken cancellationToken)
+        public async Task<EpaOrganisation> Handle(AssessorService.Api.Types.Models.GetAssessmentOrganisationByIdRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{request.Id}]");
             var org = await _registerQueryRepository.GetEpaOrganisationById(request.Id);
+
+            await Helpers.FinancialReviewStatusHelper.SetFinancialReviewStatus(org, _registerQueryRepository);
 
             return org ?? null;
         }  

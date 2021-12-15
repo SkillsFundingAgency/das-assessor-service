@@ -154,6 +154,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             {
                 contactname = "Bob Smith",
                 standard = "TITLE",
+                standardreference = "ST0001",
                 version = "1.2",
             });
 

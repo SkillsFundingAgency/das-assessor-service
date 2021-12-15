@@ -48,7 +48,7 @@ NULL UpdatedAt,
 learner1.LearnRefNumber,
 NULL CertFamilyName	
 FROM Learner learner1
-JOIN StandardCollation sc ON learner1.StdCode = sc.StandardId
+JOIN Standards sc ON learner1.StdCode = sc.LarsCode
 LEFT JOIN Certificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 WHERE 
 ce1.Uln IS  NULL

@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
         private async Task<Certificate> GetCertificate(GetBatchCertificateRequest request)
         {
             _logger.LogInformation("GetCertificate Before Get Certificate from db");
-            var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode, request.FamilyName);
+            var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode, request.FamilyName, request.IncludeLogs);
 
             _logger.LogInformation("GetCertificate Before Get Searching Organisation from db");
             var searchingOrganisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);

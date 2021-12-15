@@ -33,14 +33,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             organisationStandard.OrganisationStatus = organisation?.Status;
             organisationStandard.Ukprn = organisation?.Ukprn;
 
-            var standard = await _standardService.GetStandard(organisationStandard.StandardId);
+            var standard = await _standardService.GetStandardVersionById(organisationStandard.IFateReferenceNumber);
             organisationStandard.StandardTitle = standard?.Title;
-            organisationStandard.StandardEffectiveFrom = standard?.StandardData.EffectiveFrom;
-            organisationStandard.StandardEffectiveTo = standard?.StandardData.EffectiveTo;
-            organisationStandard.StandardLastDateForNewStarts = standard?.StandardData.LastDateForNewStarts;
-            organisationStandard.IFateReferenceNumber = standard?.ReferenceNumber;
+            organisationStandard.StandardEffectiveFrom = standard?.EffectiveFrom;
+            organisationStandard.StandardEffectiveTo = standard?.EffectiveTo;
+            organisationStandard.StandardLastDateForNewStarts = standard?.LastDateStarts;
+            organisationStandard.IFateReferenceNumber = standard?.IfateReferenceNumber;
     
-            var versions = await _standardService.GetEPAORegisteredStandardVersions(organisation?.OrganisationId, standard?.StandardId);
+            var versions = await _standardService.GetEPAORegisteredStandardVersions(organisation?.OrganisationId, standard?.LarsCode);
             organisationStandard.Versions = versions.ToList();
 
             if (organisationStandard.ContactId != null)

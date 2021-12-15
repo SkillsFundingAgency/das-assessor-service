@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Handlers.Approvals;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -33,6 +34,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var request = new ImportApprovalsRequest();
             return Ok(await _mediator.Send(request));
+        }
+
+        [HttpGet("learner", Name = "learner/GetLearner")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetLearner(int stdCode, long uln)
+        {
+            var record = await _mediator.Send(new GetApprovalsLearnerRecordRequest(stdCode, uln));
+
+            if (record == null) return NotFound();
+
+            return Ok(record);
         }
     }
 }

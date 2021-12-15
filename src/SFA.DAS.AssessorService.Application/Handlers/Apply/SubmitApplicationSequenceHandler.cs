@@ -204,6 +204,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             var contactname = contactToNotify.DisplayName;
             var reference = applyData.Apply.ReferenceNumber;
             var standard = applyData.Apply.StandardName;
+            var standardreference = applyData.Apply.StandardReference;
 
             if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
@@ -216,7 +217,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
-                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard }), cancellationToken);
+                await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard, standardreference }), cancellationToken);
             }
             else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
