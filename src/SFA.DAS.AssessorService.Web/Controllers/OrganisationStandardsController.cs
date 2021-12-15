@@ -78,6 +78,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("NotRegistered", "Home");
             }
 
+            // Temporarily disable SV-1305 because testing has uncovered a scenario not considered during development:
+            // if there are one or more applications in progress for an organisation when its financial assessment has expired, the code
+            // resumes the latest application in progress rather than resume at the financial application section as per the A/C
+            model.FinancialInfoStage1Expired = false;
+
             return View("Index", model);
         }
 
