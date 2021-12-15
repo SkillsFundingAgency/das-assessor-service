@@ -110,7 +110,7 @@
             '.address-manual-input-address-line-1': address.addressLine1,
             '.address-manual-input-address-line-2': address.addressLine2,
             '.address-manual-input-address-line-3': address.town,
-            '.address-manual-input-address-line-4': address.locality,
+            '.address-manual-input-address-line-4': '',
             '.address-manual-input-postcode': address.postcode
         };
 
