@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddressLine1CannotBeEmpty" xml:space="preserve">
-    <value>Enter an address</value>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continue</value>
   </data>
-  <data name="CityCannotBeEmpty" xml:space="preserve">
-    <value>Enter a town or city</value>
+  <data name="Heading" xml:space="preserve">
+    <value>This is the address used for your last certificate request for this employer</value>
   </data>
-  <data name="EmployerCannotBeEmpty" xml:space="preserve">
-    <value>Enter an employer</value>
+  <data name="No" xml:space="preserve">
+    <value>No, use different employer details</value>
   </data>
-  <data name="NameCannotBeEmpty" xml:space="preserve">
-    <value>Enter a name</value>
-  </data>
-  <data name="PostcodeCannotBeEmpty" xml:space="preserve">
-    <value>Enter a postcode</value>
-  </data>
-  <data name="PostcodeValid" xml:space="preserve">
-    <value>Enter a valid UK postcode</value>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes, use these employer details</value>
   </data>
 </root>

@@ -33,8 +33,9 @@ CREATE TABLE [dbo].[Learner]
     [ApprovalsCompletionDate] DATE NULL,
     [ApprovalsPaymentStatus] SMALLINT NULL,
     [LatestIlrs] DATETIME NULL,
-    [LatestApprovals] DATETIME NULL
-    
+    [LatestApprovals] DATETIME NULL,
+    [EmployerId] BIGINT NULL,
+    [EmployerName] NVARCHAR(100) NULL
 )
 GO
 

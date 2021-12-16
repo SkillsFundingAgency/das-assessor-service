@@ -13,8 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> GetCertificate(Guid certificateId, bool includeLogs = false);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
         Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string userName);
-        Task<CertificateAddress> GetContactPreviousAddress(string userName);
-        Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
+        Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerId);
         Task Delete(DeleteCertificateRequest deleteCertificateRequest);
     }
 }

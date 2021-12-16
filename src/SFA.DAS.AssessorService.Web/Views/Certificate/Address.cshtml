@@ -14,9 +14,22 @@
 }
 else
 {
-    <a asp-controller="CertificateSendTo" asp-action="SendTo" class="govuk-back-link">Back</a>
+    @if (Model.SendTo == CertificateSendTo.Apprentice)
+    {
+        <a asp-controller="CertificateSendTo" asp-action="SendTo" class="govuk-back-link">Back</a>
+    }
+    else
+    {
+        if (Model.HasPreviousAddress)
+        {
+            <a asp-controller="CertificateAddress" asp-action="PreviousAddress" class="govuk-back-link">Back</a>
+        }
+        else
+        {
+            <a asp-controller="CertificateSendTo" asp-action="SendTo" class="govuk-back-link">Back</a>
+        }
+    }
 }
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -24,6 +37,9 @@ else
             <form class="@(Model.SendTo == CertificateSendTo.Apprentice ? "apprentice-address-form" : "employer-address-form") js-disable-on-submit" method="post" asp-action="Address" asp-controller="CertificateAddress">
                 @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(c => c.SendTo)
+                @Html.HiddenFor(c => c.EmployerName)
+                @Html.HiddenFor(c => c.HasPreviousAddress)
+                @Html.HiddenFor(c => c.UsePreviousAddress)
 
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -42,6 +58,7 @@ else
                         </h2>
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Employer"></a></li>
                                 <li><a sfa-validation-for="AddressLine1"></a></li>
                                 <li><a sfa-validation-for="City"></a></li>
                                 <li><a sfa-validation-for="Postcode"></a></li>
@@ -77,7 +94,7 @@ else
                     <div id="addressLookupWrapper" class="hide-nojs form-group disabled">
                         <div id="address-lookup" class="govuk-form-group govuk-!-margin-bottom-2">
                             <p class="govuk-body">@Localizer["AddressLookupApprentice"]</p>
-                            <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input @(Model.SendTo == CertificateSendTo.Apprentice ? string.Empty: "include-organisations")" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
+                            <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input @(Model.SendTo == CertificateSendTo.Apprentice ? string.Empty : "include-organisations")" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
                             <span class="govuk-visually-hidden" id="ariaAddressEntered" aria-live="polite"></span>
                         </div>
                         <div id="address-manual" class="govuk-form-group">
@@ -100,10 +117,9 @@ else
                                     @Localizer["Employer"]
                                 </label>
                                 <sfa-validationerror-detail sfa-validation-for="Employer" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                                <span class="govuk-error-message" asp-validation-for="Employer"></span>
-                                <input class="govuk-input govuk-!-width-two-thirds address-manual-input-address-line-organisation"
+                                <input class="govuk-input govuk-!-width-two-thirds address-manual-input-focus address-manual-input-organisation"
                                        sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error"
-                                       asp-for="Employer" type="text" value="AddressLine1" />
+                                       asp-for="Employer" type="text" value="@Model.Employer" />
                             </div>
                         }
                         <div class="govuk-form-group" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
@@ -111,7 +127,7 @@ else
                                 @Localizer["AddressLine1"] <span class="govuk-visually-hidden">@Localizer["AccessiblyAddressLine1"]</span>
                             </label>
                             <sfa-validationerror-detail sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                            <input class="govuk-input govuk-!-margin-bottom-2 address-manual-input-focus address-manual-input-address-line-1"
+                            <input class="govuk-input govuk-!-margin-bottom-2 @(Model.SendTo == CertificateSendTo.Apprentice ? "address-manual-input-focus" : string.Empty) address-manual-input-address-line-1"
                                    sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-input--error"
                                    asp-for="AddressLine1" type="text" value="@Model.AddressLine1" />
 

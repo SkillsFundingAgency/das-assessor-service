@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     using Certificate = Domain.Entities.Certificate;
 
     public class CertificateSendToViewModel : CertificateBaseViewModel
-    {        
+    {
         public CertificateSendTo SendTo { get; set; }
 
         public override void FromCertificate(Certificate certificate)
@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            if (certData.SendTo != SendTo)
+            if (SendToHasSwitched(certData))
             {
-                certData = ClearContactInformation(certData);
+                certData = ClearFieldsAfterSendToSwitch(certData);
             }
 
             certData.SendTo = SendTo;
@@ -29,7 +29,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             return certificate;
         }
 
-        private CertificateData ClearContactInformation(CertificateData certData)
+        public bool SendToHasSwitched(CertificateData certData)
+        {
+            return certData.SendTo != SendTo;
+        }
+
+        private CertificateData ClearFieldsAfterSendToSwitch(CertificateData certData)
         {
             certData.Department = string.Empty;
             certData.ContactName = string.Empty;
@@ -39,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.ContactAddLine3 = string.Empty;
             certData.ContactAddLine4 = string.Empty;
             certData.ContactPostCode = string.Empty;
-            
+
             return certData;
         }
     }

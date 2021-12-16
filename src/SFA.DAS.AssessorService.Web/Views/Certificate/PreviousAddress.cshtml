@@ -1,0 +1,118 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.JsonData; 
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificatePreviousAddressViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Previous certificate address";
+    Layout = "_DashboardLayout";
+}
+
+@if (Model.BackToCheckPage)
+{
+    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateSendTo" asp-action="SendTo">Back</a>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form class="apprentice-date-form js-disable-on-submit" method="post" autocomplete="off">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.EmployerId)
+                @Html.HiddenFor(c => c.SendTo)
+                @Html.HiddenFor(c => c.PreviousAddress.ContactOrganisation)
+                @Html.HiddenFor(c => c.PreviousAddress.AddressLine1)
+                @Html.HiddenFor(c => c.PreviousAddress.AddressLine2)
+                @Html.HiddenFor(c => c.PreviousAddress.AddressLine3)
+                @Html.HiddenFor(c => c.PreviousAddress.City)
+                @Html.HiddenFor(c => c.PreviousAddress.PostCode)
+
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="UsePreviousAddress"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            @Localizer["Heading"]
+                        </h1>
+                    </legend>
+                    <p class="govuk-body">
+                        <div class="govuk-inset-text">
+                            <ul class="govuk-list">
+                                <li @(string.IsNullOrEmpty(Model.PreviousAddress.ContactOrganisation) ? "hidden" : string.Empty)>
+                                    <span>@Model.PreviousAddress.ContactOrganisation</span>
+                                </li>
+                                <li>
+                                    <span>@Model.PreviousAddress.AddressLine1</span>
+                                </li>
+                                <li>
+                                    <span>@Model.PreviousAddress.AddressLine2</span>
+                                </li>
+                                <li>
+                                    <span>@Model.PreviousAddress.AddressLine3</span>
+                                </li>
+                                <li>
+                                    <span>@Model.PreviousAddress.City</span>
+                                </li>
+                                <li>
+                                    <span>@Model.PreviousAddress.PostCode</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </p>
+                </div>
+
+                <div class="govuk-form-group" sfa-validation-for="UsePreviousAddress" sfa-validationerror-class="govuk-form-group--error">
+                    <sfa-validationerror-detail sfa-validation-for="UsePreviousAddress" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                    <div class="govuk-radios__item" data-target="usepreviousaddress-input" id="UsePreviousAddress">
+                        <input class="govuk-radios__input"
+                               sfa-validation-for="UsePreviousAddress" sfa-validationerror-class="govuk-input--error"
+                               asp-for="UsePreviousAddress" id="UsePreviousAddress_Yes" type="radio" value="true" name="UsePreviousAddress" />
+                        <label class="govuk-label govuk-radios__label" for="UsePreviousAddress_Yes">
+                            @Localizer["Yes"]
+                        </label>
+                    </div>
+                    <div class="govuk-radios__item" data-target="usepreviousaddress-input" id="UsePreviousAddress">
+                        <input class="govuk-radios__input"
+                               sfa-validation-for="UsePreviousAddress" sfa-validationerror-class="govuk-input--error"
+                               asp-for="SendTo" id="UsePreviousAddress_No" type="radio" value="false" name="UsePreviousAddress" />
+                        <label class="govuk-label govuk-radios__label" for="UsePreviousAddress_No">
+                            @Localizer["No"]
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

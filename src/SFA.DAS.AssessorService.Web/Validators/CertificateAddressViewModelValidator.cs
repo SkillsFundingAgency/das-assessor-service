@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Validators
@@ -7,7 +8,12 @@ namespace SFA.DAS.AssessorService.Web.Validators
     public class CertificateAddressViewModelValidator : AbstractValidator<CertificateAddressViewModel>
     {
         public CertificateAddressViewModelValidator(IStringLocalizer<CertificateAddressViewModelValidator> localizer)
-        {   
+        {
+            RuleFor(vm => vm.Employer).NotEmpty()
+                .When(vm => vm.SendTo == CertificateSendTo.Employer)
+                .WithSeverity(Severity.Warning)
+                .WithMessage(localizer["EmployerCannotBeEmpty"]);
+            
             RuleFor(vm => vm.AddressLine1).NotEmpty()
                 .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
             

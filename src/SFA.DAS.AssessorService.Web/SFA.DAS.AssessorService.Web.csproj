@@ -5,16 +5,12 @@
   <ItemGroup>
     <Compile Remove="TagHelpers\**" />
     <Compile Remove="Views\Application\Pages\Controls\**" />
-    <Compile Remove="Views\CertificateAddressSummary\**" />
     <Content Remove="TagHelpers\**" />
     <Content Remove="Views\Application\Pages\Controls\**" />
-    <Content Remove="Views\CertificateAddressSummary\**" />
     <EmbeddedResource Remove="TagHelpers\**" />
     <EmbeddedResource Remove="Views\Application\Pages\Controls\**" />
-    <EmbeddedResource Remove="Views\CertificateAddressSummary\**" />
     <None Remove="TagHelpers\**" />
     <None Remove="Views\Application\Pages\Controls\**" />
-    <None Remove="Views\CertificateAddressSummary\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="inactive_app_offline_public_beta.htm" />
@@ -52,7 +48,6 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Session\SFA.DAS.AssessorService.Session.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -131,7 +126,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CertificateCheckViewModelValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Validators\CertificateSendToViewModelValidator.en.resx">
+    <EmbeddedResource Update="Resources\Validators\CertificateSendToViewModelValidator - Copy.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\CertificatePreviousAddressViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateVersionViewModelValidator.en.resx">
@@ -185,6 +183,9 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\ConfirmAddress.en.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\PreviousAddress.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\SendTo.en.resx">

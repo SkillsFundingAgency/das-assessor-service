@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.JsonData
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateRecipientViewModel
 
@@ -9,11 +10,18 @@
 
 @if (Model.BackToCheckPage)
 {
-    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+    <a asp-controller="CertificateCheck" asp-action="Check" class="govuk-back-link">Back</a>
 }
 else
 {
-    <a class="govuk-back-link" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+    @if (Model.SendTo == CertificateSendTo.Apprentice)
+    {
+        <a asp-controller="CertificateAddress" asp-action="Address" class="govuk-back-link">Back</a>
+    }
+    else
+    {
+        <a asp-controller="CertificateAddress" asp-action="Recipient" class="govuk-back-link">Back</a>
+    }
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -38,13 +46,13 @@ else
 
                 <div class="govuk-inset-text">
                     <ul class="govuk-list">
-                        <li hidden="@(!string.IsNullOrEmpty(Model.Name) ? "hidden" : "")">
-                            <span>@Model.Name</span>
+                        <li @(string.IsNullOrEmpty(Model.Name) ? "hidden" : string.Empty)>
+                            <span><b>@Model.Name</b></span>
                         </li>
-                        <li hidden="@(!string.IsNullOrEmpty(Model.Dept) ? "hidden" : "")">
+                        <li @(string.IsNullOrEmpty(Model.Dept) ? "hidden" : string.Empty)>
                             <span>@Model.Dept</span>
                         </li>
-                        <li hidden="@(!string.IsNullOrEmpty(Model.Employer) ? "hidden" : "")">
+                        <li @(string.IsNullOrEmpty(Model.Employer) ? "hidden" : string.Empty)>
                             <span>@Model.Employer</span>
                         </li>
                         <li>
@@ -65,9 +73,21 @@ else
                     </ul>
                 </div>
 
-                <p class="govuk-body">
-                    <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">@Localizer["EditThisAddress"]</a>
-                </p>
+                @if (Model.SendTo == CertificateSendTo.Apprentice)
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">@Localizer["EditThisAddress"]</a>
+                    </p>
+                }
+                else
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Recipient" asp-route-edit="true">@Localizer["EditRecipientDetails"]</a>
+                    </p>
+                    <p class="govuk-body">
+                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">@Localizer["EditEmployerDetails"]</a>
+                    </p>
+                }
 
                 <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
             </form>

@@ -44,19 +44,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerId)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={WebUtility.UrlEncode(userName)}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?epaOrgId={epaOrgId}&employerId={employerId}"))
             {
                 return await RequestAndDeserialiseAsync<CertificateAddress>(httpRequest, "Could not get Certificate Address");
-            }
-        }
-
-        public async Task<List<CertificateAddress>> GetPreviousAddressess(string userName)
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/addresses?userName={WebUtility.UrlEncode(userName)}"))
-            {
-                return await RequestAndDeserialiseAsync<List<CertificateAddress>>(httpRequest, "Could not get Certificate Addressess");
             }
         }
 

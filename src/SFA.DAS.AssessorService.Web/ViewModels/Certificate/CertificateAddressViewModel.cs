@@ -16,12 +16,18 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public bool EditForm { get; set; } = false;
 
-        public bool HasPreviousAddress { get; internal set; }
+        public long? EmployerId { get; set; }
+        public string EmployerName { get; set; }
+        public bool HasPreviousAddress { get; set; }
+        public bool UsePreviousAddress { get; set; }
+        public CertificateAddress PreviousAddress { get; set; }
 
         public override void FromCertificate(Domain.Entities.Certificate cert)
         {
             base.FromCertificate(cert);
 
+            EmployerId = CertificateData.EmployerId;
+            EmployerName = CertificateData.EmployerName;
             Employer = CertificateData.ContactOrganisation;
             AddressLine1 = CertificateData.ContactAddLine1;
             AddressLine2 = CertificateData.ContactAddLine2;
@@ -34,6 +40,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             certificate = base.GetCertificateFromViewModel(certificate, certData);
 
+            //certData.UsePreviousAddress = UsePreviousAddress;
             certData.ContactOrganisation = Employer;
             certData.ContactAddLine1 = AddressLine1;
             certData.ContactAddLine2 = AddressLine2;
@@ -54,6 +61,17 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             AddressLine3 = certificatePreviousAddress.AddressLine3;
             City = certificatePreviousAddress.City;
             Postcode = certificatePreviousAddress.PostCode;
+
+            return this;
+        }
+
+        public CertificateAddressViewModel ClearAddressFields()
+        {
+            AddressLine1 = string.Empty;
+            AddressLine2 = string.Empty;
+            AddressLine3 = string.Empty;
+            City = string.Empty;
+            Postcode = string.Empty;
 
             return this;
         }
