@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -51,7 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             {
                 Uln = uln,
                 FamilyName = lastname,
-                UkPrn = ukPrn
+                UkPrn = ukPrn,
+                IncludeLogs = true
             };
 
             var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId });

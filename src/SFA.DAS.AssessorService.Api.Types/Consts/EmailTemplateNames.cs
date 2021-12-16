@@ -24,7 +24,7 @@
         public const string APPLY_EPAO_RESPONSE = "ApplyEPAOResponse";
 
         /// <summary>
-        /// Requires tokens: { contactname, standard, version }
+        /// Requires tokens: { contactname, standard, standardreference, version }
         /// </summary>
         public const string ApplyEPAOStandardOptin = "ApplyEPAOStandardOptin";
     }

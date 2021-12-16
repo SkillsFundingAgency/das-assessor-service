@@ -85,18 +85,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
             _standardServiceMock.Verify(s => s.LoadStandards(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails))));
         }
 
-        [Test]
-        public void Then_Upserts_StandardCollations()
-        {
-            _standardServiceMock.Verify(s => s.UpsertStandardCollations(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails.Where(d => d.Status == ActiveStatus)))));
-        }
-
-        [Test]
-        public void Then_Upserts_StandardNonApprovedCollations()
-        {
-            _standardServiceMock.Verify(s => s.UpsertStandardNonApprovedCollations(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails.Where(d => d.Status == DraftStatus)))));
-        }
-
         private StandardDetailResponse ConvertToStandardDetailResponse(GetStandardsListItem source) => new StandardDetailResponse
         {
             StandardUId = source.StandardUId,

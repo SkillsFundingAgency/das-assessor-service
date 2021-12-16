@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
     public class StandardVersionControllerTests
     {
         private Mock<IStandardService> _mockStandardService;
+        private Mock<IMediator> _mockMediator;
 
         private StandardVersionController _standardVersionController;
 
@@ -27,8 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         public void SetUp()
         {
             _mockStandardService = new Mock<IStandardService>();
+            _mockMediator = new Mock<IMediator>();
 
-            _standardVersionController = new StandardVersionController(Mock.Of<ILogger<StandardServiceController>>(), _mockStandardService.Object);
+            _standardVersionController = new StandardVersionController(Mock.Of<ILogger<StandardVersionController>>(), _mockStandardService.Object, _mockMediator.Object);
         }
 
         [Test, MoqAutoData]
@@ -93,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, null)).ReturnsAsync(versions);
 
-            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, null) as ObjectResult;
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId) as ObjectResult;
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
@@ -107,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, larsCode)).ReturnsAsync(versions);
 
-            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, larsCode) as ObjectResult;
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersionsByLarsCode(epaoId, larsCode) as ObjectResult;
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
@@ -198,7 +201,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 Level = standard.Level,
                 EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
+                LastDateStarts = standard.LastDateStarts,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
+                VersionLatestStartDate = standard.VersionLatestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
                 StandardPageUrl = standard.StandardPageUrl

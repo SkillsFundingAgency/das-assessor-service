@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
 
         public Printed Printed { get; set; }
 
+        public Delivered Delivered { get; set; }
+
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.External.Helpers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
@@ -58,30 +59,30 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             {
                 return NoContent();
             }
-            else
+
+            if (response.Certificate.Status.CurrentStatus == CertificateStatus.Printed)
             {
-                if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus))
-                {
-                    response.Certificate.Status.CurrentStatus = CertificateStatus.Submitted;
-                }
-                else // status could be Draft or Deleted (or Privately Funded statuses)
+                response.Certificate.Delivered = new Delivered { Status = "WaitingForDelivery" };
+            }
+
+            if (CertificateStatus.HasPrintProcessStatus(response.Certificate.Status.CurrentStatus) is false) // status could be Draft or Deleted (or Privately Funded statuses)
+            {
+                var certificateData = response.Certificate.CertificateData;
+
+                if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
 				{
-                    var certificateData = response.Certificate.CertificateData;
+                    var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
 
-                    if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
-					{
-                        var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
+                    var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
 
-                        var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
-
-                        if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, hasOptions))
-                        {
-                            response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
-                        }
+                    if (CertificateHelpers.IsDraftCertificateDeemedAsReady(response.Certificate, hasOptions))
+                    {
+                        response.Certificate.Status.CurrentStatus = CertificateStatus.Ready;
                     }
                 }
-                return Ok(response.Certificate);
             }
+
+            return Ok(response.Certificate);
         }
 
         [HttpPost]

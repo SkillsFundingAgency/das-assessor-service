@@ -9,7 +9,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task DeleteAllStandardsAndOptions();
         Task LoadStandards(IEnumerable<StandardDetailResponse> standards);
         Task LoadOptions(IEnumerable<StandardDetailResponse> standards);
-        Task UpsertStandardCollations(IEnumerable<StandardDetailResponse> standards);
-        Task UpsertStandardNonApprovedCollations(IEnumerable<StandardDetailResponse> standards);
     }
 }

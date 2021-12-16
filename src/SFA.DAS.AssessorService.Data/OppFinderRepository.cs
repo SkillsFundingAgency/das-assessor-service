@@ -134,6 +134,21 @@ namespace SFA.DAS.AssessorService.Data
             return nonApprovedStandardsResult;
         }
 
+        public async Task<OppFinderNonApprovedStandardDetailsResult> GetOppFinderNonApprovedStandardDetails(string standardReference)
+        {
+            var sql = @"SELECT [Title], [Status], [OverviewOfRole], [Level], [IFateReferenceNumber], [Route], [TypicalDuration], 
+                            [TrailblazerContact], [StandardPageUrl]
+                        FROM [dbo].[Standards] 
+                        WHERE IFateReferenceNumber = @standardReference";
+
+            var nonApprovedStandard = await _unitOfWork.Connection.QueryAsync<OppFinderNonApprovedStandardDetailsResult>(
+                sql,
+                param: new { standardReference },
+                transaction: _unitOfWork.Transaction);
+
+            return nonApprovedStandard.FirstOrDefault();
+        }
+
         public async Task UpdateStandardSummary()
         {
             await _unitOfWork.Connection.ExecuteAsync(
