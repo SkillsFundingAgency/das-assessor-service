@@ -231,9 +231,12 @@ else
                     @Model.Name
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
-                        Change<span class="govuk-visually-hidden"> recipient name</span>
-                    </a>
+                    @if (Model.SendTo == CertificateSendTo.Employer)
+                    {
+                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Recipient" asp-route-redirecttocheck="true">
+                            Change<span class="govuk-visually-hidden"> recipient name</span>
+                        </a>
+                    }
                 </dd>
             </div>
 
