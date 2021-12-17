@@ -24,7 +24,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         private const string _postcodeError = "Postcode error message";
         private const string _cityError = "City error message";
         private const string _addressLine1Error = "Postcode error message";
-        private const string _nameError = "Name error message"; 
+        private const string _nameError = "Name error message";
+        private const string _sendToError = "SentTo error message";
 
         private Mock<IStringLocalizer<CertificateCheckViewModelValidator>> _mockStringLocalizer;
 
@@ -47,7 +48,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _mockStringLocalizer.Setup(l => l["CityCannotBeEmpty"]).Returns(new LocalizedString("City", _cityError));
             _mockStringLocalizer.Setup(l => l["AddressLine1CannotBeEmpty"]).Returns(new LocalizedString("Address", _addressLine1Error));
             _mockStringLocalizer.Setup(l => l["NameCannotBeEmpty"]).Returns(new LocalizedString("Name", _nameError));
-            
+            _mockStringLocalizer.Setup(l => l["SendToCannotBeNone"]).Returns(new LocalizedString("SendTo", _sendToError));
+
             _viewModel = CreateValidViewModel();
 
             _validator = new CertificateCheckViewModelValidator(_mockStringLocalizer.Object);
@@ -180,6 +182,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         private CertificateCheckViewModel CreateValidViewModel()
         {
             return new Builder().CreateNew<CertificateCheckViewModel>()
+                .With(p => p.SendTo = CertificateSendTo.Apprentice)
                 .Build();
         }
     }
