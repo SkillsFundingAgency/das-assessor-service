@@ -50,14 +50,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _mockStringLocalizer.Setup(l => l["NameCannotBeEmpty"]).Returns(new LocalizedString("Name", _nameError));
             _mockStringLocalizer.Setup(l => l["SendToCannotBeNone"]).Returns(new LocalizedString("SendTo", _sendToError));
 
-            _viewModel = CreateValidViewModel();
+            _viewModel = CreateValidViewModel(CertificateSendTo.Apprentice);
 
             _validator = new CertificateCheckViewModelValidator(_mockStringLocalizer.Object);
         }
 
-        [Test]
-        public void When_AllFieldsAreCorrect_Then_ValidatorReturnsValid()
+        [TestCase(CertificateSendTo.Apprentice)]
+        [TestCase(CertificateSendTo.Employer)]
+        public void When_AllFieldsAreCorrect_Then_ValidatorReturnsValid(CertificateSendTo sendTo)
         {
+            _viewModel = CreateValidViewModel(sendTo);
+
             var result = _validator.Validate(_viewModel);
 
             result.IsValid.Should().Be(true);       
@@ -179,10 +182,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _validator.ShouldHaveValidationErrorFor(vm => vm.Postcode, _viewModel);
         }
 
-        private CertificateCheckViewModel CreateValidViewModel()
+        [Test]
+        public void When_SendToIsNone_Then_ValidatorReturnsInvalid()
+        {
+            _viewModel = CreateValidViewModel(CertificateSendTo.None);
+            
+            var result = _validator.Validate(_viewModel);
+
+            result.IsValid.Should().Be(false);
+        }
+
+        private CertificateCheckViewModel CreateValidViewModel(CertificateSendTo sendTo)
         {
             return new Builder().CreateNew<CertificateCheckViewModel>()
-                .With(p => p.SendTo = CertificateSendTo.Apprentice)
+                .With(p => p.SendTo = sendTo)
                 .Build();
         }
     }

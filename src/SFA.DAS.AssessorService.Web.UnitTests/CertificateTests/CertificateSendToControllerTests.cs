@@ -90,5 +90,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateSendToTests
             result.ControllerName.Should().Be("CertificateAddress");
             result.ActionName.Should().Be("Address");
         }
+
+        [Test, MoqAutoData]
+        public async Task AndPostingSendToEmployer_RedirectsToPreviousAddressWhenPreviousAddressFound(CertificateSendToViewModel vm)
+        {
+            vm.SendTo = CertificateSendTo.Employer;
+
+            var result = await _certificateSendToController.SendTo(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateAddress");
+            result.ActionName.Should().Be("PreviousAddress");
+        }
     }
 }
