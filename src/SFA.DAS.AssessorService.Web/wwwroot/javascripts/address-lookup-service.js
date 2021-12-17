@@ -31,8 +31,8 @@
         e.preventDefault();
         enableEnterAddressManually(true);
 
-        // the default employer name if present is transferred into the organisation field
-        if ($('#EmployerName').length > 0 && $('.address-manual-input-organisation').val().length == 0) {
+        if ($('.address-manual-input-organisation').length > 0 && $('#EmployerName').length > 0) {
+            // populated the organisation with the default employer name
             $('.address-manual-input-organisation').val($('#EmployerName').val());
         }
     });
@@ -139,10 +139,11 @@
 
         $(".js-address-panel ul").empty();
 
-        populateAddressField('.address-manual-input-organisation', address.organisation);
-
-        if ($('#EmployerName').length > 0 && $('.address-manual-input-organisation').val().length == 0) {
-            $('.address-manual-input-organisation').val($('#EmployerName').val());
+        if (address.organisation.length > 0) {
+            populateAddressField('.address-manual-input-organisation', address.organisation);
+        }
+        else if ($('#EmployerName').length > 0) {
+            populateAddressField('.address-manual-input-organisation', $('#EmployerName').val());
         }
 
         populateAddressField('.address-manual-input-address-line-1', address.addressLine1);
