@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
@@ -102,6 +103,20 @@ namespace SFA.DAS.AssessorService.Data
                     ae.TrainingCourseOption, ae.StandardUId, ae.StartDate, ae.EndDate, ae.CreatedOn, ae.UpdatedOn, ae.StopDate,
                     ae.PauseDate, ae.CompletionDate, ae.UKPRN, ae.LearnRefNumber, ae.PaymentStatus, ae.EmployerAccountId, ae.EmployerName);
             }
+
+
+            var sb = new StringBuilder();
+            for (int j = 0; j < dataTable.Rows.Count; j++)
+            {
+                for (int i = 0; i < dataTable.Columns.Count; i++)
+                {
+                    sb.Append(dataTable.Columns[i].ColumnName + " ");
+                    sb.Append(dataTable.Rows[j].ItemArray[i]);
+                    sb.AppendLine("TABLE RESULT EMPLOYER INFO ROW " + j);
+                }
+            }
+            _logger.LogInformation(sb.ToString());
+
 
             return dataTable;
         }
