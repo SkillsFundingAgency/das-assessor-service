@@ -40,7 +40,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             certificate = base.GetCertificateFromViewModel(certificate, certData);
 
-            //certData.UsePreviousAddress = UsePreviousAddress;
             certData.ContactOrganisation = Employer;
             certData.ContactAddLine1 = AddressLine1;
             certData.ContactAddLine2 = AddressLine2;

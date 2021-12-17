@@ -126,7 +126,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CertificateCheckViewModelValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Validators\CertificateSendToViewModelValidator - Copy.en.resx">
+    <EmbeddedResource Update="Resources\Validators\CertificateSendToViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificatePreviousAddressViewModelValidator.en.resx">

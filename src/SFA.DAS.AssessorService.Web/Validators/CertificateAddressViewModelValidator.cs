@@ -11,7 +11,6 @@ namespace SFA.DAS.AssessorService.Web.Validators
         {
             RuleFor(vm => vm.Employer).NotEmpty()
                 .When(vm => vm.SendTo == CertificateSendTo.Employer)
-                .WithSeverity(Severity.Warning)
                 .WithMessage(localizer["EmployerCannotBeEmpty"]);
             
             RuleFor(vm => vm.AddressLine1).NotEmpty()
