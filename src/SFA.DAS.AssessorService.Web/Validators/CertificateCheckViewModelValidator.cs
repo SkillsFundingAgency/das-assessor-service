@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Validators
@@ -23,19 +24,21 @@ namespace SFA.DAS.AssessorService.Web.Validators
 
             When(vm => vm.SelectedGrade != CertificateGrade.Fail, () =>
             {
+                RuleFor(vm => vm.SendTo).NotEqual(CertificateSendTo.None)
+                    .WithMessage(localizer["SendToCannotBeNone"]);
+
+                RuleFor(vm => vm.Name).NotEmpty()
+                    .WithMessage(localizer["NameCannotBeEmpty"]);
+
                 RuleFor(vm => vm.Postcode).NotEmpty()
                     .WithMessage(localizer["PostcodeCannotBeEmpty"]);
+                
                 RuleFor(vm => vm.City).NotEmpty()
                     .WithMessage(localizer["CityCannotBeEmpty"]);
+                
                 RuleFor(vm => vm.AddressLine1).NotEmpty()
                     .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
-
-                When(vm => vm.SendTo == Domain.JsonData.CertificateSendTo.Employer, () =>
-                {
-                    RuleFor(vm => vm.Name).NotEmpty()
-                        .WithMessage(localizer["NameCannotBeEmpty"]);
-                });
-                
+ 
                 When(vm => vm.SelectedGrade != null, () =>
                 {
                     RuleFor(vm => vm.AchievementDate).NotNull()

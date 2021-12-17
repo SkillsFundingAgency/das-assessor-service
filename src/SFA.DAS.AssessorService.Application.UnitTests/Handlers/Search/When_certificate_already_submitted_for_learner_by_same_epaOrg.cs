@@ -38,7 +38,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
-                        CreatedBy = "username"
+                        CreatedBy = "username",
+                        CertificateLogs = new List<CertificateLog> 
+                        { 
+                            new CertificateLog()
+                            {
+                                CertificateData = JsonConvert.SerializeObject(new CertificateData
+                                {
+                                    OverallGrade = CertificateGrade.Distinction,
+                                    LearningStartDate = new DateTime(2015, 06, 01),
+                                    AchievementDate = new DateTime(2018, 06, 01)
+                                }),
+                                Status = CertificateStatus.Submitted,
+                                EventTime = new DateTime(2018, 2, 3, 13, 23, 33),
+                                Username = "username",
+                                Action = CertificateActions.Submit
+                            } 
+                        },
                     }
                 });
 

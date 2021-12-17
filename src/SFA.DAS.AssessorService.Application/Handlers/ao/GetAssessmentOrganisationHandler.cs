@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var organisationId = request.OrganisationId;
             _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{organisationId}]");
             var org = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationId);
+
+            await Helpers.FinancialReviewStatusHelper.SetFinancialReviewStatus(org, _registerQueryRepository);
 
             return org ?? null;
         }  

@@ -111,12 +111,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 foreach (var searchResult in searchResults)
                 {
-                    var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode &&
-                                                                    s.Status != CertificateStatus.Draft);
+                    var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode);
+                    
                     if (certificate != null)
                     {
-                        searchResult.PopulateCertificateBasicInformation(certificate);
-                        searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+                        var hasPreviousSubmission = certificate.CertificateLogs.Any(l => l.Action == CertificateActions.Submit);
+
+                        if (hasPreviousSubmission)
+                        {
+                            searchResult.PopulateCertificateBasicInformation(certificate);
+                            searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, contactRepository, certificate, searchingEpao, logger);
+                        }
                     }
                 }
             }
@@ -147,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     };
 
                     searchResult.PopulateCertificateBasicInformation(certificate);
-                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, certificateRepository, contactRepository, certificate, searchingEpao, logger);
+                    searchResult.PopulateCertificateExtraInformationDependingOnPermission(request, contactRepository, certificate, searchingEpao, logger);
 
                     searchResults.Add(searchResult);
                 }
@@ -184,14 +189,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         }
 
         public static SearchResult PopulateCertificateExtraInformationDependingOnPermission(this SearchResult searchResult,
-            SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository,
+            SearchQuery request, IContactQueryRepository contactRepository,
             Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
         {
-            var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
-            logger.LogInformation($"MatchUpExistingCompletedStandards After GetCertificateLogsFor CertificateId {certificate.Id}");
-            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
 
-            var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Action == CertificateActions.Submit);
+            var createdLogEntry = certificate.CertificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+
+            var submittedLogEntry = certificate.CertificateLogs.Where(l => l.Action == CertificateActions.Submit)
+                .OrderByDescending(l => l.EventTime)
+                .FirstOrDefault();
 
             if (submittedLogEntry == null)
             {
@@ -201,7 +207,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
             var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
 
-            var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
+            var lastUpdatedLogEntry = certificate.CertificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
             var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
 
             logger.LogInformation($"MatchUpExistingCompletedStandards After GetContact for CertificateId {certificate.Id}");
@@ -210,33 +216,35 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
+            var submittedCertificateData = JsonConvert.DeserializeObject<CertificateData>(submittedLogEntry.CertificateData);
+
             if (submittingContact != null && searchingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificateData, submittedCertificateData);
                 searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
                 searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificateData, submittedCertificateData);
                 searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                 searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
             }
             else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificateData, submittedCertificateData);
                 searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
                 searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificateData, submittedCertificateData);
                 searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                 searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
             }
             else if (certificate.OrganisationId == searchingEpao?.Id)
             {
                 searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificateData, submittedCertificateData);
                 searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
                 searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                searchResult.AchDate = certificateData.AchievementDate;
+                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificateData, submittedCertificateData);
                 searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
                 searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
             }
@@ -253,6 +261,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             }
 
             return searchResult;
+        }
+
+        private static string GetSubmittedOrPreviousGrade(Certificate certificate, CertificateData currentCertificateData, CertificateData submittedCertificateData)
+        {
+            if (certificate.Status == "Draft" && certificate.Status != "Deleted")
+            {
+                return submittedCertificateData.OverallGrade;
+            }
+
+            return currentCertificateData.OverallGrade;
+        }
+
+        private static DateTime? GetSubmittedOrPreviousAchievementDate(Certificate certificate, CertificateData currentCertificateData, CertificateData submittedCertificateData)
+        {
+            if (certificate.Status == "Draft" && certificate.Status != "Deleted")
+            {
+                return submittedCertificateData.AchievementDate;
+            }
+
+            return currentCertificateData.AchievementDate;
         }
     }
 }

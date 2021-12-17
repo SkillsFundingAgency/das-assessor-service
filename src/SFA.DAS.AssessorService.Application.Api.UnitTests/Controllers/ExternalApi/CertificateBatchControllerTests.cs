@@ -9,11 +9,8 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
-using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Exceptions;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
@@ -31,6 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
         private Mock<IValidator<GetBatchCertificateRequest>> _mockGetBatchValidator;
         private Mock<IValidator<SubmitBatchCertificateRequest>> _mockSubmitBatchValidator;
         private Mock<IValidator<DeleteBatchCertificateRequest>> _mockDeleteBatchValidator;
+
         private CertificateBatchController _certificateBatchController;
 
         [SetUp]

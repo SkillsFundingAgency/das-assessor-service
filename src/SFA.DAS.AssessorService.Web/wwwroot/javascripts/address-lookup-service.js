@@ -44,6 +44,10 @@
 
     $("#postcode-search").keyup(function () {
         findAddressVal = $(this).val();
+
+        if (findAddressVal.length == 0) {
+            searchAgain();
+        }
     });
 
     var includeOrganisations = $("#postcode-search").hasClass('include-organisations');
@@ -251,6 +255,7 @@
 
         $("#address-manual, #address-lookup").removeClass("hidden");
         $("#search-again, .js-address-panel").addClass("hidden");
+        $(".js-address-panel ul li").remove();
         $("#postcode-search").val("");
     }
 })(jQuery);

@@ -158,11 +158,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<List<StaffSearchItems>> PopulateStandards(List<StaffSearchItems> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = await standardService.GetAllStandards();
+            var allStandards = await standardService.GetLatestStandardVersions();
 
             foreach (var searchResult in searchResults.Where(sr => string.IsNullOrEmpty(sr.Standard)))
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode) ?? await standardService.GetStandard(searchResult.StandardCode);
+                var standard = allStandards.SingleOrDefault(s => s.LarsCode == searchResult.StandardCode) ?? await standardService.GetStandardVersionById(searchResult.StandardCode.ToString());
 
                 if (standard != null)
                 {

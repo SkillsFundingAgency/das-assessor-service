@@ -23,6 +23,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
                 certData = ClearFieldsAfterSendToSwitch(certData);
             }
 
+            if(SendTo == CertificateSendTo.Apprentice)
+            {
+                // when sending to the apprentice use the apprentice name for the contact
+                certData.ContactName = certData.FullName;
+            }
+
             certData.SendTo = SendTo;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
             

@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             CreateMap<Domain.Entities.Certificate, Printed>()
             .ForMember(dest => dest.PrintedAt, opt => opt.MapFrom(source => source.ToBePrinted.DropMilliseconds()))
             .ForMember(dest => dest.PrintedBatch, opt => opt.MapFrom(source => source.BatchNumber))
-            .ForAllOtherMembers(dest => dest.Ignore());            
+            .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
 }

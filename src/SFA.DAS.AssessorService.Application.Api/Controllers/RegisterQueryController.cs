@@ -13,6 +13,7 @@ using System.Net;
 using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -204,13 +205,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/standards/search/{*searchstring}", Name = "SearchStandards")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardCollation>))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardVersion>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchStandards(string searchstring)
         {
             _logger.LogInformation($@"Search Standards for [{searchstring}]");
-            return Ok(await _mediator.Send(new SearchStandardsRequest {SearchTerm = searchstring}));
+
+            var results = await _mediator.Send(new SearchStandardsRequest { SearchTerm = searchstring });
+
+            return Ok(results.Select(s => (StandardVersion)s).ToList());
         }
     }
 }

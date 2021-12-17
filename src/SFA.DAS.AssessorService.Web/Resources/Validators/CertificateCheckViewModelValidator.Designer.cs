@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a city or town.
+        ///   Looks up a localized string similar to Enter a town or city.
         /// </summary>
         internal static string CityCannotBeEmpty {
             get {
@@ -139,6 +139,15 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         internal static string PostcodeCannotBeEmpty {
             get {
                 return ResourceManager.GetString("PostcodeCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select apprentice or employer.
+        /// </summary>
+        internal static string SendToCannotBeNone {
+            get {
+                return ResourceManager.GetString("SendToCannotBeNone", resourceCulture);
             }
         }
         
