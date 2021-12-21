@@ -99,25 +99,18 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var ae in approvalsExtract)
             {
-                dataTable.Rows.Add(ae.ApprenticeshipId, ae.FirstName, ae.LastName, ae.ULN, ae.TrainingCode, ae.TrainingCourseVersion, ae.TrainingCourseVersionConfirmed,
+                long uln = 0;
+
+                if (!long.TryParse(ae.ULN, out uln))
+                {
+                    _logger.LogWarning($"Invalid Uln {ae.ULN}");
+                    continue;
+                }
+
+                dataTable.Rows.Add(ae.ApprenticeshipId, ae.FirstName, ae.LastName, uln, ae.TrainingCode, ae.TrainingCourseVersion, ae.TrainingCourseVersionConfirmed,
                     ae.TrainingCourseOption, ae.StandardUId, ae.StartDate, ae.EndDate, ae.CreatedOn, ae.UpdatedOn, ae.StopDate,
                     ae.PauseDate, ae.CompletionDate, ae.UKPRN, ae.LearnRefNumber, ae.PaymentStatus, ae.EmployerAccountId, ae.EmployerName);
             }
-
-
-            var sb = new StringBuilder();
-            for (int j = 0; j < dataTable.Rows.Count; j++)
-            {
-                for (int i = 0; i < dataTable.Columns.Count; i++)
-                {
-                    sb.Append(dataTable.Columns[i].ColumnName + " ");
-                    sb.Append(dataTable.Rows[j].ItemArray[i]);
-                    sb.AppendLine("TABLE RESULT EMPLOYER INFO ROW " + j);
-                }
-            }
-            _logger.LogInformation(sb.ToString());
-
-
             return dataTable;
         }
 
