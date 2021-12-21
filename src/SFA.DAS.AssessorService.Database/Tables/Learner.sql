@@ -33,7 +33,8 @@ CREATE TABLE [dbo].[Learner]
     [ApprovalsCompletionDate] DATE NULL,
     [ApprovalsPaymentStatus] SMALLINT NULL,
     [LatestIlrs] DATETIME NULL,
-    [LatestApprovals] DATETIME NULL
+    [LatestApprovals] DATETIME NULL,
+    [LearnerFullNameNoSpaces] AS REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ','')
     
 )
 GO
