@@ -82,6 +82,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id))));
         }
 
+
+        [HttpGet("{orgId}/application/withdrawn/{standardCode}", Name = "GetWithdrawnApplications")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<List<ApplicationResponse>>> GetApplicationsWithdrawn(string orgId, string standardCode)
+        {
+            _logger.LogInformation($"Received request to retrieve withdrawn applications with OrganisationId {orgId}");
+            return Ok(await _mediator.Send(new GetWithdrawnApplicationsRequest(Guid.Parse(orgId), int.Parse(standardCode))));
+        }
+
+
+
         [HttpGet("user/{userId}/application/{id}", Name = "GetApplicationForUser")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

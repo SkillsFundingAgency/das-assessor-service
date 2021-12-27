@@ -91,6 +91,23 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
+        public async Task<ApplySummary> GetWithdrawnApplications(Guid orgId, int? standardCode)
+        {
+            var query = $@"SELECT TOP 1 * from [dbo].[Apply] 
+                            WHERE organisationId = @orgId 
+                            AND StandardCode = @standardCode 
+                            AND ReviewStatus = '{ApplicationStatus.Approved}' 
+                            AND (standardApplicationType = '{StandardApplicationTypes.StandardWithdrawal}' 
+                            OR standardApplicationType = '{StandardApplicationTypes.VersionWithdrawal}') 
+                            ORDER BY CreatedAt DESC";
+
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
+                sql: query,
+                param: new { orgId, standardCode },
+                transaction: _unitOfWork.Transaction);
+        }
+
+
         public async Task<List<ApplySummary>> GetOrganisationApplications(Guid userId)
         {
             return await GetApplications(userId, new int[] { ApplyConst.ORGANISATION_SEQUENCE_NO });
