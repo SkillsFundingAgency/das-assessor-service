@@ -66,19 +66,19 @@ else
 
                 <div class="govuk-form-group" sfa-validation-for="SendTo" sfa-validationerror-class="govuk-form-group--error">
                     <sfa-validationerror-detail sfa-validation-for="SendTo" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                    <div class="govuk-radios__item" data-target="sendto-input" id="SendTo">
+                    <div class="govuk-radios__item" data-target="sendto-input" id="SendTo_Apprentice">
                             <input class="govuk-radios__input"
                                    sfa-validation-for="SendTo" sfa-validationerror-class="govuk-input--error"
-                                   asp-for="SendTo" id="SendTo_Apprentice" type="radio" value="@CertificateSendTo.Apprentice" name="SendTo" />
-                            <label class="govuk-label govuk-radios__label" for="SendTo_Apprentice">
+                                   asp-for="SendTo" id="SendTo_Apprentice_Radio" type="radio" value="@CertificateSendTo.Apprentice" name="SendTo" />
+                            <label class="govuk-label govuk-radios__label" for="SendTo_Apprentice_Radio">
                                 Apprentice
                             </label>
                         </div>
-                    <div class="govuk-radios__item" data-target="sendto-input" id="SendTo">
+                    <div class="govuk-radios__item" data-target="sendto-input" id="SendTo_Employer">
                             <input class="govuk-radios__input"
                                    sfa-validation-for="SendTo" sfa-validationerror-class="govuk-input--error"
-                                   asp-for="SendTo" id="SendTo_Employer" type="radio" value="@CertificateSendTo.Employer" name="SendTo" />
-                            <label class="govuk-label govuk-radios__label" for="SendTo_Employer">
+                                   asp-for="SendTo" id="SendTo_Employer_Radio" type="radio" value="@CertificateSendTo.Employer" name="SendTo" />
+                            <label class="govuk-label govuk-radios__label" for="SendTo_Employer_Radio">
                                 Employer
                             </label>
                         </div>

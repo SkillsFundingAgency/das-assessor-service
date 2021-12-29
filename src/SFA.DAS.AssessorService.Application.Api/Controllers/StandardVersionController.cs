@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -18,13 +20,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [ValidateBadRequest]
     public class StandardVersionController : Controller
     {
-        private readonly ILogger<StandardServiceController> _logger;
+        private readonly ILogger<StandardVersionController> _logger;
         private readonly IStandardService _standardService;
+        private readonly IMediator _mediator;
 
-        public StandardVersionController(ILogger<StandardServiceController> logger, IStandardService standardService)
+        public StandardVersionController(ILogger<StandardVersionController> logger, IStandardService standardService, IMediator mediator)
         {
             _logger = logger;
             _standardService = standardService;
+            _mediator = mediator;
         }
 
         [HttpGet("standards", Name = "GetAllStandardVersions")]
@@ -88,10 +92,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok((StandardVersion)standard);
         }
 
-        [HttpGet("standards/epao/{epaoId}/{larsCode:int?}", Name = "GetEpaoRegisteredStandardVersions")]
+        [HttpGet("standards/epao/{epaoId}", Name = "GetEpaoRegisteredStandardVersions")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoRegisteredStandardVersions(string epaoId, int? larsCode = null)
+        public async Task<IActionResult> GetEpaoRegisteredStandardVersions(string epaoId)
+        {
+            _logger.LogInformation($"Received request to retrieve StandardVersions for Organisation {epaoId}");
+            var standardVersions = await _standardService.GetEPAORegisteredStandardVersions(epaoId);
+            return Ok(standardVersions);
+        }
+
+        [HttpGet("standards/epao/{epaoId}/{larsCode:int}", Name = "GetEpaoRegisteredStandardVersionsByLarsCode")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaoRegisteredStandardVersionsByLarsCode(string epaoId, int larsCode)
         {
             _logger.LogInformation($"Received request to retrieve StandardVersions for Organisation {epaoId}");
             var standardVersions = await _standardService.GetEPAORegisteredStandardVersions(epaoId, larsCode);
@@ -150,6 +164,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Get standard options from Standard Service for standard {standardId} and verion {version}");
             var standardOptions = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardId, version);
             return Ok(standardOptions);
+        }
+
+        [HttpPost("update-standards", Name = "update-standards/GatherAndStoreStandards")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GatherAndStoreStandards([FromBody] ImportStandardsRequest request)
+        {
+            return Ok(await _mediator.Send(request));
         }
 
     }

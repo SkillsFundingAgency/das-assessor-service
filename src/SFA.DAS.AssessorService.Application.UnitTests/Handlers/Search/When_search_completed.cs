@@ -39,12 +39,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
                         IsPrivatelyFunded = false,
-                        CreatedBy = "username"
+                        CreatedBy = "username",
+                        CertificateLogs = new List<CertificateLog>
+                        {
+                            new CertificateLog
+                            {
+                                CertificateData = JsonConvert.SerializeObject(new CertificateData
+                                {
+                                    OverallGrade = CertificateGrade.Distinction,
+                                    AchievementDate = new DateTime(2018, 06, 01)
+                                }),
+                                Action = CertificateActions.Submit
+                            }
+                        }
                     }
                 });
-
-            CertificateRepository.Setup(r => r.GetCertificateLogsFor(certificateId))
-                .ReturnsAsync(new List<CertificateLog>());
 
             ContactRepository.Setup(cr => cr.GetContact("username"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from this EAPOrg", OrganisationId = searchingEpaoOrgId});

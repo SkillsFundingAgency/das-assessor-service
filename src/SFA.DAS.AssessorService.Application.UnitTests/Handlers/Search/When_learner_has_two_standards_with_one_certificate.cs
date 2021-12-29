@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -22,13 +23,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             CertificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
-                    new Certificate {CertificateReference = "00010001", StandardCode = 12,
-                        CertificateData =
-                            JsonConvert.SerializeObject(new CertificateData {})}
+                    new Certificate
+                    {
+                        CertificateReference = "00010001", StandardCode = 12,
+                        CertificateData = JsonConvert.SerializeObject(new CertificateData {}),
+                        CertificateLogs = new List<CertificateLog>
+                        {
+                            new CertificateLog
+                            {
+                                Action = CertificateActions.Submit,
+                                CertificateData = JsonConvert.SerializeObject(new CertificateData
+                                {
+                                    OverallGrade = "Distinction",
+                                    AchievementDate = DateTime.UtcNow.AddDays(-2)
+                                })
+                            }
+                        }
+                    }
                 });
-
-            CertificateRepository.Setup(r => r.GetCertificateLogsFor(It.IsAny<Guid>()))
-                .ReturnsAsync(new List<CertificateLog>());
 
             LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
                 .ReturnsAsync(new List<Domain.Entities.Learner> {new Domain.Entities.Learner() {StdCode = 12, FamilyName = "Lamora"}, new Domain.Entities.Learner() {StdCode = 13, FamilyName = "Lamora"}});
@@ -41,6 +53,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 SearchHandler.Handle(
                     new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
+
             result.Count.Should().Be(2);
             result[0].CertificateReference.Should().Be("00010001");
             result[1].CertificateReference.Should().BeNull();

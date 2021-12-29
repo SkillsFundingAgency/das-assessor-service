@@ -124,7 +124,7 @@
     <value>Enter an address</value>
   </data>
   <data name="CityCannotBeEmpty" xml:space="preserve">
-    <value>Enter a city or town</value>
+    <value>Enter a town or city</value>
   </data>
   <data name="DateCannotBeEmpty" xml:space="preserve">
     <value>Enter the achievement/fail date</value>
@@ -143,6 +143,9 @@
   </data>
   <data name="PostcodeCannotBeEmpty" xml:space="preserve">
     <value>Enter a postcode</value>
+  </data>
+  <data name="SendToCannotBeNone" xml:space="preserve">
+    <value>Select apprentice or employer</value>
   </data>
   <data name="VersionCannotBeNull" xml:space="preserve">
     <value>Select a version</value>

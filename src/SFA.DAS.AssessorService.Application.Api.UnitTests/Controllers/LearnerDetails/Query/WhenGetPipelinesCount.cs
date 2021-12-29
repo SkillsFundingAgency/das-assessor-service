@@ -12,27 +12,34 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 {
     public class GetPipelinesCount
     {
+        private const string EpaoOrganisationId = "EPA0001";
+
+        private Mock<IMediator> _mockMediator;
+
         private LearnerDetailsQueryController _sut;
 
         [SetUp]
         public void Arrange()
         {
-            var mediator = new Mock<IMediator>();
-            mediator
-                .Setup(q => q.Send(It.IsAny<GetPipelinesCountRequest>(), new CancellationToken()))
-                .Returns(Task.FromResult(10));
+            _mockMediator = new Mock<IMediator>();
 
-            _sut = new LearnerDetailsQueryController(mediator.Object);
+            _sut = new LearnerDetailsQueryController(_mockMediator.Object);
         }
 
         [Test]
-        public async Task ThenShouldCallQuery()
+        public async Task And_StandardCodeIsIncluded_Then_ShouldCallQuery()
         {
-            // Act
-            var result = await _sut.GetPipelinesCount("EPA0001", 287) as OkObjectResult;
-            
-            // Assert
-            result.Value.Should().Be(10);
+            var result = await _sut.GetPipelinesCountForStandard(EpaoOrganisationId, 287) as OkObjectResult;
+
+            _mockMediator.Verify(r => r.Send(It.Is<GetPipelinesCountRequest>(q => q.StandardCode == 287 && q.EpaoId == EpaoOrganisationId), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task And_StandardCodeIsNotIncluded_Then_ShouldCallQuery()
+        {
+            var result = await _sut.GetPipelinesCount(EpaoOrganisationId) as OkObjectResult;
+
+            _mockMediator.Verify(r => r.Send(It.Is<GetPipelinesCountRequest>(q => q.StandardCode == null && q.EpaoId == EpaoOrganisationId), It.IsAny<CancellationToken>()));
         }
     }
 }

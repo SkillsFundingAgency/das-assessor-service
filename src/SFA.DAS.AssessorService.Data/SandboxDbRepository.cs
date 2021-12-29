@@ -98,9 +98,7 @@ namespace SFA.DAS.AssessorService.Data
 
             // repopulated in Step 3
             transaction.Connection.Execute(
-                @"  DELETE FROM Options;
-                            DELETE FROM StandardCollation;
-                            DELETE FROM Standards;
+                @"  DELETE FROM Standards;
                             DELETE FROM StandardOptions;", transaction: transaction);
 
             // repopulated in Step 2
@@ -135,7 +133,7 @@ namespace SFA.DAS.AssessorService.Data
         private void Step3_Standard_Data(SqlTransaction transaction)
         {
             _logger.LogInformation("Step 3: Syncing Standard Data");
-            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options", "Standards", "StandardOptions" });
+            BulkCopyData(transaction, new List<string> { "Standards", "StandardOptions" });
             _logger.LogInformation("Step 3: Completed");
         }
 
@@ -178,7 +176,10 @@ namespace SFA.DAS.AssessorService.Data
                           SELECT Number+1
                           FROM CTE 
                           WHERE Number < 9 
-                        )
+                        ),
+                WITH Standards_CTE as(
+                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE LarsCode != 0)
+
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
                         SELECT
                           NEWID() AS Id,
@@ -209,7 +210,7 @@ namespace SFA.DAS.AssessorService.Data
                         FROM CTE
                           CROSS JOIN OrganisationStandard ogs 
                           JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = ogs.EndPointAssessorOrganisationId AND og1.Status <> 'Deleted'
-                          JOIN StandardCollation sc1 ON ogs.StandardCode = sc1.StandardId
+                          JOIN Standards_CTE scte ON ogs.StandardCode = scte.LarsCode
                         WHERE  ogs.Status NOT IN ( 'Deleted','New') AND (ogs.EffectiveTo IS NULL OR ogs.EffectiveTo > GETDATE()) AND og1.EndPointAssessorUkprn IS NOT NULL
                         ) ab1
                         ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);

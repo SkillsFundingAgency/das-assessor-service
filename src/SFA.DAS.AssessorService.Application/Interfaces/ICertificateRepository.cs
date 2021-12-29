@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> GetCertificate(Guid id, bool includeLogs = false);
         Task<Certificate> GetCertificate(long uln, int standardCode);
         Task<Certificate> GetCertificate(long uln, int standardCode, string familyName);
+        Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, bool includeLogs);
         Task<Certificate> GetCertificate(string certificateReference);
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
         Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln, string endpointOrganisationId, string lastName, int standardCode);
