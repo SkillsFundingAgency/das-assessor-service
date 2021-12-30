@@ -73,6 +73,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve application {id} for user {userId}");
             }
         }
+        public async Task<ApplicationResponse> GetWithdrawnApplications(Guid orgId, int? standardCode)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/withdrawn/{standardCode}"))
+            {
+                return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve withdrawn applications");
+            }
+        }
 
         public async Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest)
         {

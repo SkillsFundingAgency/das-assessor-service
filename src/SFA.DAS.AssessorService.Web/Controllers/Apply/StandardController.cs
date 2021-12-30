@@ -101,6 +101,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var latestStandard = standardVersions.LastOrDefault();
             bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
 
+            var previousWithdrawnVersions = (ApplicationResponse)null;
+            //previousWithdrawnVersions = await _applicationApiClient.GetWithdrawnApplications(application.OrganisationId, latestStandard.LarsCode);
+
             if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
@@ -121,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // existing approved versions for this standard
                 var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
                 model.SelectedStandard = new StandardVersionApplication(latestStandard);
-                model.Results = ApplyVersionStatuses(standardVersions).OrderByDescending(x => x.Version).ToList();
+                model.Results = ApplyVersionStatuses(standardVersions, previousWithdrawnVersions).OrderByDescending(x => x.Version).ToList();
                 return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
             }
             else
@@ -311,7 +314,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions)
+        private bool ReApplyViaSevenQuestions(DateTime? previousWithdrawalDate, bool? prevApplyViaOptIn)
+        {
+            if (previousWithdrawalDate > DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
+            {
+                return true;
+            }
+            else if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && !prevApplyViaOptIn == false)
+            {
+                return true;
+            }
+            else if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, ApplicationResponse previousWithdrawal = null)
         {
             bool approved = false;
             bool changed = false;
@@ -350,6 +374,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     version.VersionStatus = changed ? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
                     changed = version.EPAChanged || changed;
+                }
+            }
+
+            var lastVersionWithdrawn = versions.Where(x => x.ApprovedStatus == ApprovedStatus.Withdrawn).LastOrDefault();
+            if (previousWithdrawal != null && lastVersionWithdrawn != null)
+            {
+                bool? epaChanged = versions.Where(s => s.ApplicationStatus == ApprovedStatus.Withdrawn).Select(x => x.EPAChanged).LastOrDefault();
+
+                DateTime? previousWithdrawalDate = previousWithdrawal.ApplyData.Sequences
+                            .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                            .Select(y => y.ApprovedDate).FirstOrDefault();
+
+                foreach (var withdrawnStandard in results.Where(x => x.VersionStatus == VersionStatus.Withdrawn))
+                {
+                    if (ReApplyViaSevenQuestions(previousWithdrawalDate, epaChanged))
+                    {
+                        withdrawnStandard.VersionStatus = VersionStatus.NewVersionChanged;
+                    }
+                    else
+                    {
+                        withdrawnStandard.VersionStatus = VersionStatus.NewVersionNoChange;
+                    }
+
                 }
             }
 
