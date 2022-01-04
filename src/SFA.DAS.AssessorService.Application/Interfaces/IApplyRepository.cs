@@ -13,12 +13,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Domain.Entities.Apply> GetApply(Guid applicationId);
         Task<ApplySummary> GetApplication(Guid applicationId, Guid? userId);
         Task<ApplySummary> GetWithdrawnApplications(Guid orgId, int? standardCode);
+        Task<ApplySummary> GetPreviousApplications(Guid orgId, string standardReference);
         Task<List<ApplySummary>> GetOrganisationApplications(Guid userId);
         Task<List<ApplySummary>> GetStandardApplications(Guid userId);
         Task<List<ApplySummary>> GetWithdrawalApplications(Guid userId);
         Task<List<ApplySummary>> GetOrganisationWithdrawalApplications(Guid userId);
         Task<List<ApplySummary>> GetStandardWithdrawalApplications(Guid userId);
-        
+
         Task<Guid> CreateApplication(Domain.Entities.Apply apply);
         Task DeleteApplication(Guid id, string deletedBy);
         Task DeclineAllApplicationsForOrgansiation(Guid currentApplyId, string endPointAssessorOrganisationId, string declinedBy);

@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ContactResponse>> UpdateEpaOrganisationWebsiteLink(UpdateEpaOrganisationWebsiteLinkRequest updateEpaOrganisationWebsiteLinkRequest);
 
         Task<List<OrganisationType>> GetOrganisationTypes();
-        
+
         Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest);
         Task<OrganisationResponse> GetOrganisationByName(string name);
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel);
         Task<EpaOrganisation> GetEpaOrganisationById(string Id);
 
-        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
-           string standardReference, string version, string standardUId, string comments);
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
+           string standardReference, string version, string standardUId, bool optInFollowingWithdrawal, string comments);
     }
 }

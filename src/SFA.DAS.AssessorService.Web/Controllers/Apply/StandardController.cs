@@ -101,8 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var latestStandard = standardVersions.LastOrDefault();
             bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
 
-            var previousWithdrawnVersions = (ApplicationResponse)null;
-            //previousWithdrawnVersions = await _applicationApiClient.GetWithdrawnApplications(application.OrganisationId, latestStandard.LarsCode);
+            var previousWithdrawnVersions = await _applicationApiClient.GetWithdrawnApplications(application.OrganisationId, latestStandard.LarsCode);
 
             if (!string.IsNullOrWhiteSpace(version))
             {
@@ -259,7 +258,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, $"Opted in by EPAO by {contact.Username}");
+            var previousApplications = _applicationApiClient.GetPreviousApplications(application.OrganisationId, standardReference);
+            bool optInFollowingWithdrawal = true;
+
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
 
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
@@ -365,7 +367,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             // now do it again in reverse order to handle any versions prior to the first approved version
             var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.VersionStatus == VersionStatus.Approved);
             if (firstApproved != null)
-            { 
+            {
                 changed = firstApproved.EPAChanged;
 
                 foreach (var version in results
@@ -378,7 +380,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var lastVersionWithdrawn = versions.Where(x => x.ApprovedStatus == ApprovedStatus.Withdrawn).LastOrDefault();
-            if (previousWithdrawal != null && lastVersionWithdrawn != null)
+            if (previousWithdrawal.ApplyData != null && lastVersionWithdrawn != null)
             {
                 bool? epaChanged = versions.Where(s => s.ApplicationStatus == ApprovedStatus.Withdrawn).Select(x => x.EPAChanged).LastOrDefault();
 
@@ -390,7 +392,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (ReApplyViaSevenQuestions(previousWithdrawalDate, epaChanged))
                     {
-                        withdrawnStandard.VersionStatus = VersionStatus.NewVersionChanged;
+                        withdrawnStandard.VersionStatus = VersionStatus.NewVersionNoChange;
                     }
                     else
                     {
