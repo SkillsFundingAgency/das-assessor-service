@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
     {
         public string LearnerGivenNames { get; set; }
         public string LearnerFamilyName { get; set; }
-        public long? EmployerId { get; set; }
+        public long? EmployerAccountId { get; set; }
         public string EmployerName { get; set; }
         public string StandardReference { get; set; }
         public string Version { get; set; }

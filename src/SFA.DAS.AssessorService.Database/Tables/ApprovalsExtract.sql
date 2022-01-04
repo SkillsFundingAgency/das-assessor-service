@@ -20,7 +20,7 @@
     [LearnRefNumber] NVARCHAR(50) NULL,
     [PaymentStatus] SMALLINT NULL,
     [LastUpdated] AS ISNULL([UpdatedOn],[CreatedOn]),
-    [EmployerId ] BIGINT NULL, 
+    [EmployerAccountId] BIGINT NULL, 
     [EmployerName ] NVARCHAR(100) NULL
 )
 GO

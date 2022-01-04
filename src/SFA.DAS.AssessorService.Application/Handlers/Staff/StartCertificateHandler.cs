@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certData.LearnerGivenNames = learner.GivenNames;
             certData.LearnerFamilyName = learner.FamilyName;
 
-            certData.EmployerId = learner.EmployerId;
+            certData.EmployerAccountId = learner.EmployerAccountId;
             certData.EmployerName = learner.EmployerName;
 
             certData.LearningStartDate = learner.LearnStartDate;

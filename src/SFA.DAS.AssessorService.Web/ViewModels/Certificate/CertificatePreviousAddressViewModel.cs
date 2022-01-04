@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificatePreviousAddressViewModel : CertificateSendToViewModel
     {
-        public long? EmployerId { get; set; }
+        public long? EmployerAccountId { get; set; }
         public string EmployerName { get; set; }
         public bool HasPreviousAddress { get; set; }
         public bool? UsePreviousAddress { get; set; }
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             base.FromCertificate(cert);
 
-            EmployerId = CertificateData.EmployerId;
+            EmployerAccountId = CertificateData.EmployerAccountId;
         }
 
         public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)

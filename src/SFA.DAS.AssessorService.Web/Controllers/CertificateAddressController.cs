@@ -149,7 +149,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task InitialisePreviousAddress(CertificatePreviousAddressViewModel viewModel, string epaOrgId)
         {
-            var previousAddress = await GetContactPreviousAddress(epaOrgId, viewModel.EmployerId.ToString());
+            var previousAddress = await GetContactPreviousAddress(epaOrgId, viewModel.EmployerAccountId.ToString());
             if (previousAddress != null)
             {
                 viewModel.PreviousAddress = new CertificateAddress
@@ -166,11 +166,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             viewModel.HasPreviousAddress = (previousAddress != null);
         }
 
-        private async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerId)
+        private async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
         {
             try
             {
-                return await _certificateApiClient.GetContactPreviousAddress(epaOrgId, employerId);
+                return await _certificateApiClient.GetContactPreviousAddress(epaOrgId, employerAccountId);
             }
             catch (HttpRequestException)
             {

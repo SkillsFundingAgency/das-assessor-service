@@ -48,9 +48,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateAddress))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = null)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string epaOrgId, [FromQuery] string employerId)
+        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string epaOrgId, [FromQuery] string employerAccountId)
         {
-            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { EpaOrgId = epaOrgId, EmployerId = employerId });
+            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { EpaOrgId = epaOrgId, EmployerAccountId = employerAccountId });
             return Ok(address);
         }
 

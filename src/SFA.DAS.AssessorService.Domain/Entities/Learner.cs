@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        public long? EmployerId { get; set; }
+        public long? EmployerAccountId { get; set; }
         public string EmployerName { get; set; }
 
         /// <summary>

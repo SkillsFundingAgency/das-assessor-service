@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
                 Id = CertificateIdWithoutPreviousAddress,
                 CertificateData = JsonConvert.SerializeObject(new CertificateData
                 {
-                    EmployerId = 10
+                    EmployerAccountId = 10
                 })
             };
 
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
                 Id = CertificateIdWithPreviousAddress,
                 CertificateData = JsonConvert.SerializeObject(new CertificateData
                 {
-                    EmployerId = 11
+                    EmployerAccountId = 11
                 })
             };
 

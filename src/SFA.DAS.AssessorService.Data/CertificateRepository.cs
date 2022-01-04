@@ -498,7 +498,7 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
         
-        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerId)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
         {
             var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
             var sendToEmployer = nameof(CertificateSendTo.Employer);
@@ -519,7 +519,7 @@ namespace SFA.DAS.AssessorService.Data
                     ON c.OrganisationId = o.Id
                 WHERE 
                     o.EndPointAssessorOrganisationId = @epaOrgId
-                    AND JSON_VALUE(CertificateData, '$.EmployerId') = @employerId
+                    AND JSON_VALUE(CertificateData, '$.EmployerAccountId') = @employerAccountId
                     AND JSON_VALUE(CertificateData, '$.SendTo') = @sendToEmployer
                     AND c.Status IN @statuses
                 ORDER BY 
@@ -527,7 +527,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<CertificateAddress>(
                 sql,
-                param: new { epaOrgId, employerId, sendToEmployer, statuses },
+                param: new { epaOrgId, employerAccountId, sendToEmployer, statuses },
                 transaction: _unitOfWork.Transaction);
         }
 
