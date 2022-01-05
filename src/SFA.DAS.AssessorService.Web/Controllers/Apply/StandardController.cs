@@ -101,7 +101,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var latestStandard = standardVersions.LastOrDefault();
             bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
 
-            var previousWithdrawnVersions = await _applicationApiClient.GetWithdrawnApplications(application.OrganisationId, latestStandard.LarsCode);
+            var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
+            var previousApplication = await _applicationApiClient.GetPreviousApplication(application.OrganisationId, standardReference);
 
             if (!string.IsNullOrWhiteSpace(version))
             {
@@ -123,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // existing approved versions for this standard
                 var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
                 model.SelectedStandard = new StandardVersionApplication(latestStandard);
-                model.Results = ApplyVersionStatuses(standardVersions, previousWithdrawnVersions).OrderByDescending(x => x.Version).ToList();
+                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard, previousApplication).OrderByDescending(x => x.Version).ToList();
                 return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
             }
             else
@@ -258,8 +259,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
-            var previousApplications = _applicationApiClient.GetPreviousApplications(application.OrganisationId, standardReference);
-            bool optInFollowingWithdrawal = true;
+            var previousApplication = await _applicationApiClient.GetPreviousApplication(application.OrganisationId, standardReference);
+            bool optInFollowingWithdrawal = previousApplication != null && previousApplication.StandardApplicationType.Equals(StandardApplicationTypes.VersionWithdrawal);
 
             await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
 
@@ -337,7 +338,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
 
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, ApplicationResponse previousWithdrawal = null)
+        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
+            List<ApplicationResponse> previousWithdrawals = null, ApplicationResponse previousApplication = null)
         {
             bool approved = false;
             bool changed = false;
@@ -379,24 +381,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            var lastVersionWithdrawn = versions.Where(x => x.ApprovedStatus == ApprovedStatus.Withdrawn).LastOrDefault();
-            if (previousWithdrawal.ApplyData != null && lastVersionWithdrawn != null)
+
+            DateTime? previousApplicationDate = previousApplication.ApplyData.Apply.
+
+            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal);
+            bool? epaChanged = versions.Where(s => s.ApplicationStatus == ApprovedStatus.Withdrawn).Select(x => x.EPAChanged).LastOrDefault();
+
+            foreach (var withdrawal in withdrawals)
             {
-                bool? epaChanged = versions.Where(s => s.ApplicationStatus == ApprovedStatus.Withdrawn).Select(x => x.EPAChanged).LastOrDefault();
+                List<string> vers = withdrawal.ApplyData.Apply.Versions;
 
-                DateTime? previousWithdrawalDate = previousWithdrawal.ApplyData.Sequences
-                            .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                            .Select(y => y.ApprovedDate).FirstOrDefault();
-
-                foreach (var withdrawnStandard in results.Where(x => x.VersionStatus == VersionStatus.Withdrawn))
+                foreach (var res in results)
                 {
-                    if (ReApplyViaSevenQuestions(previousWithdrawalDate, epaChanged))
+                    var checkVer = vers.Where(x => x.Contains(res.Version)).FirstOrDefault();
+                    if (checkVer != null)
                     {
-                        withdrawnStandard.VersionStatus = VersionStatus.NewVersionNoChange;
-                    }
-                    else
-                    {
-                        withdrawnStandard.VersionStatus = VersionStatus.NewVersionNoChange;
+                        DateTime? previousWithdrawalDate = withdrawal.ApplyData.Sequences
+                                .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                                .Select(y => y.ApprovedDate).FirstOrDefault();
+
+                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, epaChanged))
+                        {
+                            res.VersionStatus = VersionStatus.NewVersionChanged;
+                        }
+                        else
+                        {
+                            res.VersionStatus = VersionStatus.NewVersionNoChange;
+                        }
                     }
 
                 }

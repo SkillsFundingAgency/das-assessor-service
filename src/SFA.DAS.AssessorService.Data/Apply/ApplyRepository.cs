@@ -91,23 +91,23 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
-        public async Task<ApplySummary> GetWithdrawnApplications(Guid orgId, int? standardCode)
+        public async Task<List<ApplySummary>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode)
         {
-            var query = $@"SELECT TOP 1 * from [dbo].[Apply] 
-                            WHERE organisationId = @orgId 
-                            AND StandardCode = @standardCode 
-                            AND ReviewStatus = '{ApplicationStatus.Approved}' 
-                            AND (standardApplicationType = '{StandardApplicationTypes.StandardWithdrawal}' 
-                            OR standardApplicationType = '{StandardApplicationTypes.VersionWithdrawal}') 
-                            ORDER BY CreatedAt DESC";
+            var query = $@"SELECT * from [dbo].[Apply] 
+                        WHERE organisationId = @orgId 
+                        AND StandardCode = @standardCode 
+                        AND ReviewStatus = '{ApplicationStatus.Approved}' 
+                        AND (standardApplicationType = '{StandardApplicationTypes.StandardWithdrawal}' 
+                        OR standardApplicationType = '{StandardApplicationTypes.VersionWithdrawal}') 
+                        ORDER BY CreatedAt DESC";
 
-            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
+            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
                 sql: query,
                 param: new { orgId, standardCode },
-                transaction: _unitOfWork.Transaction);
+                transaction: _unitOfWork.Transaction)).ToList();
         }
 
-        public async Task<ApplySummary> GetPreviousApplications(Guid orgId, string standardReference)
+        public async Task<ApplySummary> GetPreviousApplication(Guid orgId, string standardReference)
         {
             var query = $@"SELECT TOP(1) *
                           FROM [dbo].[Apply]
