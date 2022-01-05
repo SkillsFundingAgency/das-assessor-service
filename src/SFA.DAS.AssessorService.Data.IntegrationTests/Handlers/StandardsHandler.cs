@@ -24,7 +24,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [IsActive]" +
                     ", [ProposedTypicalDuration]" +
                     ", [ProposedMaxFunding]" +
-                    ", [EPAChanged])" +
+                    ", [EPAChanged]" +
+                    ", [TrailblazerContact]" +
+                    ", [StandardPageUrl]" +
+                    ", [OverviewOfRole])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
@@ -38,7 +41,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @isActive" +
                     ", @proposedTypicalDuration" +
                     ", @proposedMaxFunding" +
-                    ", @epaChanged)";
+                    ", @epaChanged" +
+                    ", @trailblazerContact" +
+                    ", @standardPageUrl" +
+                    ", @overviewOfRole)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }

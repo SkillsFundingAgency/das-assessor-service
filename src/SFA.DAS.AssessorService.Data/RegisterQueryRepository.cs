@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -173,14 +172,6 @@ namespace SFA.DAS.AssessorService.Data
                   WHERE 
 	                EndPointAssessorOrganisationId = @organisationId
 
-                  SELECT
-	                sc.Id, StandardId, ReferenceNumber, Title, StandardData, DateAdded, DateUpdated, DateRemoved, IsLive
-                  FROM 
-	                [OrganisationStandard] os 
-	                INNER JOIN [StandardCollation] sc ON os.StandardCode = sc.StandardId
-                  WHERE 
-	                EndPointAssessorOrganisationId = @organisationId
-
                   SELECT StandardCode, osda.DeliveryAreaId 
                   FROM 
 	                [OrganisationStandard] os 
@@ -189,7 +180,7 @@ namespace SFA.DAS.AssessorService.Data
 	                EndPointAssessorOrganisationId = @organisationId 
                   
                   SELECT 
-	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
+	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status, s.VersionMajor, s.VersionMinor
                   FROM 
 	                [dbo].[OrganisationStandardVersion] osv
 	                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
@@ -205,14 +196,11 @@ namespace SFA.DAS.AssessorService.Data
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
             {
                 organisationStandardSummaries = multi.Read<OrganisationStandardSummary>();
-                var standardCollations = multi.Read<StandardCollation>()?.ToDictionary(a => a.StandardId);
                 var deliveryAreas = multi.Read().Select(a => new { a.StandardCode, a.DeliveryAreaId })?.GroupBy(a => a.StandardCode);
                 var organisationStandardVersions = multi.Read<OrganisationStandardVersion>()?.GroupBy(a => a.LarsCode);
 
                 foreach (var organisationStandardSummary in organisationStandardSummaries)
                 {
-                    organisationStandardSummary.StandardCollation = standardCollations[organisationStandardSummary.StandardCode];
-
                     organisationStandardSummary.DeliveryAreas = deliveryAreas?
                         .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
                         .Select(a => (int)a.DeliveryAreaId)
@@ -230,7 +218,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
             var sql =
-                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
+                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, StandardReference as IFateReferenceNumber, EffectiveFrom, EffectiveTo, " +
                     "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
                     "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
 

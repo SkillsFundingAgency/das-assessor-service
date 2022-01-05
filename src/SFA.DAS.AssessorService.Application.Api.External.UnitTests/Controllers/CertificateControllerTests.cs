@@ -11,7 +11,9 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.Testing.AutoFixture;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -21,7 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 {
     public class CertificateControllerTests
     {
-        public  GetCertificateResponse _response;
+        private Fixture _fixture;
+        private GetCertificateResponse _response;
 
         private Mock<IApiClient> _mockApiClient;
         private Mock<IHeaderInfo> _headerInfo;
@@ -31,16 +34,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [SetUp]
         public void Arrange()
         {
-            var fixture = new Fixture();
+            _fixture = new Fixture();
 
-            _response = fixture.Build<GetCertificateResponse>()
+            _response = _fixture.Build<GetCertificateResponse>()
                 .With(r => r.ValidationErrors, new List<string>())
                 .Create();
 
             _mockApiClient = new Mock<IApiClient>();
             _headerInfo = new Mock<IHeaderInfo>();
-            _headerInfo.SetupGet(s => s.Ukprn).Returns(fixture.Create<int>());
-            _headerInfo.SetupGet(s => s.Email).Returns(fixture.Create<string>());
+            _headerInfo.SetupGet(s => s.Ukprn).Returns(_fixture.Create<int>());
+            _headerInfo.SetupGet(s => s.Email).Returns(_fixture.Create<string>());
 
             _controller = new CertificateController(Mock.Of<ILogger<CertificateController>>(), _headerInfo.Object, _mockApiClient.Object);
         }
@@ -84,6 +87,22 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
             result.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
+        }
+
+        [Test, MoqAutoData]
+        public async Task When_RequestingCertificate_And_CertificateStatusIsPrinted_Then_DeliveryStatusIsWaitingForDelivery(long uln, string familyName, string standard)
+        {
+            _response.Certificate.Status.CurrentStatus = CertificateStatus.Printed;
+
+            _mockApiClient.Setup(client => client.GetCertificate(It.IsAny<GetBatchCertificateRequest>()))
+                .ReturnsAsync(_response);
+
+            var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
+
+            var certificate = result.Value as Certificate;
+
+            certificate.Delivered.Status.Should().Be("WaitingForDelivery");
+            certificate.Delivered.DeliveryDate.Should().BeNull();
         }
 
         [Test, MoqAutoData]

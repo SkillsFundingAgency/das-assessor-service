@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     ApplicationId = request.QnaApplicationId,
                     ApplicationStatus = ApplicationStatus.InProgress,
                     ReviewStatus = ApplicationReviewStatus.Draft,
-                    FinancialReviewStatus = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
+                    FinancialReviewStatus = Helpers.FinancialReviewStatusHelper.IsFinancialExempt(org.OrganisationData?.FHADetails?.FinancialExempt, org.OrganisationData?.FHADetails.FinancialDueDate, orgType) ? FinancialReviewStatus.Exempt : FinancialReviewStatus.Required,
                     OrganisationId = org.Id,
                     CreatedBy = creatingContact.Id.ToString(),
                     CreatedAt = DateTime.UtcNow
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.ORGANISATION_DETAILS_SECTION_NO, ApplyConst.DECLARATIONS_SECTION_NO);
                 }
 
-                bool isFinancialExempt = IsFinancialExempt(org.OrganisationData?.FHADetails, orgType);
+                bool isFinancialExempt = Helpers.FinancialReviewStatusHelper.IsFinancialExempt(org.OrganisationData?.FHADetails.FinancialExempt, org.OrganisationData?.FHADetails.FinancialDueDate, orgType);
                 if (isFinancialExempt)
                 {
                     RemoveSections(sequences, ApplyConst.ORGANISATION_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
@@ -118,18 +118,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (org?.OrganisationData == null) return false;
             return org.OrganisationData.RoEPAOApproved || org.Status == "Live";
-        }
-
-        private static bool IsFinancialExempt(ApplyTypes.FHADetails financials, OrganisationType orgType)
-        {
-            if (financials == null) return false;
-
-            bool financialExempt = financials.FinancialExempt ?? false;
-            bool orgTypeFinancialExempt = (orgType != null) && orgType.FinancialExempt;
-
-            bool financialIsNotDue = (financials.FinancialDueDate?.Date ?? DateTime.MinValue) > DateTime.Today;
-
-            return financialExempt || financialIsNotDue || orgTypeFinancialExempt;
         }
 
         private async Task<string> CreateReferenceNumber(string referenceFormat)

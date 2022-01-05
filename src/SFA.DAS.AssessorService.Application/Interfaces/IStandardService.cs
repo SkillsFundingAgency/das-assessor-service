@@ -7,11 +7,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStandardService
     {
-        Task<IEnumerable<StandardCollation>> GetAllStandards();
-
-        Task<StandardCollation> GetStandard(int standardId);
-        Task<StandardCollation> GetStandard(string referenceNumber);
-
         Task<IEnumerable<EPORegisteredStandards>> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId);
 
         // New Standard Versioning Methods

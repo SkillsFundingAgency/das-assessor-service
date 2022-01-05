@@ -141,6 +141,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("SequenceSignPost", new { Id = id });
         }
 
+        
+        [HttpGet("/Application/Finance", Name = "StartOrResumeApplication")]  // Need to differentiate ourselves from the other Get
+        public async Task<IActionResult> StartOrResumeApplication()
+        {
+            return await StartApplication();
+        }
+        
+
         [HttpGet("/Application/{Id}")]
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> SequenceSignPost(Guid Id)

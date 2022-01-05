@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<OppFinderApprovedStandardsResult> GetOppFinderApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex);
         Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(string standardReference);
         Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
-
+        Task<OppFinderNonApprovedStandardDetailsResult> GetOppFinderNonApprovedStandardDetails(string standardReference);
         Task UpdateStandardSummary();       
     }
 
@@ -59,6 +59,19 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         public string EqaProviderName { get; set; }
         public string EqaProviderContactName { get; set; }
         public string EqaProviderContactEmail { get; set; }
+    }
+
+    public class OppFinderNonApprovedStandardDetailsResult
+    {
+        public string Title { get; set; }
+        public string Status { get; set; }
+        public string OverviewOfRole { get; set; }
+        public string Level { get; set; }
+        public string IFateReferenceNumber { get; set; }
+        public string Route { get; set; }
+        public int TypicalDuration { get; set; }
+        public string TrailblazerContact { get; set; }
+        public string StandardPageUrl { get; set; }
     }
 
     public class OppFinderApprovedStandardRegionResult
