@@ -33,6 +33,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                    new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.2", LarsCode = 1, EPAChanged = false},
                });
 
+            _mockApiClient
+                .Setup(r => r.GetPreviousApplication(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(new ApplicationResponse {
+                    StandardReference = "ST0001", StandardApplicationType = StandardApplicationTypes.VersionWithdrawal });   
+
             _mockContactsApiClient.Setup(r => r.GetContactBySignInId(It.IsAny<String>()))
             .ReturnsAsync(new ContactResponse()
             {

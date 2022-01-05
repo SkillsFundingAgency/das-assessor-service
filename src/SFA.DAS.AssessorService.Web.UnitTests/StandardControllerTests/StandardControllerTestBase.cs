@@ -91,6 +91,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
             .ReturnsAsync(new List<OrganisationStandardSummary>());
 
+            _mockApiClient
+                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int?>()))
+                .ReturnsAsync(new List<ApplicationResponse>());
+
+            _mockApiClient
+                .Setup(r => r.GetPreviousApplication(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(new ApplicationResponse());
+
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)
             {
