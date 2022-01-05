@@ -21,9 +21,9 @@
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
     [StandardUId] VARCHAR(20)  NULL ,
-	[LearnerFamilyName] as JSON_VALUE(CertificateData, '$.LearnerFamilyName'),
-	[LearnerGivenNames] as JSON_VALUE(CertificateData, '$.LearnerGivenNames'),
-	[LearnerFullNameNoSpaces] as REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','')
+	[LearnerFamilyName] as CAST(JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS NVARCHAR(255)),
+	[LearnerGivenNames] as CAST(JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS NVARCHAR(255)),
+	[LearnerFullNameNoSpaces] as CAST(REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS NVARCHAR(255))
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -53,5 +53,5 @@ GO
 CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId]) INCLUDE ([CreatedAt], [Status])
 GO
 
-CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([Id],[LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
+CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
 GO
