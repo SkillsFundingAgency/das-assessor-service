@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
 
             // Assert
-            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", "1.2", It.IsAny<string>(), true, "Opted in by EPAO by USERNAME"));
+            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", "1.2", It.IsAny<string>(), It.IsAny<bool>(), "Opted in by EPAO by USERNAME"));
 
             Assert.AreEqual("OptInConfirmation", results.ActionName);
         }
