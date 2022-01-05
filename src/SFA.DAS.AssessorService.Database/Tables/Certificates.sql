@@ -53,5 +53,5 @@ GO
 CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId]) INCLUDE ([CreatedAt], [Status])
 GO
 
-CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
+CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([Id],[LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
 GO
