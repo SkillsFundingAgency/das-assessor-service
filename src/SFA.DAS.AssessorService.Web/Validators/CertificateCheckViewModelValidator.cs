@@ -30,15 +30,36 @@ namespace SFA.DAS.AssessorService.Web.Validators
                 RuleFor(vm => vm.Name).NotEmpty()
                     .WithMessage(localizer["NameCannotBeEmpty"]);
 
-                RuleFor(vm => vm.Postcode).NotEmpty()
-                    .WithMessage(localizer["PostcodeCannotBeEmpty"]);
-                
-                RuleFor(vm => vm.City).NotEmpty()
-                    .WithMessage(localizer["CityCannotBeEmpty"]);
-                
-                RuleFor(vm => vm.AddressLine1).NotEmpty()
-                    .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
- 
+                When(vm => vm.SendTo == CertificateSendTo.Employer, () =>
+                {
+                    RuleFor(vm => vm.Employer).NotNull()
+                        .DependentRules(() =>
+                        {
+                            RuleFor(vm => vm.AddressLine1).NotNull()
+                                .DependentRules(() =>
+                                {
+                                    RuleFor(vm => vm.City).NotNull()
+                                        .DependentRules(() =>
+                                    {
+                                        RuleFor(vm => vm.Postcode).NotNull();
+                                    });
+                                });
+                        })
+                        .WithMessage(localizer["AddressCannotBeEmpty"]); ;
+                }).Otherwise(() => 
+                {
+                    RuleFor(vm => vm.AddressLine1).NotNull()
+                        .DependentRules(() =>
+                        {
+                            RuleFor(vm => vm.City).NotNull()
+                                .DependentRules(() =>
+                                {
+                                    RuleFor(vm => vm.Postcode).NotNull();
+                                });
+                        })
+                        .WithMessage(localizer["AddressCannotBeEmpty"]); ;
+                });
+
                 When(vm => vm.SelectedGrade != null, () =>
                 {
                     RuleFor(vm => vm.AchievementDate).NotNull()

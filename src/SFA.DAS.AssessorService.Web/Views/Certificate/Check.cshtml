@@ -203,7 +203,7 @@ else
     @if (Model.SelectedGrade != CertificateGrade.Fail)
     {
         <h2 class="govuk-heading-m">
-            We'll send the certificate to:
+            We'll send the certificate to
         </h2>
 
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
@@ -212,8 +212,11 @@ else
                     Certificate receiver
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    <span class="govuk-error-message" asp-validation-for="SendTo"></span>
-                    @Model.SendTo
+                    <span id="SendTo" class="govuk-error-message" asp-validation-for="SendTo"></span>
+                    @if (Model.SendTo != CertificateSendTo.None)
+                    {
+                        @Model.SendTo
+                    }
                 </dd>
                 <dd class="govuk-summary-list__actions">
                     <a class="govuk-link" asp-controller="CertificateSendTo" asp-action="SendTo" asp-route-redirecttocheck="true">
@@ -227,7 +230,7 @@ else
                     Recipient's name
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    <span class="govuk-error-message" asp-validation-for="Name"></span>
+                    <span id="Name" class="govuk-error-message" asp-validation-for="Name"></span>
                     @Model.Name
                 </dd>
                 <dd class="govuk-summary-list__actions">
@@ -264,40 +267,56 @@ else
             </div>
             }
             <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Address
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <span id="Employer" class="govuk-error-message" asp-validation-for="Employer"></span>
-                <span id="AddressLine1" class="govuk-error-message" asp-validation-for="AddressLine1"></span>
-                <span id="City" class="govuk-error-message" asp-validation-for="City"></span>
-                <span id="Postcode" class="govuk-error-message" asp-validation-for="Postcode"></span>
-                @if (@Model.Employer != null)
-                {
-                    @Model.Employer<br />
-                }
+                <dt class="govuk-summary-list__key">
+                    Address
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.SendTo == CertificateSendTo.Employer)
+                    {
+                        <span id="Employer" class="govuk-error-message" asp-validation-for="Employer"></span>
+                    }
+                    <span id="AddressLine1" class="govuk-error-message" asp-validation-for="AddressLine1"></span>
+                    <span id="City" class="govuk-error-message" asp-validation-for="City"></span>
+                    <span id="Postcode" class="govuk-error-message" asp-validation-for="Postcode"></span>
+                    
+                    @if (Model.SendTo == CertificateSendTo.Employer)
+                    {
+                        if (!string.IsNullOrEmpty(Model.Employer))
+                        {
+                            @Model.Employer<br />
+                        }
+                    }
 
-                @Model.AddressLine1<br />
+                    @if (!string.IsNullOrEmpty(Model.AddressLine1))
+                    {
+                        @Model.AddressLine1<br />
+                    }
 
-                @if (@Model.AddressLine2 != null)
-                {
-                    @Model.AddressLine2<br />
-                }
-                
-                @if (@Model.AddressLine3 != null)
-                {
-                    @Model.AddressLine3<br />
-                }
+                    @if (!string.IsNullOrEmpty(Model.AddressLine2))
+                    {
+                        @Model.AddressLine2<br />
+                    }
 
-                @Model.City<br />
-                
-                @Model.Postcode
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
-                    Change<span class="govuk-visually-hidden"> address</span>
-                </a>
-            </dd>
+                    @if (!string.IsNullOrEmpty(Model.AddressLine3))
+                    {
+                        @Model.AddressLine3<br />
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.City))
+                    {
+                        @Model.City<br />
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Postcode))
+                    {
+                        @Model.Postcode
+                    }
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="govuk-visually-hidden"> address</span>
+                    </a>
+                </dd>
             </div>
         </dl>
     }

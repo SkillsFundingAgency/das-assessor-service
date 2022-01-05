@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            if (SendToHasSwitched(certData))
+            if (SendToHasChanged(certData))
             {
                 certData = ClearFieldsAfterSendToSwitch(certData);
             }
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             return certificate;
         }
 
-        public bool SendToHasSwitched(CertificateData certData)
+        public bool SendToHasChanged(CertificateData certData)
         {
             return certData.SendTo != SendTo;
         }

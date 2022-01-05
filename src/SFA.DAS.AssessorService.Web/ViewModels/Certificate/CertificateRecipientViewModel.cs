@@ -27,5 +27,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
             return certificate;
         }
+
+        public bool RecipientHasChanged(CertificateData certData)
+        {
+            return
+                certData.ContactName != Name ||
+                certData.Department != Dept;
+        }
     }
 }

@@ -35,9 +35,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 : RedirectToAction("PreviousAddress", "CertificateAddress");
 
             var certData = await GetCertificateData(vm.Id);
-            if (ModelState.IsValid && vm.SendToHasSwitched(certData))
+            if (ModelState.IsValid && vm.SendToHasChanged(certData))
             {
-                // when recipient has switched the complete journey is required
+                // when recipient has changed the complete journey is required
                 SessionService.SetRedirectToCheck(false);
             }
 

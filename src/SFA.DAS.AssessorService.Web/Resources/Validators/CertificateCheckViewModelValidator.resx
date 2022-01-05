@@ -120,11 +120,8 @@
   <data name="AchievementDateCannotBeEmpty" xml:space="preserve">
     <value>Enter the achievement date</value>
   </data>
-  <data name="AddressLine1CannotBeEmpty" xml:space="preserve">
+  <data name="AddressCannotBeEmpty" xml:space="preserve">
     <value>Enter an address</value>
-  </data>
-  <data name="CityCannotBeEmpty" xml:space="preserve">
-    <value>Enter a town or city</value>
   </data>
   <data name="DateCannotBeEmpty" xml:space="preserve">
     <value>Enter the achievement/fail date</value>
@@ -136,16 +133,13 @@
     <value>Select a grade</value>
   </data>
   <data name="NameCannotBeEmpty" xml:space="preserve">
-    <value>Enter a name</value>
+    <value>Enter recipient's name</value>
   </data>
   <data name="OptionCannotBeNull" xml:space="preserve">
     <value>Select an option</value>
   </data>
-  <data name="PostcodeCannotBeEmpty" xml:space="preserve">
-    <value>Enter a postcode</value>
-  </data>
   <data name="SendToCannotBeNone" xml:space="preserve">
-    <value>Select apprentice or employer</value>
+    <value>Enter the certificate receiver</value>
   </data>
   <data name="VersionCannotBeNull" xml:space="preserve">
     <value>Select a version</value>

@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using System.Net.Http;
@@ -47,6 +48,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Route("enter")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
+            var certData = await GetCertificateData(vm.Id);
+            if (ModelState.IsValid && vm.AddressHasChanged(certData))
+            {
+                // when address has been changed the complete journey is required
+                SessionService.SetRedirectToCheck(false);
+            }
+
             if (vm.SendTo == CertificateSendTo.Apprentice)
             {
                 return await SaveViewModel(vm,
@@ -122,6 +130,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Route("recipient")]
         public async Task<IActionResult> Recipient(CertificateRecipientViewModel vm)
         {
+            var certData = await GetCertificateData(vm.Id);
+            if (ModelState.IsValid && vm.RecipientHasChanged(certData))
+            {
+                // when recipient has been changed the complete journey is required
+                SessionService.SetRedirectToCheck(false);
+            }
+
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Recipient.cshtml",
                 nextAction: RedirectToAction("ConfirmAddress", "CertificateAddress"),

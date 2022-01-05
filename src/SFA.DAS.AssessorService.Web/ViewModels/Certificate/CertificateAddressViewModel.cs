@@ -64,15 +64,15 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             return this;
         }
 
-        public CertificateAddressViewModel ClearAddressFields()
+        public bool AddressHasChanged(CertificateData certData)
         {
-            AddressLine1 = string.Empty;
-            AddressLine2 = string.Empty;
-            AddressLine3 = string.Empty;
-            City = string.Empty;
-            Postcode = string.Empty;
-
-            return this;
+            return
+                certData.ContactOrganisation != Employer ||
+                certData.ContactAddLine1 != AddressLine1 ||
+                certData.ContactAddLine2 != AddressLine2 ||
+                certData.ContactAddLine3 != AddressLine3 ||
+                certData.ContactAddLine4 != City ||
+                certData.ContactPostCode != Postcode;
         }
     }
 }
