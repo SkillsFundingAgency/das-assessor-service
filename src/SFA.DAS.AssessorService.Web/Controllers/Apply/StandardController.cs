@@ -381,9 +381,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-
-            DateTime? previousApplicationDate = previousApplication.ApplyData.Apply.
-
             var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal);
             bool? epaChanged = versions.Where(s => s.ApplicationStatus == ApprovedStatus.Withdrawn).Select(x => x.EPAChanged).LastOrDefault();
 
