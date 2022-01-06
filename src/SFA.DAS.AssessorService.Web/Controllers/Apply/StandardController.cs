@@ -382,13 +382,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal);
-            bool? epaChanged = versions.Where(s => s.ApplicationStatus == ApprovedStatus.Withdrawn).Select(x => x.EPAChanged).LastOrDefault();
 
             foreach (var withdrawal in withdrawals)
             {
                 List<string> vers = withdrawal.ApplyData.Apply.Versions;
 
-                foreach (var res in results)
+                foreach (var res in results.Where(x => x.VersionStatus == VersionStatus.Withdrawn))
                 {
                     var checkVer = vers.Where(x => x.Contains(res.Version)).FirstOrDefault();
                     if (checkVer != null)
@@ -397,7 +396,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                 .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                                 .Select(y => y.ApprovedDate).FirstOrDefault();
 
-                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, epaChanged))
+                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, res.EPAChanged))
                         {
                             res.VersionStatus = VersionStatus.NewVersionChanged;
                         }
