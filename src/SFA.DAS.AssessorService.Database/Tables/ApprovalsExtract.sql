@@ -21,7 +21,7 @@
     [PaymentStatus] SMALLINT NULL,
     [LastUpdated] AS ISNULL([UpdatedOn],[CreatedOn]),
     [EmployerAccountId] BIGINT NULL, 
-    [EmployerName ] NVARCHAR(100) NULL
+    [EmployerName] NVARCHAR(100) NULL
 )
 GO
 
