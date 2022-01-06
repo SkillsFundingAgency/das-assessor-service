@@ -1,6 +1,7 @@
 ﻿
 CREATE TABLE [MergeOrganisationStandardVersion]
 (
+	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
 	[StandardUId] VARCHAR(20) NOT NULL ,
 	[Version] NVARCHAR(20) NULL,    
 	[OrganisationStandardId] INT NOT NULL, 
