@@ -73,20 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve application {id} for user {userId}");
             }
         }
-        public async Task<ApplicationResponse> GetLastWithdrawnApplication(Guid orgId, int? standardCode)
-        {
-            try
-            {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/withdrawn-old/{standardCode}"))
-                {
-                    return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve withdrawn applications");
-                }
-            }
-            catch
-            {
-                return new ApplicationResponse();
-            }
-        }
 
         public async Task<List<ApplicationResponse>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode)
         {
@@ -95,7 +81,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve previous applications");
             }
         }
-
 
         public async Task<ApplicationResponse> GetPreviousApplication(Guid orgId, string standardReference)
         {

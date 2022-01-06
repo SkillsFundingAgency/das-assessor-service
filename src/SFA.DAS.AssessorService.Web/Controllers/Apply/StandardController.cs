@@ -102,8 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
 
             var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
-            var previousApplication = await _applicationApiClient.GetPreviousApplication(application.OrganisationId, standardReference);
-
+            
             if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
@@ -124,7 +123,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // existing approved versions for this standard
                 var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
                 model.SelectedStandard = new StandardVersionApplication(latestStandard);
-                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard, previousApplication).OrderByDescending(x => x.Version).ToList();
+                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard).OrderByDescending(x => x.Version).ToList();
                 return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
             }
             else
@@ -339,7 +338,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
 
         private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
-            List<ApplicationResponse> previousWithdrawals = null, ApplicationResponse previousApplication = null)
+            List<ApplicationResponse> previousWithdrawals)
         {
             bool approved = false;
             bool changed = false;
