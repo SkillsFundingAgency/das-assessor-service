@@ -14,5 +14,5 @@ GO
 
 
 CREATE UNIQUE INDEX IXU_OrganisationStandardVersion
-   ON [OrganisationStandardVersion] ([OrganisationStandardId], [StandardUId]);
+   ON [OrganisationStandardVersion] ([OrganisationStandardId], [StandardUId], [Version]);
 
