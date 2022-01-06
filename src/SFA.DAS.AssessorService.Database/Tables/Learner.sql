@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[Learner]
     [LatestIlrs] DATETIME NULL,
     [LatestApprovals] DATETIME NULL, 
     [EmployerAccountId] BIGINT NULL, 
-    [EmployerName] NVARCHAR(100) NULL   
+    [EmployerName] NVARCHAR(100) NULL
 )
 GO
 
