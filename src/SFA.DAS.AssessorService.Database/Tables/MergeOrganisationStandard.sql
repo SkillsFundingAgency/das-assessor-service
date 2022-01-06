@@ -2,7 +2,7 @@
 (
 	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
 	EndPointAssessorOrganisationId [nvarchar](12) NOT NULL, 
-	[ReferenceNumber] INT NOT NULL,
+	[StandardCode] INT NOT NULL,
 	[EffectiveFrom] [DateTime] NULL,
 	[EffectiveTo] [DateTime] NULL,
 	[DateStandardApprovedOnRegister] [DateTime] NULL,
