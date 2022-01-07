@@ -30,35 +30,22 @@ namespace SFA.DAS.AssessorService.Web.Validators
                 RuleFor(vm => vm.Name).NotEmpty()
                     .WithMessage(localizer["NameCannotBeEmpty"]);
 
-                When(vm => vm.SendTo == CertificateSendTo.Employer, () =>
-                {
-                    RuleFor(vm => vm.Employer).NotNull()
-                        .DependentRules(() =>
-                        {
-                            RuleFor(vm => vm.AddressLine1).NotNull()
-                                .DependentRules(() =>
-                                {
-                                    RuleFor(vm => vm.City).NotNull()
-                                        .DependentRules(() =>
-                                    {
-                                        RuleFor(vm => vm.Postcode).NotNull();
-                                    });
-                                });
-                        })
-                        .WithMessage(localizer["AddressCannotBeEmpty"]); ;
-                }).Otherwise(() => 
-                {
-                    RuleFor(vm => vm.AddressLine1).NotNull()
-                        .DependentRules(() =>
-                        {
-                            RuleFor(vm => vm.City).NotNull()
-                                .DependentRules(() =>
-                                {
-                                    RuleFor(vm => vm.Postcode).NotNull();
-                                });
-                        })
-                        .WithMessage(localizer["AddressCannotBeEmpty"]); ;
+                When(vm => vm.SendTo == CertificateSendTo.Employer, () => {
+                    RuleFor(vm => vm.Employer).NotEmpty()
+                        .OverridePropertyName(vm => vm.AddressLine1)
+                        .WithMessage(localizer["AddressCannotBeEmpty"]);
                 });
+
+                RuleFor(vm => vm.AddressLine1).NotEmpty()
+                    .WithMessage(localizer["AddressCannotBeEmpty"]);
+
+                RuleFor(vm => vm.City).NotEmpty()
+                    .OverridePropertyName(vm => vm.AddressLine1)
+                    .WithMessage(localizer["AddressCannotBeEmpty"]);
+
+                RuleFor(vm => vm.Postcode).NotEmpty()
+                    .OverridePropertyName(vm => vm.AddressLine1)
+                    .WithMessage(localizer["AddressCannotBeEmpty"]);
 
                 When(vm => vm.SelectedGrade != null, () =>
                 {
