@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetStandardsByOrganisationRequest: IRequest<List<OrganisationStandardSummary>>
+    public class GetAllStandardsByOrganisationRequest: IRequest<List<OrganisationStandardSummary>>
     {
         public string OrganisationId;
     }

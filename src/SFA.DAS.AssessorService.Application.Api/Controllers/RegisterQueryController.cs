@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetOrganisationStandardsByOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Organisations Standards by OrganisationId [{organisationId}]");
-            var result = await _mediator.Send(new GetStandardsByOrganisationRequest {OrganisationId = organisationId});
+            var result = await _mediator.Send(new GetAllStandardsByOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return Ok(result);
         }

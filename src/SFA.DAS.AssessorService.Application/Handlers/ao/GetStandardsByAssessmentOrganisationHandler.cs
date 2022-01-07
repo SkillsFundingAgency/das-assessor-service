@@ -10,23 +10,25 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetStandardsByAssessmentOrganisationHandler: IRequestHandler<GetStandardsByOrganisationRequest, List<OrganisationStandardSummary>>
+    /// <summary>
+    /// This handler doesn't restrict based on efffective from / to and status of live
+    /// As it's called from the Admin Service and the Admin side needs to know about active and withdrawn standards.
+    /// </summary>
+    public class GetStandardsByAssessmentOrganisationHandler: IRequestHandler<GetAllStandardsByOrganisationRequest, List<OrganisationStandardSummary>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetStandardsByAssessmentOrganisationHandler> _logger;
-        private readonly IStandardService _standardService;
 
-        public GetStandardsByAssessmentOrganisationHandler(IRegisterQueryRepository registerQueryRepository, IStandardService standardService, ILogger<GetStandardsByAssessmentOrganisationHandler> logger)
+        public GetStandardsByAssessmentOrganisationHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetStandardsByAssessmentOrganisationHandler> logger)
         {
             _registerQueryRepository = registerQueryRepository;
-            _standardService = standardService;
             _logger = logger;
         }
 
-        public async Task<List<OrganisationStandardSummary>> Handle(GetStandardsByOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<List<OrganisationStandardSummary>> Handle(GetAllStandardsByOrganisationRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($@"Handling OrganisationStandards Request for OrganisationId [{request.OrganisationId}]");
-            var orgStandards = await _registerQueryRepository.GetOrganisationStandardByOrganisationId(request.OrganisationId);
+            var orgStandards = await _registerQueryRepository.GetAllOrganisationStandardByOrganisationId(request.OrganisationId);
             return orgStandards.ToList();
         }
     } 
