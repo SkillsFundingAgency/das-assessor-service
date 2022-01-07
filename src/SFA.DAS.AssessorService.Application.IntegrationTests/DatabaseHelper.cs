@@ -27,7 +27,8 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
             get
             {
                 var sqlConnection = new SqlConnection(_sqlTestConnectionString);
-                var option = new DbContextOptionsBuilder<AssessorDbContext>();
+                var option = new DbContextOptionsBuilder<AssessorDbContext>()
+                    .EnableSensitiveDataLogging();
                 return new AssessorDbContext(sqlConnection, option.Options);
             }
         }
