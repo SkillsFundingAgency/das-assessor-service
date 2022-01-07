@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Data
             
             modelBuilder.Entity<OrganisationStandardVersion>()
                 .ToTable("OrganisationStandardVersion")
-                .HasKey(c => new { c.OrganisationStandardId, c.StandardUId });
+                .HasKey(c => new { c.OrganisationStandardId, c.StandardUId, c.Version });
 
             modelBuilder.Entity<OrganisationStandardVersion>()
                 .HasOne(c => c.OrganisationStandard)
@@ -137,12 +137,11 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(c => c.OrganisationStandardDeliveryAreas)
                 .HasPrincipalKey(c => c.Id)
                 .HasForeignKey(c => c.OrganisationStandardId);
-            
+
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.DeliveryArea)
                 .WithOne(c => c.OrganisationStandardDeliveryArea)
-                .HasForeignKey<DeliveryArea>(c => c.Id)
-                .HasPrincipalKey<OrganisationStandardDeliveryArea>(c => c.DeliveryAreaId);
+                .HasForeignKey<DeliveryArea>(c => c.Id);
 
             modelBuilder.Entity<DeliveryArea>()
                 .ToTable("DeliveryArea");
@@ -165,7 +164,10 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<MergeOrganisationStandardVersion>()
                 .ToTable("MergeOrganisationStandardVersion")
-                .HasKey(e => new { e.StandardUid, e.Version });
+                //.HasKey(e => new { e.OrganisationStandardId, e.StandardUid, e.Version })
+                ;
+
+
             modelBuilder.Entity<MergeOrganisationStandardDeliveryArea>()
                 .ToTable("MergeOrganisationStandardDeliveryArea");
 
