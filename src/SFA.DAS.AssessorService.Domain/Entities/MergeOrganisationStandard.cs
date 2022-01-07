@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
 
 
-        public string ReferenceNumber { get; set; }
+        public int StandardCode { get; set; }
 
     }
 }

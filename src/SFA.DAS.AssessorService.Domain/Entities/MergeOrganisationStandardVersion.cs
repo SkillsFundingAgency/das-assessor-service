@@ -6,6 +6,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class MergeOrganisationStandardVersion
     {
+        public int Id { get; set; }
+
         public string StandardUid { get; set; }
         public string Version { get; set; }
         public int OrganisationStandardId { get; set; }

@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IOrganisationMergingService
     {
-        Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid mergedByUserId);
+        Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid mergedByUserId, DateTime secondaryStandardsEffectiveTo);
     }
 }

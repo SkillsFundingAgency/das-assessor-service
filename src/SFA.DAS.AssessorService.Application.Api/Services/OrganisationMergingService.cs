@@ -2,6 +2,7 @@
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _dbContext = dbContext;
         }
 
-        public async Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid mergedByUserId)
+        public async Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid mergedByUserId, DateTime secondaryStandardsEffectiveTo)
         {
             if (null == primaryOrganisation) throw new ArgumentNullException(nameof(primaryOrganisation), "primaryOrganisation must be specified.");
             if (null == secondaryOrganisation) throw new ArgumentNullException(nameof(secondaryOrganisation), "secondaryOrganisation must be specified.");
@@ -43,17 +44,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 mergedByUserId);
 
             // Perform the merge.
-            
+
+            MergeOrganisationStandardsAndVersions(
+                primaryOrganisation,
+                secondaryOrganisation,
+                mergedByUserId,
+                secondaryStandardsEffectiveTo);
 
             // Create the "After" snapshot.
 
+            // check
+            /*
+            List<Object> modifiedOrAddedEntities = _dbContext.ChangeTracker.Entries()
+                .Where(x => x.State == Microsoft.EntityFrameworkCore.EntityState.Added
+                    || x.State == Microsoft.EntityFrameworkCore.EntityState.Modified
+                    )
+                .Select(x => x.Entity).ToList();
+            */
+
+            // Now save all the changes.
             try
             {
                 await _dbContext.SaveChangesAsync();
             }
             catch(Exception ex)
             {
-                // check rollback
+                // check rollback has worked
                 throw ex;
             }
 
@@ -106,7 +122,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var mos = new MergeOrganisationStandard()
             {
                 EndPointAssessorOrganisationId = sourceOrganisationStandard.EndPointAssessorOrganisationId,
-                ReferenceNumber = "0",  // what is this? standard code ?
+                StandardCode = sourceOrganisationStandard.StandardCode,
+                StandardReference = sourceOrganisationStandard.StandardReference,
                 EffectiveFrom = sourceOrganisationStandard.EffectiveFrom,
                 EffectiveTo = sourceOrganisationStandard.EffectiveTo,
                 DateStandardApprovedOnRegister = sourceOrganisationStandard.DateStandardApprovedOnRegister,
@@ -148,6 +165,111 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             };
 
             return mosda;
+        }
+
+
+        private void MergeOrganisationStandardsAndVersions(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid createdByUserId, DateTime secondaryStandardsEffectiveTo)
+        {
+            // @ToDo: a bit monolithic - can this be refactored in to something more readable?
+
+            // Grab the primary contact for the primary organisation because we're going to need it.
+            var primaryContact = _dbContext.Contacts.FirstOrDefault(c => c.EndPointAssessorOrganisationId == primaryOrganisation.EndPointAssessorOrganisationId && c.Email == primaryOrganisation.PrimaryContact);
+
+            // Read all the standards from the secondary organisation.
+
+            foreach(var secondaryOrganisationStandard in secondaryOrganisation.OrganisationStandards)
+            {
+                // Does the primary organisation have this standard already?
+                var primaryOrganisationStandard = primaryOrganisation.OrganisationStandards.FirstOrDefault(pos => pos.StandardCode == secondaryOrganisationStandard.StandardCode);
+
+                if (null == primaryOrganisationStandard)
+                {
+                    // No - so add the standard to the primary organisation.
+
+                    primaryOrganisationStandard = new OrganisationStandard()
+                    {
+                        DateStandardApprovedOnRegister = secondaryOrganisationStandard.DateStandardApprovedOnRegister,
+                        OrganisationStandardData = secondaryOrganisationStandard.OrganisationStandardData,
+                        Comments = $"{secondaryOrganisationStandard.Comments} ** this standard has been merged from Organisation {secondaryOrganisation.EndPointAssessorOrganisationId}",
+                        ContactId = primaryContact?.Id,
+                        EffectiveFrom = secondaryOrganisationStandard.EffectiveFrom,
+                        EffectiveTo = secondaryOrganisationStandard.EffectiveTo,
+                        EndPointAssessorOrganisationId = primaryOrganisation.EndPointAssessorOrganisationId,
+                        StandardCode = secondaryOrganisationStandard.StandardCode,
+                        StandardReference = secondaryOrganisationStandard.StandardReference,
+                        Status = secondaryOrganisationStandard.Status,
+
+                        OrganisationStandardVersions = new List<OrganisationStandardVersion>(),
+                        OrganisationStandardDeliveryAreas = new List<OrganisationStandardDeliveryArea>(),
+                    };
+                    primaryOrganisation.OrganisationStandards.Add(primaryOrganisationStandard);
+                }
+
+                // Now read all the versions for this standard for the secondary organisation.
+                var secondaryOrganisationStandardVersions = _dbContext.OrganisationStandardVersion.Where(sosv => sosv.OrganisationStandardId == secondaryOrganisationStandard.Id);
+                foreach(var secondaryOrganisationStandardVersion in secondaryOrganisationStandardVersions)
+                {
+                    // Does the standard version exist for this standard in the primary organisation?
+
+                    var primaryOrganisationStandardVersion = primaryOrganisationStandard.OrganisationStandardVersions.FirstOrDefault(posv => posv.StandardUId == secondaryOrganisationStandardVersion.StandardUId && posv.Version == secondaryOrganisationStandardVersion.Version);
+                    if(null == primaryOrganisationStandardVersion)
+                    {
+                        // No - so add the standard version to the standard for the primary organisation.
+
+                        primaryOrganisationStandardVersion = new OrganisationStandardVersion()
+                        {
+                            //OrganisationStandardId = existingPrimaryOrganisationStandard.Id,
+                            DateVersionApproved = secondaryOrganisationStandardVersion.DateVersionApproved,
+                            Comments = $"{secondaryOrganisationStandardVersion.Comments} ** This standard version has been merged from Organisation {secondaryOrganisation.EndPointAssessorOrganisationId}",
+                            EffectiveFrom = secondaryOrganisationStandardVersion.EffectiveFrom,
+                            EffectiveTo = secondaryOrganisationStandardVersion.EffectiveTo,
+                            StandardUId = secondaryOrganisationStandardVersion.StandardUId,
+                            Status = secondaryOrganisationStandardVersion.Status,
+                            Version = secondaryOrganisationStandardVersion.Version,
+                        };
+                        primaryOrganisationStandard.OrganisationStandardVersions.Add(primaryOrganisationStandardVersion);
+                    }
+
+                    // Mark the secondary standard version as ending
+                    secondaryOrganisationStandardVersion.EffectiveTo = secondaryStandardsEffectiveTo;
+                    secondaryOrganisationStandardVersion.Comments = $"** This standard version has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                }
+
+                // Read all the delivery areas for this standard from the secondary organisation
+
+                var secondaryOrganisationStandardDeliveryAreas = _dbContext.OrganisationStandardDeliveryAreas.Where(sosda => sosda.OrganisationStandardId == secondaryOrganisationStandard.Id);
+
+                // Merge in any missing delivery areas that the primary organisation doesn't have
+
+                foreach(var secondaryOrganisationStandardDeliveryArea in secondaryOrganisationStandardDeliveryAreas)
+                {
+                    // Does the primary organisation standard have this delivery area?
+                    var primaryOrganisationStandardDeliveryArea = primaryOrganisationStandard.OrganisationStandardDeliveryAreas.FirstOrDefault(posda => posda.DeliveryAreaId == secondaryOrganisationStandardDeliveryArea.DeliveryAreaId);
+
+                    if(null == primaryOrganisationStandardDeliveryArea)
+                    {
+                        // No - so add the area
+
+                        primaryOrganisationStandardDeliveryArea = new OrganisationStandardDeliveryArea()
+                        {
+                            DeliveryAreaId = secondaryOrganisationStandardDeliveryArea.DeliveryAreaId,
+                            Comments = $"{secondaryOrganisationStandardDeliveryArea.Comments} ** This delivery area has been merged from Organsation {secondaryOrganisation.EndPointAssessorOrganisationId}",
+                            Status = secondaryOrganisationStandardDeliveryArea.Status,
+                            OrganisationStandard = primaryOrganisationStandard,
+                            DeliveryArea = secondaryOrganisationStandardDeliveryArea.DeliveryArea,
+                        };
+                        primaryOrganisationStandard.OrganisationStandardDeliveryAreas.Add(primaryOrganisationStandardDeliveryArea);
+                    }
+
+                    secondaryOrganisationStandardDeliveryArea.Comments = $"** This delivery area has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                }
+
+
+                // Now set the effectiveTo and comments @ToDo: need content
+
+                secondaryOrganisationStandard.EffectiveTo = secondaryStandardsEffectiveTo;
+                secondaryOrganisationStandard.Comments = $"{secondaryOrganisationStandard.Comments} ** this standard has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+            }
         }
     }
 }
