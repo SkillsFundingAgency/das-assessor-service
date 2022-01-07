@@ -169,7 +169,8 @@ namespace SFA.DAS.AssessorService.Data
 
 
             modelBuilder.Entity<MergeOrganisationStandardDeliveryArea>()
-                .ToTable("MergeOrganisationStandardDeliveryArea");
+                .ToTable("MergeOrganisationStandardDeliveryArea")
+                ;
 
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }

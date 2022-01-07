@@ -36,12 +36,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (null == primaryOrganisation) throw new ArgumentNullException(nameof(primaryOrganisation), "primaryOrganisation must be specified.");
             if (null == secondaryOrganisation) throw new ArgumentNullException(nameof(secondaryOrganisation), "secondaryOrganisation must be specified.");
 
-            // Create the MergeOrganisation and "Before" snapshot.
+            // Create the MergeOrganisation
 
             var mergeOrganisation = CreateMergeOrganisations(
                 primaryOrganisation.EndPointAssessorOrganisationId, 
                 secondaryOrganisation.EndPointAssessorOrganisationId, 
                 mergedByUserId);
+
+            // Create the "Before" snapshot
+
+            CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "Before");
+            CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
 
             // Perform the merge.
 
@@ -52,6 +57,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 secondaryStandardsEffectiveTo);
 
             // Create the "After" snapshot.
+
+            CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "After");
+            CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
 
             // check
             /*
@@ -89,9 +97,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 Status = MergeOrganisationStatus.Approved,  // auto-approved for now
             };
             _dbContext.MergeOrganisations.Add(mo);
-
-            CreateStandardsSnapshot(mo, primaryEndpointAssessorOrganisationId, "Before");
-            CreateStandardsSnapshot(mo, secondaryEndpointAssessorOrganisationId, "Before");
 
             return mo;
         }
