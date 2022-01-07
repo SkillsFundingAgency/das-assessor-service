@@ -231,7 +231,8 @@ namespace SFA.DAS.AssessorService.Data
                 FROM [dbo].[OrganisationStandardVersion] osv 
                 INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
                 INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
-                WHERE osv.OrganisationStandardId = @organisationStandardId";
+                WHERE osv.OrganisationStandardId = @organisationStandardId
+                ORDER BY s.VersionMajor, s.VersionMinor";
 
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(sql, new { organisationStandardId }))
             {
