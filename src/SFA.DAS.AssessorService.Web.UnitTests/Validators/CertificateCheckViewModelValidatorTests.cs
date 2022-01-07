@@ -21,9 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         private const string _dateError = "Date error message";
         private const string _passDateError = "Pass date error message";
         private const string _failDateError = "Fail date error message";
-        private const string _postcodeError = "Postcode error message";
-        private const string _cityError = "City error message";
-        private const string _addressLine1Error = "Postcode error message";
+        private const string _addressError = "City error message";
         private const string _nameError = "Name error message";
         private const string _sendToError = "SentTo error message";
 
@@ -44,9 +42,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _mockStringLocalizer.Setup(l => l["DateCannotBeEmpty"]).Returns(new LocalizedString("Date", _dateError));
             _mockStringLocalizer.Setup(l => l["AchievementDateCannotBeEmpty"]).Returns(new LocalizedString("Date", _passDateError));
             _mockStringLocalizer.Setup(l => l["FailDateCannotBeEmpty"]).Returns(new LocalizedString("Date", _failDateError));
-            _mockStringLocalizer.Setup(l => l["PostcodeCannotBeEmpty"]).Returns(new LocalizedString("Postcode", _postcodeError));
-            _mockStringLocalizer.Setup(l => l["CityCannotBeEmpty"]).Returns(new LocalizedString("City", _cityError));
-            _mockStringLocalizer.Setup(l => l["AddressLine1CannotBeEmpty"]).Returns(new LocalizedString("Address", _addressLine1Error));
+            _mockStringLocalizer.Setup(l => l["AddressCannotBeEmpty"]).Returns(new LocalizedString("Address", _addressError));
             _mockStringLocalizer.Setup(l => l["NameCannotBeEmpty"]).Returns(new LocalizedString("Name", _nameError));
             _mockStringLocalizer.Setup(l => l["SendToCannotBeNone"]).Returns(new LocalizedString("SendTo", _sendToError));
 
@@ -178,8 +174,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 
             _validator.ShouldHaveValidationErrorFor(vm => vm.Name, _viewModel);
             _validator.ShouldHaveValidationErrorFor(vm => vm.AddressLine1, _viewModel);
-            _validator.ShouldHaveValidationErrorFor(vm => vm.City, _viewModel);
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Postcode, _viewModel);
         }
 
         [Test]
