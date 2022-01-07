@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            if (SendToHasChanged(certData))
+            if (SendToHasChanged(certData) && ShouldClearAddressFields(certificate, certData))
             {
-                certData = ClearFieldsAfterSendToSwitch(certData);
+                certData = ClearAddressFields(certData);
             }
 
-            if(SendTo == CertificateSendTo.Apprentice)
+            if (SendTo == CertificateSendTo.Apprentice)
             {
                 // when sending to the apprentice use the apprentice name for the contact
                 certData.ContactName = certData.FullName;
@@ -40,7 +40,19 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             return certData.SendTo != SendTo;
         }
 
-        private CertificateData ClearFieldsAfterSendToSwitch(CertificateData certData)
+        private bool ShouldClearAddressFields(Certificate certificate, CertificateData certData)
+        {
+            // a certificate which has been created by the API will not have a SendTo but has valid employer details so 
+            // these will be retained if the user selects the Employer journey
+            if (certificate.CreatedBy == "API" && certData.SendTo == CertificateSendTo.None && SendTo == CertificateSendTo.Employer)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private CertificateData ClearAddressFields(CertificateData certData)
         {
             certData.Department = string.Empty;
             certData.ContactName = string.Empty;
