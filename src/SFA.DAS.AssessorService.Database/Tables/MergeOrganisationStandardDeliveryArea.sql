@@ -24,7 +24,7 @@ FOREIGN KEY ([OrganisationStandardId]) REFERENCES [OrganisationStandard] ([Id]);
 GO
 
 CREATE UNIQUE INDEX IX_standardMergeDeliveryAreaCoveredIndex
-   ON [MergeOrganisationStandardDeliveryArea] ([OrganisationStandardId], [DeliveryAreaId]);
+   ON [MergeOrganisationStandardDeliveryArea] ([Id], [OrganisationStandardId], [DeliveryAreaId]);
 GO
 
 ALTER TABLE [MergeOrganisationStandardDeliveryArea]

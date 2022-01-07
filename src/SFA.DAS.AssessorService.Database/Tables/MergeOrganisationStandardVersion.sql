@@ -16,8 +16,8 @@ CREATE TABLE [MergeOrganisationStandardVersion]
 GO
 
 
-CREATE UNIQUE INDEX IXU_OrganisationStandardVersion
-   ON [MergeOrganisationStandardVersion] ([OrganisationStandardId], [StandardUId]);
+CREATE UNIQUE INDEX IXU_MergeOrganisationStandardVersion
+   ON [MergeOrganisationStandardVersion] ([Id], [OrganisationStandardId], [StandardUId]);
 GO
 
 
