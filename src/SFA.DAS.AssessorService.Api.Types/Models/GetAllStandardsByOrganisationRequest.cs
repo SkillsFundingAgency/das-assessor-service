@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {

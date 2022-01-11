@@ -18,8 +18,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
     public class RegisterQueryGetStandardsByOrganisationIdTests
     {
         private Mock<IRegisterQueryRepository> RegisterQueryRepository;
-        private GetStandardsByAssessmentOrganisationHandler GetStandardsByAssessmentOrganisationHandler;
-        private Mock<ILogger<GetStandardsByAssessmentOrganisationHandler>> Logger;
+        private GetAllStandardsByOrganisationHandler GetAllStandardsByOrganisationHandler;
+        private Mock<ILogger<GetAllStandardsByOrganisationHandler>> Logger;
         private List<OrganisationStandardSummary> _expectedStandards;
         private OrganisationStandardSummary _standard1;
         private OrganisationStandardSummary _standard2;
@@ -66,33 +66,33 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             _request = new GetAllStandardsByOrganisationRequest { OrganisationId = _organisationId };
 
-            Logger = new Mock<ILogger<GetStandardsByAssessmentOrganisationHandler>>();
+            Logger = new Mock<ILogger<GetAllStandardsByOrganisationHandler>>();
 
             RegisterQueryRepository.Setup(r => r.GetAllOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             
-            GetStandardsByAssessmentOrganisationHandler =
-                new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, Logger.Object);
+            GetAllStandardsByOrganisationHandler =
+                new GetAllStandardsByOrganisationHandler(RegisterQueryRepository.Object, Logger.Object);
         }
 
         [Test]
         public void GetStandardsByOrganisationRepoIsCalledWhenHandlerInvoked()
         {
-            GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
+            GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetAllOrganisationStandardByOrganisationId(_organisationId));
         }
 
         [Test]
         public void GetStandardsForOrganisationReturns3SetsOfStandards()
         {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
+            var standards = GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             standards.Count.Should().Be(3);
         }
 
         [Test]
         public void GetStandardsForOrganisationReturnsStandard1OfStandardsWithExpectedPeriodsAndStandardTitle()
         {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
+            var standards = GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode1);
             Assert.AreEqual(effectiveFrom1, standard.EffectiveFrom);
             Assert.AreEqual(null, standard.EffectiveTo);
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [Test]
         public void GetStandardsForOrganisationReturnsStandard2OfStandardsWithExpected1PeriodDetails()
         {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
+            var standards = GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode2);
             Assert.AreEqual(effectiveFrom2, standard.EffectiveFrom);
             Assert.AreEqual(effectiveTo2, standard.EffectiveTo);

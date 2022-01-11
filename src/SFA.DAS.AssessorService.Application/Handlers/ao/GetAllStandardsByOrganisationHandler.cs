@@ -14,12 +14,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
     /// This handler doesn't restrict based on efffective from / to and status of live
     /// As it's called from the Admin Service and the Admin side needs to know about active and withdrawn standards.
     /// </summary>
-    public class GetStandardsByAssessmentOrganisationHandler: IRequestHandler<GetAllStandardsByOrganisationRequest, List<OrganisationStandardSummary>>
+    public class GetAllStandardsByOrganisationHandler : IRequestHandler<GetAllStandardsByOrganisationRequest, List<OrganisationStandardSummary>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
-        private readonly ILogger<GetStandardsByAssessmentOrganisationHandler> _logger;
+        private readonly ILogger<GetAllStandardsByOrganisationHandler> _logger;
 
-        public GetStandardsByAssessmentOrganisationHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetStandardsByAssessmentOrganisationHandler> logger)
+        public GetAllStandardsByOrganisationHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAllStandardsByOrganisationHandler> logger)
         {
             _registerQueryRepository = registerQueryRepository;
             _logger = logger;
