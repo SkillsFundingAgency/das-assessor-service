@@ -65,10 +65,19 @@ else
                         <div class="govuk-inset-text">
                             <ul class="govuk-list">
                                 <li @(string.IsNullOrEmpty(Model.PreviousAddress.ContactOrganisation) ? "hidden" : string.Empty)>
-                                    <span>@Model.PreviousAddress.ContactOrganisation</span>
+                                    <span><b>@Model.PreviousAddress.ContactOrganisation</b></span>
                                 </li>
                                 <li>
-                                    <span>@Model.PreviousAddress.AddressLine1</span>
+                                    <span>
+                                        @if (string.IsNullOrEmpty(Model.PreviousAddress.ContactOrganisation))
+                                        {
+                                            <b>@Model.PreviousAddress.AddressLine1</b>
+                                        }
+                                        else
+                                        {
+                                            @Model.PreviousAddress.AddressLine1
+                                        }
+                                    </span>
                                 </li>
                                 <li>
                                     <span>@Model.PreviousAddress.AddressLine2</span>
