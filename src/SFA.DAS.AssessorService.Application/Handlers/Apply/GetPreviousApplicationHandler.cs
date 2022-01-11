@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class GetPreviousApplicationsHandler : IRequestHandler<GetPreviousApplicationsRequest, ApplicationResponse>
+    public class GetPreviousApplicationsHandler : IRequestHandler<GetPreviousApplicationsRequest, List<ApplicationResponse>>
     {
         private readonly IApplyRepository _applyRepository;
 
@@ -18,10 +18,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             _applyRepository = applyRepository;
         }
 
-        public async Task<ApplicationResponse> Handle(GetPreviousApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<ApplicationResponse>> Handle(GetPreviousApplicationsRequest request, CancellationToken cancellationToken)
         {
             var result = await _applyRepository.GetPreviousApplicationsForStandard(request.OrgId, request.StandardReference);
-            return Mapper.Map<ApplySummary, ApplicationResponse>(result);
+
+            return result != null
+                ? Mapper.Map<List<ApplySummary>, List<ApplicationResponse>>(result)
+                : null;
         }
     }
 }

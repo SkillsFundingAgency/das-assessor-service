@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<Domain.Entities.Apply> GetApply(Guid applicationId);
         Task<ApplySummary> GetApplication(Guid applicationId, Guid? userId);
-        Task<ApplySummary> GetPreviousApplicationsForStandard(Guid orgId, string standardReference);
+        Task<List<ApplySummary>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference);
         Task<List<ApplySummary>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode);
         Task<List<ApplySummary>> GetOrganisationApplications(Guid userId);
         Task<List<ApplySummary>> GetStandardApplications(Guid userId);

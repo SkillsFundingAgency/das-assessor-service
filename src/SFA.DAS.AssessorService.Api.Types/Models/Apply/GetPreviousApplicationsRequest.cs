@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
-    public class GetPreviousApplicationsRequest : IRequest<ApplicationResponse>
+    public class GetPreviousApplicationsRequest : IRequest<List<ApplicationResponse>>
     {
         public Guid OrgId { get; }
         public string StandardReference { get; }
