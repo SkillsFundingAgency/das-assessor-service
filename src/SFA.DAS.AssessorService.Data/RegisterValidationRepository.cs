@@ -101,7 +101,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             var selectOrganisationStandardId =
                 "select id FROM [OrganisationStandard] " +
-                "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
+                "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode " +
+                "AND (EffectiveTo !=null OR EffectiveTo > GetDate())";
             var organisationStandardId = await _unitOfWork.Connection.ExecuteScalarAsync<int>(selectOrganisationStandardId, new { organisationId, standardCode });
             if (default(int) == organisationStandardId) return false;
 

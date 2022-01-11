@@ -59,7 +59,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
            
-            return await _registerRepository.CreateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
+            if (request.ApplyFollowingWithdrawal)
+            {
+                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas);
+            }
+            else
+            {
+                return await _registerRepository.CreateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
+            }
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationStandardRequest request)
