@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
         public async Task Then_organisation_previous_application_is_retrieved()
         {
             await Handler.Handle(new GetPreviousApplicationsRequest(new Guid(), ""), new CancellationToken());
-            ApplyRepository.Verify(r => r.GetPreviousApplication(It.IsAny<Guid>(),It.IsAny<string>()), Times.Once);
+            ApplyRepository.Verify(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(),It.IsAny<string>()), Times.Once);
         }
     }
 }

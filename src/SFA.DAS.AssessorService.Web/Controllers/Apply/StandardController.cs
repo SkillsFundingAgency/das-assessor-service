@@ -258,8 +258,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
-            var previousApplication = await _applicationApiClient.GetPreviousApplication(application.OrganisationId, standardReference);
-            bool optInFollowingWithdrawal = previousApplication != null && previousApplication.StandardApplicationType.Equals(StandardApplicationTypes.VersionWithdrawal);
+
+            bool optInFollowingWithdrawal = false;
+
+            //Get all previous applications for standard and find application that contains version in question
+            //First found application must not be a withdrawal
+            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
+            if (previousApplications.Where(x => x.ApplyData.Apply.Versions.Contains(version)).FirstOrDefault().ApplicationType != ApplicationTypes.Withdrawal)
+            {
+                //Get all previously withdrawn applications for standard and check to see if version in question has been withdrawn
+                var previousWithdrawnApplicationsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, stdVersion.LarsCode);
+                if (previousWithdrawnApplicationsForStandard.Where(x => x.ApplyData.Apply.Versions.Contains(version) && x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal).Any())
+                {
+                    optInFollowingWithdrawal = true;
+                }
+
+            }
 
             await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
 
@@ -318,24 +332,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         private bool ReApplyViaSevenQuestions(DateTime? previousWithdrawalDate, bool? prevApplyViaOptIn)
         {
-            if (previousWithdrawalDate > DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
-            {
-                return true;
-            }
-            else if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && !prevApplyViaOptIn == false)
-            {
-                return true;
-            }
-            else if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
+            // If previously applied via opt in and previous withdrawal is older than 12 months then
+            // allow 7 question apply
+            if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
             {
                 return false;
             }
-            else
-            {
-                return true;
-            }
+         
+            return true;
         }
-
+        
 
         private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
             List<ApplicationResponse> previousWithdrawals)
@@ -380,7 +386,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal);
+            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
+                                                                                        && x.ApplicationStatus != ApplicationStatus.Approved);
 
             foreach (var withdrawal in withdrawals)
             {

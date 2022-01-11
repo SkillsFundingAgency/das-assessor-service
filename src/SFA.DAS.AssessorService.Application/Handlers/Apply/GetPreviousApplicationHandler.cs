@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
         public async Task<ApplicationResponse> Handle(GetPreviousApplicationsRequest request, CancellationToken cancellationToken)
         {
-            var result = await _applyRepository.GetPreviousApplication(request.OrgId, request.StandardReference);
+            var result = await _applyRepository.GetPreviousApplicationsForStandard(request.OrgId, request.StandardReference);
             return Mapper.Map<ApplySummary, ApplicationResponse>(result);
         }
     }

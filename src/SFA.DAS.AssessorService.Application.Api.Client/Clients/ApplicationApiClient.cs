@@ -82,18 +82,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ApplicationResponse> GetPreviousApplication(Guid orgId, string standardReference)
+        public async Task<List<ApplicationResponse>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference)
         {
             try
             {
                 using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/previous/{standardReference}"))
                 {
-                    return await RequestAndDeserialiseAsync<ApplicationResponse>(request, $"Could not retrieve previous applications");
+                    return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve previous applications");
                 }
             }
             catch
             {
-                return new ApplicationResponse();
+                return new List<ApplicationResponse>();
             }
         }
 

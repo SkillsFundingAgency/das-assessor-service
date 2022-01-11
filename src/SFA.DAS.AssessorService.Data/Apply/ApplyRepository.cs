@@ -107,18 +107,18 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
-        public async Task<ApplySummary> GetPreviousApplication(Guid orgId, string standardReference)
+        public async Task<List<ApplySummary>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference)
         {
-            var query = $@"SELECT TOP(1) *
+            var query = $@"SELECT *
                           FROM [dbo].[Apply]
                           where organisationId = @orgId 
                           AND StandardReference = @standardReference 
                           ORDER BY createdAt DESC";
 
-            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<ApplySummary>(
+            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
                 sql: query,
                 param: new { orgId, standardReference },
-                transaction: _unitOfWork.Transaction);
+                transaction: _unitOfWork.Transaction)).ToList();
         }
 
         public async Task<List<ApplySummary>> GetOrganisationApplications(Guid userId)
