@@ -2,6 +2,7 @@
 	@Search nvarchar(50)
 AS
 BEGIN
+	DECLARE @SearchNoSpaces nvarchar(50) = REPLACE(@Search, ' ','')
 	SELECT SUM(ab.Count)
 	FROM
 	(
@@ -9,18 +10,16 @@ BEGIN
 		FROM Certificates ce1 
 		JOIN Organisations org ON ce1.OrganisationId = org.Id
 		LEFT JOIN Learner learner1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
-		WHERE JSON_VALUE(CertificateData, '$.LearnerFamilyName') = @Search
-		   OR JSON_VALUE(CertificateData, '$.LearnerGivenNames') = @Search
-		   OR REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') = REPLACE(@Search, ' ','') 
+		WHERE ce1.LearnerFamilyName = @Search 
+		OR ce1.LearnerGivenNames = @Search 
+		OR ce1.LearnerFullNameNoSpaces = @SearchNoSpaces
 		UNION ALL 
 		SELECT COUNT(learner1.Id) AS 'Count'
 		FROM Learner learner1
 		JOIN Standards sc ON learner1.StdCode = sc.LarsCode
 		LEFT JOIN Certificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 		WHERE 
-		ce1.Uln IS  NULL
-		AND(FamilyName = @Search 
-			OR GivenNames = @Search 
-			OR REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ','') =  REPLACE(@Search, ' ','') 	)  
+		ce1.Uln IS NULL AND
+		(learner1.FamilyName = @Search OR learner1.GivenNames = @Search  OR learner1.LearnerFullNameNoSpaces =  @SearchNoSpaces)  
 	) as ab
 END

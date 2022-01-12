@@ -301,35 +301,7 @@ namespace SFA.DAS.AssessorService.Data
 
             await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
         }        
-
-        public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
-        {
-            int count;
-            var certificates = _context.Certificates.Include(q => q.Organisation)
-                .Include(q => q.CertificateLogs);
-            IQueryable<Certificate> queryable;
-            if (status == null )
-            {
-                count = await _context.Certificates.Where(x => x.IsPrivatelyFunded).CountAsync();
-                queryable = certificates;
-            }
-            else
-            {
-               count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).Where(x => x.IsPrivatelyFunded).CountAsync();
-               queryable = certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus);
-            }
-
-            if (pageSize == 0)
-                  pageSize = count == 0 ? 1 : count;
-            var  certificateResult = await queryable
-                .Where(x => x.IsPrivatelyFunded) 
-                .OrderByDescending(q => q.UpdatedAt)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
-
-            return new PaginatedList<Certificate>(certificateResult, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
-        }
-
+                
         public async Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, List<string> statuses)
         {
             var count = await GetCertificatesCount(endPointAssessorOrganisationId, statuses);
@@ -548,66 +520,6 @@ namespace SFA.DAS.AssessorService.Data
                 sql,
                 param: new {providerUkPrn},
                 transaction: _unitOfWork.Transaction);
-        }
-
-        public async Task UpdatePrivatelyFundedCertificatesToBeApproved()
-        {
-            var certificates =
-                _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted &&
-                                                 q.PrivatelyFundedStatus != CertificateStatus.Approved);
-            if (certificates.Any())
-            {
-                foreach (var certificate in certificates)
-                {
-                    certificate.Status = CertificateStatus.ToBeApproved;
-                    certificate.PrivatelyFundedStatus = null;
-                }
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string username)
-        {
-            var certificateReferences =
-                approvalResults.Select(q => q.CertificateReference).ToList();
-
-            var certificates =
-                _context.Certificates.Where(q => certificateReferences.Contains(q.CertificateReference));
-            if (certificates.Any())
-            {
-                foreach (var approvalResult in approvalResults)
-                {
-                    var certificate =
-                        await certificates.FirstOrDefaultAsync(
-                            q => q.CertificateReference == approvalResult.CertificateReference
-                                 && q.PrivatelyFundedStatus != CertificateStatus.Approved);
-
-                    if (certificate == null) continue;
-
-                    if (approvalResult.IsApproved == CertificateStatus.ToBeApproved &&
-                        approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval)
-                    {
-                        var certLog = await _context.CertificateLogs.FirstOrDefaultAsync(x =>
-                            x.CertificateId == certificate.Id && x.Action == CertificateStatus.SentForApproval &&
-                            x.Status == CertificateStatus.ToBeApproved);
-                        
-                        if (certLog != null) {
-                            var certData = JsonConvert.DeserializeObject<CertificateData>(certLog.CertificateData);
-                            var deleted =  _context.CertificateLogs.Any(x => x.CertificateId == certificate.Id && x.Status == CertificateStatus.Deleted);
-                            if (!deleted && certData?.OverallGrade != CertificateGrade.Fail)
-                                continue;
-                        }
-                    }
-
-                    certificate.Status = approvalResult.IsApproved;
-                    certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
-
-                    await AddSingleCertificateLog(certificate.Id, certificate.PrivatelyFundedStatus, certificate.Status, DateTime.UtcNow,
-                        certificate.CertificateData, username, certificate.BatchNumber, approvalResult.ReasonForChange);
-                }
-
-                await _context.SaveChangesAsync();
-            }
         }
 
         private async Task AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
