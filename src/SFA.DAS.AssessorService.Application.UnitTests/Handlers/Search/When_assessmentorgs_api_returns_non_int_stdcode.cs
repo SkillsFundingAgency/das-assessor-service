@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         [Test]
         public void Then_an_exception_is_not_thrown()
         {
-            RegisterQueryRepository.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA0050"))
+            RegisterQueryRepository.Setup(c => c.GetAllOrganisationStandardByOrganisationId("EPA0050"))
                 .ReturnsAsync(new List<OrganisationStandardSummary>
                 {
                     new OrganisationStandardSummary {StandardCode = 12},
