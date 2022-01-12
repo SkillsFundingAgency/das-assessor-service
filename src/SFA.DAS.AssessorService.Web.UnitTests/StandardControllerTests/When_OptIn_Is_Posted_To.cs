@@ -34,9 +34,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             _mockApiClient
+            .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<ApplicationResponse> {
+                    new ApplicationResponse { StandardReference = "ST0001", ApplyData = new ApplyData{ Apply = new Apply{ Versions = new List<string>{"1.1","1.2"}}},
+                        StandardApplicationType = StandardApplicationTypes.VersionWithdrawal}
+            });
+
+            _mockApiClient
                 .Setup(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(new List<ApplicationResponse> { 
-                    new ApplicationResponse { StandardReference = "ST0001", StandardApplicationType = StandardApplicationTypes.VersionWithdrawal}
+                    new ApplicationResponse { StandardReference = "ST0001",  ApplyData = new ApplyData{ Apply = new Apply{ Versions = new List<string>{"1.1","1.2"}}}, 
+                        StandardApplicationType = StandardApplicationTypes.VersionWithdrawal}
                      });   
 
             _mockContactsApiClient.Setup(r => r.GetContactBySignInId(It.IsAny<String>()))
