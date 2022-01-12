@@ -31,15 +31,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task UpdatePrintStatus(Certificate certificate, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,
             bool updateCertificate, bool updateCertificateBatchLog);
-
-        Task UpdatePrivatelyFundedCertificatesToBeApproved();
-        
+                
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
         Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, List<string> statuses);
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string username);
-        Task ApproveCertificates(List<ApprovalResult> approvalResults, string username);
-        Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus);
         Task<bool> CertifciateExistsForUln(long uln);
         Task<Certificate> GetCertificateDeletedByUln(long uln);
     }
