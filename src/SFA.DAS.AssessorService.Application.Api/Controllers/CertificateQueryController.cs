@@ -60,11 +60,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("history", Name = "GetCertificatesHistory")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificatesHistory(int pageIndex,
-            string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetCertificatesHistory(int pageIndex, string endPointAssessorOrganisationId, string searchTerm, string sortColumn, int sortDescending)
         {
             return Ok(await _mediator.Send(
-                new GetCertificateHistoryRequest { PageIndex = pageIndex, EndPointAssessorOrganisationId = endPointAssessorOrganisationId }));
+                new GetCertificateHistoryRequest
+                {
+                    PageIndex = pageIndex,
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                    SortDescending = sortDescending > 0,
+                    SearchTerm = searchTerm,
+                    SortColumn = sortColumn
+                }));
         }
 
         [HttpGet("approvals", Name = "GetApprovedCertificates")]

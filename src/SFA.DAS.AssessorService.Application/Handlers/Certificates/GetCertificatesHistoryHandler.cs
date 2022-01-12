@@ -35,42 +35,56 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 10;
+            const int pageSize = 100;
             var ignoreStatuses = new List<string>
             {
                 Domain.Consts.CertificateStatus.Deleted,
                 Domain.Consts.CertificateStatus.Draft,
             };
 
-            var certificates = await _certificateRepository.GetCertificateHistory(
+            var searchResult = await _certificateRepository.GetCertificateHistory(
                 request.EndPointAssessorOrganisationId,
                 request.PageIndex ?? 1,
-                pageSize, ignoreStatuses);
+                pageSize,
+                request.SearchTerm,
+                request.SortColumn,
+                request.SortDescending,
+                ignoreStatuses);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
-            var certificateHistoryResponses = MapCertificates(certificates);
+            var certificateHistoryResponses = MapCertificates(searchResult.batchLogs, searchResult.certificatePaginatedList);
 
             return await certificateHistoryResponses;
         }
 
-        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(List<CertificateBatchLog> certificateBatchLogs, PaginatedList<Certificate> certificates)
         {
             var certificateResponses = certificates?.Items.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                    
+
                     var recordedBy = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
                                 certificateLog.Action == Domain.Consts.CertificateActions.Submit)?.Username;
-                    
-                    var printStatusAt =
-                        certificate.CertificateBatchLog?.StatusAt;
 
-                    var printReasonForChange =
-                        certificate.CertificateBatchLog?.ReasonForChange;
+                    var latestCertificateBatchLog = certificateBatchLogs?
+                        .OrderByDescending(q => q.CreatedAt)
+                        .FirstOrDefault();
+
+                    var printStatusAt = latestCertificateBatchLog?.StatusAt;
+                    var printReasonForChange = latestCertificateBatchLog?.ReasonForChange;
+
+                    var statusList = certificateBatchLogs?
+                        .OrderByDescending(q => q.CreatedAt)
+                        .Select(x => new CertificateStatusList
+                        {
+                             CertificateDate = x.StatusAt,
+                             Status = x.Status
+                        } )
+                        .ToList();
 
                     var trainingProviderName = string.Empty;
                     try
@@ -84,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                             {
                                 throw new EntityNotFoundException($"Provider {certificate.ProviderUkPrn} not found", null);
                             }
-                            
+
                             trainingProviderName = provider.ProviderName;
                             _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName).GetAwaiter().GetResult();
                         }
@@ -127,7 +141,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine4 = certificateData.ContactAddLine4,
                         ContactPostCode = certificateData.ContactPostCode,
                         Status = certificate.Status,
-                        ReasonForChange = printReasonForChange
+                        ReasonForChange = printReasonForChange,
+                        CertificateStatusList = statusList
                     };
                 });
 
@@ -142,9 +157,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             }
 
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
-                    certificates?.TotalRecordCount??0,
-                    certificates?.PageIndex??1,
-                    certificates?.PageSize??10
+                    certificates?.TotalRecordCount ?? 0,
+                    certificates?.PageIndex ?? 1,
+                    certificates?.PageSize ?? 10
                 );
 
             return paginatedList;
