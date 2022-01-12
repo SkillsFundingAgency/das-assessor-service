@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             };
 
             _mediator.Setup(m =>
-                m.Send(It.IsAny<GetStandardsByOrganisationRequest>(),
+                m.Send(It.IsAny<GetAllStandardsByOrganisationRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedStandards);
             _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
 
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void MediatorSendsExpectedGetStandardsByOrganisationIdRequest()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<GetStandardsByOrganisationRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<GetAllStandardsByOrganisationRequest>(), new CancellationToken()));
         }
 
 
