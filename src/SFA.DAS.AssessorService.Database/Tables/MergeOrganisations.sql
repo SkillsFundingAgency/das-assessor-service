@@ -9,7 +9,8 @@
 	[CreatedBy] [UNIQUEIDENTIFIER] NOT NULL,
 	[UpdatedBy] [UNIQUEIDENTIFIER] NULL,
 	[ApprovedAt] [datetime2](7) NULL,
-	[ApprovedBy] [UNIQUEIDENTIFIER] NULL,
+	[ApprovedBy] [UNIQUEIDENTIFIER] NULL
+	)
 
  GO
 
