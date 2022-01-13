@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
                 var userId = Guid.NewGuid();
                 var secondaryStandardsEffectiveTo = DateTime.UtcNow.AddMonths(3);
                 var sut = new OrganisationMergingService(dbContext);
-                var mo = await sut.MergeOrganisations(primaryOrganisation, secondaryOrganisation, userId, secondaryStandardsEffectiveTo);
+                var mo = await sut.MergeOrganisations(primaryOrganisation, secondaryOrganisation, secondaryStandardsEffectiveTo, userId);
 
                 //
                 //  Assert.

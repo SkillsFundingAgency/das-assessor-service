@@ -31,57 +31,71 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _dbContext = dbContext;
         }
 
-        public async Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid mergedByUserId, DateTime secondaryStandardsEffectiveTo)
+        public async Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, Guid mergedByUserId)
         {
             if (null == primaryOrganisation) throw new ArgumentNullException(nameof(primaryOrganisation), "primaryOrganisation must be specified.");
             if (null == secondaryOrganisation) throw new ArgumentNullException(nameof(secondaryOrganisation), "secondaryOrganisation must be specified.");
 
-            // Create the MergeOrganisation
+            try 
+            { 
+                // Validation: you cannot use an organisation as a secondary organisation more than once.
 
-            var mergeOrganisation = CreateMergeOrganisations(
-                primaryOrganisation.EndPointAssessorOrganisationId, 
-                secondaryOrganisation.EndPointAssessorOrganisationId, 
-                mergedByUserId);
+                if(HasAlreadyMergedAsSecondaryOrganisation(secondaryOrganisation.EndPointAssessorOrganisationId))
+                {
+                    throw new Exception($"Cannot merge {secondaryOrganisation.EndPointAssessorOrganisationId}. It has already been merged into another organisation.");
+                }
 
-            // Create the "Before" snapshot
+                // Create the MergeOrganisation
 
-            CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "Before");
-            CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
+                var mergeOrganisation = CreateMergeOrganisations(
+                    primaryOrganisation.EndPointAssessorOrganisationId, 
+                    secondaryOrganisation.EndPointAssessorOrganisationId, 
+                    mergedByUserId);
 
-            // Perform the merge.
+                // Create the "Before" snapshot
 
-            MergeOrganisationStandardsAndVersions(
-                primaryOrganisation,
-                secondaryOrganisation,
-                mergedByUserId,
-                secondaryStandardsEffectiveTo);
+                CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "Before");
+                CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
 
-            // Create the "After" snapshot.
+                // Perform the merge.
 
-            CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "After");
-            CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
+                MergeOrganisationStandardsAndVersions(
+                    primaryOrganisation,
+                    secondaryOrganisation,
+                    mergedByUserId,
+                    secondaryStandardsEffectiveTo);
 
-            // check
-            /*
-            List<Object> modifiedOrAddedEntities = _dbContext.ChangeTracker.Entries()
-                .Where(x => x.State == Microsoft.EntityFrameworkCore.EntityState.Added
-                    || x.State == Microsoft.EntityFrameworkCore.EntityState.Modified
-                    )
-                .Select(x => x.Entity).ToList();
-            */
+                // Create the "After" snapshot.
 
-            // Now save all the changes.
-            try
-            {
+                CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "After");
+                CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
+
+                // Approve the merge
+                ApproveMerge(mergeOrganisation, mergedByUserId);
+
+                // Now save all the changes.
                 await _dbContext.SaveChangesAsync();
+
+                return mergeOrganisation;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                // log
                 // check rollback has worked
                 throw ex;
             }
+        }
 
-            return mergeOrganisation;
+        private bool HasAlreadyMergedAsSecondaryOrganisation(string secondaryEndpointAssessorOrganisationId)
+        {
+            return _dbContext.MergeOrganisations.Any(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEndpointAssessorOrganisationId);
+        }
+
+        private void ApproveMerge(MergeOrganisation mo, Guid approvingUserId)
+        {
+            mo.ApprovedBy = approvingUserId;
+            mo.ApprovedAt = DateTime.UtcNow;
+            mo.Status = MergeOrganisationStatus.Approved;            
         }
 
         private MergeOrganisation CreateMergeOrganisations(string primaryEndpointAssessorOrganisationId, string secondaryEndpointAssessorOrganisationId, Guid createdByUserId)
@@ -92,9 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 SecondaryEndPointAssessorOrganisationId = secondaryEndpointAssessorOrganisationId,
                 CreatedBy = createdByUserId,
                 CreatedAt = DateTime.UtcNow,
-                ApprovedBy = createdByUserId,
-                ApprovedAt = DateTime.UtcNow,
-                Status = MergeOrganisationStatus.Approved,  // auto-approved for now
+                Status = MergeOrganisationStatus.InProgress,
             };
             _dbContext.MergeOrganisations.Add(mo);
 

@@ -109,5 +109,10 @@ namespace SFA.DAS.AssessorService.Data
             
             return contact.Organisation;
         }
+
+        public async Task<IEnumerable<Domain.Entities.MergeOrganisation>> GetAllMergeOrganisations()
+        {
+            return await _assessorDbContext.MergeOrganisations.ToListAsync();
+        }
     }
 }
