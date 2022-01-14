@@ -49,15 +49,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sql = $@"DELETE from OrganisationStandardVersion where OrganisationStandardId = {orgStandardId}";
             DatabaseService.Execute(sql);
         }
-
-        //public static void DeleteRecords(List<> ids)
-        //{
-        //    foreach (var id in ids)
-        //    {
-        //        DeleteRecord(id);
-        //    }
-        //}
-    }
 }
 
 
