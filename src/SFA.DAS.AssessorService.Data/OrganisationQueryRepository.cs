@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Data
@@ -111,9 +113,27 @@ namespace SFA.DAS.AssessorService.Data
             return contact.Organisation;
         }
 
-        public async Task<IEnumerable<Domain.Entities.MergeOrganisation>> GetAllMergeOrganisations()
+        public async Task<PaginatedList<MergeOrganisation>> GetAllMergeOrganisations(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId)
         {
-            return await _assessorDbContext.MergeOrganisations.ToListAsync();
+            IQueryable<MergeOrganisation> queryable = _assessorDbContext.MergeOrganisations;
+            if(!string.IsNullOrWhiteSpace(primaryEPAOId))
+            {
+                queryable = queryable.Where(mo => mo.PrimaryEndPointAssessorOrganisationId == primaryEPAOId);
+            }
+            if (!string.IsNullOrWhiteSpace(secondaryEPAOId))
+            {
+                queryable = queryable.Where(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEPAOId);
+            }
+            int count = await queryable.CountAsync();
+
+            if (pageSize == 0)
+                pageSize = count == 0 ? 1 : count;
+            var result = await queryable
+                //.OrderByDescending(q => q.UpdatedAt)
+                .Skip(((pageIndex > 0) ? pageIndex - 1 : 0) * pageSize)
+                .Take(pageSize).ToListAsync();
+
+            return new PaginatedList<MergeOrganisation>(result, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 
         public async Task<Domain.Entities.MergeOrganisation> GetMergeOrganisation(int id)
