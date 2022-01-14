@@ -15,12 +15,13 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid? UpdatedBy { get; set; }
         public DateTime? ApprovedAt { get; set; }
         public Guid? ApprovedBy { get; set; }
-
+        public DateTime SecondaryEPAOEffectiveTo { get; set; }
+        public DateTime? CompletedAt { get; set; }
 
         public ICollection<MergeOrganisationStandard> MergeOrganisationStandards { get; set; }
         public ICollection<MergeOrganisationStandardVersion> MergeOrganisationStandardVersions { get; set; }
         public ICollection<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
-
+        
 
         public MergeOrganisation()
         {
