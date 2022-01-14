@@ -49,13 +49,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet(Name = "GetMergeOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(MergeOrganisationsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetMergeOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetMergeOrganisation(int id)
         {
-            // We're just here because of CreatedAtRoute
-            throw new NotImplementedException();
+            _logger.LogInformation("Received Get Merge Organisation Request");
+
+            var mergeOrganisation = await _mediator.Send(new GetMergeOrganisationRequest() { Id = id } );
+            if(null == mergeOrganisation)
+            {
+                return NotFound();
+            }
+
+            return new OkObjectResult(mergeOrganisation);
         }
 
         [HttpGet("log", Name = "GetMergeLog")]

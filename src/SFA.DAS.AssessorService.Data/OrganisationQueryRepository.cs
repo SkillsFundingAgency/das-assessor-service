@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
@@ -113,6 +114,11 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<IEnumerable<Domain.Entities.MergeOrganisation>> GetAllMergeOrganisations()
         {
             return await _assessorDbContext.MergeOrganisations.ToListAsync();
+        }
+
+        public async Task<Domain.Entities.MergeOrganisation> GetMergeOrganisation(int id)
+        {
+            return await _assessorDbContext.MergeOrganisations.FirstOrDefaultAsync(mo => mo.Id == id);
         }
     }
 }

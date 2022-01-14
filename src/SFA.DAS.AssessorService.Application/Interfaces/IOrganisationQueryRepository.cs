@@ -22,5 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard);
 
         Task<IEnumerable<MergeOrganisation>> GetAllMergeOrganisations();
+        Task<MergeOrganisation> GetMergeOrganisation(int id);
     }
 }

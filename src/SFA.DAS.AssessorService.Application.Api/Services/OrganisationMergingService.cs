@@ -49,7 +49,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 var mergeOrganisation = CreateMergeOrganisations(
                     primaryOrganisation.EndPointAssessorOrganisationId, 
-                    secondaryOrganisation.EndPointAssessorOrganisationId, 
+                    secondaryOrganisation.EndPointAssessorOrganisationId,
+                    secondaryStandardsEffectiveTo,
                     mergedByUserId);
 
                 // Create the "Before" snapshot
@@ -98,12 +99,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             mo.Status = MergeOrganisationStatus.Approved;            
         }
 
-        private MergeOrganisation CreateMergeOrganisations(string primaryEndpointAssessorOrganisationId, string secondaryEndpointAssessorOrganisationId, Guid createdByUserId)
+        private MergeOrganisation CreateMergeOrganisations(string primaryEndpointAssessorOrganisationId, string secondaryEndpointAssessorOrganisationId, DateTime secondaryStandardsEffectiveTo, Guid createdByUserId)
         {
             var mo = new MergeOrganisation()
             {
                 PrimaryEndPointAssessorOrganisationId = primaryEndpointAssessorOrganisationId,
                 SecondaryEndPointAssessorOrganisationId = secondaryEndpointAssessorOrganisationId,
+                SecondaryEPAOEffectiveTo = secondaryStandardsEffectiveTo,
                 CreatedBy = createdByUserId,
                 CreatedAt = DateTime.UtcNow,
                 Status = MergeOrganisationStatus.InProgress,
