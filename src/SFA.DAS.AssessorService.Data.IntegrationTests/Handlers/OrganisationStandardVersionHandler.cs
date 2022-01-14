@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
@@ -18,7 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sql =
                 "INSERT INTO [dbo].[OrganisationStandardVersion] ([StandardUId], [Version],[OrganisationStandardId],[EffectiveFrom],[EffectiveTo],[DateVersionApproved]," +
                 "[Comments],[Status]) VALUES (@standardUId, @version, @organisationStandardId, @effectiveFrom, @effectiveTo, @dateVersionApproved, @comments, @status); ";
-        
+
             DatabaseService.Execute(sql, organisationStandard);
         }
 
@@ -49,6 +45,5 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sql = $@"DELETE from OrganisationStandardVersion where OrganisationStandardId = {orgStandardId}";
             DatabaseService.Execute(sql);
         }
+    }
 }
-
-
