@@ -159,18 +159,42 @@ namespace SFA.DAS.AssessorService.Data
                 "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
                     new { osdaId });
 
-            await _unitOfWork.Connection.ExecuteAsync(
-                @"UPDATE [OrganisationStandardVersion] 
-                        SET [EffectiveFrom] = @effectiveFrom,
-                            [EffectiveTo] = @effectiveTo
-                        WHERE
-                            [OrganisationStandardId] = @id",
-                new
+
+            if (null != orgStandard.StandardVersions)
+            {
+                foreach (var version in orgStandard.StandardVersions)
                 {
-                    orgStandard.EffectiveFrom,
-                    orgStandard.EffectiveTo,
-                    orgStandard.Id
-                });
+                    var standardUid = $"{orgStandard.StandardReference.Trim()}_{version.Trim()}";
+
+                    await _unitOfWork.Connection.ExecuteAsync(
+                        "IF NOT EXISTS (select * from OrganisationStandardVersion where StandardUId = @StandardUid and Version = @version and OrganisationStandardId = @OrganisationStandardId) " +
+                        "INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
+                            "VALUES(@StandardUid, @Version, @OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, 'Live')",
+                            new
+                            {
+                                standardUid,
+                                version,
+                                OrganisationStandardId = osdaId,
+                                orgStandard.EffectiveFrom,
+                                orgStandard.EffectiveTo,
+                                DateVersionApproved = orgStandard.DateStandardApprovedOnRegister,
+                                orgStandard.Comments
+                            });
+
+                    await _unitOfWork.Connection.ExecuteAsync(
+                        @"UPDATE [OrganisationStandardVersion] 
+                                        SET [EffectiveFrom] = @effectiveFrom,
+                                            [EffectiveTo] = @effectiveTo
+                                        WHERE
+                                            [OrganisationStandardId] = @id",
+                        new
+                        {
+                            orgStandard.EffectiveFrom,
+                            orgStandard.EffectiveTo,
+                            orgStandard.Id
+                        });
+                }
+            }
 
             return osdaId;
         }
