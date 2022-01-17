@@ -387,7 +387,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
-                                                                                        && x.ApplicationStatus != ApplicationStatus.Approved);
+                                                                                        && x.ApplicationStatus == ApplicationStatus.Approved);
 
             foreach (var withdrawal in withdrawals)
             {
