@@ -2,7 +2,9 @@
 (
 	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
 	[PrimaryEndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
+	[PrimaryEndPointAssessorName] [nvarchar](100) NOT NULL,
 	[SecondaryEndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
+	[SecondaryEndPointAssessorName] [nvarchar](100) NOT NULL,
 	[SecondaryEPAOEffectiveTo] [datetime2](7) NOT NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
