@@ -75,11 +75,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(MergeLogEntry))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetMergeLog(int? pageSize, int? pageIndex, string primaryEPAOId, string secondaryEPAOId)
+        public async Task<IActionResult> GetMergeLog(int? pageSize, int? pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId)
         {
+            // Valid values for OrderBy:
+            //  CompletedAt
+            //  
+
             try
             {
-                var request = new GetMergeLogRequest() { PageSize = pageSize, PageIndex = pageIndex, PrimaryEPAOId = primaryEPAOId, SecondaryEPAOId = secondaryEPAOId };
+                var request = new GetMergeLogRequest() { PageSize = pageSize, PageIndex = pageIndex, OrderBy = orderBy, OrderDirection = orderDirection, PrimaryEPAOId = primaryEPAOId, SecondaryEPAOId = secondaryEPAOId };
                 var response = await _mediator.Send(request);
                 return new OkObjectResult(response);
             }

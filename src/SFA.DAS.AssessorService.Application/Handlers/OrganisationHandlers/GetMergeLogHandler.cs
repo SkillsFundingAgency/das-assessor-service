@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
         public async Task<PaginatedList<MergeLogEntry>> Handle(GetMergeLogRequest request,
             CancellationToken cancellationToken)
         {
-            var mergelog = await _organisationQueryRepository.GetOrganisationMergeLogs(request.PageSize ?? 1, request.PageIndex ?? 0, request.PrimaryEPAOId, request.SecondaryEPAOId);
+            var mergelog = await _organisationQueryRepository.GetOrganisationMergeLogs(request.PageSize ?? 1, request.PageIndex ?? 0, request.OrderBy, request.OrderDirection, request.PrimaryEPAOId, request.SecondaryEPAOId);
             return mergelog;
         }
     }

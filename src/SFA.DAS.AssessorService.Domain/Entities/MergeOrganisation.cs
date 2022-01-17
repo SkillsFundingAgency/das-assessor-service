@@ -9,10 +9,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int Id { get; set; }
 
         public string PrimaryEndPointAssessorOrganisationId { get; set; }
-        public string PrimaryEndpointAssessorOrganisationName { get; set; }
+        public string PrimaryEndPointAssessorOrganisationName { get; set; }
 
         public string SecondaryEndPointAssessorOrganisationId { get; set; }
-        public string SecondaryEndpointAssessorOrganisationName { get; set; }
+        public string SecondaryEndPointAssessorOrganisationName { get; set; }
         public DateTime SecondaryEPAOEffectiveTo { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

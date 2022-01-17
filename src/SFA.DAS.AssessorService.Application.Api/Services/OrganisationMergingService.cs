@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -83,9 +82,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
             catch (Exception ex)
             {
-                // log
-                // check rollback has worked
-
                 throw ex;
             }
         }
@@ -113,9 +109,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var mo = new MergeOrganisation()
             {
                 PrimaryEndPointAssessorOrganisationId = primaryOrganisation.EndPointAssessorOrganisationId,
-                PrimaryEndpointAssessorOrganisationName = primaryOrganisation.EndPointAssessorName,
+                PrimaryEndPointAssessorOrganisationName = primaryOrganisation.EndPointAssessorName,
                 SecondaryEndPointAssessorOrganisationId = secondaryOrganisation.EndPointAssessorOrganisationId,
-                SecondaryEndpointAssessorOrganisationName = secondaryOrganisation.EndPointAssessorName,
+                SecondaryEndPointAssessorOrganisationName = secondaryOrganisation.EndPointAssessorName,
                 SecondaryEPAOEffectiveTo = secondaryStandardsEffectiveTo,
                 CreatedBy = createdByUserId,
                 CreatedAt = DateTime.UtcNow,

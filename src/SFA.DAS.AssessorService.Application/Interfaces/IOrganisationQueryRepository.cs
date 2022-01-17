@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard);
 
-        Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId);
+        Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId);
         Task<MergeLogEntry> GetOrganisationMergeLogById(int id);
     }
 }

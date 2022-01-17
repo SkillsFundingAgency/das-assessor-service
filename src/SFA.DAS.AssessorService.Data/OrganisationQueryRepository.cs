@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Extensions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
@@ -113,7 +114,7 @@ namespace SFA.DAS.AssessorService.Data
             return contact.Organisation;
         }
 
-        public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId)
+        public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId)
         {
             IQueryable<MergeOrganisation> queryable = _assessorDbContext.MergeOrganisations;
             if(!string.IsNullOrWhiteSpace(primaryEPAOId))
@@ -123,6 +124,21 @@ namespace SFA.DAS.AssessorService.Data
             if (!string.IsNullOrWhiteSpace(secondaryEPAOId))
             {
                 queryable = queryable.Where(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEPAOId);
+            }
+            if(!string.IsNullOrWhiteSpace(orderBy))
+            {
+                if(!string.IsNullOrWhiteSpace(orderDirection) && orderDirection.Equals("descending", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    queryable = queryable.OrderByDescending(orderBy);
+                }
+                else
+                {
+                    queryable = queryable.OrderBy(orderBy);
+                }
+            }
+            else
+            {
+                queryable = queryable.OrderBy("CompletedAt");
             }
             int count = await queryable.CountAsync();
 
@@ -137,9 +153,9 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     Id = o.Id,
                     PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
-                    PrimaryEndPointAssessorOrganisationName = o.PrimaryEndpointAssessorOrganisationName,
+                    PrimaryEndPointAssessorOrganisationName = o.PrimaryEndPointAssessorOrganisationName,
                     SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
-                    SecondaryEndPointAssessorOrganisationName = o.SecondaryEndpointAssessorOrganisationName,
+                    SecondaryEndPointAssessorOrganisationName = o.SecondaryEndPointAssessorOrganisationName,
                     CompletedAt = o.CompletedAt,
                     SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
                 })
@@ -156,9 +172,9 @@ namespace SFA.DAS.AssessorService.Data
             {
                 Id = o.Id,
                 PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
-                PrimaryEndPointAssessorOrganisationName = o.PrimaryEndpointAssessorOrganisationName,
+                PrimaryEndPointAssessorOrganisationName = o.PrimaryEndPointAssessorOrganisationName,
                 SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
-                SecondaryEndPointAssessorOrganisationName = o.SecondaryEndpointAssessorOrganisationName,
+                SecondaryEndPointAssessorOrganisationName = o.SecondaryEndPointAssessorOrganisationName,
                 CompletedAt = o.CompletedAt,
                 SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
             };
