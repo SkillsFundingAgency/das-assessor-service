@@ -156,6 +156,8 @@ namespace SFA.DAS.AssessorService.Data
                 .ToTable("MergeOrganisations")
                 .HasMany(e => e.MergeOrganisationStandards)
                 .WithOne(e => e.MergeOrganisation);
+
+
             modelBuilder.Entity<MergeOrganisationStandard>()
                 .ToTable("MergeOrganisationStandard");
 

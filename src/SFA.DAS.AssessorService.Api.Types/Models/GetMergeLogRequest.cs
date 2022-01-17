@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetMergeLogRequest : IRequest<PaginatedList<MergeOrganisation>>
+    public class GetMergeLogRequest : IRequest<PaginatedList<MergeLogEntry>>
     {
         public int? PageSize { get; set; }
         public int? PageIndex { get; set; }

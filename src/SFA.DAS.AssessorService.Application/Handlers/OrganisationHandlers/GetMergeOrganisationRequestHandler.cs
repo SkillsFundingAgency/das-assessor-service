@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class GetMergeOrganisationRequestHandler : IRequestHandler<GetMergeOrganisationRequest, GetMergeOrganisationResponse>
+    public class GetMergeOrganisationRequestHandler : IRequestHandler<GetMergeOrganisationRequest, MergeLogEntry>
     {
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
@@ -15,19 +15,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task<GetMergeOrganisationResponse> Handle(GetMergeOrganisationRequest request,
+        public async Task<MergeLogEntry> Handle(GetMergeOrganisationRequest request,
             CancellationToken cancellationToken)
         {
-            var mergeOrganisation = await _organisationQueryRepository.GetMergeOrganisation(request.Id);
-            if (null == mergeOrganisation) return null;
-            return new GetMergeOrganisationResponse() 
-            { 
-                 Id = mergeOrganisation.Id,
-                 PrimaryEndPointAssessorOrganisationId = mergeOrganisation.PrimaryEndPointAssessorOrganisationId,
-                 SecondaryEndPointAssessorOrganisationId = mergeOrganisation.SecondaryEndPointAssessorOrganisationId,
-                 SecondaryEPAOEffectiveTo = mergeOrganisation.SecondaryEPAOEffectiveTo,
-                 CompletionDate = mergeOrganisation.CompletedAt
-            };
+            var mergeOrganisation = await _organisationQueryRepository.GetOrganisationMergeLogById(request.Id);
+            return mergeOrganisation;
         }
     }
 }

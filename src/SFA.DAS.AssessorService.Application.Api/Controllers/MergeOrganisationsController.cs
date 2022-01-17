@@ -41,6 +41,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var mergeOrganisation = await _mediator.Send(mergeOrganisationsRequest);
 
+            if(null != mergeOrganisation && mergeOrganisation.Status == Services.MergeOrganisationStatus.Approved)
+            {
+                // @ToDo: send email(s)
+            }
+
             return CreatedAtRoute("GetMergeOrganisation",
                 new { id = mergeOrganisation.Id },
                 mergeOrganisation);
@@ -49,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet(Name = "GetMergeOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetMergeOrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(MergeLogEntry))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetMergeOrganisation(int id)
@@ -67,14 +72,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("log", Name = "GetMergeLog")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetMergeLogResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(MergeLogEntry))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetMergeLog(int? pageSize, int? pageIndex, string primaryEPAOId, string secondaryEPAOId)
         {
-            var request = new GetMergeLogRequest() { PageSize = pageSize, PageIndex = pageIndex, PrimaryEPAOId = primaryEPAOId, SecondaryEPAOId = secondaryEPAOId};
-            var response = await _mediator.Send(request);
-            return new OkObjectResult(response);
+            try
+            {
+                var request = new GetMergeLogRequest() { PageSize = pageSize, PageIndex = pageIndex, PrimaryEPAOId = primaryEPAOId, SecondaryEPAOId = secondaryEPAOId };
+                var response = await _mediator.Send(request);
+                return new OkObjectResult(response);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -48,8 +49,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 // Create the MergeOrganisation
 
                 var mergeOrganisation = CreateMergeOrganisations(
-                    primaryOrganisation.EndPointAssessorOrganisationId, 
-                    secondaryOrganisation.EndPointAssessorOrganisationId,
+                    primaryOrganisation, 
+                    secondaryOrganisation,
                     secondaryStandardsEffectiveTo,
                     mergedByUserId);
 
@@ -58,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "Before");
                 CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
 
-                // Perform the merge.
+                // Perform the merge.                
 
                 MergeOrganisationStandardsAndVersions(
                     primaryOrganisation,
@@ -71,8 +72,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "After");
                 CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
 
-                // Approve the merge
+                // Approve and complete the merge
                 ApproveMerge(mergeOrganisation, mergedByUserId);
+                CompleteMerge(mergeOrganisation, mergedByUserId);
 
                 // Now save all the changes.
                 await _dbContext.SaveChangesAsync();
@@ -83,6 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             {
                 // log
                 // check rollback has worked
+
                 throw ex;
             }
         }
@@ -99,12 +102,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             mo.Status = MergeOrganisationStatus.Approved;            
         }
 
-        private MergeOrganisation CreateMergeOrganisations(string primaryEndpointAssessorOrganisationId, string secondaryEndpointAssessorOrganisationId, DateTime secondaryStandardsEffectiveTo, Guid createdByUserId)
+        private void CompleteMerge(MergeOrganisation mo, Guid completingUserId)
+        {
+            mo.CompletedBy = completingUserId;
+            mo.CompletedAt = DateTime.UtcNow;
+        }
+
+        private MergeOrganisation CreateMergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, Guid createdByUserId)
         {
             var mo = new MergeOrganisation()
             {
-                PrimaryEndPointAssessorOrganisationId = primaryEndpointAssessorOrganisationId,
-                SecondaryEndPointAssessorOrganisationId = secondaryEndpointAssessorOrganisationId,
+                PrimaryEndPointAssessorOrganisationId = primaryOrganisation.EndPointAssessorOrganisationId,
+                PrimaryEndpointAssessorOrganisationName = primaryOrganisation.EndPointAssessorName,
+                SecondaryEndPointAssessorOrganisationId = secondaryOrganisation.EndPointAssessorOrganisationId,
+                SecondaryEndpointAssessorOrganisationName = secondaryOrganisation.EndPointAssessorName,
                 SecondaryEPAOEffectiveTo = secondaryStandardsEffectiveTo,
                 CreatedBy = createdByUserId,
                 CreatedAt = DateTime.UtcNow,
@@ -221,6 +232,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                         OrganisationStandardVersions = new List<OrganisationStandardVersion>(),
                         OrganisationStandardDeliveryAreas = new List<OrganisationStandardDeliveryArea>(),
                     };
+                    primaryOrganisationStandard.Comments = primaryOrganisationStandard.Comments.Substring(0, Math.Min(primaryOrganisationStandard.Comments.Length, 500));
                     primaryOrganisation.OrganisationStandards.Add(primaryOrganisationStandard);
                 }
 
@@ -246,12 +258,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                             Status = secondaryOrganisationStandardVersion.Status,
                             Version = secondaryOrganisationStandardVersion.Version,
                         };
+                        primaryOrganisationStandardVersion.Comments = primaryOrganisationStandardVersion.Comments.Substring(0, Math.Min(primaryOrganisationStandardVersion.Comments.Length, 500));
                         primaryOrganisationStandard.OrganisationStandardVersions.Add(primaryOrganisationStandardVersion);
                     }
 
                     // Mark the secondary standard version as ending
                     secondaryOrganisationStandardVersion.EffectiveTo = secondaryStandardsEffectiveTo;
                     secondaryOrganisationStandardVersion.Comments = $"** This standard version has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                    secondaryOrganisationStandardVersion.Comments = secondaryOrganisationStandardVersion.Comments.Substring(0, Math.Min(secondaryOrganisationStandardVersion.Comments.Length, 500));
                 }
 
                 // Read all the delivery areas for this standard from the secondary organisation
@@ -277,10 +291,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                             OrganisationStandard = primaryOrganisationStandard,
                             DeliveryArea = secondaryOrganisationStandardDeliveryArea.DeliveryArea,
                         };
+                        primaryOrganisationStandardDeliveryArea.Comments = primaryOrganisationStandardDeliveryArea.Comments.Substring(0, Math.Min(primaryOrganisationStandardDeliveryArea.Comments.Length, 500));
                         primaryOrganisationStandard.OrganisationStandardDeliveryAreas.Add(primaryOrganisationStandardDeliveryArea);
                     }
 
                     secondaryOrganisationStandardDeliveryArea.Comments = $"** This delivery area has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                    secondaryOrganisationStandardDeliveryArea.Comments = secondaryOrganisationStandardDeliveryArea.Comments.Substring(0, Math.Min(secondaryOrganisationStandardDeliveryArea.Comments.Length, 500));
                 }
 
 
@@ -288,6 +304,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 secondaryOrganisationStandard.EffectiveTo = secondaryStandardsEffectiveTo;
                 secondaryOrganisationStandard.Comments = $"{secondaryOrganisationStandard.Comments} ** this standard has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                secondaryOrganisationStandard.Comments = secondaryOrganisationStandard.Comments.Substring(0, Math.Min(secondaryOrganisationStandard.Comments.Length, 500));
             }
         }
     }

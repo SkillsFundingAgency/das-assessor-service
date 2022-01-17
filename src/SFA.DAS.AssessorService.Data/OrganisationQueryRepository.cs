@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Data
             return contact.Organisation;
         }
 
-        public async Task<PaginatedList<MergeOrganisation>> GetAllMergeOrganisations(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId)
+        public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId)
         {
             IQueryable<MergeOrganisation> queryable = _assessorDbContext.MergeOrganisations;
             if(!string.IsNullOrWhiteSpace(primaryEPAOId))
@@ -128,17 +128,40 @@ namespace SFA.DAS.AssessorService.Data
 
             if (pageSize == 0)
                 pageSize = count == 0 ? 1 : count;
+
             var result = await queryable
                 //.OrderByDescending(q => q.UpdatedAt)
                 .Skip(((pageIndex > 0) ? pageIndex - 1 : 0) * pageSize)
-                .Take(pageSize).ToListAsync();
+                .Take(pageSize)
+                .Select(o => new MergeLogEntry() 
+                {
+                    Id = o.Id,
+                    PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
+                    PrimaryEndPointAssessorOrganisationName = o.PrimaryEndpointAssessorOrganisationName,
+                    SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
+                    SecondaryEndPointAssessorOrganisationName = o.SecondaryEndpointAssessorOrganisationName,
+                    CompletedAt = o.CompletedAt,
+                    SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
+                })
+                .ToListAsync();
 
-            return new PaginatedList<MergeOrganisation>(result, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+            return new PaginatedList<MergeLogEntry>(result, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 
-        public async Task<Domain.Entities.MergeOrganisation> GetMergeOrganisation(int id)
+        public async Task<MergeLogEntry> GetOrganisationMergeLogById(int id)
         {
-            return await _assessorDbContext.MergeOrganisations.FirstOrDefaultAsync(mo => mo.Id == id);
+            var o = await _assessorDbContext.MergeOrganisations.FirstOrDefaultAsync(mo => mo.Id == id);
+            if (null == o) return null;
+            return new MergeLogEntry()
+            {
+                Id = o.Id,
+                PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
+                PrimaryEndPointAssessorOrganisationName = o.PrimaryEndpointAssessorOrganisationName,
+                SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
+                SecondaryEndPointAssessorOrganisationName = o.SecondaryEndpointAssessorOrganisationName,
+                CompletedAt = o.CompletedAt,
+                SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
+            };
         }
     }
 }

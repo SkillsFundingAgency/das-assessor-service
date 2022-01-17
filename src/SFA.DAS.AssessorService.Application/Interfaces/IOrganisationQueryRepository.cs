@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 
@@ -22,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard);
 
-        Task<PaginatedList<MergeOrganisation>> GetAllMergeOrganisations(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId);
-        Task<MergeOrganisation> GetMergeOrganisation(int id);
+        Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string primaryEPAOId, string secondaryEPAOId);
+        Task<MergeLogEntry> GetOrganisationMergeLogById(int id);
     }
 }
