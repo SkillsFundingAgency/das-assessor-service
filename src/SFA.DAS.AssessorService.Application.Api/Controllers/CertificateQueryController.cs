@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     PageIndex = pageIndex,
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
-                    SortDescending = sortDescending > 0,
+                    SortDescending = sortDescending == 0,
                     SearchTerm = searchTerm,
                     SortColumn = sortColumn
                 }));

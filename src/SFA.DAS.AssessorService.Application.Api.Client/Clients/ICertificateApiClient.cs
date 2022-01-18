@@ -12,7 +12,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> Start(StartCertificateRequest request);
         Task<Certificate> GetCertificate(Guid certificateId, bool includeLogs = false);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
-        Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string userName);
+        Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory
+        (int pageIndex, string endPointAssessorOrganisationId, string searchTerm, string sortColumn, int sortDescending);
         Task<CertificateAddress> GetContactPreviousAddress(string userName);
         Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
         Task Delete(DeleteCertificateRequest deleteCertificateRequest);

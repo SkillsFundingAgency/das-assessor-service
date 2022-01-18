@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
                     It.IsAny<string>(),
                     It.IsAny<bool>(),
                     It.IsAny<List<string>>()))
-                .ReturnsAsync((new List<CertificateBatchLog>(), new PaginatedList<Certificate>(certificates, 40, 1, ResultPageSize)));
+                .ReturnsAsync(new PaginatedList<Certificate>(certificates, 40, 1, ResultPageSize));
 
             _contactQueryRepositoryMock = new Mock<IContactQueryRepository>();
             _contactQueryRepositoryMock.Setup(r => r.GetContact(SubmitUsername)).ReturnsAsync(new Contact

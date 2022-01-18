@@ -8,8 +8,10 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 
@@ -21,6 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
+        private List<string> _ignoreStatuses;
 
         public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
             IRoatpApiClient roatpApiClient,
@@ -31,16 +34,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _roatpApiClient = roatpApiClient;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
+            _ignoreStatuses = new List<string>
+            {
+                Domain.Consts.CertificateStatus.Deleted,
+                Domain.Consts.CertificateStatus.Draft,
+            };
         }
 
         public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
             const int pageSize = 100;
-            var ignoreStatuses = new List<string>
-            {
-                Domain.Consts.CertificateStatus.Deleted,
-                Domain.Consts.CertificateStatus.Draft,
-            };
 
             var searchResult = await _certificateRepository.GetCertificateHistory(
                 request.EndPointAssessorOrganisationId,
@@ -49,43 +52,42 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 request.SearchTerm,
                 request.SortColumn,
                 request.SortDescending,
-                ignoreStatuses);
+                _ignoreStatuses);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
-            var certificateHistoryResponses = MapCertificates(searchResult.batchLogs, searchResult.certificatePaginatedList);
+            var certificateHistoryResponses = MapCertificates(searchResult);
 
             return await certificateHistoryResponses;
         }
 
-        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(List<CertificateBatchLog> certificateBatchLogs, PaginatedList<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var certificateResponses = certificates?.Items.Select(
                 certificate =>
                 {
+                    var latestCertificateStatusDate = certificate.LatestChange().Value;
+
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
                     var recordedBy = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
                                 certificateLog.Action == Domain.Consts.CertificateActions.Submit)?.Username;
+                    
+                    var printStatusAt = certificate.CertificateBatchLog?.StatusAt;
+                    var printReasonForChange = certificate.CertificateBatchLog?.ReasonForChange;
 
-                    var latestCertificateBatchLog = certificateBatchLogs?
-                        .OrderByDescending(q => q.CreatedAt)
-                        .FirstOrDefault();
-
-                    var printStatusAt = latestCertificateBatchLog?.StatusAt;
-                    var printReasonForChange = latestCertificateBatchLog?.ReasonForChange;
-
-                    var statusList = certificateBatchLogs?
-                        .OrderByDescending(q => q.CreatedAt)
+                    var statusList = certificate.CertificateLogs?
+                        .Where(o => !_ignoreStatuses.Contains(o.Status))
+                        .OrderByDescending(q => q.EventTime)
                         .Select(x => new CertificateStatusList
                         {
-                             CertificateDate = x.StatusAt,
+                             CertificateDate = x.EventTime,
                              Status = x.Status
                         } )
                         .ToList();
-
+                    
                     var trainingProviderName = string.Empty;
                     try
                     {
@@ -142,7 +144,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactPostCode = certificateData.ContactPostCode,
                         Status = certificate.Status,
                         ReasonForChange = printReasonForChange,
-                        CertificateStatusList = statusList
+                        CertificateStatusList = statusList,
+                        LatestStatusDatetime = latestCertificateStatusDate
                     };
                 });
 

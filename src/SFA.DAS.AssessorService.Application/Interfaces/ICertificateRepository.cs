@@ -35,8 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
         
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
-        Task<(List<CertificateBatchLog> batchLogs, PaginatedList<Certificate> certificatePaginatedList)> 
-            GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, string searchTerm, string sortColumn, bool sortAscending,List<string> statuses);
+        Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, string searchTerm, string sortColumn, bool sortAscending,List<string> statuses);
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string username);
         Task ApproveCertificates(List<ApprovalResult> approvalResults, string username);

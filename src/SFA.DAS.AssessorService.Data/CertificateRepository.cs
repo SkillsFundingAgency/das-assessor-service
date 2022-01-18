@@ -331,8 +331,7 @@ namespace SFA.DAS.AssessorService.Data
             return new PaginatedList<Certificate>(certificateResult, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 
-        public async Task<(List<CertificateBatchLog> batchLogs, PaginatedList<Certificate> certificatePaginatedList)> 
-            GetCertificateHistory(string endPointAssessorOrganisationId,
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId,
                 int pageIndex,
                 int pageSize, 
                 string searchTerm, 
@@ -342,7 +341,10 @@ namespace SFA.DAS.AssessorService.Data
         {
 
             var certificatesQuery = (from certificate in _context.Certificates
-                join organisation in _context.Organisations on
+                 .Include(q => q.Organisation)
+                .Include(q => q.CertificateLogs)
+                .Include(q => q.CertificateBatchLog)
+                                     join organisation in _context.Organisations on
                                 certificate.OrganisationId equals organisation.Id
                             where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
                                   && !statuses.Contains(certificate.Status)
@@ -354,13 +356,15 @@ namespace SFA.DAS.AssessorService.Data
                 searchTerm = searchTerm.ToLower();
                 long.TryParse(searchTerm, out long validUln);
 
-                certificatesQuery = certificatesQuery.Where(x => x.certificateData.LearnerGivenNames.ToLower().Contains(searchTerm) ||
-                                               x.certificate.CertificateReference.ToLower() == searchTerm ||
-                                               x.certificate.Uln == validUln);
+                certificatesQuery = certificatesQuery
+                    .Where(x => x.certificateData.LearnerGivenNames.ToLower().StartsWith(searchTerm) ||
+                                                    x.certificateData.LearnerGivenNames.ToLower() == searchTerm ||
+                                                   x.certificate.CertificateReference.ToLower() == searchTerm ||
+                                                   x.certificate.Uln == validUln);
             }
 
             if (!Enum.TryParse(sortColumn, out GetCertificateHistoryRequest.SortColumns sort))
-                sort = GetCertificateHistoryRequest.SortColumns.Apprentice;
+                sort = GetCertificateHistoryRequest.SortColumns.DateRequested;
 
             switch (sort)
             {
@@ -423,20 +427,10 @@ namespace SFA.DAS.AssessorService.Data
             var certificates = await certificatesQuery.Select(x => x.certificate)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
-
-            var certificateBatchInfo = certificates
-                .Select(x => new {x.BatchNumber, x.CertificateReference})
-                .ToList();
-
-            var certificateBatchLogs = await _context.CertificateBatchLogs
-                .Where(x => certificateBatchInfo.Any(o => o.BatchNumber == x.BatchNumber &&o.CertificateReference == x.CertificateReference))
-                .OrderByDescending(o => o.StatusAt)
-                .Take(5)
-                .ToListAsync();
             
             var count = await certificatesQuery.Select(x => x.certificate.Id).CountAsync();
 
-            return (certificateBatchLogs, new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize));
+            return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)

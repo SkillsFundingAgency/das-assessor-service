@@ -43,6 +43,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string EpaoName { get; set; }
         public string ReasonForChange { get; set; }
         public List<CertificateStatusList> CertificateStatusList { get; set; }
+        public DateTime LatestStatusDatetime { get; set; }
     }
 
     public class CertificateStatusList
