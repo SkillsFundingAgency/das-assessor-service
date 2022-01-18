@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
            
             if (request.ApplyFollowingWithdrawal)
             {
-                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas);
+                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas, true);
             }
             else
             {

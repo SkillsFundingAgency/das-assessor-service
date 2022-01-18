@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas)
+            List<int> deliveryAreas, bool applyFollowingWithdrawal=false)
         {
             var osdaId = (await _unitOfWork.Connection.QueryAsync<string>(
                 "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Data
                     new { osdaId });
 
 
-            if (null != orgStandard.StandardVersions)
+            if (null != orgStandard.StandardVersions && applyFollowingWithdrawal)
             {
                 foreach (var version in orgStandard.StandardVersions)
                 {
@@ -180,21 +180,22 @@ namespace SFA.DAS.AssessorService.Data
                                 DateVersionApproved = orgStandard.DateStandardApprovedOnRegister,
                                 orgStandard.Comments
                             });
-
-                    await _unitOfWork.Connection.ExecuteAsync(
-                        @"UPDATE [OrganisationStandardVersion] 
-                                        SET [EffectiveFrom] = @effectiveFrom,
-                                            [EffectiveTo] = @effectiveTo
-                                        WHERE
-                                            [OrganisationStandardId] = @id",
-                        new
-                        {
-                            orgStandard.EffectiveFrom,
-                            orgStandard.EffectiveTo,
-                            orgStandard.Id
-                        });
                 }
             }
+
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                    @"UPDATE [OrganisationStandardVersion] 
+                                                    SET [EffectiveFrom] = @effectiveFrom,
+                                                        [EffectiveTo] = @effectiveTo
+                                                    WHERE
+                                                        [OrganisationStandardId] = @id",
+                    new
+                    {
+                        orgStandard.EffectiveFrom,
+                        orgStandard.EffectiveTo,
+                        orgStandard.Id
+                    });
 
             return osdaId;
         }
