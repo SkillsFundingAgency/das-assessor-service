@@ -349,7 +349,12 @@ namespace SFA.DAS.AssessorService.Data
                             where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
                                   && !statuses.Contains(certificate.Status)
                             let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
-                            select new { certificate, organisation, certificateData });
+                            select new SortableCertificateInfo
+                            {
+                                Certificate =  certificate,
+                                Organisation = organisation,
+                                CertificateData = certificateData
+                            });
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -357,15 +362,28 @@ namespace SFA.DAS.AssessorService.Data
                 long.TryParse(searchTerm, out long validUln);
 
                 certificatesQuery = certificatesQuery
-                    .Where(x => x.certificateData.LearnerGivenNames.ToLower().StartsWith(searchTerm) ||
-                                                    x.certificateData.LearnerGivenNames.ToLower() == searchTerm ||
-                                                   x.certificate.CertificateReference.ToLower() == searchTerm ||
-                                                   x.certificate.Uln == validUln);
+                    .Where(x => x.CertificateData.LearnerGivenNames.ToLower().StartsWith(searchTerm) ||
+                                                    x.CertificateData.LearnerGivenNames.ToLower() == searchTerm ||
+                                                   x.Certificate.CertificateReference.ToLower() == searchTerm ||
+                                                   x.Certificate.Uln == validUln);
             }
 
             if (!Enum.TryParse(sortColumn, out GetCertificateHistoryRequest.SortColumns sort))
                 sort = GetCertificateHistoryRequest.SortColumns.DateRequested;
 
+            certificatesQuery = GetSortedCertificateInfo(sortDescending, sort, certificatesQuery);
+
+            var certificates = await certificatesQuery.Select(x => x.Certificate)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
+            
+            var count = await certificatesQuery.Select(x => x.Certificate.Id).CountAsync();
+
+            return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
+        }
+
+        private  IQueryable<SortableCertificateInfo> GetSortedCertificateInfo(bool sortDescending, GetCertificateHistoryRequest.SortColumns sort, IQueryable<SortableCertificateInfo> certificatesQuery)
+        {
             switch (sort)
             {
                 case GetCertificateHistoryRequest.SortColumns.Apprentice:
@@ -373,13 +391,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.certificateData.FullName);
-
+                            .OrderByDescending(x => x.CertificateData.FullName);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.certificateData.FullName);
+                            .OrderBy(x => x.CertificateData.FullName);
                     }
 
                     break;
@@ -387,12 +404,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.certificateData.ContactOrganisation);
+                            .OrderByDescending(x => x.CertificateData.ContactOrganisation);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.certificateData.ContactOrganisation);
+                            .OrderBy(x => x.CertificateData.ContactOrganisation);
                     }
 
                     break;
@@ -400,12 +417,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.certificateData.ProviderName);
+                            .OrderByDescending(x => x.CertificateData.ProviderName);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.certificateData.ProviderName);
+                            .OrderBy(x => x.CertificateData.ProviderName);
                     }
 
                     break;
@@ -413,24 +430,18 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.certificate.CreatedAt);
+                            .OrderByDescending(x => x.Certificate.CreatedAt);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.certificate.CreatedAt);
+                            .OrderBy(x => x.Certificate.CreatedAt);
                     }
 
                     break;
             }
 
-            var certificates = await certificatesQuery.Select(x => x.certificate)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
-            
-            var count = await certificatesQuery.Select(x => x.certificate.Id).CountAsync();
-
-            return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
+            return certificatesQuery;
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
@@ -730,5 +741,14 @@ namespace SFA.DAS.AssessorService.Data
                    param: new { certificateIds, action, status, eventTime, certificateData, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
+
+        class SortableCertificateInfo
+        {
+            public Certificate Certificate { get; set; }
+            public Organisation Organisation { get; set; }
+            public CertificateData CertificateData { get; set; }
+        }
+
+
     }
 }
