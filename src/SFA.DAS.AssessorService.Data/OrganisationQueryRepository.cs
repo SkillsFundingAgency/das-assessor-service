@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Data
             }
             if(!string.IsNullOrWhiteSpace(orderBy))
             {
-                if(!string.IsNullOrWhiteSpace(orderDirection) && orderDirection.Equals("descending", StringComparison.InvariantCultureIgnoreCase))
+                if(!string.IsNullOrWhiteSpace(orderDirection) && orderDirection.Equals("desc", StringComparison.InvariantCultureIgnoreCase))
                 {
                     queryable = queryable.OrderByDescending(orderBy);
                 }
