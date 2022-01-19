@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "MergeOrganisations")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(MergeOrganisationsResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Created)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> MergeOrganisations(
@@ -83,8 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             if(null != mergeOrganisation)
             {
-                return CreatedAtRoute("GetMergeOrganisation",
-                    new { id = mergeOrganisation.Id });
+                return CreatedAtRoute("GetMergeOrganisation", new { id = mergeOrganisation.Id });
             }
             return new StatusCodeResult(500);
         }

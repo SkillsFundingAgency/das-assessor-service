@@ -17,11 +17,11 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string Status { get; set; }
-        public Guid CreatedBy { get; set; }
-        public Guid? UpdatedBy { get; set; }
+        public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
         public DateTime? ApprovedAt { get; set; }
-        public Guid? ApprovedBy { get; set; }
-        public Guid? CompletedBy { get; set; }
+        public string ApprovedBy { get; set; }
+        public string CompletedBy { get; set; }
         public DateTime? CompletedAt { get; set; }
 
         public ICollection<MergeOrganisationStandard> MergeOrganisationStandards { get; set; }

@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _dbContext = dbContext;
         }
 
-        public async Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, Guid mergedByUserId)
+        public async Task<MergeOrganisation> MergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, string actionedByUser)
         {
             if (null == primaryOrganisation) throw new ArgumentNullException(nameof(primaryOrganisation), "primaryOrganisation must be specified.");
             if (null == secondaryOrganisation) throw new ArgumentNullException(nameof(secondaryOrganisation), "secondaryOrganisation must be specified.");
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     primaryOrganisation, 
                     secondaryOrganisation,
                     secondaryStandardsEffectiveTo,
-                    mergedByUserId);
+                    actionedByUser);
 
                 // Create the "Before" snapshot
 
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 MergeOrganisationStandardsAndVersions(
                     primaryOrganisation,
                     secondaryOrganisation,
-                    mergedByUserId,
+                    actionedByUser,
                     secondaryStandardsEffectiveTo);
 
                 // Create the "After" snapshot.
@@ -73,8 +73,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
 
                 // Approve and complete the merge
-                ApproveMerge(mergeOrganisation, mergedByUserId);
-                CompleteMerge(mergeOrganisation, mergedByUserId);
+                ApproveMerge(mergeOrganisation, actionedByUser);
+                CompleteMerge(mergeOrganisation, actionedByUser);
 
                 // Now save all the changes.
                 await _dbContext.SaveChangesAsync();
@@ -92,20 +92,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return _dbContext.MergeOrganisations.Any(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEndpointAssessorOrganisationId);
         }
 
-        private void ApproveMerge(MergeOrganisation mo, Guid approvingUserId)
+        private void ApproveMerge(MergeOrganisation mo, string approvedByUser)
         {
-            mo.ApprovedBy = approvingUserId;
+            mo.ApprovedBy = approvedByUser;
             mo.ApprovedAt = DateTime.UtcNow;
             mo.Status = MergeOrganisationStatus.Approved;            
         }
 
-        private void CompleteMerge(MergeOrganisation mo, Guid completingUserId)
+        private void CompleteMerge(MergeOrganisation mo, string completedByUser)
         {
-            mo.CompletedBy = completingUserId;
+            mo.CompletedBy = completedByUser;
             mo.CompletedAt = DateTime.UtcNow;
         }
 
-        private MergeOrganisation CreateMergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, Guid createdByUserId)
+        private MergeOrganisation CreateMergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, string createdByUser)
         {
             var primaryContactName = _dbContext.Contacts.AsNoTracking().FirstOrDefault(c => c.Email == primaryOrganisation.PrimaryContact)?.DisplayName;
             var secondaryContactName = _dbContext.Contacts.AsNoTracking().FirstOrDefault(c => c.Email == secondaryOrganisation.PrimaryContact)?.DisplayName;
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 SecondaryOrganisationEmail = secondaryOrganisation.PrimaryContact,
                 SecondaryContactName = secondaryContactName,
                 SecondaryEPAOEffectiveTo = secondaryStandardsEffectiveTo,
-                CreatedBy = createdByUserId,
+                CreatedBy = createdByUser,
                 CreatedAt = DateTime.UtcNow,
                 Status = MergeOrganisationStatus.InProgress,
             };
@@ -202,7 +202,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         }
 
 
-        private void MergeOrganisationStandardsAndVersions(Organisation primaryOrganisation, Organisation secondaryOrganisation, Guid createdByUserId, DateTime secondaryStandardsEffectiveTo)
+        private void MergeOrganisationStandardsAndVersions(Organisation primaryOrganisation, Organisation secondaryOrganisation, string createdByUser, DateTime secondaryStandardsEffectiveTo)
         {
             // @ToDo: a bit monolithic - can this be refactored in to something more readable?
 

@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
 
                 // Act.
 
-                var userId = Guid.NewGuid();
+                var userId = "merger@merger.merger";
                 var dbContext = DatabaseHelper.TestContext;
                 var sut = new OrganisationMergingService(dbContext);
                 var testExcutionTimestamp = DateTime.UtcNow;
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
                 var dbContext = DatabaseHelper.TestContext;
                 var primaryOrganisation = dbContext.Organisations.First(e => e.EndPointAssessorOrganisationId == primaryEpaId);
                 var secondaryOrganisation = dbContext.Organisations.First(e => e.EndPointAssessorOrganisationId == secondaryEpaId);
-                var userId = Guid.NewGuid();
+                var userId = "merger@merge.merge";
                 var secondaryStandardsEffectiveTo = DateTime.UtcNow.AddMonths(3);
                 var sut = new OrganisationMergingService(dbContext);
                 var mo = await sut.MergeOrganisations(primaryOrganisation, secondaryOrganisation, secondaryStandardsEffectiveTo, userId);

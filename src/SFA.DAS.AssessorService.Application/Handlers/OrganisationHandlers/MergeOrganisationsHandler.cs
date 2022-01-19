@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             var primaryOrganisation = await _organisationQueryRepository.Get(mergeOrganisationRequest.PrimaryEndPointAssessorOrganisationId);
             var secondaryOrganisation = await _organisationQueryRepository.Get(mergeOrganisationRequest.SecondaryEndPointAssessorOrganisationId);
 
-            var mergeOrganisation = await _organisationMergingService.MergeOrganisations(primaryOrganisation, secondaryOrganisation, mergeOrganisationRequest.SecondaryStandardsEffectiveTo, mergeOrganisationRequest.ActionedByUserId);
+            var mergeOrganisation = await _organisationMergingService.MergeOrganisations(primaryOrganisation, secondaryOrganisation, mergeOrganisationRequest.SecondaryStandardsEffectiveTo, mergeOrganisationRequest.ActionedByUser);
 
             return mergeOrganisation;
         }
