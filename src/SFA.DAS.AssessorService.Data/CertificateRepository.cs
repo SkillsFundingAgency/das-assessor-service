@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Remotion.Linq.Clauses;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -416,6 +415,16 @@ namespace SFA.DAS.AssessorService.Data
             return certificatesQuery;
         }
 
+        public async Task<int> GetCertificatesCount(string endPointAssessorOrganisationId, List<string> statuses)
+        {
+            return await (from certificate in _context.Certificates
+                          join organisation in _context.Organisations on
+                              certificate.OrganisationId equals organisation.Id
+                          where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
+                                && !statuses.Contains(certificate.Status)
+                          select certificate).CountAsync();
+        }
+
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
             var cert = await GetCertificate(certificate.Id)
@@ -596,21 +605,6 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction);
         }
 
-        public async Task UpdatePrivatelyFundedCertificatesToBeApproved()
-        {
-            var certificates =
-                _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted &&
-                                                 q.PrivatelyFundedStatus != CertificateStatus.Approved);
-            if (certificates.Any())
-            {
-                foreach (var certificate in certificates)
-                {
-                    certificate.Status = CertificateStatus.ToBeApproved;
-                    certificate.PrivatelyFundedStatus = null;
-                }
-                await _context.SaveChangesAsync();
-            }
-        }
         private async Task AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
         {
             if (action != null)
@@ -667,14 +661,11 @@ namespace SFA.DAS.AssessorService.Data
                    param: new { certificateIds, action, status, eventTime, certificateData, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
-
-        class SortableCertificateInfo
-        {
-            public Certificate Certificate { get; set; }
-            public Organisation Organisation { get; set; }
-            public CertificateData CertificateData { get; set; }
-        }
-
-
+    }
+    class SortableCertificateInfo
+    {
+        public Certificate Certificate { get; set; }
+        public Organisation Organisation { get; set; }
+        public CertificateData CertificateData { get; set; }
     }
 }
