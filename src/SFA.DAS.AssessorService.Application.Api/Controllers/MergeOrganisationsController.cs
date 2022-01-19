@@ -81,9 +81,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetMergeOrganisation",
-                new { id = mergeOrganisation.Id },
-                mergeOrganisation);
+            if(null != mergeOrganisation)
+            {
+                return CreatedAtRoute("GetMergeOrganisation",
+                    new { id = mergeOrganisation.Id },
+                    mergeOrganisation);
+            }
+            return new StatusCodeResult(500);
         }
 
 
