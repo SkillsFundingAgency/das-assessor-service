@@ -303,34 +303,6 @@ namespace SFA.DAS.AssessorService.Data
             await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
         }
 
-        public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize, string status, string privatelyFundedStatus)
-        {
-            int count;
-            var certificates = _context.Certificates.Include(q => q.Organisation)
-                .Include(q => q.CertificateLogs);
-            IQueryable<Certificate> queryable;
-            if (status == null)
-            {
-                count = await _context.Certificates.Where(x => x.IsPrivatelyFunded).CountAsync();
-                queryable = certificates;
-            }
-            else
-            {
-                count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).Where(x => x.IsPrivatelyFunded).CountAsync();
-                queryable = certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus);
-            }
-
-            if (pageSize == 0)
-                pageSize = count == 0 ? 1 : count;
-            var certificateResult = await queryable
-                .Where(x => x.IsPrivatelyFunded)
-                .OrderByDescending(q => q.UpdatedAt)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
-
-            return new PaginatedList<Certificate>(certificateResult, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
-        }
-
         public async Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId,
                 int pageIndex,
                 int pageSize,
