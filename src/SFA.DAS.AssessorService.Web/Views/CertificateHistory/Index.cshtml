@@ -330,9 +330,20 @@
                     }
                     else
                     {
-                        <div class="info-summary">
-                            <h3 class="govuk-heading-m">You have no completed assessments.</h3>
-                        </div>
+
+                        if (string.IsNullOrWhiteSpace(Model.SearchTerm))
+                        {
+                            <div class="info-summary">
+                                <h3 class="govuk-heading-m">You have no completed assessments.</h3>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="info-summary">
+                                <h3 class="govuk-heading-m">No results found</h3>
+                            </div>
+                        }
+                        
                     }
             </div>
             </div>
