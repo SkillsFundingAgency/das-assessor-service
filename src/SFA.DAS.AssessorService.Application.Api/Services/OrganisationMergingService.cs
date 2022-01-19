@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -106,12 +107,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private MergeOrganisation CreateMergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, Guid createdByUserId)
         {
+            var primaryContactName = _dbContext.Contacts.AsNoTracking().FirstOrDefault(c => c.Email == primaryOrganisation.PrimaryContact)?.DisplayName;
+            var secondaryContactName = _dbContext.Contacts.AsNoTracking().FirstOrDefault(c => c.Email == secondaryOrganisation.PrimaryContact)?.DisplayName;
+
             var mo = new MergeOrganisation()
             {
                 PrimaryEndPointAssessorOrganisationId = primaryOrganisation.EndPointAssessorOrganisationId,
                 PrimaryEndPointAssessorOrganisationName = primaryOrganisation.EndPointAssessorName,
+                PrimaryOrganisationEmail = primaryOrganisation.PrimaryContact,
+                PrimaryContactName = primaryContactName,
                 SecondaryEndPointAssessorOrganisationId = secondaryOrganisation.EndPointAssessorOrganisationId,
                 SecondaryEndPointAssessorOrganisationName = secondaryOrganisation.EndPointAssessorName,
+                SecondaryOrganisationEmail = secondaryOrganisation.PrimaryContact,
+                SecondaryContactName = secondaryContactName,
                 SecondaryEPAOEffectiveTo = secondaryStandardsEffectiveTo,
                 CreatedBy = createdByUserId,
                 CreatedAt = DateTime.UtcNow,

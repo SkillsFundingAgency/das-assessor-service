@@ -6,9 +6,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -19,14 +21,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<MergeOrganisationsController> _logger;
         private readonly IMediator _mediator;
+        private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
 
         public MergeOrganisationsController(
+            IEMailTemplateQueryRepository eMailTemplateQueryRepository,
             ILogger<MergeOrganisationsController> logger,
             IMediator mediator
         )
         {
             _logger = logger;
             _mediator = mediator;
+            _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
         }
 
         [HttpPost(Name = "MergeOrganisations")]
@@ -41,9 +46,39 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var mergeOrganisation = await _mediator.Send(mergeOrganisationsRequest);
 
-            if(null != mergeOrganisation && mergeOrganisation.Status == Services.MergeOrganisationStatus.Approved)
+            // Send emails on success
+            if (null != mergeOrganisation && mergeOrganisation.Status == Services.MergeOrganisationStatus.Approved)
             {
-                // @ToDo: send email(s)
+                try
+                {
+                    var primaryEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.MergeConfirmationForPrimaryEpao);
+                    if (null != primaryEmailTemplate)
+                    {
+                        await _mediator.Send(new SendEmailRequest(mergeOrganisation.PrimaryOrganisationEmail, primaryEmailTemplate,
+                            new
+                            {
+                                primaryEPAO = mergeOrganisation.PrimaryEndPointAssessorOrganisationName,
+                                contactName = mergeOrganisation.PrimaryContactName,
+                                effectiveToDate = mergeOrganisation.SecondaryEPAOEffectiveTo,
+                            }));
+                    }
+
+                    var secondaryEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.MergeConfirmationForSecondaryEpao);
+                    if (null != secondaryEmailTemplate)
+                    {
+                        await _mediator.Send(new SendEmailRequest(mergeOrganisation.SecondaryOrganisationEmail, secondaryEmailTemplate,
+                            new
+                            {
+                                secondaryEPAO = mergeOrganisation.SecondaryEndPointAssessorOrganisationName,
+                                contactName = mergeOrganisation.SecondaryContactName,
+                                effectiveToDate = mergeOrganisation.SecondaryEPAOEffectiveTo,
+                            }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send merge confirmation email");
+                }
             }
 
             return CreatedAtRoute("GetMergeOrganisation",

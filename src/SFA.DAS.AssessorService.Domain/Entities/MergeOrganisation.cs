@@ -27,7 +27,16 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public ICollection<MergeOrganisationStandard> MergeOrganisationStandards { get; set; }
         public ICollection<MergeOrganisationStandardVersion> MergeOrganisationStandardVersions { get; set; }
         public ICollection<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
-        
+
+
+        [NotMapped]
+        public string PrimaryOrganisationEmail { get; set; }
+        [NotMapped]
+        public string SecondaryOrganisationEmail { get; set; }
+        [NotMapped]
+        public string PrimaryContactName { get; set; }
+        [NotMapped]
+        public string SecondaryContactName { get; set; }
 
         public MergeOrganisation()
         {
