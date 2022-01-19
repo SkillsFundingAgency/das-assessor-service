@@ -160,7 +160,13 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.QueryAsync<EpaOrganisation>(sql, new { standardId });
         }
 
-        public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
+        /// <summary>
+        /// This method doesn't restrict by Effective From / To and Status as the goal is return all standards
+        /// of all states, specifically for use by the admin side of the service.
+        /// /// </summary>
+        /// <param name="organisationId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<OrganisationStandardSummary>> GetAllOrganisationStandardByOrganisationId(string organisationId)
         {
             IEnumerable<OrganisationStandardSummary> organisationStandardSummaries;
 
@@ -187,10 +193,6 @@ namespace SFA.DAS.AssessorService.Data
 	                INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
                         AND o.EndPointAssessorOrganisationId = @organisationId
 	                INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
-                  WHERE 
-	                osv.Status = 'Live' AND os.status = 'Live' 
-	                AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
-	                AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE()) 
                   ORDER BY LarsCode, VersionMajor, VersionMinor";
 
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
@@ -217,13 +219,36 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
-            var sql =
-                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, StandardReference as IFateReferenceNumber, EffectiveFrom, EffectiveTo, " +
-                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
-                    "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
+            OrganisationStandard orgStandard;
 
-            return await _unitOfWork.Connection.QuerySingleAsync<OrganisationStandard>(sql, new { organisationStandardId });
+            var sql =
+                @"SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, StandardReference as IFateReferenceNumber, 
+                             EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData 
+                FROM [OrganisationStandard] WHERE Id = @organisationStandardId
+
+                SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, 
+                       osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status, s.VersionMajor, s.VersionMinor
+                FROM [dbo].[OrganisationStandardVersion] osv 
+                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
+                INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
+                WHERE osv.OrganisationStandardId = @organisationStandardId
+                ORDER BY s.VersionMajor, s.VersionMinor";
+
+            using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(sql, new { organisationStandardId }))
+            {
+                orgStandard = await multi.ReadSingleOrDefaultAsync<OrganisationStandard>();
+                var standardVersions = multi.Read<OrganisationStandardVersion>();
+
+                if (orgStandard != null)
+                {
+                    orgStandard.Versions = standardVersions?.ToList();
+                }
+            }
+
+            return orgStandard;
         }
+
+
 
         public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {
