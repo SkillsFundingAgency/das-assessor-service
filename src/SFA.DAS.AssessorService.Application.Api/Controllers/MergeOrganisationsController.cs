@@ -84,8 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if(null != mergeOrganisation)
             {
                 return CreatedAtRoute("GetMergeOrganisation",
-                    new { id = mergeOrganisation.Id },
-                    mergeOrganisation);
+                    new { id = mergeOrganisation.Id });
             }
             return new StatusCodeResult(500);
         }
@@ -116,20 +115,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetMergeLog(int? pageSize, int? pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId)
         {
-            // Valid values for OrderBy:
-            //  CompletedAt
-            //  
-
-            try
-            {
-                var request = new GetMergeLogRequest() { PageSize = pageSize, PageIndex = pageIndex, OrderBy = orderBy, OrderDirection = orderDirection, PrimaryEPAOId = primaryEPAOId, SecondaryEPAOId = secondaryEPAOId };
-                var response = await _mediator.Send(request);
-                return new OkObjectResult(response);
-            }
-            catch(Exception ex)
-            {
-                throw;
-            }
+            var request = new GetMergeLogRequest() { PageSize = pageSize, PageIndex = pageIndex, OrderBy = orderBy, OrderDirection = orderDirection, PrimaryEPAOId = primaryEPAOId, SecondaryEPAOId = secondaryEPAOId };
+            var response = await _mediator.Send(request);
+            return new OkObjectResult(response);
         }
     }
 }
