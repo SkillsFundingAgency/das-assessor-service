@@ -264,11 +264,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             //Get all previous applications for standard and find application that contains version in question
             //First found application must not be a withdrawal
             var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
-            if (previousApplications.Where(x => x.ApplyData.Apply.Versions.Contains(version)).FirstOrDefault().ApplicationType != ApplicationTypes.Withdrawal)
+            if (previousApplications != null && previousApplications.Where(x => x.ApplyData.Apply.Versions.Contains(version)).FirstOrDefault().ApplicationType != ApplicationTypes.Withdrawal)
             {
                 //Get all previously withdrawn applications for standard and check to see if version in question has been withdrawn
                 var previousWithdrawnApplicationsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, stdVersion.LarsCode);
-                if (previousWithdrawnApplicationsForStandard.Where(x => x.ApplyData.Apply.Versions.Contains(version) && x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal).Any())
+                if (previousWithdrawnApplicationsForStandard != null && previousWithdrawnApplicationsForStandard.Where(x => x.ApplyData.Apply.Versions.Contains(version) && x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal).Any())
                 {
                     optInFollowingWithdrawal = true;
                 }
