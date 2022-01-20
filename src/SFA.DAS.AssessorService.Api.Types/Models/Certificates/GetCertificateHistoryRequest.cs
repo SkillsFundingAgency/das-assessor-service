@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
     public class GetCertificateHistoryRequest : IRequest<PaginatedList<CertificateSummaryResponse>>
     {
         public GetCertificateHistoryRequest()
-        {            
+        {
         }
 
         public string EndPointAssessorOrganisationId { get; set; }
@@ -22,8 +22,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
             ProviderName,
             DateRequested
         }
-
     }
-
-
 }

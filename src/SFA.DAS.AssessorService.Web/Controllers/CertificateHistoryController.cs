@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ICertificateHistorySession _certificateHistorySession;
         private const string CertificateHistoryRoute = "certificateHistory";
         private const int DefaultPageIndex = 1;
+
         public CertificateHistoryController(
             ILogger<CertificateController> logger,
             IHttpContextAccessor contextAccessor,
@@ -58,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _certificateHistorySession.CertificateHistorySearchTerm = searchTerm ?? string.Empty;
 
             // reset the page indexes as the new results may have less pages
-            _certificateHistorySession.CertificateHistoryPageIndex = 1;
+            _certificateHistorySession.CertificateHistoryPageIndex = DefaultPageIndex;
 
             var vm = await MapViewModelFromSession();
             return View(nameof(Index), vm);
@@ -79,6 +80,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var vm = await MapViewModelFromSession();
             return View(nameof(Index), vm);
         }
+
         private void UpdateCertificateHistorySortDirection(string sortColumnName, string sortDirection)
         {
             if (Enum.TryParse(sortColumnName, true, out GetCertificateHistoryRequest.SortColumns sortColumn))
@@ -94,6 +96,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
             }
         }
+
         private async Task<CertificateHistoryViewModel> MapViewModelFromSession()
         {
             var viewModel = new CertificateHistoryViewModel();
@@ -116,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private void SetDefaultSession()
         {
-            _certificateHistorySession.CertificateHistorySearchTerm = string.Empty; ;
+            _certificateHistorySession.CertificateHistorySearchTerm = string.Empty;
             _certificateHistorySession.CertificateHistorySortColumn = GetCertificateHistoryRequest.SortColumns.DateRequested;
             _certificateHistorySession.CertificateHistoryPageIndex = DefaultPageIndex;
             _certificateHistorySession.CertificateHistorySortDirection = "Desc";

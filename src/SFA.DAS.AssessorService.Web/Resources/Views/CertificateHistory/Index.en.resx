@@ -210,26 +210,4 @@
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
-  <data name="DateSubmitted" xml:space="preserve">
-    <value>Date submitted</value>
-  </data>
-  <data name="DateSentToPrinter" xml:space="preserve">
-    <value>Date sent to printer</value>
-  </data>
-
-  <data name="DatePrinted" xml:space="preserve">
-    <value>Date printed</value>
-  </data>
-
-  <data name="DateDelivered" xml:space="preserve">
-    <value>Date delivered </value>
-  </data>
-
-  <data name="DateNotDelivered" xml:space="preserve">
-    <value>Date not delivered </value>
-  </data>
-
-  <data name="DateReprint" xml:space="preserve">
-    <value>Date reprint requested</value>
-  </data>
 </root>
