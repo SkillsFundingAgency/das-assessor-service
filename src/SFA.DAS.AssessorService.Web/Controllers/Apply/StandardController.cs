@@ -267,7 +267,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 //Most recent application must not be a withdrawal
                 var mostRecentApplication = previousApplications.FirstOrDefault();
-                if (mostRecentApplication.ApplicationType == ApplicationTypes.Withdrawal && mostRecentApplication.ApplyData.Apply.Versions.Contains(version))
+                if (mostRecentApplication.ApplicationType != ApplicationTypes.Withdrawal && mostRecentApplication.ApplyData.Apply.Versions.Contains(version))
                 {
                     //Get all previously withdrawn applications for standard and check to see if version in question has been withdrawn
                     var previousWithdrawnApplicationsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, stdVersion.LarsCode);
