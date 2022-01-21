@@ -336,9 +336,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var applications = _dbContext.Applications.Where(e => e.Organisation.EndPointAssessorOrganisationId == organisation.EndPointAssessorOrganisationId);
             foreach (var application in applications)
             {
-                application.DeletedAt = DateTime.UtcNow;
-                application.ApplicationStatus = ApplyTypes.ApplicationStatus.Deleted;
-                application.DeletedBy = deletedByUser;
+                if(application.ApplicationStatus == ApplyTypes.ApplicationStatus.InProgress)
+                {
+                    application.DeletedAt = DateTime.UtcNow;
+                    application.ApplicationStatus = ApplyTypes.ApplicationStatus.Deleted;
+                    application.DeletedBy = deletedByUser;
+                }
             }
         }
     }
