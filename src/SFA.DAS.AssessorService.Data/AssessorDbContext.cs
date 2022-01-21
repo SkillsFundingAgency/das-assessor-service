@@ -47,6 +47,8 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<MergeOrganisationStandard> MergeOrganisationStandards { get; set; }
         public virtual DbSet<MergeOrganisationStandardVersion> MergeOrganisationStandardVersions { get; set; }
         public virtual DbSet<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
+        public virtual DbSet<ApplyEF> Applications { get; set; }
+        public virtual DbSet<MergeApply> MergeApplications { get; set; }
 
 
         public override int SaveChanges()
@@ -157,6 +159,10 @@ namespace SFA.DAS.AssessorService.Data
                 .HasMany(e => e.MergeOrganisationStandards)
                 .WithOne(e => e.MergeOrganisation);
 
+            modelBuilder.Entity<MergeOrganisation>()
+                .HasMany(e => e.MergeSecondaryApplications)
+                .WithOne(e => e.MergeOrganisation);
+
 
             modelBuilder.Entity<MergeOrganisationStandard>()
                 .ToTable("MergeOrganisationStandard");
@@ -173,6 +179,12 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<MergeOrganisationStandardDeliveryArea>()
                 .ToTable("MergeOrganisationStandardDeliveryArea")
                 ;
+
+            modelBuilder.Entity<ApplyEF>()
+                .ToTable("Apply");
+
+            modelBuilder.Entity<MergeApply>()
+                .ToTable("MergeApply");
 
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }

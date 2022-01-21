@@ -58,6 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "Before");
                 CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
+                CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
 
                 // Perform the merge.                
 
@@ -67,12 +68,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     actionedByUser,
                     secondaryStandardsEffectiveTo);
 
+                // Delete any in-progress applications for the secondary organisation
+
+                DeleteInProgressApplications(secondaryOrganisation, actionedByUser);
+
                 // Create the "After" snapshot.
 
                 CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "After");
                 CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
+                CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
 
                 // Approve and complete the merge
+                
                 ApproveMerge(mergeOrganisation, actionedByUser);
                 CompleteMerge(mergeOrganisation, actionedByUser);
 
@@ -309,6 +316,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 secondaryOrganisationStandard.EffectiveTo = secondaryStandardsEffectiveTo;
                 secondaryOrganisationStandard.Comments = $"{secondaryOrganisationStandard.Comments} ** this standard has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
                 secondaryOrganisationStandard.Comments = secondaryOrganisationStandard.Comments.Substring(0, Math.Min(secondaryOrganisationStandard.Comments.Length, 500));
+            }
+        }
+
+        private void CreateApplySnapshot(MergeOrganisation mergeOrganisation, string endpointAssessorOrganisationId, string replicates)
+        {
+            var applications = _dbContext.Applications.Include("Organisation").Where(e => e.Organisation.EndPointAssessorOrganisationId == endpointAssessorOrganisationId);
+            foreach(var application in applications)
+            {
+                var mergeApplication = MergeApply.CreateFrom(application);
+                mergeApplication.Replicates = replicates;
+                mergeOrganisation.MergeSecondaryApplications.Add(mergeApplication);
+            }
+            
+        }
+
+        private void DeleteInProgressApplications(Organisation organisation, string deletedByUser)
+        {
+            var applications = _dbContext.Applications.Where(e => e.Organisation.EndPointAssessorOrganisationId == organisation.EndPointAssessorOrganisationId);
+            foreach (var application in applications)
+            {
+                application.DeletedAt = DateTime.UtcNow;
+                application.ApplicationStatus = ApplyTypes.ApplicationStatus.Deleted;
+                application.DeletedBy = deletedByUser;
             }
         }
     }

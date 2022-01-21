@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public ICollection<MergeOrganisationStandard> MergeOrganisationStandards { get; set; }
         public ICollection<MergeOrganisationStandardVersion> MergeOrganisationStandardVersions { get; set; }
         public ICollection<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
+        public ICollection<MergeApply> MergeSecondaryApplications { get; set; }
 
 
         [NotMapped]
@@ -43,6 +44,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
             MergeOrganisationStandards = new List<MergeOrganisationStandard>();
             MergeOrganisationStandardVersions = new List<MergeOrganisationStandardVersion>();
             MergeOrganisationStandardDeliveryAreas = new List<MergeOrganisationStandardDeliveryArea>();
+            MergeSecondaryApplications = new List<MergeApply>();
         }
     }
 }
