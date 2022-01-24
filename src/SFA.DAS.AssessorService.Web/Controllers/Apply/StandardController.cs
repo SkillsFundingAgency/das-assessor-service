@@ -411,10 +411,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         if (ReApplyViaSevenQuestions(previousWithdrawalDate, res.EPAChanged))
                         {
                             res.VersionStatus = VersionStatus.NewVersionChanged;
+                            res.PreviouslyWithdrawn = true;
                         }
                         else
                         {
                             res.VersionStatus = VersionStatus.NewVersionNoChange;
+                            res.PreviouslyWithdrawn = true;
                         }
                     }
 
