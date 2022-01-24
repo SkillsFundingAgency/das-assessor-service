@@ -7,6 +7,7 @@ CREATE TABLE [MergeOrganisationStandardDeliveryArea]
 	[Comments] [NVARCHAR] (500) NULL,
 	[Status] [nvarchar](10) NOT NULL,
 	[MergeOrganisationId] int NOT NULL,
+	[OrganisationStandardDeliveryAreaId] int NOT NULL,
 	[Replicates] NVARCHAR (6) NOT NULL
 	) ON [PRIMARY] 
 GO

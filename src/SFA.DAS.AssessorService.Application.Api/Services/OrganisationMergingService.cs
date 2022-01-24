@@ -84,6 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 CompleteMerge(mergeOrganisation, actionedByUser);
 
                 // Now save all the changes.
+
                 await _dbContext.SaveChangesAsync();
 
                 return mergeOrganisation;
@@ -172,6 +173,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 Status = sourceOrganisationStandard.Status,
                 ContactId = sourceOrganisationStandard.ContactId,
                 OrganisationStandardData = sourceOrganisationStandard.OrganisationStandardData,
+                OrganisationStandardId = sourceOrganisationStandard.Id,
                 Replicates = replicates,                
             };
 
@@ -189,7 +191,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 Comments = sourceOrganisationStandardVersion.Comments,
                 DateVersionApproved = sourceOrganisationStandardVersion.DateVersionApproved,
                 EffectiveFrom = sourceOrganisationStandardVersion.EffectiveFrom,
-                EffectiveTo = sourceOrganisationStandardVersion.EffectiveTo,
+                EffectiveTo = sourceOrganisationStandardVersion.EffectiveTo
             };
 
             return mosv;
@@ -203,6 +205,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 OrganisationStandardId = sourceOrganisationStandardDeliveryArea.OrganisationStandardId,
                 Status = sourceOrganisationStandardDeliveryArea.Status,
                 Comments = sourceOrganisationStandardDeliveryArea.Comments,
+                OrganisationStandardDeliveryAreaId = sourceOrganisationStandardDeliveryArea.Id
             };
 
             return mosda;

@@ -182,6 +182,7 @@
     <Build Include="Tables\MergeOrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\MergeOrganisationStandardVersion.sql" />
     <Build Include="Tables\MergeApply.sql" />
+    <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

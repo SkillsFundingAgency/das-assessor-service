@@ -7,6 +7,7 @@
         public int DeliveryAreaId { get; set; }
         public string Comments { get; set; }
         public string Status { get; set; }
+        public int OrganisationStandardDeliveryAreaId { get; set; }
         public string Replicates { get; set; }
 
         public virtual MergeOrganisation MergeOrganisation { get; set; }

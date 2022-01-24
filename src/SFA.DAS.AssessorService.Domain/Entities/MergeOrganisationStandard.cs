@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -16,6 +14,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid? ContactId { get; set; }
         public string OrganisationStandardData { get; set; }
         public string StandardReference { get; set; }
+        public int OrganisationStandardId { get; set; }
         public string Replicates { get; set; }
 
         

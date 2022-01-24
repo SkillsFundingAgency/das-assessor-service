@@ -12,6 +12,7 @@
     OrganisationStandardData [nvarchar](max) NULL,
     [StandardReference] NVARCHAR(10) NULL ,
 	[MergeOrganisationId] int NOT NULL,
+	[OrganisationStandardId] int NOT NULL,
 	[Replicates] NVARCHAR (6) NOT NULL
 ) ON [PRIMARY]
 
