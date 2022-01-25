@@ -123,7 +123,7 @@ namespace SFA.DAS.AssessorService.Data
             
             modelBuilder.Entity<OrganisationStandardVersion>()
                 .ToTable("OrganisationStandardVersion")
-                .HasKey(c => new { c.OrganisationStandardId, c.StandardUId, c.Version });
+                .HasKey(c => new { c.OrganisationStandardId, c.StandardUId });
 
             modelBuilder.Entity<OrganisationStandardVersion>()
                 .HasOne(c => c.OrganisationStandard)
