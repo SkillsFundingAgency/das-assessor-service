@@ -13,6 +13,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Api.Types.Enums;
+using EnumsNET;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -92,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CertificateReference = certificate?.CertificateReference,
                 CertificateStatus = certificate?.Status,
                 OverallGrade = certificateData.OverallGrade,
-                AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
+                AchievementDate = certificateData.AchievementDate,
                 Option = !string.IsNullOrEmpty(certificateData.CourseOption) ? certificateData.CourseOption : learner?.CourseOption,
                 OrganisationName = epao.EndPointAssessorName,
                 OrganisationId = epao.EndPointAssessorOrganisationId,
@@ -104,7 +106,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CertificateId = certificate?.Id,
                 PrintStatusAt = certificate?.CertificateBatchLog?.StatusAt,
                 ReasonForChange = certificate?.CertificateBatchLog?.ReasonForChange,
+                CertificateSendTo = certificateData.SendTo.ToString(),
                 ContactName = certificateData.ContactName,
+                ContactDept = certificateData.Department,
                 ContactOrganisation = certificateData.ContactOrganisation,
                 ContactAddLine1 = certificateData.ContactAddLine1,
                 ContactAddLine2 = certificateData.ContactAddLine2,
@@ -145,9 +149,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 var thisLog = logs[i];
                 if (i != logs.Count() - 1)
                 {
-                    var previousLog = logs[i + 1];
+                    var prevLog = logs[i + 1];
 
-                    thisLog.DifferencesToPrevious = GetDifference(thisLog.CertificateData, previousLog.CertificateData);
+                    thisLog.DifferencesToPrevious = GetChanges(thisLog, prevLog);
                 }
                 else
                 {
@@ -156,33 +160,66 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
         }
 
-        private Dictionary<string, string> GetDifference(string thisLogCertificateData, string previousLogCertificateData)
+        private Dictionary<string, string> GetChanges(CertificateLogSummary thisLog, CertificateLogSummary prevLog)
         {
-            var differences = new Dictionary<string, string>();
-            var thisData = JsonConvert.DeserializeObject<CertificateData>(thisLogCertificateData);
-            var prevData = JsonConvert.DeserializeObject<CertificateData>(previousLogCertificateData);
-
-            //*** DO NOT Calculate differences in EpaDetails 
-            thisData.EpaDetails = null;
-            prevData.EpaDetails = null;
+            var changes = new Dictionary<string, string>();
+            
+            var thisData = JsonConvert.DeserializeObject<CertificateData>(thisLog.CertificateData);
+            var prevData = JsonConvert.DeserializeObject<CertificateData>(prevLog.CertificateData);
+            
+            // do not use generic change calculation for some properties
+            var ignoreProperties = new string[] { nameof(CertificateData.EpaDetails),
+                nameof(CertificateData.ReprintReasons), nameof(CertificateData.AmendReasons), nameof(CertificateData.IncidentNumber) };
 
             foreach (var propertyInfo in thisData.GetType().GetProperties())
             {
-                var thisProperty = propertyInfo.GetValue(thisData)?.ToString();
-                var prevProperty = propertyInfo.GetValue(prevData)?.ToString();
+                if (ignoreProperties.Contains(propertyInfo.Name))
+                    continue;
+                
+                var propertyIsList = propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType == typeof(List<string>);
+
+                var thisProperty = propertyIsList
+                    ? ((List<string>)propertyInfo.GetValue(thisData) ?? new List<string>()).Listyfy()
+                    : propertyInfo.GetValue(thisData)?.ToString();
+
+                var prevProperty = propertyIsList
+                    ? ((List<string>)propertyInfo.GetValue(prevData) ?? new List<string>()).Listyfy()
+                    : propertyInfo.GetValue(prevData)?.ToString();
+
                 if (prevProperty != thisProperty)
                 {
-                    var ignoreProperties = propertyInfo.Name.Equals("Version", StringComparison.OrdinalIgnoreCase);
-                    if (!ignoreProperties && DateTime.TryParse(thisProperty, out var result))
+                    if (propertyInfo.PropertyType == typeof(DateTime) && DateTime.TryParse(thisProperty, out var result))
                     {
                         thisProperty = result.UtcToTimeZoneTime().ToShortDateString();
                     }
 
-                    differences.Add(propertyInfo.Name.Spaceyfy(), string.IsNullOrEmpty(thisProperty) ? "<Empty>" : thisProperty);
+                    var value = string.IsNullOrEmpty(thisProperty)
+                            ? "&lt;Empty&gt;"
+                            : thisProperty;
+
+                    changes.Add(propertyInfo.Name.Spaceyfy(), value);
                 }
             }
 
-            return differences;
+            // always populate the incident number and the reprint or amend reasons in the changes
+            if(thisLog.Action == CertificateActions.ReprintReason)
+            {
+                var reprintReasons = thisData.ReprintReasons?.Select(p => Enum.TryParse(p, out ReprintReasons reprintReason)
+                    ? reprintReason.AsString(EnumFormat.Description) : p).ToList();
+
+                changes.Add(nameof(CertificateData.IncidentNumber).Spaceyfy(), thisData.IncidentNumber);
+                changes.Add(nameof(CertificateData.ReprintReasons).Spaceyfy(), reprintReasons.Listyfy());
+            }
+            else if(thisLog.Action == CertificateActions.AmendReason)
+            {
+                var amendReasons = thisData.AmendReasons?.Select(p => Enum.TryParse(p, out AmendReasons amendReason)
+                    ? amendReason.AsString(EnumFormat.Description) : p).ToList();
+
+                changes.Add(nameof(CertificateData.IncidentNumber).Spaceyfy(), thisData.IncidentNumber);
+                changes.Add(nameof(CertificateData.AmendReasons).Spaceyfy(), amendReasons.Listyfy());
+            }
+
+            return changes;
         }
     }
 
@@ -202,6 +239,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
 
             return spaceyfiedString;
+        }
+
+        public static string Listyfy(this List<string> target)
+        {
+            var li = string.Join(string.Empty, target.SelectMany(x => string.Format("<li>{0}</li>", x)).ToList());
+            return $"<ul class=\"govuk-list govuk-list--bullet\">{li}</ul>";
         }
     }
 }

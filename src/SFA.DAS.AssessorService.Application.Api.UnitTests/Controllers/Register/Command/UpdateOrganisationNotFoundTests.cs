@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
@@ -49,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             };
 
             _mediator.Setup(m =>
-                m.Send(_request, new CancellationToken())).Throws<NotFound>();
+                m.Send(_request, new CancellationToken())).Throws<NotFoundException>();
 
             _controller = new RegisterController(_mediator.Object, _logger.Object);
             _result = _controller.UpdateEpaOrganisation(_request).Result;

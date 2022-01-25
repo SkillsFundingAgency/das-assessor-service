@@ -18,12 +18,16 @@
         public const string StandardCode = "StandardCode";
         public const string Declaration = "Declaration";
         public const string Printed = "Printed";
-        public const string Reprint = "Reprint";
+        
         public const string Recipient = "Recipient";
         public const string Name = "Name";
         public const string Uln = "Uln";
         public const string ProviderUkPrn = "ProviderUkPrn";
         public const string Status = "Status";
+
+        public const string AmendReason = "AmendReason";
+        public const string ReprintReason = "ReprintReason";
+        public const string Reprint = "Reprint";
 
         // Generated from the External API
         public const string Epa = "Epa";

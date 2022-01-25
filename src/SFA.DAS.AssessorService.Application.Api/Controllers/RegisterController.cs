@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return Ok(new EpaOrganisationResponse(result));
             }
 
-            catch (NotFound ex)
+            catch (NotFoundException ex)
             {
                 _logger.LogError($@"Record is not available for organisation ID: [{request.OrganisationId}]");
                 return NotFound(new EpaOrganisationResponse(ex.Message));
@@ -266,7 +266,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 var result = await _mediator.Send(request);
                 return Ok(new EpaoStandardResponse(result));
             }
-            catch (NotFound ex)
+            catch (NotFoundException ex)
             {
                 _logger.LogError($@"Record is not available for organisation / standard: [{request.OrganisationId}, {request.StandardCode}]");
                 return NotFound(new EpaoStandardResponse(ex.Message));

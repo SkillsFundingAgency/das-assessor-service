@@ -2,9 +2,10 @@
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         {
             var certificate = await _certificateRepository.GetCertificate(request.CertificateReference, request.LastName, request.AchievementDate);
             if (certificate == null)
-                throw new NotFound();
+                throw new NotFoundException();
 
             if (certificate.Status == CertificateStatus.Reprint)
             {
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             }
             else
             {
-                throw new NotFound();
+                throw new NotFoundException();
             }
 
             return Unit.Value;

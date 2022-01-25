@@ -36,6 +36,8 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
 
         [JsonConverter(typeof(StringEnumConverter))]
         public CertificateSendTo SendTo { get; set; }
+        public List<string> ReprintReasons { get; set; }
+        public List<string> AmendReasons { get; set; }
     }
 
     public class EpaDetails
