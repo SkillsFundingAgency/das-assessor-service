@@ -221,7 +221,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             // Read all the standards from the secondary organisation.
 
-            foreach(var secondaryOrganisationStandard in secondaryOrganisation.OrganisationStandards)
+            if(null == secondaryOrganisation.OrganisationStandards)
+            {
+                _dbContext.Entry(secondaryOrganisation)
+                    .Collection(o => o.OrganisationStandards)
+                    .Load();
+            }
+
+            foreach (var secondaryOrganisationStandard in secondaryOrganisation.OrganisationStandards)
             {
                 // Does the primary organisation have this standard already?
                 var primaryOrganisationStandard = primaryOrganisation.OrganisationStandards.FirstOrDefault(pos => pos.StandardCode == secondaryOrganisationStandard.StandardCode);
@@ -251,8 +258,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 }
 
                 // Now read all the versions for this standard for the secondary organisation.
-                var secondaryOrganisationStandardVersions = _dbContext.OrganisationStandardVersion.Where(sosv => sosv.OrganisationStandardId == secondaryOrganisationStandard.Id);
-                foreach(var secondaryOrganisationStandardVersion in secondaryOrganisationStandardVersions)
+
+                if (null == secondaryOrganisationStandard.OrganisationStandardVersions)
+                {
+                    _dbContext.Entry(secondaryOrganisationStandard)
+                        .Collection(o => o.OrganisationStandardVersions)
+                        .Load();
+                }
+
+                foreach(var secondaryOrganisationStandardVersion in secondaryOrganisationStandard.OrganisationStandardVersions)
                 {
                     // Does the standard version exist for this standard in the primary organisation?
 
@@ -282,13 +296,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     secondaryOrganisationStandardVersion.Comments = secondaryOrganisationStandardVersion.Comments.Substring(0, Math.Min(secondaryOrganisationStandardVersion.Comments.Length, 500));
                 }
 
-                // Read all the delivery areas for this standard from the secondary organisation
-
-                var secondaryOrganisationStandardDeliveryAreas = _dbContext.OrganisationStandardDeliveryAreas.Where(sosda => sosda.OrganisationStandardId == secondaryOrganisationStandard.Id);
 
                 // Merge in any missing delivery areas that the primary organisation doesn't have
 
-                foreach(var secondaryOrganisationStandardDeliveryArea in secondaryOrganisationStandardDeliveryAreas)
+                if (null == primaryOrganisationStandard.OrganisationStandardDeliveryAreas)
+                {
+                    _dbContext.Entry(primaryOrganisationStandard)
+                        .Collection(o => o.OrganisationStandardDeliveryAreas)
+                        .Load();
+                }
+
+                foreach (var secondaryOrganisationStandardDeliveryArea in secondaryOrganisationStandard.OrganisationStandardDeliveryAreas)
                 {
                     // Does the primary organisation standard have this delivery area?
                     var primaryOrganisationStandardDeliveryArea = primaryOrganisationStandard.OrganisationStandardDeliveryAreas.FirstOrDefault(posda => posda.DeliveryAreaId == secondaryOrganisationStandardDeliveryArea.DeliveryAreaId);
@@ -313,7 +331,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     secondaryOrganisationStandardDeliveryArea.Comments = secondaryOrganisationStandardDeliveryArea.Comments.Substring(0, Math.Min(secondaryOrganisationStandardDeliveryArea.Comments.Length, 500));
                 }
 
-
                 // Now set the effectiveTo and comments @ToDo: need content
 
                 secondaryOrganisationStandard.EffectiveTo = secondaryStandardsEffectiveTo;
@@ -330,8 +347,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 var mergeApplication = MergeApply.CreateFrom(application);
                 mergeApplication.Replicates = replicates;
                 mergeOrganisation.MergeSecondaryApplications.Add(mergeApplication);
-            }
-            
+            }            
         }
 
         private void DeleteInProgressApplications(Organisation organisation, string deletedByUser)
