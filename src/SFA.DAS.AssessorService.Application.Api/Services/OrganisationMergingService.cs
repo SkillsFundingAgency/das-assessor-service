@@ -140,19 +140,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private void CreateStandardsSnapshot(MergeOrganisation mo, string endpointAssessorOrganisationId, string replicates)
         {
-            var organisationStandards = _dbContext.OrganisationStandard.Where(e => e.EndPointAssessorOrganisationId == endpointAssessorOrganisationId);
+            var organisationStandards = _dbContext.OrganisationStandard
+                .Include(a => a.OrganisationStandardVersions)
+                .Include(a => a.OrganisationStandardDeliveryAreas)
+                .Where(e => e.EndPointAssessorOrganisationId == endpointAssessorOrganisationId);
             foreach (var os in organisationStandards)
             {
                 mo.MergeOrganisationStandards.Add(CreateMergeOrganisationStandard(replicates, os));
 
-                var organisationStandardVersions = _dbContext.OrganisationStandardVersion.Where(e => e.OrganisationStandardId == os.Id);
-                foreach (var osv in organisationStandardVersions)
+                foreach (var osv in os.OrganisationStandardVersions)
                 {
                     mo.MergeOrganisationStandardVersions.Add(CreateMergeOrganisationStandardVersion(replicates, osv));
                 }
 
-                var organisationStandardDeliveryAreas = _dbContext.OrganisationStandardDeliveryAreas.Where(e => e.OrganisationStandardId == os.Id);
-                foreach (var osda in organisationStandardDeliveryAreas)
+                foreach (var osda in os.OrganisationStandardDeliveryAreas)
                 {
                     mo.MergeOrganisationStandardDeliveryAreas.Add(CreateMergeOrganisationStandardDeliveryArea(replicates, osda));
                 }
