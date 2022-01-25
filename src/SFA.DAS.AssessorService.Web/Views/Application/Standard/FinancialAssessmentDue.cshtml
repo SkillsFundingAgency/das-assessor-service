@@ -1,0 +1,43 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model ApprovedStandardsWithVersionsViewModel
+
+@{
+    ViewBag.Title = "Organisation Financial Health Assessment Due";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Important
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
+                    <p class="govuk-notification-banner__heading">
+                        Your organisation's financial health assessment is due.
+                    </p>
+                    <p>
+                        You won't be able to apply to assess standards or standard versions until
+                        your organisation's financial health assessment has been completed and approved.
+                    </p>
+                    <p>
+                        <a class="govuk-notification-banner__link" href="@Model.FinancialAssessmentUrl">Start financial health assessment</a>
+                    </p>
+                </div>
+            </div>
+
+            <h2 class="govuk-heading-m">What do you want to do next?</h2>
+            <ul class="govuk-list">
+                <li><a class="govuk-link" asp-controller="OrganisationStandards" asp-action="Index">Return to your applications</a></li>
+                <li>or</li>
+                <li><a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Return to account home</a></li>
+            </ul>
+
+        </div>
+    </div>
+</main>

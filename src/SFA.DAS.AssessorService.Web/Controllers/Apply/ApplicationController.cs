@@ -16,6 +16,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
@@ -36,10 +37,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IStandardsApiClient _standardsApiClient;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
+        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IStandardsApiClient standardsApiClient, IWebConfiguration config,
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
             : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
@@ -47,6 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
+            _standardsApiClient = standardsApiClient;
             _config = config;
             _logger = logger;
         }
@@ -123,6 +126,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+
+            //If financial review is outstanding then redirect
+            var financialExpired = await IsFinancialExpired(contact.EndPointAssessorOrganisationId, "StartOrResumeApplication", "Application");
+            if (financialExpired.FinancialInfoStage1Expired)
+            {
+                return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
+            }
 
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
@@ -732,7 +742,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!CanUpdateApplication(application, sequenceNo))
             {
                 return RedirectToAction("Applications");
-            }
+            }        
 
             var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -753,6 +763,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 else
                 {
                     return View("~/Views/Application/Sequence.cshtml", sequenceVm);
+                }
+            }
+
+            //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
+            string applicationStatus = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo).Status;
+            if (applicationStatus == ApplicationSequenceStatus.InProgress || applicationStatus == ApplicationSequenceStatus.FeedbackAdded)
+            {
+                var org = await _orgApiClient.GetOrganisationByName(application.EndPointAssessorName.ToString());
+                var financialExpired = await IsFinancialExpired(org.EndPointAssessorOrganisationId, "StartOrResumeApplication", "Application");
+                if (financialExpired.FinancialInfoStage1Expired)
+                {
+                    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
                 }
             }
 
@@ -1274,6 +1296,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
+        }
+
+        public async Task<ApprovedStandardsWithVersionsViewModel> IsFinancialExpired(string epaoId, string redirAction, string redirController)
+        {
+            var model = new ApprovedStandardsWithVersionsViewModel();
+            var organisation = await _orgApiClient.GetEpaOrganisation(epaoId);
+            if (organisation != null)
+            {
+                model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, 1, 10);
+
+                var financialAssessmentExempt = !string.IsNullOrWhiteSpace(organisation.FinancialReviewStatus) && (organisation.FinancialReviewStatus == ApplyTypes.FinancialReviewStatus.Exempt);
+                if (!financialAssessmentExempt)
+                {
+                    var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
+                    if (null != financialDueDate && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
+                    {
+                        model.FinancialInfoStage1Expired = true;
+                        model.FinancialAssessmentUrl = this.Url.Action(redirAction, redirController);
+                    }
+                }
+            }
+            return model;
         }
     }
 }
