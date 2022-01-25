@@ -56,8 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 // Create the "Before" snapshot
 
-                CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "Before");
-                CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
+                CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation, "Before");
+                CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation, "Before");
                 CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
 
                 // Perform the merge.                
@@ -72,12 +72,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 DeleteInProgressApplications(secondaryOrganisation, actionedByUser);
 
-                // Create the "After" snapshot.
-
-                CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation.EndPointAssessorOrganisationId, "After");
-                CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
-                CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
-
                 // Approve and complete the merge
                 
                 ApproveMerge(mergeOrganisation, actionedByUser);
@@ -85,6 +79,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 // Now save all the changes.
 
+                await _dbContext.SaveChangesAsync();
+
+                // Create the "After" snapshot.
+
+                CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation, "After");
+                CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation, "After");
+                CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
                 await _dbContext.SaveChangesAsync();
 
                 return mergeOrganisation;
@@ -138,21 +139,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return mo;
         }
 
-        private void CreateStandardsSnapshot(MergeOrganisation mo, string endpointAssessorOrganisationId, string replicates)
+        private void CreateStandardsSnapshot(MergeOrganisation mo, Organisation organisation, string replicates)
         {
-            var organisationStandards = _dbContext.OrganisationStandard
-                .Include(a => a.OrganisationStandardVersions)
-                .Include(a => a.OrganisationStandardDeliveryAreas)
-                .Where(e => e.EndPointAssessorOrganisationId == endpointAssessorOrganisationId);
-            foreach (var os in organisationStandards)
+            // Make sure the standards are loaded.
+            _dbContext.Entry(organisation)
+                .Collection(os => os.OrganisationStandards)
+                .Load();
+
+            foreach (var os in organisation.OrganisationStandards)
             {
                 mo.MergeOrganisationStandards.Add(CreateMergeOrganisationStandard(replicates, os));
+
+                // Make sure the versions are loaded.
+                _dbContext.Entry(os)
+                    .Collection(osv => osv.OrganisationStandardVersions)
+                    .Load();
 
                 foreach (var osv in os.OrganisationStandardVersions)
                 {
                     mo.MergeOrganisationStandardVersions.Add(CreateMergeOrganisationStandardVersion(replicates, osv));
                 }
 
+                // Make sure the areas are loaded.
+                _dbContext.Entry(os)
+                    .Collection(osv => osv.OrganisationStandardDeliveryAreas)
+                    .Load();
                 foreach (var osda in os.OrganisationStandardDeliveryAreas)
                 {
                     mo.MergeOrganisationStandardDeliveryAreas.Add(CreateMergeOrganisationStandardDeliveryArea(replicates, osda));
@@ -222,13 +233,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             // Read all the standards from the secondary organisation.
 
-            if(null == secondaryOrganisation.OrganisationStandards)
-            {
-                _dbContext.Entry(secondaryOrganisation)
-                    .Collection(o => o.OrganisationStandards)
-                    .Load();
-            }
-
             foreach (var secondaryOrganisationStandard in secondaryOrganisation.OrganisationStandards)
             {
                 // Does the primary organisation have this standard already?
@@ -260,13 +264,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 // Now read all the versions for this standard for the secondary organisation.
 
-                if (null == secondaryOrganisationStandard.OrganisationStandardVersions)
-                {
-                    _dbContext.Entry(secondaryOrganisationStandard)
-                        .Collection(o => o.OrganisationStandardVersions)
-                        .Load();
-                }
-
                 foreach(var secondaryOrganisationStandardVersion in secondaryOrganisationStandard.OrganisationStandardVersions)
                 {
                     // Does the standard version exist for this standard in the primary organisation?
@@ -278,7 +275,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                         primaryOrganisationStandardVersion = new OrganisationStandardVersion()
                         {
-                            //OrganisationStandardId = existingPrimaryOrganisationStandard.Id,
                             DateVersionApproved = secondaryOrganisationStandardVersion.DateVersionApproved,
                             Comments = $"{secondaryOrganisationStandardVersion.Comments} ** This standard version has been merged from Organisation {secondaryOrganisation.EndPointAssessorOrganisationId}",
                             EffectiveFrom = secondaryOrganisationStandardVersion.EffectiveFrom,
@@ -295,16 +291,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     secondaryOrganisationStandardVersion.EffectiveTo = secondaryStandardsEffectiveTo;
                     secondaryOrganisationStandardVersion.Comments = $"** This standard version has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
                     secondaryOrganisationStandardVersion.Comments = secondaryOrganisationStandardVersion.Comments.Substring(0, Math.Min(secondaryOrganisationStandardVersion.Comments.Length, 500));
-                }
-
-
-                // Merge in any missing delivery areas that the primary organisation doesn't have
-
-                if (null == primaryOrganisationStandard.OrganisationStandardDeliveryAreas)
-                {
-                    _dbContext.Entry(primaryOrganisationStandard)
-                        .Collection(o => o.OrganisationStandardDeliveryAreas)
-                        .Load();
                 }
 
                 foreach (var secondaryOrganisationStandardDeliveryArea in secondaryOrganisationStandard.OrganisationStandardDeliveryAreas)
