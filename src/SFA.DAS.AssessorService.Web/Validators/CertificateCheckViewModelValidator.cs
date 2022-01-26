@@ -30,15 +30,23 @@ namespace SFA.DAS.AssessorService.Web.Validators
                 RuleFor(vm => vm.Name).NotEmpty()
                     .WithMessage(localizer["NameCannotBeEmpty"]);
 
-                RuleFor(vm => vm.Postcode).NotEmpty()
-                    .WithMessage(localizer["PostcodeCannotBeEmpty"]);
-                
-                RuleFor(vm => vm.City).NotEmpty()
-                    .WithMessage(localizer["CityCannotBeEmpty"]);
-                
+                When(vm => vm.SendTo == CertificateSendTo.Employer, () => {
+                    RuleFor(vm => vm.Employer).NotEmpty()
+                        .OverridePropertyName(vm => vm.AddressLine1)
+                        .WithMessage(localizer["AddressCannotBeEmpty"]);
+                });
+
                 RuleFor(vm => vm.AddressLine1).NotEmpty()
-                    .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
- 
+                    .WithMessage(localizer["AddressCannotBeEmpty"]);
+
+                RuleFor(vm => vm.City).NotEmpty()
+                    .OverridePropertyName(vm => vm.AddressLine1)
+                    .WithMessage(localizer["AddressCannotBeEmpty"]);
+
+                RuleFor(vm => vm.Postcode).NotEmpty()
+                    .OverridePropertyName(vm => vm.AddressLine1)
+                    .WithMessage(localizer["AddressCannotBeEmpty"]);
+
                 When(vm => vm.SelectedGrade != null, () =>
                 {
                     RuleFor(vm => vm.AchievementDate).NotNull()

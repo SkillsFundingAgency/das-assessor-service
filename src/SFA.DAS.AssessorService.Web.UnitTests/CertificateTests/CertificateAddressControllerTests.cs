@@ -193,15 +193,44 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
         }
 
         [Test, MoqAutoData]
-        public async Task AndPostingRecipientSendToEmployer_RedirectsToConfirm(CertificateRecipientViewModel vm)
+        public async Task AndPostingSameAddressForSendToEmployer_ReturnsToCheck_IfRedirectToCheckSet(CertificateSession session, CertificateAddressViewModel vm)
         {
             vm.SendTo = CertificateSendTo.Employer;
             vm.Id = CertificateIdWithPreviousAddress;
 
-            var result = await _certificateAddressController.Recipient(vm) as RedirectToActionResult;
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out expectedValue)).Returns(true);
+
+            var result = await _certificateAddressController.Address(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateCheck");
+            result.ActionName.Should().Be("Check");
+        }
+
+        [Test, MoqAutoData]
+        public async Task AndPostingDifferentAddressForSendToEmployer_RedirectsToRecipient_IfRedirectToCheckSet(CertificateSession session, CertificateAddressViewModel vm)
+        {
+            vm.SendTo = CertificateSendTo.Employer;
+            vm.Id = CertificateIdWithPreviousAddress;
+            vm.Employer = vm.Employer + "_Different";
+
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+            
+            var redirectToCheck = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
+            
+            _mockSessionService.Setup(s => s.Set("RedirectToCheck", It.IsAny<object>())).Callback((string key, object value) => {
+                redirectToCheck = (bool)value;
+                _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
+            });
+
+            var result = await _certificateAddressController.Address(vm) as RedirectToActionResult;
 
             result.ControllerName.Should().Be("CertificateAddress");
-            result.ActionName.Should().Be("ConfirmAddress");
+            result.ActionName.Should().Be("Recipient");
         }
 
         [Test, MoqAutoData]
@@ -215,6 +244,59 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
 
             result.ViewName.Should().Be("~/Views/Certificate/Recipient.cshtml");
             result.Model.Should().BeOfType<CertificateRecipientViewModel>();
+        }
+
+        [Test, MoqAutoData]
+        public async Task AndPostingRecipientSendToEmployer_RedirectsToConfirm(CertificateRecipientViewModel vm)
+        {
+            vm.SendTo = CertificateSendTo.Employer;
+            vm.Id = CertificateIdWithPreviousAddress;
+
+            var result = await _certificateAddressController.Recipient(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateAddress");
+            result.ActionName.Should().Be("ConfirmAddress");
+        }
+
+        [Test, MoqAutoData]
+        public async Task AndPostingSameRecipientForSendToEmployer_ReturnsToCheck_IfRedirectToCheckSet(CertificateSession session, CertificateRecipientViewModel vm)
+        {
+            vm.SendTo = CertificateSendTo.Employer;
+            vm.Id = CertificateIdWithPreviousAddress;
+
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+            var expectedValue = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out expectedValue)).Returns(true);
+
+            var result = await _certificateAddressController.Recipient(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateCheck");
+            result.ActionName.Should().Be("Check");
+        }
+
+        [Test, MoqAutoData]
+        public async Task AndPostingDifferentRecipientForSendToEmployer_RedirectsToConfirm_IfRedirectToCheckSet(CertificateSession session, CertificateRecipientViewModel vm)
+        {
+            vm.SendTo = CertificateSendTo.Employer;
+            vm.Id = CertificateIdWithPreviousAddress;
+            vm.Name = vm.Name + "_Different";
+
+            var sessionString = JsonConvert.SerializeObject(session);
+            _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
+
+            var redirectToCheck = true;
+            _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
+
+            _mockSessionService.Setup(s => s.Set("RedirectToCheck", It.IsAny<object>())).Callback((string key, object value) => {
+                redirectToCheck = (bool)value;
+                _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
+            });
+
+            var result = await _certificateAddressController.Recipient(vm) as RedirectToActionResult;
+
+            result.ControllerName.Should().Be("CertificateAddress");
+            result.ActionName.Should().Be("ConfirmAddress");
         }
 
         [Test, MoqAutoData]
