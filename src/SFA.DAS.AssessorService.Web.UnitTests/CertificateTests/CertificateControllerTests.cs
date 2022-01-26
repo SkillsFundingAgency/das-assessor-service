@@ -28,7 +28,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
     {
         private Mock<IStandardVersionClient> _mockStandardVersionClient;
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
-        private Mock<ILearnerDetailsApiClient> _mockLearnerApiClient;
         private Mock<IApprovalsLearnerApiClient> _mockLearnerApiClient;
         private Mock<IHttpContextAccessor> _mockContextAccessor;
         private Mock<ISessionService> _mockSessionService;
@@ -49,7 +48,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             _mockStandardVersionClient = new Mock<IStandardVersionClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
-            _mockLearnerApiClient = new Mock<ILearnerDetailsApiClient>();
             _mockLearnerApiClient = new Mock<IApprovalsLearnerApiClient>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
             _mockSessionService = new Mock<ISessionService>();

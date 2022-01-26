@@ -27,14 +27,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IStandardVersionClient _standardVersionClient;
         private readonly ISessionService _sessionService;
-        private readonly ILearnerDetailsApiClient _learnerApiClient;
         private readonly IApprovalsLearnerApiClient _learnerApiClient;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient,
             IStandardVersionClient standardVersionClient,
             ISessionService sessionService,
-            ILearnerDetailsApiClient learnerApiClient)
             IApprovalsLearnerApiClient learnerApiClient)
         {
             _logger = logger;
