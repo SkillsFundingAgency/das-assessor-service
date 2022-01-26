@@ -63,9 +63,9 @@ WHEN NOT MATCHED BY TARGET
 
 -- Use the snapshots to delete the deltas of added data
 
-DELETE FROM OrganisationStandardDeliveryArea WHERE Id IN (SELECT OrganisationStandardDeliveryAreaId FROM MergeOrganisationStandardDeliveryArea WHERE Replicates = 'After') AND Id NOT IN (SELECT OrganisationStandardDeliveryAreaId FROM MergeOrganisationStandardDeliveryArea WHERE Replicates = 'Before')
-DELETE FROM OrganisationStandardVersion WHERE StandardUId IN (SELECT StandardUId FROM MergeOrganisationStandardVersion WHERE Replicates = 'After') AND StandardUId NOT IN (SELECT StandardUId FROM MergeOrganisationStandardVersion WHERE Replicates = 'Before')
-DELETE FROM OrganisationStandard WHERE Id IN (SELECT OrganisationStandardId FROM MergeOrganisationStandard WHERE Replicates = 'After') AND Id NOT IN (SELECT OrganisationStandardId FROM MergeOrganisationStandard WHERE Replicates = 'Before')
+DELETE FROM OrganisationStandardDeliveryArea WHERE Id IN (SELECT OrganisationStandardDeliveryAreaId FROM MergeOrganisationStandardDeliveryArea WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'After' AND OrganisationStandardDeliveryAreaId NOT IN (SELECT OrganisationStandardDeliveryAreaId FROM MergeOrganisationStandardDeliveryArea WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'))
+DELETE FROM OrganisationStandardVersion WHERE OrganisationStandardId IN (SELECT OrganisationStandardId FROM MergeOrganisationStandardVersion WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'After' AND OrganisationStandardId NOT IN (SELECT OrganisationStandardId FROM MergeOrganisationStandardVersion WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'))
+DELETE FROM OrganisationStandard WHERE Id IN (SELECT OrganisationStandardId FROM MergeOrganisationStandard WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'After' AND OrganisationStandardId NOT IN (SELECT OrganisationStandardId FROM MergeOrganisationStandard WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'))
 
 
 -- Revert OrganisationStandardDeliveryArea to the "Before" data
