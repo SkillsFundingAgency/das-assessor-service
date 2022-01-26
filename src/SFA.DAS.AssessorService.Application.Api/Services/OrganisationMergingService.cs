@@ -37,72 +37,75 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (null == primaryOrganisation) throw new ArgumentNullException(nameof(primaryOrganisation), "primaryOrganisation must be specified.");
             if (null == secondaryOrganisation) throw new ArgumentNullException(nameof(secondaryOrganisation), "secondaryOrganisation must be specified.");
 
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
+            return await executionStrategy.ExecuteAsync( async () =>
             {
-                try
+                using (var transaction = _dbContext.Database.BeginTransaction())
                 {
-                    // Validation: you cannot use an organisation as a secondary organisation more than once.
-
-                    if (HasAlreadyMergedAsSecondaryOrganisation(secondaryOrganisation.EndPointAssessorOrganisationId))
+                    try
                     {
-                        throw new Exception($"Cannot merge {secondaryOrganisation.EndPointAssessorOrganisationId}. It has already been merged into another organisation.");
+                        // Validation: you cannot use an organisation as a secondary organisation more than once.
+
+                        if (HasAlreadyMergedAsSecondaryOrganisation(secondaryOrganisation.EndPointAssessorOrganisationId))
+                        {
+                            throw new Exception($"Cannot merge {secondaryOrganisation.EndPointAssessorOrganisationId}. It has already been merged into another organisation.");
+                        }
+
+                        // Create the MergeOrganisation
+
+                        var mergeOrganisation = CreateMergeOrganisations(
+                            primaryOrganisation,
+                            secondaryOrganisation,
+                            secondaryStandardsEffectiveTo,
+                            actionedByUser);
+
+                        // Create the "Before" snapshot
+
+                        CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation, "Before");
+                        CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation, "Before");
+                        CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
+
+                        // Perform the merge.                
+
+                        MergeOrganisationStandardsAndVersions(
+                            primaryOrganisation,
+                            secondaryOrganisation,
+                            actionedByUser,
+                            secondaryStandardsEffectiveTo);
+
+                        // Delete any in-progress applications for the secondary organisation
+
+                        DeleteInProgressApplications(secondaryOrganisation, actionedByUser);
+
+                        // Approve and complete the merge
+
+                        ApproveMerge(mergeOrganisation, actionedByUser);
+                        CompleteMerge(mergeOrganisation, actionedByUser);
+
+                        // Now save all the changes.
+                        // We do this here to make sure everything has worked and so that all the Id's are generated/wrired up
+                        // ready for the after snapshot
+
+                        await _dbContext.SaveChangesAsync();
+
+                        // Now we know the merge has worked, create the "After" snapshot.
+
+                        CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation, "After");
+                        CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation, "After");
+                        CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
+                        await _dbContext.SaveChangesAsync();
+
+                        transaction.Commit();
+
+                        return mergeOrganisation;
                     }
-
-                    // Create the MergeOrganisation
-
-                    var mergeOrganisation = CreateMergeOrganisations(
-                        primaryOrganisation,
-                        secondaryOrganisation,
-                        secondaryStandardsEffectiveTo,
-                        actionedByUser);
-
-                    // Create the "Before" snapshot
-
-                    CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation, "Before");
-                    CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation, "Before");
-                    CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "Before");
-
-                    // Perform the merge.                
-
-                    MergeOrganisationStandardsAndVersions(
-                        primaryOrganisation,
-                        secondaryOrganisation,
-                        actionedByUser,
-                        secondaryStandardsEffectiveTo);
-
-                    // Delete any in-progress applications for the secondary organisation
-
-                    DeleteInProgressApplications(secondaryOrganisation, actionedByUser);
-
-                    // Approve and complete the merge
-
-                    ApproveMerge(mergeOrganisation, actionedByUser);
-                    CompleteMerge(mergeOrganisation, actionedByUser);
-
-                    // Now save all the changes.
-                    // We do this here to make sure everything has worked and so that all the Id's are generated/wrired up
-                    // ready for the after snapshot
-
-                    await _dbContext.SaveChangesAsync();
-
-                    // Now we know the merge has worked, create the "After" snapshot.
-
-                    CreateStandardsSnapshot(mergeOrganisation, primaryOrganisation, "After");
-                    CreateStandardsSnapshot(mergeOrganisation, secondaryOrganisation, "After");
-                    CreateApplySnapshot(mergeOrganisation, secondaryOrganisation.EndPointAssessorOrganisationId, "After");
-                    await _dbContext.SaveChangesAsync();
-
-                    transaction.Commit();
-
-                    return mergeOrganisation;
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw ex;
-                }
-
-            }
+            });
         }
 
         private bool HasAlreadyMergedAsSecondaryOrganisation(string secondaryEndpointAssessorOrganisationId)
