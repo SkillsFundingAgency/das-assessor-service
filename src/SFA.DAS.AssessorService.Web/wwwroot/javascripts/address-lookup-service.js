@@ -30,6 +30,11 @@
     $("#enterAddressManually").on("click", function (e) {
         e.preventDefault();
         enableEnterAddressManually(true);
+
+        if ($('.address-manual-input-organisation').length > 0 && $('#EmployerName').length > 0) {
+            // populated the organisation with the default employer name
+            $('.address-manual-input-organisation').val($('#EmployerName').val());
+        }
     });
 
     $("#searchAgain").on("click", function (e) {
@@ -63,7 +68,7 @@
                     dataType: "json",
                     data: {
                         query: request.term,
-                        includeOrganisationName: includeOrganisations
+                        includeOrganisations: includeOrganisations
                     },
                     timeout: 5000,
                     success: function (data) {
@@ -134,7 +139,13 @@
 
         $(".js-address-panel ul").empty();
 
-        populateAddressField('.address-manual-input-organisation', address.organisation);
+        if (address.organisation.length > 0) {
+            populateAddressField('.address-manual-input-organisation', address.organisation);
+        }
+        else if ($('#EmployerName').length > 0) {
+            populateAddressField('.address-manual-input-organisation', $('#EmployerName').val());
+        }
+
         populateAddressField('.address-manual-input-address-line-1', address.addressLine1);
         populateAddressField('.address-manual-input-address-line-2', address.addressLine2);
         populateAddressField('.address-manual-input-address-line-3', address.addressLine3);
@@ -182,10 +193,13 @@
         $.each(addressFields, function (index, value) {
             if ($(index).length && !($(index).val().length === 0)) {
                 $(".js-address-panel ul").append("<li>" + $(index).val() + "</li>");
-                if (!($("#postcode-search").val().length === 0)) {
+
+                if ($("#postcode-search").length > 0 && $("#postcode-search").val().length > 0) {
                     $("#postcode-search").val($("#postcode-search").val() + ', ');
                 }
+
                 $("#postcode-search").val($("#postcode-search").val() + $(index).val());
+
                 hasPreviousValues = true;
             }
         });

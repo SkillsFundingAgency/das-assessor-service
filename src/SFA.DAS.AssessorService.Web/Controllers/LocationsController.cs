@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<List<AddressResponse>> Index([FromQuery] string query, [FromQuery] bool includeOrganisation)
+        public async Task<List<AddressResponse>> Index([FromQuery] string query, [FromQuery] bool includeOrganisations)
         {
             try
             {
@@ -38,13 +38,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     locations.Add(AddressResponse.NoResultsFound);
                 }
-                else
+                else if(!includeOrganisations)
                 {
-                    if(!includeOrganisation)
-                        locations.ForEach(p => p.Organisation = string.Empty);
+                    locations.ForEach(p => p.Organisation = string.Empty);
                 }
                 
-                return locations;
+                 return locations;
             }
             catch (Exception ex)
             {

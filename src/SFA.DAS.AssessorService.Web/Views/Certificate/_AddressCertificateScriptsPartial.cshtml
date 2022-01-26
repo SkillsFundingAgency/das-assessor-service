@@ -18,6 +18,13 @@
                     return ($('.js-address-panel ul li').length == 0)
                 }
             },
+            Employer: {
+                required: function () {
+                    return $('.apprentice-address-form').length
+                        ? false
+                        : true;
+                }
+            },
             AddressLine1: {
                 required: true
             },
@@ -36,6 +43,9 @@
                         ? 'Enter an address or postcode'
                         : 'Enter an employer name, address or postcode';
                 }
+            },
+            Employer: {
+                required: 'Enter an employer'
             },
             AddressLine1: {
                 required: 'Enter an address'

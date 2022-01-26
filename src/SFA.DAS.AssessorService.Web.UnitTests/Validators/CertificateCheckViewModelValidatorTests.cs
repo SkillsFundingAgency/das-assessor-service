@@ -21,9 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         private const string _dateError = "Date error message";
         private const string _passDateError = "Pass date error message";
         private const string _failDateError = "Fail date error message";
-        private const string _postcodeError = "Postcode error message";
-        private const string _cityError = "City error message";
-        private const string _addressLine1Error = "Postcode error message";
+        private const string _addressError = "City error message";
         private const string _nameError = "Name error message";
         private const string _sendToError = "SentTo error message";
 
@@ -44,20 +42,21 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _mockStringLocalizer.Setup(l => l["DateCannotBeEmpty"]).Returns(new LocalizedString("Date", _dateError));
             _mockStringLocalizer.Setup(l => l["AchievementDateCannotBeEmpty"]).Returns(new LocalizedString("Date", _passDateError));
             _mockStringLocalizer.Setup(l => l["FailDateCannotBeEmpty"]).Returns(new LocalizedString("Date", _failDateError));
-            _mockStringLocalizer.Setup(l => l["PostcodeCannotBeEmpty"]).Returns(new LocalizedString("Postcode", _postcodeError));
-            _mockStringLocalizer.Setup(l => l["CityCannotBeEmpty"]).Returns(new LocalizedString("City", _cityError));
-            _mockStringLocalizer.Setup(l => l["AddressLine1CannotBeEmpty"]).Returns(new LocalizedString("Address", _addressLine1Error));
+            _mockStringLocalizer.Setup(l => l["AddressCannotBeEmpty"]).Returns(new LocalizedString("Address", _addressError));
             _mockStringLocalizer.Setup(l => l["NameCannotBeEmpty"]).Returns(new LocalizedString("Name", _nameError));
             _mockStringLocalizer.Setup(l => l["SendToCannotBeNone"]).Returns(new LocalizedString("SendTo", _sendToError));
 
-            _viewModel = CreateValidViewModel();
+            _viewModel = CreateValidViewModel(CertificateSendTo.Apprentice);
 
             _validator = new CertificateCheckViewModelValidator(_mockStringLocalizer.Object);
         }
 
-        [Test]
-        public void When_AllFieldsAreCorrect_Then_ValidatorReturnsValid()
+        [TestCase(CertificateSendTo.Apprentice)]
+        [TestCase(CertificateSendTo.Employer)]
+        public void When_AllFieldsAreCorrect_Then_ValidatorReturnsValid(CertificateSendTo sendTo)
         {
+            _viewModel = CreateValidViewModel(sendTo);
+
             var result = _validator.Validate(_viewModel);
 
             result.IsValid.Should().Be(true);       
@@ -175,14 +174,22 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 
             _validator.ShouldHaveValidationErrorFor(vm => vm.Name, _viewModel);
             _validator.ShouldHaveValidationErrorFor(vm => vm.AddressLine1, _viewModel);
-            _validator.ShouldHaveValidationErrorFor(vm => vm.City, _viewModel);
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Postcode, _viewModel);
         }
 
-        private CertificateCheckViewModel CreateValidViewModel()
+        [Test]
+        public void When_SendToIsNone_Then_ValidatorReturnsInvalid()
+        {
+            _viewModel = CreateValidViewModel(CertificateSendTo.None);
+            
+            var result = _validator.Validate(_viewModel);
+
+            result.IsValid.Should().Be(false);
+        }
+
+        private CertificateCheckViewModel CreateValidViewModel(CertificateSendTo sendTo)
         {
             return new Builder().CreateNew<CertificateCheckViewModel>()
-                .With(p => p.SendTo = CertificateSendTo.Apprentice)
+                .With(p => p.SendTo = sendTo)
                 .Build();
         }
     }

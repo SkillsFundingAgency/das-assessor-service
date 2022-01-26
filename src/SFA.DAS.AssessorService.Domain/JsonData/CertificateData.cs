@@ -9,15 +9,13 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
     {
         public string LearnerGivenNames { get; set; }
         public string LearnerFamilyName { get; set; }
+        public long? EmployerAccountId { get; set; }
+        public string EmployerName { get; set; }
         public string StandardReference { get; set; }
         public string Version { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
         public DateTime? StandardPublicationDate { get; set; }
-        
-        [JsonConverter(typeof(StringEnumConverter))]
-        public CertificateSendTo SendTo { get; set; }
-        
         public string ContactName { get; set; }
         public string ContactOrganisation { get; set; }
         public string ContactAddLine1 { get; set; }
@@ -28,16 +26,16 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string ProviderName { get; set; }
         public string Registration { get; set; }
         public DateTime? LearningStartDate { get; set; }
-
         public DateTime? AchievementDate { get; set; }
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
         public string Department { get; set; }
         public string FullName { get; set; }
-
         public string IncidentNumber { get; set; }
-
         public EpaDetails EpaDetails { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CertificateSendTo SendTo { get; set; }
     }
 
     public class EpaDetails

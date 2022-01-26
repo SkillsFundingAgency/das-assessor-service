@@ -142,7 +142,7 @@
     <value>For example, human resources</value>
   </data>
   <data name="Employer" xml:space="preserve">
-    <value>Organisation name (optional)</value>
+    <value>Employer name</value>
   </data>
   <data name="SearchHeadingApprentice" xml:space="preserve">
     <value>Search for the address that you'd like us to send the certificate to</value>

@@ -120,6 +120,12 @@
   <data name="ContinueButton" xml:space="preserve">
     <value>Continue</value>
   </data>
+  <data name="EditEmployerDetails" xml:space="preserve">
+    <value>Edit the employer's details</value>
+  </data>
+  <data name="EditRecipientDetails" xml:space="preserve">
+    <value>Edit the recipient's details</value>
+  </data>
   <data name="EditThisAddress" xml:space="preserve">
     <value>Edit this address</value>
   </data>

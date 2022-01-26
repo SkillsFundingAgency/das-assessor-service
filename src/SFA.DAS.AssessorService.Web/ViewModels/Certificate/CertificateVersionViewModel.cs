@@ -8,6 +8,8 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
+    using Certificate = Domain.Entities.Certificate;
+
     public class CertificateVersionViewModel : CertificateBaseViewModel
     {
         public IEnumerable<StandardVersionViewModel> Versions { get; set; }
@@ -16,14 +18,14 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public StandardOptions SelectedStandardOptions { get; set; }
         public CertificateData PreviousFailData { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert, IEnumerable<StandardVersionViewModel> versions)
+        public void FromCertificate(Certificate cert, IEnumerable<StandardVersionViewModel> versions)
         {
             base.FromCertificate(cert);
             Versions = versions.OrderBy(v => v.Version);
             PreviousFailData = GetLatestFailData(cert);
         }
 
-        public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             certData.StandardReference = SelectedStandardVersion.IFateReferenceNumber;
             certData.StandardName = SelectedStandardVersion.Title;

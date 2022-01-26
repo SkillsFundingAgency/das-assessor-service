@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     using Certificate = Domain.Entities.Certificate;
 
     public class CertificateSendToViewModel : CertificateBaseViewModel
-    {        
+    {
         public CertificateSendTo SendTo { get; set; }
 
         public override void FromCertificate(Certificate certificate)
@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            if (SendTo != certData.SendTo)
+            if (SendToHasChanged(certData) && ShouldClearAddressFields(certificate, certData))
             {
-                certData = ClearContactInformation(certData);
+                certData = ClearAddressFields(certData);
             }
 
-            if(SendTo == CertificateSendTo.Apprentice)
+            if (SendTo == CertificateSendTo.Apprentice)
             {
                 // when sending to the apprentice use the apprentice name for the contact
                 certData.ContactName = certData.FullName;
@@ -35,7 +35,24 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             return certificate;
         }
 
-        private CertificateData ClearContactInformation(CertificateData certData)
+        public bool SendToHasChanged(CertificateData certData)
+        {
+            return certData.SendTo != SendTo;
+        }
+
+        private bool ShouldClearAddressFields(Certificate certificate, CertificateData certData)
+        {
+            // a certificate which has been created by the API will not have a SendTo but has valid employer details so 
+            // these will be retained if the user selects the Employer journey
+            if (certificate.CreatedBy == "API" && certData.SendTo == CertificateSendTo.None && SendTo == CertificateSendTo.Employer)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private CertificateData ClearAddressFields(CertificateData certData)
         {
             certData.Department = string.Empty;
             certData.ContactName = string.Empty;
@@ -45,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.ContactAddLine3 = string.Empty;
             certData.ContactAddLine4 = string.Empty;
             certData.ContactPostCode = string.Empty;
-            
+
             return certData;
         }
     }
