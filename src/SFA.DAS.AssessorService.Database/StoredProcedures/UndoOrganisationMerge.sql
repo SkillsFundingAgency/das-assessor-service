@@ -4,10 +4,15 @@
 AS
 
 
-
 -- Validate that the merge can be restored
 
-IF NOT EXISTS (SELECT * FROM MergeOrganisations WHERE Id = @mergeOrganisationId AND Status = 'Approved') RAISERROR('Unable to undo merge', -1, -1)
+BEGIN TRY
+IF NOT EXISTS (SELECT * FROM MergeOrganisations WHERE Id = @mergeOrganisationId AND Status = 'Completed') RAISERROR('Unable to undo merge', 16, 1)
+END TRY
+BEGIN CATCH
+RETURN
+END CATCH
+
 
 DECLARE @PrimaryEndPointAssessorOrganisationId NVARCHAR(12)
 SET @PrimaryEndPointAssessorOrganisationId = (SELECT PrimaryEndPointAssessorOrganisationId FROM MergeOrganisations WHERE Id = @mergeOrganisationId)
@@ -68,84 +73,6 @@ DELETE FROM OrganisationStandardVersion WHERE OrganisationStandardId IN (SELECT 
 DELETE FROM OrganisationStandard WHERE Id IN (SELECT OrganisationStandardId FROM MergeOrganisationStandard WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'After' AND OrganisationStandardId NOT IN (SELECT OrganisationStandardId FROM MergeOrganisationStandard WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'))
 
 
--- Revert OrganisationStandardDeliveryArea to the "Before" data
-
-
-DROP TABLE IF EXISTS #MergeOrganisationStandardDeliveryAreaBefore
-SELECT * INTO #MergeOrganisationStandardDeliveryAreaBefore FROM MergeOrganisationStandardDeliveryArea WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'
-
-SET IDENTITY_INSERT [OrganisationStandardDeliveryArea] ON
-
-MERGE [OrganisationStandardDeliveryArea] [Target] USING #MergeOrganisationStandardDeliveryAreaBefore [Source]
-ON ([Source].OrganisationStandardDeliveryAreaId = [Target].Id)
-WHEN MATCHED
-    THEN UPDATE SET 
-        [Target].[OrganisationStandardId] = [Source].[OrganisationStandardId],
-        [Target].[DeliveryAreaId] = [Source].[DeliveryAreaId],
-        [Target].[Comments] = [Source].[Comments],
-        [Target].[Status] = [Source].[Status]
-
-WHEN NOT MATCHED BY TARGET 
-    THEN INSERT (
-    [Id],
-    [OrganisationStandardId], 
-    [DeliveryAreaId],
-    [Comments],
-    [Status]    
-    )
-         VALUES (
-         [Source].[Id], 
-         [Source].[OrganisationStandardId], 
-         [Source].[DeliveryAreaId],
-         [Source].[Comments],
-         [Source].[Status]
-         );
-
-SET IDENTITY_INSERT [OrganisationStandardDeliveryArea] OFF
-
-
-
--- Revert OrganisationStandardVersion to the "Before" data
-
-
-DROP TABLE IF EXISTS #MergeOrganisationStandardVersionBefore
-SELECT * INTO #MergeOrganisationStandardVersionBefore FROM MergeOrganisationStandardVersion WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'
-
-MERGE [OrganisationStandardVersion] [Target] USING #MergeOrganisationStandardVersionBefore [Source]
-ON ([Source].OrganisationStandardId = [Target].OrganisationStandardId AND [Source].StandardUId = [Target].StandardUId)
-WHEN MATCHED
-    THEN UPDATE SET 
-        [Target].[Version] = [Source].[Version],
-        [Target].[EffectiveFrom] = [Source].[EffectiveFrom],
-        [Target].[EffectiveTo] = [Source].[EffectiveTo],
-        [Target].[DateVersionApproved] = [Source].[DateVersionApproved],
-        [Target].[Comments] = [Source].[Comments],
-        [Target].[Status] = [Source].[Status]
-
-WHEN NOT MATCHED BY TARGET 
-    THEN INSERT (
-    [OrganisationStandardId], 
-    [StandardUId],
-    [Version],
-    [EffectiveFrom],
-    [EffectiveTo],
-    [DateVersionApproved],
-    [Comments],
-    [Status]
-    )
-         VALUES (
-         [Source].[OrganisationStandardId], 
-         [Source].[StandardUId],
-         [Source].[Version],
-         [Source].[EffectiveFrom],
-         [Source].[EffectiveTo],
-         [Source].[DateVersionApproved],
-         [Source].[Comments],
-         [Source].[Status]
-         );
-
-
-
 -- Revert OrganisationStandard to the "Before" data
 
 DROP TABLE IF EXISTS #MergeOrganisationStandardBefore
@@ -198,9 +125,87 @@ WHEN NOT MATCHED BY TARGET
 SET IDENTITY_INSERT [OrganisationStandard] OFF
 
 
+-- Revert OrganisationStandardVersion to the "Before" data
+
+DROP TABLE IF EXISTS #MergeOrganisationStandardVersionBefore
+SELECT * INTO #MergeOrganisationStandardVersionBefore FROM MergeOrganisationStandardVersion WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'
+
+MERGE [OrganisationStandardVersion] [Target] USING #MergeOrganisationStandardVersionBefore [Source]
+ON ([Source].OrganisationStandardId = [Target].OrganisationStandardId AND [Source].StandardUId = [Target].StandardUId)
+WHEN MATCHED
+    THEN UPDATE SET 
+        [Target].[Version] = [Source].[Version],
+        [Target].[EffectiveFrom] = [Source].[EffectiveFrom],
+        [Target].[EffectiveTo] = [Source].[EffectiveTo],
+        [Target].[DateVersionApproved] = [Source].[DateVersionApproved],
+        [Target].[Comments] = [Source].[Comments],
+        [Target].[Status] = [Source].[Status]
+
+WHEN NOT MATCHED BY TARGET 
+    THEN INSERT (
+    [OrganisationStandardId], 
+    [StandardUId],
+    [Version],
+    [EffectiveFrom],
+    [EffectiveTo],
+    [DateVersionApproved],
+    [Comments],
+    [Status]
+    )
+         VALUES (
+         [Source].[OrganisationStandardId], 
+         [Source].[StandardUId],
+         [Source].[Version],
+         [Source].[EffectiveFrom],
+         [Source].[EffectiveTo],
+         [Source].[DateVersionApproved],
+         [Source].[Comments],
+         [Source].[Status]
+         );
+
+
+-- Revert OrganisationStandardDeliveryArea to the "Before" data
+
+DROP TABLE IF EXISTS #MergeOrganisationStandardDeliveryAreaBefore
+SELECT * INTO #MergeOrganisationStandardDeliveryAreaBefore FROM MergeOrganisationStandardDeliveryArea WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'
+
+SET IDENTITY_INSERT [OrganisationStandardDeliveryArea] ON
+
+MERGE [OrganisationStandardDeliveryArea] [Target] USING #MergeOrganisationStandardDeliveryAreaBefore [Source]
+ON ([Source].OrganisationStandardDeliveryAreaId = [Target].Id)
+WHEN MATCHED
+    THEN UPDATE SET 
+        [Target].[OrganisationStandardId] = [Source].[OrganisationStandardId],
+        [Target].[DeliveryAreaId] = [Source].[DeliveryAreaId],
+        [Target].[Comments] = [Source].[Comments],
+        [Target].[Status] = [Source].[Status]
+
+WHEN NOT MATCHED BY TARGET 
+    THEN INSERT (
+    [Id],
+    [OrganisationStandardId], 
+    [DeliveryAreaId],
+    [Comments],
+    [Status]    
+    )
+         VALUES (
+         [Source].[Id], 
+         [Source].[OrganisationStandardId], 
+         [Source].[DeliveryAreaId],
+         [Source].[Comments],
+         [Source].[Status]
+         );
+
+SET IDENTITY_INSERT [OrganisationStandardDeliveryArea] OFF
+
 
 -- Mark the merge as being undone
 
 UPDATE MergeOrganisations SET Status = 'Reverted', UpdatedAt = SYSDATETIME(), UpdatedBy = @UpdatedBy WHERE Id = @mergeOrganisationId
 
+-- Done
+
 COMMIT TRANSACTION
+
+
+RETURN 0

@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
     {
         public const string InProgress = "In Progress";
         public const string Approved = "Approved";
-        public const string Deleted = "Deleted";
+        public const string Completed = "Completed";
         public const string Reverted = "Reverted";
     }
 
@@ -112,6 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             mo.CompletedBy = completedByUser;
             mo.CompletedAt = DateTime.UtcNow;
+            mo.Status = MergeOrganisationStatus.Completed;
         }
 
         private MergeOrganisation CreateMergeOrganisations(Organisation primaryOrganisation, Organisation secondaryOrganisation, DateTime secondaryStandardsEffectiveTo, string createdByUser)
