@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, null)).ReturnsAsync(versions);
 
-            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, null) as ObjectResult;
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId) as ObjectResult;
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         {
             _mockStandardService.Setup(s => s.GetEPAORegisteredStandardVersions(epaoId, larsCode)).ReturnsAsync(versions);
 
-            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersions(epaoId, larsCode) as ObjectResult;
+            var controllerResult = await _standardVersionController.GetEpaoRegisteredStandardVersionsByLarsCode(epaoId, larsCode) as ObjectResult;
 
             controllerResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
 

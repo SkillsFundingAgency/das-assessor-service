@@ -92,10 +92,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok((StandardVersion)standard);
         }
 
-        [HttpGet("standards/epao/{epaoId}/{larsCode:int?}", Name = "GetEpaoRegisteredStandardVersions")]
+        [HttpGet("standards/epao/{epaoId}", Name = "GetEpaoRegisteredStandardVersions")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoRegisteredStandardVersions(string epaoId, int? larsCode = null)
+        public async Task<IActionResult> GetEpaoRegisteredStandardVersions(string epaoId)
+        {
+            _logger.LogInformation($"Received request to retrieve StandardVersions for Organisation {epaoId}");
+            var standardVersions = await _standardService.GetEPAORegisteredStandardVersions(epaoId);
+            return Ok(standardVersions);
+        }
+
+        [HttpGet("standards/epao/{epaoId}/{larsCode:int}", Name = "GetEpaoRegisteredStandardVersionsByLarsCode")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaoRegisteredStandardVersionsByLarsCode(string epaoId, int larsCode)
         {
             _logger.LogInformation($"Received request to retrieve StandardVersions for Organisation {epaoId}");
             var standardVersions = await _standardService.GetEPAORegisteredStandardVersions(epaoId, larsCode);

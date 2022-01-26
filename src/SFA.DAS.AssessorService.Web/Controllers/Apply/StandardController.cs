@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                         .OrderBy(s => s.Version);
             var earliestStandard = standardVersions.FirstOrDefault();
             var latestStandard = standardVersions.LastOrDefault();
-            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved);
+            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
 
             if (!string.IsNullOrWhiteSpace(version))
             {

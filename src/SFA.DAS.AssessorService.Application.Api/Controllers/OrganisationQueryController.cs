@@ -138,21 +138,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<Organisation,OrganisationResponse>(organisation));
         }
 
-        [HttpGet("organisation/earliest-withdrawal/{id}/{standardId?}", Name = "GetOrganisationEarliestWithdrawal")]
+        [HttpGet("organisation/earliest-withdrawal/{id}", Name = "GetOrganisationEarliestWithdrawal")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetOrganisationEarliestWithdrawal(Guid id, int? standardId = null)
-        {
-            if (standardId.HasValue)
-            {
-                _logger.LogInformation($"Received request to retrieve earliest withdrawal for Standard: {standardId} of Organisation: {id}");
-            }
-            else
-            {
-                _logger.LogInformation($"Received request to retrieve earliest withdrawal for Organisation: {id}");
-            }
+        public async Task<IActionResult> GetOrganisationEarliestWithdrawal(Guid id)
+        { 
+            _logger.LogInformation($"Received request to retrieve earliest withdrawal for Organisation: {id}");
+            
+            return Ok(await _mediator.Send(new GetEarliestWithdrawalDateRequest(id)));
+        }
 
+        [HttpGet("organisation/earliest-withdrawal/{id}/{standardId}", Name = "GetOrganisationStandardEarliestWithdrawal")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisationStandardEarliestWithdrawal(Guid id, int standardId)
+        {
+            _logger.LogInformation($"Received request to retrieve earliest withdrawal for Standard: {standardId} of Organisation: {id}");
+            
             return Ok(await _mediator.Send(new GetEarliestWithdrawalDateRequest(id, standardId)));
         }
     }

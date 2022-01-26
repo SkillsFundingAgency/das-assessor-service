@@ -440,7 +440,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                         INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
                         WHERE osv.Status = 'Live' AND os.status = 'Live' AND os.StandardCode = @larsCode
                         AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
-                        AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+                        AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE()) 
+                        ORDER BY s.VersionMajor, s.VersionMinor";
 
             var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandardVersion>(
                 sql,
@@ -453,7 +454,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
         public async Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber)
         {
 
-            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version
+            var sql = @"SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
                         FROM [dbo].[OrganisationStandardVersion] osv
                         INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
                         INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.EndPointAssessorOrganisationId = @endPointAssessorOrganisationId
@@ -470,7 +471,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return results;
         }
 
-        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection, int pageSize, int? pageIndex)
+        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId,
+            int pipelineCutoff, string orderBy, string orderDirection, int pageSize, int? pageIndex)
         {
             IEnumerable<EpaoPipelineStandard> epaoPipelines;
             var epaoPipelineStandardsResult = new EpaoPipelineStandardsResult
@@ -500,7 +502,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                     epaOrgId = endPointAssessorOrganisationId,
                     standardFilterId = standardFilterId,
                     providerFilterId = providerFilterId,
-                    epaDateFilterId = epaDateFilterId
+                    epaDateFilterId = epaDateFilterId,
+                    pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -532,13 +535,14 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return epaoPipelineStandardsResult;
         }
 
-        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId, int pipelineCutOff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardFilter>(
                 "GetEPAO_Pipelines_StandardFilter",
                 param: new
                 {
-                    epaOrgId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutOff = pipelineCutOff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -546,13 +550,14 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return result?.ToList();
         }
 
-        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsProviderFilter(string endPointAssessorOrganisationId, int pipelineCutOff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardFilter>(
                 "GetEPAO_Pipelines_ProviderFilter",
                 param: new
                 {
-                    epaOrgId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutOff = pipelineCutOff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -560,13 +565,14 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return result?.ToList();
         }
 
-        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsEPADateFilter(string endPointAssessorOrganisationId, int pipelineCutOff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardFilter>(
                 "GetEPAO_Pipelines_EPADateFilter",
                 param: new
                 {
-                    epaOrgId = endPointAssessorOrganisationId
+                    epaOrgId = endPointAssessorOrganisationId,
+                    pipelineCutOff = pipelineCutOff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
@@ -574,7 +580,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return result?.ToList();
         }
 
-        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId)
+        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId, int pipelineCutoff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<EpaoPipelineStandardExtract>(
                 "GetEPAO_Pipelines_Extract",
@@ -583,7 +589,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                     epaOrgId = endPointAssessorOrganisationId,
                     standardFilterId = standardFilterId,
                     providerFilterId = providerFilterId,
-                    epaDateFilterId = epaDateFilterId
+                    epaDateFilterId = epaDateFilterId,
+                    pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);
