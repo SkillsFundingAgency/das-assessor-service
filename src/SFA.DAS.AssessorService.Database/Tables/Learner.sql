@@ -33,8 +33,10 @@ CREATE TABLE [dbo].[Learner]
     [ApprovalsCompletionDate] DATE NULL,
     [ApprovalsPaymentStatus] SMALLINT NULL,
     [LatestIlrs] DATETIME NULL,
-    [LatestApprovals] DATETIME NULL
-    
+    [LatestApprovals] DATETIME NULL,
+    [EmployerAccountId] BIGINT NULL, 
+    [EmployerName] NVARCHAR(100) NULL,
+    [LearnerFullNameNoSpaces] AS CAST(REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ','') AS NVARCHAR(255))
 )
 GO
 

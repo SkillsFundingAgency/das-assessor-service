@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard 12", Version = "1.0", LarsCode = 12 },
                                                           new OrganisationStandardVersion { Title = "Standard 13", Version = "1.0", LarsCode = 13 } });
 
-            RegisterQueryRepository.Setup(c => c.GetOrganisationStandardByOrganisationId("EPA001"))
+            RegisterQueryRepository.Setup(c => c.GetAllOrganisationStandardByOrganisationId("EPA001"))
                 .ReturnsAsync(new List<OrganisationStandardSummary>
                 {
                     new OrganisationStandardSummary {StandardCode = 12},
