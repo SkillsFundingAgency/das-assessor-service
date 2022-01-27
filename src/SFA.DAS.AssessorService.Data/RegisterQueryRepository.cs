@@ -236,10 +236,13 @@ namespace SFA.DAS.AssessorService.Data
 
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(sql, new { organisationStandardId }))
             {
-                orgStandard = await multi.ReadSingleAsync<OrganisationStandard>();
+                orgStandard = await multi.ReadSingleOrDefaultAsync<OrganisationStandard>();
                 var standardVersions = multi.Read<OrganisationStandardVersion>();
 
-                orgStandard.Versions = standardVersions?.ToList();
+                if (orgStandard != null)
+                {
+                    orgStandard.Versions = standardVersions?.ToList();
+                }
             }
 
             return orgStandard;
