@@ -74,20 +74,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
                                 certificateLog.Action == Domain.Consts.CertificateActions.Submit)?.Username;
-                    
+
                     var printStatusAt = certificate.CertificateBatchLog?.StatusAt;
                     var printReasonForChange = certificate.CertificateBatchLog?.ReasonForChange;
 
-                    var statusList = certificate.CertificateLogs?
-                        .Where(o => !_ignoreStatuses.Contains(o.Status))
-                        .OrderByDescending(q => q.EventTime)
-                        .Select(x => new CertificateStatusList
-                        {
-                             CertificateDate = x.EventTime,
-                             Status = x.Status
-                        } )
-                        .ToList();
-                    
                     var trainingProviderName = string.Empty;
                     try
                     {
@@ -144,7 +134,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactPostCode = certificateData.ContactPostCode,
                         Status = certificate.Status,
                         ReasonForChange = printReasonForChange,
-                        CertificateStatusList = statusList,
                         LatestStatusDatetime = latestCertificateStatusDate
                     };
                 });

@@ -23,7 +23,11 @@
     [StandardUId] VARCHAR(20)  NULL ,
 	[LearnerFamilyName] as CAST(JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS NVARCHAR(255)),
 	[LearnerGivenNames] as CAST(JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS NVARCHAR(255)),
-	[LearnerFullNameNoSpaces] as CAST(REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS NVARCHAR(255))
+	[LearnerFullNameNoSpaces] as CAST(REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS NVARCHAR(255)),
+	[FullName] as CAST(JSON_VALUE(CertificateData, '$.FullName') AS NVARCHAR(255)),
+	[ContactOrganisation] as CAST(JSON_VALUE(CertificateData, '$.ContactOrganisation') AS NVARCHAR(255)),
+	[ProviderName] as CAST(JSON_VALUE(CertificateData, '$.ProviderName') AS NVARCHAR(255)),
+
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -54,4 +58,7 @@ CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId
 GO
 
 CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
+GO
+
+CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
 GO

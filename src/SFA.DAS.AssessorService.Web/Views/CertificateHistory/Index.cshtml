@@ -14,7 +14,6 @@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form asp-action="Search" asp-controller="CertificateHistory" method="get">
@@ -35,7 +34,6 @@
             </form>
         </div>
     </div>
-
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -182,7 +180,6 @@
                                         }
                                         <dd class="govuk-summary-list__value">@achievementDate</dd>
                                     </div>
-
                                     </dl>
 
                                     @if (Model.CanShowCertificateDetails(item))
@@ -284,45 +281,9 @@
                         </p>
                     }
 
-                    @if (item.CertificateStatusList.Any())
-                    {
-
-                        <table class="govuk-table govuk-table--small responsive">
-                            <thead class="govuk-table__head">
-                                <tr class="govuk-table__row">
-
-                                    <th class="govuk-table__header" scope="col">
-                                        @Localizer["DateAndTime"]
-                                    </th>
-
-
-                                    <th class="govuk-table__header" scope="col">
-                                        @Localizer["Status"]
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="govuk-table__body">
-                                @foreach (var statusList in item.CertificateStatusList)
-                                {
-                                    <tr>
-                                        <td class="govuk-table__cell" data-label="@CertificateStatus.GetStatusDateDisplayName(statusList.Status)">
-                                            @statusList.CertificateDate.ToString("dd/MM/yyyy hh:MM:ss")
-                                        </td>
-                                        <td class="govuk-table__cell" data-label="@Localizer["Status"]">
-                                            @Html.DisplayFor(modelItem => statusList.Status)
-                                        </td>
-                                    </tr>
-
-                                }
-                            </tbody>
-                        </table>
-                    }
-
                 }
                                 </div>
                                 </td>
-
-
                                 </tr>
                             }
                         </tbody>
@@ -343,7 +304,7 @@
                                 <h3 class="govuk-heading-m">No results found</h3>
                             </div>
                         }
-                        
+
                     }
             </div>
             </div>
@@ -377,7 +338,6 @@
                                     <span class="counter">Page <span class="nextPage">@(Model.Certificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.Certificates.TotalPages)</span></span>
                                 </a>
                             }
-
                         </div>
                     </div>
                 </div>

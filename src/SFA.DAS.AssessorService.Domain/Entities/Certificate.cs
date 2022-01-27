@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string StandardUId { get; set; }
         public int ProviderUkPrn { get; set; }
         public Guid OrganisationId { get; set; }
+
         [JsonIgnore]
         public Organisation Organisation { get; set; }
 
@@ -38,7 +39,12 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string PrivatelyFundedStatus { get; set; }
         public DateTime CreateDay { get; set; }
         public virtual ICollection<CertificateLog> CertificateLogs { get; set; } = new List<CertificateLog>();
+
         [JsonIgnore]
         public virtual CertificateBatchLog CertificateBatchLog { get; set; }
+
+        public string FullName { get; set; }
+        public string ContactOrganisation { get; set; }
+        public string ProviderName { get; set; }
     }
 }

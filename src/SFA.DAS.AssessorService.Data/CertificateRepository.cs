@@ -315,13 +315,7 @@ namespace SFA.DAS.AssessorService.Data
                                     .Include(q => q.CertificateBatchLog)
                                      join organisation in _context.Organisations on certificate.OrganisationId equals organisation.Id
                                      where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && !statuses.Contains(certificate.Status)
-                                     let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
-                                     select new SortableCertificateInfo
-                                     {
-                                         Certificate = certificate,
-                                         Organisation = organisation,
-                                         CertificateData = certificateData
-                                     });
+                                     select certificate);
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -329,10 +323,10 @@ namespace SFA.DAS.AssessorService.Data
                 long.TryParse(searchTerm, out long validUln);
 
                 certificatesQuery = certificatesQuery
-                    .Where(x => x.CertificateData.LearnerGivenNames.ToLower().StartsWith(searchTerm) ||
-                                                    x.CertificateData.LearnerGivenNames.ToLower() == searchTerm ||
-                                                   x.Certificate.CertificateReference.ToLower() == searchTerm ||
-                                                   x.Certificate.Uln == validUln);
+                    .Where(x => x.FullName.ToLower().Contains(searchTerm) ||
+                                x.FullName.ToLower() == searchTerm ||
+                                x.CertificateReference.ToLower() == searchTerm ||
+                                x.Uln == validUln);
             }
 
             if (!Enum.TryParse(sortColumn, out GetCertificateHistoryRequest.SortColumns sort))
@@ -340,16 +334,16 @@ namespace SFA.DAS.AssessorService.Data
 
             certificatesQuery = GetSortedCertificateInfo(sortDescending, sort, certificatesQuery);
 
-            var certificates = await certificatesQuery.Select(x => x.Certificate)
+            var certificates = await certificatesQuery
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
 
-            var count = await certificatesQuery.Select(x => x.Certificate.Id).CountAsync();
+            var count = await certificatesQuery.Select(x => x.Id).CountAsync();
 
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }
 
-        private IQueryable<SortableCertificateInfo> GetSortedCertificateInfo(bool sortDescending, GetCertificateHistoryRequest.SortColumns sort, IQueryable<SortableCertificateInfo> certificatesQuery)
+        private IQueryable<Certificate> GetSortedCertificateInfo(bool sortDescending, GetCertificateHistoryRequest.SortColumns sort, IQueryable<Certificate> certificatesQuery)
         {
             switch (sort)
             {
@@ -358,12 +352,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.CertificateData.FullName);
+                            .OrderByDescending(x => x.FullName);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.CertificateData.FullName);
+                            .OrderBy(x => x.FullName);
                     }
 
                     break;
@@ -372,12 +366,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.CertificateData.ContactOrganisation);
+                            .OrderByDescending(x => x.ContactOrganisation);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.CertificateData.ContactOrganisation);
+                            .OrderBy(x => x.ContactOrganisation);
                     }
 
                     break;
@@ -386,12 +380,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.CertificateData.ProviderName);
+                            .OrderByDescending(x => x.ProviderName);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.CertificateData.ProviderName);
+                            .OrderBy(x => x.ProviderName);
                     }
 
                     break;
@@ -400,12 +394,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.Certificate.CreatedAt);
+                            .OrderByDescending(x => x.CreatedAt);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.Certificate.CreatedAt);
+                            .OrderBy(x => x.CreatedAt);
                     }
 
                     break;
@@ -650,12 +644,5 @@ namespace SFA.DAS.AssessorService.Data
                    param: new { certificateIds, action, status, eventTime, certificateData, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
-    }
-
-    internal class SortableCertificateInfo
-    {
-        public Certificate Certificate { get; set; }
-        public Organisation Organisation { get; set; }
-        public CertificateData CertificateData { get; set; }
     }
 }
