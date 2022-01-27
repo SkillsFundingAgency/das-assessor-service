@@ -44,10 +44,4 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string ReasonForChange { get; set; }
         public DateTime LatestStatusDatetime { get; set; }
     }
-
-    public class CertificateStatusList
-    {
-        public DateTime CertificateDate { get; set; }
-        public string Status { get; set; }
-    }
 }
