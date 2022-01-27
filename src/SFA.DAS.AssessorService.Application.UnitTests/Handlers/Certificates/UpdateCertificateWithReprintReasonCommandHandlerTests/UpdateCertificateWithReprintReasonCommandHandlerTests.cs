@@ -8,7 +8,9 @@ using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,25 +21,94 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 {
     public class UpdateCertificateWithReprintReasonCommandHandlerTests
     {
-        [Test]
-        public async Task WhenCalled_ThenGetCertificateIsCalled_ForCertificateReference()
+        [Test, MoqAutoData]
+        public async Task WhenCalled_ThenGetCertificateIsCalled_ForCertificateReference(UpdateCertificateWithReprintReasonCommand command)
         {
             // Arrange
             var fixture = new UpdateCertificateWithReprintReasonCommandHandlerTestsFixture()
-                .WithCertificate("12345");
+                .WithCertificate(command.CertificateReference);
 
             // Act
-            await fixture.Handle(new UpdateCertificateWithReprintReasonCommand 
-            { 
-                CertificateReference = "12345", IncidentNumber = "333", 
-                Reasons = ReprintReasons.ApprenticeDetails | ReprintReasons.ApprenticeAddress,
-                OtherReason = string.Empty,
-                Username = "Some User"
+            await fixture.Handle(new UpdateCertificateWithReprintReasonCommand
+            {
+                CertificateReference = command.CertificateReference,
+                IncidentNumber = command.IncidentNumber,
+                Reasons = command.Reasons,
+                OtherReason = command.OtherReason,
+                Username = command.Username
             });
 
             // Assert
-            fixture.VerifyGetCertificateCalled("12345");
-            fixture.VerifyUpdateCalled("12345", "333", new List<string> { ReprintReasons.ApprenticeDetails.ToString(), ReprintReasons.ApprenticeAddress.ToString()}, "Some User", CertificateActions.ReprintReason, string.Empty);
+            fixture.VerifyGetCertificateCalled(command.CertificateReference);
+        }
+
+        [Test, MoqAutoData]
+        public void WhenCalledWithInvalidCertificate_ThenThrowsNotFoundException(UpdateCertificateWithReprintReasonCommand command)
+        {
+            // Arrange
+            var fixture = new UpdateCertificateWithReprintReasonCommandHandlerTestsFixture()
+                .WithCertificate(command.CertificateReference);
+
+            command.OtherReason = string.Empty;
+
+            // Act & Assert
+            Assert.ThrowsAsync<NotFoundException>(async () => await
+                fixture.Handle(new UpdateCertificateWithReprintReasonCommand
+                {
+                    CertificateReference = command.CertificateReference + "NotValid",
+                    IncidentNumber = command.IncidentNumber,
+                    Reasons = command.Reasons,
+                    OtherReason = command.OtherReason,
+                    Username = command.Username
+                }));
+        }
+
+        [Test, MoqAutoData]
+        public async Task WhenCalledWithoutOtherReason_ThenUpdateIsCalled_ForCertificateReference(UpdateCertificateWithReprintReasonCommand command)
+        {
+            // Arrange
+            var fixture = new UpdateCertificateWithReprintReasonCommandHandlerTestsFixture()
+                .WithCertificate(command.CertificateReference);
+
+            command.OtherReason = string.Empty;
+
+            // Act
+            await fixture.Handle(new UpdateCertificateWithReprintReasonCommand
+            {
+                CertificateReference = command.CertificateReference,
+                IncidentNumber = command.IncidentNumber,
+                Reasons = command.Reasons,
+                OtherReason = command.OtherReason,
+                Username = command.Username
+            });
+
+            // Assert
+            fixture.VerifyUpdateCalled(command.CertificateReference, command.IncidentNumber,
+                command.Reasons, command.Username, CertificateActions.ReprintReason, command.OtherReason);
+        }
+
+        [Test, MoqAutoData]
+        public async Task WhenCalledWithOtherReason_ThenUpdateIsCalled_ForCertificateReference(UpdateCertificateWithReprintReasonCommand command)
+        {
+            // Arrange
+            var fixture = new UpdateCertificateWithReprintReasonCommandHandlerTestsFixture()
+                .WithCertificate(command.CertificateReference);
+
+            command.OtherReason = "Some other reason";
+
+            // Act
+            await fixture.Handle(new UpdateCertificateWithReprintReasonCommand
+            {
+                CertificateReference = command.CertificateReference,
+                IncidentNumber = command.IncidentNumber,
+                Reasons = command.Reasons,
+                OtherReason = command.OtherReason,
+                Username = command.Username
+            });
+
+            // Assert
+            fixture.VerifyUpdateCalled(command.CertificateReference, command.IncidentNumber,
+                command.Reasons, command.Username, CertificateActions.ReprintReason, command.OtherReason);
         }
 
         public class UpdateCertificateWithReprintReasonCommandHandlerTestsFixture
@@ -79,9 +150,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 _certificateRepository.Verify(r => r.GetCertificate(certificateReference), Times.Once);
             }
 
-            public void VerifyUpdateCalled(string certificateReference, string incidentNumber, List<string> reprintReasons, string userName, 
+            public void VerifyUpdateCalled(string certificateReference, string incidentNumber, ReprintReasons? reasons, string userName,
                 string action, string reasonForChange)
             {
+                var reprintReasons = reasons?.ToString().Split(',').Select(p => p.Trim()).ToList() ?? new List<string>();
+
                 _certificateRepository.Verify(r => r.Update(
                     It.Is<Certificate>(c => c.CertificateReference == certificateReference
                         && JsonConvert.DeserializeObject<CertificateData>(c.CertificateData).IncidentNumber == incidentNumber
