@@ -1,4 +1,5 @@
 ﻿using FizzWare.NBuilder;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -22,6 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
     public class When_called_to_record_a_grade
     {
         private Mock<ICertificateRepository> CertificateRepository;
+        private Mock<IMediator> Mediator;
         private Guid CertificateId = Guid.NewGuid();
         private string CertificateReference = "00010000";
         private UpdateCertificateHandler Sut;
@@ -90,11 +92,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             CertificateRepository.Setup(r => r.Update(It.Is<Certificate>(c => c.CertificateReference == CertificateReference), "user", null, true, null))
                 .ReturnsAsync(certificate);
 
+            Mediator.Setup(r => r.Send(It.IsAny<GetCertificateRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(certificate);
+
             var updatedLatestEpaDate = updatedLatestEpaYear.HasValue && updatedLatestEpaMonth.HasValue && updatedLastestEpaDay.HasValue
                 ? new DateTime(updatedLatestEpaYear.Value, updatedLatestEpaMonth.Value, updatedLastestEpaDay.Value)
                 : (DateTime?)null;
 
-            Sut = new UpdateCertificateHandler(CertificateRepository.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
+            Sut = new UpdateCertificateHandler(CertificateRepository.Object, Mediator.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
             await Sut.Handle(new UpdateCertificateRequest(certificate) { Username = "user" }, new CancellationToken());
 
             CertificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
