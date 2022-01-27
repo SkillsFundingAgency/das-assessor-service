@@ -310,12 +310,11 @@ namespace SFA.DAS.AssessorService.Data
                 bool sortDescending,
                 List<string> statuses)
         {
-            var certificatesQuery = (from certificate in _context.Certificates
+            var certificatesQuery = _context.Certificates
                                     .Include(q => q.CertificateLogs)
                                     .Include(q => q.CertificateBatchLog)
-                                     join organisation in _context.Organisations on certificate.OrganisationId equals organisation.Id
-                                     where organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && !statuses.Contains(certificate.Status)
-                                     select certificate);
+                                    .Include(q => q.Organisation)
+                                    .Where(o => o.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && !statuses.Contains(o.Status));
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
