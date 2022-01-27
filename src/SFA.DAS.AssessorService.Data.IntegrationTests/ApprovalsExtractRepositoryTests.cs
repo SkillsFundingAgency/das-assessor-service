@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
-            
+
             // Act
             await _repository.PopulateApprovalsExtract();
 
@@ -134,7 +134,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 PauseDate = new DateTime(2021, 12, 01),
                 UKPRN = 10006600,
                 LearnRefNumber = "RF5764700785",
-                PaymentStatus = 1
+                PaymentStatus = 1,
+                EmployerAccountId = 100,
+                EmployerName = "SFA"
             };
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
