@@ -16,7 +16,7 @@ AS
 			WHEN 10022210 THEN 'ANNE CLARKE ASSOCIATES LIMITED'
 			WHEN 10053962 THEN 'NEWCASTLE COLLEGE'
 			ELSE
-			(CASE WHEN ce.[ProviderName] IS NULL OR ce.[ProviderName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderName] END)
+			(CASE WHEN ce.[ProviderOrganisationName] IS NULL OR ce.[ProviderOrganisationName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderOrganisationName] END)
 		END AS 'Provider Name', 
 	  (CASE WHEN JSON_VALUE(ce.[CertificateData], '$.OverallGrade') IS NULL THEN '' ELSE  UPPER(JSON_VALUE(ce.[CertificateData], '$.OverallGrade')) END) AS 'Grade',
 	  COUNT(*) AS 'Total',
@@ -31,7 +31,7 @@ AS
   FROM 
 	(
 		SELECT a1.*,
-		(SELECT MAX(UPPER(ProviderName)) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderName]
+		(SELECT MAX(UPPER(ProviderName)) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderOrganisationName]
 		FROM  [dbo].[Certificates] a1
 	) ce
   GROUP BY 
@@ -50,7 +50,7 @@ AS
 		WHEN 10022210 THEN 'ANNE CLARKE ASSOCIATES LIMITED'
 		WHEN 10053962 THEN 'NEWCASTLE COLLEGE'
 		ELSE
-		(CASE WHEN ce.[ProviderName] IS NULL OR ce.[ProviderName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderName] END)
+		(CASE WHEN ce.[ProviderOrganisationName] IS NULL OR ce.[ProviderOrganisationName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderOrganisationName] END)
 	END,
 	(CASE WHEN JSON_VALUE(ce.[CertificateData], '$.OverallGrade') IS NULL THEN '' ELSE  UPPER(JSON_VALUE(ce.[CertificateData], '$.OverallGrade')) END)
 
