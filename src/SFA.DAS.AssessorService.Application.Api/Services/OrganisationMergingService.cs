@@ -110,7 +110,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private bool HasAlreadyMergedAsSecondaryOrganisation(string secondaryEndpointAssessorOrganisationId)
         {
-            return _dbContext.MergeOrganisations.Any(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEndpointAssessorOrganisationId);
+            return _dbContext.MergeOrganisations.Any(mo => 
+            mo.SecondaryEndPointAssessorOrganisationId == secondaryEndpointAssessorOrganisationId
+            && (mo.Status != MergeOrganisationStatus.InProgress && 
+                mo.Status != MergeOrganisationStatus.Approved && 
+                mo.Status != MergeOrganisationStatus.Completed));
         }
 
         private void ApproveMerge(MergeOrganisation mo, string approvedByUser)
