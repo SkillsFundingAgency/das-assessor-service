@@ -47,23 +47,7 @@ WHEN MATCHED
         [Target].[DeletedAt] = [Source].[DeletedAt],
         [Target].[DeletedBy] = [Source].[DeletedBy],
         [Target].[StandardApplicationType] = [Source].[StandardApplicationType],
-        [Target].[StandardReference] = [Source].[StandardReference]
-
-WHEN NOT MATCHED BY TARGET 
-    THEN INSERT ([Id], 
-    [ApplicationId], 
-    [OrganisationId], 
-    [ApplicationStatus], 
-    [ReviewStatus], 
-    [ApplyData],
-    [FinancialReviewStatus],
-    [FinancialGrade],
-    [StandardCode], [CreatedAt],[CreatedBy],[UpdatedAt],[UpdatedBy],[DeletedAt],[DeletedBy],[StandardApplicationType],[StandardReference]
-    )
-         VALUES ([Source].[ApplyId], [Source].[ApplicationId], [Source].[OrganisationId], [Source].[ApplicationStatus], [Source].[ReviewStatus],
-         [Source].[ApplyData],[Source].[FinancialReviewStatus],[Source].[FinancialGrade],[Source].[StandardCode],[Source].[CreatedAt],[Source].[CreatedBy],
-         [Source].[UpdatedAt],[Source].[UpdatedBy],[Source].[DeletedAt],[Source].[DeletedBy],[Source].[StandardApplicationType],[Source].[StandardReference]
-         );
+        [Target].[StandardReference] = [Source].[StandardReference];
 
 
 -- Use the snapshots to delete the deltas of added data
@@ -78,8 +62,6 @@ DELETE FROM OrganisationStandard WHERE Id IN (SELECT OrganisationStandardId FROM
 DROP TABLE IF EXISTS #MergeOrganisationStandardBefore
 SELECT * INTO #MergeOrganisationStandardBefore FROM MergeOrganisationStandard WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'
 
-SET IDENTITY_INSERT [OrganisationStandard] ON
-
 MERGE [OrganisationStandard] [Target] USING #MergeOrganisationStandardBefore [Source]
 ON ([Source].OrganisationStandardId = [Target].Id)
 WHEN MATCHED
@@ -93,36 +75,7 @@ WHEN MATCHED
         [Target].[Status] = [Source].[Status],
         [Target].[ContactId] = [Source].[ContactId],
         [Target].[OrganisationStandardData] = [Source].[OrganisationStandardData],
-        [Target].[StandardReference] = [Source].[StandardReference]
-
-WHEN NOT MATCHED BY TARGET 
-    THEN INSERT ([Id], 
-        [EndPointAssessorOrganisationId],
-        [StandardCode],
-        [EffectiveFrom],
-        [EffectiveTo],
-        [DateStandardApprovedOnRegister],
-        [Comments],
-        [Status],
-        [ContactId],
-        [OrganisationStandardData],
-        [StandardReference]
-    )
-         VALUES (
-         [Source].[OrganisationStandardId], 
-        [Source].[EndPointAssessorOrganisationId],
-        [Source].[StandardCode],
-        [Source].[EffectiveFrom],
-        [Source].[EffectiveTo],
-        [Source].[DateStandardApprovedOnRegister],
-        [Source].[Comments],
-        [Source].[Status],
-        [Source].[ContactId],
-        [Source].[OrganisationStandardData],
-        [Source].[StandardReference]
-         );
-
-SET IDENTITY_INSERT [OrganisationStandard] OFF
+        [Target].[StandardReference] = [Source].[StandardReference];
 
 
 -- Revert OrganisationStandardVersion to the "Before" data
@@ -139,37 +92,13 @@ WHEN MATCHED
         [Target].[EffectiveTo] = [Source].[EffectiveTo],
         [Target].[DateVersionApproved] = [Source].[DateVersionApproved],
         [Target].[Comments] = [Source].[Comments],
-        [Target].[Status] = [Source].[Status]
-
-WHEN NOT MATCHED BY TARGET 
-    THEN INSERT (
-    [OrganisationStandardId], 
-    [StandardUId],
-    [Version],
-    [EffectiveFrom],
-    [EffectiveTo],
-    [DateVersionApproved],
-    [Comments],
-    [Status]
-    )
-         VALUES (
-         [Source].[OrganisationStandardId], 
-         [Source].[StandardUId],
-         [Source].[Version],
-         [Source].[EffectiveFrom],
-         [Source].[EffectiveTo],
-         [Source].[DateVersionApproved],
-         [Source].[Comments],
-         [Source].[Status]
-         );
+        [Target].[Status] = [Source].[Status];
 
 
 -- Revert OrganisationStandardDeliveryArea to the "Before" data
 
 DROP TABLE IF EXISTS #MergeOrganisationStandardDeliveryAreaBefore
 SELECT * INTO #MergeOrganisationStandardDeliveryAreaBefore FROM MergeOrganisationStandardDeliveryArea WHERE MergeOrganisationId = @mergeOrganisationId AND Replicates = 'Before'
-
-SET IDENTITY_INSERT [OrganisationStandardDeliveryArea] ON
 
 MERGE [OrganisationStandardDeliveryArea] [Target] USING #MergeOrganisationStandardDeliveryAreaBefore [Source]
 ON ([Source].OrganisationStandardDeliveryAreaId = [Target].Id)
@@ -178,25 +107,7 @@ WHEN MATCHED
         [Target].[OrganisationStandardId] = [Source].[OrganisationStandardId],
         [Target].[DeliveryAreaId] = [Source].[DeliveryAreaId],
         [Target].[Comments] = [Source].[Comments],
-        [Target].[Status] = [Source].[Status]
-
-WHEN NOT MATCHED BY TARGET 
-    THEN INSERT (
-    [Id],
-    [OrganisationStandardId], 
-    [DeliveryAreaId],
-    [Comments],
-    [Status]    
-    )
-         VALUES (
-         [Source].[Id], 
-         [Source].[OrganisationStandardId], 
-         [Source].[DeliveryAreaId],
-         [Source].[Comments],
-         [Source].[Status]
-         );
-
-SET IDENTITY_INSERT [OrganisationStandardDeliveryArea] OFF
+        [Target].[Status] = [Source].[Status];
 
 
 -- Mark the merge as being undone
