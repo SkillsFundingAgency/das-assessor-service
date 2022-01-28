@@ -31,7 +31,7 @@ AS
   FROM 
 	(
 		SELECT a1.*,
-		(SELECT MAX(UPPER(JSON_VALUE([CertificateData], '$.ProviderName'))) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderName]
+		(SELECT MAX(UPPER(ProviderName)) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderName]
 		FROM  [dbo].[Certificates] a1
 	) ce
   GROUP BY 
