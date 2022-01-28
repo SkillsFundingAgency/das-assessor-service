@@ -114,10 +114,14 @@ namespace SFA.DAS.AssessorService.Data
             return contact.Organisation;
         }
 
-        public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId)
+        public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId, string status)
         {
             IQueryable<MergeOrganisation> queryable = _assessorDbContext.MergeOrganisations;
-            if(!string.IsNullOrWhiteSpace(primaryEPAOId))
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                queryable = queryable.Where(mo => mo.Status == status);
+            }
+            if (!string.IsNullOrWhiteSpace(primaryEPAOId))
             {
                 queryable = queryable.Where(mo => mo.PrimaryEndPointAssessorOrganisationId == primaryEPAOId);
             }

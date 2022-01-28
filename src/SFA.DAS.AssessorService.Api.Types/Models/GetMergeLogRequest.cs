@@ -11,5 +11,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string OrderDirection { get; set; }
         public string PrimaryEPAOId { get; set; }
         public string SecondaryEPAOId { get; set; }
+        public string Status { get; set; }
     }
 }
