@@ -31,7 +31,7 @@ AS
   FROM 
 	(
 		SELECT a1.*,
-		(SELECT MAX(UPPER(ProviderName)) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderOrganisationName]
+		(SELECT MAX(UPPER(c.ProviderName)) FROM [dbo].[Certificates] c WHERE c.[ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderOrganisationName]
 		FROM  [dbo].[Certificates] a1
 	) ce
   GROUP BY 
