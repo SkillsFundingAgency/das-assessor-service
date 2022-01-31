@@ -41,6 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            SetDefaultSession();
             var vm = await MapViewModelFromSession();
             return View(nameof(Index), vm);
         }
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet(nameof(Search))]
         public async Task<IActionResult> Search(string searchTerm)
         {
-            _certificateHistorySession.CertificateHistorySearchTerm = searchTerm ?? string.Empty;
+            _certificateHistorySession.CertificateHistorySearchTerm = searchTerm?.Trim() ?? string.Empty;
 
             // reset the page indexes as the new results may have less pages
             _certificateHistorySession.CertificateHistoryPageIndex = DefaultPageIndex;
