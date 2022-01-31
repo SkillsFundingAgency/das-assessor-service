@@ -112,9 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             return _dbContext.MergeOrganisations.Any(mo => 
             mo.SecondaryEndPointAssessorOrganisationId == secondaryEndpointAssessorOrganisationId
-            && (mo.Status != MergeOrganisationStatus.InProgress && 
-                mo.Status != MergeOrganisationStatus.Approved && 
-                mo.Status != MergeOrganisationStatus.Completed));
+            && (mo.Status != MergeOrganisationStatus.Reverted));
         }
 
         private void ApproveMerge(MergeOrganisation mo, string approvedByUser)
