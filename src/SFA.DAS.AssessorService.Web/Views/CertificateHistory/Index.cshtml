@@ -164,22 +164,33 @@
                                         }
                                         <dd class="govuk-summary-list__value">@achievementStartDate</dd>
                                     </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">
-                                            @if (item.OverallGrade == CertificateGrade.Fail)
-                                            {
-                                                @Localizer["FailDate"]
-                                            }
-                                            else
-                                            {
-                                                @Localizer["AchievementDate"]
-                                            }
-                                        </dt>
-                                        @{
-                                            var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
-                                        }
-                                        <dd class="govuk-summary-list__value">@achievementDate</dd>
-                                    </div>
+
+                                    @{
+                                        var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
+                                    }
+
+                                    @if (item.OverallGrade == CertificateGrade.Fail)
+                                    {
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key"> @Localizer["FailDate"] </dt>
+                                            <dd class="govuk-summary-list__value">@achievementDate</dd>
+                                        </div>
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key"> @Localizer["ReferenceNumber"] </dt>
+                                            <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CertificateReference)</dd>
+                                        </div>
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key"> @Localizer["CertificateStatus"] </dt>
+                                            <dd class="govuk-summary-list__value"> <text>@CertificateStatus.GetDisplayName(item.Status)</text> </dd>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key"> @Localizer["AchievementDate"] </dt>
+                                            <dd class="govuk-summary-list__value">@achievementDate</dd>
+                                        </div>
+                                    }
                                     </dl>
 
                                     @if (Model.CanShowCertificateDetails(item))
@@ -189,14 +200,7 @@
                                         <dl class="govuk-summary-list govuk-summary-list--no-border">
                                             <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">
-                                                @if (item.OverallGrade == CertificateGrade.Fail)
-                                                {
-                                                    @Localizer["ReferenceNumber"]
-                                                }
-                                                else
-                                                {
-                                                    @Localizer["CertificateNumber"]
-                                                }
+                                                @Localizer["CertificateNumber"]
                                             </dt>
                                             <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CertificateReference)</dd>
                     </div>
@@ -214,7 +218,7 @@
                             @CertificateStatus.GetStatusDateDisplayName(item.Status)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <text> @item.CreatedAt.ToString("dd/MM/yyyy hh:MM:ss")</text>
+                            <text> @item.LatestStatusDatetime.ToString("dd/MM/yyyy hh:MM:ss")</text>
                         </dd>
                     </div>
                     </dl>
