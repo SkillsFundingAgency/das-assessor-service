@@ -17,10 +17,10 @@ BEGIN
 		WITH LatestVersions
 		AS (
 			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, Larscode, Duration
-			  FROM (
-			   SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration, 
-					  ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber 
-				 FROM Standards
+			FROM (
+				SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration, 
+					ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, LarsCode ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber 
+				FROM Standards 
 				WHERE VersionApprovedForDelivery IS NOT NULL
 			) sv1 WHERE rownumber = 1
 		)
