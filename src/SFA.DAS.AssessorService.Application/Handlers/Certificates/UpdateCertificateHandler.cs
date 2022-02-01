@@ -144,14 +144,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         private CertificateData ClearAddressFields(CertificateData certificateData)
         {
-            certificateData.ContactName = string.Empty;
-            certificateData.Department = string.Empty;
-            certificateData.ContactOrganisation = string.Empty;
-            certificateData.ContactAddLine1 = string.Empty;
-            certificateData.ContactAddLine2 = string.Empty;
-            certificateData.ContactAddLine3 = string.Empty;
-            certificateData.ContactAddLine4 = string.Empty;
-            certificateData.ContactPostCode = string.Empty;
+            certificateData.ContactName = null;
+            certificateData.Department = null;
+            certificateData.ContactOrganisation = null;
+            certificateData.ContactAddLine1 = null;
+            certificateData.ContactAddLine2 = null;
+            certificateData.ContactAddLine3 = null;
+            certificateData.ContactAddLine4 = null;
+            certificateData.ContactPostCode = null;
 
             return certificateData;
         }
