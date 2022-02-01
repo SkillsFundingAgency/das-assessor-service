@@ -43,8 +43,13 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         [JsonIgnore]
         public virtual CertificateBatchLog CertificateBatchLog { get; set; }
 
-        public string FullName { get; set; }
-        public string ContactOrganisation { get; set; }
-        public string ProviderName { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string FullName { get; private set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string ContactOrganisation { get; private set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string ProviderName { get; private set; }
     }
 }
