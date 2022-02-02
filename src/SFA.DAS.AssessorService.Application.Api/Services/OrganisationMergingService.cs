@@ -241,8 +241,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private void MergeOrganisationStandardsAndVersions(Organisation primaryOrganisation, Organisation secondaryOrganisation, string createdByUser, DateTime secondaryStandardsEffectiveTo)
         {
-            // @ToDo: a bit monolithic - can this be refactored in to something more readable?
-
             // Grab the primary contact for the primary organisation because we're going to need it.
             var primaryContact = _dbContext.Contacts.FirstOrDefault(c => c.EndPointAssessorOrganisationId == primaryOrganisation.EndPointAssessorOrganisationId && c.Email == primaryOrganisation.PrimaryContact);
 

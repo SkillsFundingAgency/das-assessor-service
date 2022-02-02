@@ -10,9 +10,9 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
 {
     public class OrganisationMergingServiceTests
     {
-        public class Before_Merge : TestBase
+        public class During_Merge : TestBase
         {
-            [Test]
+            [Test(Description = "TDD - drive the creation of the MergeOrganisation record during the merge.")]
             public async Task MergeOrganisation_Should_Be_Created()
             {
                 // Arrange.
@@ -52,8 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
 
         public class MergeScenarios : TestBase
         {
-            [Test]
-            public async Task Primary_And_Secondary_Organisations_Have_Distinct_Standards()
+            [Test(Description = "Scenario: No overlap of standards/versions between organisations.")]
+            public async Task When_Primary_And_Secondary_Organisations_Have_Distinct_Standards()
             {
                 //
                 //  Arrange.
