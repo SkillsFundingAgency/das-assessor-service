@@ -27,11 +27,14 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
 
                 // Act.
 
-                var userId = "merger@merger.merger";
+                var actionedByUser = "merger@merger.merger";
                 var dbContext = DatabaseHelper.TestContext;
                 var sut = new OrganisationMergingService(dbContext);
                 var testExcutionTimestamp = DateTime.UtcNow;
-                var mo = sut.CallPrivateMethod<MergeOrganisation>("CreateMergeOrganisations", new object[] { primaryEpaId, secondaryEpaId, userId });
+                var primaryOrganisation = GetOrganisationByEPAOId(primaryEpaId);
+                var secondaryOrganisation = GetOrganisationByEPAOId(secondaryEpaId);
+                var secondaryStandardsEffectiveTo = DateTime.UtcNow.AddYears(1);
+                var mo = sut.CallPrivateMethod<MergeOrganisation>("CreateMergeOrganisations", new object[] { primaryOrganisation, secondaryOrganisation, secondaryStandardsEffectiveTo, actionedByUser });
                 await dbContext.SaveChangesAsync();
 
                 // Assert.
@@ -39,29 +42,11 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
                 mo.Id.Should().BeGreaterThan(0);
                 mo.PrimaryEndPointAssessorOrganisationId.Should().Be(primaryEpaId);
                 mo.SecondaryEndPointAssessorOrganisationId.Should().Be(secondaryEpaId);
-                mo.CreatedAt.Should().BeCloseTo(testExcutionTimestamp, 500);
+                mo.CreatedAt.Should().BeCloseTo(testExcutionTimestamp, 1500);
                 mo.UpdatedAt.Should().BeNull();
-                mo.Status.Should().Be(MergeOrganisationStatus.Approved);
-                mo.CreatedBy.Should().Be(userId);
+                mo.Status.Should().Be(MergeOrganisationStatus.InProgress);
+                mo.CreatedBy.Should().Be(actionedByUser);
                 mo.UpdatedBy.Should().BeNull();
-                mo.ApprovedAt.Should().BeCloseTo(testExcutionTimestamp, 500);
-                mo.ApprovedBy.Should().Be(userId);
-            }
-
-            [Test]
-            public async Task BeforeSnapshot_Should_Be_Created()
-            {
-
-            }
-        }
-
-
-        public class After_Merge : TestBase
-        {
-            [Test]
-            public async Task AfterSnapshot_Should_Be_Created()
-            {
-
             }
         }
 
@@ -115,14 +100,12 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
                 //
 
                 mo.Should().NotBeNull();
-                mo.MergeOrganisationStandards.Should().HaveCount(4);
+                mo.MergeOrganisationStandards.Should().HaveCount(5);
                 mo.MergeOrganisationStandards.Where(mos => mos.Replicates == ReplicationType.Before).Should().HaveCount(2);
-                mo.MergeOrganisationStandards.Where(mos => mos.Replicates == ReplicationType.After).Should().HaveCount(2);
+                mo.MergeOrganisationStandards.Where(mos => mos.Replicates == ReplicationType.After).Should().HaveCount(3);
 
                 primaryOrganisation.OrganisationStandards.Should().HaveCount(2);
                 var primaryOrganisationStandard = primaryOrganisation.OrganisationStandards.Where(os => os.StandardReference == "ST0232");
-
-                // assert properly
             }
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using SFA.DAS.AssessorService.Data;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
 {
@@ -98,6 +99,18 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
             }
         }
 
+        public static T Get<T>(string sql)
+        {
+            using (var connection = new SqlConnection(_sqlTestConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var result = connection.Query<T>(sql);
+                connection.Close();
+                return result.FirstOrDefault();
+            }
+        }
+
 
 
 
@@ -105,17 +118,6 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
         /*
 
 
-                public T Get<T>(string sql)
-                {
-                    using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
-                    {
-                        if (connection.State != ConnectionState.Open)
-                            connection.Open();
-                        var result = connection.Query<T>(sql);
-                        connection.Close();
-                        return result.FirstOrDefault();
-                    }
-                }
 
                 public IEnumerable<T> GetList<T>(string sql)
                 {

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
@@ -51,6 +52,12 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
         protected void CreateOrganisationStandardDeliveryArea(int organisationStandardId, int deliveryAreaId)
         {
             DatabaseHelper.Execute($"INSERT INTO OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Comments, Status) VALUES ({organisationStandardId}, {deliveryAreaId},  NULL, 'Live');");
+        }
+
+        protected Organisation GetOrganisationByEPAOId(string id)
+        {
+            var org = DatabaseHelper.Get<Organisation>($"SELECT id, EndPointAssessorOrganisationId, EndpointAssessorName FROM Organisations WHERE EndPointAssessorOrganisationId = '{id}';");
+            return org;
         }
 
         [OneTimeTearDown]
