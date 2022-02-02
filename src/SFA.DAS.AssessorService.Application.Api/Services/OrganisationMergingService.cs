@@ -206,7 +206,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     {
                         DateStandardApprovedOnRegister = secondaryOrganisationStandard.DateStandardApprovedOnRegister,
                         OrganisationStandardData = secondaryOrganisationStandard.OrganisationStandardData,
-                        Comments = $"{secondaryOrganisationStandard.Comments} ** this standard has been merged from Organisation {secondaryOrganisation.EndPointAssessorOrganisationId}",
+                        Comments = $"This standard/version has been acquired from a merge with {secondaryOrganisation.EndPointAssessorOrganisationId} on {DateTime.UtcNow.ToString("dd MMM yyyy")}. {secondaryOrganisationStandard.Comments}",
                         ContactId = primaryContact?.Id,
                         EffectiveFrom = secondaryOrganisationStandard.EffectiveFrom,
                         EffectiveTo = secondaryOrganisationStandard.EffectiveTo,
@@ -236,7 +236,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                         primaryOrganisationStandardVersion = new OrganisationStandardVersion()
                         {
                             DateVersionApproved = secondaryOrganisationStandardVersion.DateVersionApproved,
-                            Comments = $"{secondaryOrganisationStandardVersion.Comments} ** This standard version has been merged from Organisation {secondaryOrganisation.EndPointAssessorOrganisationId}",
+                            Comments = $"This standard/version has been acquired from a merge with {secondaryOrganisation.EndPointAssessorOrganisationId} on {DateTime.UtcNow.ToString("dd MMM yyyy")}. {secondaryOrganisationStandardVersion.Comments}",
                             EffectiveFrom = secondaryOrganisationStandardVersion.EffectiveFrom,
                             EffectiveTo = secondaryOrganisationStandardVersion.EffectiveTo,
                             StandardUId = secondaryOrganisationStandardVersion.StandardUId,
@@ -249,7 +249,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                     // Mark the secondary standard version as ending
                     secondaryOrganisationStandardVersion.EffectiveTo = secondaryStandardsEffectiveTo;
-                    secondaryOrganisationStandardVersion.Comments = $"** This standard version has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                    secondaryOrganisationStandardVersion.Comments = $"This standard version has been merged in to {primaryOrganisation.EndPointAssessorOrganisationId} on {DateTime.UtcNow.ToString("dd MMM yyyy")}. ${secondaryOrganisationStandardVersion.Comments}";
                     secondaryOrganisationStandardVersion.Comments = secondaryOrganisationStandardVersion.Comments.Substring(0, Math.Min(secondaryOrganisationStandardVersion.Comments.Length, 500));
                 }
 
@@ -265,7 +265,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                         primaryOrganisationStandardDeliveryArea = new OrganisationStandardDeliveryArea()
                         {
                             DeliveryAreaId = secondaryOrganisationStandardDeliveryArea.DeliveryAreaId,
-                            Comments = $"{secondaryOrganisationStandardDeliveryArea.Comments} ** This delivery area has been merged from Organsation {secondaryOrganisation.EndPointAssessorOrganisationId}",
+                            Comments = $"This delivery area has been acquired from a merge with {secondaryOrganisation.EndPointAssessorOrganisationId} on {DateTime.UtcNow.ToString("dd MMM yyyy")}. {secondaryOrganisationStandardDeliveryArea.Comments}",
                             Status = secondaryOrganisationStandardDeliveryArea.Status,
                             OrganisationStandard = primaryOrganisationStandard,
                             DeliveryArea = secondaryOrganisationStandardDeliveryArea.DeliveryArea,
@@ -274,14 +274,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                         primaryOrganisationStandard.OrganisationStandardDeliveryAreas.Add(primaryOrganisationStandardDeliveryArea);
                     }
 
-                    secondaryOrganisationStandardDeliveryArea.Comments = $"** This delivery area has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                    secondaryOrganisationStandardDeliveryArea.Comments = $"This delivery area has been merged in to {primaryOrganisation.EndPointAssessorOrganisationId} on {DateTime.UtcNow.ToString("dd MMM yyyy")}. {secondaryOrganisationStandardDeliveryArea.Comments}";
                     secondaryOrganisationStandardDeliveryArea.Comments = secondaryOrganisationStandardDeliveryArea.Comments.Substring(0, Math.Min(secondaryOrganisationStandardDeliveryArea.Comments.Length, 500));
                 }
 
                 // Now set the effectiveTo and comments @ToDo: need content
 
                 secondaryOrganisationStandard.EffectiveTo = secondaryStandardsEffectiveTo;
-                secondaryOrganisationStandard.Comments = $"{secondaryOrganisationStandard.Comments} ** this standard has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId}";
+                secondaryOrganisationStandard.Comments = $"This standard has been merged in to Organisation {primaryOrganisation.EndPointAssessorOrganisationId} on {DateTime.UtcNow.ToString("dd MMM yyyy")}. {secondaryOrganisationStandard.Comments}";
                 secondaryOrganisationStandard.Comments = secondaryOrganisationStandard.Comments.Substring(0, Math.Min(secondaryOrganisationStandard.Comments.Length, 500));
             }
         }
