@@ -17,10 +17,10 @@ BEGIN
 		WITH LatestVersions
 		AS (
 			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, Larscode, Duration
-			  FROM (
-			   SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration, 
-					  ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber 
-				 FROM Standards
+			FROM (
+				SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration, 
+					ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, LarsCode ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber 
+				FROM Standards 
 				WHERE VersionApprovedForDelivery IS NOT NULL
 			) sv1 WHERE rownumber = 1
 		)
@@ -90,6 +90,8 @@ BEGIN
 				  ,PaymentStatus
 				  ,UKPRN 
 				  ,LearnRefNumber
+				  ,EmployerAccountId
+				  ,EmployerName
 				  ,CompletionStatus
 			FROM (
 				SELECT *
@@ -141,6 +143,8 @@ BEGIN
 					  ,PaymentStatus
 					  ,UKPRN
 					  ,LearnRefNumber
+					  ,EmployerAccountId
+				 	  ,EmployerName
 					  -- map Approvals date to ILR CompletionStatus value
 					  ,CASE WHEN StopDate IS NOT NULL THEN 3
 							WHEN PauseDate IS NOT NULL THEN 6
@@ -205,7 +209,9 @@ BEGIN
 				ax1.CompletionDate ApprovalsCompletionDate,
 				ax1.PaymentStatus ApprovalsPaymentStatus,
 				il1.LastUpdated LatestIlrs,
-				ax1.LastUpdated LatestApprovals
+				ax1.LastUpdated LatestApprovals,
+				ax1.EmployerAccountId,
+				ax1.EmployerName
 		  FROM ax1 
 		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
 		  WHERE il1.FundingModel != 99
@@ -249,7 +255,9 @@ BEGIN
 				null ApprovalsCompletionDate,
 				null ApprovalsPaymentStatus, 
 				il1.LastUpdated LatestIlrs,
-				null LatestApprovals
+				null LatestApprovals,
+				null EmployerAccountId,
+				null EmployerName
 		  FROM il1 
 		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
 		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
@@ -288,19 +296,20 @@ BEGIN
 			 lm1.ApprovalsCompletionDate = upd.ApprovalsCompletionDate,
 			 lm1.ApprovalsPaymentStatus = upd.ApprovalsPaymentStatus,
 			 lm1.LatestIlrs = upd.LatestIlrs,
-			 lm1.LatestApprovals = upd.LatestApprovals
-
+			 lm1.LatestApprovals = upd.LatestApprovals,
+			 lm1.EmployerAccountId = upd.EmployerAccountId,
+			 lm1.EmployerName = upd.EmployerName
 		WHEN NOT MATCHED THEN
 		INSERT (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
 				Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
 				Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, 
 				LastUpdated, EstimatedEndDate, ApprovalsStopDate, ApprovalsPauseDate, ApprovalsCompletionDate, ApprovalsPaymentStatus,
-				LatestIlrs, LatestApprovals)
+				LatestIlrs, LatestApprovals, EmployerAccountId, EmployerName)
 		VALUES (upd.Id, upd.Uln, upd.GivenNames, upd.FamilyName, upd.UkPrn, upd.StdCode, upd.LearnStartDate, upd.EpaOrgId, upd.FundingModel, upd.ApprenticeshipId,
 				upd.Source, upd.LearnRefNumber, upd.CompletionStatus, upd.PlannedEndDate, upd.DelLocPostCode, upd.LearnActEndDate, upd.WithdrawReason,
 				upd.Outcome, upd.AchDate, upd.OutGrade, upd.Version, upd.VersionConfirmed, upd.CourseOption, upd.StandardUId, upd.StandardReference, upd.StandardName,
 				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
-				upd.LatestIlrs, upd.LatestApprovals);
+				upd.LatestIlrs, upd.LatestApprovals, upd.EmployerAccountId, upd.EmployerName);
 
 		SET @upserted = @@ROWCOUNT;
 
