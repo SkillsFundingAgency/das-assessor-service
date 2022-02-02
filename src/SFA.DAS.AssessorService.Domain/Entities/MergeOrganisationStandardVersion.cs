@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -20,5 +18,20 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Replicates { get; set; }
 
         public virtual MergeOrganisation MergeOrganisation { get; set; }
+
+        public MergeOrganisationStandardVersion() { }
+
+        public MergeOrganisationStandardVersion(OrganisationStandardVersion sourceOrganisationStandardVersion, string replicates)
+        {
+            StandardUid = sourceOrganisationStandardVersion.StandardUId;
+            Version = sourceOrganisationStandardVersion.Version;
+            Replicates = replicates;
+            OrganisationStandardId = sourceOrganisationStandardVersion.OrganisationStandardId;
+            Status = sourceOrganisationStandardVersion.Status;
+            Comments = sourceOrganisationStandardVersion.Comments;
+            DateVersionApproved = sourceOrganisationStandardVersion.DateVersionApproved;
+            EffectiveFrom = sourceOrganisationStandardVersion.EffectiveFrom;
+            EffectiveTo = sourceOrganisationStandardVersion.EffectiveTo;
+        }
     }
 }

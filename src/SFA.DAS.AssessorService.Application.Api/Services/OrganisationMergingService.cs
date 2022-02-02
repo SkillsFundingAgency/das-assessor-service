@@ -163,7 +163,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             foreach (var os in organisation.OrganisationStandards)
             {
-                mo.MergeOrganisationStandards.Add(CreateMergeOrganisationStandard(replicates, os));
+                mo.MergeOrganisationStandards.Add(new MergeOrganisationStandard(os, replicates));
 
                 // Make sure the versions are loaded.
                 _dbContext.Entry(os)
@@ -172,7 +172,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 foreach (var osv in os.OrganisationStandardVersions)
                 {
-                    mo.MergeOrganisationStandardVersions.Add(CreateMergeOrganisationStandardVersion(replicates, osv));
+                    mo.MergeOrganisationStandardVersions.Add(new MergeOrganisationStandardVersion(osv, replicates));
                 }
 
                 // Make sure the areas are loaded.
@@ -181,63 +181,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     .Load();
                 foreach (var osda in os.OrganisationStandardDeliveryAreas)
                 {
-                    mo.MergeOrganisationStandardDeliveryAreas.Add(CreateMergeOrganisationStandardDeliveryArea(replicates, osda));
+                    mo.MergeOrganisationStandardDeliveryAreas.Add(new MergeOrganisationStandardDeliveryArea(osda, replicates));
                 }
             }
         }
-
-        private MergeOrganisationStandard CreateMergeOrganisationStandard(string replicates, OrganisationStandard sourceOrganisationStandard)
-        {
-            var mos = new MergeOrganisationStandard()
-            {
-                EndPointAssessorOrganisationId = sourceOrganisationStandard.EndPointAssessorOrganisationId,
-                StandardCode = sourceOrganisationStandard.StandardCode,
-                StandardReference = sourceOrganisationStandard.StandardReference,
-                EffectiveFrom = sourceOrganisationStandard.EffectiveFrom,
-                EffectiveTo = sourceOrganisationStandard.EffectiveTo,
-                DateStandardApprovedOnRegister = sourceOrganisationStandard.DateStandardApprovedOnRegister,
-                Comments = sourceOrganisationStandard.Comments,
-                Status = sourceOrganisationStandard.Status,
-                ContactId = sourceOrganisationStandard.ContactId,
-                OrganisationStandardData = sourceOrganisationStandard.OrganisationStandardData,
-                OrganisationStandardId = sourceOrganisationStandard.Id,
-                Replicates = replicates,                
-            };
-
-            return mos;
-        }
-        private MergeOrganisationStandardVersion CreateMergeOrganisationStandardVersion(string replicates, OrganisationStandardVersion sourceOrganisationStandardVersion)
-        {
-            var mosv = new MergeOrganisationStandardVersion()
-            {
-                StandardUid = sourceOrganisationStandardVersion.StandardUId,
-                Version = sourceOrganisationStandardVersion.Version,
-                Replicates = replicates,
-                OrganisationStandardId = sourceOrganisationStandardVersion.OrganisationStandardId,
-                Status = sourceOrganisationStandardVersion.Status,
-                Comments = sourceOrganisationStandardVersion.Comments,
-                DateVersionApproved = sourceOrganisationStandardVersion.DateVersionApproved,
-                EffectiveFrom = sourceOrganisationStandardVersion.EffectiveFrom,
-                EffectiveTo = sourceOrganisationStandardVersion.EffectiveTo
-            };
-
-            return mosv;
-        }
-        private MergeOrganisationStandardDeliveryArea CreateMergeOrganisationStandardDeliveryArea(string replicates, OrganisationStandardDeliveryArea sourceOrganisationStandardDeliveryArea)
-        {
-            var mosda = new MergeOrganisationStandardDeliveryArea()
-            {
-                Replicates = replicates,
-                DeliveryAreaId = sourceOrganisationStandardDeliveryArea.DeliveryAreaId,
-                OrganisationStandardId = sourceOrganisationStandardDeliveryArea.OrganisationStandardId,
-                Status = sourceOrganisationStandardDeliveryArea.Status,
-                Comments = sourceOrganisationStandardDeliveryArea.Comments,
-                OrganisationStandardDeliveryAreaId = sourceOrganisationStandardDeliveryArea.Id
-            };
-
-            return mosda;
-        }
-
 
         private void MergeOrganisationStandardsAndVersions(Organisation primaryOrganisation, Organisation secondaryOrganisation, string createdByUser, DateTime secondaryStandardsEffectiveTo)
         {
