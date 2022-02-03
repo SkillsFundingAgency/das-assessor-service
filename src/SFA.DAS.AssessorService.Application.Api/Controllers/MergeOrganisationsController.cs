@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                             {
                                 primaryEPAO = mergeOrganisation.PrimaryEndPointAssessorOrganisationName,
                                 contactName = mergeOrganisation.PrimaryContactName,
-                                effectiveToDate = mergeOrganisation.SecondaryEPAOEffectiveTo,
+                                effectiveToDate = mergeOrganisation.SecondaryEPAOEffectiveTo.ToString("dd MMMM yyyy")
                             }));
                     }
 
