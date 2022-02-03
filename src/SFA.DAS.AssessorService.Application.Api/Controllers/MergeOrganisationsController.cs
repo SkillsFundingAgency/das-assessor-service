@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var mergeOrganisation = await _mediator.Send(mergeOrganisationsRequest);
 
             // Send emails on success
-            if (null != mergeOrganisation && mergeOrganisation.Status == Services.MergeOrganisationStatus.Approved)
+            if (null != mergeOrganisation && mergeOrganisation.Status == Services.MergeOrganisationStatus.Completed)
             {
                 try
                 {
