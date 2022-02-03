@@ -18,11 +18,6 @@ ADD CONSTRAINT FK_MergeDeliveryAreaIdStandardDeliveryArea
 FOREIGN KEY (DeliveryAreaId) REFERENCES [DeliveryArea] (Id);
 GO
 
---ALTER TABLE [MergeOrganisationStandardDeliveryArea]
---ADD CONSTRAINT FK_MergeOrganisationStandardId
---FOREIGN KEY ([OrganisationStandardId]) REFERENCES [OrganisationStandard] ([Id]);
---GO
-
 CREATE UNIQUE INDEX IX_standardMergeDeliveryAreaCoveredIndex
    ON [MergeOrganisationStandardDeliveryArea] ([Id], [OrganisationStandardId], [DeliveryAreaId]);
 GO

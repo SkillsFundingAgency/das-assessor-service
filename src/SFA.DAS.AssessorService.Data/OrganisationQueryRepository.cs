@@ -150,7 +150,6 @@ namespace SFA.DAS.AssessorService.Data
                 pageSize = count == 0 ? 1 : count;
 
             var result = await queryable
-                //.OrderByDescending(q => q.UpdatedAt)
                 .Skip(((pageIndex > 0) ? pageIndex - 1 : 0) * pageSize)
                 .Take(pageSize)
                 .Select(o => new MergeLogEntry() 

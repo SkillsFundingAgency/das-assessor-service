@@ -110,50 +110,5 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
                 return result.FirstOrDefault();
             }
         }
-
-
-
-
-
-        /*
-
-
-
-                public IEnumerable<T> GetList<T>(string sql)
-                {
-                    using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
-                    {
-                        if (connection.State != ConnectionState.Open)
-                            connection.Open();
-                        var result = connection.Query<T>(sql);
-                        connection.Close();
-                        return result;
-                    }
-                }
-
-                public object ExecuteScalar(string sql)
-                {
-                    using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
-                    {
-                        if (connection.State != ConnectionState.Open)
-                            connection.Open();
-                        var result = connection.ExecuteScalar(sql);
-                        connection.Close();
-
-                        return result;
-                    }
-                }
-
-                public void Execute(string sql, TestModel model)
-                {
-                    using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
-                    {
-                        if (connection.State != ConnectionState.Open)
-                            connection.Open();
-                        connection.Execute(sql, model);
-                        connection.Close();
-                    }
-                }
-        */
     }
 }
