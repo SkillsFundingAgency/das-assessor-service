@@ -39,6 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _certificateHistorySession = certificateHistorySession;
         }
 
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public async Task<IActionResult> Index()
         {
             SetDefaultSession();
@@ -48,6 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet(nameof(ResetSession))]
         [CheckSession(nameof(ICertificateHistorySession.CertificateHistorySearchTerm), CheckSession.Ignore)]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public IActionResult ResetSession()
         {
             SetDefaultSession();
@@ -55,6 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet(nameof(Search))]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public async Task<IActionResult> Search(string searchTerm)
         {
             _certificateHistorySession.CertificateHistorySearchTerm = searchTerm?.Trim() ?? string.Empty;
@@ -67,6 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet(nameof(SortCertificateHistory))]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public async Task<IActionResult> SortCertificateHistory(string sortColumn, string sortDirection)
         {
             UpdateCertificateHistorySortDirection(sortColumn, sortDirection);
@@ -74,6 +78,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet(nameof(ChangePageCertificateHistory))]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public async Task<IActionResult> ChangePageCertificateHistory(int pageIndex = DefaultPageIndex)
         {
             _certificateHistorySession.CertificateHistoryPageIndex = pageIndex;
