@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         await _mediator.Send(new SendEmailRequest(mergeOrganisation.PrimaryOrganisationEmail, primaryEmailTemplate,
                             new
                             {
-                                primaryEPAO = mergeOrganisation.PrimaryEndPointAssessorOrganisationName,
+                                secondaryEPAO = mergeOrganisation.SecondaryEndPointAssessorOrganisationName,
                                 contactName = mergeOrganisation.PrimaryContactName,
                                 effectiveToDate = mergeOrganisation.SecondaryEPAOEffectiveTo.ToString("dd MMMM yyyy")
                             }));
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                         await _mediator.Send(new SendEmailRequest(mergeOrganisation.SecondaryOrganisationEmail, secondaryEmailTemplate,
                             new
                             {
-                                secondaryEPAO = mergeOrganisation.SecondaryEndPointAssessorOrganisationName,
+                                primaryEPAO = mergeOrganisation.PrimaryEndPointAssessorOrganisationName,
                                 contactName = mergeOrganisation.SecondaryContactName,
                                 effectiveToDate = mergeOrganisation.SecondaryEPAOEffectiveTo.ToString("dd MMMM yyyy")
                             }));
