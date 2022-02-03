@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
         public FinancialGrade FinancialGrade { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
+        public bool ApplyViaOptIn { get; set; }
         public ApplyData ApplyData { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

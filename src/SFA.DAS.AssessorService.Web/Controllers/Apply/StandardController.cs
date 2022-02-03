@@ -102,7 +102,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
 
             var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
-            
+            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
+
             if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
@@ -123,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // existing approved versions for this standard
                 var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
                 model.SelectedStandard = new StandardVersionApplication(latestStandard);
-                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard).OrderByDescending(x => x.Version).ToList();
+                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard, previousApplications).OrderByDescending(x => x.Version).ToList();
                 return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
             }
             else
@@ -350,7 +351,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         
 
         private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
-            List<ApplicationResponse> previousWithdrawals)
+            List<ApplicationResponse> previousWithdrawals, List<ApplicationResponse> previousApplications)
         {
             bool approved = false;
             bool changed = false;
@@ -392,8 +393,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
+            bool AppliedViaOptIn = false;
             var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
                                                                                         && x.ApplicationStatus == ApplicationStatus.Approved);
+            if (previousApplications != null)
+                AppliedViaOptIn = previousApplications
+                    .Where(w => (w.ApplicationType != StandardApplicationTypes.StandardWithdrawal) &&
+                                (w.ApplicationType != StandardApplicationTypes.VersionWithdrawal) &&
+                                (w.ApplyViaOptIn == true)).Select(x => x.ApplyViaOptIn).FirstOrDefault();
+ 
 
             foreach (var withdrawal in withdrawals)
             {
@@ -408,7 +416,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                 .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                                 .Select(y => y.ApprovedDate).FirstOrDefault();
 
-                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, res.EPAChanged))
+                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, AppliedViaOptIn))
                         {
                             res.VersionStatus = VersionStatus.NewVersionChanged;
                             res.PreviouslyWithdrawn = true;

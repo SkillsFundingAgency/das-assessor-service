@@ -90,6 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application.ApplyData.Apply.StandardReference = request.StandardReference;
                 application.ApplyData.Apply.StandardName = standard.Title;
                 application.ApplyData.Apply.Versions = new List<string>() { request.Version };
+                application.ApplyViaOptIn = true;
 
                 await _applyRepository.SubmitApplicationSequence(application);
 

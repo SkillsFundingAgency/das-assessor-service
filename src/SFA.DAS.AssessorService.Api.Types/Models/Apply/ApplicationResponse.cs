@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public ApplyData ApplyData { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
+        public bool ApplyViaOptIn { get; set; }
         public string CreatedBy { get; set; }
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
