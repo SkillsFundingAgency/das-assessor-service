@@ -27,5 +27,15 @@
         /// Requires tokens: { contactname, standard, standardreference, version }
         /// </summary>
         public const string ApplyEPAOStandardOptin = "ApplyEPAOStandardOptin";
+
+        /// <summary>
+        /// Requires tokens: { primaryEPAO, contactName, effectiveToDate }
+        /// </summary>
+        public const string MergeConfirmationForPrimaryEpao = "MergeConfirmationForPrimaryEpao";
+
+        /// <summary>
+        /// Requires tokens: { secondaryEPAO, contactName, effectiveToDate }
+        /// </summary>
+        public const string MergeConfirmationForSecondaryEpao = "MergeConfirmationForSecondaryEpao";
     }
 }
