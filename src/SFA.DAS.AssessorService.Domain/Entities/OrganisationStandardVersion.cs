@@ -1,15 +1,25 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class OrganisationStandardVersion
     {
         public string StandardUId { get; set; }
+
+        [NotMapped]
         public string Title { get; set; }
+        [NotMapped]
         public int LarsCode { get; set; }
+        [NotMapped]
         public string IFateReferenceNumber { get; set; }
+
+
         public string Version { get; set; }
+
+        [NotMapped]
         public int Level { get; set; }
+
         public int OrganisationStandardId { get; set; }
 
         public DateTime? EffectiveFrom { get; set; }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
@@ -20,5 +22,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> CheckIfOrganisationHasContactsWithSigninId(string endPointAssessorOrganisationId, Guid contactId);
 
         Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard);
+
+        Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId, string status);
+        Task<MergeLogEntry> GetOrganisationMergeLogById(int id);
     }
 }
