@@ -51,10 +51,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return Unit.Value;
         }
 
-        private List<string> AmendReasonsToList(AmendReasons? reprintReasons)
+        private List<string> AmendReasonsToList(AmendReasons? amendReasons)
         {
-            return reprintReasons != null
-                ? reprintReasons.ToString().Split(',').Select(p => p.Trim()).ToList()
+            return amendReasons != null
+                ? amendReasons.ToString().Split(',').Select(p => p.Trim()).ToList()
                 : new List<string>();
         }
     }

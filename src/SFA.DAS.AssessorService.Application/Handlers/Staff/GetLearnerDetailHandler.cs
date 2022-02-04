@@ -186,6 +186,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     ? ((List<string>)propertyInfo.GetValue(prevData) ?? new List<string>()).Listyfy()
                     : propertyInfo.GetValue(prevData)?.ToString();
 
+                if (prevProperty is null && thisProperty is null)
+                    continue;
+
                 if (prevProperty != thisProperty)
                 {
                     if (propertyInfo.PropertyType == typeof(DateTime) && DateTime.TryParse(thisProperty, out var result))

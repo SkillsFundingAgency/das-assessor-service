@@ -54,22 +54,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPost("requestreprint", Name = "RequestReprint")]
+        [HttpPost("request-reprint", Name = "RequestReprint")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> RequestReprint([FromBody] CertificateReprintRequest certificateReprintRequest)
+        public async Task<IActionResult> RequestReprint([FromBody] UpdateCertificateRequestReprintCommand command)
         {
             try
             {
-                await _mediator.Send(certificateReprintRequest);
+                return Ok(await _mediator.Send(command));
             }
             catch (NotFoundException)
             {
                 throw new ResourceNotFoundException();
             }
-
-            return Ok();
         }
 
         [HttpPost("update-with-amend-reason", Name = "UpdateCertificateWithAmendReason")]
