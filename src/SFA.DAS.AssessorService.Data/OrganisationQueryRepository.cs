@@ -4,7 +4,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Extensions;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Data
@@ -108,6 +112,75 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(c => c.Id == contactId);
             
             return contact.Organisation;
+        }
+
+        public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId, string status)
+        {
+            IQueryable<MergeOrganisation> queryable = _assessorDbContext.MergeOrganisations;
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                queryable = queryable.Where(mo => mo.Status == status);
+            }
+            if (!string.IsNullOrWhiteSpace(primaryEPAOId))
+            {
+                queryable = queryable.Where(mo => mo.PrimaryEndPointAssessorOrganisationId == primaryEPAOId);
+            }
+            if (!string.IsNullOrWhiteSpace(secondaryEPAOId))
+            {
+                queryable = queryable.Where(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEPAOId);
+            }
+            if(!string.IsNullOrWhiteSpace(orderBy))
+            {
+                if(!string.IsNullOrWhiteSpace(orderDirection) && orderDirection.Equals("desc", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    queryable = queryable.OrderByDescending(orderBy);
+                }
+                else
+                {
+                    queryable = queryable.OrderBy(orderBy);
+                }
+            }
+            else
+            {
+                queryable = queryable.OrderBy("CompletedAt");
+            }
+            int count = await queryable.CountAsync();
+
+            if (pageSize == 0)
+                pageSize = count == 0 ? 1 : count;
+
+            var result = await queryable
+                .Skip(((pageIndex > 0) ? pageIndex - 1 : 0) * pageSize)
+                .Take(pageSize)
+                .Select(o => new MergeLogEntry() 
+                {
+                    Id = o.Id,
+                    PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
+                    PrimaryEndPointAssessorOrganisationName = o.PrimaryEndPointAssessorOrganisationName,
+                    SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
+                    SecondaryEndPointAssessorOrganisationName = o.SecondaryEndPointAssessorOrganisationName,
+                    CompletedAt = o.CompletedAt,
+                    SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
+                })
+                .ToListAsync();
+
+            return new PaginatedList<MergeLogEntry>(result, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+        }
+
+        public async Task<MergeLogEntry> GetOrganisationMergeLogById(int id)
+        {
+            var o = await _assessorDbContext.MergeOrganisations.FirstOrDefaultAsync(mo => mo.Id == id);
+            if (null == o) return null;
+            return new MergeLogEntry()
+            {
+                Id = o.Id,
+                PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
+                PrimaryEndPointAssessorOrganisationName = o.PrimaryEndPointAssessorOrganisationName,
+                SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
+                SecondaryEndPointAssessorOrganisationName = o.SecondaryEndPointAssessorOrganisationName,
+                CompletedAt = o.CompletedAt,
+                SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
+            };
         }
     }
 }

@@ -177,6 +177,12 @@
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
     <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
     <None Include="PostDeploymentScripts\SV-1290-RemoveOldStandardCollationTables.sql" />
+    <Build Include="Tables\MergeOrganisations.sql" />
+    <Build Include="Tables\MergeOrganisationStandard.sql" />
+    <Build Include="Tables\MergeOrganisationStandardDeliveryArea.sql" />
+    <Build Include="Tables\MergeOrganisationStandardVersion.sql" />
+    <Build Include="Tables\MergeApply.sql" />
+    <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
