@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificatesHistoryHandlerTests
 {
@@ -40,10 +41,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         {
             MappingBootstrapper.Initialize();
 
-            var certificates = Builder<Certificate>.CreateListOfSize(10)
+            var certificates = Builder<CertificateHistoryModel>.CreateListOfSize(10)
                 .All()
-                .With(q => q.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().Build()))
-                .With(q => q.IsPrivatelyFunded = false)
                 .With(x => x.CertificateLogs = Builder<CertificateLog>.CreateListOfSize(2)
                     .TheFirst(1)
                         .With(q => q.Status = CertificateStatus.Submitted)
@@ -56,7 +55,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
                         .With(q => q.Username = SystemUsers.PrintFunction)
                         .With(q => q.EventTime = SubmitDateTime.AddDays(1))
                     .Build().ToList())
-                .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .Build().ToList();
 
             _certificateRepositoryMock = new Mock<ICertificateRepository>();
@@ -64,12 +62,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
                 .Setup(r => r.GetCertificateHistory(
                     It.IsAny<string>(),
                     It.IsAny<int>(),
-                    It.IsAny<int>(), 
+                    It.IsAny<int>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<bool>(),
                     It.IsAny<List<string>>()))
-                .ReturnsAsync(new PaginatedList<Certificate>(certificates, 40, 1, ResultPageSize));
+                .ReturnsAsync(new PaginatedList<CertificateHistoryModel>(certificates, 40, 1, ResultPageSize));
 
             _contactQueryRepositoryMock = new Mock<IContactQueryRepository>();
             _contactQueryRepositoryMock.Setup(r => r.GetContact(SubmitUsername)).ReturnsAsync(new Contact
@@ -79,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
 
             _roatpApiClientMock = new Mock<IRoatpApiClient>();
             _roatpApiClientMock.Setup(r => r.GetOrganisationByUkprn(It.IsAny<long>()))
-                .ReturnsAsync( new OrganisationSearchResult
+                .ReturnsAsync(new OrganisationSearchResult
                 {
                     ProviderName = "TestProvider",
                     Ukprn = 123456789
@@ -93,10 +91,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
                     _loggermock.Object);
 
             _result = sut.Handle(new GetCertificateHistoryRequest
-                {
-                    PageIndex = 1,
-                    EndPointAssessorOrganisationId = "12345677"
-                }, new CancellationToken())
+            {
+                PageIndex = 1,
+                EndPointAssessorOrganisationId = "12345677"
+            }, new CancellationToken())
                 .Result;
         }
 
