@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -302,7 +303,7 @@ namespace SFA.DAS.AssessorService.Data
             await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
         }
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string endPointAssessorOrganisationId,
+        public async Task<PaginatedList<CertificateHistoryModel>> GetCertificateHistory(string endPointAssessorOrganisationId,
                 int pageIndex,
                 int pageSize,
                 string searchTerm,
@@ -334,12 +335,49 @@ namespace SFA.DAS.AssessorService.Data
             certificatesQuery = GetSortedCertificateInfo(sortDescending, sort, certificatesQuery);
 
             var certificates = await certificatesQuery
+                 .Select(q => new CertificateHistoryModel
+                 {
+                     Id = q.Id,
+                     AchievementDate = q.AchievementDate,
+                     CertificateReference = q.CertificateReference,
+                     ContactAddLine1 = q.ContactAddLine1,
+                     ContactAddLine2 = q.ContactAddLine2,
+                     ContactAddLine3 = q.ContactAddLine3,
+                     ContactAddLine4 = q.ContactAddLine4,
+                     ContactName = q.ContactName,
+                     ContactOrganisation = q.ContactOrganisation,
+                     ContactPostCode = q.ContactPostCode,
+                     CourseOption = q.CourseOption,
+                     CreateDay = q.CreateDay,
+                     CreatedAt = q.CreatedAt,
+                     CreatedBy = q.CreatedBy,
+                     FullName = q.FullName,
+                     LearnRefNumber = q.LearnRefNumber,
+                     LearningStartDate = q.LearningStartDate,
+                     OrganisationId = q.OrganisationId,
+                     OverallGrade = q.OverallGrade,
+                     ProviderName = q.ProviderName,
+                     ProviderUkPrn = q.ProviderUkPrn,
+                     StandardCode = q.StandardCode,
+                     StandardLevel = q.StandardLevel,
+                     StandardName = q.StandardName,
+                     StandardReference = q.StandardReference,
+                     Status = q.Status,
+                     Uln = q.Uln,
+                     UpdatedAt = q.UpdatedAt,
+                     UpdatedBy = q.UpdatedBy,
+                     Version = q.Version,
+                     EndPointAssessorUkprn = q.Organisation.EndPointAssessorUkprn,
+                     StatusAt = q.CertificateBatchLog.StatusAt,
+                     ReasonForChange = q.CertificateBatchLog.ReasonForChange,
+                     CertificateLogs = q.CertificateLogs
+                 })
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
 
             var count = await certificatesQuery.Select(x => x.Id).CountAsync();
 
-            return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
+            return new PaginatedList<CertificateHistoryModel>(certificates, count, pageIndex, pageSize);
         }
 
         private IQueryable<Certificate> GetSortedCertificateInfo(bool sortDescending, GetCertificateHistoryRequest.SortColumns sort, IQueryable<Certificate> certificatesQuery)

@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.Extensions;
@@ -61,27 +62,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return await certificateHistoryResponses;
         }
 
-        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<CertificateHistoryModel> certificates)
         {
             var certificateResponses = certificates?.Items.Select(
                 certificate =>
                 {
-                    var latestCertificateStatusDate = certificate.LatestChange().Value;
-
-                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    var latestCertificateStatusDate = (new[] { certificate.UpdatedAt, certificate.CreatedAt }.Max()).Value;
 
                     var recordedBy = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
                                 certificateLog.Action == Domain.Consts.CertificateActions.Submit)?.Username;
 
-                    var printStatusAt = certificate.CertificateBatchLog?.StatusAt;
-                    var printReasonForChange = certificate.CertificateBatchLog?.ReasonForChange;
+                    var printStatusAt = certificate?.StatusAt;
+                    var printReasonForChange = certificate?.ReasonForChange;
 
                     var trainingProviderName = string.Empty;
                     try
                     {
-                        if (certificateData.ProviderName == null)
+                        if (certificate.ProviderName == null)
                         {
                             var provider = _roatpApiClient
                                 .GetOrganisationByUkprn(certificate.ProviderUkPrn).Result;
@@ -96,14 +95,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         }
                         else
                         {
-                            trainingProviderName = certificateData.ProviderName;
+                            trainingProviderName = certificate.ProviderName;
                         }
                     }
                     catch (EntityNotFoundException)
                     {
-                        if (certificate.Organisation.EndPointAssessorUkprn != null)
+                        if (certificate.EndPointAssessorUkprn != null)
                             _logger.LogInformation(
-                                $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
+                                $"Cannot find training provider for ukprn {certificate.EndPointAssessorUkprn.Value}");
                     }
 
                     return new CertificateSummaryResponse
@@ -114,24 +113,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CreatedDay = certificate.CreateDay,
                         UpdatedAt = certificate.UpdatedAt,
                         PrintStatusAt = printStatusAt,
-                        ContactOrganisation = certificateData.ContactOrganisation,
-                        ContactName = certificateData.ContactName,
+                        ContactOrganisation = certificate.ContactOrganisation,
+                        ContactName = certificate.ContactName,
                         TrainingProvider = trainingProviderName,
                         RecordedBy = recordedBy,
-                        CourseOption = certificateData.CourseOption,
-                        FullName = certificateData.FullName,
-                        OverallGrade = certificateData.OverallGrade,
-                        StandardReference = certificateData.StandardReference,
-                        StandardName = certificateData.StandardName,
-                        Version = certificateData.Version,
-                        Level = certificateData.StandardLevel,
-                        AchievementDate = certificateData.AchievementDate,
-                        LearningStartDate = certificateData.LearningStartDate,
-                        ContactAddLine1 = certificateData.ContactAddLine1,
-                        ContactAddLine2 = certificateData.ContactAddLine2,
-                        ContactAddLine3 = certificateData.ContactAddLine3,
-                        ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode,
+                        CourseOption = certificate.CourseOption,
+                        FullName = certificate.FullName,
+                        OverallGrade = certificate.OverallGrade,
+                        StandardReference = certificate.StandardReference,
+                        StandardName = certificate.StandardName,
+                        Version = certificate.Version,
+                        Level = certificate.StandardLevel,
+                        AchievementDate = certificate.AchievementDate,
+                        LearningStartDate = certificate.LearningStartDate,
+                        ContactAddLine1 = certificate.ContactAddLine1,
+                        ContactAddLine2 = certificate.ContactAddLine2,
+                        ContactAddLine3 = certificate.ContactAddLine3,
+                        ContactAddLine4 = certificate.ContactAddLine4,
+                        ContactPostCode = certificate.ContactPostCode,
                         Status = certificate.Status,
                         ReasonForChange = printReasonForChange,
                         LatestStatusDatetime = latestCertificateStatusDate
