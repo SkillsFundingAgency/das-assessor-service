@@ -100,7 +100,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
                  .Excluding(c => c.FullName)
                  .Excluding(c => c.ContactOrganisation)
                  .Excluding(c => c.ProviderName)
-                 .Excluding(c => c.UpdatedBy));
+                 .Excluding(c => c.UpdatedBy)
+                 .Excluding(c => c.ContactName)
+                 .Excluding(c => c.CourseOption)
+                 .Excluding(c => c.OverallGrade)
+                 .Excluding(c => c.StandardReference)
+                 .Excluding(c => c.StandardName)
+
+                 .Excluding(c => c.Version)
+                 .Excluding(c => c.StandardLevel)
+                 .Excluding(c => c.AchievementDate)
+                 .Excluding(c => c.LearningStartDate)
+
+                 .Excluding(c => c.ContactAddLine1)
+                 .Excluding(c => c.ContactAddLine2)
+                 .Excluding(c => c.ContactAddLine3)
+                 .Excluding(c => c.ContactAddLine4)
+                 .Excluding(c => c.ContactPostCode));
         }
 
         [Test]
