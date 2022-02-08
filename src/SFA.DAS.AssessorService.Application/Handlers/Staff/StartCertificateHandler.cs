@@ -128,8 +128,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certData.LearnerFamilyName = learner.FamilyName;
             certData.LearningStartDate = learner.LearnStartDate;
             certData.FullName = $"{learner.GivenNames} {learner.FamilyName}";
-            certData.ProviderName = provider.Name;
-                        
+            certData.ProviderName = provider?.Name;
+
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;
             certificate.LearnRefNumber = learner.LearnRefNumber;
