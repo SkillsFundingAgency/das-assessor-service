@@ -64,16 +64,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version);
 
-                if (request.OptInFollowingWithdrawal)
+                if (request.OptInFollowingWithdrawal && existingVersion != null)
                 {
-                    if (existingVersion != null)
-                        await _repository.UpdateOrganisationStandardVersion(entity);
+                    await _repository.UpdateOrganisationStandardVersion(entity);
+                }
+                else if (existingVersion != null)
+                {
+                    throw new InvalidOperationException("OrganisationStandardVersion already exists");
                 }
                 else
-                {
-                    if (existingVersion != null)
-                        throw new InvalidOperationException("OrganisationStandardVersion already exists");
-
+                { 
                     await _repository.CreateOrganisationStandardVersion(entity);
                 }
 
