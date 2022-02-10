@@ -155,21 +155,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
                 else
                 {
-                    thisLog.DifferencesToPrevious = new Dictionary<string, string>();
+                    thisLog.DifferencesToPrevious = new List<CertificateLogSummary.Difference>();
                 }
             }
         }
 
-        private Dictionary<string, string> GetChanges(CertificateLogSummary thisLog, CertificateLogSummary prevLog)
+        private List<CertificateLogSummary.Difference> GetChanges(CertificateLogSummary thisLog, CertificateLogSummary prevLog)
         {
-            var changes = new Dictionary<string, string>();
-            
+            var changes = new List<CertificateLogSummary.Difference>();
+
             var thisData = JsonConvert.DeserializeObject<CertificateData>(thisLog.CertificateData);
             var prevData = JsonConvert.DeserializeObject<CertificateData>(prevLog.CertificateData);
             
             // do not use generic change calculation for some properties
             var ignoreProperties = new string[] { nameof(CertificateData.EpaDetails),
-                nameof(CertificateData.ReprintReasons), nameof(CertificateData.AmendReasons), nameof(CertificateData.IncidentNumber) };
+                nameof(CertificateData.ReprintReasons), nameof(CertificateData.AmendReasons) };
 
             foreach (var propertyInfo in thisData.GetType().GetProperties())
             {
@@ -178,48 +178,54 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 
                 var propertyIsList = propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType == typeof(List<string>);
 
-                var thisProperty = propertyIsList
-                    ? ((List<string>)propertyInfo.GetValue(thisData) ?? new List<string>()).Listyfy()
-                    : propertyInfo.GetValue(thisData)?.ToString();
-
-                var prevProperty = propertyIsList
-                    ? ((List<string>)propertyInfo.GetValue(prevData) ?? new List<string>()).Listyfy()
-                    : propertyInfo.GetValue(prevData)?.ToString();
-
+                var thisProperty = propertyInfo.GetValue(thisData)?.ToString();
+                var prevProperty = propertyInfo.GetValue(prevData)?.ToString();
+                
                 if (prevProperty is null && thisProperty is null)
                     continue;
 
-                if (prevProperty != thisProperty)
+                if (thisProperty != prevProperty)
                 {
                     if (propertyInfo.PropertyType == typeof(DateTime) && DateTime.TryParse(thisProperty, out var result))
                     {
                         thisProperty = result.UtcToTimeZoneTime().ToShortDateString();
                     }
 
-                    var value = string.IsNullOrEmpty(thisProperty)
-                            ? "&lt;Empty&gt;"
-                            : thisProperty;
-
-                    changes.Add(propertyInfo.Name.Spaceyfy(), value);
+                    changes.Add(new CertificateLogSummary.Difference 
+                    { 
+                        Key = propertyInfo.Name.Spaceyfy(), 
+                        Values = new List<string>
+                        { 
+                            string.IsNullOrEmpty(thisProperty)
+                                ? "<Empty>"
+                                : thisProperty
+                        }
+                    });
                 }
             }
 
-            // always populate the incident number and the reprint or amend reasons in the changes
-            if(thisLog.Action == CertificateActions.ReprintReason)
+            // always populate the incident number and reprint or amend reasons in the changes
+            if (thisLog.Action == CertificateActions.ReprintReason || thisLog.Action == CertificateActions.AmendReason)
             {
-                var reprintReasons = thisData.ReprintReasons?.Select(p => Enum.TryParse(p, out ReprintReasons reprintReason)
-                    ? reprintReason.AsString(EnumFormat.Description) : p).ToList();
+                if (!changes.Exists(p => p.Key == nameof(CertificateData.IncidentNumber).Spaceyfy()))
+                {
+                    changes.Add(new CertificateLogSummary.Difference { Key = nameof(CertificateData.IncidentNumber).Spaceyfy(), Values = new List<string> { thisData.IncidentNumber } });
+                }
 
-                changes.Add(nameof(CertificateData.IncidentNumber).Spaceyfy(), thisData.IncidentNumber);
-                changes.Add(nameof(CertificateData.ReprintReasons).Spaceyfy(), reprintReasons.Listyfy());
-            }
-            else if(thisLog.Action == CertificateActions.AmendReason)
-            {
-                var amendReasons = thisData.AmendReasons?.Select(p => Enum.TryParse(p, out AmendReasons amendReason)
-                    ? amendReason.AsString(EnumFormat.Description) : p).ToList();
+                if (thisLog.Action == CertificateActions.ReprintReason)
+                {
+                    var reprintReasons = thisData.ReprintReasons?.Select(p => Enum.TryParse(p, out ReprintReasons reprintReason)
+                        ? reprintReason.AsString(EnumFormat.Description) : p).ToList();
 
-                changes.Add(nameof(CertificateData.IncidentNumber).Spaceyfy(), thisData.IncidentNumber);
-                changes.Add(nameof(CertificateData.AmendReasons).Spaceyfy(), amendReasons.Listyfy());
+                    changes.Add(new CertificateLogSummary.Difference { Key = nameof(CertificateData.ReprintReasons).Spaceyfy(), Values = reprintReasons, IsList = true });
+                }
+                else if (thisLog.Action == CertificateActions.AmendReason)
+                {
+                    var amendReasons = thisData.AmendReasons?.Select(p => Enum.TryParse(p, out AmendReasons amendReason)
+                        ? amendReason.AsString(EnumFormat.Description) : p).ToList();
+
+                    changes.Add(new CertificateLogSummary.Difference { Key = nameof(CertificateData.AmendReasons).Spaceyfy(), Values = amendReasons, IsList = true });
+                }
             }
 
             return changes;
@@ -242,12 +248,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
 
             return spaceyfiedString;
-        }
-
-        public static string Listyfy(this List<string> target)
-        {
-            var li = string.Join(string.Empty, target.SelectMany(x => string.Format("<li>{0}</li>", x)).ToList());
-            return $"<ul class=\"govuk-list govuk-list--bullet\">{li}</ul>";
         }
     }
 }
