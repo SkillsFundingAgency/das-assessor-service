@@ -157,6 +157,27 @@
             }
         },
         {
+            "apiVersion": "2021-04-01",
+            "name": "das-assessor-service-active-sandbox-sql-firewall-rule",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'sql-server-firewall-rules.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serverName": {
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "subnetResourceIdList": {
+                        "value": "[createArray(reference('active-sandbox-app-service-subnet').outputs.SubnetResourceId.value)]"
+                    }
+                }
+            }
+        },
+        {
             "apiVersion": "2020-10-01",
             "name": "sandbox-external-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
