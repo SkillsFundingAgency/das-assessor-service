@@ -767,11 +767,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
-            string applicationStatus = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo).Status;
-            if (applicationStatus == ApplicationSequenceStatus.InProgress || applicationStatus == ApplicationSequenceStatus.FeedbackAdded)
+            if (application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
             {
-                var org = await _orgApiClient.GetOrganisationByName(application.EndPointAssessorName.ToString());
-                var financialExpired = await IsFinancialExpired(org.EndPointAssessorOrganisationId, "StartOrResumeApplication", "Application");
+                var financialExpired = await IsFinancialExpired(application.OrganisationId.ToString(), "StartOrResumeApplication", "Application");
                 if (financialExpired.FinancialInfoStage1Expired)
                 {
                     return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
