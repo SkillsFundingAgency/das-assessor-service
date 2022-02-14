@@ -127,12 +127,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-            //If financial review is outstanding then redirect
-            var financialExpired = await IsFinancialExpired(contact.EndPointAssessorOrganisationId, "StartOrResumeApplication", "Application");
-            if (financialExpired.FinancialInfoStage1Expired)
-            {
-                return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
-            }
+            ////If financial review is outstanding then redirect
+            //var financialExpired = await IsFinancialExpired(contact.EndPointAssessorOrganisationId, "StartOrResumeApplication", "Application");
+            //if (financialExpired.FinancialInfoStage1Expired)
+            //{
+            //    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
+            //}
 
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
@@ -1304,14 +1304,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, 1, 10);
 
-                var financialAssessmentExempt = !string.IsNullOrWhiteSpace(organisation.FinancialReviewStatus) && (organisation.FinancialReviewStatus == ApplyTypes.FinancialReviewStatus.Exempt);
-                if (!financialAssessmentExempt)
+                var orgDataFinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
+                var orgDataFinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
+                var orgTypeFinancialExempt = organisation.FinancialReviewStatus;
+
+                if ((!orgDataFinancialExempt.HasValue) || (orgDataFinancialExempt.Value == false))
                 {
-                    var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
-                    if (null != financialDueDate && (financialDueDate.Value.Date < DateTime.UtcNow.Date))
+                    if ((!orgDataFinancialDueDate.HasValue) || (orgDataFinancialDueDate.Value.Date < DateTime.UtcNow.Date))
                     {
-                        model.FinancialInfoStage1Expired = true;
-                        model.FinancialAssessmentUrl = this.Url.Action(redirAction, redirController);
+                        if (orgTypeFinancialExempt != ApplyTypes.FinancialReviewStatus.Exempt)
+                        {
+                            model.FinancialInfoStage1Expired = true;
+                            model.FinancialAssessmentUrl = this.Url.Action(redirAction, redirController);
+                        }
                     }
                 }
             }

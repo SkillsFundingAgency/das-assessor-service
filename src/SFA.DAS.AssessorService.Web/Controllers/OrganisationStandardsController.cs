@@ -57,19 +57,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
                 {
-                    model.ApprovedStandardsWithVersions =
-                        await _standardsApiClient.GetEpaoRegisteredStandards(
-                            organisation.OrganisationId, pageIndex ?? 1, 10);
+                    model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, 1, 10);
 
-                    var financialAssessmentExempt = !string.IsNullOrWhiteSpace(organisation.FinancialReviewStatus) && (organisation.FinancialReviewStatus == ApplyTypes.FinancialReviewStatus.Exempt);
-                    if (!financialAssessmentExempt)
+                    var orgDataFinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
+                    var orgDataFinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
+                    var orgTypeFinancialExempt = organisation.FinancialReviewStatus;
+
+                    if ((!orgDataFinancialExempt.HasValue) || (orgDataFinancialExempt.Value == false))
                     {
-                        var financialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
-
-                        if (null == financialDueDate || (financialDueDate.Value.Date < DateTime.UtcNow.Date))
+                        if ((!orgDataFinancialDueDate.HasValue) || (orgDataFinancialDueDate.Value.Date < DateTime.UtcNow.Date))
                         {
-                            model.FinancialInfoStage1Expired = true;
-                            model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
+                            if (orgTypeFinancialExempt != ApplyTypes.FinancialReviewStatus.Exempt)
+                            {
+                                model.FinancialInfoStage1Expired = true;
+                                model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
+                            }
                         }
                     }
                 }
