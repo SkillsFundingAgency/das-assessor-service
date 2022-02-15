@@ -38,6 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
@@ -50,6 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
             _standardsApiClient = standardsApiClient;
+            _contextAccessor = httpContextAccessor;
             _config = config;
             _logger = logger;
         }
@@ -113,12 +115,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> StandardApplications()
         {
             var userId = await GetUserId();
-
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             var existingApplications = (await _applicationApiClient.GetStandardApplications(userId))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined)
                 .ToList();
+            var financialExpired = await IsFinancialExpired(epaoid, "StartOrResumeApplication", "Application");
 
-            return View(existingApplications);
+            ApplicationResponseViewModel applicationsResponseVm = new ApplicationResponseViewModel();
+            applicationsResponseVm.ApplicationResponse = existingApplications;
+            applicationsResponseVm.FinancialInfoStage1Expired = financialExpired.FinancialInfoStage1Expired;
+            applicationsResponseVm.FinancialAssessmentUrl = financialExpired.FinancialAssessmentUrl;
+
+            return View(applicationsResponseVm);
         }
 
         [HttpPost("/Application")]
@@ -1296,14 +1304,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         }
 
-        public async Task<ApprovedStandardsWithVersionsViewModel> IsFinancialExpired(string epaoId, string redirAction, string redirController)
+        public async Task<FinancialExpiredViewModel> IsFinancialExpired(string epaoId, string redirAction, string redirController)
         {
-            var model = new ApprovedStandardsWithVersionsViewModel();
+            var model = new FinancialExpiredViewModel();
             var organisation = await _orgApiClient.GetEpaOrganisation(epaoId);
             if (organisation != null)
             {
-                model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, 1, 10);
-
                 var orgDataFinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
                 var orgDataFinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
                 var orgTypeFinancialExempt = organisation.FinancialReviewStatus;
