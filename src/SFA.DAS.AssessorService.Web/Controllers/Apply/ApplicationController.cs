@@ -135,13 +135,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-            ////If financial review is outstanding then redirect
-            //var financialExpired = await IsFinancialExpired(contact.EndPointAssessorOrganisationId, "StartOrResumeApplication", "Application");
-            //if (financialExpired.FinancialInfoStage1Expired)
-            //{
-            //    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
-            //}
-
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
 
@@ -165,7 +158,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             return await StartApplication();
         }
-        
+
+        public IActionResult FinancialExpiredRedir()
+        {
+            FinancialExpiredViewModel financialExpiredVM = new FinancialExpiredViewModel();
+            financialExpiredVM.FinancialInfoStage1Expired = true;
+            financialExpiredVM.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
+            return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpiredVM);
+        }
 
         [HttpGet("/Application/{Id}")]
         [ApplicationAuthorize(routeId: "Id")]
