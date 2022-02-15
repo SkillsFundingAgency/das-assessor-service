@@ -775,9 +775,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
-            if (application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-            {
+            bool qnaFinancialQuestionsComplete = false;
+            var financialQnAComplete = sections.Where(w => w.SectionNo == 3 && w.SequenceNo == 1);
+            if (financialQnAComplete != null)
+                qnaFinancialQuestionsComplete = financialQnAComplete.Select(w => w.QnAData.Pages[0].Complete).FirstOrDefault();
+
+            if (qnaFinancialQuestionsComplete != true && application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+            {               
                 var financialExpired = await IsFinancialExpired(application.OrganisationId.ToString(), "StartOrResumeApplication", "Application");
+            
                 if (financialExpired.FinancialInfoStage1Expired)
                 {
                     return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
