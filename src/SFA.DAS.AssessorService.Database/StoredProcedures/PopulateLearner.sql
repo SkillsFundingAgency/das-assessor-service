@@ -42,7 +42,7 @@ BEGIN
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode 
 			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
-			  AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
+			  AND (le3.Id IS NULL OR le3.LatestApprovals IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		,
@@ -120,6 +120,7 @@ BEGIN
 					   END
 					  ,CreatedOn DESC ) as rownumber
 				FROM (
+					SELECT * FROM (
 				-- inner query gets all records for each learner, ORDER BY CreatedOn desc - there can be many but two iterations should be sufficient
 					SELECT ApprenticeshipId
 					  ,FirstName
@@ -152,8 +153,9 @@ BEGIN
 					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
 					FROM ApprovalsExtract ap1
  					JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
+					) ax2
 					WHERE 1=1
-					  AND NOT (StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted
+					  AND NOT (UKPRN_1 !=0 AND StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted and not the only record
 				) ab2
 			) ab3 WHERE rownumber = 1
 			) Apx 
