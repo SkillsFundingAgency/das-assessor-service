@@ -74,6 +74,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<List<ApplicationResponse>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/withdrawn/{standardCode}"))
+            {
+                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve previous applications");
+            }
+        }
+
+        public async Task<List<ApplicationResponse>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/previous/{standardReference}"))
+                {
+                    return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve previous applications");
+                }
+            }
+            catch
+            {
+                return new List<ApplicationResponse>();
+            }
+        }
+
         public async Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/createApplication"))
@@ -92,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<bool> SubmitApplicationSequence(SubmitApplicationSequenceRequest submitApplicationRequest)
         {
-          
+
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplicationSequence"))
             {
                 return await PostPutRequestWithResponse<SubmitApplicationSequenceRequest, bool>(request, submitApplicationRequest);
