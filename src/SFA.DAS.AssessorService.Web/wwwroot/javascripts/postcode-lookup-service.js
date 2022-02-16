@@ -8,7 +8,7 @@
 
   $("#enterAddressManually").on("click", function(e) {
     e.preventDefault();
-    $("#addressManualWrapper").unbind("click");
+    $("#addressManualWrapper").off("click");
     $(
       ".js-address-panel, .js-select-previous-address, .js-search-address-heading, #address-lookup"
     ).addClass("hidden");
@@ -18,8 +18,8 @@
     $("#Employer").focus();
   });
 
-  $("#addressManualWrapper, button[type=submit]").bind("click", function() {
-    $(this).unbind("click");
+  $("#addressManualWrapper, button[type=submit]").on("click", function() {
+    $(this).off("click");
   });
 
   $("#postcode-search").keyup(function() {

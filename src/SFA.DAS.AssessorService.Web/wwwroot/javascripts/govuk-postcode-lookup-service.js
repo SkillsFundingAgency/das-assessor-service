@@ -26,7 +26,7 @@
         searchAgain();
     });
 
-    $("#postcode-search").keyup(function () {
+    $("#postcode-search").on('keyup', function () {
         findAddressVal = $(this).val();
     });
 
