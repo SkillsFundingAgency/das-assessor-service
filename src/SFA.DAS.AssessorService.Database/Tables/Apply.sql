@@ -16,7 +16,8 @@ CREATE TABLE [Apply](
 	[DeletedBy] [nvarchar](256) NULL,
     [StandardApplicationType]  NVARCHAR(60) NULL ,  
     [StandardReference] NVARCHAR(10) NULL ,    
- CONSTRAINT [PK_Apply] PRIMARY KEY CLUSTERED 
+	[ApplyViaOptIn] BIT NULL DEFAULT 0, 
+    CONSTRAINT [PK_Apply] PRIMARY KEY CLUSTERED 
  (
 	[Id] ASC
  )
