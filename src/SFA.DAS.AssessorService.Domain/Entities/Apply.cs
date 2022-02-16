@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
         public string StandardReference { get; set; }
+        public bool ApplyViaOptIn { get; set; }
     }
 
     // Entity used by EF in AssessorDbContext - flattens applydata and financialgrade
