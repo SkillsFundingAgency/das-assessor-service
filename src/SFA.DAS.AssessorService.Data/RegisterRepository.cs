@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas)
+            List<int> deliveryAreas, bool applyFollowingWithdrawal=false)
         {
             var osdaId = (await _unitOfWork.Connection.QueryAsync<string>(
                 "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
@@ -159,18 +159,48 @@ namespace SFA.DAS.AssessorService.Data
                 "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
                     new { osdaId });
 
-            await _unitOfWork.Connection.ExecuteAsync(
-                @"UPDATE [OrganisationStandardVersion] 
-                        SET [EffectiveFrom] = @effectiveFrom,
-                            [EffectiveTo] = @effectiveTo
-                        WHERE
-                            [OrganisationStandardId] = @id",
-                new
+
+            if (null != orgStandard.StandardVersions && applyFollowingWithdrawal)
+            {
+                foreach (var version in orgStandard.StandardVersions)
                 {
-                    orgStandard.EffectiveFrom,
-                    orgStandard.EffectiveTo,
-                    orgStandard.Id
-                });
+                    var standardUid = $"{orgStandard.StandardReference.Trim()}_{version.Trim()}";
+
+                    await _unitOfWork.Connection.ExecuteAsync(
+                         "IF NOT EXISTS (select * from OrganisationStandardVersion where StandardUId = @StandardUid and Version = @version and OrganisationStandardId = @OrganisationStandardId) " +
+                            "INSERT INTO OrganisationStandardVersion (StandardUid, Version, OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status) " +
+                                "VALUES(@StandardUid, @Version, @OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, 'Live') " +
+                         "ELSE " +
+                         "UPDATE [OrganisationStandardVersion] SET[EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @effectiveTo " +
+                                "WHERE StandardUId = @StandardUid and Version = @version and OrganisationStandardId = @OrganisationStandardId"
+                            ,
+                            new
+                            {
+                                standardUid,
+                                version,
+                                OrganisationStandardId = osdaId,
+                                orgStandard.EffectiveFrom,
+                                orgStandard.EffectiveTo,
+                                DateVersionApproved = orgStandard.DateStandardApprovedOnRegister,
+                                orgStandard.Comments
+                            });
+                }
+            }
+            else
+            {
+                await _unitOfWork.Connection.ExecuteAsync(
+                        @"UPDATE [OrganisationStandardVersion] 
+                                                    SET [EffectiveFrom] = @effectiveFrom,
+                                                        [EffectiveTo] = @effectiveTo
+                                                    WHERE
+                                                        [OrganisationStandardId] = @id",
+                        new
+                        {
+                            orgStandard.EffectiveFrom,
+                            orgStandard.EffectiveTo,
+                            orgStandard.Id
+                        });
+            }
 
             return osdaId;
         }
