@@ -134,14 +134,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 var certificateData = Builder<CertificateData>.CreateNew()
                     .With(ecd => ecd.SendTo = sendTo)
-                    /*.With(ecd => ecd.ContactName = "ContactName")
-                    .With(ecd => ecd.Department = "Department")
-                    .With(ecd => ecd.ContactOrganisation = "ContactOrganisation")
-                    .With(ecd => ecd.ContactAddLine1 = "ContactAddLine1")
-                    .With(ecd => ecd.ContactAddLine2 = "ContactAddLine2")
-                    .With(ecd => ecd.ContactAddLine3 = "ContactAddLine3")
-                    .With(ecd => ecd.ContactAddLine4 = "ContactAddLine4")
-                    .With(ecd => ecd.ContactPostCode = "ContactPostCode")*/
                     .Build();
 
                 var certificate = Builder<Certificate>.CreateNew()
