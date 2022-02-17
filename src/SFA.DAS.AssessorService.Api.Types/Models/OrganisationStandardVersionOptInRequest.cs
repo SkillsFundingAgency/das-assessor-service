@@ -21,6 +21,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Status { get; set; }
 
         public Guid SubmittingContactId { get; set; }
+
+        public bool OptInFollowingWithdrawal { get; set; }
     }
 
 }

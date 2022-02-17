@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Data.Apply
 {
     public class ApplyRepository : Repository, IApplyRepository
-    {        
+    {
         private readonly ILogger<ApplyRepository> _logger;
 
         public ApplyRepository(IUnitOfWork unitOfWork, ILogger<ApplyRepository> logger)
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         public async Task<Domain.Entities.Apply> GetApply(Guid applicationId)
         {
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(
-                @"SELECT * FROM Apply WHERE Id = @applicationId AND DeletedAt IS NULL", 
+                @"SELECT * FROM Apply WHERE Id = @applicationId AND DeletedAt IS NULL",
                 param: new { applicationId },
                 transaction: _unitOfWork.Transaction);
         }
@@ -88,6 +88,36 @@ namespace SFA.DAS.AssessorService.Data.Apply
             return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
                 sql: query,
                 param: new { userId, sequenceNos },
+                transaction: _unitOfWork.Transaction)).ToList();
+        }
+
+        public async Task<List<ApplySummary>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode)
+        {
+            var query = $@"SELECT * from [dbo].[Apply] 
+                        WHERE organisationId = @orgId 
+                        AND StandardCode = @standardCode 
+                        AND ReviewStatus = '{ApplicationStatus.Approved}' 
+                        AND (standardApplicationType = '{StandardApplicationTypes.StandardWithdrawal}' 
+                        OR standardApplicationType = '{StandardApplicationTypes.VersionWithdrawal}') 
+                        ORDER BY CreatedAt DESC";
+
+            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
+                sql: query,
+                param: new { orgId, standardCode },
+                transaction: _unitOfWork.Transaction)).ToList();
+        }
+
+        public async Task<List<ApplySummary>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference)
+        {
+            var query = $@"SELECT *
+                          FROM [dbo].[Apply]
+                          where organisationId = @orgId 
+                          AND StandardReference = @standardReference 
+                          ORDER BY createdAt DESC";
+
+            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
+                sql: query,
+                param: new { orgId, standardReference },
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
@@ -158,9 +188,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 @"UPDATE Apply
-                  SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @StandardReference, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                  SET  ApplicationStatus = @ApplicationStatus, ApplyData = @ApplyData, StandardCode = @StandardCode, StandardReference = @StandardReference, ReviewStatus = @ReviewStatus, FinancialReviewStatus = @FinancialReviewStatus, ApplyViaOptIn = @ApplyViaOptIn, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                   WHERE  (Apply.Id = @Id)",
-                param: new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.StandardReference, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.UpdatedBy},
+                param: new { apply.ApplicationStatus, apply.ApplyData, apply.StandardCode, apply.StandardReference, apply.ReviewStatus, apply.FinancialReviewStatus, apply.Id, apply.ApplyViaOptIn, apply.UpdatedBy },
                 transaction: _unitOfWork.Transaction);
         }
 
@@ -169,7 +199,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var application = await GetApply(id);
             var applyData = application?.ApplyData;
 
-            if(application != null && applyData != null)
+            if (application != null && applyData != null)
             {
                 application.StandardCode = standardCode;
                 application.StandardReference = referenceNumber;
@@ -191,7 +221,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                       WHERE  Id = @Id",
                     param: new { application.Id, application.ApplyData, application.StandardCode, application.StandardReference, application.StandardApplicationType },
                     transaction: _unitOfWork.Transaction);
-                
+
                 return true;
             }
 
@@ -267,26 +297,27 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 await _unitOfWork.Connection.ExecuteAsync(
                     "UPDATE " +
-                    "   Apply " + 
+                    "   Apply " +
                     "SET " +
-                    "   ApplyData = @ApplyData, " + 
+                    "   ApplyData = @ApplyData, " +
                     "   ApplicationStatus = @ApplicationStatus, " +
                     "   ReviewStatus = @ReviewStatus, " +
                     "   StandardCode = @StandardCode, " +
                     "   StandardReference = @StandardReference, " +
-                    "   UpdatedAt = @UpdatedAt, " + 
+                    "   UpdatedAt = @UpdatedAt, " +
                     "   UpdatedBy = @UpdatedBy " +
                     "WHERE " +
                     "   Id = @Id",
-                    param: new { 
-                        application.Id, 
-                        application.ApplyData, 
-                        application.ApplicationStatus, 
+                    param: new
+                    {
+                        application.Id,
+                        application.ApplyData,
+                        application.ApplicationStatus,
                         application.ReviewStatus,
                         application.StandardCode,
                         application.StandardReference,
-                        application.UpdatedAt, 
-                        application.UpdatedBy 
+                        application.UpdatedAt,
+                        application.UpdatedBy
                     },
                     transaction: _unitOfWork.Transaction);
 
@@ -317,7 +348,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     @"UPDATE Apply
                       SET  ApplyData = @ApplyData, FinancialReviewStatus = @FinancialReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                       WHERE Apply.Id = @Id",
-                    param:  new { application.Id, application.ApplyData, application.FinancialReviewStatus, application.UpdatedBy },
+                    param: new { application.Id, application.ApplyData, application.FinancialReviewStatus, application.UpdatedBy },
                     transaction: _unitOfWork.Transaction);
             }
         }
@@ -401,7 +432,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     section.EvaluatedDate = DateTime.UtcNow;
                     section.EvaluatedBy = evaluatedBy;
 
-                    if(section.ReviewedBy != section.EvaluatedBy)
+                    if (section.ReviewedBy != section.EvaluatedBy)
                     {
                         // Note: If it's a different person who has evaluated from the person who started the review then update the review information!
                         section.ReviewStartDate = section.EvaluatedDate;
@@ -414,7 +445,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                     section.EvaluatedDate = null;
                     section.EvaluatedBy = null;
 
-                    if(application.FinancialGrade != null)
+                    if (application.FinancialGrade != null)
                     {
                         section.ReviewStartDate = application.FinancialGrade.GradedDateTime;
                         section.ReviewedBy = application.FinancialGrade.GradedBy;
@@ -443,8 +474,8 @@ namespace SFA.DAS.AssessorService.Data.Apply
             var sequence = applyData?.Sequences.SingleOrDefault(seq => seq.SequenceNo == sequenceNo);
             var nextSequence = applyData?.Sequences.Where(seq => seq.SequenceNo > sequenceNo && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
-            if (application != null && applyData != null && sequence !=null)
-            { 
+            if (application != null && applyData != null && sequence != null)
+            {
                 application.UpdatedBy = returnedBy;
                 application.UpdatedAt = DateTime.UtcNow;
                 sequence.Status = sequenceStatus;
@@ -468,7 +499,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
                         {
                             applyData.Apply.OrganisationWithdrawalSubmissionFeedbackAddedDate = DateTime.UtcNow;
                         }
-                        else if(sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                        else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                         {
                             applyData.Apply.StandardWithdrawalSubmissionFeedbackAddedDate = DateTime.UtcNow;
                         }
@@ -586,7 +617,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
         public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
-            var @params = new DynamicParameters();          
+            var @params = new DynamicParameters();
             @params.Add("includedNewApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.New));
             @params.Add("includedInProgressApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.InProgress));
             @params.Add("includedHasFeedbackApplicationSequenceStatus", GetApplicationSequenceStatus(ApplicationReviewStatus.HasFeedback));
@@ -780,9 +811,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 param: new
                 {
                     financialReviewStatusGraded = FinancialReviewStatus.Graded,
-                    financialReviewStatusApproved = FinancialReviewStatus.Approved                            
+                    financialReviewStatusApproved = FinancialReviewStatus.Approved
                 },
-                transaction: _unitOfWork.Transaction)).ToList();   
+                transaction: _unitOfWork.Transaction)).ToList();
         }
     }
 }

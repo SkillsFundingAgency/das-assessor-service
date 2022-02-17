@@ -33,6 +33,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                    new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.2", LarsCode = 1, EPAChanged = false},
                });
 
+            _mockApiClient
+            .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<ApplicationResponse> {
+                    new ApplicationResponse { StandardReference = "ST0001", ApplyData = new ApplyData{ Apply = new Apply{ Versions = new List<string>{"1.1","1.2"}}},
+                        StandardApplicationType = StandardApplicationTypes.VersionWithdrawal}
+            });
+
+            _mockApiClient
+                .Setup(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(new List<ApplicationResponse> { 
+                    new ApplicationResponse { StandardReference = "ST0001",  ApplyData = new ApplyData{ Apply = new Apply{ Versions = new List<string>{"1.1","1.2"}}}, 
+                        StandardApplicationType = StandardApplicationTypes.VersionWithdrawal}
+                     });   
+
             _mockContactsApiClient.Setup(r => r.GetContactBySignInId(It.IsAny<String>()))
             .ReturnsAsync(new ContactResponse()
             {
@@ -43,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
 
             // Assert
-            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", "1.2", It.IsAny<string>(), "Opted in by EPAO by USERNAME"));
+            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", "1.2", It.IsAny<string>(), It.IsAny<bool>(), "Opted in by EPAO by USERNAME"));
 
             Assert.AreEqual("OptInConfirmation", results.ActionName);
         }

@@ -10,9 +10,9 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
                 await _mediator.Send(deleteOrganisationRequest);
             }
-            catch (NotFound)
+            catch (NotFoundException)
             {
                 throw new ResourceNotFoundException();
             }

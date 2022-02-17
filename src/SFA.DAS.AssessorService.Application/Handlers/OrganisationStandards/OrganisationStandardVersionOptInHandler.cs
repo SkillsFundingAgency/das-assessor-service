@@ -63,10 +63,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 };
 
                 var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version);
-                if (existingVersion != null)
-                    throw new InvalidOperationException("OrganisationStandardVersion already exists");
 
-                await _repository.CreateOrganisationStandardVersion(entity);
+                if (request.OptInFollowingWithdrawal && existingVersion != null)
+                {
+                    await _repository.UpdateOrganisationStandardVersion(entity);
+                }
+                else if (existingVersion != null)
+                {
+                    throw new InvalidOperationException("OrganisationStandardVersion already exists");
+                }
+                else
+                { 
+                    await _repository.CreateOrganisationStandardVersion(entity);
+                }
+
                 var orgStandardVersion = (OrganisationStandardVersion)entity;
 
                 var application = await _applyRepository.GetApply(request.ApplicationId);
@@ -80,13 +90,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 application.ApplyData.Apply.StandardReference = request.StandardReference;
                 application.ApplyData.Apply.StandardName = standard.Title;
                 application.ApplyData.Apply.Versions = new List<string>() { request.Version };
+                application.ApplyViaOptIn = true;
 
                 await _applyRepository.SubmitApplicationSequence(application);
 
                 await NotifyContact(submittingContact, application.ApplyData, cancellationToken);
 
                 _unitOfWork.Commit();
-                    
+
                 return orgStandardVersion;
             }
             catch (Exception ex)

@@ -1,15 +1,26 @@
-﻿// This version of the postcode-lookup-service uses the 5 address fields; building and street (1 & 2), 
-// town or city, county and postcode which are recommended by the gov uk style guidelines
+﻿// This version of the address lookup service can populate the 5 address fields; building and street (1, 2),
+// town or city, county and postcode which are recommended by the govuk style guidelines; it can also populate the
+// more correct 5 address fields building and street (1, 2, 3), town or city and postcode
 // see https://design-system.service.gov.uk/patterns/addresses/
 (function ($) {
     var findAddressVal = $("#postcode-search").val();
-
     var hasAddressValidationErrors = ($("div.govuk-form-group--error").length > 0);
 
-    // when errors present from previous selection the manual input must be used
+    var addressFields = {
+        '.address-manual-input-organisation': '',
+        '.address-manual-input-address-line-1': '',
+        '.address-manual-input-address-line-2': '',
+        '.address-manual-input-address-line-3': '',
+        '.address-manual-input-address-line-4': '',
+        '.address-manual-input-town': '',
+        '.address-manual-input-county': '',
+        '.address-manual-input-postcode': ''
+    };
+
+    // when errors are present from a previous selection the manual input must be used
     if ((restorePreviousAddress() === true && hasAddressValidationErrors) || hasAddressValidationErrors) {
-        enableEnterAddressManually();
-        highlightAddressIfNotSet();
+        enableEnterAddressManually(false);
+        highlightAddressErrorsIfNotSet();
         return;
     }
 
@@ -18,7 +29,12 @@
 
     $("#enterAddressManually").on("click", function (e) {
         e.preventDefault();
-        enableEnterAddressManually();
+        enableEnterAddressManually(true);
+
+        if ($('.address-manual-input-organisation').length > 0 && $('#EmployerName').length > 0) {
+            // populated the organisation with the default employer name
+            $('.address-manual-input-organisation').val($('#EmployerName').val());
+        }
     });
 
     $("#searchAgain").on("click", function (e) {
@@ -28,7 +44,13 @@
 
     $("#postcode-search").keyup(function () {
         findAddressVal = $(this).val();
+
+        if (findAddressVal.length == 0) {
+            searchAgain();
+        }
     });
+
+    var includeOrganisations = $("#postcode-search").hasClass('include-organisations');
 
     $("#postcode-search")
         .autocomplete({
@@ -45,7 +67,8 @@
                         "/locations",
                     dataType: "json",
                     data: {
-                        query: request.term
+                        query: request.term,
+                        includeOrganisations: includeOrganisations
                     },
                     timeout: 5000,
                     success: function (data) {
@@ -93,6 +116,9 @@
             },
             select: function (event, ui) {
                 var item = ui.item.data;
+                if (item.text === 'No results found')
+                    return false;
+
                 populateAddress(item);
             },
             focus: function (_, ui) {
@@ -106,53 +132,79 @@
         });
 
     function populateAddress(address) {
-        var addressFields = {
-            '.address-manual-input-address-line-1': address.addressLine1,
-            '.address-manual-input-address-line-2': address.addressLine2,
-            '.address-manual-input-address-line-3': address.town,
-            '.address-manual-input-address-line-4': '',
-            '.address-manual-input-postcode': address.postcode
-        };
+        var showAddressSelectionPanel = !$(".js-address-panel").hasClass("js-address-panel-never-show");
+        if (showAddressSelectionPanel) {
+            $(".js-address-panel").removeClass("hidden");
+        }
 
-        $(".js-address-panel").removeClass("hidden");
         $(".js-address-panel ul").empty();
-        $.each(addressFields, function (index, value) {
-            $(index).val(value);
-            $(".js-address-panel ul").append("<li>" + value + "</li>");
-        });
+
+        if (address.organisation.length > 0) {
+            populateAddressField('.address-manual-input-organisation', address.organisation);
+        }
+        else if ($('#EmployerName').length > 0) {
+            populateAddressField('.address-manual-input-organisation', $('#EmployerName').val());
+        }
+
+        populateAddressField('.address-manual-input-address-line-1', address.addressLine1);
+        populateAddressField('.address-manual-input-address-line-2', address.addressLine2);
+        populateAddressField('.address-manual-input-address-line-3', address.addressLine3);
+
+        if ($('.address-manual-input-town').length) {
+            populateAddressField('.address-manual-input-town', address.town);
+        }
+        else {
+            // town is currently defined as address-line-3 in the QnA _Address.cshtml
+            populateAddressField('.address-manual-input-address-line-3', address.town);
+        }
+
+        if ($('.address-manual-input-county').length) {
+            populateAddressField('.address-manual-input-county', address.county);
+        }
+        else {
+            // county is currently defined as address-line-4 in the QnA _Address.cshtml
+            populateAddressField('.address-manual-input-address-line-4', address.county);
+        }
+
+        populateAddressField('.address-manual-input-postcode', address.postcode);
 
         // populate hidden field for accessibility
         $("#ariaAddressEntered").text(
             "Your address has been entered into the fields below."
         );
 
-        $("#address-manual, #address-lookup").addClass("hidden");
-        $("#search-again").removeClass("hidden");
+        if (showAddressSelectionPanel) {
+            $("#address-manual, #address-lookup").addClass("hidden");
+            $("#search-again").removeClass("hidden");
+        }
+    }
+
+    function populateAddressField(className, addressValue) {
+        if ($(className).length) {
+            $(className).val(addressValue);
+            $(".js-address-panel ul").append("<li>" + addressValue + "</li>");
+        }
     }
 
     function restorePreviousAddress() {
         var hasPreviousValues = false;
-
-        var addressFields = {
-            '.address-manual-input-address-line-1': '',
-            '.address-manual-input-address-line-2': '',
-            '.address-manual-input-address-line-3': '',
-            '.address-manual-input-address-line-4': '',
-            '.address-manual-input-postcode': ''
-        };
+        var showAddressSelectionPanel = !$(".js-address-panel").hasClass("js-address-panel-never-show");
 
         $.each(addressFields, function (index, value) {
-            $(".js-address-panel ul").append("<li>" + $(index).val() + "</li>");
-            if (!($(index).val().length === 0)) {
-                if (!($("#postcode-search").val().length === 0)) {
+            if ($(index).length && !($(index).val().length === 0)) {
+                $(".js-address-panel ul").append("<li>" + $(index).val() + "</li>");
+
+                if ($("#postcode-search").length > 0 && $("#postcode-search").val().length > 0) {
                     $("#postcode-search").val($("#postcode-search").val() + ', ');
                 }
+
                 $("#postcode-search").val($("#postcode-search").val() + $(index).val());
+
                 hasPreviousValues = true;
             }
         });
 
-        if (hasPreviousValues) {
+        if (hasPreviousValues && showAddressSelectionPanel) {
             $("#address-manual, #address-lookup").addClass("hidden");
             $("#search-again").removeClass("hidden");
             $(".js-address-panel").removeClass("hidden");
@@ -161,37 +213,50 @@
         return hasPreviousValues;
     }
 
-    function enableEnterAddressManually() {
+    function enableEnterAddressManually(clearInputFields) {
+        $(".js-error-summary").hide();
         $(".js-address-panel, #addressLookupWrapper").addClass("hidden");
         $("#addressLookupWrapper").removeClass("hide-nojs");
+        $(".js-search-address-heading").addClass("hidden");
+        $(".js-manual-address-heading").removeClass("hidden");
         $(".address-manual-input").removeClass("js-hidden");
+
+        // clear all the manual input fields
+        if (clearInputFields) {
+            $.each(addressFields, function (index, value) {
+                $(index).val("");
+            });
+        }
+
         $(".address-manual-input-focus").focus();
     }
 
-    function highlightAddressIfNotSet() {
+    function highlightAddressErrorsIfNotSet() {
         if ($(".address-manual-input-address-line-1").val().length === 0)
             $(".address-manual-input-address-line-1").addClass("govuk-input--error");
-        if ($(".address-manual-input-address-line-3").val().length === 0)
-            $(".address-manual-input-address-line-3").addClass("govuk-input--error");
+
+        if ($(".address-manual-input-town").length) {
+            if ($(".address-manual-input-town").val().length === 0)
+                $(".address-manual-input-town").addClass("govuk-input--error");
+        }
+        else {
+            // town is currently defined as address-line-3 in the QnA _Address.cshtml
+            if ($(".address-manual-input-address-line-3").val().length === 0)
+                $(".address-manual-input-address-line-3").addClass("govuk-input--error");
+        }
+
         if ($(".address-manual-input-postcode").val().length === 0)
             $(".address-manual-input-postcode").addClass("govuk-input--error");
     }
 
     function searchAgain() {
-        var addressFields = {
-            '.address-manual-input-address-line-1': '',
-            '.address-manual-input-address-line-2': '',
-            '.address-manual-input-address-line-3': '',
-            '.address-manual-input-address-line-4': '',
-            '.address-manual-input-postcode': ''
-        };
-
         $.each(addressFields, function (index, value) {
             $(index).val(value);
         });
 
         $("#address-manual, #address-lookup").removeClass("hidden");
         $("#search-again, .js-address-panel").addClass("hidden");
+        $(".js-address-panel ul li").remove();
         $("#postcode-search").val("");
     }
 })(jQuery);

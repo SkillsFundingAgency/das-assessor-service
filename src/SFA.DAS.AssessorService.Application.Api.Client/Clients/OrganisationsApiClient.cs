@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationResponse>  GetOrganisationByName(string name)
+        public async Task<OrganisationResponse> GetOrganisationByName(string name)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{WebUtility.UrlEncode(name)}"))
             {
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/{organisationId}"))
             {
-                return await RequestAndDeserialiseAsync<Organisation>(request,$"Could not find the organisation {organisationId}");
+                return await RequestAndDeserialiseAsync<Organisation>(request, $"Could not find the organisation {organisationId}");
             }
         }
 
@@ -187,7 +187,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateContact(string contactId,  string firstName, string lastName, string email,string phoneNumber)
+        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string firstName, string lastName, string email, string phoneNumber)
         {
             var validationRequest = new UpdateEpaOrganisationContactValidationRequest
             {
@@ -261,9 +261,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
         {
-           
+
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/standards/validate/search/{searchstring}")) 
+                $"/api/ao/assessment-organisations/standards/validate/search/{searchstring}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for standard using [{searchstring.Trim()}]");
@@ -305,7 +305,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 OrganisationStandardStatus = organisationStandardStatus,
                 OrganisationStatus = organisationStatus
             };
-          
+
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-existing/"))
             {
                 return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
@@ -356,7 +356,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Put,
                 $"/api/v1/organisations/NotifyUserManagementUsers"))
             {
-                 await PostPutRequest (request, notifyUserManagementUsersRequest);
+                await PostPutRequest(request, notifyUserManagementUsersRequest);
             }
         }
 
@@ -456,8 +456,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, 
-            string standardReference, string version, string standardUId, string comments)
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
+            string standardReference, string version, string standardUId, bool optInFollowingWithdrawal, string comments)
         {
             var createVersionRequest = new OrganisationStandardVersionOptInRequest
             {
@@ -471,7 +471,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 DateVersionApproved = null,
                 Comments = comments,
                 Status = OrganisationStatus.Live,
-                SubmittingContactId = contactId
+                SubmittingContactId = contactId,
+                OptInFollowingWithdrawal = optInFollowingWithdrawal
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))

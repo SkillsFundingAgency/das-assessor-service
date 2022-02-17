@@ -42,7 +42,7 @@ BEGIN
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode 
 			WHERE ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
-			  AND (le3.Id IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
+			  AND (le3.Id IS NULL OR le3.LatestApprovals IS NULL OR le3.LatestApprovals < ax1.Lastupdated)
 		)
 		----------------------------------------------------------------------------------------------------------------------
 		,
@@ -90,6 +90,8 @@ BEGIN
 				  ,PaymentStatus
 				  ,UKPRN 
 				  ,LearnRefNumber
+				  ,EmployerAccountId
+				  ,EmployerName
 				  ,CompletionStatus
 			FROM (
 				SELECT *
@@ -120,6 +122,7 @@ BEGIN
 					   END
 					  ,CreatedOn DESC ) as rownumber
 				FROM (
+					SELECT * FROM (
 				-- inner query gets all records for each learner, ORDER BY CreatedOn desc - there can be many but two iterations should be sufficient
 					SELECT ApprenticeshipId
 					  ,FirstName
@@ -141,6 +144,8 @@ BEGIN
 					  ,PaymentStatus
 					  ,UKPRN
 					  ,LearnRefNumber
+					  ,EmployerAccountId
+				 	  ,EmployerName
 					  -- map Approvals date to ILR CompletionStatus value
 					  ,CASE WHEN StopDate IS NOT NULL THEN 3
 							WHEN PauseDate IS NOT NULL THEN 6
@@ -152,8 +157,9 @@ BEGIN
 					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
 					FROM ApprovalsExtract ap1
  					JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
+					) ax2
 					WHERE 1=1
-					  AND NOT (StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted
+					  AND NOT (UKPRN_1 !=0 AND StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted and not the only record
 				) ab2
 			) ab3 WHERE rownumber = 1
 			) Apx 
@@ -205,7 +211,9 @@ BEGIN
 				ax1.CompletionDate ApprovalsCompletionDate,
 				ax1.PaymentStatus ApprovalsPaymentStatus,
 				il1.LastUpdated LatestIlrs,
-				ax1.LastUpdated LatestApprovals
+				ax1.LastUpdated LatestApprovals,
+				ax1.EmployerAccountId,
+				ax1.EmployerName
 		  FROM ax1 
 		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
 		  WHERE il1.FundingModel != 99
@@ -249,7 +257,9 @@ BEGIN
 				null ApprovalsCompletionDate,
 				null ApprovalsPaymentStatus, 
 				il1.LastUpdated LatestIlrs,
-				null LatestApprovals
+				null LatestApprovals,
+				null EmployerAccountId,
+				null EmployerName
 		  FROM il1 
 		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
 		  WHERE (il1.FundingModel = 99 OR ax1.ULN IS NULL)
@@ -288,19 +298,20 @@ BEGIN
 			 lm1.ApprovalsCompletionDate = upd.ApprovalsCompletionDate,
 			 lm1.ApprovalsPaymentStatus = upd.ApprovalsPaymentStatus,
 			 lm1.LatestIlrs = upd.LatestIlrs,
-			 lm1.LatestApprovals = upd.LatestApprovals
-
+			 lm1.LatestApprovals = upd.LatestApprovals,
+			 lm1.EmployerAccountId = upd.EmployerAccountId,
+			 lm1.EmployerName = upd.EmployerName
 		WHEN NOT MATCHED THEN
 		INSERT (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, 
 				Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason, 
 				Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName, 
 				LastUpdated, EstimatedEndDate, ApprovalsStopDate, ApprovalsPauseDate, ApprovalsCompletionDate, ApprovalsPaymentStatus,
-				LatestIlrs, LatestApprovals)
+				LatestIlrs, LatestApprovals, EmployerAccountId, EmployerName)
 		VALUES (upd.Id, upd.Uln, upd.GivenNames, upd.FamilyName, upd.UkPrn, upd.StdCode, upd.LearnStartDate, upd.EpaOrgId, upd.FundingModel, upd.ApprenticeshipId,
 				upd.Source, upd.LearnRefNumber, upd.CompletionStatus, upd.PlannedEndDate, upd.DelLocPostCode, upd.LearnActEndDate, upd.WithdrawReason,
 				upd.Outcome, upd.AchDate, upd.OutGrade, upd.Version, upd.VersionConfirmed, upd.CourseOption, upd.StandardUId, upd.StandardReference, upd.StandardName,
 				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
-				upd.LatestIlrs, upd.LatestApprovals);
+				upd.LatestIlrs, upd.LatestApprovals, upd.EmployerAccountId, upd.EmployerName);
 
 		SET @upserted = @@ROWCOUNT;
 

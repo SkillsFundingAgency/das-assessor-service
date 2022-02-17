@@ -50,12 +50,28 @@
                         }
                         else if (version.VersionStatus == VersionStatus.NewVersionChanged)
                         {
-                            <td class="govuk-table__cell">You can apply</td>
+                            if (version.PreviouslyWithdrawn)
+                            {
+                                <td class="govuk-table__cell">Withdrawn</td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell">You can apply</td>
+                            }
+
                             <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/confirm-standard/@Model.StandardReference/@version.Version">Apply for standard version</a></td>
                         }
                         else if (version.VersionStatus == VersionStatus.NewVersionNoChange)
                         {
-                            <td class="govuk-table__cell">You can opt-in</td>
+                            if (version.PreviouslyWithdrawn)
+                            {
+                                <td class="govuk-table__cell">Withdrawn</td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell">You can opt-in</td>
+                            }
+
                             <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/opt-in/@Model.StandardReference/@version.Version">Opt into standard version</a></td>
                         }
                         else if (version.VersionStatus == VersionStatus.InProgress)

@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -61,16 +62,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
+            Logger.LogDebug($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
-            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certificate = await GetCertificate(vm.Id);
+            var certData = GetCertificateData(certificate);
 
             if (!ModelState.IsValid)
             {
                 vm.FamilyName = certData.LearnerFamilyName;
                 vm.GivenNames = certData.LearnerGivenNames;
-                Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogDebug($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
 
@@ -92,25 +93,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
+            Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
-            if (SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck) && redirectToCheck)
+            if(SessionService.GetRedirectToCheck())
             {
-                if (nextAction.ActionName == "AddressSummary")
-                {
-                    var certAddress = vm as CertificateAddressViewModel;
-                    if (string.IsNullOrEmpty(certAddress.Employer))
-                    {
-                        return new RedirectToActionResult("AddressSummary", "CertificateAddressSummary", new { redirecttocheck = "true" });
-                    }
-                }
-
-                Logger.LogInformation(
-                    $"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
+                Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
+            Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 
@@ -133,12 +124,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var query = ContextAccessor.HttpContext.Request.Query;
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
             {
-                Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
-                SessionService.Set("redirecttocheck", "true");
+                SessionService.SetRedirectToCheck(true);
                 viewModel.BackToCheckPage = true;
             }
             else
-                SessionService.Remove("redirecttocheck");
+                SessionService.SetRedirectToCheck(false);
+        }
+
+        protected async Task<Certificate> GetCertificate(Guid certificateId)
+        {
+            return await CertificateApiClient.GetCertificate(certificateId);
+        }
+
+        protected async Task<CertificateData> GetCertificateData(Guid certificateId)
+        {
+            var certificate = await GetCertificate(certificateId);
+            return GetCertificateData(certificate);
+        }
+
+        protected CertificateData GetCertificateData(Certificate certificate)
+        {
+            return JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
         }
 
         private string GetModelValues<T>(T viewModel)

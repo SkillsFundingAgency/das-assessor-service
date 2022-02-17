@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogInformation($"Load View Model for CertificateOptionViewModel for {username}");
+            Logger.LogDebug($"Load View Model for CertificateOptionViewModel for {username}");
 
             var viewModel = new CertificateOptionViewModel();
 
@@ -63,11 +64,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Declare", "CertificateDeclaration");
             }
 
-            Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
+            Logger.LogDebug($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
 
             viewModel.FromCertificate(certificate, certSession.Options);
-
-            Logger.LogInformation($"Got View Model of type CertificateOptionViewModel requested by {username}");
+            
+            Logger.LogDebug($"Got View Model of type CertificateOptionViewModel requested by {username}");
 
             return View(view, viewModel);
         }
@@ -75,7 +76,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Option")]
         public async Task<IActionResult> Option(CertificateOptionViewModel vm)
         {
-
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
                 nextAction: RedirectToAction("Declare", "CertificateDeclaration"), action: CertificateActions.Option);
@@ -85,16 +85,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogInformation($"Save View Model for CertificateOptionViewModel for {username} with values: {GetModelValues(vm)}");
+            Logger.LogDebug($"Save View Model for CertificateOptionViewModel for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            SessionService.Remove("redirectedfromversion");
+            SessionService.RemoveRedirectedFromVersion();
 
             var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
-                Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
+                Logger.LogDebug($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 vm.Options = certSession.Options;
-                Logger.LogInformation($"Model State not valid for CertificateOptionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogDebug($"Model State not valid for CertificateOptionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
 
@@ -118,15 +118,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
                   
-            Logger.LogInformation($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} updated.");
+            Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} updated.");
 
-            if (SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck) && redirectToCheck)
+            if (SessionService.GetRedirectToCheck())
             {
-                Logger.LogInformation($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
+                Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            Logger.LogInformation($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
+            Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 
@@ -160,10 +160,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 //redirectfromversion is always set when coming from version page to allow for this
                 //however it's removed beyond that page, therefore if coming back from declaration
                 //the final version count check allows that fallback.
-                SessionService.TryGet<bool>("redirecttocheck", out var redirectToCheck);
-                SessionService.TryGet<bool>("redirectedfromversion", out var redirectedFromVersion);
+                var redirectToCheck = SessionService.GetRedirectToCheck();
+                var redirectedFromVersion = SessionService.GetRedirectedFromVersion();
+                
+                SessionService.RemoveRedirectedFromVersion();
 
-                SessionService.Remove("redirectedfromversion");
                 object routeValues = null;
                 if (redirectToCheck)
                 {
