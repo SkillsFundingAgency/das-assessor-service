@@ -15,8 +15,8 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
                 await _mediator.Send(deleteContactRequest);
             }
-            catch (NotFound)
+            catch (NotFoundException)
             {
                 throw new ResourceNotFoundException();
             }

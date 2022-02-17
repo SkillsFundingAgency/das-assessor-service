@@ -25,13 +25,11 @@
 )
 GO
 
-
 CREATE INDEX [IX_ApprovalsExtract_TrainingCode_ULN] ON [ApprovalsExtract] ([TrainingCode], [Uln], [StartDate], [PaymentStatus] ,[StopDate]) 
-INCLUDE ([ApprenticeshipId] ,[FirstName] ,[LastName] ,[TrainingCourseVersion] ,[TrainingCourseVersionConfirmed] ,[TrainingCourseOption] ,
-         [StandardUId] ,[EndDate] ,[CreatedOn] ,[UpdatedOn] ,[PauseDate] ,[CompletionDate] ,[UKPRN] ,[LearnRefNumber] ,[LastUpdated])
+INCLUDE ([ApprenticeshipId] ,[FirstName] ,[LastName] ,[TrainingCourseVersion] ,[TrainingCourseVersionConfirmed] ,[TrainingCourseOption],
+         [StandardUId] ,[EndDate] ,[CreatedOn] ,[UpdatedOn] ,[PauseDate] ,[CompletionDate] ,[UKPRN] ,[LearnRefNumber] ,[LastUpdated], [EmployerAccountId], [EmployerName])
       
 GO
-
 
 CREATE NONCLUSTERED INDEX [IX_ApprovalsExtract_LastUpdated] ON [ApprovalsExtract] ([LastUpdated]) INCLUDE ([TrainingCode], [Uln] )
 GO
