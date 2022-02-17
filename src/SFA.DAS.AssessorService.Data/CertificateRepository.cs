@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -339,7 +338,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
             var cert = await GetCertificate(certificate.Id)
-                ?? throw new NotFound();
+                ?? throw new NotFoundException();
 
             cert.Uln = certificate.Uln;
             cert.StandardUId = certificate.StandardUId;
@@ -381,7 +380,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var certificate = await GetCertificate(uln, standardCode);
 
-            if (certificate == null) throw new NotFound();
+            if (certificate == null) throw new NotFoundException();
 
             // If already deleted ignore
             if (certificate.Status == CertificateStatus.Deleted)
