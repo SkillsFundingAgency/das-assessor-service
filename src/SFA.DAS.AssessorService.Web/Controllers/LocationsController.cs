@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -28,11 +29,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<List<AddressResponse>> Index([FromQuery] string query)
+        public async Task<List<AddressResponse>> Index([FromQuery] string query, [FromQuery] bool includeOrganisations)
         {
             try
             {
-                return await _locationsApiClient.SearchLocations(query);
+                var locations = await _locationsApiClient.SearchLocations(query);
+                if (!locations.Any())
+                {
+                    locations.Add(AddressResponse.NoResultsFound);
+                }
+                else if(!includeOrganisations)
+                {
+                    locations.ForEach(p => p.Organisation = string.Empty);
+                }
+                
+                 return locations;
             }
             catch (Exception ex)
             {

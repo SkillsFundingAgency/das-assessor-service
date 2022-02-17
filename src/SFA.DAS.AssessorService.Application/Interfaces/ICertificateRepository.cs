@@ -50,9 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<PaginatedList<CertificateHistoryModel>> GetCertificateHistory(string endPointAssessorOrganisationId, int pageIndex, int pageSize, string searchTerm, string sortColumn, bool sortAscending, List<string> statuses);
 
         Task<string> GetPreviousProviderName(int providerUkPrn);
-
-        Task<CertificateAddress> GetContactPreviousAddress(string username);
-
+        Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId);
         Task<bool> CertifciateExistsForUln(long uln);
 
         Task<Certificate> GetCertificateDeletedByUln(long uln);

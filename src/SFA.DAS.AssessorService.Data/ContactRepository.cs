@@ -132,7 +132,7 @@ namespace SFA.DAS.AssessorService.Data
                 contactEntity = await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == updateContactRequest.Email);
 
             if (contactEntity == null)
-                throw new NotFound();
+                throw new NotFoundException();
 
             contactEntity.Username = updateContactRequest.UserName;
             contactEntity.DisplayName = updateContactRequest.DisplayName;
@@ -206,7 +206,7 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefault(q => q.Username == userName);
 
             if (contactEntity == null)
-                throw new NotFound();
+                throw new NotFoundException();
 
             // Ignore if already deleted
             if (contactEntity.Status == ContactStatus.Deleted)

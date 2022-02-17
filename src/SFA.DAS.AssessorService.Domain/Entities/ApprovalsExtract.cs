@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class ApprovalsExtract
     {
         public int ApprenticeshipId { get; set; }
-        
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -41,5 +41,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string LearnRefNumber { get; set; }
 
         public int PaymentStatus { get; set; }
+
+        public long EmployerAccountId { get; set; }
+        public string EmployerName { get; set; }
     }
 }

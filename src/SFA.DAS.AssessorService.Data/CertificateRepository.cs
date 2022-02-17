@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -448,7 +447,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
             var cert = await GetCertificate(certificate.Id)
-                ?? throw new NotFound();
+                ?? throw new NotFoundException();
 
             cert.Uln = certificate.Uln;
             cert.StandardUId = certificate.StandardUId;
@@ -490,7 +489,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var certificate = await GetCertificate(uln, standardCode);
 
-            if (certificate == null) throw new NotFound();
+            if (certificate == null) throw new NotFoundException();
 
             // If already deleted ignore
             if (certificate.Status == CertificateStatus.Deleted)
@@ -579,31 +578,37 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string username)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
         {
             var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
+            var sendToEmployer = nameof(CertificateSendTo.Employer);
 
-            var certificateAddress = await (from certificate in _context.Certificates
-                                            where
-                                               statuses.Contains(certificate.Status)
-                                               && certificate.UpdatedBy == username
-                                            let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
-                                            orderby certificate.UpdatedAt descending
-                                            select new CertificateAddress
-                                            {
-                                                OrganisationId = certificate.OrganisationId,
-                                                ContactOrganisation = certificateData.ContactOrganisation,
-                                                ContactName = certificateData.ContactName,
-                                                Department = certificateData.Department,
-                                                CreatedAt = certificate.CreatedAt,
-                                                AddressLine1 = certificateData.ContactAddLine1,
-                                                AddressLine2 = certificateData.ContactAddLine2,
-                                                AddressLine3 = certificateData.ContactAddLine3,
-                                                City = certificateData.ContactAddLine4,
-                                                PostCode = certificateData.ContactPostCode
-                                            }).FirstOrDefaultAsync();
+            var sql = @"
+                SELECT
+                    c.OrganisationId,
+                    JSON_VALUE(CertificateData, '$.ContactOrganisation') ContactOrganisation,
+                    JSON_VALUE(CertificateData, '$.ContactName') ContactName,
+                    JSON_VALUE(CertificateData, '$.Department') Department,
+                    JSON_VALUE(CertificateData, '$.ContactAddLine1') AddressLine1 ,
+                    JSON_VALUE(CertificateData, '$.ContactAddLine2') AddressLine2,
+                    JSON_VALUE(CertificateData, '$.ContactAddLine3') AddressLine3,
+                    JSON_VALUE(CertificateData, '$.ContactAddLine4') City,
+                    JSON_VALUE(CertificateData, '$.ContactPostCode') PostCode
+                FROM
+                    Certificates c INNER JOIN Organisations o
+                    ON c.OrganisationId = o.Id
+                WHERE
+                    o.EndPointAssessorOrganisationId = @epaOrgId
+                    AND JSON_VALUE(CertificateData, '$.EmployerAccountId') = @employerAccountId
+                    AND JSON_VALUE(CertificateData, '$.SendTo') = @sendToEmployer
+                    AND c.Status IN @statuses
+                ORDER BY
+                   ISNULL(c.UpdatedBy, c.CreatedAt) DESC";
 
-            return certificateAddress;
+            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<CertificateAddress>(
+                sql,
+                param: new { epaOrgId, employerAccountId, sendToEmployer, statuses },
+                transaction: _unitOfWork.Transaction);
         }
 
         public Task<string> GetPreviousProviderName(int providerUkPrn)

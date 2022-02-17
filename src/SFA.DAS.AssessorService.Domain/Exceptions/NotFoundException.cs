@@ -4,21 +4,21 @@ using System.Runtime.Serialization;
 namespace SFA.DAS.AssessorService.Domain.Exceptions
 {
     [Serializable]
-    public class NotFound : Exception
+    public class NotFoundException : Exception
     {
-        public NotFound()
+        public NotFoundException()
         {
         }
 
-        public NotFound(string message) : base(message)
+        public NotFoundException(string message) : base(message)
         {
         }
 
-        public NotFound(string message, Exception inner) : base(message, inner)
+        public NotFoundException(string message, Exception inner) : base(message, inner)
         {
         }
 
-        protected NotFound(
+        protected NotFoundException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {

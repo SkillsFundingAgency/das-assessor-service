@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
             _standardService.Setup(m => m.GetStandardOptionsByStandardId(stdUId)).ReturnsAsync((StandardOptions)null);
 
             // Act
-            Assert.ThrowsAsync<NotFound>(() => _handler.Handle(_request, CancellationToken.None));
+            Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(_request, CancellationToken.None));
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync((Certificate)null);
 
             // Act
-            Assert.ThrowsAsync<NotFound>(() => _handler.Handle(_request, CancellationToken.None));
+            Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(_request, CancellationToken.None));
         }
     }
 }

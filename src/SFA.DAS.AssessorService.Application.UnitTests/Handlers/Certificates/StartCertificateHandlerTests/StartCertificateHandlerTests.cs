@@ -175,8 +175,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             // Act
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
-
-            act.Should().Throw<InvalidOperationException>().WithMessage("StandardUId Provided not recognised, unable to populate certificate data");
+        
+            act.Should().Throw<InvalidOperationException>().WithMessage($"StandardUId:{request.StandardUId} not found, unable to populate certificate data");
         }
 
         [Test, RecursiveMoqAutoData]

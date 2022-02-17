@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Web.Controllers;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateCheckViewModel : CertificateBaseViewModel
+    public class CertificateCheckViewModel : CertificateSendToViewModel
     {
         public string Option { get; set; }
         public string Version { get; set; }
@@ -57,8 +57,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
+            certificate = base.GetCertificateFromViewModel(certificate, certData);
+
             certificate.Status = CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
+
             return certificate;
         }
 
