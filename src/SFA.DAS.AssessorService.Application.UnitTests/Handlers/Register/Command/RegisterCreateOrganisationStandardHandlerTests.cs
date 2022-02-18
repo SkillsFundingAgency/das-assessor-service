@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -12,7 +8,10 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Exceptions;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
@@ -93,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var requestOrgNotFound = BuildRequest("", 1, new List<int> {1});
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.NotFound);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound)).Returns(errorResponse);
-            var ex = Assert.ThrowsAsync<NotFound>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgNotFound, new CancellationToken()));
+            var ex = Assert.ThrowsAsync<NotFoundException>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgNotFound, new CancellationToken()));
             Assert.AreEqual(errorMessage + "; ", ex.Message);
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound));

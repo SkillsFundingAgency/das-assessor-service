@@ -73,18 +73,9 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         /// <summary>
         ///   Looks up a localized string similar to Enter an address.
         /// </summary>
-        internal static string AddressLine1CannotBeEmpty {
+        internal static string AddressCannotBeEmpty {
             get {
-                return ResourceManager.GetString("AddressLine1CannotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enter a city or town.
-        /// </summary>
-        internal static string CityCannotBeEmpty {
-            get {
-                return ResourceManager.GetString("CityCannotBeEmpty", resourceCulture);
+                return ResourceManager.GetString("AddressCannotBeEmpty", resourceCulture);
             }
         }
         
@@ -116,7 +107,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a name.
+        ///   Looks up a localized string similar to Enter recipient&apos;s name.
         /// </summary>
         internal static string NameCannotBeEmpty {
             get {
@@ -134,11 +125,11 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a postcode.
+        ///   Looks up a localized string similar to Enter the certificate receiver.
         /// </summary>
-        internal static string PostcodeCannotBeEmpty {
+        internal static string SendToCannotBeNone {
             get {
-                return ResourceManager.GetString("PostcodeCannotBeEmpty", resourceCulture);
+                return ResourceManager.GetString("SendToCannotBeNone", resourceCulture);
             }
         }
         

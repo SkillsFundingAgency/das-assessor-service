@@ -339,7 +339,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             //Arrange
             _mockMediator.Setup(s => s.Send(It.IsAny<GetStandardVersionRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
             _mockDeleteBatchValidator.Setup(s => s.ValidateAsync(It.IsAny<DeleteBatchEpaRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult());
-            _mockMediator.Setup(a => a.Send(It.IsAny<DeleteBatchEpaRequest>(), new System.Threading.CancellationToken())).Throws<NotFound>();
+            _mockMediator.Setup(a => a.Send(It.IsAny<DeleteBatchEpaRequest>(), new System.Threading.CancellationToken())).Throws<NotFoundException>();
 
             //Act
             var controllerResult = await _epaBatchController.Delete(request.Uln, request.FamilyName, request.StandardReference, request.EpaReference, request.UkPrn) as NotFoundResult;

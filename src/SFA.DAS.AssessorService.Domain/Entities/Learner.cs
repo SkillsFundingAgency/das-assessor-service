@@ -9,6 +9,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
+        public long? EmployerAccountId { get; set; }
+        public string EmployerName { get; set; }
 
         /// <summary>
         /// Used for search handler, escaping special characters
@@ -45,11 +47,5 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? ApprovalsPauseDate { get; set; }
         public DateTime? ApprovalsCompletionDate { get; set; }
         public int ApprovalsPaymentStatus { get; set; }
-
-
-        ////public long? EmployerAccountId { get; set; }
-        //public DateTime CreatedAt { get; set; }
-        //public DateTime? UpdatedAt { get; set; }       
-        //public long? EventId { get;set; }
     }
 }

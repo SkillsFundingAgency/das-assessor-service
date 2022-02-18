@@ -82,6 +82,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id))));
         }
 
+
+        [HttpGet("{orgId}/application/withdrawn/{standardCode}", Name = "GetAllWithdrawnApplicationsForStandard")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<List<ApplicationResponse>>> GetAllWithdrawnApplicationsForStandard(string orgId, int? standardCode)
+        {
+            _logger.LogInformation($"Received request to retrieve withdrawn applications with OrganisationId {orgId}");
+            return Ok(await _mediator.Send(new GetAllWithdrawnApplicationsForStandardRequest(Guid.Parse(orgId), standardCode)));
+        }
+
+        [HttpGet("{orgId}/application/previous/{standardReference}", Name = "GetPreviousApplications")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<List<ApplicationResponse>>> GetApplicationsPrevious(Guid orgId, string standardReference)
+        {
+            _logger.LogInformation($"Received request to retrieve previous applications with OrganisationId {orgId}");
+            return Ok(await _mediator.Send(new GetPreviousApplicationsRequest(orgId, standardReference)));
+        }
+
         [HttpGet("user/{userId}/application/{id}", Name = "GetApplicationForUser")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

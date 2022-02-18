@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Data
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             if (organisationEntity == null)
-                throw new NotFound();
+                throw new NotFoundException();
 
             // If already deleted ignore
             if (organisationEntity.Status == OrganisationStatus.Deleted)

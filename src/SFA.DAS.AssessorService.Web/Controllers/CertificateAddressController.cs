@@ -1,14 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -25,121 +27,172 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [Route("enter")]
         public async Task<IActionResult> Address(
-            bool? edit,
-            bool? reset,
+            bool edit = false,
+            bool hasPreviousAddress = false,
             bool? redirectToCheck = false)
         {
-            var username = GetUsernameFromClaim();
+            var actionResult = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
+            if(actionResult is ViewResult viewResult && viewResult.Model is CertificateAddressViewModel viewModel)
+            {
 
-            var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");            
+                viewModel.HasPreviousAddress = hasPreviousAddress;
+                viewModel.EditForm = edit;
+            }
 
-            certificateAddressViewModel = await InitialisePreviousAddresssForView(
-                certificateAddressViewModel: certificateAddressViewModel, username: username);
-
-            if (AddressAlreadyInitialised(certificateAddressViewModel) && (edit ?? false) == false)
-                return RedirectToAction("AddressSummary", "CertificateAddressSummary");
-
-            var viewResult = certificateAddressViewModel as ViewResult;
-            (viewResult.Model as CertificateAddressViewModel).EditForm = edit ?? false;
-            
-            return certificateAddressViewModel;
-        }       
+            return actionResult;
+        }
 
         [HttpPost(Name = "Address")]
+        [Route("enter")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
-            var username = GetUsernameFromClaim();
-
-            if (vm.SelectPreviousAddress)
+            var certData = await GetCertificateData(vm.Id);
+            if (ModelState.IsValid && vm.AddressHasChanged(certData))
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
-                vm = vm.CopyFromCertificateAddress(certificatePreviousAddress);             
+                // when address has been changed the complete journey is required
+                SessionService.SetRedirectToCheck(false);
             }
 
-            if (!ModelState.IsValid)
-            {
-                vm = await InitialisePreviousAddresssesForViewModel(vm, username);
-            }
-
-            if (vm.SelectPreviousAddress)
+            if (vm.SendTo == CertificateSendTo.Apprentice)
             {
                 return await SaveViewModel(vm,
                     returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
-                    nextAction: RedirectToAction("Recipient", "CertificateRecipient"),
+                    nextAction: RedirectToAction("ConfirmAddress", "CertificateAddress"),
                     action: CertificateActions.Address);
             }
             else
             {
                 return await SaveViewModel(vm,
                     returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
-                    nextAction: RedirectToAction("AddressSummary", "CertificateAddressSummary"),
+                    nextAction: RedirectToAction("Recipient", "CertificateAddress"),
                     action: CertificateActions.Address);
             }
         }
 
-        [HttpGet("resetaddress", Name = "ResetAddress")]
-        public async Task<IActionResult> ResetAddress(bool? redirectToCheck = false)
+        [HttpGet]
+        [Route("select-previous")]
+        public async Task<IActionResult> PreviousAddress()
+        {
+            var epaOrgId = GetEpaOrgIdFromClaim();
+            
+            var actionResult = await LoadViewModel<CertificatePreviousAddressViewModel>("~/Views/Certificate/PreviousAddress.cshtml");
+            if (actionResult is ViewResult viewResult && viewResult.Model is CertificatePreviousAddressViewModel viewModel)
+            {
+                await InitialisePreviousAddress(viewModel, epaOrgId);
+                if(!viewModel.HasPreviousAddress)
+                {
+                    actionResult = RedirectToAction("Address", "CertificateAddress");
+                }
+            }
+
+            return actionResult;
+        }
+
+        [HttpPost(Name = "PreviousAddress")]
+        [Route("select-previous")]
+        public async Task<IActionResult> PreviousAddress(CertificatePreviousAddressViewModel vm)
+        {
+            if (vm.UsePreviousAddress == true)
+            {
+                return await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/Certificate/PreviousAddress.cshtml",
+                    nextAction: RedirectToAction("Recipient", "CertificateAddress", new { UsePreviousAddress = true }),
+                    action: CertificateActions.Address);
+            }
+            else
+            {
+                return await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/Certificate/PreviousAddress.cshtml",
+                    nextAction: RedirectToAction("Address", "CertificateAddress", new { HasPreviousAddress = true }),
+                    action: CertificateActions.Address);
+            }
+        }
+
+        [HttpGet]
+        [Route("recipient")]
+        public async Task<IActionResult> Recipient(
+            bool edit = false,
+            bool usePreviousAddress = false)
+        {
+            var actionResult = await LoadViewModel<CertificateRecipientViewModel>("~/Views/Certificate/Recipient.cshtml");
+            if (actionResult is ViewResult viewResult && viewResult.Model is CertificateRecipientViewModel viewModel)
+            {
+                viewModel.UsePreviousAddress = usePreviousAddress;
+                viewModel.EditForm = edit;
+            }
+
+            return actionResult;
+        }
+
+        [HttpPost(Name = "Recipient")]
+        [Route("recipient")]
+        public async Task<IActionResult> Recipient(CertificateRecipientViewModel vm)
+        {
+            var certData = await GetCertificateData(vm.Id);
+            if (ModelState.IsValid && vm.RecipientHasChanged(certData))
+            {
+                // when recipient has been changed the complete journey is required
+                SessionService.SetRedirectToCheck(false);
+            }
+
+            return await SaveViewModel(vm,
+                returnToIfModelNotValid: "~/Views/Certificate/Recipient.cshtml",
+                nextAction: RedirectToAction("ConfirmAddress", "CertificateAddress"),
+                action: CertificateActions.Address);
+        }
+
+        [HttpGet]
+        [Route("confirm")]
+        public async Task<IActionResult> ConfirmAddress()
+        {
+            var actionResult = await LoadViewModel<CertificateRecipientViewModel>("~/Views/Certificate/ConfirmAddress.cshtml");
+            return actionResult;
+        }
+        
+        [HttpPost(Name = "ConfirmAddress")]
+        [Route("confirm")]
+        public async Task<IActionResult> ConfirmAddress(CertificateRecipientViewModel vm)
         {
             var username = GetUsernameFromClaim();
 
-            var viewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
-            var viewResult = viewModel as ViewResult;
-            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-
-            certificateAddress.EmptyAddressDetails();
-
-            var certificateAddressViewModel = View("~/Views/Certificate/Address.cshtml", certificateAddress);
-            certificateAddressViewModel = await InitialisePreviousAddresssForView(certificateAddressViewModel, username);
-
-            return certificateAddressViewModel;
-        }       
-
-        private async Task<ViewResult> InitialisePreviousAddresssForView(
-            IActionResult certificateAddressViewModel,
-            string username)
-        {
-            var viewResult = certificateAddressViewModel as ViewResult;
-            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-
-            await InitialisePreviousAddresses(username, certificateAddress);
-
-            return viewResult;
+            return await SaveViewModel(vm,
+                returnToIfModelNotValid: "~/Views/Certificate/ConfirmAddress.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateCheck"), action: CertificateActions.ConfirmAddress);
         }
 
-        private async Task<CertificateAddressViewModel> InitialisePreviousAddresssesForViewModel(CertificateAddressViewModel certificateAddressViewModel,
-            string username)
+        private async Task InitialisePreviousAddress(CertificatePreviousAddressViewModel viewModel, string epaOrgId)
         {
-            await InitialisePreviousAddresses(username, certificateAddressViewModel);
+            var previousAddress = await GetContactPreviousAddress(epaOrgId, viewModel.EmployerAccountId.ToString());
+            if (previousAddress != null)
+            {
+                viewModel.PreviousAddress = new CertificateAddress
+                {
+                    ContactOrganisation = previousAddress.ContactOrganisation,
+                    AddressLine1 = previousAddress.AddressLine1,
+                    AddressLine2 = previousAddress.AddressLine2,
+                    AddressLine3 = previousAddress.AddressLine3,
+                    City = previousAddress.City,
+                    PostCode = previousAddress.PostCode
+                };
+            }
 
-            return certificateAddressViewModel;
+            viewModel.HasPreviousAddress = (previousAddress != null);
         }
 
-        private async Task InitialisePreviousAddresses(string username, CertificateAddressViewModel certificateAddress)
+        private async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
         {
             try
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
-
-                certificateAddress.PreviousAddress =
-                    new CertificatePreviousAddressViewModel(certificatePreviousAddress);
-
+                return await _certificateApiClient.GetContactPreviousAddress(epaOrgId, employerAccountId);
             }
-            catch (EntityNotFoundException)
+            catch (HttpRequestException)
             {
-                var certificatePreviousAddress = new CertificateAddress();
-                certificateAddress.PreviousAddress =
-                    new CertificatePreviousAddressViewModel(certificatePreviousAddress);
+                // when there is no previous address NoContent is correctly returned from the API but the client
+                // incorrectly throws an exception 
+                return null;
             }
-        }
-
-        private bool AddressAlreadyInitialised(IActionResult certificateAddressViewModel)
-        {
-            var viewResult = certificateAddressViewModel as ViewResult;
-            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-
-            return !string.IsNullOrEmpty(certificateAddress.AddressLine1)
-                   && !string.IsNullOrEmpty(certificateAddress.Postcode);
         }
     }
 }

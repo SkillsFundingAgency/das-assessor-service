@@ -10,8 +10,8 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -54,17 +54,51 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPost("requestreprint", Name = "RequestReprint")]
+        [HttpPost("request-reprint", Name = "RequestReprint")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> RequestReprint([FromBody] CertificateReprintRequest certificateReprintRequest)
+        public async Task<IActionResult> RequestReprint([FromBody] UpdateCertificateRequestReprintCommand command)
         {
             try
             {
-                await _mediator.Send(certificateReprintRequest);
+                return Ok(await _mediator.Send(command));
             }
-            catch (NotFound)
+            catch (NotFoundException)
+            {
+                throw new ResourceNotFoundException();
+            }
+        }
+
+        [HttpPost("update-with-amend-reason", Name = "UpdateCertificateWithAmendReason")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateCertificateWithAmendReason([FromBody] UpdateCertificateWithAmendReasonCommand command)
+        {
+            try
+            {
+                await _mediator.Send(command);
+            }
+            catch (NotFoundException)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("update-with-reprint-reason", Name = "UpdateCertificateWithReprintReason")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateCertificateWithReprintReason([FromBody] UpdateCertificateWithReprintReasonCommand command)
+        {
+            try
+            {
+                await _mediator.Send(command);
+            }
+            catch (NotFoundException)
             {
                 throw new ResourceNotFoundException();
             }
@@ -73,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpDelete("deletecertificate", Name = "DeleteCertificate")]
-        [SwaggerResponse((int)HttpStatusCode.OK)]        
+        [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Delete([FromBody] DeleteCertificateRequest deleteCertificateRequest)
@@ -82,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 await _mediator.Send(deleteCertificateRequest);
             }
-            catch (NotFound)
+            catch (NotFoundException)
             {
                 throw new ResourceNotFoundException();
             }

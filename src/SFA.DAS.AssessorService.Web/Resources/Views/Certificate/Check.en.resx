@@ -123,10 +123,10 @@
   <data name="Heading" xml:space="preserve">
     <value>Check and submit the assessment details</value>
   </data>
-  <data name="InfoHeader" xml:space="preserve">
-    <value>Please check before submitting</value>
+  <data name="Info" xml:space="preserve">
+    <value>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individual Learner Record (&lt;abbr title="Individual Learner Record"&gt;ILR&lt;/abbr&gt;).</value>
   </data>
-  <data name="InfoLine1" xml:space="preserve">
+  <data name="InfoNotFail" xml:space="preserve">
     <value>The apprentice and apprenticeship details will be printed on the certificate.</value>
   </data>
 </root>

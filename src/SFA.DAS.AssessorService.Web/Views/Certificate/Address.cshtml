@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.JsonData;
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateAddressViewModel
 
@@ -13,16 +14,32 @@
 }
 else
 {
-    <a asp-controller="CertificateDate" asp-action="Date" class="govuk-back-link">Back</a>
+    @if (Model.SendTo == CertificateSendTo.Apprentice)
+    {
+        <a asp-controller="CertificateSendTo" asp-action="SendTo" class="govuk-back-link">Back</a>
+    }
+    else
+    {
+        if (Model.HasPreviousAddress)
+        {
+            <a asp-controller="CertificateAddress" asp-action="PreviousAddress" class="govuk-back-link">Back</a>
+        }
+        else
+        {
+            <a asp-controller="CertificateSendTo" asp-action="SendTo" class="govuk-back-link">Back</a>
+        }
+    }
 }
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateAddress"
-                  asp-action="Address">
+            <form class="@(Model.SendTo == CertificateSendTo.Apprentice ? "apprentice-address-form" : "employer-address-form") js-disable-on-submit" method="post" asp-action="Address" asp-controller="CertificateAddress">
                 @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.SendTo)
+                @Html.HiddenFor(c => c.EmployerName)
+                @Html.HiddenFor(c => c.HasPreviousAddress)
+                @Html.HiddenFor(c => c.UsePreviousAddress)
 
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -40,7 +57,8 @@ else
                             There is a problem
                         </h2>
                         <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">                                
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Employer"></a></li>
                                 <li><a sfa-validation-for="AddressLine1"></a></li>
                                 <li><a sfa-validation-for="City"></a></li>
                                 <li><a sfa-validation-for="Postcode"></a></li>
@@ -49,116 +67,114 @@ else
                     </div>
                 }
 
-
-                @if (Model.EditForm)
-                {
-                    <h1 class="govuk-heading-xl">
+                <h1 class="govuk-heading-xl">
+                    @if (Model.EditForm)
+                    {
                         @(Localizer["EditHeading"])
-                    </h1>
-                }
-                else
-                {
-                    <h1 class="govuk-heading-xl">
-                        <span class="js-search-address-heading hidden">@(Localizer["SearchHeading"])</span>
+                    }
+                    else
+                    {
+                        <span class="js-search-address-heading">
+                            @if (Model.SendTo == CertificateSendTo.Apprentice)
+                            {
+                                @(Localizer["SearchHeadingApprentice"])
+                            }
+                            else
+                            {
+                                @(Localizer["SearchHeadingEmployer"])
+                            }
+                        </span>
                         <span class="js-manual-address-heading hidden">@(Localizer["ManualHeading"])</span>
                         <span class="js-hidden">@(Localizer["NoJsHeading"])</span>
-                    </h1>
-                }
-
-                <p class="govuk-body">@Localizer["Lead"]</p>
+                    }
+                </h1>
 
                 @if (!Model.EditForm)
                 {
-                    <div id="address-lookup" class="hide-nojs form-group disabled">
-                        <div class="govuk-form-group" id="addressInputWrapper">
-                            <label for="postcode-search" class="govuk-label govuk-label--m">@Localizer["PostcodeLookup"]</label>
-                            <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
+                    <div id="addressLookupWrapper" class="hide-nojs form-group disabled">
+                        <div id="address-lookup" class="govuk-form-group govuk-!-margin-bottom-2">
+                            <p class="govuk-body">@Localizer["AddressLookupApprentice"]</p>
+                            <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input @(Model.SendTo == CertificateSendTo.Apprentice ? string.Empty : "include-organisations")" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
                             <span class="govuk-visually-hidden" id="ariaAddressEntered" aria-live="polite"></span>
                         </div>
-                        <div class="govuk-form-group" id="address-manual">
-                            <p class="govuk-body"><a class="govuk-link" href="#" id="enterAddressManually">Enter the address manually</a></p>
+                        <div id="address-manual" class="govuk-form-group">
+                            <p class="govuk-body"><a class="govuk-link" href="#" id="enterAddressManually">Enter address manually</a></p>
                             <p class="govuk-body toggle-content loading-text" id="addressLoading">Loading address...</p>
                             <p id="postcodeServiceUnavailable" class="govuk-body error toggle-content text">Service is currently unavailable, please enter the address manually</p>
                         </div>
-                    </div>
-
-                    <div class="info-highlighted js-address-panel hidden">
-                        <ul class="govuk-list"></ul>
-                    </div>
-
-
-                    if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress))
-                    {
-                        <div class="govuk-form-group js-select-previous-address">
-                            <p class="govuk-body govuk-!-margin-bottom-2">@Localizer["UseLastAddress"]</p>
-                            <div class="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox" />
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectPreviousAddress">
-                                        @Model.PreviousAddress.StringifiedAddress
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="info-highlighted js-address-panel js-address-panel-never-show hidden">
+                            <ul class="govuk-list"></ul>
                         </div>
-                    }
+                        <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
+                    </div>
                 }
-
                 <div id="addressManualWrapper">
                     <div id="address-details" class="address-manual-input js-hidden">
-                        <div class="govuk-form-group" sfa-validation-for="Employer" sfa-validationerror-class="govuk-form-group--error">
-                            <label class="govuk-label" for="Employer">
-                                @Localizer["Employer"]
-                            </label>
-                            <span class="govuk-error-message" asp-validation-for="Employer"></span>
-                            <input class="govuk-input govuk-!-width-two-thirds" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error" asp-for="Employer" type="text" />                            
-                        </div>
-
-                        <div class="govuk-form-group address-item" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
+                        @if (Model.SendTo == CertificateSendTo.Employer)
+                        {
+                            <div class="govuk-form-group" sfa-validation-for="Employer" sfa-validationerror-class="govuk-form-group--error">
+                                <label class="govuk-label" for="Employer">
+                                    @Localizer["Employer"]
+                                </label>
+                                <sfa-validationerror-detail sfa-validation-for="Employer" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                                <input class="govuk-input govuk-!-width-two-thirds address-manual-input-focus address-manual-input-organisation"
+                                       sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error"
+                                       asp-for="Employer" type="text" value="@Model.Employer" />
+                            </div>
+                        }
+                        <div class="govuk-form-group" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
                             <label class="govuk-label" for="AddressLine1">
-                                @Localizer["Address"] <span class="govuk-visually-hidden">line 1 of 3</span>
+                                @Localizer["AddressLine1"] <span class="govuk-visually-hidden">@Localizer["AccessiblyAddressLine1"]</span>
                             </label>
-                            <span class="govuk-error-message" asp-validation-for="AddressLine1"></span>
-                            <input autocomplete="off" class="govuk-input" name="AddressLine1" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-input--error" asp-for="AddressLine1" type="text" />
-                        </div>
+                            <sfa-validationerror-detail sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-!-margin-bottom-2 @(Model.SendTo == CertificateSendTo.Apprentice ? "address-manual-input-focus" : string.Empty) address-manual-input-address-line-1"
+                                   sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-input--error"
+                                   asp-for="AddressLine1" type="text" value="@Model.AddressLine1" />
 
-                        <div class="govuk-form-group address-item" sfa-validation-for="AddressLine2" sfa-validationerror-class="govuk-form-group--error">
-                            <label class="govuk-label" for="AddressLine2">
-                                <span class="govuk-visually-hidden">@Localizer["AddressLine2"]</span>
+                            <label class="govuk-label govuk-label--m" for="AddressLine2">
+                                <span class="govuk-visually-hidden">@Localizer["AccessiblyAddressLine2"]</span>
                             </label>
-                            <span class="govuk-error-message" asp-validation-for="AddressLine2"></span>
-                            <input autocomplete="off" class="govuk-input" name="AddressLine2" sfa-validation-for="AddressLine2" sfa-validationerror-class="govuk-input--error" asp-for="AddressLine2" type="text" />
-                        </div>
-                        <div class="govuk-form-group address-item" sfa-validation-for="AddressLine3" sfa-validationerror-class="govuk-form-group--error">
+                            <sfa-validationerror-detail sfa-validation-for="AddressLine2" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-!-margin-bottom-2 address-manual-input-address-line-2"
+                                   sfa-validation-for="AddressLine2" sfa-validationerror-class="govuk-input--error"
+                                   asp-for="AddressLine2" type="text" value="@Model.AddressLine2" />
+
                             <label class="govuk-label" for="AddressLine3">
-                                <span class="govuk-visually-hidden">@Localizer["AddressLine3"]</span>
+                                <span class="govuk-visually-hidden">@Localizer["AccessiblyAddressLine3"]</span>
                             </label>
-                            <span class="govuk-error-message" asp-validation-for="AddressLine3"></span>
-                            <input autocomplete="off" class="govuk-input" name="AddressLine3" sfa-validation-for="AddressLine3" sfa-validationerror-class="govuk-input--error" asp-for="AddressLine3" type="text" />
+                            <sfa-validationerror-detail sfa-validation-for="AddressLine3" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input address-manual-input-address-line-3"
+                                   sfa-validation-for="AddressLine3" sfa-validationerror-class="govuk-input--error"
+                                   asp-for="AddressLine3" type="text" value="@Model.AddressLine3" />
                         </div>
-                        <div class="govuk-form-group address-item" sfa-validation-for="City" sfa-validationerror-class="govuk-form-group--error">
+                        <div class="govuk-form-group" sfa-validation-for="City" sfa-validationerror-class="govuk-form-group--error">
                             <label class="govuk-label" for="City">
-                                @Localizer["City"]
+                                @Localizer["Town"]
                             </label>
-                            <span class="govuk-error-message" asp-validation-for="City"></span>
-                            <input autocomplete="off" class="govuk-input govuk-!-width-two-thirds" name="City" sfa-validation-for="City" sfa-validationerror-class="govuk-input--error" asp-for="City" type="text" />
+                            <sfa-validationerror-detail sfa-validation-for="City" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-!-width-two-thirds address-manual-input-town"
+                                   sfa-validation-for="City" sfa-validationerror-class="govuk-input--error"
+                                   asp-for="City" type="text" value="@Model.City" />
                         </div>
-                        <div class="govuk-form-group address-item" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-form-group--error">
+                        <div class="govuk-form-group" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-form-group--error">
                             <label class="govuk-label" for="Postcode">
                                 @Localizer["Postcode"]
                             </label>
-                            <span class="govuk-error-message" asp-validation-for="Postcode"></span>
-                            <input autocomplete="off" class="govuk-input govuk-input--width-10 js-no-special-chars" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-input--error" asp-for="Postcode" type="text" />
+                            <sfa-validationerror-detail sfa-validation-for="Postcode" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <input class="govuk-input govuk-input--width-10 address-manual-input-postcode"
+                                   sfa-validation-for="Postcode" sfa-validationerror-class="govuk-input--error"
+                                   asp-for="Postcode" type="text" value="@Model.Postcode" />
                         </div>
+
+                        <button type="submit" class="govuk-button">@Localizer["SaveAndContinueButton"]</button>
                     </div>
                 </div>
-
-                <button type="submit" class="govuk-button">@Localizer["ContinueButton"]</button>
             </form>
         </div>
     </div>
 </main>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressCertificateScriptsPartial.cshtml");}
 }

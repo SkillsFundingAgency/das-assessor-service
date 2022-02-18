@@ -63,6 +63,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
              });
 
             _mockApiClient
+                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<ApplicationResponse>()
+                { 
+                    new ApplicationResponse { StandardCode = 59, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
+                    new ApplicationResponse { StandardCode = 131, StandardApplicationType = StandardApplicationTypes.StandardWithdrawal },
+                    new ApplicationResponse { StandardCode = 354, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
+                });
+
+            _mockApiClient
                 .Setup(r => r.GetStandardApplications(It.IsAny<Guid>()))
                 .ReturnsAsync(new List<ApplicationResponse>());
 
@@ -90,6 +99,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockOrgApiClient
             .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
             .ReturnsAsync(new List<OrganisationStandardSummary>());
+
+            _mockApiClient
+                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int?>()))
+                .ReturnsAsync(new List<ApplicationResponse>());
+
+            _mockApiClient
+                .Setup(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ReturnsAsync(new List<ApplicationResponse>());
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)

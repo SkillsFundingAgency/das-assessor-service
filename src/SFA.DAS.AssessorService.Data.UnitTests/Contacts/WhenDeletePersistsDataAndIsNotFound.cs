@@ -46,12 +46,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
                 _exception = exception;
             }
         
-        }                      
+        }
 
         [Test]
         public void ThenNotFoundExceptionSHouldBeThrown()
         {
-            _exception.Should().BeOfType<NotFound>();            
+            _exception.Should().BeOfType<NotFoundException>();            
         }
 
         private Mock<AssessorDbContext> CreateMockDbContext(IMock<DbSet<Contact>> mockSet)
