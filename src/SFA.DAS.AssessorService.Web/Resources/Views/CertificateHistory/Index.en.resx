@@ -195,4 +195,19 @@
   <data name="Version" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="DateSentToPrinter" xml:space="preserve">
+    <value>Date sent to printer</value>
+  </data>
+  <data name="DeliveryOfCertificates" xml:space="preserve">
+    <value>Delivery of certificates can take up to 15 working days after the request for printing.</value>
+  </data>
+  <data name="LatestCertificateDetails" xml:space="preserve">
+    <value>Latest Certificate Details</value>
+  </data>
+  <data name="DateAndTime" xml:space="preserve">
+    <value>Date and time</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
 </root>

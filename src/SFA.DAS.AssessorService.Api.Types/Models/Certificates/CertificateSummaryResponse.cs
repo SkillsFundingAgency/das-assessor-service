@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
@@ -41,5 +42,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string EpaoId { get; set; }
         public string EpaoName { get; set; }
         public string ReasonForChange { get; set; }
+        public DateTime LatestStatusDatetime { get; set; }
     }
 }
