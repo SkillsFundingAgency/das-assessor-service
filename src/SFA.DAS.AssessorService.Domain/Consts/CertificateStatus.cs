@@ -69,5 +69,38 @@ namespace SFA.DAS.AssessorService.Domain.Consts
                     return status;
             }
         }
+
+        public static string GetStatusDateDisplayName(string status)
+        {
+            switch (status)
+            {
+                case ToBeApproved:
+                    return "Date submitted";
+
+                case Submitted:
+                    return "Date submitted";
+
+                case SentForApproval:
+                    return "Date sent for approval";
+
+                case SentToPrinter:
+                    return "Date sent to printer";
+
+                case NotDelivered:
+                    return "Date not delivered";
+
+                case Reprint:
+                    return "Date reprint requested";
+
+                case Delivered:
+                    return "Date delivered";
+
+                case Printed:
+                    return "Date printed";
+
+                default:
+                    return $"Date {status}";
+            }
+        }
     }
 }

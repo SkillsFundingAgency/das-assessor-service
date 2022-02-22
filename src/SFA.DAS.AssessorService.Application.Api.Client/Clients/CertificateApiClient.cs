@@ -52,9 +52,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string endPointAssessorOrganisationId)
+        public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string endPointAssessorOrganisationId, string searchTerm, string sortColumn, int sortDescending)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}&endPointAssessorOrganisationId={endPointAssessorOrganisationId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?" +
+                                                                            $"pageIndex={pageIndex}" +
+                                                                            $"&searchTerm={searchTerm}" +
+                                                                            $"&sortColumn={sortColumn}" +
+                                                                            $"&sortDescending={sortDescending}" +
+                                                                            $"&endPointAssessorOrganisationId={endPointAssessorOrganisationId}"))
             {
                 return await RequestAndDeserialiseAsync<PaginatedList<CertificateSummaryResponse>>(httpRequest, "Could not get Certificate History");
             }

@@ -7,19 +7,25 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateHistoryViewModel
     {
+        public int? PageIndex { get; set; }
+
+        public GetCertificateHistoryRequest.SortColumns SortColumn { get; set; }
+        public string SortDirection { get; set; } 
+        public string SearchTerm { get; set; }
+
         public PaginatedList<CertificateSummaryResponse> Certificates { get; set; }
 
         public bool CanShowCertificateDetails(CertificateSummaryResponse certificateSummaryResponse)
         {
-            var allowed = new[] 
-            { 
-                CertificateStatus.Submitted, CertificateStatus.SentToPrinter, 
-                CertificateStatus.Printed, CertificateStatus.Reprint, 
+            var allowed = new[]
+            {
+                CertificateStatus.Submitted, CertificateStatus.SentToPrinter,
+                CertificateStatus.Printed, CertificateStatus.Reprint,
                 CertificateStatus.Delivered, CertificateStatus.NotDelivered,
                 CertificateStatus.ToBeApproved
             };
-            
-            return 
+
+            return
                 allowed.Contains(certificateSummaryResponse.Status) &&
                 certificateSummaryResponse.OverallGrade != CertificateGrade.Fail;
         }

@@ -21,9 +21,28 @@
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
     [StandardUId] VARCHAR(20)  NULL ,
+	
 	[LearnerFamilyName] as CAST(JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS NVARCHAR(255)),
 	[LearnerGivenNames] as CAST(JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS NVARCHAR(255)),
-	[LearnerFullNameNoSpaces] as CAST(REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS NVARCHAR(255))
+	[LearnerFullNameNoSpaces] as CAST(REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS NVARCHAR(255)),
+	[FullName] as CAST(JSON_VALUE(CertificateData, '$.FullName') AS NVARCHAR(255)),
+	[ContactOrganisation] as CAST(JSON_VALUE(CertificateData, '$.ContactOrganisation') AS NVARCHAR(255)),
+	[ProviderName] as CAST(JSON_VALUE(CertificateData, '$.ProviderName') AS NVARCHAR(255)),
+	[ContactName] as CAST(JSON_VALUE(CertificateData, '$.ContactName') AS NVARCHAR(255)),
+	[CourseOption] as CAST(JSON_VALUE(CertificateData, '$.CourseOption') AS NVARCHAR(255)),
+	[OverallGrade] as CAST(JSON_VALUE(CertificateData, '$.OverallGrade') AS NVARCHAR(255)),
+	[StandardReference] as CAST(JSON_VALUE(CertificateData, '$.StandardReference') AS NVARCHAR(255)),
+	[StandardName] as CAST(JSON_VALUE(CertificateData, '$.StandardName') AS NVARCHAR(255)),
+	[Version] as CAST(JSON_VALUE(CertificateData, '$.Version') AS NVARCHAR(255)),
+	[StandardLevel] as CAST(JSON_VALUE(CertificateData, '$.StandardLevel') AS INT),
+	[AchievementDate] as CAST(JSON_VALUE(CertificateData, '$.AchievementDate') AS [datetime2](7)),
+	[LearningStartDate] as CAST(JSON_VALUE(CertificateData, '$.LearningStartDate') AS [datetime2](7)),
+	[ContactAddLine1] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine1') AS NVARCHAR(255)),
+	[ContactAddLine2] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine2') AS NVARCHAR(255)),
+	[ContactAddLine3] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine3') AS NVARCHAR(255)),
+	[ContactAddLine4] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine4') AS NVARCHAR(255)),
+	[ContactPostCode] as CAST(JSON_VALUE(CertificateData, '$.ContactPostCode') AS NVARCHAR(255)),
+
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -54,4 +73,7 @@ CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId
 GO
 
 CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
+GO
+
+CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
 GO
