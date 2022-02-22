@@ -147,6 +147,7 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOppFinderSession>().Use<OppFinderSession>();
+                config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
 
                 config.For<IWebConfiguration>().Use(Configuration);
                 
