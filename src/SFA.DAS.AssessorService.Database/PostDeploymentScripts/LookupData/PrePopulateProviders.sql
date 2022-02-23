@@ -3274,6 +3274,11 @@ INSERT INTO #Providers VALUES (10088194,'THE BEST CONNECTION GROUP LIMITED')
 INSERT INTO #Providers VALUES (10088215,'COMMUNITY MATTERS LTD.')
 INSERT INTO #Providers VALUES (90000524,'THE MARITIME AND COASTGUARD AGENCY')
 
+-- Providers that are now no longer on register but needed for claiming certificates.
+INSERT INTO #Providers VALUES (10003816,'LEARNDIRECT')
+INSERT INTO #Providers VALUES (10020022,'LEONARDO LIMITED')
+INSERT INTO #Providers VALUES (10089242,'RICHARD HUISH COLLEGE')
+
 -- Insert Providers table but do not overwrite
 
 MERGE [Providers] [Target] USING #Providers [Source]
