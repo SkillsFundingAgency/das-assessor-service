@@ -792,7 +792,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 if (financialExpired)
                 {
                     var financialExpiredModel = new FinancialExpiredViewModel { FinancialInfoStage1Expired = financialExpired, FinancialAssessmentUrl = Url.Action("StartOrResumeApplication", "Application") };
-                    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
+                    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpiredModel);
                 }
             }
 
