@@ -1,7 +1,9 @@
 GOVUK.epaoValidate = function(formElement, validationRulesObject) {
+
   var documentTitle = $(document).attr("title");
+
   var validator = formElement
-    .bind("invalid-form.validate", function() {
+    .on("invalid-form.validate", function() {
       $(document).attr("title", "Error: " + documentTitle);
 
       if ($(".js-error-summary").length) {
@@ -19,7 +21,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         $(".js-error-summary")
           .show()
           .focus();
-        $(".js-error-summary a").click(function(e) {
+        $(".js-error-summary a").on('click', function(e) {
           e.preventDefault();
           var href = $(this).attr("href");
           $(href).is(":visible")
