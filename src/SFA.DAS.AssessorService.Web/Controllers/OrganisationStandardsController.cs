@@ -58,21 +58,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (organisation != null)
                 {
                     model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, 1, 10);
-
-                    var orgDataFinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
-                    var orgDataFinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
-                    var orgTypeFinancialExempt = organisation.FinancialReviewStatus;
-
-                    if ((!orgDataFinancialExempt.HasValue) || (orgDataFinancialExempt.Value == false))
+                    if (organisation.FinancialReviewStatus != ApplyTypes.FinancialReviewStatus.Exempt)
                     {
-                        if ((!orgDataFinancialDueDate.HasValue) || (orgDataFinancialDueDate.Value.Date < DateTime.UtcNow.Date))
-                        {
-                            if (orgTypeFinancialExempt != ApplyTypes.FinancialReviewStatus.Exempt)
-                            {
-                                model.FinancialInfoStage1Expired = true;
-                                model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
-                            }
-                        }
+                        model.FinancialInfoStage1Expired = true;
+                        model.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
                     }
                 }
             }

@@ -119,12 +119,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var existingApplications = (await _applicationApiClient.GetStandardApplications(userId))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined)
                 .ToList();
-            var financialExpired = await IsFinancialExpired(epaoid, "StartOrResumeApplication", "Application");
 
-            ApplicationResponseViewModel applicationsResponseVm = new ApplicationResponseViewModel();
-            applicationsResponseVm.ApplicationResponse = existingApplications;
-            applicationsResponseVm.FinancialInfoStage1Expired = financialExpired.FinancialInfoStage1Expired;
-            applicationsResponseVm.FinancialAssessmentUrl = financialExpired.FinancialAssessmentUrl;
+            var organisation = await _orgApiClient.GetEpaOrganisation(epaoid);
+            var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
+
+            var applicationsResponseVm = new ApplicationResponseViewModel
+            {
+                ApplicationResponse = existingApplications,
+                FinancialInfoStage1Expired = financialExpired,
+                FinancialAssessmentUrl = financialExpired ? Url.Action("StartOrResumeApplication", "Application") : string.Empty
+            };
 
             return View(applicationsResponseVm);
         }
@@ -781,11 +785,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 qnaFinancialQuestionsComplete = financialQnAComplete.Select(w => w.QnAData.Pages[0].Complete).FirstOrDefault();
 
             if (qnaFinancialQuestionsComplete != true && application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-            {               
-                var financialExpired = await IsFinancialExpired(application.OrganisationId.ToString(), "StartOrResumeApplication", "Application");
+            {
+                var organisation = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+                var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
             
-                if (financialExpired.FinancialInfoStage1Expired)
+                if (financialExpired)
                 {
+                    var financialExpiredModel = new FinancialExpiredViewModel { FinancialInfoStage1Expired = financialExpired, FinancialAssessmentUrl = Url.Action("StartOrResumeApplication", "Application") };
                     return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpired);
                 }
             }
@@ -1308,31 +1314,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 }
             }
 
-        }
-
-        public async Task<FinancialExpiredViewModel> IsFinancialExpired(string epaoId, string redirAction, string redirController)
-        {
-            var model = new FinancialExpiredViewModel();
-            var organisation = await _orgApiClient.GetEpaOrganisation(epaoId);
-            if (organisation != null)
-            {
-                var orgDataFinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt;
-                var orgDataFinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate;
-                var orgTypeFinancialExempt = organisation.FinancialReviewStatus;
-
-                if ((!orgDataFinancialExempt.HasValue) || (orgDataFinancialExempt.Value == false))
-                {
-                    if ((!orgDataFinancialDueDate.HasValue) || (orgDataFinancialDueDate.Value.Date < DateTime.UtcNow.Date))
-                    {
-                        if (orgTypeFinancialExempt != ApplyTypes.FinancialReviewStatus.Exempt)
-                        {
-                            model.FinancialInfoStage1Expired = true;
-                            model.FinancialAssessmentUrl = this.Url.Action(redirAction, redirController);
-                        }
-                    }
-                }
-            }
-            return model;
         }
     }
 }
