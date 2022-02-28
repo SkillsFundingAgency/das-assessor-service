@@ -27,7 +27,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         private Mock<IOrganisationsApiClient> _mockOrgApiClient;
         private Mock<IQnaApiClient> _mockQnaApiClient;
         private Mock<IApplicationApiClient> _mockApiClient;
-        private Mock<IStandardsApiClient> _mockStandardsApiClient;
         private Mock<IContactsApiClient> _mockContactsApiClient;
         private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private Mock<IWebConfiguration> _mockConfig;
@@ -40,7 +39,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockApplicationService = new Mock<IApplicationService>();
             _mockOrgApiClient = new Mock<IOrganisationsApiClient>();
             _mockApiClient = new Mock<IApplicationApiClient>();
-            _mockStandardsApiClient = new Mock<IStandardsApiClient>();
             _mockContactsApiClient = new Mock<IContactsApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockQnaApiClient = new Mock<IQnaApiClient>();
@@ -63,18 +61,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                              Status = ApplicationSequenceStatus.Draft
                          }
                     },
-                    Apply = new Apply()
-                    {
-                        StandardReference = "ST0001",
-                        StandardName = "TITLE 1",
-                        Versions = new List<string>() { "1.2" }
-                    }
+                     Apply = new Apply()
+                     {
+                         StandardReference = "ST0001",
+                         StandardName = "TITLE 1",
+                         Versions = new List<string>() { "1.2" }
+                     }
                  }
              });
 
 
-            _sut = new ApplicationController(_mockApiValidationService.Object, _mockApplicationService.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object, 
-                        _mockStandardsApiClient.Object, _mockConfig.Object, _mockApiClient.Object, _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockLogger.Object);
+            _sut = new ApplicationController(_mockApiValidationService.Object, _mockApplicationService.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
+                        _mockConfig.Object, _mockApiClient.Object, _mockContactsApiClient.Object, _mockHttpContextAccessor.Object, _mockLogger.Object);
         }
 
         [Test]
