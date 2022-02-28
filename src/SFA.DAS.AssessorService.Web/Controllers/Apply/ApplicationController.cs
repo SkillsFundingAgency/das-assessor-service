@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +9,10 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
@@ -37,12 +33,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IStandardsApiClient _standardsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IStandardsApiClient standardsApiClient, IWebConfiguration config,
+        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
             : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
@@ -50,7 +45,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
-            _standardsApiClient = standardsApiClient;
             _contextAccessor = httpContextAccessor;
             _config = config;
             _logger = logger;
@@ -784,7 +778,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (financialQnAComplete != null)
                 qnaFinancialQuestionsComplete = financialQnAComplete.Select(w => w.QnAData.Pages[0].Complete).FirstOrDefault();
 
-            if (qnaFinancialQuestionsComplete != true && application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+            if (!qnaFinancialQuestionsComplete && application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
             {
                 var organisation = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
                 var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
