@@ -53,5 +53,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             _handler = new GetOrganisationStandardHandler(_mockRegisterQueryRepository.Object, Mock.Of<ILogger<GetAssessmentOrganisationHandler>>(), _mockStandardService.Object);
         }
+
+        [Test]
+        public async Task Then_CallGetRegisteredStandardVersions_And_AddToResponse()
+        {
+            var result = await _handler.Handle(new GetOrganisationStandardRequest(), CancellationToken.None);
+
+            _mockStandardService.Verify(ss => ss.GetEPAORegisteredStandardVersions(_organisationResponse.OrganisationId, _standardResponse.LarsCode), Times.Once());
+
+            result.Versions.Should().BeEquivalentTo(_versions);
+        }
     }
 }

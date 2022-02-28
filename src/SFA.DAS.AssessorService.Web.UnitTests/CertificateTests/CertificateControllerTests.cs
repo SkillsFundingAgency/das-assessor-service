@@ -82,6 +82,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockStandardVersionClient.Setup(s => s.GetStandardOptions(standard.StandardUId)).ReturnsAsync(new StandardOptions());
             _mockLearnerApiClient.Setup(c => c.GetLearnerRecord(model.StdCode, model.Uln)).ReturnsAsync(learner);
 
+
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {
@@ -277,6 +278,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                         setSession = (CertificateSession)session;
                     }
                 });
+
             var result = await _certificateController.Start(model) as RedirectToActionResult;
 
             _mockCertificateApiClient.Verify(s => s.Start(It.Is<StartCertificateRequest>(

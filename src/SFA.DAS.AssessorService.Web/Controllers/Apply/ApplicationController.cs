@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +9,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Helpers;
@@ -36,6 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
@@ -47,6 +45,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
+            _contextAccessor = httpContextAccessor;
             _config = config;
             _logger = logger;
         }
@@ -110,12 +109,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> StandardApplications()
         {
             var userId = await GetUserId();
-
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             var existingApplications = (await _applicationApiClient.GetStandardApplications(userId))?
                 .Where(p => p.ApplicationStatus != ApplicationStatus.Declined)
                 .ToList();
 
-            return View(existingApplications);
+            var organisation = await _orgApiClient.GetEpaOrganisation(epaoid);
+            var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
+
+            var applicationsResponseVm = new ApplicationResponseViewModel
+            {
+                ApplicationResponse = existingApplications,
+                FinancialInfoStage1Expired = financialExpired,
+                FinancialAssessmentUrl = financialExpired ? Url.Action("StartOrResumeApplication", "Application") : string.Empty
+            };
+
+            return View(applicationsResponseVm);
         }
 
         [HttpPost("/Application")]
@@ -147,7 +156,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             return await StartApplication();
         }
-        
+
+        public IActionResult FinancialExpiredRedir()
+        {
+            FinancialExpiredViewModel financialExpiredVM = new FinancialExpiredViewModel();
+            financialExpiredVM.FinancialInfoStage1Expired = true;
+            financialExpiredVM.FinancialAssessmentUrl = this.Url.Action("StartOrResumeApplication", "Application");
+            return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpiredVM);
+        }
 
         [HttpGet("/Application/{Id}")]
         [ApplicationAuthorize(routeId: "Id")]
@@ -732,7 +748,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!CanUpdateApplication(application, sequenceNo))
             {
                 return RedirectToAction("Applications");
-            }
+            }        
 
             var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -753,6 +769,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 else
                 {
                     return View("~/Views/Application/Sequence.cshtml", sequenceVm);
+                }
+            }
+
+            //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
+            bool qnaFinancialQuestionsComplete = false;
+            var financialQnAComplete = sections.Where(w => w.SectionNo == 3 && w.SequenceNo == 1);
+            if (financialQnAComplete != null)
+                qnaFinancialQuestionsComplete = financialQnAComplete.Select(w => w.QnAData.Pages[0].Complete).FirstOrDefault();
+
+            if (!qnaFinancialQuestionsComplete && application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+            {
+                var organisation = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+                var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
+            
+                if (financialExpired)
+                {
+                    var financialExpiredModel = new FinancialExpiredViewModel { FinancialInfoStage1Expired = financialExpired, FinancialAssessmentUrl = Url.Action("StartOrResumeApplication", "Application") };
+                    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpiredModel);
                 }
             }
 
