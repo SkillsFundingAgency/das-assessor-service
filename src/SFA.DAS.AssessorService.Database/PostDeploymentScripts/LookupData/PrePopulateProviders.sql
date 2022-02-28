@@ -3274,6 +3274,14 @@ INSERT INTO #Providers VALUES (10088194,'THE BEST CONNECTION GROUP LIMITED')
 INSERT INTO #Providers VALUES (10088215,'COMMUNITY MATTERS LTD.')
 INSERT INTO #Providers VALUES (90000524,'THE MARITIME AND COASTGUARD AGENCY')
 
+-- Insert some missing providers which had been de-listed on RoATP but for which an EPAO required to claim certificates
+-- there are similar named providers above so it could be that they de-listed themselves and then relisted under different
+-- names and UkPRN
+
+INSERT INTO #Providers VALUES (10003816,'LEARNDIRECT')
+INSERT INTO #Providers VALUES (10020022,'LEONARDO LIMITED')
+INSERT INTO #Providers VALUES (10089242,'RICHARD HUISH COLLEGE')
+
 -- Insert Providers table but do not overwrite
 
 MERGE [Providers] [Target] USING #Providers [Source]
