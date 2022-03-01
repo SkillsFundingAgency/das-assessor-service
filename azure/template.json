@@ -702,6 +702,12 @@
                 "parameters": {
                     "serviceBusNamespaceName": {
                         "value": "[parameters('serviceBusName')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[parameters('logAnalyticsWorkspaceName')]"
+                    },
+                    "logAnalyticsWorkspaceResourceGroupName": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     }
                 }
             },
