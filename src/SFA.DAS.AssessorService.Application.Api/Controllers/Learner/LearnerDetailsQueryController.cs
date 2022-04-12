@@ -46,5 +46,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(new GetPipelinesCountRequest(epaOrgId, stdCode)));
         }
+
+        [HttpGet("{apprenticeshipId}", Name = "GetApprenticeLearner")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetApprenticeLearner(long apprenticeshipId)
+        {
+            return Ok(await _mediator.Send(new GetApprenticeLearnerRequest(apprenticeshipId)));
+        }
     }
 }
