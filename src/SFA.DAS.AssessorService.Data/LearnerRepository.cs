@@ -58,12 +58,13 @@ namespace SFA.DAS.AssessorService.Data
                     l.Uln,
                     l.GivenNames,
                     l.FamilyName,
-                    c.OverallGrade,
-                    c.AchievementDate,
+                    JSON_VALUE(c.CertificateData,'$.AchievementDate') as AchievementDate,
+                    JSON_VALUE(c.CertificateData,'$.EpaDetails.LatestEpaOutcome') as Outcome,
                     p.Name as ProviderName
-                FROM [Learner] l JOIN [Certificates] c 
-                    on l.Uln = c.Uln AND l.StdCode = c.StandardCode 
-                JOIN [Providers] p on l.UkPrn = p.Ukprn
+                FROM [Learner] l 
+                    LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn
+                    LEFT JOIN [Certificates] c on l.Uln = c.Uln AND l.StdCode = c.StandardCode 
+                
                 WHERE [ApprenticeshipId] = @apprenticeshipId",
                 param: new { apprenticeshipId },
                 transaction: _unitOfWork.Transaction);

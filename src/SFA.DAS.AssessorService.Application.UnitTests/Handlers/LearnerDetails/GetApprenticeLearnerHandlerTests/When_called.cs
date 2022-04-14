@@ -32,7 +32,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         public async Task ThenLearnerIsRetrievedFromDatabase(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
         {
             // Arrange
-            learner.OverallGrade = "Merit";
             _mockLearnerRepository
                 .Setup(r => r.Get(request.ApprenticeshipId))
                 .ReturnsAsync(learner);
@@ -55,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
                 learner.StandardReference,
                 learner.StandardName,
                 learner.CompletionStatus,
-                Outcome = "Pass",
+                learner.Outcome,
                 learner.ApprovalsStopDate,
                 learner.ApprovalsPauseDate,
                 learner.EstimatedEndDate,
@@ -66,37 +65,5 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
                 learner.ProviderName
             });
         }
-
-        [Test]
-        [MoqInlineAutoData(null, null)]
-        [MoqInlineAutoData("Pass","Pass")]
-        [MoqInlineAutoData("Credit", "Pass")]
-        [MoqInlineAutoData("Merit", "Pass")]
-        [MoqInlineAutoData("Distinction", "Pass")]
-        [MoqInlineAutoData("PassWithExcellence", "Pass")]
-        [MoqInlineAutoData("Outstanding", "Pass")]
-        [MoqInlineAutoData("NoGradeAwarded", "Pass")]
-        [MoqInlineAutoData("Fail","Fail")]
-        public async Task ThenLearnerGradeIsMappedSuccessfully(string grade, string outcome, GetApprenticeLearnerRequest request, ApprenticeLearner learner)
-        {
-            // Arrange
-            learner.OverallGrade = grade;
-            _mockLearnerRepository
-                .Setup(r => r.Get(request.ApprenticeshipId))
-                .ReturnsAsync(learner);
-
-            // Act
-            var result = await _sut.Handle(request, new CancellationToken());
-
-            // Assert
-            _mockLearnerRepository
-                .Verify(r => r.Get(request.ApprenticeshipId), Times.Once);
-
-            result.Should().BeEquivalentTo(new
-            {
-                Outcome = outcome
-            });
-        }
-
     }
 }

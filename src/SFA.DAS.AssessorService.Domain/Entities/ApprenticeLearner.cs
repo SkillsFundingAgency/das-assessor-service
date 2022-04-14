@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         /// <summary>
         /// From Certificate Table
         /// </summary>
-        public string OverallGrade { get; set; }
+        public string Outcome { get; set; }
         /// <summary>
         /// From Certificate Table
         /// </summary>

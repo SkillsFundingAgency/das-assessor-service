@@ -31,20 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 _logger.LogInformation($"Learner not found for Apprenticeship Id :{request.ApprenticeshipId}");
                 return default;
             }
-
-            string grade = learner.OverallGrade;
-            if(!string.IsNullOrWhiteSpace(learner.OverallGrade))
-            {
-                if(learner.OverallGrade.Equals(CertificateGrade.Fail))
-                {
-                    grade = "Fail";
-                }
-                else
-                {
-                    grade = "Pass";
-                }
-            }
-             
+            
             var approvalsRecord = new GetApprenticeLearnerResponse()
             {
                 ApprenticeshipId = learner.ApprenticeshipId.Value,
@@ -56,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 StandardReference = learner.StandardReference,
                 StandardName = learner.StandardName,
                 CompletionStatus = learner.CompletionStatus,
-                Outcome = grade,
+                Outcome = learner.Outcome,
                 ApprovalsStopDate = learner.ApprovalsStopDate,
                 ApprovalsPauseDate = learner.ApprovalsPauseDate,
                 EstimatedEndDate = learner.EstimatedEndDate,
