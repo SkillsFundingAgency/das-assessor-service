@@ -42,6 +42,7 @@
 	[ContactAddLine3] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine3') AS NVARCHAR(255)),
 	[ContactAddLine4] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine4') AS NVARCHAR(255)),
 	[ContactPostCode] as CAST(JSON_VALUE(CertificateData, '$.ContactPostCode') AS NVARCHAR(255)),
+	[LatestEPAOutcome] as CAST(JSON_VALUE(CertificateData, '$.EpaDetails.LatestEpaOutcome') AS NVARCHAR(15)),
 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
