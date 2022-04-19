@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         /// <summary>
         /// From Certificate Table
         /// </summary>
-        public DateTime AchievementDate { get; set; }
+        public DateTime? AchievementDate { get; set; }
         /// <summary>
         /// From Provider Table
         /// </summary>
