@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
                 {
-                    model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, 1, 10);
+                    model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, pageIndex, PageSize);
                     if (organisation.FinancialReviewStatus != ApplyTypes.FinancialReviewStatus.Exempt)
                     {
                         model.FinancialInfoStage1Expired = true;
