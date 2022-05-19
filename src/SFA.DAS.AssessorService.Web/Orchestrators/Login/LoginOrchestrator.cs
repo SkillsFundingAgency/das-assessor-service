@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Web.Infrastructure;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 {
@@ -33,11 +30,6 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
             var user = _contextAccessor.HttpContext.User;
             if (user == null)
                 return loginResult;
-
-            foreach (var claim in user.Claims)
-            {
-                _logger.LogInformation($"Claim received: {claim.Type} Value: {claim.Value}");
-            }
 
             _logger.LogInformation("Start of PostSignIn");
 

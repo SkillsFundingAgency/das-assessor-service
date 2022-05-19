@@ -54,3 +54,7 @@ GO
 
 CREATE NONCLUSTERED INDEX [IX_Learner_Source] ON [Learner] ([Source], [EstimatedEndDate], [CompletionStatus], [LastUpdated]) 
 GO
+
+CREATE NONCLUSTERED INDEX [IX_ApprovalsApprenticeId] ON [Learner] ([ApprenticeshipId]) INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
+[StandardName],[CompletionStatus],[ApprovalsStopDate],[ApprovalsPauseDate],[EstimatedEndDate],[Uln],[GivenNames],[FamilyName])
+GO
