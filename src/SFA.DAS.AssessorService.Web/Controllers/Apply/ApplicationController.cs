@@ -773,20 +773,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
-            bool qnaFinancialQuestionsComplete = false;
-            var financialQnAComplete = sections.Where(w => w.SectionNo == 3 && w.SequenceNo == 1);
-            if (financialQnAComplete != null)
-                qnaFinancialQuestionsComplete = financialQnAComplete.Select(w => w.QnAData.Pages[0].Complete).FirstOrDefault();
+            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO) {
+                bool qnaFinancialQuestionsComplete = false;
+                var financialQnAComplete = sections.Where(w => w.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && w.SequenceNo == ApplyConst.FINANCIAL_SEQUENCE_NO);
+                if (financialQnAComplete != null)
+                    qnaFinancialQuestionsComplete = financialQnAComplete.Select(w => w.QnAData.Pages[0].Complete).FirstOrDefault();
 
-            if (!qnaFinancialQuestionsComplete && application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-            {
-                var organisation = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
-                var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
-            
-                if (financialExpired)
+                if (!qnaFinancialQuestionsComplete && (application.ApplicationStatus == ApplicationStatus.InProgress || application.ApplicationStatus == ApplicationStatus.FeedbackAdded))
                 {
-                    var financialExpiredModel = new FinancialExpiredViewModel { FinancialInfoStage1Expired = financialExpired, FinancialAssessmentUrl = Url.Action("StartOrResumeApplication", "Application") };
-                    return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpiredModel);
+                    var organisation = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+                    var financialExpired = organisation.FinancialReviewStatus != FinancialReviewStatus.Exempt;
+
+                    if (financialExpired)
+                    {
+                        var financialExpiredModel = new FinancialExpiredViewModel { FinancialInfoStage1Expired = financialExpired, FinancialAssessmentUrl = Url.Action("StartOrResumeApplication", "Application") };
+                        return View("~/Views/Application/Standard/FinancialAssessmentDue.cshtml", financialExpiredModel);
+                    }
                 }
             }
 
