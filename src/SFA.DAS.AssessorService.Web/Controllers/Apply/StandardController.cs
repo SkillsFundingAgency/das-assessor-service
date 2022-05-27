@@ -251,39 +251,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact();
 
             if (!CanUpdateApplicationAsync(application))
-            {
                 return RedirectToAction("Applications", "Application");
-            }
 
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
-            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+            IEnumerable<StandardVersion> standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
+            StandardVersion stdVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
+            var appliedVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference);
+            if (!appliedVersions.Any(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase)))
+                return RedirectToAction("Applications", "Application");
 
-            bool optInFollowingWithdrawal = false;
-
-            //Get all previous applications for standard and find application that contains version in question
-            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
-            if (previousApplications != null)
-            {
-                //Most recent application must not be a withdrawal
-                var mostRecentApplication = previousApplications.FirstOrDefault();
-                if (mostRecentApplication.ApplicationType != ApplicationTypes.Withdrawal && mostRecentApplication.ApplyData.Apply.Versions.Contains(version))
-                {
-                    //Get all previously withdrawn applications for standard and check to see if version in question has been withdrawn
-                    var previousWithdrawnApplicationsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, stdVersion.LarsCode);
-                    if (previousWithdrawnApplicationsForStandard != null)
-                    {
-                        if (previousWithdrawnApplicationsForStandard.Where(x => x.ApplyData.Apply.Versions.Contains(version) && x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal).Any())
-                        {
-                            optInFollowingWithdrawal = true;
-                        }
-                    }
-                }
-            }
+            DateTime? effectiveTo = stdVersion?.EffectiveTo;
+            bool optInFollowingWithdrawal = effectiveTo.HasValue;
 
             await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
-
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
 
