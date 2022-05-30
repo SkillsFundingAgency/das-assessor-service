@@ -254,6 +254,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications", "Application");
 
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            if (org == null)
+                return RedirectToAction("Applications", "Application");
+
             IEnumerable<StandardVersion> standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             StandardVersion stdVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
@@ -264,7 +267,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             DateTime? effectiveTo = stdVersion?.EffectiveTo;
             bool optInFollowingWithdrawal = effectiveTo.HasValue;
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
 
