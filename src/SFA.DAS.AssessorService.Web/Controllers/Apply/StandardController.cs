@@ -259,13 +259,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             IEnumerable<StandardVersion> standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
             StandardVersion stdVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
-
-            var appliedVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference);
-            if (!appliedVersions.Any(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase)))
+            if (stdVersion == null)
                 return RedirectToAction("Applications", "Application");
 
-            DateTime? effectiveTo = stdVersion?.EffectiveTo;
-            bool optInFollowingWithdrawal = effectiveTo.HasValue;
+            IEnumerable<AppliedStandardVersion> appliedVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference);
+            AppliedStandardVersion appliedVersion = appliedVersions.FirstOrDefault((x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase)));
+            if (appliedVersion == null || appliedVersion.ApprovedStatus == "Approved" || appliedVersion.ApprovedStatus == "Apply in progress" || appliedVersion.ApprovedStatus == "Feedback Added")
+                return RedirectToAction("Applications", "Application");
+
+            DateTime? effectiveTo = appliedVersion.StdVersionEffectiveTo;
+            bool optInFollowingWithdrawal = (effectiveTo.HasValue || appliedVersion.ApprovedStatus == "Withdrawn");
 
             await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });

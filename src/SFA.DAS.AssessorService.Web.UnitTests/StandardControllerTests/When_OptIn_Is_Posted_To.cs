@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         [Test]
         public async Task Then_Version_Is_Opted_In()
         {
-            //Arrange
+            // Arrange
             _mockStandardVersionApiClient
                .Setup(r => r.GetStandardVersionsByIFateReferenceNumber("ST0001"))
                .ReturnsAsync(new List<StandardVersion> {
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockApiClient
                 .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
                 .ReturnsAsync(new List<ApplicationResponse> {
-                    new ApplicationResponse { StandardReference = "ST0001", ApplyData = new ApplyData{ }, // Apply = new Apply{ Versions = new List<string>{"1.1","1.2"}}},
+                    new ApplicationResponse { StandardReference = "ST0001", ApplyData = new ApplyData{ },
                         StandardApplicationType = StandardApplicationTypes.VersionWithdrawal}
             });
 
