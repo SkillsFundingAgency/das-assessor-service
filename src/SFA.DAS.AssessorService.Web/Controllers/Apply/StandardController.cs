@@ -268,7 +268,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 return RedirectToAction("Applications", "Application");
 
             DateTime? effectiveTo = appliedVersion.StdVersionEffectiveTo;
-            bool optInFollowingWithdrawal = (effectiveTo.HasValue || appliedVersion.ApprovedStatus == "Withdrawn");
+            bool optInFollowingWithdrawal = effectiveTo.HasValue;
 
             await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
