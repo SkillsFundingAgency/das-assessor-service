@@ -1,8 +1,12 @@
+// Application javascript
+window.GOVUKFrontend.initAll();
+window.DASFrontend.expandableTable.init();
+window.DASFrontend.cookies.init();
+
 (function(global) {
   "use strict";
 
   var GOVUK = global.GOVUK || {};
-  var DASFrontend = global.DASFrontend || {};
 
   GOVUK.checkAll = {
     checkAllContainer: document.querySelector(".js-check-all-container"),
@@ -85,32 +89,4 @@
   };
 
   global.GOVUK = GOVUK;
-
-  
-
-  DASFrontend.forms = {
-    init: function() {
-      var forms = document.querySelectorAll("form")
-      for (var i = 0, length = forms.length; i < length; i++) {
-        forms[i].addEventListener("submit", this.preventDoubleSubmit);
-      }
-    },
-    preventDoubleSubmit: function() {
-      var button = this.querySelector(".govuk-button")
-      button.setAttribute('disabled', 'disabled');
-      setTimeout(function () {
-        button.removeAttribute('disabled');
-      }, 20000);
-    }
-  };
-
-  global.DASFrontend = DASFrontend;
-
 })(window);
-  
-
-// Application javascript
-window.GOVUKFrontend.initAll();
-window.DASFrontend.expandableTable.init();
-window.DASFrontend.cookies.init();
-window.DASFrontend.forms.init();
