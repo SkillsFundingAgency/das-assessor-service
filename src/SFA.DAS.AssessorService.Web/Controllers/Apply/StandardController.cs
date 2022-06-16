@@ -251,39 +251,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var contact = await GetUserContact();
 
             if (!CanUpdateApplicationAsync(application))
-            {
                 return RedirectToAction("Applications", "Application");
-            }
 
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
-            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+            if (org == null)
+                return RedirectToAction("Applications", "Application");
 
+            IEnumerable<StandardVersion> standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
+            StandardVersion stdVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+            if (stdVersion == null)
+                return RedirectToAction("Applications", "Application");
 
-            bool optInFollowingWithdrawal = false;
+            IEnumerable<AppliedStandardVersion> appliedVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference);
+            AppliedStandardVersion appliedVersion = appliedVersions.FirstOrDefault((x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase)));
+            if (appliedVersion == null || appliedVersion.ApprovedStatus == "Approved" || appliedVersion.ApprovedStatus == "Apply in progress" || appliedVersion.ApprovedStatus == "Feedback Added")
+                return RedirectToAction("Applications", "Application");
 
-            //Get all previous applications for standard and find application that contains version in question
-            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
-            if (previousApplications != null)
-            {
-                //Most recent application must not be a withdrawal
-                var mostRecentApplication = previousApplications.FirstOrDefault();
-                if (mostRecentApplication.ApplicationType != ApplicationTypes.Withdrawal && mostRecentApplication.ApplyData.Apply.Versions.Contains(version))
-                {
-                    //Get all previously withdrawn applications for standard and check to see if version in question has been withdrawn
-                    var previousWithdrawnApplicationsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, stdVersion.LarsCode);
-                    if (previousWithdrawnApplicationsForStandard != null)
-                    {
-                        if (previousWithdrawnApplicationsForStandard.Where(x => x.ApplyData.Apply.Versions.Contains(version) && x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal).Any())
-                        {
-                            optInFollowingWithdrawal = true;
-                        }
-                    }
-                }
-            }
+            DateTime? effectiveTo = appliedVersion.StdVersionEffectiveTo;
+            bool optInFollowingWithdrawal = effectiveTo.HasValue;
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
-
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
 
