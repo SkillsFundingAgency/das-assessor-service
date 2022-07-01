@@ -206,13 +206,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
 
-                // update QnA application data for the Application Type
+                // update QnA application data to include the version Application Type but remove the Organisation Type
+                // as the QnA service does not include AND operations for NotRequiredConditions. The presence of
+                // Organisation Type would remove some pages which should be shown in a standard version application
+                // when the NotRequiredConditions are combined with an OR operation. The application data can be
+                // updated here because a version application is always an additional standard and the update is being
+                // done prior to displaying the application and collecting the answers to tagged questions
                 var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
                 applicationData.ApplicationType = StandardApplicationTypes.Version;
+                applicationData.OrganisationType = null;
                 await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
             }
             else
+            {
+                // the QnA application data must not be updated here as this could be a full stage 2 standard application
+                // where the tagged questions in stage 1 are required to approve the application, updating the application
+                // data would overwrite the tagged questions
                 await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Full);
+            }
 
             return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
         }
