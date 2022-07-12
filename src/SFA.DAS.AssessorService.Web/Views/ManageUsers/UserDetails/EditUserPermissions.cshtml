@@ -31,7 +31,7 @@
             <span class="govuk-caption-xl">Edit user permissions</span>
             <partial for="@Model" name="~/Views/ManageUsers/UserDetails/_UserDetails.cshtml"/>
 
-            <form asp-controller="UserDetails" asp-action="EditPermissions">
+            <form asp-controller="UserDetails" asp-action="EditPermissions" class="app-prevent-button-disabling">
                 <input type="hidden" name="ContactId" value="@Model.EditPrivilegesViewModel.ContactId"/>
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
