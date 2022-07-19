@@ -50,9 +50,6 @@
         "storageAccountContainerArray": {
             "type": "array"
         },
-        "serviceBusName": {
-            "type": "string"
-        },
         "sharedFrontEndAppServicePlanName": {
             "type": "string"
         },
@@ -81,9 +78,6 @@
             "type": "string"
         },
         "sharedSQLServerName": {
-            "type": "string"
-        },
-        "databaseName": {
             "type": "string"
         },
         "elasticPoolName": {
@@ -125,7 +119,9 @@
         "externalApiAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-as')]",
         "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbox-as')]",
         "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
-        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]"
+        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
+        "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
+        "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]"
     },
     "resources": [
         {
@@ -693,7 +689,7 @@
             ]
         },
         {
-            "name": "[concat(parameters('serviceBusName'), '-', parameters('utcValue'))]",
+            "name": "[concat(variables('serviceBusName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "apiVersion": "2020-10-01",
@@ -705,7 +701,7 @@
                 },
                 "parameters": {
                     "serviceBusNamespaceName": {
-                        "value": "[parameters('serviceBusName')]"
+                        "value": "[variables('serviceBusName')]"
                     },
                     "logAnalyticsWorkspaceName": {
                         "value": "[parameters('logAnalyticsWorkspaceName')]"
@@ -721,7 +717,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(parameters('databaseName'), '-sql-database-',parameters('utcValue'))]",
+            "name": "[concat(variables('databaseName'), '-sql-database-',parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
@@ -732,7 +728,7 @@
                 },
                 "parameters": {
                     "databaseName": {
-                        "value": "[parameters('databaseName')]"
+                        "value": "[variables('databaseName')]"
                     },
                     "sqlServerName": {
                         "value": "[parameters('sharedSQLServerName')]"
@@ -779,6 +775,14 @@
         "ExternalApiSandboxAppServiceName": {
             "type": "string",
             "value": "[variables('externalApiSandboxAppServiceName')]"
+        },
+        "DatabaseName": {
+            "type": "string",
+            "value": "[variables('databaseName')]"
+        },
+        "ServiceBusName": {
+            "type": "string",
+            "value": "[variables('serviceBusName')]"
         },
         "StorageAccountName": {
             "type": "string",
