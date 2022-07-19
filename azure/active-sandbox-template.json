@@ -491,7 +491,7 @@
             "type": "string",
             "value": "[variables('internalApiActiveSandboxAppServiceName')]"
         },
-        "DatabaseName": {
+        "SandboxDatabaseName": {
             "type": "string",
             "value": "[variables('sandboxDatabaseName')]"
         }        
