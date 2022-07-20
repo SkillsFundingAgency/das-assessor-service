@@ -117,7 +117,7 @@
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
         "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "externalApiAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-as')]",
-        "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbx-as')]",
+        "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbox-as')]",
         "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
@@ -395,7 +395,7 @@
         {
             "condition": "[greater(length(parameters('externalApiCustomHostname')), 0)]",
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -502,7 +502,7 @@
                         "value": "[parameters('externalApiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(concat(variables('externalApiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
+                        "value": "[reference(concat(variables('externalApiAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('externalApiAppServiceAllowedIPs')]"
