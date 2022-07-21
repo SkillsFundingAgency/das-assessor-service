@@ -183,7 +183,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -234,7 +234,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('uiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -273,7 +273,7 @@
         {
             "condition": "[greater(length(parameters('apiCustomHostName')), 0)]",
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('apiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('apiAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -297,7 +297,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -348,7 +348,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('apiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('apiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -384,7 +384,7 @@
                         "value": "[parameters('apiCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(concat(variables('apiAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
+                        "value": "[reference(concat(variables('apiAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -419,7 +419,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -470,7 +470,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('externalApiAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('externalApiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -513,7 +513,7 @@
         {
             "condition": "[greater(length(parameters('externalApiSandboxCustomHostname')), 0)]",
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -537,7 +537,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -588,7 +588,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('externalApiSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('externalApiSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -624,7 +624,7 @@
                         "value": "[parameters('externalApiSandboxCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference(concat(variables('externalApiSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
+                        "value": "[reference(concat(variables('externalApiSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('externalApiAppServiceAllowedIPs')]"
