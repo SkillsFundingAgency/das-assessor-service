@@ -31,7 +31,7 @@
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">The main contact address for this organisation. This information appears on the register.</p>
 
-            <form asp-controller="Organisation" asp-action="ChangeAddress">
+            <form asp-controller="Organisation" asp-action="ChangeAddress" class="app-prevent-button-disabling">
                 <div id="addressLookupWrapper" class="hide-nojs form-group disabled">
                     <div class="govuk-form-group govuk-!-margin-bottom-2" id="address-lookup">
                         <label for="postcode-search" class="govuk-label govuk-label--m">Start typing the address or postcode</label>

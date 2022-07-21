@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">Select a user as your main contact for your organisation. This is the name employers and training providers will see on the Register.</p>
 
-            <form asp-controller="Organisation" asp-action="SelectOrChangeContactName">
+            <form asp-controller="Organisation" asp-action="SelectOrChangeContactName" class="app-prevent-button-disabling">
                 <div class="govuk-form-group" sfa-validation-for="PrimaryContact" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <div class="govuk-radios">

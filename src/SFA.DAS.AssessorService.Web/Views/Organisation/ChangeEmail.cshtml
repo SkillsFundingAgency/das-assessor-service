@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">This is usually a generic email address that can be accessed by more than one member of your team.</p>
 
-            <form asp-controller="Organisation" asp-action="ChangeEmail">
+            <form asp-controller="Organisation" asp-action="ChangeEmail" class="app-prevent-button-disabling">
                 <div class="govuk-form-group">
                     <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="Email">

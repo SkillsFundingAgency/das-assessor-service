@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">The main contact number for this organisation. This information appears on the register.</p>
 
-            <form asp-controller="Organisation" asp-action="ChangePhoneNumber">
+            <form asp-controller="Organisation" asp-action="ChangePhoneNumber" class="app-prevent-button-disabling">
                 <div class="govuk-form-group">
                     <div class="govuk-form-group" sfa-validation-for="PhoneNumber" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="PhoneNumber">
