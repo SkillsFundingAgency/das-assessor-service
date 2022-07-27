@@ -106,7 +106,7 @@
     "resources": [
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('activeSandboxAppServicePlanName'), '-app-service-plan-', parameters('utcValue'))]",
+            "name": "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
@@ -182,7 +182,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
 
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
@@ -208,7 +208,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0)]",
@@ -261,7 +261,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -297,7 +297,7 @@
                         "value": "[parameters('externalActiveApiSandboxCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -305,7 +305,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-service-plan-', parameters('utcValue'))]"
+                "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]"
             ]
         },
         {
@@ -338,7 +338,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -383,7 +383,7 @@
                         "value": "[parameters('internalApiSandboxCustomHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -391,12 +391,12 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-service-plan-', parameters('utcValue'))]"
+                "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]"
             ]
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
@@ -418,7 +418,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",

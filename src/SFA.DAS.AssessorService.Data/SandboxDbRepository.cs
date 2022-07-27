@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Data
                           WHERE Number < 9 
                         ),
                 WITH Standards_CTE as(
-                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE LarsCode != 0)
+                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
 
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
                         SELECT
@@ -210,7 +210,7 @@ namespace SFA.DAS.AssessorService.Data
                         FROM CTE
                           CROSS JOIN OrganisationStandard ogs 
                           JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = ogs.EndPointAssessorOrganisationId AND og1.Status <> 'Deleted'
-                          JOIN Standards_CTE scte ON ogs.StandardCode = scte.LarsCode
+                          JOIN Standards_CTE scte ON ogs.StandardCode = scte.LarsCode AND seq = 1
                         WHERE  ogs.Status NOT IN ( 'Deleted','New') AND (ogs.EffectiveTo IS NULL OR ogs.EffectiveTo > GETDATE()) AND og1.EndPointAssessorUkprn IS NOT NULL
                         ) ab1
                         ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);
