@@ -34,7 +34,7 @@
 -- AB 10/05/21 Keeping this for now to patch FAILs recorded via the API
 ;
 WITH Standards_CTE AS(
-SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE LarsCode != 0)
+SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
 
 MERGE INTO certificates ma1
 USING (
