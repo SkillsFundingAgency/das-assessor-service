@@ -619,7 +619,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         }
                         else if (FileValidator.AllRequiredFilesArePresent(page, errorMessages, ModelState))
                         {
-                            return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
+                            return await ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
                         }
                     }
                     else
@@ -962,11 +962,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return atLeastOneAnswerChanged;
         }
 
-        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
+        private async Task<IActionResult> ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
         {
-            var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
+            var application = await _applicationApiClient.GetApplication(Id);
+            var next = await _qnaApiClient.SkipPage(application.ApplicationId, page.SectionId.Value, page.PageId);
             if (next != null)
-                return RedirectToNextAction(Id, sequenceNo, sectionNo, next.Action, next.ReturnId, __redirectAction);
+                return RedirectToNextAction(Id, sequenceNo, sectionNo, next.NextAction, next.NextActionId, __redirectAction);
+
             return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
         }
 
