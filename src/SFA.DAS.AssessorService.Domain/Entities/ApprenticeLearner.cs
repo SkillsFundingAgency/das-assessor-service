@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
     /// <summary>
-    /// Domain model object over Learner + Provider & Certificate for Learner endpoint
+    /// Domain model object over Learner + Provider for Learner endpoint
     /// </summary>
     public class ApprenticeLearner
     {
@@ -20,18 +20,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? ApprovalsStopDate { get; set; }
         public DateTime? ApprovalsPauseDate { get; set; }
         public DateTime? EstimatedEndDate { get; set; }
-
+        public DateTime? LearnActEndDate { get; set; }
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        /// <summary>
-        /// From Certificate Table
-        /// </summary>
-        public string Outcome { get; set; }
-        /// <summary>
-        /// From Certificate Table
-        /// </summary>
-        public DateTime? AchievementDate { get; set; }
         /// <summary>
         /// From Provider Table
         /// </summary>
