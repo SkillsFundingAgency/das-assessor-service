@@ -177,7 +177,7 @@ namespace SFA.DAS.AssessorService.Data
                           FROM CTE 
                           WHERE Number < 9 
                         ),
-                WITH Standards_CTE as(
+                 Standards_CTE as(
                 SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
 
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
@@ -202,11 +202,11 @@ namespace SFA.DAS.AssessorService.Data
                         FROM (
                           SELECT 
                             '1'+ SUBSTRING(ogs.EndPointAssessorOrganisationId,4,4) + RIGHT('000'+CAST(ogs.StandardCode AS VARCHAR(3)),3) +RIGHT('00'+CAST(CTE.Number AS VARCHAR(2)),2) AS Uln, 
-	                        og1.EndPointAssessorUkprn AS UkPrn,
-	                        ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
+                            og1.EndPointAssessorUkprn AS UkPrn,
+                            ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
                             ogs.StandardCode,
-	                        CTE.*,
-	                        CONVERT(NUMERIC, JSON_VALUE(sc1.StandardData,'$.Duration')) AS Duration 
+                            CTE.*,
+                            TypicalDuration AS Duration 
                         FROM CTE
                           CROSS JOIN OrganisationStandard ogs 
                           JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = ogs.EndPointAssessorOrganisationId AND og1.Status <> 'Deleted'
