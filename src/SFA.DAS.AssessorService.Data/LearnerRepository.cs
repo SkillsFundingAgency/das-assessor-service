@@ -58,13 +58,10 @@ namespace SFA.DAS.AssessorService.Data
                     l.Uln,
                     l.GivenNames,
                     l.FamilyName,
-                    c.AchievementDate,
-                    c.LatestEPAOutcome as Outcome,
+                    l.LearnActEndDate,
                     p.Name as ProviderName
                 FROM [Learner] l 
-                    LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn
-                    LEFT JOIN [Certificates] c on l.Uln = c.Uln AND l.StdCode = c.StandardCode AND c.Status NOT IN ('Deleted','Draft')
-                
+                    LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn                
                 WHERE [ApprenticeshipId] = @apprenticeshipId",
                 param: new { apprenticeshipId },
                 transaction: _unitOfWork.Transaction);
