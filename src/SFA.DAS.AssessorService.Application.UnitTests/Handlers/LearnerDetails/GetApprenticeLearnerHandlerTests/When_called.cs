@@ -54,14 +54,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
                 learner.StandardReference,
                 learner.StandardName,
                 learner.CompletionStatus,
-                learner.Outcome,
                 learner.ApprovalsStopDate,
                 learner.ApprovalsPauseDate,
                 learner.EstimatedEndDate,
                 learner.Uln,
                 learner.GivenNames,
                 learner.FamilyName,
-                learner.AchievementDate,
+                learner.LearnActEndDate,
                 learner.ProviderName
             });
         }

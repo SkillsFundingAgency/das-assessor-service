@@ -58,3 +58,8 @@ GO
 CREATE NONCLUSTERED INDEX [IX_ApprovalsApprenticeId] ON [Learner] ([ApprenticeshipId]) INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
 [StandardName],[CompletionStatus],[ApprovalsStopDate],[ApprovalsPauseDate],[EstimatedEndDate],[Uln],[GivenNames],[FamilyName])
 GO
+
+--Added as a new index to include Learn Act End date, to not cause deployment issue modifying existing index.
+CREATE NONCLUSTERED INDEX [IX_ApprovalsLearner] ON [Learner] ([ApprenticeshipId]) INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
+[StandardName],[CompletionStatus],[ApprovalsStopDate],[ApprovalsPauseDate],[EstimatedEndDate],[Uln],[GivenNames],[FamilyName],[LearnActEndDate])
+GO
