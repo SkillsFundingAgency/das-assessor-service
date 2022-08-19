@@ -6,7 +6,8 @@
 	 @SortAscending AS INT,
      @PageSize AS INT,
      @PageIndex AS INT,
-     @TotalCount AS INT OUTPUT
+     @TotalCount AS INT OUTPUT,
+	 @ApplyExclusions AS INT = 1  -- set to 1 to apply exclusions or 0 to ignore 
 AS
 BEGIN
 	-- variables redeclared to workaround query plan parameter sniffing performance issues
@@ -21,10 +22,21 @@ BEGIN
 
 	DECLARE @Skip INT = (@PageIndexInternal-1) * @PageSizeInternal
 
+	-- there are some specifically excluded Standards
+	DECLARE @Exclusions TABLE
+	(
+		StandardName nvarchar(500),
+		StandardReference nvarchar(10)
+	) 
+	
+	INSERT INTO @Exclusions(StandardName, StandardReference)
+	EXEC OppFinder_Exclusions 
+
+
 	SELECT 
 		StandardCode, 
-		StandardReference, 
-		StandardName, 
+		ss.StandardReference, 
+		ss.StandardName, 
 		Versions,
 		SUM(Learners) ActiveApprentices, 
 		MAX(TotalEPAOs) RegisteredEPAOs,
@@ -34,13 +46,14 @@ BEGIN
 	INTO
 		#Results
 	FROM 
-		StandardSummary
+		StandardSummary ss
+		LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = ss.StandardReference
 	WHERE
 		(
 			@SearchTermInternal = '' OR
 			(
-				(StandardName LIKE '%' + @SearchTermInternal + '%' ) OR
-				(StandardReference LIKE '%' + @SearchTermInternal + '%') OR
+				(ss.StandardName LIKE '%' + @SearchTermInternal + '%' ) OR
+				(ss.StandardReference LIKE '%' + @SearchTermInternal + '%') OR
 				(Sector LIKE '%' + @SearchTermInternal + '%')
 			)
 		)
@@ -54,8 +67,9 @@ BEGIN
 			@LevelFiltersInternal = '' OR
 			CASE StandardLevel WHEN 0 THEN 'To be confirmed' ELSE CONVERT(VARCHAR, StandardLevel) END IN (SELECT LTRIM(RTRIM(value)) FROM STRING_SPLIT ( @LevelFiltersInternal, '|' ))
 		)
+		AND (ex1.StandardName IS NULL or @ApplyExclusions != 1)
 	GROUP BY 
-		StandardCode, StandardReference, StandardName, Versions, Sector, StandardLevel
+		StandardCode, ss.StandardReference, ss.StandardName, Versions, Sector, StandardLevel
 
 	-- the total number of results is returned as an out parameter
 	SELECT @TotalCount = (SELECT MAX(TotalCount) FROM #Results)
