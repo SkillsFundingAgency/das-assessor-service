@@ -184,6 +184,7 @@
     <Build Include="Tables\MergeApply.sql" />
     <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
     <None Include="PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql" />
+    <Build Include="StoredProcedures\StaffReports_List_Approved_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

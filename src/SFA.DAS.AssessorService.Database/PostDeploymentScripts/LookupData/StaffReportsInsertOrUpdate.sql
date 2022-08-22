@@ -70,6 +70,13 @@ INSERT #StaffReports VALUES (N'4ec6aa79-75ac-4dfe-b277-e2fac7096bda', N'Batch', 
 INSERT #StaffReports VALUES (N'd8d8aa09-74b1-4dc4-bbc6-f0b6e71a60cc', N'EPAO', N'StaffReports_ByEpao', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 5, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'ec0b30aa-1a6b-4de4-bebd-fb9aaf1a3331', N'Weekly summary', N'StaffReports_WeeklySummary', CAST(N'2018-10-24T13:51:17.8033333' AS DateTime2), NULL, NULL, 3, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'db48b407-6160-426a-9a45-693970d47edc', N'Missing certificate data', N'StaffReports_MissingCertificateData', CAST(N'2021-03-31T00:00:00.0000000' AS DateTime2), NULL, NULL, 15, N'ViewOnScreen', NULL)
+INSERT #StaffReports VALUES (N'3800291d-6209-4e65-be4d-e8d390997de8', N'Active Apprentices by Standard', N'', CAST(N'2022-08-22 00:00:00.0000000' AS DateTime2), NULL, NULL, 16, N'Download', N'{"Name":"List Of Active Apprentices by Standard","Worksheets": [
+	  {
+	  "worksheet": "List Of Active Apprentices",
+	  "order": 1,
+	  "StoredProcedure": "StaffReports_List_Approved_Standards"
+	  }
+	]}')
 
 MERGE [StaffReports] [Target] USING #StaffReports [Source]
 ON ([Source].[Id] = [Target].[Id])
