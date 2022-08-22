@@ -1,11 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[OppFinder_List_Approved_Standards]
-	 @SearchTerm AS NVARCHAR(100),
-	 @SectorFilters AS NVARCHAR(MAX),
-	 @LevelFilters AS NVARCHAR(MAX),
-	 @SortColumn AS NVARCHAR(20),
-	 @SortAscending AS INT,
-     @PageSize AS INT,
-     @PageIndex AS INT,
+	 @SearchTerm AS NVARCHAR(100) = '',
+	 @SectorFilters AS NVARCHAR(MAX) = '',
+	 @LevelFilters AS NVARCHAR(MAX) = '',
+	 @SortColumn AS NVARCHAR(20) = 'StandardName',
+	 @SortAscending AS INT = 1,
+     @PageSize AS INT = 50,
+     @PageIndex AS INT = 1,
      @TotalCount AS INT OUTPUT,
 	 @ApplyExclusions AS INT = 1  -- set to 1 to apply exclusions or 0 to ignore 
 AS
