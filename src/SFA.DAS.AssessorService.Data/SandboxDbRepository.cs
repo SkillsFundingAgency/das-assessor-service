@@ -215,6 +215,19 @@ namespace SFA.DAS.AssessorService.Data
                         ) ab1
                         ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);
 
+            // the Ilrs test data uses the EPAO UKPRN as the training provider's UKPRN - this is not usual so need to add these UKPRNs to the Providers table
+            transaction.Connection.Execute(@" MERGE INTO Providers pemain
+                        USING (
+                        SELECT DISTINCT il1.[Ukprn], og1.[EndPointAssessorName] [Name]
+                        FROM [dbo].[Ilrs] il1
+                        JOIN [dbo].[Organisations] og1 on og1.[EndPointAssessorOrganisationId] = il1.[EpaOrgId]
+                        LEFT JOIN [dbo].[Providers] pe1 on pe1.[Ukprn] = il1.[Ukprn]
+                        WHERE pe1.[Name] is null
+                        ) upd
+                        ON (pemain.[Ukprn] = upd.[Ukprn])
+                        WHEN NOT MATCHED THEN
+                        INSERT ([Ukprn], [Name], [UpdatedOn]) VALUES (upd.[Ukprn], upd.[Name], GETUTCDATE() );", transaction: transaction);
+
             _logger.LogInformation("Step 6: Completed");
         }
 
