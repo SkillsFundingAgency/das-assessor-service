@@ -56,7 +56,7 @@ BEGIN
 
 	BEGIN TRY;
 	
-	TRUNCATE TABLE StandardSummary;
+	DELETE FROM StandardSummary WHERE 1=1;
 	
 	INSERT INTO StandardSummary
 	-- combine results FROM 4 subqueries
@@ -156,7 +156,7 @@ BEGIN
 	
 	
 	-- populate the StandardVersionSummary table
-	TRUNCATE TABLE StandardVersionSummary;
+	DELETE FROM StandardVersionSummary WHERE 1=1;
 	
 	INSERT INTO StandardVersionSummary
 	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
