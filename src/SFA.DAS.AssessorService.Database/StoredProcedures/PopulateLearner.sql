@@ -1,11 +1,10 @@
 ﻿-- Populates Learner by merging ApprovalsExtract with ILRs
-
 CREATE PROCEDURE [dbo].[PopulateLearner]
+		@overlaptimeIlr int = -15, -- days to allow for an overlap on ILR submissions changes
+		@overlaptimeApx int = -15  -- days to allow for an overlap on Approvals changes
 AS
 BEGIN 
    DECLARE 
-		@overlaptimeIlr int = -15, -- days to allow for an overlap on ILR submissions changes
-		@overlaptimeApx int = -15, -- days to allow for an overlap on Approvals changes
 		@upserted int = 0;
 		
 	BEGIN 
