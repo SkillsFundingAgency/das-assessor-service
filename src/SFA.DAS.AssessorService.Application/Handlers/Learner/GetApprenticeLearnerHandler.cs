@@ -43,14 +43,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 StandardReference = learner.StandardReference,
                 StandardName = learner.StandardName,
                 CompletionStatus = learner.CompletionStatus,
-                Outcome = learner.Outcome,
                 ApprovalsStopDate = learner.ApprovalsStopDate,
                 ApprovalsPauseDate = learner.ApprovalsPauseDate,
                 EstimatedEndDate = learner.EstimatedEndDate,
                 Uln = learner.Uln,
                 GivenNames = learner.GivenNames,
                 FamilyName = learner.FamilyName,
-                AchievementDate = learner.AchievementDate,
+                LearnActEndDate = learner.LearnActEndDate,
                 ProviderName = learner.ProviderName
             };
 
