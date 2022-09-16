@@ -30,6 +30,11 @@
             <form asp-controller="Organisation" asp-action="SelectOrChangeContactName">
                 <div class="govuk-form-group" sfa-validation-for="PrimaryContact" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h3 class="govuk-fieldset__heading">
+                                Contacts
+                            </h3>
+                        </legend>
                         <div class="govuk-radios">
                             <sfa-validationerror-detail sfa-validation-for="PrimaryContact" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                             @foreach (var contact in Model.Contacts.OrderBy(p => p.FamilyName).ThenBy(p => p.GivenNames))
