@@ -37,9 +37,11 @@
                         </legend>
                         <div class="govuk-radios">
                             <sfa-validationerror-detail sfa-validation-for="PrimaryContact" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
-                            @foreach (var contact in Model.Contacts.OrderBy(p => p.FamilyName).ThenBy(p => p.GivenNames))
+                            @{int i = 1;}
+                            @foreach (var contact in Model.Contacts
+                                                          .OrderBy(p => p.FamilyName)
+                                                          .ThenBy(p => p.GivenNames))
                             {
-                                int i = 1;
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="PrimaryContact_@(i++)" name="PrimaryContact" type="radio" value="@contact.Username" checked="@(contact.Username == Model.PrimaryContact)">
                                     <label class="govuk-label govuk-radios__label" for="PrimaryContact">
