@@ -70,15 +70,16 @@
             else
             {
                 <ul class="govuk-list">
+                    @{int i = 1;}
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
                         if (!(Model.ApplySections.FirstOrDefault(x => x.SectionNo == applicationSection.SectionNo)?.NotRequired).Value)
                         {
                             <li>
-                                <h2 id="@applicationSection.Id" class="govuk-heading-m govuk-!-margin-bottom-2">
+                                <h2 id="@($"{applicationSection.Id}_{i}")" class="govuk-heading-m govuk-!-margin-bottom-2">
                                     @applicationSection.LinkTitle
                                 </h2>
-                                <span id="company-details-hint" class="govuk-hint">
+                                <span id="@($"company-details-hint_{i++}")" class="govuk-hint">
                                     @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
                                 </span>
                                 @if (Model.Status != ApplicationSequenceStatus.Submitted)
