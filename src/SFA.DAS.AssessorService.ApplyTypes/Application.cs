@@ -1,9 +1,9 @@
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {

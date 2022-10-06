@@ -7,6 +7,7 @@
     var isSamePage = false;
     var nextPageTitle = "";
     var pagesToCheck = Model.Section.QnAData.Pages.Where(p => p.Active).ToList();
+    var crlf = Environment.NewLine;
 }
 
 <a href="@Url.Action("Sequence", "Application", new {Id = Model.Id, sequenceNo= Model.SequenceNo})" class="govuk-back-link">Back to application overview</a>
@@ -51,26 +52,26 @@
                                     </span>
                                     @if (pg.Complete)
                                     {
-                                        <strong class="govuk-tag app-task-list__task-custom-tag" id="completed">Completed</strong>
+                                        <strong class="govuk-tag app-task-list__task-custom-tag" id="@($"completed_{i}")">Completed</strong>
                                     }
                                 </li>
 
                                 @if (nextPageTitle != pageTitle)
                                 {
-                                    @Html.Raw("</ul></li>");
+                                    @Html.Raw($"{crlf}</ul>{crlf}");
                                     if (i < pagesToCheck.Count - 1)
                                     {
-                                        @Html.Raw("<li><h2 class=\"app-task-list__section\">")
+                                        @Html.Raw($"{crlf}<h2 class=\"app-task-list__section\">{crlf}")
                                         @nextPageTitle
-                                        @Html.Raw("</h2><ul class=\"app-task-list__items app-task-list__items--no-number\">")
+                                        @Html.Raw($"{crlf}</h2>{crlf}<ul class=\"app-task-list__items app-task-list__items--no-number\">{crlf}")
                                     }
                                 }
 
                             }
-                        </ul>
-                    </li>
                 </ol>
-                <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo=Model.SequenceNo })" class="govuk-button">Return to application overview</a>
+                <a href="@Url.Action("Sequence", "Application", new {id = Model.Id, sequenceNo=Model.SequenceNo })" class="govuk-button">
+                    Return to application overview
+                </a>
             }
         </div>
     </div>

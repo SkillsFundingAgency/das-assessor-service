@@ -99,23 +99,25 @@
                             }
                             else
                             {
-                                if (!string.IsNullOrWhiteSpace(@Model.BodyText))
-                                {
-                                    <div>
-                                        @Html.Raw(Model.BodyText)
-                                    </div>
-                                }
-                                @if (Model.PageContext != null)
-                                {
-                                    <span class="govuk-caption-xl">
-                                        @Html.Raw(Model.PageContext)
-                                    </span>
-                                }
-                                <h1 class="govuk-label-wrapper">
-                                    <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                        @Html.Raw(question.Label)
-                                    </label>
-                                </h1>
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                    @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                    {
+                                        <div>
+                                            @Html.Raw(Model.BodyText)
+                                        </div>
+                                    }
+                                    @if (Model.PageContext != null)
+                                    {
+                                        <span class="govuk-caption-xl">
+                                            @Html.Raw(Model.PageContext)
+                                        </span>
+                                    }
+                                    <h1 class="govuk-label-wrapper">
+                                        <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                            @Html.Raw(question.Label)
+                                        </label>
+                                    </h1>
+                                </legend>
                             }
 
                             @if (question.QuestionBodyText != null)
