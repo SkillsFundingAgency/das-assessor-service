@@ -78,10 +78,10 @@ BEGIN
 		AS (
 			SELECT Ilrs.*
 				  -- if could only be version 1.0 then this can be assumed as confirmed
-				  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE '1.0' /*[dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode)*/ END Version
+				  ,CASE WHEN lv1.Version = '1.0' THEN '1.0' ELSE [dbo].[GetVersionFromLarsCode](LearnStartDate,Ilrs.StdCode) END Version
 				  ,CASE WHEN lv1.Version = '1.0' THEN 1 ELSE 0 END VersionConfirmed
 				  -- use StandardUId for version 1.0 (if appropriate) or estimate based on startdate when unknown
-				  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE 'xxxx' /*[dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode)*/ END StandardUId
+				  ,CASE WHEN lv1.Version = '1.0' THEN lv1.StandardUId ELSE [dbo].[GetStandardUIdFromLarsCode](LearnStartDate,Ilrs.StdCode) END StandardUId
 				  ,lv1.StandardReference
 				  ,lv1.Title StandardName
 				  ,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, lv1.Duration, LearnStartDate)) END EstimatedEndDate
@@ -166,8 +166,7 @@ BEGIN
 					   END
 					  ,CreatedOn DESC ) as rownumber
 				FROM (
-					SELECT *
-					FROM (
+					SELECT * FROM (
 					-- inner query gets all records for each learner, ORDER BY CreatedOn desc - there can be many but two iterations should be sufficient
 					SELECT ApprenticeshipId
 					  ,FirstName
