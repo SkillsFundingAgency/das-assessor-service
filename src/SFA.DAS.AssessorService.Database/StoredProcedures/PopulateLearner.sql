@@ -15,7 +15,7 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
 		-- Reset predicted Transfers where this has exceeded the transfer window
-		-- Will be resetting IsTransfer flag unless the WithdrawReason from ILR has specifically stated it is a transfer.
+		-- Will be resetting IsTransfer flag after the transfer window
 		-- 2  'Learner has transferred to another provider'
 		-- 7  'Learner has transferred between providers due to intervention by or with the written agreement of the ESFA'
 		-- 41 'Learner has transferred to another provider to undertake learning that meets a specific government strategy'
@@ -25,8 +25,7 @@ BEGIN
 		UPDATE Learner
 		SET IsTransfer = 0
 		WHERE IsTransfer = 1
-		AND DateTransferIdentified < DATEADD(day,@transferWindow,GETUTCDATE())
-		AND (WithdrawReason IS NULL OR WithdrawReason NOT IN (2, 7, 41 ,47) );
+		AND DateTransferIdentified < DATEADD(day,@transferWindow,GETUTCDATE());
 
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
