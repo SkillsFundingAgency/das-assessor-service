@@ -24,9 +24,12 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
+        public bool IsTransfer { get; set; }
+        public DateTime? DateTransferIdentified { get; set; }
         /// <summary>
         /// From Provider Table
         /// </summary>
         public string ProviderName { get; set; }
+        
     }
 }

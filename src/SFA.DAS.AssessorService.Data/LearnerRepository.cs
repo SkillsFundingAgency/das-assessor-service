@@ -59,6 +59,8 @@ namespace SFA.DAS.AssessorService.Data
                     l.GivenNames,
                     l.FamilyName,
                     l.LearnActEndDate,
+                    l.IsTransfer,
+                    l.DateTransferIdentified,
                     p.Name as ProviderName
                 FROM [Learner] l 
                     LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn                

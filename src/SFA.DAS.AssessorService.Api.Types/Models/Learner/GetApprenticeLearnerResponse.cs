@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-
+        public bool IsTransfer { get; set; }
+        public DateTime? DateTransferIdentified { get; set; }
     }
 }
