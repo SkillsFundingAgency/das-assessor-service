@@ -41,7 +41,10 @@
         "externalApiSandboxCustomHostname": {
             "type": "string"
         },
-        "appServiceAllowedIPs": {
+        "frontEndAccessRestrictions": {
+            "type": "array"
+        },
+        "backEndAccessRestrictions": {
             "type": "array"
         },
         "externalApiAppServiceAllowedIPs": {
@@ -265,7 +268,7 @@
                         "value": "[reference(concat(variables('uiAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('frontEndAccessRestrictions')]"
                     }
                 }
             }
@@ -387,7 +390,7 @@
                         "value": "[reference(concat(variables('apiAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
             }
