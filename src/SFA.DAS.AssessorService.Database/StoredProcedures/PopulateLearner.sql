@@ -424,8 +424,9 @@ BEGIN
 			 lm1.ApprovalsPaymentStatus = upd.ApprovalsPaymentStatus,
 			 lm1.LatestIlrs = upd.LatestIlrs,
 			 lm1.LatestApprovals = upd.LatestApprovals,
-			 lm1.EmployerAccountId = upd.EmployerAccountId,
-			 lm1.EmployerName = upd.EmployerName,
+			 -- Set Employer Account Name and ID only if it comes from Approvals, otherwise keep existing value.
+			 lm1.EmployerAccountId = CASE WHEN upd.LatestApprovals IS NULL THEN lm1.EmployerAccountId ELSE upd.EmployerAccountId END,
+			 lm1.EmployerName = CASE WHEN upd.LatestApprovals IS NULL THEN lm1.EmployerName ELSE upd.EmployerName END,
 			 -- Set IsTransfer, but do not reset if already has been expired
 			 lm1.IsTransfer = CASE WHEN lm1.DateTransferIdentified IS NULL 
 								   THEN upd.IsTransfer
