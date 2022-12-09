@@ -50,6 +50,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 GivenNames = learner.GivenNames,
                 FamilyName = learner.FamilyName,
                 LearnActEndDate = learner.LearnActEndDate,
+                IsTransfer = learner.IsTransfer,
+                DateTransferIdentified = learner.DateTransferIdentified,
                 ProviderName = learner.ProviderName
             };
 

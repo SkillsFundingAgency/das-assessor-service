@@ -36,7 +36,9 @@ CREATE TABLE [dbo].[Learner]
     [LatestApprovals] DATETIME NULL,
     [EmployerAccountId] BIGINT NULL, 
     [EmployerName] NVARCHAR(100) NULL,
-    [LearnerFullNameNoSpaces] AS CONVERT(NVARCHAR(255),REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ',''))
+    [LearnerFullNameNoSpaces] AS CONVERT(NVARCHAR(255),REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ','')),
+    [IsTransfer] BIT NOT NULL DEFAULT 0,
+    [DateTransferIdentified] DATETIME NULL
 )
 GO
 
@@ -62,4 +64,8 @@ GO
 --Added as a new index to include Learn Act End date, to not cause deployment issue modifying existing index.
 CREATE NONCLUSTERED INDEX [IX_ApprovalsLearner] ON [Learner] ([ApprenticeshipId]) INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
 [StandardName],[CompletionStatus],[ApprovalsStopDate],[ApprovalsPauseDate],[EstimatedEndDate],[Uln],[GivenNames],[FamilyName],[LearnActEndDate])
+GO
+
+--Added new index for Update to IsTransfer
+CREATE NONCLUSTERED INDEX [IX_Learner_Transfer] ON [Learner] ([DateTransferIdentified],[IsTransfer]) INCLUDE ([WithdrawReason])
 GO
