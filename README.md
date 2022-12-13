@@ -25,18 +25,20 @@ In order to run this solution locally you will need the following:
 * Install [Azure Storage Explorer](http://storageexplorer.com/) 
 * Administrator Access
 
-* Optionally Install [Specflow](http://specflow.org/documentation/Installation/)
+* Optionally Install [Specflow](http://specflow.org/documentation/Installation/) (used for integration tests)
 
 ### Environment Setup
 
-* Clone this repository, and open Visual Studio as an administrator.
-* Either use Visual Studio's `Publish Database` tool to publish the database project `SFA.DAS.AssessorService.Database` to name `{{database name}}` on `{{local instance name}}`.
-	or
-* Create a database manually named `{{database name}}` on `{{local instance name}}` and run each of the `.sql` scripts in the `SFA.DAS.AssessorService.Database` project.
+* Clone this repository and open Visual Studio as an administrator.
+* Either use Visual Studio's `Publish Database` tool to publish the database project `SFA.DAS.AssessorService.Database` to the database name `{{database name}}` on `{{local instance name}}`, or create a database manually named `{{database name}}` on `{{local instance name}}` and run each of the `.sql` scripts in the `SFA.DAS.AssessorService.Database` project.
 * **json file** - Get the `das-assessor-service` configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-assessor-service/SFA.DAS.AssessorService.json); which is a non-public repository.
 * **Azure Table Storage Config** - Add the following data to your Azure Table Storage Config:
-PartitionKey: LOCAL
+
 RowKey: SFA.DAS.AssessorService_1.0
+
+
+PartitionKey: LOCAL
+
 Data: 
 ```
 {{The contents of the local config json file}}.
@@ -73,7 +75,18 @@ This codebase includes unit tests and integration tests. These are all in sepera
 
 #### Unit Tests
 
+There are several unit test projects in the solution built using C#, NUnit, Moq, FluentAssertions, .NET and AutoFixture.
+* `SFA.DAS.AssessorService.Application.Api.External.UnitTests`
+* `SFA.DAS.AssessorService.Application.Api.UnitTests`
+* `SFA.DAS.AssessorService.Application.UnitTests`
+* `SFA.DAS.AssessorService.Data.UnitTests`
+* `SFA.DAS.AssessorService.Domain.UnitTests`
+* `SFA.DAS.AssessorService.Web.UnitTests`
+
 #### Integration Tests
+There are two integration test projects: 
+* `SFA.DAS.AssessorService.Application.Api.IntegrationTests`
+* `SFA.DAS.AssessorService.Data.IntegrationTests`
 
 Specflow is currently used for integration testing the internal API. It is configured to run using the NUnit Test runner. 
 Hence, it requires:
