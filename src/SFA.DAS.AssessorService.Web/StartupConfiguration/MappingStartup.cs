@@ -13,15 +13,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
     public static class MappingStartup
     {
-        public static void AddMappings(this IServiceCollection services)
+        public static MapperConfiguration AddMappings(this IServiceCollection services)
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            //services.AddAutoMapper(assemblies);
-
-            /*
-            Mapper.Reset();
-
-            Mapper.Initialize(cfg =>
+            return new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<ResultViewModel, SearchResult>();
                 cfg.CreateMap<StandardVersionViewModel, StandardVersion>();
@@ -40,7 +34,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 cfg.AddProfile<CharityTrusteeProfile>();
                 cfg.AddProfile<RoatpOrganisationProfile>();
             });
-            */
         }
     }
 }

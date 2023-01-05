@@ -216,8 +216,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<ISignInService>().Use<SignInService>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
-                var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(sqlConnectionString, options => options.EnableRetryOnFailure(3).CommandTimeout(300));
+                config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()

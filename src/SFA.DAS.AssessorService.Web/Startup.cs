@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using SFA.DAS.AssessorService.Application.Infrastructure;
+using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -124,10 +125,8 @@ namespace SFA.DAS.AssessorService.Web
 
             services.AddHealthChecks();
 
-            services.AddMappings();
-
             return ConfigureIoc(services);
-        }        
+        }
 
         private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
@@ -176,9 +175,10 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
-                
-               
-                
+
+                var mapper = services.AddMappings().CreateMapper();
+                config.For<IMapper>().Use(mapper);
+
                 config.Populate(services);
             });
 

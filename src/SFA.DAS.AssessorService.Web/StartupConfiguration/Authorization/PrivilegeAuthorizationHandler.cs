@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
@@ -51,17 +52,27 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             }
             else
             {
-                // @ToDo: .Net Core Upgrade - line below was moved down from line 37 as only needed here and is throwing NPE. Investigate auth.
-                var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
-
-                var deniedContext = new PrivilegeAuthorizationDeniedContext
+                if (context.Resource is RouteEndpoint routeEndpoint)
                 {
-                    PrivilegeId = privilegeRequested.Id,
-                    Controller = controllerActionDescriptor.ControllerName,
-                    Action = controllerActionDescriptor.ActionName
-                };
-                
-                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> {{ nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext)}});
+                    var controllerActionDescriptor = routeEndpoint.Metadata
+                        .OfType<ControllerActionDescriptor>()
+                        .SingleOrDefault();
+
+                    if (controllerActionDescriptor != null)
+                    {
+                        var deniedContext = new PrivilegeAuthorizationDeniedContext
+                        {
+                            PrivilegeId = privilegeRequested.Id,
+                            Controller = controllerActionDescriptor.ControllerName,
+                            Action = controllerActionDescriptor.ActionName
+                        };
+
+                        _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> { { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) } });
+                        return;
+                    }
+
+                    context.Fail();
+                }
             }
         }
     }
