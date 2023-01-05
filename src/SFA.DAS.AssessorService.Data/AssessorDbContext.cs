@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
         public virtual DbSet<OrganisationStandardVersion> OrganisationStandardVersion { get; set; }
+        public virtual DbSet<OrganisationStandardDeliveryArea> OrganisationStandardDeliveryAreas { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
@@ -41,6 +42,14 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<ContactInvitation> ContactInvitations { get; set; }
         public virtual DbSet<Provider> Providers { get; set; }
+
+        public virtual DbSet<MergeOrganisation> MergeOrganisations { get; set; }
+        public virtual DbSet<MergeOrganisationStandard> MergeOrganisationStandards { get; set; }
+        public virtual DbSet<MergeOrganisationStandardVersion> MergeOrganisationStandardVersions { get; set; }
+        public virtual DbSet<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
+        public virtual DbSet<ApplyEF> Applications { get; set; }
+        public virtual DbSet<MergeApply> MergeApplications { get; set; }
+
 
         public override int SaveChanges()
         {
@@ -130,12 +139,11 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(c => c.OrganisationStandardDeliveryAreas)
                 .HasPrincipalKey(c => c.Id)
                 .HasForeignKey(c => c.OrganisationStandardId);
-            
+
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.DeliveryArea)
                 .WithOne(c => c.OrganisationStandardDeliveryArea)
-                .HasForeignKey<DeliveryArea>(c => c.Id)
-                .HasPrincipalKey<OrganisationStandardDeliveryArea>(c => c.DeliveryAreaId);
+                .HasForeignKey<DeliveryArea>(c => c.Id);
 
             modelBuilder.Entity<DeliveryArea>()
                 .ToTable("DeliveryArea");
@@ -143,6 +151,40 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<Provider>()
                 .ToTable("Providers")
                 .HasKey(c => new { c.Ukprn });
+
+
+
+            modelBuilder.Entity<MergeOrganisation>()
+                .ToTable("MergeOrganisations")
+                .HasMany(e => e.MergeOrganisationStandards)
+                .WithOne(e => e.MergeOrganisation);
+
+            modelBuilder.Entity<MergeOrganisation>()
+                .HasMany(e => e.MergeSecondaryApplications)
+                .WithOne(e => e.MergeOrganisation);
+
+
+            modelBuilder.Entity<MergeOrganisationStandard>()
+                .ToTable("MergeOrganisationStandard");
+
+
+
+
+            modelBuilder.Entity<MergeOrganisationStandardVersion>()
+                .ToTable("MergeOrganisationStandardVersion")
+                //.HasKey(e => new { e.OrganisationStandardId, e.StandardUid, e.Version })
+                ;
+
+
+            modelBuilder.Entity<MergeOrganisationStandardDeliveryArea>()
+                .ToTable("MergeOrganisationStandardDeliveryArea")
+                ;
+
+            modelBuilder.Entity<ApplyEF>()
+                .ToTable("Apply");
+
+            modelBuilder.Entity<MergeApply>()
+                .ToTable("MergeApply");
 
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }

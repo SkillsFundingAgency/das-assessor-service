@@ -39,14 +39,46 @@ namespace SFA.DAS.AssessorService.Data
                   transaction: _unitOfWork.Transaction);
         }
 
-        public async Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode = null)
+        public async Task<ApprenticeLearner> Get(long apprenticeshipId)
+        {
+            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<ApprenticeLearner>(
+                @"SELECT
+                    l.ApprenticeshipId,
+                    l.UkPrn,
+                    l.LearnStartDate,
+                    l.PlannedEndDate,
+                    l.StdCode,
+                    l.StandardUId,
+                    l.StandardReference,
+                    l.StandardName,
+                    l.CompletionStatus,
+                    l.ApprovalsStopDate,
+                    l.ApprovalsPauseDate,
+                    l.EstimatedEndDate,
+                    l.Uln,
+                    l.GivenNames,
+                    l.FamilyName,
+                    l.LearnActEndDate,
+                    l.IsTransfer,
+                    l.DateTransferIdentified,
+                    p.Name as ProviderName
+                FROM [Learner] l 
+                    LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn                
+                WHERE [ApprenticeshipId] = @apprenticeshipId",
+                param: new { apprenticeshipId },
+                transaction: _unitOfWork.Transaction);
+        }
+
+
+        public async Task<int> GetEpaoPipelinesCount(string epaOrgId, int? stdCode, int pipelineCutoff)
         {
             var result = await _unitOfWork.Connection.QueryAsync<int>(
                 "GetEPAO_Pipelines_Count",
                 param: new
                 {
                     epaOrgId,
-                    stdCode
+                    stdCode,
+                    pipelineCutoff
                 },
                 transaction: _unitOfWork.Transaction,
                 commandType: CommandType.StoredProcedure);

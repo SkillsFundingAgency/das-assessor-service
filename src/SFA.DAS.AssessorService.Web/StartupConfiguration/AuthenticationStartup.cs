@@ -1,22 +1,21 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
@@ -29,8 +28,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         {
             _configuration = configuration;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            IdentityModelEventSource.ShowPII = true;
 
             services.AddAuthentication(options =>
                 {

@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.LocationsControllerTests
             // Arrange
 
             // Act
-            var results = await _sut.Index("Search");
+            var results = await _sut.Index("Search", true);
 
             // Assert
             _mockLocationsApiClient.Verify(m => m.SearchLocations("Search"), Times.Once);

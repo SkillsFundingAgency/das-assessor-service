@@ -4,7 +4,7 @@
 
     refreshClickHandlers();
 
-    $("#search").click(function (event) {
+    $("#search").on('click', function (event) {
         var searchTerm = $("#search-term").val();
         initSearchPartial(
             "Search",
@@ -26,7 +26,7 @@
             : showHideFilterButton.text("Show filters");
     });
 
-    $("#apply-filters").click(function (event) {
+    $("#apply-filters").on('click', function (event) {
         var sectorFilters = [];
         var levelFilters = [];
 
@@ -47,7 +47,7 @@
         event.preventDefault();
     });
 
-    $("#reset-filters").click(function (event) {
+    $("#reset-filters").on('click', function (event) {
         resetFiltersPartial("#standard-filters", searchPartial);
         event.preventDefault();
     });
@@ -162,7 +162,7 @@
         refreshFunction
     ) {
         $(linkClass).each(function (i, obj) {
-            $(obj).click(function (event) {
+            $(obj).on('click', function (event) {
                 var pageIndex = $(obj).attr("data-pageIndex");
                 changeStandardsPartial(
                     actionMethod,
@@ -183,7 +183,7 @@
         containerId,
         refreshFunction
     ) {
-        $(selectClass).change(function () {
+        $(selectClass).on('change', function () {
             var selectedVal = $(this)
                 .find(":selected")
                 .val();
@@ -206,7 +206,7 @@
         refreshFunction
     ) {
         $(linkClass).each(function (i, obj) {
-            $(obj).click(function (event) {
+            $(obj).on('click', function (event) {
                 var sortColumn = $(obj).attr("data-sortColumn");
                 var sortDirection = $(obj).attr("data-sortDirection");
                 changeStandardsPartial(

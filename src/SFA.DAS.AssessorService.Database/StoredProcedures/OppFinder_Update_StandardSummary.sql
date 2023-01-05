@@ -18,16 +18,6 @@ DECLARE @Error_Code INT = 0
 BEGIN
 	BEGIN TRANSACTION T1;
 	
-	-- there are some specifically excluded Standards
-	DECLARE @Exclusions TABLE
-	(
-		StandardName nvarchar(500),
-		StandardReference nvarchar(10)
-	) 
-	
-	INSERT INTO @Exclusions(StandardName, StandardReference)
-	EXEC OppFinder_Exclusions 
-
 	DECLARE @StandardsCore TABLE
 	(
 		 StandardCode INT NULL, 
@@ -50,7 +40,7 @@ BEGIN
 			  ,AllVersions Versions
 			  ,ROW_NUMBER() OVER(PARTITION BY st1.IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) AS RowNumber
 		FROM Standards st1
-		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ', ') WITHIN GROUP (ORDER BY VersionMajor , VersionMinor) AS AllVersions 
+		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ', ') WITHIN GROUP (ORDER BY VersionMajor DESC, VersionMinor DESC) AS AllVersions 
 			   FROM Standards 
 			   WHERE VersionApprovedForDelivery IS NOT NULL
 			   GROUP BY IFateReferenceNumber ) sv1 ON sv1.IFateReferenceNumber = st1.IFateReferenceNumber
@@ -62,9 +52,7 @@ BEGIN
 		   -- When LARS set LastDateStarts to EffectiveFrom Date this is because there is no EPAO for this standard, so we want EPAOs to see the Opportunity!
 		   AND (LastDateStarts IS NULL OR LastDateStarts = EffectiveFrom)
 	) stv 
-	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
-	WHERE RowNumber = 1
-	  AND ex1.StandardName IS NULL;
+	WHERE RowNumber = 1;
 
 	BEGIN TRY;
 	

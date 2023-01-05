@@ -130,6 +130,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<SkipPageResponse> SkipPage(Guid applicationId, Guid sectionId, string pageId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/skip"))
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.Converters.Add(new SetResultConverter());
+                return await PostPutRequestWithResponse<SkipPageResponse>(request, settings);
+            }
+        }
+
         public async Task<AddPageAnswerResponse> AddAnswersToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple"))

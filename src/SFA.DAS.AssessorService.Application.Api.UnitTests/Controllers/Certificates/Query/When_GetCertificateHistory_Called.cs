@@ -38,7 +38,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             int page = 1;
             string userName = "testUser";
-            _result = certificateQueryControler.GetCertificatesHistory(page, userName).Result;
+            string searchTerm = "test";
+            string sortColumn = "DateRequested";
+            int sortDescending = 1;
+
+            _result = certificateQueryControler.GetCertificatesHistory(page, userName,  searchTerm,  sortColumn,  sortDescending).Result;
         }
 
         [Test]

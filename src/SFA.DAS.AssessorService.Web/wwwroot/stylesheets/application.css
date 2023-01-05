@@ -1690,7 +1690,7 @@ th[aria-sort="ascending"] a:after {
   margin-left: 0;
 }
 
-.sorted-ascending::after {
+.sorted-descending::after {
   content: "";
   margin-left: 3px;
   display: inline-block;
@@ -1704,7 +1704,7 @@ th[aria-sort="ascending"] a:after {
   border-top-color: inherit;
 }
 
-.sorted-descending::after {
+.sorted-ascending::after {
   content: "";
   margin-left: 3px;
   display: inline-block;
@@ -1927,16 +1927,15 @@ th[aria-sort="ascending"] a:after {
 
 /*** govuk confirmation panel ***/
 .govuk-panel--confirmation {
-    background: #00703c;
+  background: #00703c;
 }
 
-
 .das-filter-panel {
-    background-color: #f3f2f1;
-    padding: 15px;
-    margin-bottom: 30px;
+  background-color: #f3f2f1;
+  padding: 15px;
+  margin-bottom: 30px;
 }
 
 .das-text-align-right {
-    text-align: right !important;
+  text-align: right !important;
 }

@@ -19,11 +19,11 @@ AS
     ON TARGET.ApprenticeshipId = SOURCE.ApprenticeshipId
     
 	WHEN NOT MATCHED BY TARGET
-        THEN INSERT (ApprenticeshipId, FirstName, LastName, Uln, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption,
-		StandardUId, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus)
-    VALUES (SOURCE.ApprenticeshipId, SOURCE.FirstName, SOURCE.LastName,SOURCE.Uln, SOURCE.TrainingCode, SOURCE.TrainingCourseVersion, SOURCE.TrainingCourseVersionConfirmed,
+        THEN INSERT (ApprenticeshipId, FirstName, LastName, ULN, TrainingCode, TrainingCourseVersion, TrainingCourseVersionConfirmed, TrainingCourseOption,
+		StandardUId, StartDate, EndDate, CreatedOn, UpdatedOn, StopDate, PauseDate, CompletionDate, UKPRN, LearnRefNumber, PaymentStatus, EmployerAccountId, EmployerName)
+    VALUES (SOURCE.ApprenticeshipId, SOURCE.FirstName, SOURCE.LastName,SOURCE.ULN, SOURCE.TrainingCode, SOURCE.TrainingCourseVersion, SOURCE.TrainingCourseVersionConfirmed,
 			SOURCE.TrainingCourseOption, SOURCE.StandardUId, SOURCE.StartDate, SOURCE.EndDate, SOURCE.CreatedOn, SOURCE.UpdatedOn, SOURCE.StopDate, SOURCE.PauseDate,
-			SOURCE.CompletionDate, SOURCE.UKPRN, SOURCE.LearnRefNumber, SOURCE.PaymentStatus)
+			SOURCE.CompletionDate, SOURCE.UKPRN, SOURCE.LearnRefNumber, SOURCE.PaymentStatus, SOURCE.EmployerAccountId, SOURCE.EmployerName)
 	WHEN MATCHED THEN UPDATE SET
         TARGET.FirstName		= SOURCE.FirstName,
 		TARGET.LastName			= SOURCE.LastName,
@@ -42,6 +42,8 @@ AS
 		TARGET.PaymentStatus	= SOURCE.PaymentStatus,
 		TARGET.TrainingCourseVersion= SOURCE.TrainingCourseVersion,
 		TARGET.TrainingCourseVersionConfirmed= SOURCE.TrainingCourseVersionConfirmed,
-		TARGET.TrainingCourseOption= SOURCE.TrainingCourseOption;
+		TARGET.TrainingCourseOption= SOURCE.TrainingCourseOption,
+		TARGET.EmployerAccountId= SOURCE.EmployerAccountId,
+		TARGET.EmployerName = SOURCE.EmployerName;
 
 RETURN 0

@@ -91,6 +91,27 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="StandardApplicationType" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="3a2e8cb0-c6e5-4360-a394-343157d6154c" ChangeDateTime="01/04/2022 11:44:10">
+    <Property Name="ElementName" Value="[dbo].[Learner].[EmployerId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Learner]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmployerAccountId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="265ccc07-37fb-48ea-a57f-db957f45c031" ChangeDateTime="01/04/2022 11:44:20">
+    <Property Name="ElementName" Value="[dbo].[ApprovalsExtract].[EmployerId ]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ApprovalsExtract]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmployerAccountId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="20759d56-278a-4ec9-acb4-0d9db2a4ca8f" ChangeDateTime="01/04/2022 11:44:29">
+    <Property Name="ElementName" Value="[dbo].[ApprovalsExtract_Staging].[EmployerId ]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ApprovalsExtract_Staging]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EmployerAccountId" />
+  </Operation>
   <Operation Name="Rename Refactor" Key="9f3ecb35-5ca5-4cd5-a006-0d31c4e55b92" ChangeDateTime="10/27/2021 12:52:40">
     <Property Name="ElementName" Value="[dbo].[ApprovalsExtract].[ULN]" />
     <Property Name="ElementType" Value="SqlSimpleColumn" />

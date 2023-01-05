@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data
                         Step4_OrganisationStandard_Data(transaction);
                         Step5_Obfuscate_Personal_Data(transaction);
                         Step6_Generate_Test_Data(transaction);
+                        Step7_GenerateLearner(transaction);
 
                         transaction.Commit();
                     }
@@ -74,6 +75,10 @@ namespace SFA.DAS.AssessorService.Data
         {
             _logger.LogInformation("Step 0: Tear Down Database");
 
+            // repopulated in Step 7
+            transaction.Connection.Execute(
+                @"  DELETE FROM Learner;", transaction: transaction);
+
             // repopulated in Step 6
             transaction.Connection.Execute(
                 @"  DELETE FROM CertificateLogs;
@@ -93,9 +98,7 @@ namespace SFA.DAS.AssessorService.Data
 
             // repopulated in Step 3
             transaction.Connection.Execute(
-                @"  DELETE FROM Options;
-                            DELETE FROM StandardCollation;
-                            DELETE FROM Standards;
+                @"  DELETE FROM Standards;
                             DELETE FROM StandardOptions;", transaction: transaction);
 
             // repopulated in Step 2
@@ -130,7 +133,7 @@ namespace SFA.DAS.AssessorService.Data
         private void Step3_Standard_Data(SqlTransaction transaction)
         {
             _logger.LogInformation("Step 3: Syncing Standard Data");
-            BulkCopyData(transaction, new List<string> { "StandardCollation", "Options", "Standards", "StandardOptions" });
+            BulkCopyData(transaction, new List<string> { "Standards", "StandardOptions" });
             _logger.LogInformation("Step 3: Completed");
         }
 
@@ -173,7 +176,10 @@ namespace SFA.DAS.AssessorService.Data
                           SELECT Number+1
                           FROM CTE 
                           WHERE Number < 9 
-                        )
+                        ),
+                 Standards_CTE as(
+                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
+
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
                         SELECT
                           NEWID() AS Id,
@@ -196,20 +202,42 @@ namespace SFA.DAS.AssessorService.Data
                         FROM (
                           SELECT 
                             '1'+ SUBSTRING(ogs.EndPointAssessorOrganisationId,4,4) + RIGHT('000'+CAST(ogs.StandardCode AS VARCHAR(3)),3) +RIGHT('00'+CAST(CTE.Number AS VARCHAR(2)),2) AS Uln, 
-	                        og1.EndPointAssessorUkprn AS UkPrn,
-	                        ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
+                            og1.EndPointAssessorUkprn AS UkPrn,
+                            ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
                             ogs.StandardCode,
-	                        CTE.*,
-	                        CONVERT(NUMERIC, JSON_VALUE(sc1.StandardData,'$.Duration')) AS Duration 
+                            CTE.*,
+                            TypicalDuration AS Duration 
                         FROM CTE
                           CROSS JOIN OrganisationStandard ogs 
                           JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = ogs.EndPointAssessorOrganisationId AND og1.Status <> 'Deleted'
-                          JOIN StandardCollation sc1 ON ogs.StandardCode = sc1.StandardId
+                          JOIN Standards_CTE scte ON ogs.StandardCode = scte.LarsCode AND seq = 1
                         WHERE  ogs.Status NOT IN ( 'Deleted','New') AND (ogs.EffectiveTo IS NULL OR ogs.EffectiveTo > GETDATE()) AND og1.EndPointAssessorUkprn IS NOT NULL
                         ) ab1
                         ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);
 
+            // the Ilrs test data uses the EPAO UKPRN as the training provider's UKPRN - this is not usual so need to add these UKPRNs to the Providers table
+            transaction.Connection.Execute(@" MERGE INTO Providers pemain
+                        USING (
+                        SELECT DISTINCT il1.[Ukprn], og1.[EndPointAssessorName] [Name]
+                        FROM [dbo].[Ilrs] il1
+                        JOIN [dbo].[Organisations] og1 on og1.[EndPointAssessorOrganisationId] = il1.[EpaOrgId]
+                        LEFT JOIN [dbo].[Providers] pe1 on pe1.[Ukprn] = il1.[Ukprn]
+                        WHERE pe1.[Name] is null
+                        ) upd
+                        ON (pemain.[Ukprn] = upd.[Ukprn])
+                        WHEN NOT MATCHED THEN
+                        INSERT ([Ukprn], [Name], [UpdatedOn]) VALUES (upd.[Ukprn], upd.[Name], GETUTCDATE() );", transaction: transaction);
+
             _logger.LogInformation("Step 6: Completed");
+        }
+
+        private void Step7_GenerateLearner(SqlTransaction transaction)
+        {
+            _logger.LogInformation("Step 7: Populating learner data");
+
+            transaction.Connection.Execute("EXEC PopulateLearner", transaction: transaction);
+
+            _logger.LogInformation("Step 7: Completed");
         }
 
         private void BulkCopyData(SqlTransaction transaction, List<string> tablesToCopy)

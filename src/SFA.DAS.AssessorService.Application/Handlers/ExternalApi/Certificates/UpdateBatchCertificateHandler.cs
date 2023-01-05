@@ -7,12 +7,12 @@ using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             else
             {
                 _logger.LogWarning($"UpdateCertificate Did not find Certificate for Uln {request.Uln} and StandardCode {request.StandardCode}");
-                throw new NotFound();
+                throw new NotFoundException();
             }
         }
 

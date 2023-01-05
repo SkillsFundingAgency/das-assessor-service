@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
 
             //Assert
-            act.Should().Throw<NotFound>();
+            act.Should().Throw<NotFoundException>();
         }
 
         [Test, RecursiveMoqAutoData]

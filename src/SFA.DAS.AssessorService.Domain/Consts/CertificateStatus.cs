@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
         public const string Reprint = "Reprint";
         public const string Error = "Error";
 
-        public static string[] PrintProcessStatus = new[] { SentToPrinter, Printed, Reprint, Delivered, NotDelivered };
+        public static string[] PrintProcessStatus = new[] { SentToPrinter, Printed, Delivered, NotDelivered, Reprint };
         public static string[] PrintNotificationStatus = new[] { SentToPrinter, Printed, Delivered, NotDelivered };
 
         public static bool HasPrintProcessStatus(string status)
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
             return PrintNotificationStatus.Contains(status);
         }
 
-        public static bool CanRequestDuplicateCertificate(string status)
+        public static bool CanRequestReprintCertificate(string status)
         {
             var allowed = PrintProcessStatus;
             return allowed.Contains(status);
@@ -67,6 +67,39 @@ namespace SFA.DAS.AssessorService.Domain.Consts
 
                 default:
                     return status;
+            }
+        }
+
+        public static string GetStatusDateDisplayName(string status)
+        {
+            switch (status)
+            {
+                case ToBeApproved:
+                    return "Date submitted";
+
+                case Submitted:
+                    return "Date submitted";
+
+                case SentForApproval:
+                    return "Date sent for approval";
+
+                case SentToPrinter:
+                    return "Date sent to printer";
+
+                case NotDelivered:
+                    return "Date not delivered";
+
+                case Reprint:
+                    return "Date reprint requested";
+
+                case Delivered:
+                    return "Date delivered";
+
+                case Printed:
+                    return "Date printed";
+
+                default:
+                    return $"Date {status}";
             }
         }
     }

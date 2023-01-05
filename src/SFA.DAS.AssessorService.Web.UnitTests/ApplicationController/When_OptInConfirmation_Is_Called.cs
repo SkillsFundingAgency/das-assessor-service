@@ -61,12 +61,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                              Status = ApplicationSequenceStatus.Draft
                          }
                     },
-                    Apply = new Apply()
-                    {
-                        StandardReference = "ST0001",
-                        StandardName = "TITLE 1",
-                        Versions = new List<string>() { "1.2" }
-                    }
+                     Apply = new Apply()
+                     {
+                         StandardReference = "ST0001",
+                         StandardName = "TITLE 1",
+                         Versions = new List<string>() { "1.2" }
+                     }
                  }
              });
 

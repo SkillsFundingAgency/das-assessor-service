@@ -9,7 +9,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -19,15 +18,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
     public class RegisterQueryGetStandardsByOrganisationIdTests
     {
         private Mock<IRegisterQueryRepository> RegisterQueryRepository;
-        private Mock<IStandardService> _standardService;
-        private GetStandardsByAssessmentOrganisationHandler GetStandardsByAssessmentOrganisationHandler;
-        private Mock<ILogger<GetStandardsByAssessmentOrganisationHandler>> Logger;
+        private GetAllStandardsByOrganisationHandler GetAllStandardsByOrganisationHandler;
+        private Mock<ILogger<GetAllStandardsByOrganisationHandler>> Logger;
         private List<OrganisationStandardSummary> _expectedStandards;
         private OrganisationStandardSummary _standard1;
         private OrganisationStandardSummary _standard2;
         private OrganisationStandardSummary _standard3;
         private readonly string _organisationId = "EPAXXX";
-        private GetStandardsByOrganisationRequest _request;
+        private GetAllStandardsByOrganisationRequest _request;
         private int _standardCode1 = 1;
         private int _standardCode2 = 2;
         private int _standardCode3 = 3;
@@ -40,10 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private int _id2;
         private int _id3;
         private List<int> _expectedDeliveryAreas;
-        private string _expectedTitle1;
-        private string _expectedTitle2;
-        private string _expectedTitle3;
-
+        
         [SetUp]
         public void Setup()
         {
@@ -54,17 +49,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _id1 = 1;
             _id2 = 2;
             _id3 = 3;
-            _expectedTitle1 = "Standard 1";
-            _expectedTitle2 = "Standard 2";
-            _expectedTitle3 = "Standard 3";
             _expectedDeliveryAreas = new List<int> { 1, 2 };
             
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             
-            _standardService = new Mock<IStandardService>();
-            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1, StandardCollation = new StandardCollation { StandardId = _id1, Title = _expectedTitle1 } };
-            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2, StandardCollation = new StandardCollation { StandardId = _id2, Title = _expectedTitle2 } };
-            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3, StandardCollation = new StandardCollation { StandardId = _id3, Title = _expectedTitle3 } };
+            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1};
+            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2};
+            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3};
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
@@ -73,49 +64,47 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _standard3
             };
 
-            _request = new GetStandardsByOrganisationRequest { OrganisationId = _organisationId };
+            _request = new GetAllStandardsByOrganisationRequest { OrganisationId = _organisationId };
 
-            Logger = new Mock<ILogger<GetStandardsByAssessmentOrganisationHandler>>();
+            Logger = new Mock<ILogger<GetAllStandardsByOrganisationHandler>>();
 
-            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardByOrganisationId(_organisationId))
+            RegisterQueryRepository.Setup(r => r.GetAllOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
             
-            GetStandardsByAssessmentOrganisationHandler =
-                new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, _standardService.Object,Logger.Object);
+            GetAllStandardsByOrganisationHandler =
+                new GetAllStandardsByOrganisationHandler(RegisterQueryRepository.Object, Logger.Object);
         }
 
         [Test]
         public void GetStandardsByOrganisationRepoIsCalledWhenHandlerInvoked()
         {
-            GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
-            RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
+            GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
+            RegisterQueryRepository.Verify(r => r.GetAllOrganisationStandardByOrganisationId(_organisationId));
         }
 
         [Test]
         public void GetStandardsForOrganisationReturns3SetsOfStandards()
         {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
+            var standards = GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             standards.Count.Should().Be(3);
         }
 
         [Test]
         public void GetStandardsForOrganisationReturnsStandard1OfStandardsWithExpectedPeriodsAndStandardTitle()
         {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
+            var standards = GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode1);
             Assert.AreEqual(effectiveFrom1, standard.EffectiveFrom);
             Assert.AreEqual(null, standard.EffectiveTo);
-            Assert.AreEqual(_expectedTitle1, standard.StandardCollation.Title);
         }
 
         [Test]
         public void GetStandardsForOrganisationReturnsStandard2OfStandardsWithExpected1PeriodDetails()
         {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
+            var standards = GetAllStandardsByOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             var standard = standards.First(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode2);
             Assert.AreEqual(effectiveFrom2, standard.EffectiveFrom);
             Assert.AreEqual(effectiveTo2, standard.EffectiveTo);
-            Assert.AreEqual(_expectedTitle2, standard.StandardCollation.Title);
         }
     }
 }

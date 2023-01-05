@@ -9,13 +9,13 @@ using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 {
@@ -51,7 +51,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             {
                 Uln = uln,
                 FamilyName = lastname,
-                UkPrn = ukPrn
+                UkPrn = ukPrn,
+                IncludeLogs = true
             };
 
             var standard = await _mediator.Send(new GetStandardVersionRequest { StandardId = standardId });
@@ -244,7 +245,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                     await _mediator.Send(request);
                     return NoContent();
                 }
-                catch (NotFound)
+                catch (NotFoundException)
                 {
                     return NotFound();
                 }

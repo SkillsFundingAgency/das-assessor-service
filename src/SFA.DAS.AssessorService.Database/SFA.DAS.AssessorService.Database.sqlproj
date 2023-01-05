@@ -94,7 +94,6 @@
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates.sql" />
-    <Build Include="Tables\Options.sql" />
     <Build Include="Tables\StaffReports.sql" />
     <Build Include="StoredProcedures\StaffReports_DetailedExtract.sql" />
     <Build Include="StoredProcedures\StaffReports_ByBatch.sql" />
@@ -106,7 +105,6 @@
     <Build Include="StoredProcedures\StaffReports_CertificateCount.sql" />
     <Build Include="StoredProcedures\StaffReports_MonthlySummary.sql" />
     <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
-    <Build Include="Tables\StandardCollation.sql" />
     <Build Include="Tables\IlrsCopy.sql" />
     <Build Include="Tables\EPASummary.sql" />
     <Build Include="Tables\PostCodeRegion.sql" />
@@ -132,7 +130,6 @@
     <Build Include="StoredProcedures\OppFinder_Exclusions.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Approved_StandardStatus.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_InDevelopment_StandardStatus.sql" />
-    <Build Include="Tables\StandardNonApprovedCollation.sql" />
     <Build Include="Functions\Scalar-valued Functions\OppFinder_Is_Proposed_StandardStatus.sql" />
     <Build Include="StoredProcedures\OppFinder_List_NonApproved_Standards.sql" />
     <Build Include="Tables\Audits.sql" />
@@ -178,8 +175,16 @@
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
-    <None Include="PostDeploymentScripts\RecreateStandardVersion.sql" />
     <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
+    <None Include="PostDeploymentScripts\SV-1290-RemoveOldStandardCollationTables.sql" />
+    <Build Include="Tables\MergeOrganisations.sql" />
+    <Build Include="Tables\MergeOrganisationStandard.sql" />
+    <Build Include="Tables\MergeOrganisationStandardDeliveryArea.sql" />
+    <Build Include="Tables\MergeOrganisationStandardVersion.sql" />
+    <Build Include="Tables\MergeApply.sql" />
+    <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
+    <None Include="PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql" />
+    <Build Include="StoredProcedures\StaffReports_List_Approved_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -203,7 +208,6 @@
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
-    <None Include="PostDeploymentScripts\InsertApprovalsExtractSettingsIfNotExists.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

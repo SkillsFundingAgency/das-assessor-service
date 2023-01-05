@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -161,23 +160,21 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.QueryAsync<EpaOrganisation>(sql, new { standardId });
         }
 
-        public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
+        /// <summary>
+        /// This method doesn't restrict by Effective From / To and Status as the goal is return all standards
+        /// of all states, specifically for use by the admin side of the service.
+        /// /// </summary>
+        /// <param name="organisationId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<OrganisationStandardSummary>> GetAllOrganisationStandardByOrganisationId(string organisationId)
         {
             IEnumerable<OrganisationStandardSummary> organisationStandardSummaries;
 
-            var query = 
+            var query =
                 @"SELECT 
 	                os.Id, EndPointAssessorOrganisationId AS OrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, ContactId, OrganisationStandardData, StandardReference
                   FROM 
 	                [OrganisationStandard] os 
-                  WHERE 
-	                EndPointAssessorOrganisationId = @organisationId
-
-                  SELECT
-	                sc.Id, StandardId, ReferenceNumber, Title, StandardData, DateAdded, DateUpdated, DateRemoved, IsLive
-                  FROM 
-	                [OrganisationStandard] os 
-	                INNER JOIN [StandardCollation] sc ON os.StandardCode = sc.StandardId
                   WHERE 
 	                EndPointAssessorOrganisationId = @organisationId
 
@@ -189,29 +186,23 @@ namespace SFA.DAS.AssessorService.Data
 	                EndPointAssessorOrganisationId = @organisationId 
                   
                   SELECT 
-	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status
+	                osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status, s.VersionMajor, s.VersionMinor
                   FROM 
 	                [dbo].[OrganisationStandardVersion] osv
 	                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
 	                INNER JOIN [dbo].[Organisations] o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
                         AND o.EndPointAssessorOrganisationId = @organisationId
 	                INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
-                  WHERE 
-	                osv.Status = 'Live' AND os.status = 'Live' 
-	                AND (os.EffectiveTo IS NULL OR os.EffectiveTo > GETDATE())
-	                AND (osv.EffectiveTo IS NULL OR osv.EffectiveTo > GETDATE())";
+                  ORDER BY LarsCode, VersionMajor, VersionMinor";
 
             using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(query, new { organisationId }))
             {
                 organisationStandardSummaries = multi.Read<OrganisationStandardSummary>();
-                var standardCollations = multi.Read<StandardCollation>()?.ToDictionary(a => a.StandardId);
                 var deliveryAreas = multi.Read().Select(a => new { a.StandardCode, a.DeliveryAreaId })?.GroupBy(a => a.StandardCode);
                 var organisationStandardVersions = multi.Read<OrganisationStandardVersion>()?.GroupBy(a => a.LarsCode);
 
                 foreach (var organisationStandardSummary in organisationStandardSummaries)
                 {
-                    organisationStandardSummary.StandardCollation = standardCollations[organisationStandardSummary.StandardCode];
-
                     organisationStandardSummary.DeliveryAreas = deliveryAreas?
                         .SingleOrDefault(a => a.Key == organisationStandardSummary.StandardCode)?
                         .Select(a => (int)a.DeliveryAreaId)
@@ -228,13 +219,36 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
-            var sql =
-                "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
-                    "DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData " +
-                    "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
+            OrganisationStandard orgStandard;
 
-            return await _unitOfWork.Connection.QuerySingleAsync<OrganisationStandard>(sql, new { organisationStandardId });
+            var sql =
+                @"SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, StandardReference as IFateReferenceNumber, 
+                             EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData 
+                FROM [OrganisationStandard] WHERE Id = @organisationStandardId
+
+                SELECT osv.StandardUId, os.StandardCode as LarsCode, s.Title, s.Level, s.IFateReferenceNumber, s.Version, 
+                       osv.EffectiveFrom, osv.EffectiveTo, osv.DateVersionApproved, osv.Status, s.VersionMajor, s.VersionMinor
+                FROM [dbo].[OrganisationStandardVersion] osv 
+                INNER JOIN [dbo].[OrganisationStandard] os on osv.OrganisationStandardId = os.Id
+                INNER JOIN [dbo].[Standards] s on osv.StandardUId = s.StandardUId
+                WHERE osv.OrganisationStandardId = @organisationStandardId
+                ORDER BY s.VersionMajor, s.VersionMinor";
+
+            using (var multi = await _unitOfWork.Connection.QueryMultipleAsync(sql, new { organisationStandardId }))
+            {
+                orgStandard = await multi.ReadSingleOrDefaultAsync<OrganisationStandard>();
+                var standardVersions = multi.Read<OrganisationStandardVersion>();
+
+                if (orgStandard != null)
+                {
+                    orgStandard.Versions = standardVersions?.ToList();
+                }
+            }
+
+            return orgStandard;
         }
+
+
 
         public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {

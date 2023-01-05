@@ -6,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -37,14 +35,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             var standardService = new Mock<IStandardService>();
-            standardService.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<StandardCollation> { new StandardCollation { Title = "Standard Title", StandardData = new StandardData{ Level = 2}}});
+            standardService.Setup(c => c.GetLatestStandardVersions())
+                .ReturnsAsync(new List<Standard> { new Standard { Title = "Standard Title", Level = 2 } });
             standardService.Setup(s => s.GetEPAORegisteredStandardVersions(It.IsAny<string>(), null))
                 .ReturnsAsync(new List<OrganisationStandardVersion> { new OrganisationStandardVersion { Title = "Standard 1", Version = "1.0", LarsCode = 1 },
                                                           new OrganisationStandardVersion { Title = "Standard 2", Version = "1.0", LarsCode = 2 },
                                                           new OrganisationStandardVersion { Title = "Standard 3", Version = "1.0", LarsCode = 3 }});
-            standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
-                .ReturnsAsync(new StandardCollation {Title = "Standard Title", StandardData = new StandardData{ Level = 2}});
+            standardService.Setup(c => c.GetStandardVersionById(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new Standard {Title = "Standard Title",  Level = 2 });
             
             
             var organisationRepository = new Mock<IOrganisationQueryRepository>();

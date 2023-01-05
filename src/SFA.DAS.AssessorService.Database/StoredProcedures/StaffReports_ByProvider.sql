@@ -16,7 +16,7 @@ AS
 			WHEN 10022210 THEN 'ANNE CLARKE ASSOCIATES LIMITED'
 			WHEN 10053962 THEN 'NEWCASTLE COLLEGE'
 			ELSE
-			(CASE WHEN ce.[ProviderName] IS NULL OR ce.[ProviderName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderName] END)
+			(CASE WHEN ce.[ProviderOrganisationName] IS NULL OR ce.[ProviderOrganisationName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderOrganisationName] END)
 		END AS 'Provider Name', 
 	  COUNT(*) AS 'Total',
 	  SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS 'Manual Total',
@@ -30,7 +30,7 @@ AS
   FROM 
 	(
 		SELECT a1.*,
-		(SELECT MAX(UPPER(JSON_VALUE([CertificateData], '$.ProviderName'))) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderName]
+		(SELECT MAX(UPPER(ProviderName)) FROM [dbo].[Certificates] WHERE [ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderOrganisationName]
 		FROM  [dbo].[Certificates] a1
 	) ce
   GROUP BY 
@@ -49,7 +49,7 @@ AS
 		WHEN 10022210 THEN 'ANNE CLARKE ASSOCIATES LIMITED'
 		WHEN 10053962 THEN 'NEWCASTLE COLLEGE'
 		ELSE
-		(CASE WHEN ce.[ProviderName] IS NULL OR ce.[ProviderName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderName] END)
+		(CASE WHEN ce.[ProviderOrganisationName] IS NULL OR ce.[ProviderOrganisationName] = 'UNKNOWN' THEN 'UKPRN '+ CONVERT(VARCHAR, ce.[ProviderUkPrn]) ELSE ce.[ProviderOrganisationName] END)
 	END
 
   UNION

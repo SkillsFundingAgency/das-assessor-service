@@ -117,16 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Address" xml:space="preserve">
+  <data name="AddressLine1" xml:space="preserve">
     <value>Building and street</value>
   </data>
-  <data name="AddressLine2" xml:space="preserve">
+  <data name="AccessibleAddressLine1" xml:space="preserve">
+    <value>line 1 of 3</value>
+  </data>
+  <data name="AccessibleAddressLine2" xml:space="preserve">
     <value>Building and street line 2 of 3</value>
   </data>
-  <data name="AddressLine3" xml:space="preserve">
+  <data name="AccessibleAddressLine3" xml:space="preserve">
     <value>Building and street line 3 of 3</value>
   </data>
-  <data name="City" xml:space="preserve">
+  <data name="Town" xml:space="preserve">
     <value>Town or city</value>
   </data>
   <data name="ContinueButton" xml:space="preserve">
@@ -139,10 +142,13 @@
     <value>For example, human resources</value>
   </data>
   <data name="Employer" xml:space="preserve">
-    <value>Organisation name (optional)</value>
+    <value>Employer name</value>
   </data>
-  <data name="SearchHeading" xml:space="preserve">
-    <value>Search for the address that you’d like us to send the certificate to</value>
+  <data name="SearchHeadingApprentice" xml:space="preserve">
+    <value>Search for the address that you'd like us to send the certificate to</value>
+  </data>
+  <data name="SearchHeadingEmployer" xml:space="preserve">
+    <value>Search for an employer or address</value>
   </data>
   <data name="EditHeading" xml:space="preserve">
     <value>Edit the address that you’d like us to send the certificate to</value>
@@ -153,8 +159,11 @@
   <data name="ManualHeading" xml:space="preserve">
     <value>Add the address that you’d like us to send the certificate to</value>
   </data>
-  <data name="Lead" xml:space="preserve">
-    <value>Some employers are not open due to the coronavirus (COVID-19) outbreak. You can temporarily choose to send certificates to the apprentice, employer or training provider.</value>
+  <data name="AddressLookupApprentice" xml:space="preserve">
+    <value>Start typing the address or postcode</value>
+  </data>
+  <data name="AddressLookupEmployer" xml:space="preserve">
+    <value>Start typing the employer name, address or postcode</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>
@@ -185,5 +194,8 @@
   </data>
   <data name="EditEmployersAddress" xml:space="preserve">
     <value>Edit the employer’s address</value>
+  </data>
+  <data name="SaveAndContinueButton" xml:space="preserve">
+    <value>Save and continue</value>
   </data>
 </root>

@@ -108,22 +108,22 @@
                     {
                         <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                             <fieldset class="govuk-fieldset">
-                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
-                                {
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
+                                    {
                                         <h1 class="govuk-fieldset__heading">
                                             @Html.Raw(question.Label)
                                         </h1>
-                                    </legend>
-                                }
-                                else
-                                {
-                                    <h1 class="govuk-label-wrapper">
-                                        <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                            @Html.Raw(question.Label)
-                                        </label>
-                                    </h1>
-                                }
+                                    }
+                                    else
+                                    {
+                                        <h1 class="govuk-label-wrapper">
+                                            <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                                @Html.Raw(question.Label)
+                                            </label>
+                                        </h1>
+                                    }
+                                </legend>
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
                                 </span>

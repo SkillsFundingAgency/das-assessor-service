@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -176,9 +177,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNotFound);
         }
 
-        public async Task<StandardCollation> GetStandard(int standardCode)
+        public async Task<Standard> GetStandard(string standardId)
         {
-            return await _standardService.GetStandard(standardCode);
+            return await _standardService.GetStandardVersionById(standardId);
         }
 
         public string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode)
@@ -592,7 +593,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardVersionAlreadyExists(request.OrganisationId, request.StandardCode, request.StandardVersions), validationResult, ValidationStatusCode.AlreadyExists);
             if (!validationResult.IsValid) return validationResult;
 
-            var standard = GetStandard(request.StandardCode).Result;
+            var standard = GetStandard(request.StandardCode.ToString()).Result;
             if (standard is null)
             {
                 var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
@@ -600,7 +601,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 return validationResult;
             }
 
-            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.StandardData.EffectiveFrom, standard.StandardData.EffectiveTo, standard.StandardData.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateStarts), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardEffectiveFromIsEntered(request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);
 
@@ -612,7 +613,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
             }
 
-            RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.StandardData.EffectiveFrom, standard.StandardData.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.EffectiveFrom, standard.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
    
             return validationResult;
         }
@@ -620,7 +621,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public ValidationResponse ValidatorUpdateEpaOrganisationStandardRequest(UpdateEpaOrganisationStandardRequest request)
         {
             var validationResult = new ValidationResponse();
-            var standard = GetStandard(request.StandardCode).Result;
+            var standard = GetStandard(request.StandardCode.ToString()).Result;
             if (standard is null)
             {
                 var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
@@ -632,9 +633,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.StandardData.EffectiveFrom, standard.StandardData.EffectiveTo, standard.StandardData.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateStarts), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.StandardData.EffectiveFrom, standard.StandardData.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.EffectiveFrom, standard.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardEffectiveFromIsEntered(request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);   
 
             return validationResult;
@@ -713,8 +714,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             else
             {
                 var contacts = _registerQueryRepository.GetAssessmentOrganisationContacts(request.OrganisationId).Result;
-                var standards = _registerQueryRepository.GetOrganisationStandardByOrganisationId(request.OrganisationId).Result;
-
+                var standards = _standardService.GetEpaoRegisteredStandards(request.OrganisationId).Result;
+                
                 RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
                 RunValidationCheckAndAppendAnyError("Address", CheckAddressDetailsForOrganisation(request.Address1, request.Address2, request.Address3, request.Address4), validationResult, ValidationStatusCode.BadRequest);
                 RunValidationCheckAndAppendAnyError("Postcode", CheckPostcodeIsPresentForOrganisation(request.Postcode), validationResult, ValidationStatusCode.BadRequest);

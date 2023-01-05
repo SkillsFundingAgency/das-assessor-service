@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Section> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo);
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
         Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
+        Task<SkipPageResponse> SkipPage(Guid applicationId, Guid sectionId, string pageId);
         Task<SetPageAnswersResponse> SetPageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
         Task<ResetPageAnswersResponse> ResetSectionAnswers(Guid applicationId, int sequenceId, int sectionId);
         Task<AddPageAnswerResponse> AddAnswersToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);

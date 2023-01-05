@@ -5,7 +5,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
             }
 
             var submittedLogEntry = certificateLogs?.OrderByDescending(l => l.EventTime).FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
-
+            
             // NOTE: THIS IS A DATA FRIG FOR EXTERNAL API AS WE NEED SUBMITTED INFORMATION!
             // Amended, don't return submitted info, if the status has returned to draft after a fail.
             if (submittedLogEntry != null && certificate.Status != CertificateStatus.Draft)

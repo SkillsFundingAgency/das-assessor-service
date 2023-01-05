@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -47,32 +46,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateAddress))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = null)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username)
+        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string epaOrgId, [FromQuery] string employerAccountId)
         {
-            var address = await _mediator.Send(new GetContactPreviousAddressesRequest
-            { Username = username });
-            if (address == null)
-                throw new ResourceNotFoundException();
+            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { EpaOrgId = epaOrgId, EmployerAccountId = employerAccountId });
             return Ok(address);
         }
 
         [HttpGet("history", Name = "GetCertificatesHistory")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificatesHistory(int pageIndex,
-            string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetCertificatesHistory(int pageIndex, string endPointAssessorOrganisationId, string searchTerm, string sortColumn, int sortDescending)
         {
             return Ok(await _mediator.Send(
-                new GetCertificateHistoryRequest { PageIndex = pageIndex, EndPointAssessorOrganisationId = endPointAssessorOrganisationId }));
-        }
-
-        [HttpGet("approvals", Name = "GetApprovedCertificates")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetApprovedCertificates(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
-        {
-            return Ok(await _mediator.Send(new GetToBeApprovedCertificatesRequest { PageSize = pageSize, PageIndex = pageIndex, Status = status, PrivatelyFundedStatus = privatelyFundedStatus }));
+                new GetCertificateHistoryRequest
+                {
+                    PageIndex = pageIndex,
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                    SortDescending = sortDescending == 0,
+                    SearchTerm = searchTerm,
+                    SortColumn = sortColumn
+                }));
         }
 
         [HttpGet("ready-to-print/count", Name = "GetCertificatesReadyToPrintCount")]
