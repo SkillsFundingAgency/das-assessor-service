@@ -127,6 +127,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         opts => { opts.ResourcesPath = "Resources"; })
                     .AddDataAnnotationsLocalization()
                     .AddControllersAsServices()
+                    .AddNewtonsoftJson()
                     .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
                 services.AddSwaggerGen(config =>

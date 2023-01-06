@@ -18,13 +18,17 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             return new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<ResultViewModel, SearchResult>();
-                cfg.CreateMap<StandardVersionViewModel, StandardVersion>();
+                
+                cfg.CreateMap<StandardVersionViewModel, StandardVersion>()
+                    .ReverseMap();
+                
                 cfg.CreateMap<OrganisationSearchViewModel, RequestAccessOrgSearchViewModel>()
-                .ForMember(dest => dest.Address, x => x.Ignore())
-                .ForMember(dest => dest.CompanyNumber, x => x.Ignore())
-                .ForMember(dest => dest.CompanyOrCharityDisplayText, x => x.Ignore())
-                .ForMember(dest => dest.OrganisationIsLive, x => x.Ignore())
-                .ForMember(dest => dest.RoEPAOApproved, x => x.Ignore());
+                    .ForMember(dest => dest.Address, x => x.Ignore())
+                    .ForMember(dest => dest.CompanyNumber, x => x.Ignore())
+                    .ForMember(dest => dest.CompanyOrCharityDisplayText, x => x.Ignore())
+                    .ForMember(dest => dest.OrganisationIsLive, x => x.Ignore())
+                    .ForMember(dest => dest.RoEPAOApproved, x => x.Ignore());
+                
                 cfg.CreateMap<ContactResponse, UserViewModel>();
 
                 cfg.AddProfile<CompaniesHouseSummaryProfile>();
