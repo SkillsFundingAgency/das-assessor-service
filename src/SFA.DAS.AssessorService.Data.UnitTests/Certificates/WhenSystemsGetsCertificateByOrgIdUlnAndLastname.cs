@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
+using Moq.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -25,8 +21,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         {
             MappingBootstrapper.Initialize();
             
-            var mockSet = CreateCertificateMockDbSet();
-            _mockDbContext = CreateMockDbContext(mockSet);
+            _mockDbContext = CreateMockDbContext();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
 
             _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
@@ -34,14 +29,16 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _result = _certificateRepository.GetCertificateByUlnOrgIdLastnameAndStandardCode(1111111111, "EPA0001", "Hawkins", 1).Result;
         }
 
-        [Test, Ignore("Temporarily ignore during .Net Core 3.1 upgrade")]
+        [Test]
         public void ItShouldReturnResult()
         {
             _result.Uln.Should().Be(1111111111);
         }
 
-        private Mock<DbSet<Certificate>> CreateCertificateMockDbSet()
+        private Mock<AssessorDbContext> CreateMockDbContext()
         {
+            var mockDbContext = new Mock<AssessorDbContext>();
+
             var certificates = Builder<Certificate>.CreateListOfSize(10)
                 .TheFirst(1)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
@@ -57,27 +54,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            var mockSet = new Mock<DbSet<Certificate>>();
-
-            //mockSet.As<IAsyncEnumerable<Certificate>>()
-                //.Setup(m => m.GetEnumerator())  // @ToDo: .Net Core 3.1 upgrade - uncomment and fix this
-                //.Returns(new TestAsyncEnumerator<Certificate>(certificates.GetEnumerator()));
-
-            mockSet.As<IQueryable<Certificate>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<Certificate>(certificates.Provider));
-
-            mockSet.As<IQueryable<Certificate>>().Setup(m => m.Expression).Returns(certificates.Expression);
-            mockSet.As<IQueryable<Certificate>>().Setup(m => m.ElementType).Returns(certificates.ElementType);
-            mockSet.As<IQueryable<Certificate>>().Setup(m => m.GetEnumerator()).Returns(() => certificates.GetEnumerator());
-
-            return mockSet;
-        }
-
-        private Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Certificate>> certificateMockDbSet)
-        {
-            var mockDbContext = new Mock<AssessorDbContext>();
-            mockDbContext.Setup(c => c.Certificates).Returns(certificateMockDbSet.Object);
+            mockDbContext.Setup(c => c.Certificates).ReturnsDbSet(certificates);
+            
             return mockDbContext;
         }
     }

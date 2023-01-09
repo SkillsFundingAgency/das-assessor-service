@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Data
                         certificateData.EpaDetails.EpaReference = certificate.CertificateReference;
                         certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
 
-                        await AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
+                        AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
                             certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
 
                         await _context.SaveChangesAsync();
@@ -477,7 +477,7 @@ namespace SFA.DAS.AssessorService.Data
 
             if (updateLog)
             {
-                await AddSingleCertificateLog(cert.Id, action, cert.Status, cert.UpdatedAt.Value,
+                AddSingleCertificateLog(cert.Id, action, cert.Status, cert.UpdatedAt.Value,
                     cert.CertificateData, cert.UpdatedBy, cert.BatchNumber, reasonForChange);
             }
 
@@ -507,7 +507,7 @@ namespace SFA.DAS.AssessorService.Data
 
             if (updateLog)
             {
-                await AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.DeletedAt.Value,
+                AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.DeletedAt.Value,
                     certificate.CertificateData, certificate.DeletedBy, certificate.BatchNumber, reasonForChange);
             }
 
@@ -565,7 +565,7 @@ namespace SFA.DAS.AssessorService.Data
 
             var action = (printStatus == CertificateStatus.Printed ? CertificateActions.Printed : CertificateActions.Status);
 
-            await AddSingleCertificateLog(certificate.Id, action, printStatus, statusAt,
+            AddSingleCertificateLog(certificate.Id, action, printStatus, statusAt,
                 certificateBatchLog.CertificateData, SystemUsers.PrintFunction,
                 certificateBatchLog.BatchNumber, reasonForChange);
 
@@ -631,7 +631,7 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction);
         }
 
-        private async Task AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
+        private void AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
         {
             if (action != null)
             {
@@ -648,7 +648,7 @@ namespace SFA.DAS.AssessorService.Data
                     ReasonForChange = reasonForChange
                 };
 
-                await _context.CertificateLogs.AddAsync(certLog);
+                _context.CertificateLogs.Add(certLog);
             }
         }
 

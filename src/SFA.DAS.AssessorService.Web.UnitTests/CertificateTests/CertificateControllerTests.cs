@@ -43,7 +43,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             var config = new MapperConfiguration(opts =>
             {
-                opts.CreateMap<StandardVersionViewModel, StandardVersion>();
+                opts.CreateMap<StandardVersionViewModel, StandardVersion>()
+                .ReverseMap();
             });
             _mapper = config.CreateMapper();
 
