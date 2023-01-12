@@ -1,15 +1,19 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using JWT;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,19 +27,13 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
-using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
+using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -234,8 +232,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                   .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-                //@ToDo:  temporarily commented out as part of .Net 3.1 upgrade whilst CharityCommission WSDL service not regenerated. Uncomment once done.
-                //config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
+                    .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
                 // End of SOAP Services
 
