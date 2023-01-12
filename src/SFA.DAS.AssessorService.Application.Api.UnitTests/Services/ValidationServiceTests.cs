@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
         [TestCase("", true)]
         [TestCase("a", false)]
-//        [TestCase("marky..mark@test.com", false)]  // @ToDo: .NetCore 3.1 upgrade - failing - is this now considered a valid email address???
+        [TestCase("marky..mark@test.com", false)]
         [TestCase("mark@test.com", true)]
         [TestCase("marky.mark@test.com", true)]
         public void CheckEmailAddress(string emailAddress, bool expectedResult)

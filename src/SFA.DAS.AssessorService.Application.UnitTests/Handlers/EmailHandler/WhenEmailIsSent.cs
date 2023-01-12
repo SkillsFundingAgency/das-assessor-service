@@ -122,11 +122,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
 
             //assert
-            /*
-            _loggerMock.Verify(
-                x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(),     // @ToDo: temporarily commented out in .Net Core 3.1 upgrade. This type is internal now. Need an alternative
-                    It.IsAny<Func<object, Exception, string>>()), Times.Once);
-            */
+            VerifyLogger(LogLevel.Error, new EventId(0));
+        }
+
+        private void VerifyLogger(LogLevel logLevel, EventId eventId)
+        {
+            _loggerMock.Verify(logger => logger.Log(
+                It.Is<LogLevel>(p => p == logLevel),
+                It.Is<EventId>(p => p == eventId),
+                It.Is<It.IsAnyType>((@object, @type) => @type.Name == "FormattedLogValues"),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
     }
 }

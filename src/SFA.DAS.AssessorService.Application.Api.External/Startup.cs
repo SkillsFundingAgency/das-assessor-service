@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +23,6 @@ using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -84,9 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
                     c.EnableAnnotations();
-                    c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
-                    //c.OperationFilter<ExamplesOperationFilter>();  @ToDo: ExamplesOperationFilter is no longer accessible - fix this
-                    c.SchemaFilter<NullableSchemaFilter>();
+                    c.ExampleFilters();
                     c.SchemaFilter<SwaggerRequiredSchemaFilter>();
                     c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
 
@@ -97,6 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         c.IncludeXmlComments(xmlPath);
                     }
                 });
+                services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
                 services.AddHttpContextAccessor();

@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Validators;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 {
@@ -6,7 +7,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
     {
             public EmailCheckValidator()
             {
-                DefaultValidatorExtensions.EmailAddress<EmailCheck>(RuleFor(x => x.EmailToCheck));
+                DefaultValidatorExtensions.EmailAddress(
+                    RuleFor(x => x.EmailToCheck)
+                    .EmailAddress(EmailValidationMode.Net4xRegex));
             }
     }
 }

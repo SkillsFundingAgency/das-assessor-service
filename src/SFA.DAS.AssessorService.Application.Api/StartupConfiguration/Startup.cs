@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         {
                             var basePath = AppContext.BaseDirectory;
                             var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                            //config.IncludeXmlComments(xmlPath);  // @todo put this back once the auth issue sorted
+                            //config.IncludeXmlComments(xmlPath);  // @todo .net 3.1 put this back once the auth issue sorted
                         }
 
                         if (!_env.IsDevelopment())
@@ -248,8 +248,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             try
             {
                 MappingStartup.AddMappings();
-
-                //app.UseSecurityHeaders();
                 
                 if (env.IsDevelopment())
                 {
@@ -272,25 +270,26 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 app.UseRequestLocalization();
                 app.UseHealthChecks("/health");
 
-                // .Net Core 3.1 upgrade - new routing config, including disabling auth in dev.
                 app.UseRouting();
                 app.UseAuthentication();
                 app.UseAuthorization();
                 app.UseEndpoints(endpoints =>
                 {
                     if (env.IsDevelopment())
+                    {
                         endpoints.MapControllers().WithMetadata(new AllowAnonymousAttribute());
+                    }
                     else
+                    {
                         endpoints.MapControllers();
+                    }
                 });
-                // end .Net Core 3.1 upgrade
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error during Startup Configure");
                 throw;
             }
-
         }
 
         private Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration NotificationConfiguration()
