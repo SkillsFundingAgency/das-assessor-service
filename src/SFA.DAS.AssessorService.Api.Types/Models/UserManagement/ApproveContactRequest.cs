@@ -1,5 +1,5 @@
-using System;
 using MediatR;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.UserManagement
 {
@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.UserManagement
     {
         public Guid ContactId { get; set; }
     }
-    
+
     public class RejectContactRequest : IRequest
     {
         public Guid ContactId { get; set; }

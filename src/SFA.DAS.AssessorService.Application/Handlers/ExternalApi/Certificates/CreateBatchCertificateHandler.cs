@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
         private readonly IProvidersRepository _providersRepository;
 
         public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository,
-            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, 
+            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository,
             ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService, IProvidersRepository providersRepository)
         {
             _certificateRepository = certificateRepository;
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                        CreatedBy = ExternalApiConstants.ApiUserName,
                        CertificateData = JsonConvert.SerializeObject(certData),
                        Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
-                        CertificateReference = string.Empty,
+                       CertificateReference = string.Empty,
                        LearnRefNumber = learner.LearnRefNumber,
                        CreateDay = DateTime.UtcNow.Date
                    });
@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                     epaDetails = certData.EpaDetails;
                 }
             }
-            
+
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
 
             var epaOutcome = data.OverallGrade == CertificateGrade.Fail ? EpaOutcome.Fail : EpaOutcome.Pass;

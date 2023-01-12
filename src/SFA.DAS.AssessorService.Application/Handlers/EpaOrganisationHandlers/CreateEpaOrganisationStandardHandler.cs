@@ -37,12 +37,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
                 _logger.LogError(message);
-                if (validationResponse.Errors.Any(x =>  x.ValidationStatusCode == ValidationStatusCode.BadRequest))
-                {     
+                if (validationResponse.Errors.Any(x => x.ValidationStatusCode == ValidationStatusCode.BadRequest))
+                {
                     throw new BadRequestException(message);
                 }
-                
-                if (validationResponse.Errors.Any(x =>  x.ValidationStatusCode == ValidationStatusCode.NotFound))
+
+                if (validationResponse.Errors.Any(x => x.ValidationStatusCode == ValidationStatusCode.NotFound))
                 {
                     throw new NotFoundException(message);
                 }
@@ -53,10 +53,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 }
 
                 throw new Exception(message);
-            } 
+            }
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
-           
+
             if (request.ApplyFollowingWithdrawal)
             {
                 return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas, true);
@@ -69,12 +69,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationStandardRequest request)
         {
-            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());           
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());
             request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
             request.ContactId = request.ContactId?.Trim();
         }
-        
-        private static  EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(CreateEpaOrganisationStandardRequest request)
+
+        private static EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(CreateEpaOrganisationStandardRequest request)
         {
             Guid? contactId = null;
             if (Guid.TryParse(request.ContactId, out var contactIdGuid))
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 DateStandardApprovedOnRegister = request.DateStandardApprovedOnRegister,
                 Comments = request.Comments,
                 ContactId = contactId,
-                OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments}
+                OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments }
             };
             return organisationStandard;
         }

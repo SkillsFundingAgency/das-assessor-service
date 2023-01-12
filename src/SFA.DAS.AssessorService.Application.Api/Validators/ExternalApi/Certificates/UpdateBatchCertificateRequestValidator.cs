@@ -13,10 +13,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
     public class UpdateBatchCertificateRequestValidator : AbstractValidator<UpdateBatchCertificateRequest>
     {
         public UpdateBatchCertificateRequestValidator(
-            IStringLocalizer<BatchCertificateRequestValidator> localiser, 
+            IStringLocalizer<BatchCertificateRequestValidator> localiser,
             IOrganisationQueryRepository organisationQueryRepository,
-            ILearnerRepository learnerRepository, 
-            ICertificateRepository certificateRepository, 
+            ILearnerRepository learnerRepository,
+            ICertificateRepository certificateRepository,
             IStandardService standardService)
         {
             Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, learnerRepository, standardService));
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         if (string.IsNullOrEmpty(certData.OverallGrade))
                         {
                             context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
-                        }                        
+                        }
                     }
                     else
                     {
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                     // SV-1253 additional validation to check version and option
                     var learnerDetails = await learnerRepository.Get(m.Uln, m.StandardCode);
-                    if(null != learnerDetails)
+                    if (null != learnerDetails)
                     {
                         if (learnerDetails.VersionConfirmed && !string.IsNullOrWhiteSpace(learnerDetails.Version) && !string.IsNullOrWhiteSpace(m.CertificateData.Version))
                         {

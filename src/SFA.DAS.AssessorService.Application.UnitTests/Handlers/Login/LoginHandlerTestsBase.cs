@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Handlers.Login;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
 {
@@ -26,11 +26,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
 
             ContactQueryRepository = new Mock<IContactQueryRepository>();
             ContactQueryRepository.Setup(r => r.GetBySignInId(It.IsNotIn(Guid.Empty)))
-                .Returns(Task.FromResult(new Contact() {Id = It.IsAny<Guid>(), Status = ContactStatus.Live,
-                    OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
+                .Returns(Task.FromResult(new Contact()
+                {
+                    Id = It.IsAny<Guid>(),
+                    Status = ContactStatus.Live,
+                    OrganisationId = It.IsAny<Guid>(),
+                    Username = "Test",
+                    Email = "test@email.com"
+                }));
             ContactQueryRepository.Setup(r => r.GetBySignInId(Guid.Empty))
-                .Returns(Task.FromResult(new Contact() { Id = Guid.Empty, Status = ContactStatus.InvitePending,
-                    OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
+                .Returns(Task.FromResult(new Contact()
+                {
+                    Id = Guid.Empty,
+                    Status = ContactStatus.InvitePending,
+                    OrganisationId = It.IsAny<Guid>(),
+                    Username = "Test",
+                    Email = "test@email.com"
+                }));
 
             OrgQueryRepository.Setup(r => r.Get(It.IsAny<Guid>())).ReturnsAsync(new Organisation
             {
@@ -46,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
             RegisterRepository = new Mock<IRegisterRepository>();
             RegisterRepository.Setup(m => m.UpdateEpaOrganisationPrimaryContact(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(default(object)));
 
-            Handler = new LoginHandler(new Mock<ILogger<LoginHandler>>().Object, 
+            Handler = new LoginHandler(new Mock<ILogger<LoginHandler>>().Object,
                 OrgQueryRepository.Object, ContactQueryRepository.Object, ContactRepository.Object, RegisterRepository.Object);
         }
     }

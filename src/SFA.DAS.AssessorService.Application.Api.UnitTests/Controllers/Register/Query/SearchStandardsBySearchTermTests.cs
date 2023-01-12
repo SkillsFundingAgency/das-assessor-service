@@ -1,16 +1,16 @@
+using FluentAssertions;
+using FluentAssertions.Equivalency;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.AssessorService.Application.Api.Controllers;
-using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Domain.Entities;
-using FluentAssertions.Equivalency;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -25,15 +25,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private Standard _standard1;
         private Standard _standard2;
         private string _searchTerm = "Test";
-        
-        
+
+
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _standard1 = new Standard {LarsCode = 1, Title = "Test 9"};
-            _standard2 = new Standard {LarsCode = 1, Title = "Test 2"};
+            _standard1 = new Standard { LarsCode = 1, Title = "Test 9" };
+            _standard2 = new Standard { LarsCode = 1, Title = "Test 2" };
             _expectedStandards = new List<Standard>
             {
                 _standard1,
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                     new CancellationToken())).ReturnsAsync(_expectedStandards);
             _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
             _result = _queryController.SearchStandards(_searchTerm).Result;
-        }  
+        }
 
         [Test]
         public void SearchStandardsBySearchstringReturnExpectedActionResult()

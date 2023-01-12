@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Services
 {
@@ -20,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Services
             get
             {
                 var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(nameof(UserId));
-                if(userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+                if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
                 {
                     return userId;
                 }

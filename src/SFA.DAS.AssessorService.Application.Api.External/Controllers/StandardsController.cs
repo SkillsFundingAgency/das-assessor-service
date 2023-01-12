@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         {
             var standards = await _apiClient.GetStandardOptionsForLatestStandardVersions();
 
-            if(standards is null)
+            if (standards is null)
             {
                 return StatusCode((int)HttpStatusCode.ServiceUnavailable);
             }

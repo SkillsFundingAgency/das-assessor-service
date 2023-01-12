@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             _mockStandardsApiClient.Setup(m => m.GetEpaoRegisteredStandards(It.IsAny<string>(), 1, 10))
                     .ReturnsAsync(new Domain.Paging.PaginatedList<GetEpaoRegisteredStandardsResponse>(registeredStandards, 2, 1, 3));
-                
+
             // Act
             var result = await _sut.ChooseStandardForWithdrawal(1) as ViewResult;
 

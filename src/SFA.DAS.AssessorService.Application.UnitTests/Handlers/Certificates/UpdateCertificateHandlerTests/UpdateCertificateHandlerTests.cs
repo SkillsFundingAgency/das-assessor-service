@@ -1,5 +1,4 @@
 ﻿using FizzWare.NBuilder;
-using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -38,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         [TestCase("API", CertificateSendTo.Employer, CertificateSendTo.Employer, false, false)]
         [TestCase("API", CertificateSendTo.Apprentice, CertificateSendTo.Apprentice, false, true)]
         [TestCase("API", CertificateSendTo.Employer, CertificateSendTo.Apprentice, true, true)]
-        public async Task WhenSendToIsChanged_ThenAddressDetailsAreReset(string createdBy, CertificateSendTo currentSendTo, CertificateSendTo updatedSendTo, 
+        public async Task WhenSendToIsChanged_ThenAddressDetailsAreReset(string createdBy, CertificateSendTo currentSendTo, CertificateSendTo updatedSendTo,
             bool addressDetailsCleared, bool fullNameTransferred)
         {
             // Arrange
@@ -237,12 +236,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
                         MatchCertificateOnContactAddressDetails(updatedCertificate,
                         fullNameTransferred ? GetCertificateData(_certificate).FullName : null,
-                        null, 
-                        null, 
-                        null, 
-                        null, 
-                        null, 
-                        null, 
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
                         null)), "user", null, true, null), Times.Once);
                 }
                 else
@@ -263,7 +262,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             private bool MatchCertificate(Certificate certificate, string expectedLatestEpaOutcome, DateTime? expectedLatestEpaDate, int expectedEpasCount)
             {
                 var certificateData = GetCertificateData(certificate);
-                
+
                 bool numberOfEpaDetailsMatched = (certificateData.EpaDetails?.Epas?.Count ?? 0) == expectedEpasCount;
                 bool latestEpaDateMatched = certificateData.EpaDetails?.LatestEpaDate == expectedLatestEpaDate;
                 bool latestEpaOutcomeMatched = (certificateData.EpaDetails?.LatestEpaOutcome ?? string.Empty).Equals(expectedLatestEpaOutcome ?? string.Empty, StringComparison.InvariantCultureIgnoreCase);

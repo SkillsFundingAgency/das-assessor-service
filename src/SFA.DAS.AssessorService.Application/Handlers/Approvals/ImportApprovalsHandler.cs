@@ -45,9 +45,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
                 DateTime? extractStartTime = null;
                 _logger.LogInformation($"Calculating Approvals changed date, initially set to null.");
                 DateTime? latestApprovalsExtractTimestamp = await _approvalsExtractRepository.GetLatestExtractTimestamp();
-                if(null != latestApprovalsExtractTimestamp && latestApprovalsExtractTimestamp.HasValue)
+                if (null != latestApprovalsExtractTimestamp && latestApprovalsExtractTimestamp.HasValue)
                 {
-                    extractStartTime = latestApprovalsExtractTimestamp.Value.AddSeconds(- await GetSettingAsInt(TOLERANCE_SETTING_NAME));
+                    extractStartTime = latestApprovalsExtractTimestamp.Value.AddSeconds(-await GetSettingAsInt(TOLERANCE_SETTING_NAME));
                     _logger.LogInformation($"Pulling Approvals changed since: {extractStartTime}");
                 }
 

@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                             }
                         }
                         else if (existingCertificate.Status == CertificateStatus.Submitted && !string.IsNullOrWhiteSpace(certData.OverallGrade) && certData.OverallGrade.Equals(CertificateGrade.Fail, StringComparison.OrdinalIgnoreCase))
-                        { 
+                        {
                             // A submitted fail can be re-created
                         }
                         else
@@ -66,16 +66,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         }
 
                         // SV-1253 additional validation to check version and option
-                        if(learnerDetails.VersionConfirmed && !string.IsNullOrWhiteSpace(learnerDetails.Version) && !string.IsNullOrWhiteSpace(m.CertificateData.Version))
+                        if (learnerDetails.VersionConfirmed && !string.IsNullOrWhiteSpace(learnerDetails.Version) && !string.IsNullOrWhiteSpace(m.CertificateData.Version))
                         {
-                            if(learnerDetails.Version.Trim().ToUpperInvariant() != m.CertificateData.Version.Trim().ToUpperInvariant())
+                            if (learnerDetails.Version.Trim().ToUpperInvariant() != m.CertificateData.Version.Trim().ToUpperInvariant())
                             {
                                 context.AddFailure(new ValidationFailure("LearnerDetails", "Incorrect version for learner"));
                             }
                         }
-                        if(!string.IsNullOrWhiteSpace(learnerDetails.CourseOption) && !string.IsNullOrWhiteSpace(m.CertificateData.CourseOption))
+                        if (!string.IsNullOrWhiteSpace(learnerDetails.CourseOption) && !string.IsNullOrWhiteSpace(m.CertificateData.CourseOption))
                         {
-                            if(learnerDetails.CourseOption.Trim().ToUpperInvariant() != m.CertificateData.CourseOption.Trim().ToUpperInvariant())
+                            if (learnerDetails.CourseOption.Trim().ToUpperInvariant() != m.CertificateData.CourseOption.Trim().ToUpperInvariant())
                             {
                                 context.AddFailure(new ValidationFailure("LearnerDetails", "Incorrect course option for learner"));
                             }

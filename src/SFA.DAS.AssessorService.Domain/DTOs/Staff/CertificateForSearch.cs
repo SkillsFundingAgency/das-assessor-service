@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs.Staff
         public string CertificateReference { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        public string Status { get; set; }     
+        public string Status { get; set; }
         public DateTime? LastUpdatedAt { get; set; }
     }
 }

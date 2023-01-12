@@ -1,10 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 {
@@ -19,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void Setup()
         {
             _registerQueryRepository = new Mock<IRegisterQueryRepository>();
-             _generator = new EpaOrganisationIdGenerator(_registerQueryRepository.Object);   
+            _generator = new EpaOrganisationIdGenerator(_registerQueryRepository.Object);
         }
 
         [TestCase("EPA0001", "EPA0002")]
@@ -29,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void GetNewOrganisationIdFromCurrentMaximumOrganisationId(string currentId, string newId)
         {
             _registerQueryRepository.Setup(r => r.EpaOrganisationIdCurrentMaximum()).Returns(Task.FromResult(currentId));
-           var returnedId = _generator.GetNextOrganisationId();
+            var returnedId = _generator.GetNextOrganisationId();
             Assert.AreEqual(returnedId, newId);
         }
     }

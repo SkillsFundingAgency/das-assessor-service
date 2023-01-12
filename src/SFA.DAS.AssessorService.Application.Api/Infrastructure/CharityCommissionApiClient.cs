@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AutoMapper;
 using CharityCommissionService;
-using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Settings;
+using System;
+using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 {
     /// <summary>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -12,6 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             Privileges = new List<PrivilegeResponse>();
         }
         public ContactResponse Contact { get; set; }
-        public List<PrivilegeResponse> Privileges { get;  }
+        public List<PrivilegeResponse> Privileges { get; }
     }
 }

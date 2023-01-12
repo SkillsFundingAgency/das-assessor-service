@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Exception during withdrawal date validation for {q} : { ex.Message}");
+                _logger.LogError($"Exception during withdrawal date validation for {q} : {ex.Message}");
 
                 return new ApiValidationResult
                 {

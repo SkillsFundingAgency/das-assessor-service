@@ -1,8 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -15,10 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
 
         public InvitationCheckHandler(
-            IContactRepository contactRepository, 
-            IMediator mediator, 
-            IContactQueryRepository contactQueryRepository, 
-            IOrganisationQueryRepository organisationQueryRepository, 
+            IContactRepository contactRepository,
+            IMediator mediator,
+            IContactQueryRepository contactQueryRepository,
+            IOrganisationQueryRepository organisationQueryRepository,
             IEMailTemplateQueryRepository eMailTemplateQueryRepository
         )
         {
@@ -36,9 +36,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             var acceptedContact = await _contactQueryRepository.GetContactById(contactInvitation.InviteeContactId);
             var invitingContact = await _contactQueryRepository.GetContactById(contactInvitation.InvitorContactId);
             var organisation = await _organisationQueryRepository.Get(contactInvitation.OrganisationId);
-            
+
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate("EPAOLoginAccountCreated");
-            
+
             await _mediator.Send(new SendEmailRequest(invitingContact.Email, emailTemplate, new
             {
                 Contact = invitingContact.GivenNames,
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }), cancellationToken);
 
             await _contactRepository.SetInvitationAccepted(contactInvitation);
-            
+
             return Unit.Value;
         }
     }

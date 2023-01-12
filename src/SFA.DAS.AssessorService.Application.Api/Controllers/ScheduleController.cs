@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(scheduleRun);
         }
 
-        [HttpGet("api/v1/schedule/next", Name="GetNextScheduledRun")]
+        [HttpGet("api/v1/schedule/next", Name = "GetNextScheduledRun")]
         public async Task<IActionResult> GetNextScheduledRun(int scheduleType)
         {
             var scheduleRun = await _scheduleRepository.GetNextScheduledRun(scheduleType);
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(scheduleRun);
         }
 
-        [HttpPost("api/v1/schedule",Name="CompleteScheduleRun")]
+        [HttpPost("api/v1/schedule", Name = "CompleteScheduleRun")]
         public async Task<IActionResult> CompleteScheduleRun(Guid scheduleRunId)
         {
             await _scheduleRepository.CompleteScheduleRun(scheduleRunId);
@@ -53,21 +53,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(scheduleRun);
         }
 
-        [HttpPost("api/v1/schedule/runnow", Name="RunNow")]
+        [HttpPost("api/v1/schedule/runnow", Name = "RunNow")]
         public async Task<IActionResult> RunNow(int scheduleType)
         {
             await _scheduleRepository.QueueImmediateRun(scheduleType);
             return Ok();
         }
 
-        [HttpPut("api/v1/schedule/create", Name="Set")]
-        public async Task<IActionResult> Create([FromBody]ScheduleRun scheduleRun)
+        [HttpPut("api/v1/schedule/create", Name = "Set")]
+        public async Task<IActionResult> Create([FromBody] ScheduleRun scheduleRun)
         {
             await _scheduleRepository.CreateScheduleRun(scheduleRun);
             return Ok();
         }
 
-        [HttpDelete("api/v1/schedule",Name="DeleteScheduleRun")]
+        [HttpDelete("api/v1/schedule", Name = "DeleteScheduleRun")]
         public async Task<IActionResult> DeleteScheduleRun(Guid scheduleRunId)
         {
             await _scheduleRepository.DeleteScheduleRun(scheduleRunId);

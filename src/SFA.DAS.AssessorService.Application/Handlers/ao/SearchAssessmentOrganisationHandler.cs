@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -32,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         public async Task<List<AssessmentOrganisationSummary>> Handle(SearchAssessmentOrganisationsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
-            
+
             var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.SearchTerm.Trim());
 
             if (searchstring.Length < 2)
@@ -48,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             IEnumerable<AssessmentOrganisationSummary> resultFromUkprn = null;
             if (_validator.IsValidUkprn(searchstring))
             {
-                _logger.LogInformation($@"Searching AssessmentOrganisations based on ukprn: [{searchstring}]");         
+                _logger.LogInformation($@"Searching AssessmentOrganisations based on ukprn: [{searchstring}]");
                 resultFromUkprn = await _registerQueryRepository.GetAssessmentOrganisationsByUkprn(searchstring);
             }
 
@@ -56,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(searchstring);
 
             var result = resultMain.ToList();
-            if (resultFromUkprn != null)    
+            if (resultFromUkprn != null)
                 result.AddRange(resultFromUkprn);
 
             return result.Distinct(new AssessmentOrganisationSummaryEqualityComparer()).Where(x => x.Status != "Applying").ToList();

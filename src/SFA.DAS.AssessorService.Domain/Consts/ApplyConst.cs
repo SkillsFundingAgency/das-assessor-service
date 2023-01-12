@@ -8,7 +8,7 @@
 
         public const int FINANCIAL_SEQUENCE_NO = 1;
         public const int FINANCIAL_DETAILS_SECTION_NO = 3;
-        
+
         public const int STANDARD_SEQUENCE_NO = 2;
         public const int STANDARD_DETAILS_SECTION_NO = 4;
 

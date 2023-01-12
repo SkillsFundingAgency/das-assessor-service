@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
 
             result.ControllerName.Should().Be("CertificateDeclaration");
             result.ActionName.Should().Be("Declare");
-        }               
+        }
 
         [Test, MoqAutoData]
         public async Task WhenPostingOptionSelected_And_UpdateCertificateFails_Then_RedirectToError(CertificateSession session, CertificateOptionViewModel model)
@@ -194,7 +194,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             session.Versions = new List<StandardVersionViewModel> { standardVersion };
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
-            
+
             var result = _certificateOptionController.Back() as RedirectToActionResult;
 
             result.ControllerName.Should().Be("Search");

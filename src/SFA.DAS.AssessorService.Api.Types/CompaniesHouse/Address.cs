@@ -1,5 +1,5 @@
 ﻿namespace SFA.DAS.AssessorService.Api.Types.CompaniesHouse
-{ 
+{
     public class Address
     {
         public string AddressLine1 { get; set; } // po_box + premises + address_line_1

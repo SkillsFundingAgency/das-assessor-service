@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 {

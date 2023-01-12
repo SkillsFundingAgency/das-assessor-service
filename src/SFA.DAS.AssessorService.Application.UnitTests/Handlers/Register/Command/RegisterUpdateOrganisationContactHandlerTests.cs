@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,6 +8,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
@@ -43,21 +43,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _lastName = "Cool";
             _phoneNumber = "555 4444";
 
-            _requestNoIssues = BuildRequest(_contactId, _firstName,_lastName, _email,_phoneNumber);
+            _requestNoIssues = BuildRequest(_contactId, _firstName, _lastName, _email, _phoneNumber);
             _expectedOrganisationContactNoIssues = BuildOrganisationStandard(_requestNoIssues);
 
             _registerRepository.Setup(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(_expectedOrganisationContactNoIssues.Id.ToString()));
-            
+
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
 
             _validator.Setup(v => v.ValidatorUpdateEpaOrganisationContactRequest(_requestNoIssues))
                 .Returns(new ValidationResponse());
-                
-            _updateEpaOrganisationContactHandler = new UpdateEpaOrganisationContactHandler(_registerRepository.Object, _validator.Object,  _cleanserService.Object, _logger.Object);
+
+            _updateEpaOrganisationContactHandler = new UpdateEpaOrganisationContactHandler(_registerRepository.Object, _validator.Object, _cleanserService.Object, _logger.Object);
         }
-        
+
         [Test]
         public void UpdateOrganisationContactDetailsRepoIsCalledWhenHandlerInvoked()
         {
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var returnedId = _updateEpaOrganisationContactHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             returnedId.Should().Be(_expectedOrganisationContactNoIssues.Id.ToString());
         }
-        
+
         [Test]
         public void GeExceptionWheValidationOccurs()
         {
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.ValidatorUpdateEpaOrganisationContactRequest(requestFailedContactDetails)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationContactHandler.Handle(requestFailedContactDetails, new CancellationToken()));
             Assert.AreEqual(errorMessage + "; ", ex.Message);
-            _registerRepository.Verify(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(),It.IsAny<string>()), Times.Never);
+            _registerRepository.Verify(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(), It.IsAny<string>()), Times.Never);
             _validator.Verify(v => v.ValidatorUpdateEpaOrganisationContactRequest(requestFailedContactDetails));
         }
 
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             {
                 ContactId = contactId,
                 FirstName = firstName,
-                LastName =  lastName,
+                LastName = lastName,
                 Email = email,
                 PhoneNumber = phoneNumber
             };

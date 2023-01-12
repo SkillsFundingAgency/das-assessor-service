@@ -13,7 +13,6 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.Testing.AutoFixture;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -28,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
         private Mock<IApiClient> _mockApiClient;
         private Mock<IHeaderInfo> _headerInfo;
-        
+
         private CertificateController _controller;
 
         [SetUp]
@@ -53,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         {
             _mockApiClient.Setup(client => client.GetCertificate(It.Is<GetBatchCertificateRequest>(r => r.FamilyName == familyName && r.Uln == uln && r.Standard == standard)))
                 .ReturnsAsync(_response);
-            
+
             var result = await _controller.GetCertificate(uln, familyName, standard) as ObjectResult;
 
             result.StatusCode.Should().Be((int)HttpStatusCode.OK);
@@ -111,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             //Arrange
             var fixture = new Fixture();
             var requests = fixture.CreateMany<CreateCertificateRequest>(26);
-            
+
             //Act
             var result = await _controller.CreateCertificates(requests) as ObjectResult;
 
@@ -151,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
                 }
             });
 
-            result.Value.Should().Be(response);        
+            result.Value.Should().Be(response);
         }
 
         [Test, MoqAutoData]

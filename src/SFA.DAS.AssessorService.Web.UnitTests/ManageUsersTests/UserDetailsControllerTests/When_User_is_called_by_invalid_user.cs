@@ -1,9 +1,9 @@
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsControllerTests
 {
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
                 Id = CallingUserId,
                 OrganisationId = DifferentOrganisationId
             });
-            
+
             var result = await Controller.Details(UserId);
 
             result.Should().BeOfType<UnauthorizedResult>();

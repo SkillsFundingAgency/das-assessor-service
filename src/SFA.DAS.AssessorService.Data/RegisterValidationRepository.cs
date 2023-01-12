@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class RegisterValidationRepository: Repository, IRegisterValidationRepository
+    public class RegisterValidationRepository : Repository, IRegisterValidationRepository
     {
         public RegisterValidationRepository(IUnitOfWork unitOfWork)
-            : base (unitOfWork)
+            : base(unitOfWork)
         {
         }
 
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
                 "WHERE JSON_VALUE(OrganisationData, '$.CompanyNumber') = @companyNumber";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { companyNumber });
         }
 
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Data
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
                 "WHERE JSON_VALUE(OrganisationData, '$.CharityNumber') = @charityNumber " +
                 "AND EndPointAssessorOrganisationId != @organisationIdToExclude";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationIdToExclude, charityNumber });
         }
 
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
                 "WHERE JSON_VALUE(OrganisationData, '$.CharityNumber') = @charityNumber";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { charityNumber });
         }
 
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
                 "WHERE EndPointAssessorUkprn = @ukprn";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { ukprn });
         }
 
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationType] " +
                 "WHERE Id = @organisationTypeId";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationTypeId });
         }
 
@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
                 "WHERE EndPointAssessorOrganisationId != @organisationIdToExclude and EndPointAssessorUkprn = @ukprn";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationIdToExclude, ukprn });
         }
 
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationStandard] " +
                 "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationId, standardCode });
         }
 
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                 "WHERE id  = @contactId";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId });
         }
 
@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Data
             var sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                 "WHERE id = @ContactId and EndPointAssessorOrganisationId = @organisationId";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, organisationId });
         }
 
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Data
             const string sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                 "WHERE email  = @email and EndPointAssessorOrganisationId != @organisationId";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, organisationId });
         }
 
@@ -170,7 +170,7 @@ namespace SFA.DAS.AssessorService.Data
             const string sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                 "WHERE email  = @email and EndPointAssessorOrganisationId != (select EndPointAssessorOrganisationId from contacts where id=@contactId)";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, contactId });
         }
 
@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Data
             const string sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                 "WHERE id  = @contactId";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId });
         }
 
@@ -204,7 +204,7 @@ namespace SFA.DAS.AssessorService.Data
             const string sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                 "WHERE email  = @email";
-            
+
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email });
         }
     }

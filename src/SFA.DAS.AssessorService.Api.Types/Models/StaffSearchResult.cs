@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Domain.Paging;
+﻿using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {

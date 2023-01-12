@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
 
             LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Domain.Entities.Learner> {new Domain.Entities.Learner() {StdCode = 12, FamilyName = "Lamora"}});
+                .ReturnsAsync(new List<Domain.Entities.Learner> { new Domain.Entities.Learner() { StdCode = 12, FamilyName = "Lamora" } });
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
             result.Count.Should().Be(1);
             result[0].CertificateReference.Should().BeNull();

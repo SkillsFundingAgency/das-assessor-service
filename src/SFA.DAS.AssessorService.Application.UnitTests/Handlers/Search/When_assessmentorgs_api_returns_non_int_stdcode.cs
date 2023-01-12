@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -14,10 +14,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         [SetUp]
         public void Arrange()
         {
-            
+
             Setup();
         }
-        
+
         [Test]
         public void Then_an_exception_is_not_thrown()
         {
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
 
             SearchHandler
-                .Handle(new SearchQuery() {Surname = "smith", EpaOrgId = "99999", Uln = 12345, Username = "dave"},
+                .Handle(new SearchQuery() { Surname = "smith", EpaOrgId = "99999", Uln = 12345, Username = "dave" },
                     new CancellationToken()).Wait();
         }
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +14,10 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -58,14 +58,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var user = await GetUser();
 
-            if(user is null)
+            if (user is null)
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if(user.OrganisationId != null && user.Status == ContactStatus.Live)
+            else if (user.OrganisationId != null && user.Status == ContactStatus.Live)
             {
                 return RedirectToAction("Index", "Dashboard");
-            }               
+            }
             else if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.SearchString), "Enter a valid search string");
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 TempData["ShowErrors"] = true;
                 return View(nameof(Results), viewModel);
             }
-            
+
             viewModel.Organisations = await _organisationsApiClient.SearchForOrganisations(viewModel.SearchString, PageSize, SanitizePageIndex(pageIndex));
 
             return View(nameof(Results), viewModel);
@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 TempData["ShowErrors"] = true;
                 return RedirectToAction(nameof(Index));
             }
-            else if(string.IsNullOrEmpty(viewModel.OrganisationType))
+            else if (string.IsNullOrEmpty(viewModel.OrganisationType))
             {
                 ModelState.AddModelError(nameof(viewModel.OrganisationType), "Select an organisation type");
                 TempData["ShowErrors"] = true;
@@ -162,13 +162,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("Type", viewModel);
             }
 
-            if(!string.IsNullOrEmpty(viewModel.OrganisationType))
+            if (!string.IsNullOrEmpty(viewModel.OrganisationType))
             {
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
-                viewModel.OrganisationTypeId = viewModel.OrganisationTypes.Any()? viewModel.OrganisationTypes
-                    .First(x => viewModel.OrganisationType != null && x.Type == viewModel.OrganisationType).Id:0;
+                viewModel.OrganisationTypeId = viewModel.OrganisationTypes.Any() ? viewModel.OrganisationTypes
+                    .First(x => viewModel.OrganisationType != null && x.Type == viewModel.OrganisationType).Id : 0;
             }
-           
+
 
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
@@ -185,7 +185,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
                 }
 
-                viewModel.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult },1,1,1);
+                viewModel.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult }, 1, 1, 1);
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
             }
             _sessionService.Set("OrganisationSearchViewModel", viewModel);
@@ -216,14 +216,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var sessionString = _sessionService.Get("OrganisationSearchViewModel");
             if (sessionString == null)
             {
-                _logger.LogInformation($"Session for OrganisationSearchViewModel requested by { user.DisplayName } has been lost. Redirecting to Search Index");
+                _logger.LogInformation($"Session for OrganisationSearchViewModel requested by {user.DisplayName} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "OrganisationSearch");
             }
             var viewModelFromSession = JsonConvert.DeserializeObject<OrganisationSearchViewModel>(sessionString);
             _sessionService.Remove("OrganisationSearchViewModel");
 
             var organisationSearchResult = await GetOrganisation(viewModelFromSession.SearchString, viewModelFromSession.Name,
-                viewModelFromSession.Ukprn, viewModelFromSession.OrganisationType, viewModelFromSession.Postcode,null);
+                viewModelFromSession.Ukprn, viewModelFromSession.OrganisationType, viewModelFromSession.Postcode, null);
             viewModelFromSession.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult }, 1, 1, PageSize);
             viewModelFromSession.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
@@ -264,10 +264,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     orgTypeModelState.RawValue = viewModel.OrganisationType;
                     orgTypeModelState.Errors.Clear();
                 }
-                
+
                 return View("Type", viewModel);
             }
-            return View(nameof(Confirm),viewModel);
+            return View(nameof(Confirm), viewModel);
         }
 
 
@@ -292,7 +292,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name,
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
-            { 
+            {
                 if (organisationSearchResult.CompanyNumber != null)
                 {
                     var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
@@ -324,18 +324,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     _logger.LogInformation($"Contact with display name {user.DisplayName} is associated with organisation {epaoId.Details}.");
 
                     _sessionService.Set("OrganisationName", newOrg.Name);
-                    
+
                     return RedirectToAction("Applications", "Application");
                 }
             }
             return View(viewModel);
-        }  
-     
+        }
+
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn,
             string organisationType, string postcode, int? pageIndex)
         {
-            var searchResultsReturned = await _organisationsApiClient.SearchForOrganisations(searchString,PageSize, SanitizePageIndex(pageIndex));
-            var searchResults = searchResultsReturned.Items == null ? 
+            var searchResultsReturned = await _organisationsApiClient.SearchForOrganisations(searchString, PageSize, SanitizePageIndex(pageIndex));
+            var searchResults = searchResultsReturned.Items == null ?
                 new List<OrganisationSearchResult>().AsEnumerable() : searchResultsReturned.Items.AsEnumerable();
 
             // filter ukprn
@@ -347,7 +347,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             // filter organisation type
-            searchResults = searchResults.Where(sr => sr.RoATPApproved || 
+            searchResults = searchResults.Where(sr => sr.RoATPApproved ||
                 (sr.OrganisationType?.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase) ?? true));
 
             // filter postcode
@@ -359,7 +359,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.RoATPApproved  || organisationSearchResult.OrganisationType == null)
+                if (organisationSearchResult.RoATPApproved || organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = organisationType;
             }
 
@@ -389,8 +389,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Address3 = organisationSearchResult.Address?.Address3,
                 Address4 = organisationSearchResult.Address?.City,
                 Postcode = organisationSearchResult.Address?.Postcode,
-                RoATPApproved =  organisationSearchResult.RoATPApproved,
-                RoEPAOApproved= false,
+                RoATPApproved = organisationSearchResult.RoATPApproved,
+                RoEPAOApproved = false,
                 EndPointAssessmentOrgId = null,
                 FHADetails = new Api.Types.Models.AO.FHADetails
                 {

@@ -1,10 +1,10 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _mediator = mediator;
             _organisationQueryRepository = organisationQueryRepository;
         }
-        
+
         public async Task<Unit> Handle(NotifyUserManagementUsersRequest message, CancellationToken cancellationToken)
         {
             const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
@@ -30,11 +30,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoUserApproveRequestTemplate);
 
             var organisation = await _organisationQueryRepository.Get(message.EndPointAssessorOrganisationId);
-            
+
             var contactsWithUserManagementPrivilege = (await _contactQueryRepository.GetAllContactsIncludePrivileges(organisation.EndPointAssessorOrganisationId))
-                .Where(c => c.ContactsPrivileges.Any(cp => cp.Privilege.Key == Privileges.ManageUsers && 
+                .Where(c => c.ContactsPrivileges.Any(cp => cp.Privilege.Key == Privileges.ManageUsers &&
                     cp.Contact.Status == ContactStatus.Live)).ToList();
-            
+
             foreach (var contact in contactsWithUserManagementPrivilege)
             {
                 await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new

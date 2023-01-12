@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             catch (Exception exception)
             {
                 _result = exception;
-            }           
+            }
         }
 
         [Test]

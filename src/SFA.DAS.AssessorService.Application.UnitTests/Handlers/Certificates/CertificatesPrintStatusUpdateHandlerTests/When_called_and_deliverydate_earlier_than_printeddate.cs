@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
     {
         private CertificatePrintStatusUpdateHandlerTestsFixture _fixture;
         private ValidationResponse _response;
-        
+
         private const string CertificateReference = "00123456";
         private const int BatchNumber = 222;
 

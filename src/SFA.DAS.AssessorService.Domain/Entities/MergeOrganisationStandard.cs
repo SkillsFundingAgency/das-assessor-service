@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string StandardReference { get; set; }
         public int OrganisationStandardId { get; set; }
         public string Replicates { get; set; }
-      
+
         public virtual MergeOrganisation MergeOrganisation { get; set; }
 
         public int StandardCode { get; set; }

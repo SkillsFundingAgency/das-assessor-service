@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             {
                 var response = await RequestAndDeserialiseAsync<AzureSubscriptionResponse>(httpRequest, "Could not get Subscriptions for User");
 
-                foreach(var subscription in response.Subscriptions)
+                foreach (var subscription in response.Subscriptions)
                 {
                     subscription.ApiEndPointUrl = new Uri(_requestBaseUri, subscription.ProductId).ToString();
                 }
@@ -153,7 +153,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
             AzureUser emailUser = await GetUserDetailsByEmail(emailForOrganisation, true, true);
             AzureUser ukprnUser = ukprnUsersWithSubscription.FirstOrDefault(u => u.Email.Equals(emailForOrganisation));
-            
+
             if (ukprnUsersWithSubscription.Any() && ukprnUser is null)
             {
                 throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled.");
@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             {
                 user = ukprnUser;
             }
-            else if(emailUser != null)
+            else if (emailUser != null)
             {
                 user = emailUser;
                 await UpdateUserNote(user.Id, $"ukprn={ukprn}");
@@ -215,8 +215,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         {
             var users = await GetUserDetailsByUkprn(ukprn, true);
             var subscription = users?.Select(u => u.Subscriptions.FirstOrDefault(s => s.Id == subscriptionId)).FirstOrDefault();
-            
-            if(subscription != null)
+
+            if (subscription != null)
             {
                 var userId = subscription.UserId;
                 var productId = subscription.ProductId;

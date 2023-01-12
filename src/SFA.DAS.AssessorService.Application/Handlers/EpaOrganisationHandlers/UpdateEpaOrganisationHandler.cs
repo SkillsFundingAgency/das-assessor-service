@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -20,8 +20,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
         private readonly ISpecialCharacterCleanserService _cleanser;
         private readonly IEpaOrganisationValidator _validator;
-        
-        public UpdateEpaOrganisationHandler(IRegisterQueryRepository registerQueryRepository, IRegisterRepository registerRepository,  ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser,
+
+        public UpdateEpaOrganisationHandler(IRegisterQueryRepository registerQueryRepository, IRegisterRepository registerRepository, ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser,
             IEpaOrganisationValidator validator)
         {
             _registerQueryRepository = registerQueryRepository;
@@ -51,13 +51,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             var organisation = MapOrganisationRequestToOrganisation(request, existingOrganisation);
 
-           return await _registerRepository.UpdateEpaOrganisation(organisation);
+            return await _registerRepository.UpdateEpaOrganisation(organisation);
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationRequest request)
-        {       
-            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId);  
-            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);  
+        {
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId);
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);
             request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
             request.TradingName = _cleanser.CleanseStringForSpecialCharacters(request.TradingName);
             request.ProviderName = _cleanser.CleanseStringForSpecialCharacters(request.ProviderName);
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 status = "New";
                 roEPAOApproved = true;
             }
-            else if(status == "Applying" && request.ActionChoice == "ApproveApplication")
+            else if (status == "Applying" && request.ActionChoice == "ApproveApplication")
             {
                 roEPAOApproved = true;
             }
@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     Postcode = request.Postcode,
                     LegalName = request.LegalName,
                     TradingName = request.TradingName,
-                    ProviderName = request.ProviderName,                   
+                    ProviderName = request.ProviderName,
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
                     WebsiteLink = request.WebsiteLink,
@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                         FinancialDueDate = request.FinancialDueDate,
                         FinancialExempt = request.FinancialExempt
                     }
-                }                
+                }
             };
 
             return organisation;

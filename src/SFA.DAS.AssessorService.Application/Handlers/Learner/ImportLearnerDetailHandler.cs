@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             {
                 return await HandleExistingLearnerRequest(learner, importLearnerDetail, cancellationToken);
             }
-            
+
             return await CreateIlrRecord(importLearnerDetail);
         }
 
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             {
                 return await UpdateIlrRecord(importLearnerDetail, false);
             }
-            
+
             return await HandleSameSourceRequest(learner, importLearnerDetail, cancellationToken);
         }
 
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                         }
                     }
 
-                    if(ignore)
+                    if (ignore)
                         return "IgnoreUkprnChangedButCertficateAlreadyExists";
                 }
 
@@ -232,7 +232,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private void AddMissingMandatoryFieldError<T>(ImportLearnerDetailResult result, T fieldValue, string fieldName)
         {
-            if(fieldValue == null)
+            if (fieldValue == null)
             {
                 result.Errors.Add($"Missing mandatory field {fieldName}.");
             }

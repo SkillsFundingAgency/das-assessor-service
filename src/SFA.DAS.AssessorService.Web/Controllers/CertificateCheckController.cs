@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Index", "Search");
             }
-           
+
             return await LoadViewModel("~/Views/Certificate/Check.cshtml");
         }
 

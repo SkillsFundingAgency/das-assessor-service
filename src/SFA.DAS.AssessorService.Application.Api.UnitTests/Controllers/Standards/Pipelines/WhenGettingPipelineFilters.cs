@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 .Setup(x => x.Send(
                     It.Is<EpaoPipelineStandardsFiltersRequest>(c => c.EpaoId.Equals(epaoId)),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new EpaoPipelineStandardsFiltersResponse() 
+                .ReturnsAsync(new EpaoPipelineStandardsFiltersResponse()
                 {
                     StandardFilterItems = new List<EpaoPipelineStandardFilter>(),
                     ProviderFilterItems = new List<EpaoPipelineStandardFilter>(),

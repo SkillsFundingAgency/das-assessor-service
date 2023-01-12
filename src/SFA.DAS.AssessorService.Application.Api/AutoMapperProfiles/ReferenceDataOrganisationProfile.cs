@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
     {
         public ReferenceDataOrganisationProfile()
         {
-            CreateMap<AssessorService.Api.Types.Models.ReferenceData.Organisation,OrganisationSearchResult>()
+            CreateMap<AssessorService.Api.Types.Models.ReferenceData.Organisation, OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.Ukprn = null)
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "EASAPI")
                 .BeforeMap((source, dest) => dest.Email = null)

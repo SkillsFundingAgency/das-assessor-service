@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +8,8 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await LoadViewModel<CertificateDateViewModel>("~/Views/Certificate/Date.cshtml");
         }
-        
+
         [HttpPost(Name = "Date")]
         public async Task<IActionResult> Date(CertificateDateViewModel vm)
         {
@@ -42,11 +42,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("~/Views/Certificate/Date.cshtml", vm);
             }
 
-            var nextAction = vm.SelectedGrade == CertificateGrade.Fail 
-                ? RedirectToAction("Check", "CertificateCheck") 
+            var nextAction = vm.SelectedGrade == CertificateGrade.Fail
+                ? RedirectToAction("Check", "CertificateCheck")
                 : RedirectToAction("SendTo", "CertificateSendTo");
 
-            var actionResult = await SaveViewModel(vm, 
+            var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Date.cshtml",
                 nextAction: nextAction, action: CertificateActions.Date);
 

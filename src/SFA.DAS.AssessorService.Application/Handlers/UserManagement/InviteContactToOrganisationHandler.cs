@@ -1,11 +1,11 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -43,16 +43,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
 
             var organisation = await _organisationQueryRepository.Get(request.OrganisationId);
-            
+
             var newContact = await CreateNewContact(request, organisation);
 
             var inviter = await _contactQueryRepository.GetContactById(request.InvitedByContactId);
-                
+
             await _signInService.InviteUserToOrganisation(request.Email, request.GivenName, request.FamilyName, newContact.Id, organisation.EndPointAssessorName, inviter.DisplayName);
 
             await _contactRepository.AddContactInvitation(request.InvitedByContactId, newContact.Id, organisation.Id);
-            
-            return new InviteContactToOrganisationResponse {Success = true, ContactId = newContact.Id};
+
+            return new InviteContactToOrganisationResponse { Success = true, ContactId = newContact.Id };
         }
 
         private async Task<Contact> CreateNewContact(InviteContactToOrganisationRequest request, Organisation organisation)
@@ -67,13 +67,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 Status = ContactStatus.Pending,
                 SignInType = "ASLogin",
                 Title = "",
-                Username = request.Email, 
+                Username = request.Email,
                 EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
             };
 
             var contact = await _contactRepository.CreateNewContact(newContact);
-            
-           
+
+
             await _mediator.Send(new SetContactPrivilegesRequest
             {
                 AmendingContactId = request.InvitedByContactId,

@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
     public class When_application_type_is_resolved
     {
         ApplicationTypeResolver Sut = new ApplicationTypeResolver();
-        
+
         ApplySummary InitialWithFinancialHealthChecks;
         ApplySummary InitialWithoutFinancialHealthChecks;
         ApplySummary AdditionalStandardWithFinancialHealthChecks;
@@ -191,7 +191,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
                             (notRequired: false, ApplyConst.STANDARD_WITHDRAWAL_DETAILS_SECTION_NO))
                     )));
         }
-        
+
         [Test]
         public void Then_InitialWithFinancialHealthChecks_is_resolved_correctly()
         {
@@ -236,7 +236,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
 
         private IEnumerable<ApplyTypes.ApplySection> GetSections(params (bool notRequired, int sectionNo)[] sections)
         {
-            foreach(var section in sections)
+            foreach (var section in sections)
             {
                 yield return new ApplyTypes.ApplySection
                 {
@@ -248,7 +248,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
 
         private IEnumerable<ApplyTypes.ApplySequence> GetSequences(params (bool notRequired, int sequenceNo, IEnumerable<ApplyTypes.ApplySection> sections)[] sequences)
         {
-            foreach(var sequence in sequences)
+            foreach (var sequence in sequences)
             {
                 yield return new ApplyTypes.ApplySequence
                 {

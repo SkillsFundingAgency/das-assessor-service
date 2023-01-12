@@ -1,10 +1,9 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
@@ -17,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore);
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
         string CheckOrganisationTypeExists(int? organisationTypeId);
-        string CheckIfOrganisationNotFound(string organisationId); 
+        string CheckIfOrganisationNotFound(string organisationId);
         string CheckUkprnIsValid(long? ukprn);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);

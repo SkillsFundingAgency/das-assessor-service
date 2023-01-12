@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return contacts;
         }
-        
+
 
         public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId, bool? withUser = null)
         {
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Data
                     (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
                 .OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames)
                 .ToListAsync();
-            
+
             return contacts;
         }
 
@@ -89,11 +89,11 @@ namespace SFA.DAS.AssessorService.Data
             var contact = await _assessorDbContext.Contacts
                 .Include(c => c.Organisation)
                 .FirstOrDefaultAsync(c => c.Email.ToLower() == email.ToLower() && c.Organisation.Status != OrganisationStatus.Deleted);
-            
+
             return contact;
         }
 
-      
+
         public async Task<Contact> GetBySignInId(Guid requestSignInId)
         {
             return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId)
         {
-            return await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).Include(cp => cp.Privilege).ToListAsync();   
+            return await _assessorDbContext.ContactsPrivileges.Where(cr => cr.ContactId == contactId).Include(cp => cp.Privilege).ToListAsync();
         }
 
         public async Task<bool> CheckContactExists(string userName)

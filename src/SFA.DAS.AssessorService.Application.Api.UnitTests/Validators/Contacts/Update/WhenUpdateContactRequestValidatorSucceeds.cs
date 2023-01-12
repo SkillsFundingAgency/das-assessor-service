@@ -1,10 +1,10 @@
-using System.Linq;
-using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.Update
 {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
-                
+
             _validationResult = UpdateContactRequestValidator.Validate(_updateContactRequest);
         }
 

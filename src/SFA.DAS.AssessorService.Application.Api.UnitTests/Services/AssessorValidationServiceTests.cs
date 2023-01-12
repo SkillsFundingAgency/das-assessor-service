@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 {
@@ -22,15 +22,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
         [TestCase(true)]
         [TestCase(false)]
-        public  void CheckContactDetailsAlreadyPresent(bool result)
+        public void CheckContactDetailsAlreadyPresent(bool result)
         {
-            _registerValidationRepository.Setup(r => r.ContactDetailsAlreadyExist(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Guid?>()))
+            _registerValidationRepository.Setup(r => r.ContactDetailsAlreadyExist(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid?>()))
                 .Returns(Task.FromResult(result));
-            var checkResult = _assessorValidationService.CheckIfContactDetailsAlreadyPresentInSystem("a","b","c", "e",null ).Result;
-            Assert.AreEqual(checkResult,result);
+            var checkResult = _assessorValidationService.CheckIfContactDetailsAlreadyPresentInSystem("a", "b", "c", "e", null).Result;
+            Assert.AreEqual(checkResult, result);
         }
 
-        [TestCase("",false,false, false)]
+        [TestCase("", false, false, false)]
         [TestCase("", true, false, false)]
         [TestCase(" ", false, false, false)]
         [TestCase(" ", true, false, false)]
@@ -43,11 +43,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _registerValidationRepository.Setup(r => r.EpaOrganisationExistsWithCompanyNumber(It.IsAny<string>()))
                 .Returns(Task.FromResult(repositoryResponse));
             var checkResult = _assessorValidationService.IsCompanyNumberTaken(companyNumber).Result;
-            Assert.AreEqual(expectedResult,checkResult);
+            Assert.AreEqual(expectedResult, checkResult);
             if (repositoryCalled)
                 _registerValidationRepository.Verify(r => r.EpaOrganisationExistsWithCompanyNumber(It.IsAny<string>()));
             else
-            _registerValidationRepository.Verify(r => r.EpaOrganisationExistsWithCompanyNumber(It.IsAny<string>()),Times.Never);
+                _registerValidationRepository.Verify(r => r.EpaOrganisationExistsWithCompanyNumber(It.IsAny<string>()), Times.Never);
         }
 
         [TestCase("", false, false, false)]
@@ -102,14 +102,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("organisation Name", true, true, true)]
         public void CheckIOrganisationNameAlreadyTaken(string email, bool repositoryResponse, bool repositoryCalled, bool expectedResult)
         {
-            _registerValidationRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),string.Empty))
+            _registerValidationRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(), string.Empty))
                 .Returns(Task.FromResult(repositoryResponse));
             var checkResult = _assessorValidationService.IsOrganisationNameTaken(email).Result;
             Assert.AreEqual(expectedResult, checkResult);
             if (repositoryCalled)
-                _registerValidationRepository.Verify(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),string.Empty));
+                _registerValidationRepository.Verify(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(), string.Empty));
             else
-                _registerValidationRepository.Verify(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),string.Empty), Times.Never);
+                _registerValidationRepository.Verify(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(), string.Empty), Times.Never);
         }
 
         [TestCase(true)]

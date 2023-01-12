@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Domain.DTOs;
+﻿using SFA.DAS.AssessorService.Domain.DTOs;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {

@@ -1,9 +1,9 @@
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
@@ -22,11 +22,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
-        
+
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactGivenName { get; set; }
-        
+
         public int? PipelinesCount { get; set; }
         public DateTime EarliestDateOfWithdrawal { get; set; }
         public string StandardOrVersion { get; set; }

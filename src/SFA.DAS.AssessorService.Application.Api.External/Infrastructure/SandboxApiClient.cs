@@ -120,8 +120,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         }
 
         public override async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
-        { 
-            if(request != null)
+        {
+            if (request != null)
             {
                 _logger.LogInformation($"GetCertificate called with request: {JsonConvert.SerializeObject(request)}");
                 var details = await GetLearnerDetail(request.Standard, request.Uln);

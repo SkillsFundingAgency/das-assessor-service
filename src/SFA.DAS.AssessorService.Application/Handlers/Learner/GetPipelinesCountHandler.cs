@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
         private readonly IWebConfiguration _config;
         private readonly ILearnerRepository _learnerRepository;
         private readonly ILogger<GetPipelinesCountHandler> _logger;
-        
+
 
         public GetPipelinesCountHandler(IWebConfiguration config, ILearnerRepository learnerRepository, ILogger<GetPipelinesCountHandler> logger)
         {
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             {
                 _logger.LogDebug($"GetPipelinesCountHandler: EpaoId = {request.EpaoId}");
             }
-            
+
             return await _learnerRepository.GetEpaoPipelinesCount(request.EpaoId, request.StandardCode, _config.PipelineCutoff);
         }
     }

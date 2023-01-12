@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
         {
             //Act
             var actual = new GetStandardsRequest();
-            
+
             //Assert
             actual.GetUrl.Should().Be("trainingcourses");
         }

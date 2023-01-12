@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Data
                     [FileUploadEndTime], 
                     [BatchData] 
                   FROM BatchLogs WHERE BatchNumber = @batchNumber",
-            param: new { batchNumber},
+            param: new { batchNumber },
                 transaction: _unitOfWork.Transaction);
 
             return batchLog.FirstOrDefault();

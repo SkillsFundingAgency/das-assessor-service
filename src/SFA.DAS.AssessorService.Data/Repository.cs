@@ -30,8 +30,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public string SqlWithOptionalPredicates()
         {
-            string sqlPredicates = Predicates.Count > 0 
-                ? $"WHERE {string.Join(" AND ", Predicates.ToArray())}" 
+            string sqlPredicates = Predicates.Count > 0
+                ? $"WHERE {string.Join(" AND ", Predicates.ToArray())}"
                 : string.Empty;
 
             return Sql.Replace(PredicatePlaceholder, sqlPredicates);

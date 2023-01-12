@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Data
                                     AND IsComplete = 0 
                                     AND RunTime <= GetUtcDate()
                                     AND (LastRunStatus <> @scheduleRunStatus or LastRunStatus is null)
-                                    ORDER BY RunTime", new {scheduleType, scheduleRunStatus = LastRunStatus.Failed});
+                                    ORDER BY RunTime", new { scheduleType, scheduleRunStatus = LastRunStatus.Failed });
         }
 
         public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
@@ -48,23 +48,23 @@ namespace SFA.DAS.AssessorService.Data
                                     WHERE ScheduleType = @scheduleType 
                                     AND IsComplete = 0 
                                     AND (LastRunStatus <> @scheduleRunStatus or LastRunStatus is null)
-                                    ORDER BY RunTime", new {scheduleType, scheduleRunStatus = LastRunStatus.Failed });
+                                    ORDER BY RunTime", new { scheduleType, scheduleRunStatus = LastRunStatus.Failed });
         }
 
         public async Task CompleteScheduleRun(Guid scheduleRunId)
         {
-            var schedule = await _unitOfWork.Connection.QuerySingleAsync<ScheduleRun>("SELECT * FROM ScheduleRuns WHERE Id = @scheduleRunId", new {scheduleRunId});
+            var schedule = await _unitOfWork.Connection.QuerySingleAsync<ScheduleRun>("SELECT * FROM ScheduleRuns WHERE Id = @scheduleRunId", new { scheduleRunId });
             if (!schedule.IsComplete)
             {
-                await _unitOfWork.Connection.ExecuteAsync("UPDATE ScheduleRuns SET IsComplete = 1 WHERE Id = @scheduleRunId", 
-                    new {scheduleRunId });
+                await _unitOfWork.Connection.ExecuteAsync("UPDATE ScheduleRuns SET IsComplete = 1 WHERE Id = @scheduleRunId",
+                    new { scheduleRunId });
                 if (schedule.IsRecurring)
                 {
                     var newScheduleTime = schedule.RunTime.AddMinutes((int)schedule.Interval);
                     await _unitOfWork.Connection.ExecuteAsync(
                         "INSERT ScheduleRuns (RunTime, Interval, IsRecurring, ScheduleType, LastRunStatus) VALUES (@runTime, @interval, @isRecurring, @scheduleType, @lastRunStatus)",
-                        new {runTime = newScheduleTime, schedule.Interval, IsRecurring = true, schedule.ScheduleType, lastRunStatus = LastRunStatus.Completed});
-                }   
+                        new { runTime = newScheduleTime, schedule.Interval, IsRecurring = true, schedule.ScheduleType, lastRunStatus = LastRunStatus.Completed });
+                }
             }
         }
 
@@ -74,11 +74,11 @@ namespace SFA.DAS.AssessorService.Data
                 new { scheduleRunId = request.ScheduleRunId, scheduleRunStatus = request.LastRunStatus });
         }
 
-        public async Task QueueImmediateRun(int scheduleType) 
+        public async Task QueueImmediateRun(int scheduleType)
         {
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT ScheduleRuns (RunTime, ScheduleType) VALUES (@runTime, @scheduleType)",
-                new {runTime = DateTime.UtcNow, scheduleType});
+                new { runTime = DateTime.UtcNow, scheduleType });
         }
 
         public async Task CreateScheduleRun(ScheduleRun scheduleRun)
@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task DeleteScheduleRun(Guid scheduleRunId)
         {
-            await _unitOfWork.Connection.ExecuteAsync("DELETE ScheduleRuns WHERE Id = @scheduleRunId", new {scheduleRunId});
+            await _unitOfWork.Connection.ExecuteAsync("DELETE ScheduleRuns WHERE Id = @scheduleRunId", new { scheduleRunId });
         }
     }
 }

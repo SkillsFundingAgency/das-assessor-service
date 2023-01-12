@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FluentValidation.Internal;
+using System;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
-using FluentValidation.Internal;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {

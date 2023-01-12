@@ -1,11 +1,10 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+﻿using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -66,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             var standardsWithOptions = standards.Where(s => s.Options != null && s.Options.Any());
             IEnumerable<StandardOption> optionsToInsert = new List<StandardOption>();
-            foreach(var standard in standardsWithOptions)
+            foreach (var standard in standardsWithOptions)
             {
                 // Union to ensure no duplicates.
                 optionsToInsert = optionsToInsert.Union(standard.Options.Select(s => new StandardOption { StandardUId = standard.StandardUId, OptionName = s }));

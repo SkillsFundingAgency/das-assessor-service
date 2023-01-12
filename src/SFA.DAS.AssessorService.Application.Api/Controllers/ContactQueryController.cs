@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +8,14 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -49,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var privileges = await _contactQueryRepository.GetAllPrivileges();
             return Ok(privileges);
         }
-        
+
         [HttpGet("user/{userId}/privileges")]
         public async Task<IActionResult> GetPrivilegesForContact(Guid userId)
         {
@@ -58,9 +57,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {
             _logger.LogInformation(
@@ -101,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             ValidateEndPointAssessorOrganisation(request.EndPointAssessorOrganisationId);
 
             return Ok(await _mediator.Send(request));
-        }        
+        }
 
         [HttpGet("getAllWhoCanBePrimary/{endPointAssessorOrganisationId}", Name = "GetAllContactsWhoCanBePrimaryForOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
@@ -120,9 +119,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("username/{userName}", Name = "SearchContactByUserName")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
-        [SwaggerResponse((int) HttpStatusCode.NotFound)]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactByUserName(string userName)
         {
             _logger.LogInformation($"Received Search Contact By UserName Request using user name = {userName}");
@@ -148,13 +147,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e,$"Failed to retrieve contact with id : {id}");
+                _logger.LogError(e, $"Failed to retrieve contact with id : {id}");
             }
 
-            if (contact == null) { 
+            if (contact == null)
+            {
                 throw new ResourceNotFoundException();
             }
-         
+
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
@@ -207,11 +207,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
-        
-        [HttpPost("MigrateUsers", Name= "MigrateUsers")]
+
+        [HttpPost("MigrateUsers", Name = "MigrateUsers")]
         public async Task<ActionResult> MigrateUsers()
         {
-            var endpoint = new Uri(new Uri(_config.LoginService.MetadataAddress), "/Migrate"); 
+            var endpoint = new Uri(new Uri(_config.LoginService.MetadataAddress), "/Migrate");
             using (var httpClient = new HttpClient())
             {
                 var usersToMigrate = await _contactQueryRepository.GetUsersToMigrate();
@@ -219,9 +219,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     var result = await httpClient.PostAsJsonAsync(endpoint, new
                     {
-                        ClientId = _config.LoginService.ClientId, 
-                        GivenName = user.GivenNames, 
-                        FamilyName = user.FamilyName, 
+                        ClientId = _config.LoginService.ClientId,
+                        GivenName = user.GivenNames,
+                        FamilyName = user.FamilyName,
                         Email = user.Email
                     });
 
@@ -230,18 +230,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     await _contactQueryRepository.UpdateMigratedContact(user.Id, migrateResult.NewUserId);
                 }
             }
-            
-            
-            return Ok(); 
+
+
+            return Ok();
         }
-        
+
         private void ValidateEndPointAssessorOrganisation(string endPointAssessorOrganisationId)
         {
             var result = _searchOrganisationForContactsValidator.Validate(endPointAssessorOrganisationId);
             if (!result.IsValid)
                 throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
         }
-      
+
     }
 
 

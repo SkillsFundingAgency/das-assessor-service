@@ -1,11 +1,11 @@
 ﻿
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
-    using System;
     using MediatR;
+    using System;
     using System.Runtime.Serialization;
 
-    public class UpdateOrganisationFinancialTrackRecordRequest: IRequest
+    public class UpdateOrganisationFinancialTrackRecordRequest : IRequest
     {
         [DataMember]
         public Guid OrganisationId { get; set; }

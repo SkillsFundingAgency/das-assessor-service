@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -12,6 +7,10 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -43,8 +42,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _assessmentOrganisationDetails1,
                 _assessmentOrganisationDetails2
             };
-           
-            _searchAssessmentOrganisationsHandler = new SearchAssessmentOrganisationHandler(_registerQueryRepository.Object, _searchValidator.Object, _logger.Object,_cleanserService.Object);
+
+            _searchAssessmentOrganisationsHandler = new SearchAssessmentOrganisationHandler(_registerQueryRepository.Object, _searchValidator.Object, _logger.Object, _cleanserService.Object);
         }
 
         [TestCase("A")]
@@ -56,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             var request = new SearchAssessmentOrganisationsRequest { SearchTerm = search };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(search.Trim())).Returns(search.Trim());
-            Assert.ThrowsAsync<BadRequestException>(() => _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken())); 
+            Assert.ThrowsAsync<BadRequestException>(() => _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken()));
         }
 
         [Test]
@@ -72,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             var organisations = _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken()).Result;
 
             _searchValidator.Verify(v => v.IsValidEpaOrganisationId(searchstring));
-            _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()),Times.Never);
+            _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()), Times.Never);
             _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring));
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assessmentOrganisationDetails1);

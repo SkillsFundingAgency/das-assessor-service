@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
-    public class OrganisationStandardModel: TestModel
+    public class OrganisationStandardModel : TestModel
     {
         public int Id { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }

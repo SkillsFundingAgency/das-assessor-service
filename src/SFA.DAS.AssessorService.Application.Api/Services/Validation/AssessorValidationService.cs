@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 {
-    public class AssessorValidationService: IAssessorValidationService 
+    public class AssessorValidationService : IAssessorValidationService
     {
         private readonly IRegisterValidationRepository _registerValidationRepository;
 
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 
         public async Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phone, Guid? contactId)
         {
-            return await _registerValidationRepository.ContactDetailsAlreadyExist(firstName,lastName, email, phone, contactId);
+            return await _registerValidationRepository.ContactDetailsAlreadyExist(firstName, lastName, email, phone, contactId);
         }
 
         public async Task<bool> IsCharityNumberTaken(string charityNumber)

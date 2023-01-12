@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
-using FluentAssertions;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Schedule.Command
 {
@@ -43,9 +43,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Schedule
 
             await _sut.UpdateLastRunStatus(request);
 
-            _repository.Verify(x => 
+            _repository.Verify(x =>
             x.UpdateLastRunStatus(It.Is<UpdateLastRunStatusRequest>(y => y.ScheduleRunId == request.ScheduleRunId && y.LastRunStatus == lastRunStatus))
-               ,  Times.Once());
+               , Times.Once());
         }
     }
 }

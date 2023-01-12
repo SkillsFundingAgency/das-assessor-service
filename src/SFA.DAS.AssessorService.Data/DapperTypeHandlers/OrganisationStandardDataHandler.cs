@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using Dapper;
+﻿using Dapper;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System.Data;
 
 namespace SFA.DAS.AssessorService.Data.DapperTypeHandlers
 {

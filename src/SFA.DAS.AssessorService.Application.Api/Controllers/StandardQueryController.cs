@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +8,10 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("pipelines/{epaoId}", Name = "GetEpaoPipelineStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection,int pageSize, int? pageIndex = null)
+        public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection, int pageSize, int? pageIndex = null)
         {
             _logger.LogInformation($"Received request to retrieve pipeline for standards of the organisation {epaoId}");
             if (string.IsNullOrWhiteSpace(epaoId))
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return BadRequest();
             }
             var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
-            return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, standardFilterId, providerFilterId, epaDateFilterId, orderBy, orderDirection,normalisedPageIndex, pageSize)));
+            return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, standardFilterId, providerFilterId, epaDateFilterId, orderBy, orderDirection, normalisedPageIndex, pageSize)));
         }
 
         [HttpGet("pipelines/{epaoId}/filters", Name = "GetEpaoPipelineStandardsFilters")]
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [ProducesResponseType(typeof(List<OrganisationStandardResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async  Task<IActionResult> GetEpaosByStandard(int standardCode)
+        public async Task<IActionResult> GetEpaosByStandard(int standardCode)
         {
             if (standardCode == 0)
             {

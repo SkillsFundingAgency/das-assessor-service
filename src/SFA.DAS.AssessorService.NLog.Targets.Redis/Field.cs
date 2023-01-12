@@ -1,6 +1,6 @@
-using System;
 using NLog.Config;
 using NLog.Layouts;
+using System;
 
 namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
 {
@@ -11,7 +11,7 @@ namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
         public string Name { get; set; }
 
         [RequiredParameter]
-        public Layout Layout { get; set; } 
+        public Layout Layout { get; set; }
 
         public Type LayoutType { get; set; } = typeof(string);
 

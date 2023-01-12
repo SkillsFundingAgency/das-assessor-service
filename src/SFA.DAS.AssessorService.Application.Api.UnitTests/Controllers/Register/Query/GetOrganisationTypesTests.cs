@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -29,8 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _organisationType1 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 1, Type = "Type 1"};
-            _organisationType2 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 2, Type = "Another Type"};
+            _organisationType1 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 1, Type = "Type 1" };
+            _organisationType2 = new AssessorService.Api.Types.Models.AO.OrganisationType { Id = 2, Type = "Another Type" };
 
             _expectedOrganisationTypes = new List<AssessorService.Api.Types.Models.AO.OrganisationType>
             {

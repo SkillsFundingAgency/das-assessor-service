@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -26,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<EmailTemplateSummary>(request, $"Could not find the template");
             }
-            
+
         }
 
         public async Task SendEmailWithTemplate(SendEmailRequest sendEmailRequest)
@@ -34,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/emailTemplates/"))
             {
                 _logger.LogInformation("Sending Email");
-                 await PostPutRequest(request,sendEmailRequest);
+                await PostPutRequest(request, sendEmailRequest);
             }
         }
     }

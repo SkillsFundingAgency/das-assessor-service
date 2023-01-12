@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Controllers.OppFinder;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
@@ -67,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OppFinderControllerTests
                                             }
                                         }
                                     });
-            
+
             // Act
             var results = (await _sut.ShowApprovedStandardDetails("ST0001")) as ViewResult;
 

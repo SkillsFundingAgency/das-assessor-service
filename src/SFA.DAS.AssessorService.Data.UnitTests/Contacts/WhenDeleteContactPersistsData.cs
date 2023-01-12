@@ -20,16 +20,16 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             MappingBootstrapper.Initialize();
 
             _mockDbContext = new Mock<AssessorDbContext>();
-                 
-           var contacts = new List<Contact>
+
+            var contacts = new List<Contact>
             {
-                Builder<Contact>.CreateNew()    
+                Builder<Contact>.CreateNew()
                   .With(q => q.Username = "1234")
                     .Build()
             }.AsQueryable();
 
             var mockSet = contacts.CreateMockSet(contacts);
-            
+
             _mockDbContext.Setup(q => q.Contacts).Returns(mockSet.Object);
             _mockDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Contact>()));
             _mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))

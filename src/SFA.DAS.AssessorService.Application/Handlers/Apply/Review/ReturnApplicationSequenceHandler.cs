@@ -101,8 +101,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, standard = standardName, LoginLink = loginLink }), cancellationToken);
                     }
                 }
-                else if(returnType == "ReturnWithFeedback" && 
-                        (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || 
+                else if (returnType == "ReturnWithFeedback" &&
+                        (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO ||
                          sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
                 {
                     var lastSubmission = sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO
@@ -117,9 +117,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new
                             {
-                                ServiceName = SERVICE_NAME, 
+                                ServiceName = SERVICE_NAME,
                                 ServiceTeam = SERVICE_TEAM,
-                                Contact = contactToNotify.DisplayName, 
+                                Contact = contactToNotify.DisplayName,
                                 LoginLink = loginLink
                             }), cancellationToken);
                     }
@@ -128,12 +128,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                 {
                     var lastSubmission = application.ApplyData?.Apply.LatestOrganisationWithdrawalSubmission;
                     if (lastSubmission != null)
-                    {                        
+                    {
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
                         var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAORegisterWithdrawalApproval);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
-                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName,  LoginLink = loginLink }), cancellationToken);
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, LoginLink = loginLink }), cancellationToken);
                     }
                 }
                 else if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && returnType == "Approve")
@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 
                         var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardWithdrawalApproval);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
-                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardName = standardName, StandardReference = standardReferance,  LoginLink = loginLink }), cancellationToken);
+                            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardName = standardName, StandardReference = standardReferance, LoginLink = loginLink }), cancellationToken);
                     }
                 }
             }

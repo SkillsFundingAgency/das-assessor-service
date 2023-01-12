@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             {
                 return null;
             }
-            
+
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             certificate = await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
@@ -59,8 +59,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             {
                 return null;
             }
-            else if (certificate.Status == CertificateStatus.Draft && 
-                EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase) && 
+            else if (certificate.Status == CertificateStatus.Draft &&
+                EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase) &&
                 certData.OverallGrade == null)
             {
                 return null;
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                     certificate = null;
                 }
             }
-            
+
             return certificate;
         }
 

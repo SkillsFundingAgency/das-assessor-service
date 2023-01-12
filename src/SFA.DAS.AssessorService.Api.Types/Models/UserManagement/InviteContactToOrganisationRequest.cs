@@ -1,5 +1,5 @@
-using System;
 using MediatR;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.UserManagement
 {
@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.UserManagement
         public string GivenName { get; set; }
         public string Email { get; set; }
         public Guid OrganisationId { get; set; }
-        
+
         public Guid[] Privileges { get; set; }
     }
 }

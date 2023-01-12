@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class Apply: BaseEntity
+    public class Apply : BaseEntity
     {
         public Guid Id { get; set; }
         public string StandardApplicationType { get; set; }

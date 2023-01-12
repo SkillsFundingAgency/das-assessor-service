@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa
                 hash = (hash * multiplier) ^ (LatestEpaDate is null ? 0 : LatestEpaDate.GetHashCode());
                 hash = (hash * multiplier) ^ (LatestEpaOutcome is null ? 0 : LatestEpaOutcome.GetHashCode());
                 hash = (hash * multiplier) ^ (Epas is null ? 0 : Epas.GetHashCode());
-                
+
                 return hash;
             }
         }

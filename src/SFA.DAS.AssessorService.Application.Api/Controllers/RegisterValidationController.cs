@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +8,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -49,10 +49,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("validate-existing", Name = "UpdateEpaOrganisationValidate")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int) HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateOrganisationValidate([FromBody] UpdateEpaOrganisationValidationRequest request)
         {
             try
@@ -123,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 _logger.LogError($@"Bad request, Message: [{ex.Message}]");
                 return BadRequest(ex);
-            } 
+            }
         }
 
         [HttpPost("standards/validate-existing", Name = "UpdateEpaOrganisationStandardValidate")]

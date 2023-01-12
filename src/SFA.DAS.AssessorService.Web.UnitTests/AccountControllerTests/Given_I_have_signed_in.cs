@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         public void And_I_do_not_have_correct_role_Then_redirect_to_InvalidRole_page()
         {
             _loginOrchestrator.Setup(o => o.Login())
-                .ReturnsAsync(new LoginResponse() {Result = LoginResult.InvalidRole});
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.InvalidRole });
 
             var result = _accountController.PostSignIn().Result;
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         public void And_I_am_valid_Then_redirect_to_Search_page()
         {
             _loginOrchestrator.Setup(o => o.Login())
-                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, EndPointAssessorOrganisationId = "EPA0001"});
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, EndPointAssessorOrganisationId = "EPA0001" });
 
             var result = _accountController.PostSignIn().Result;
 

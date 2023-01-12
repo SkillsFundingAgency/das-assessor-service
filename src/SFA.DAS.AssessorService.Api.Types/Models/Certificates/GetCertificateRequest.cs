@@ -1,6 +1,6 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
             CertificateId = certificateId;
             IncludeLogs = includeLogs;
         }
-        
+
         public Guid CertificateId { get; }
 
         public bool IncludeLogs { get; }

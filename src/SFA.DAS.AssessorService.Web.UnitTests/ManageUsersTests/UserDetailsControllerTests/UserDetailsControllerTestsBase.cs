@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -12,6 +8,9 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsControllerTests
 {
@@ -35,12 +34,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
             {
                 cfg.CreateMap<ContactResponse, UserViewModel>();
             });
-            
+
             UserId = Guid.NewGuid();
             CallingUserId = Guid.NewGuid();
             var requestedContactOrganisationId = Guid.NewGuid();
             DifferentOrganisationId = Guid.NewGuid();
-            
+
             ContactsApiClient = new Mock<IContactsApiClient>();
             ContactsApiClient.Setup(apiClient => apiClient.GetById(UserId)).ReturnsAsync(new ContactResponse
             {
@@ -53,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
                 Status = ContactStatus.Active,
                 OrganisationId = requestedContactOrganisationId
             });
-            
+
             ContactsApiClient.Setup(apiClient => apiClient.GetById(CallingUserId)).ReturnsAsync(new ContactResponse
             {
                 Id = CallingUserId,
@@ -64,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
             PrivilegeId1 = Guid.NewGuid();
             PrivilegeId2 = Guid.NewGuid();
             PrivilegeId3 = Guid.NewGuid();
-            
+
             ContactsApiClient.Setup(apiClient => apiClient.GetContactPrivileges(UserId)).ReturnsAsync(new List<ContactsPrivilege>()
             {
                 new ContactsPrivilege{PrivilegeId = PrivilegeId1},
@@ -77,21 +76,21 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
                 new Privilege{Id = PrivilegeId2},
                 new Privilege{Id = PrivilegeId3}
             });
-            
+
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
-            
+
             var context = new DefaultHttpContext();
             var claimsPrincipal = new ClaimsPrincipal();
 
-            var claimsIdentity = new ClaimsIdentity(new List<Claim>{new Claim("UserId", CallingUserId.ToString())});
+            var claimsIdentity = new ClaimsIdentity(new List<Claim> { new Claim("UserId", CallingUserId.ToString()) });
             claimsPrincipal.AddIdentity(claimsIdentity);
             context.User = claimsPrincipal;
 
             httpContextAccessor.Setup(a => a.HttpContext).Returns(context);
-            
+
             Controller = new UserDetailsController(ContactsApiClient.Object, httpContextAccessor.Object, new Mock<IOrganisationsApiClient>().Object);
         }
-        
+
         [TearDown]
         public void TearDown()
         {

@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoFixture.NUnit3;
-using AutoMapper;
+﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations.GetEpaOrganisationsByStandard
 {
@@ -25,13 +22,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations.G
             GetEpaOrganisationsByStandardQueryHandler handler)
         {
             //Arrange
-            var entityOrganisations = new List<Organisation> {entityOrganisation};
+            var entityOrganisations = new List<Organisation> { entityOrganisation };
             repository.Setup(x => x.GetOrganisationsByStandard(query.Standard)).ReturnsAsync(entityOrganisations);
-            
-            
+
+
             //Act
             var actual = await handler.Handle(query, It.IsAny<CancellationToken>());
-            
+
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsAssignableFrom<GetEpaOrganisationsByStandardResponse>(actual);

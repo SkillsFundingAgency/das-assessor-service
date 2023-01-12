@@ -1,5 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -24,10 +24,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public DateTime BatchDate { get; set; }
         public int PostalContactCount { get; set; }
         public int TotalCertificateCount { get; set; }
-        
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? PrintedDate { get; set; }
-        
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? PostedDate { get; set; }
 

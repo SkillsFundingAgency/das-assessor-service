@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
-using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
 {

@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<GetOppFinderNonApprovedStandardsResponse> Handle(GetOppFinderNonApprovedStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Retreiving non approved standards: {request.NonApprovedType}");
-            var result = await _oppFinderRepository.GetOppFinderNonApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters, 
+            var result = await _oppFinderRepository.GetOppFinderNonApprovedStandards(request.SearchTerm, request.SectorFilters, request.LevelFilters,
                 request.SortColumn, request.SortAscending, request.PageSize, request.PageIndex ?? 1, request.NonApprovedType);
 
             var standards = result.PageOfResults

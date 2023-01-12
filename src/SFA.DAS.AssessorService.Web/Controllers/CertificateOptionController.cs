@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
 
-            if(certSession.Options.Count == 1)
+            if (certSession.Options.Count == 1)
             {
                 return RedirectToAction("Declare", "CertificateDeclaration");
             }
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             Logger.LogDebug($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
 
             viewModel.FromCertificate(certificate, certSession.Options);
-            
+
             Logger.LogDebug($"Got View Model of type CertificateOptionViewModel requested by {username}");
 
             return View(view, viewModel);
@@ -107,7 +107,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
-            
+
             try
             {
                 await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Logger.LogError($"Unable to update certificate with Id {certificate.Id}.");
                 return RedirectToAction("Error", "Home");
             }
-                  
+
             Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} updated.");
 
             if (SessionService.GetRedirectToCheck())
@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 //the final version count check allows that fallback.
                 var redirectToCheck = SessionService.GetRedirectToCheck();
                 var redirectedFromVersion = SessionService.GetRedirectedFromVersion();
-                
+
                 SessionService.RemoveRedirectedFromVersion();
 
                 object routeValues = null;

@@ -1,5 +1,5 @@
-using System;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
 {

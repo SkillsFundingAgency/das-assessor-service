@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         protected Mock<IStringLocalizer<ContactQueryController>> ContactControllerLocaliserMock;
-        
+
         protected Mock<IStringLocalizer<SearchOrganisationForContactsValidator>> SearchOrganisationForContactsValidatorLocaliserMock;
 
         protected Mock<ILogger<ContactQueryController>> ControllerLoggerMock;
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         protected Mock<IMediator> MediatorMock;
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
-        
+
         private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
 
         protected void Setup()
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
             SetupOrchestratorMocks();
             SetupControllerMocks();
             MediatorMock = new Mock<IMediator>();
-            
+
 
             ContactQueryController = new ContactQueryController(
                 ContactQueryRepositoryMock.Object,

@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateGradeViewModel : CertificateBaseViewModel
     {
-        public string SelectedGrade { get; set; }       
+        public string SelectedGrade { get; set; }
 
         public List<SelectListItem> Grades = new List<SelectListItem>
         {
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             base.FromCertificate(cert);
             SelectedGrade = CertificateData.OverallGrade;
 
-            if(cert?.StandardCode == 201)
+            if (cert?.StandardCode == 201)
             {
                 // ON-2352
                 int index = Grades.FindIndex(g => g.Value == CertificateGrade.Fail);

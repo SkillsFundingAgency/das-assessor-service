@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -12,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             Id = id;
             Status = status;
         }
-        public Guid Id { get;  }
+        public Guid Id { get; }
         public string Status { get; }
     }
 }

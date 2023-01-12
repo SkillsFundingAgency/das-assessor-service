@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
         private Guid certId = Guid.NewGuid();
         private long uln = 12345678L;
         private int stdCode = 123;
-        
+
         private SubmitBatchCertificateRequest _request;
 
         [SetUp]
@@ -38,11 +38,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
 
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode))
                 .ReturnsAsync(new Certificate()
-            {
-                Id = certId,
-                Status = CertificateStatus.Approved,
-                CertificateData = @"{}"
-            });
+                {
+                    Id = certId,
+                    Status = CertificateStatus.Approved,
+                    CertificateData = @"{}"
+                });
 
             _certificateRepository.Setup(m => m.Update(It.Is<Certificate>(x => x.Id == certId), ExternalApiConstants.ApiUserName, CertificateActions.Submit, true, null))
             .ReturnsAsync(new Certificate()

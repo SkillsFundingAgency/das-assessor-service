@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? AchDate { get; set; }
         public string OutGrade { get; set; }
 
-        public string Version { get; set;}
+        public string Version { get; set; }
         public bool VersionConfirmed { get; set; }
         public string CourseOption { get; set; }
         public string StandardUId { get; set; }

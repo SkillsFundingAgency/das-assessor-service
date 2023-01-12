@@ -1,6 +1,4 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
 
@@ -19,7 +17,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             Username = userName;
             DisplayName = $"{givenName} {familyName}";
         }
-       
+
 
         public string EndPointAssessorOrganisationId { get; set; }
 

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Data;
-using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data
 {

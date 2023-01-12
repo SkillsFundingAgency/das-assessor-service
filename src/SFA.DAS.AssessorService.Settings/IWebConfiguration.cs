@@ -13,7 +13,7 @@
         ClientApiAuthentication QnaApiAuthentication { get; set; }
         string ServiceLink { get; set; }
         LoginServiceConfig LoginService { get; set; }
-        
+
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
         ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
@@ -34,7 +34,7 @@
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
         string ZenDeskCobrowsingSnippetKey { get; set; }
-        
+
         OuterApiConfiguration OuterApi { get; set; }
     }
 }

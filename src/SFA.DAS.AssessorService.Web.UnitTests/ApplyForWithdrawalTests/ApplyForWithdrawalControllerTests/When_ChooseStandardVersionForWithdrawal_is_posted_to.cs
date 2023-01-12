@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             var model = new ChooseStandardVersionForWithdrawalViewModel()
             {
-                SelectedVersions = new List<string>() {"1.1", "1.2"}
+                SelectedVersions = new List<string>() { "1.1", "1.2" }
             };
 
             // Act

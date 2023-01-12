@@ -50,10 +50,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                 .Setup(r => r.GetEarliestWithdrawalDate(It.IsAny<Guid>(), It.IsAny<int?>()))
                 .ReturnsAsync(_earliestWithdrawalDate);
 
-            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicatonApiClient.Object, 
+            _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicatonApiClient.Object,
                 _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
-        
+
         [Test]
         public async Task Then_GetPipelinesCount_is_called()
         {
@@ -63,8 +63,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
             // Act
             await _sut.BuildOrganisationWithdrawalRequest(
                 new ContactResponse { Id = Guid.NewGuid() },
-                new OrganisationResponse 
-                { 
+                new OrganisationResponse
+                {
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 
             // Assert
             _mockQnaApiClient
-                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p => 
+                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p =>
                 JsonConvert.DeserializeObject<ApplicationData>(p.ApplicationData).PipelinesCount == _pipelinesCount)));
         }
 

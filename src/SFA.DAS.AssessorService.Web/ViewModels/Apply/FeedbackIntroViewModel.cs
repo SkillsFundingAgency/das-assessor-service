@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
     public class FeedbackIntroViewModel
     {
         private readonly ApplicationResponse _applicationResponse;
-        
+
         public FeedbackIntroViewModel(ApplicationResponse applicationResponse)
         {
             _applicationResponse = applicationResponse;
@@ -25,6 +25,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
             $"{StandardDescription}, Version {_applicationResponse.ApplyData.Apply.Versions.First()}" : StandardDescription;
 
         public Guid ApplicationId => _applicationResponse.Id;
-        
+
     }
 }

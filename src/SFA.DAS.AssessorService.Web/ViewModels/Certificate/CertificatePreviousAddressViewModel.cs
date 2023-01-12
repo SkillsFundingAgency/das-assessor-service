@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             certificate = base.GetCertificateFromViewModel(certificate, certData);
 
-            if(UsePreviousAddress.Value)
+            if (UsePreviousAddress.Value)
             {
                 certData.ContactOrganisation = PreviousAddress.ContactOrganisation;
                 certData.ContactAddLine1 = PreviousAddress.AddressLine1;
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
                 certData.ContactAddLine4 = string.Empty;
                 certData.ContactPostCode = string.Empty;
             }
-            
+
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;

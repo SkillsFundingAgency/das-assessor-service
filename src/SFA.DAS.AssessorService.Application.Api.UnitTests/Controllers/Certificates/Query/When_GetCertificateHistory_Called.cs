@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +7,10 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certificates.Query
 {
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             var certificateQueryControler = new CertificateQueryController(mediator.Object);
 
-            var statuses = new List<string> {"Submitted"};
+            var statuses = new List<string> { "Submitted" };
 
             int page = 1;
             string userName = "testUser";
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             string sortColumn = "DateRequested";
             int sortDescending = 1;
 
-            _result = certificateQueryControler.GetCertificatesHistory(page, userName,  searchTerm,  sortColumn,  sortDescending).Result;
+            _result = certificateQueryControler.GetCertificatesHistory(page, userName, searchTerm, sortColumn, sortDescending).Result;
         }
 
         [Test]

@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 new EpaoPipelineStandardsResponse() { StandardCode = "54", StandardName = "Butcher", StandardVersion = "1.2", UKPRN = "10057058", TrainingProvider = "L C PARTNERSHIP LTD", Pipeline = 1, EstimatedDate = "2021-10-12 00:00:00.000" },
                 new EpaoPipelineStandardsResponse() { StandardCode = "54", StandardName = "Butcher", StandardVersion = "1.3", UKPRN = "10057058", TrainingProvider = "L C PARTNERSHIP LTD", Pipeline = 1, EstimatedDate = "2021-11-12 00:00:00.000" },
             }
-            , 14, 1, 10);        
+            , 14, 1, 10);
 
         [Test, MoqAutoData]
         public async Task Then_If_OrgId_Not_Supplied_Return_BadRequest(

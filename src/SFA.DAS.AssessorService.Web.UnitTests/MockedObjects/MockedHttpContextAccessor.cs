@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Moq;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {

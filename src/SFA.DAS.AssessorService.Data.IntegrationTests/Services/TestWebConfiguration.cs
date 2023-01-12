@@ -1,5 +1,5 @@
-﻿using System;
-using SFA.DAS.AssessorService.Settings;
+﻿using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {

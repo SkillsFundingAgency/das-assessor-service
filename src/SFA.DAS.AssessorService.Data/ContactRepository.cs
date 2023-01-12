@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Data
 
             return newContact;
         }
-        
+
         public async Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges)
         {
-            
+
             foreach (var privilege in privileges)
             {
                 var contactPrivilegeEntity =
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task AddPrivilege(Guid contactId, Guid privilegeId)
         {
-            await _assessorDbContext.ContactsPrivileges.AddAsync(new ContactsPrivilege() {ContactId = contactId, PrivilegeId = privilegeId});
+            await _assessorDbContext.ContactsPrivileges.AddAsync(new ContactsPrivilege() { ContactId = contactId, PrivilegeId = privilegeId });
             await _assessorDbContext.SaveChangesAsync();
         }
 
@@ -94,20 +94,20 @@ namespace SFA.DAS.AssessorService.Data
         public async Task RemoveContactFromOrganisation(Guid contactId)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", 
+                "UPDATE Contacts SET OrganisationId = NULL, EndPointAssessorOrganisationId = NULL, Status = 'New' WHERE Id = @contactId",
                 new { contactId });
         }
 
         public async Task UpdateOrganisationId(Guid contactId, Guid? organisationId)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                "UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId", 
+                "UPDATE Contacts SET OrganisationId = @organisationId WHERE Id = @contactId",
                 new { contactId, organisationId });
         }
 
         public async Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId)
         {
-            var contactInvitation = new ContactInvitation() {InvitationDate = DateTime.UtcNow, OrganisationId = organisationId, InvitorContactId = invitorContactId, InviteeContactId = inviteeContactId};
+            var contactInvitation = new ContactInvitation() { InvitationDate = DateTime.UtcNow, OrganisationId = organisationId, InvitorContactId = invitorContactId, InviteeContactId = inviteeContactId };
             await _assessorDbContext.ContactInvitations.AddAsync(contactInvitation);
             await _assessorDbContext.SaveChangesAsync();
         }
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == updateContactRequest.UserName);
 
-            if(contactEntity == null)
+            if (contactEntity == null)
                 contactEntity = await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == updateContactRequest.Email);
 
             if (contactEntity == null)
@@ -163,7 +163,7 @@ namespace SFA.DAS.AssessorService.Data
                 await _assessorDbContext.Contacts.FirstAsync(c => c.Id == contactId);
 
             contactEntity.Status = status;
-            
+
             await _assessorDbContext.SaveChangesAsync();
         }
 
@@ -235,7 +235,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Contact> GetContact(string email)
         {
-            return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
+            return await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
         }
 
         public async Task UpdateUserName(Guid contactId, string userName)
@@ -243,7 +243,7 @@ namespace SFA.DAS.AssessorService.Data
             var contactEntity =
                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
-            contactEntity.Username=userName;
+            contactEntity.Username = userName;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);

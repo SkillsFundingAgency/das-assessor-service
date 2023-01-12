@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
@@ -71,13 +67,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsAreOfTypeEpaOrganisationContactResponse()
         {
-            ((OkObjectResult) _result).Value.Should().BeOfType<EpaOrganisationContactResponse>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationContactResponse>();
         }
 
         [Test]
         public void ResultsMatchExpectedOrganisationContactUserName()
         {
-            var organisationStandardId = ((OkObjectResult) _result).Value as EpaOrganisationContactResponse;
+            var organisationStandardId = ((OkObjectResult)_result).Value as EpaOrganisationContactResponse;
             organisationStandardId.Details.Should().Be(_username);
         }
     }

@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
     {
         private Certificate _certificate;
         private IEnumerable<string> _potentialOptions;
-        
+
         [SetUp]
         public void Arrange()
         {

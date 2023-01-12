@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         public async Task When_PostToImportingApprovals_Then_ImportApprovalsHandlerIsCalled(Mock<IMediator> mockMediator)
         {
             // Arrange.
-            
+
             // Act.
             var controllerResult = await _sut.GatherAndStoreApprovals() as ObjectResult;
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         public async Task When_GatherAndStoreApprovalsHasNoErrors_Then_ReturnOK()
         {
             // Arrange.
-            
+
             // Act.
             var controllerResult = await _sut.GatherAndStoreApprovals() as ObjectResult;
 
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
         public async Task When_GettingApprovalsLearnerRecord_ThenGetAppovalsLearnerRecordHandlerIsCalled(int stdCode, long uln)
         {
             // Arrange.
-                        
+
             // Act.
             var controllerResult = await _sut.GetLearner(stdCode, uln) as ObjectResult;
 

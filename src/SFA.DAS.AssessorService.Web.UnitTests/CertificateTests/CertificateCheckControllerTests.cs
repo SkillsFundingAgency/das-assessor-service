@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private Mock<IValidator<CertificateCheckViewModel>> _validator;
 
         private CertificateCheckController _certificateCheckController;
-            
+
         private Builder _builder;
         private Certificate _certificate = new Certificate();
         private const int Ukprn = 123456;
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockContextAccessor.Setup(s => s.HttpContext.Request.Query).Returns(Mock.Of<IQueryCollection>());
 
             _mockLocalizer.Setup(localizer => localizer[It.IsAny<string>()]).Returns(new LocalizedString("Key", "Error"));
-            
+
             _validator = new Mock<IValidator<CertificateCheckViewModel>>();
 
             var certSessionString = JsonConvert.SerializeObject(_builder.CreateNew<CertificateSession>()

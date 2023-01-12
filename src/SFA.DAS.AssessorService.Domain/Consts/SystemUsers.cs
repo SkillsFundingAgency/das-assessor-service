@@ -2,6 +2,6 @@
 {
     public static class SystemUsers
     {
-        public const string PrintFunction = "PrintFunction";      
+        public const string PrintFunction = "PrintFunction";
     }
 }

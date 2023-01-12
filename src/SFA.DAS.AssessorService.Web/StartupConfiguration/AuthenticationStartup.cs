@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                         var orgName = organisation.OrganisationData?.LegalName ??
                                                       organisation.OrganisationData?.TradingName ??
                                                       organisation.Name;
-                                        
+
                                         sessionService.Set("OrganisationName", orgName);
 
                                         identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",

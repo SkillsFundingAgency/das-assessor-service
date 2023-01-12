@@ -1,13 +1,13 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class CertificateLog 
+    public class CertificateLog
     {
         public Guid Id { get; set; }
         public Guid CertificateId { get; set; }
-       
+
         [JsonIgnore]
         public virtual Certificate Certificate { get; set; }
 

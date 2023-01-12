@@ -17,14 +17,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
 
         [SetUp]
         public async Task Arrange()
-        {  
-             _request = Builder<GetBatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 101)
-                .With(i => i.StandardReference = null)
-                .With(i => i.UkPrn = 12345678)
-                .With(i => i.FamilyName = "Test")
-                .Build();
+        {
+            _request = Builder<GetBatchCertificateRequest>.CreateNew()
+               .With(i => i.Uln = 1234567890)
+               .With(i => i.StandardCode = 101)
+               .With(i => i.StandardReference = null)
+               .With(i => i.UkPrn = 12345678)
+               .With(i => i.FamilyName = "Test")
+               .Build();
 
             var organisationResponse = Builder<Organisation>.CreateNew().Build();
             var certificateResponse = Builder<Certificate>.CreateNew().Build();

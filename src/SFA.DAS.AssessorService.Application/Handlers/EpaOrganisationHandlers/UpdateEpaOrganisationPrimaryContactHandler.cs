@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationPrimaryContactHandler : IRequestHandler<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>
-    { 
+    {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<UpdateEpaOrganisationPrimaryContactHandler> _logger;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         public async Task<List<ContactResponse>> Handle(UpdateEpaOrganisationPrimaryContactRequest request, CancellationToken cancellationToken)
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
-            
+
             var success = await _mediator.Send(new AssociateEpaOrganisationWithEpaContactRequest
             {
                 ContactId = request.PrimaryContactId,

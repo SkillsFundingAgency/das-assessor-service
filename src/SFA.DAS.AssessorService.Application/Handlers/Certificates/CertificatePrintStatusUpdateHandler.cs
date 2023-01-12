@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private readonly IMediator _mediator;
         private readonly ILogger<CertificatePrintStatusUpdateHandler> _logger;
 
-        public CertificatePrintStatusUpdateHandler(ICertificateRepository certificateRepository, 
+        public CertificatePrintStatusUpdateHandler(ICertificateRepository certificateRepository,
             IBatchLogQueryRepository batchLogQueryRepository,
             IMediator mediator, ILogger<CertificatePrintStatusUpdateHandler> logger)
         {
@@ -63,8 +63,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     validationResult.Errors.Add(
                         new ValidationErrorDetail(
-                            "StatusChangedDateTime", 
-                            $"Certificate {validatedCertificatePrintStatus.CertificateReference} {validatedCertificatePrintStatus.Status} at {validatedCertificatePrintStatus.StatusAt} is earlier than {certificateBatchLog.Status} at {certificateBatchLog.StatusAt}.", 
+                            "StatusChangedDateTime",
+                            $"Certificate {validatedCertificatePrintStatus.CertificateReference} {validatedCertificatePrintStatus.Status} at {validatedCertificatePrintStatus.StatusAt} is earlier than {certificateBatchLog.Status} at {certificateBatchLog.StatusAt}.",
                             ValidationStatusCode.Warning));
                 }
 
@@ -118,13 +118,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         private async Task<CertificatePrintStatusUpdate> Validate(CertificatePrintStatusUpdate certificatePrintStatus, ValidationResponse validationResult)
         {
-            if(!CertificateStatus.HasPrintNotificateStatus(certificatePrintStatus.Status))
+            if (!CertificateStatus.HasPrintNotificateStatus(certificatePrintStatus.Status))
             {
                 validationResult.Errors.Add(
                     new ValidationErrorDetail("CertificatePrintStatuses", $"The certificate status {certificatePrintStatus.Status} is not a valid print notification status.", ValidationStatusCode.BadRequest));
             }
-            
-            if(!await IsValidBatchNumber(certificatePrintStatus.BatchNumber))
+
+            if (!await IsValidBatchNumber(certificatePrintStatus.BatchNumber))
             {
                 validationResult.Errors.Add(
                     new ValidationErrorDetail("BatchNumber", $"The batch number {certificatePrintStatus.BatchNumber} was not found.", ValidationStatusCode.NotFound));

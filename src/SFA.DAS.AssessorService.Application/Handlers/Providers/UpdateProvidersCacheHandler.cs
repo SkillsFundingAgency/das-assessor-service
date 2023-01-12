@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Providers
         {
             try
             {
-                switch(request.UpdateType)
+                switch (request.UpdateType)
                 {
                     case ProvidersCacheUpdateType.InsertProvidersFromApprovalsExtract:
                         await _approvalsExtractRepository.InsertProvidersFromApprovalsExtract();

@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 {
@@ -17,22 +16,22 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("ifateReferenceNumber")]
         public string IfateReferenceNumber { get; set; }
         [JsonProperty("larsCode")]
-        public int LarsCode { get ; set ; }
+        public int LarsCode { get; set; }
         [JsonProperty("title")]
-        public string Title { get ; set ; }
+        public string Title { get; set; }
         [JsonProperty("version")]
         public decimal? Version { get; set; }
         [JsonProperty("standardDates")]
-        public StandardDates StandardDates { get ; set ; }
+        public StandardDates StandardDates { get; set; }
         [JsonProperty("level")]
-        public int Level { get ; set ; }
+        public int Level { get; set; }
         [JsonProperty("status")]
         public string Status { get; set; }
         [JsonProperty("typicalDuration")]
-        public int TypicalDuration { get ; set ; }
+        public int TypicalDuration { get; set; }
         [JsonProperty("maxFunding")]
-        public int MaxFunding { get ; set ; }
+        public int MaxFunding { get; set; }
         [JsonProperty("isActive")]
-        public bool IsActive { get ; set ; }
+        public bool IsActive { get; set; }
     }
 }

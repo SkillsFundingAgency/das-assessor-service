@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Commands
 {
     public class CreateOrganisationContactCommand
     {
-      
+
         public string OrganisationName { get; set; }
         public string OrganisationType { get; set; }
         public string OrganisationUkprn { get; set; }
@@ -43,7 +42,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
 
         public CreateOrganisationContactCommand(string organisationName, string organisationType,
             string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
-            bool useTradingName, string contactName,string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
+            bool useTradingName, string contactName, string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
             string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail,

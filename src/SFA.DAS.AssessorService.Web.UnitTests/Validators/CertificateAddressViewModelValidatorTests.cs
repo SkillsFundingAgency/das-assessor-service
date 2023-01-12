@@ -1,15 +1,12 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation.Results;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 {
@@ -20,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         private const string _cityError = "City error message";
         private const string _postcodeError = "Postcode error message";
         private const string _postcodeValidError = "Postcode valid error message";
-        
+
         private Mock<IStringLocalizer<CertificateAddressViewModelValidator>> _mockStringLocalizer;
 
         private CertificateAddressViewModel _viewModel;
@@ -59,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_SendToIsEmployerAndEmployerIsNullOrEmpty_Then_ValidatorReturnsInvalid(string employer)
         {
             _viewModel = CreateValidViewModel(CertificateSendTo.Employer);
-            
+
             _viewModel.Employer = employer;
 
             _validator.ShouldHaveValidationErrorFor(vm => vm.Employer, _viewModel);

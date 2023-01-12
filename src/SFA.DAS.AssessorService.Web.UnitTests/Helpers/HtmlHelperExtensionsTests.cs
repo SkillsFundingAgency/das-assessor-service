@@ -1,12 +1,11 @@
 ﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Extensions;
-using System.Collections;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
 {
     [TestFixture]
     public class HtmlHelperExtensionsTests
-    { 
+    {
         [TestCaseSource(nameof(LabelCases))]
         public void WhenICallSetZenDeskLabelsWithLabels_ThenTheKeywordsAreCorrect(string[] labels, string keywords)
         {

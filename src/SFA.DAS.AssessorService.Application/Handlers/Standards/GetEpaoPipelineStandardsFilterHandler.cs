@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         private readonly IWebConfiguration _config;
         private readonly IStandardRepository _standardRepository;
         private readonly ILogger<GetEpaoPipelineStandardsFilterHandler> _logger;
-        
+
         public GetEpaoPipelineStandardsFilterHandler(IWebConfiguration config, IStandardRepository standardRepository, ILogger<GetEpaoPipelineStandardsFilterHandler> logger)
         {
             _config = config;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<EpaoPipelineStandardsFiltersResponse> Handle(EpaoPipelineStandardsFiltersRequest request, CancellationToken cancellationToken)
         {
             _logger.LogDebug($"GetEpaoPipelineStandardsFilterHandler: EpaoId = {request.EpaoId}");
-            
+
             EpaoPipelineStandardsFiltersResponse response = new EpaoPipelineStandardsFiltersResponse();
 
             var standards = await _standardRepository.GetEpaoPipelineStandardsStandardFilter(request.EpaoId, _config.PipelineCutoff);

@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                         new StandardVersion() { Version = "1.1" },
                         new StandardVersion() { Version = "1.2" }
                     });
-                
+
             // Act
             var result = await _sut.CheckWithdrawalRequest("ST0001", "1.1", null) as ViewResult;
 

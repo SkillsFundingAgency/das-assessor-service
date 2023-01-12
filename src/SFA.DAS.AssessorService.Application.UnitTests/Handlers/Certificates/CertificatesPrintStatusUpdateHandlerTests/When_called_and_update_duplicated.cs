@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
         private const string CertificateReference = "00123456";
         private const int BatchNumber = 111;
-        
+
         private static readonly DateTime StatusAt = DateTime.Parse("01/01/2021 12:00:00");
         private static readonly DateTime ChangedStatusAt = DateTime.Parse("01/01/2021 18:00:00");
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             // Act
             _response = await _fixture.Handle(request);
-            
+
             // Assert
             _response.IsValid.Should().Be(true);
             _response.Errors.Count.Should().Be(0);
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _response = await _fixture.Handle(request);
 
             // Assert
-            if(updateCertificateBatchLog)
+            if (updateCertificateBatchLog)
             {
                 _fixture.VerifyUpdatePrintStatusCalled(CertificateReference, BatchNumber, request.Status, request.StatusAt, request.ReasonForChange, updateCertificateStatus, updateCertificateBatchLog);
             }

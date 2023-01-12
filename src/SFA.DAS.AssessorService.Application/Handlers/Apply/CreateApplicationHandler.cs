@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 var sequences = request.ApplySequences;
                 RemoveSequencesAndSections(sequences, org, orgType, request.ApplicationType);
-              
+
                 var applyData = new ApplyData
                 {
                     Sequences = sequences,
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             // after deactivating all the not required sequences, the next sequence which is 
             // required will be activated and started
             var nextRequiredSequence = sequences.Where(s => !s.NotRequired).OrderBy(s => s.SequenceNo).FirstOrDefault();
-            if(nextRequiredSequence != null)
+            if (nextRequiredSequence != null)
             {
                 nextRequiredSequence.IsActive = true;
                 nextRequiredSequence.Status = ApplicationSequenceStatus.Draft;

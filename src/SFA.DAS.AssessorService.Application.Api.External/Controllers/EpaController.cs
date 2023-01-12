@@ -42,14 +42,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Create EPA Records", "Creates a initial EPA record for each valid item within the request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> CreateEpaRecords([FromBody] IEnumerable<CreateEpaRequest> request)
         {
-            if(request.Count() > MAX_EPAS_IN_REQUEST)
+            if (request.Count() > MAX_EPAS_IN_REQUEST)
             {
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, MAX_EPAS_IN_REQUEST_ERROR_MESSAGE);
                 return StatusCode(error.StatusCode, error);
             }
 
             var createRequest = request.Select(req =>
-                new CreateBatchEpaRequest {
+                new CreateBatchEpaRequest
+                {
                     UkPrn = _headerInfo.Ukprn,
                     RequestId = req.RequestId,
                     Learner = req.Learner,
@@ -100,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Delete EPA Record", "Deletes the specified EPA record.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> DeleteEpaRecord(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string epaReference)
         {
-            var deleteRequest = new DeleteBatchEpaRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, EpaReference = epaReference};
+            var deleteRequest = new DeleteBatchEpaRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, EpaReference = epaReference };
             var error = await _apiClient.DeleteEpa(deleteRequest);
 
             if (error is null)

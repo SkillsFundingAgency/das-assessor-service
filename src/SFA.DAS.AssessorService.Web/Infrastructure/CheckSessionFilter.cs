@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
                     .GetCustomAttribute<CheckSessionAttribute>();
             }
 
-            if(checkSessionAttribute == null)
+            if (checkSessionAttribute == null)
             {
                 checkSessionAttribute = context.Controller.GetType()
                     .GetTypeInfo()
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             {
                 if (checkSessionAttribute.CheckSession == CheckSession.Error)
                 {
-                    context.Result = 
+                    context.Result =
                         new BadRequestObjectResult("Session lost");
 
                     _logger.LogInformation($"Session lost, error result");
@@ -70,6 +70,6 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             }
         }
 
-        public void OnActionExecuted(ActionExecutedContext context){}
+        public void OnActionExecuted(ActionExecutedContext context) { }
     }
 }

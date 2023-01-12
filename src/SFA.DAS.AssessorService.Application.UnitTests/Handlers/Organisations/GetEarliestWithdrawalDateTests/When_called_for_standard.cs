@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         {
             _mockDateTimeHelper = new Mock<IDateTimeHelper>();
 
-            _sut = new GetEarliestWithdrawalDateHandler(_mockDateTimeHelper.Object); 
+            _sut = new GetEarliestWithdrawalDateHandler(_mockDateTimeHelper.Object);
         }
 
         [TestCase(2020, 12, 01, 100)]

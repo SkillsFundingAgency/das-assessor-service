@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Learner, SearchResult>();
                 cfg.CreateMap<Learner, StaffSearchItems>()
-                    .ForMember(q => q.StandardCode, opts => {opts.MapFrom(i => i.StdCode);});
+                    .ForMember(q => q.StandardCode, opts => { opts.MapFrom(i => i.StdCode); });
 
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>();
                 cfg.CreateMap<BatchData, BatchDataResponse>();
@@ -51,8 +51,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<EpaOrganisationProfile>();
                 cfg.AddProfile<OppFinderProfile>();
 
-                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); 
-                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); 
+                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>();
+                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
 

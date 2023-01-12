@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.NatureOfBusiness, opt => opt.MapFrom(source => source.NatureOfBusiness))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.RegistrationDate))
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.RegistrationRemovalDate))
-                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.Address, AssessorService.Api.Types.CharityCommission.Address>(source.Address))) 
+                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.Address, AssessorService.Api.Types.CharityCommission.Address>(source.Address)))
                 .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.LatestFiling, AssessorService.Api.Types.CharityCommission.Accounts>(source.LatestFiling)))
                 .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => Mapper.Map<CharityCommissionService.Trustee[], AssessorService.Api.Types.CharityCommission.Trustee[]>(source.Trustees)))
                 .ForAllOtherMembers(dest => dest.Ignore());

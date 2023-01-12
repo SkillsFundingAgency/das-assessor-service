@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace CharityCommissionService
 {
-   public partial class Charity
+    public partial class Charity
     {
         [XmlIgnore]
         public string Status

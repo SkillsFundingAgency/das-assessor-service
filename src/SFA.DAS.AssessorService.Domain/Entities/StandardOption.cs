@@ -3,7 +3,7 @@
     public class StandardOption
     {
         public string StandardUId { get; set; }
-                        
+
         public string OptionName { get; set; }
     }
 }

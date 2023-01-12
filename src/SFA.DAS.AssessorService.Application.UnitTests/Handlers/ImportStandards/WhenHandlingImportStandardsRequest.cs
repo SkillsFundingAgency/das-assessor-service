@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
 
             _sut = new ImportStandardsHandler(_unitOfWorkMock.Object, _outerApiServiceMock.Object, _standardServiceMock.Object, _loggerMock.Object);
 
-            await _sut.Handle(new ImportStandardsRequest(), new CancellationToken() );
+            await _sut.Handle(new ImportStandardsRequest(), new CancellationToken());
         }
 
         [TearDown]

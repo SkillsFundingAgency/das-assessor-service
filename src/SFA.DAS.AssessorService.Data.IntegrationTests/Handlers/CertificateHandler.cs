@@ -1,5 +1,5 @@
-﻿using System;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -10,7 +6,9 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Login
 {
@@ -22,8 +20,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private readonly IRegisterRepository _registerRepository;
         private readonly IContactRepository _contactRepository;
 
-        public LoginHandler(ILogger<LoginHandler> logger,  
-            IOrganisationQueryRepository organisationQueryRepository, 
+        public LoginHandler(ILogger<LoginHandler> logger,
+            IOrganisationQueryRepository organisationQueryRepository,
             IContactQueryRepository contactQueryRepository, IContactRepository contactRepository,
             IRegisterRepository registerRepository)
         {
@@ -36,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
-            var response =new LoginResponse();
+            var response = new LoginResponse();
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
 
@@ -44,8 +42,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             var originalUsername = contact.Username;
 
             if (string.IsNullOrEmpty(originalUsername) ||
-                originalUsername.StartsWith("unknown-",StringComparison.CurrentCultureIgnoreCase))
-                await _contactRepository.UpdateUserName(contact.Id,contact.Email);
+                originalUsername.StartsWith("unknown-", StringComparison.CurrentCultureIgnoreCase))
+                await _contactRepository.UpdateUserName(contact.Id, contact.Email);
 
             if (UserDoesNotHaveAcceptableRole(contact.Id))
             {
@@ -54,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 response.Result = LoginResult.InvalidRole;
                 return response;
             }
-            
+
             _logger.LogInformation("Role is good");
 
             if (contact.OrganisationId == null)

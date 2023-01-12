@@ -1,10 +1,10 @@
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 using System;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 namespace SFA.DAS.AssessorService.NLog.Targets.Redis
 {
     // Class taken from https://github.com/ReactiveMarkets/NLog.Targets.ElasticSearch/commit/82bd41d46e15b08f3e7770e40f0660394f8359ba
@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.NLog.Targets.Redis
     {
         private static IConfiguration _configuration;
 
-        static  StringExtensions()
+        static StringExtensions()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())

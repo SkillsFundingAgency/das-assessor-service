@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<UpdateCertificateWithReprintReasonCommandHandler> _logger;
 
-        public UpdateCertificateWithReprintReasonCommandHandler(ICertificateRepository certificateRepository, 
+        public UpdateCertificateWithReprintReasonCommandHandler(ICertificateRepository certificateRepository,
             ILogger<UpdateCertificateWithReprintReasonCommandHandler> logger)
         {
             _certificateRepository = certificateRepository;

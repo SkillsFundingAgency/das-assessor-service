@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,8 +50,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
             await _handler.Handle(_request, CancellationToken.None);
 
             _mockOrganisationStandardRepository.Verify(
-                repository => repository.UpdateOrganisationStandardVersion(It.Is<OrganisationStandardVersion>(v => v.EffectiveFrom == _request.EffectiveFrom 
-                    && v.EffectiveTo == _request.EffectiveTo)), 
+                repository => repository.UpdateOrganisationStandardVersion(It.Is<OrganisationStandardVersion>(v => v.EffectiveFrom == _request.EffectiveFrom
+                    && v.EffectiveTo == _request.EffectiveTo)),
                 Times.Once);
         }
 

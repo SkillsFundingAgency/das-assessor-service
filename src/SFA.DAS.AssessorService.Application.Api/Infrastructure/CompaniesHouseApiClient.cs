@@ -1,13 +1,13 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 {
@@ -50,14 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 
             if (company != null)
             {
-                if(company.Status is null && "charitable-incorporated-organisation".Equals(company.Type, StringComparison.InvariantCultureIgnoreCase))
+                if (company.Status is null && "charitable-incorporated-organisation".Equals(company.Type, StringComparison.InvariantCultureIgnoreCase))
                 {
                     isTrading = company.DissolvedOn == null && company.IsLiquidated != true;
                 }
-                else 
+                else
                 {
                     isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase);
-                } 
+                }
             }
 
             return isTrading;

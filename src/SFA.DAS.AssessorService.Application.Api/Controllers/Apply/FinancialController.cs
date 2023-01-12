@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.ApplyTypes;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
     public class FinancialController : Controller
     {
         private readonly IMediator _mediator;
-        
+
         public FinancialController(IMediator mediator)
         {
             _mediator = mediator;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         [HttpGet("/Financial/OpenApplications")]
         public async Task<ActionResult> OpenApplications()
         {
-            var applications =await _mediator.Send(new OpenFinancialApplicationsRequest());
+            var applications = await _mediator.Send(new OpenFinancialApplicationsRequest());
             return Ok(applications);
         }
 

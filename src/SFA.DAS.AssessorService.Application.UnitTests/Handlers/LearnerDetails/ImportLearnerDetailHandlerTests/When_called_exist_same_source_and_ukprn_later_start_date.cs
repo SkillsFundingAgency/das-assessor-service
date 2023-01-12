@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         {
             // Arrange
             Arrange(epaOrgId, learnActEndDate, withdrawReason, outcome, achDate, outGrade);
-            
+
             // Act
             Response = await Sut.Handle(Request, new CancellationToken());
 

@@ -10,7 +10,7 @@
 
         public const string SearchSuccess = "Search_Success";
         public const string SearchFailure = "Search_Failure";
-        
+
         public const string CertificateStarted = "Certificate_Started";
         public const string CertificateSubmitted = "Certificate_Submitted";
         public const string CertificatePrinted = "Certificate_Printed";

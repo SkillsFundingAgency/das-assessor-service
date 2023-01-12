@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
         public string ContactPhoneNumber { get; set; }
         public string ContactEmail { get; set; }
         public DateTime? DateStandardApprovedOnRegister { get; set; }
-        public string Comments { get; set; }        
+        public string Comments { get; set; }
         public string Status { get; set; }
 
         public Guid? ContactId { get; set; }

@@ -12,7 +12,7 @@ using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class EpaOrganisationContactPutTests: TestBase
+    public class EpaOrganisationContactPutTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 PhoneNumber = "555 55555",
                 Status = OrganisationStatus.Live
             };
-            
+
             _contactBeforeChange = new EpaContact
             {
                 Id = _contactId,
@@ -77,9 +77,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 DisplayName = "Joe Cool",
                 Email = "tester@test.com",
                 PhoneNumber = "555 55555",
-                Status = OrganisationStatus.Live   
+                Status = OrganisationStatus.Live
             };
-            
+
             _contactUpdated = new EpaContact
             {
                 Id = _contactId,
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 DisplayName = "Joe Cool changes",
                 Email = "tester@testChanged.com",
                 PhoneNumber = "555 44444",
-                Status = OrganisationStatus.Live                   
+                Status = OrganisationStatus.Live
             };
             OrganisationContactHandler.InsertRecord(_contactModel);
         }
@@ -97,11 +97,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void UpdateOrganisationContactCheckNewDetails()
         {
             var contactBeforeChange = OrganisationContactHandler.GetContactById(_contactId.ToString());
-            var returnedContactId = _repository.UpdateEpaOrganisationContact(_contactUpdated,"Save").Result;
+            var returnedContactId = _repository.UpdateEpaOrganisationContact(_contactUpdated, "Save").Result;
             var contactAfterChange = OrganisationContactHandler.GetContactById(_contactId.ToString());
-   
+
             _contactBeforeChange.Should().BeEquivalentTo(contactBeforeChange);
-            _contactUpdated.Should().BeEquivalentTo(contactAfterChange);      
+            _contactUpdated.Should().BeEquivalentTo(contactAfterChange);
         }
         [OneTimeTearDown]
         public void TearDownOrganisationTests()

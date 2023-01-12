@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Search;
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {
     [TestFixture]
-    public class Given_I_enter_an_invalid_ULN_format 
+    public class Given_I_enter_an_invalid_ULN_format
     {
         [TestCase("123456789")]
         [TestCase("12345678901")]
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .Returns(new LocalizedString(ResourceKey.UlnShouldNotBeEmpty, "ULN should not be empty"));
 
             var validator = new SearchQueryViewModelValidator(localizer.Object);
-            var result = validator.Validate(new SearchRequestViewModel() {Surname = "Smith", Uln = invalidUln});
+            var result = validator.Validate(new SearchRequestViewModel() { Surname = "Smith", Uln = invalidUln });
             result.IsValid.Should().BeFalse();
         }
     }

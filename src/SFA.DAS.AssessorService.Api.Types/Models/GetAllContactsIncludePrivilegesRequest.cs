@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetAllContactsIncludePrivilegesRequest: IRequest<List<ContactIncludePrivilegesResponse>>
+    public class GetAllContactsIncludePrivilegesRequest : IRequest<List<ContactIncludePrivilegesResponse>>
     {
         public GetAllContactsIncludePrivilegesRequest(string endPointAssessorOrganisationId, bool? withUser = null)
         {
@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             WithUser = withUser;
         }
 
-        public string EndPointAssessorOrganisationId { get;}
+        public string EndPointAssessorOrganisationId { get; }
         public bool? WithUser { get; }
     }
 }

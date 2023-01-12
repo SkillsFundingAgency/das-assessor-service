@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Exceptions
     {
         public EntityNotFoundException()
         {
-            
+
         }
 
         public EntityNotFoundException(string message) : base(message)

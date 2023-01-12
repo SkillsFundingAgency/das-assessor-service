@@ -1,21 +1,15 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using FizzWare.NBuilder;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
@@ -38,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
-        protected  void Setup()
+        protected void Setup()
         {
             Mediator = new Mock<IMediator>();
 
@@ -75,6 +69,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             ControllerLoggerMock = new Mock<ILogger<OrganisationQueryController>>();
         }
-        
+
     }
 }

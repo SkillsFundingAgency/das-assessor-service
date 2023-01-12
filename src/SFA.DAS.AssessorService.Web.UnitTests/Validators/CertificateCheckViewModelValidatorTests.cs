@@ -1,6 +1,5 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation.Results;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -59,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 
             var result = _validator.Validate(_viewModel);
 
-            result.IsValid.Should().Be(true);       
+            result.IsValid.Should().Be(true);
         }
 
         [TestCase(null)]
@@ -154,7 +153,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _viewModel.Postcode = null;
 
             var result = _validator.Validate(_viewModel);
-            
+
             result.IsValid.Should().Be(true);
         }
 
@@ -180,7 +179,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_SendToIsNone_Then_ValidatorReturnsInvalid()
         {
             _viewModel = CreateValidViewModel(CertificateSendTo.None);
-            
+
             var result = _validator.Validate(_viewModel);
 
             result.IsValid.Should().Be(false);

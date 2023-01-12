@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
             _validator = new Mock<IEpaOrganisationValidator>();
             _unitOfWork = new Mock<IUnitOfWork>();
 
-            _handler = new WithdrawOrganisationHandler( _validator.Object, _orgStandardRepository.Object, _applyRepository.Object, _unitOfWork.Object);
+            _handler = new WithdrawOrganisationHandler(_validator.Object, _orgStandardRepository.Object, _applyRepository.Object, _unitOfWork.Object);
         }
 
         [Test]

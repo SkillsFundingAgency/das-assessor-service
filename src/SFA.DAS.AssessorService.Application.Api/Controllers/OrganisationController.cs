@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +8,10 @@ using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -34,9 +34,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "CreateOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisation(
             [FromBody] CreateOrganisationRequest createOrganisationRequest)
         {
@@ -45,15 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var organisation = await _mediator.Send(createOrganisationRequest);
 
             return CreatedAtRoute("CreateOrganisation",
-                new {id = organisation.EndPointAssessorOrganisationId},
+                new { id = organisation.EndPointAssessorOrganisationId },
                 organisation);
         }
 
         [HttpPut(Name = "UpdateOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateOrganisation(
             [FromBody] UpdateOrganisationRequest updateOrganisationRequest)
         {
@@ -66,9 +66,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpDelete(Name = "DeleteOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.NotFound)]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> DeleteOrganisation(string endPointAssessorOrganisationId)
         {
             _logger.LogInformation("Received Delete Organisation Request");
@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> NotifyUserManagementUsers([FromBody]NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
+        public async Task<IActionResult> NotifyUserManagementUsers([FromBody] NotifyUserManagementUsersRequest notifyUserManagementUsersRequest)
         {
             await _mediator.Send(notifyUserManagementUsersRequest, CancellationToken.None);
 

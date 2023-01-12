@@ -1,12 +1,9 @@
-﻿using AutoFixture;
-using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit3;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Standards;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
@@ -97,13 +94,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             //List defaults to 3 records in autofixture
             // Set learner date for last version
             learnerRecord.LearnStartDate = baseDate.AddYears(2);
-            
+
             foreach (var s in standards)
             {
                 s.Version = baseVersion.ToString();
                 s.VersionLatestStartDate = baseDate;
                 s.LarsCode = larsCode;
-                
+
                 baseVersion++;
                 baseDate = baseDate.AddYears(1);
             }
@@ -151,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
             }
 
             var latestVersion = standards.OrderByDescending(d => d.Version).First();
-            
+
             standardService.Setup(s => s.GetStandardVersionById(request.StandardId, null)).ReturnsAsync(latestVersion);
             standardService.Setup(s => s.GetStandardVersionsByLarsCode(larsCode)).ReturnsAsync(standards);
             learnerRepository.Setup(s => s.Get(request.Uln, larsCode)).ReturnsAsync(learnerRecord);

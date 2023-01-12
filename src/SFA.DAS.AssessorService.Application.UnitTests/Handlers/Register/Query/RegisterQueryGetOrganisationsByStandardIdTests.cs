@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -10,6 +6,10 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             _assessmentOrganisationDetails1 = new EpaOrganisation { OrganisationId = "EPA9999", Name = "Name 100", Ukprn = 777777 };
             _assessmentOrganisationDetails2 = new EpaOrganisation { OrganisationId = "EPA8888", Name = "Name 10" };
-            _request = new GetAssessmentOrganisationsbyStandardRequest {StandardId = _standardId};
+            _request = new GetAssessmentOrganisationsbyStandardRequest { StandardId = _standardId };
 
             Logger = new Mock<ILogger<GetAssessmentOrganisationsByStandardHandler>>();
 

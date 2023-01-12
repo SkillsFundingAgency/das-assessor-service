@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var isOrgByOrgIdPresentBeforeInsert = _validationRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
             var isOrgByUkprnPresentBeforeInsert = _validationRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
-            
+
             var returnedOrganisationId = _repository.CreateEpaOrganisation(_organisation).Result;
 
             var isOrgByOrgIdPresentAfterInsert = _validationRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;

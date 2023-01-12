@@ -1,13 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Api.Infrastructure;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
 {
@@ -22,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
             _roatpApiClient = roatpApiClient;
             _organisationQueryRepository = organisationQueryRepository;
         }
-        
+
         [HttpGet("Validations/UkPrn/{id}")]
         public async Task<ActionResult<ApiValidationResult>> ValidateUkPrn(Guid id, int q)
         {
@@ -30,19 +29,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
             var epaOrg = await _organisationQueryRepository.GetByUkPrn(q);
             if (epaOrg != null)
             {
-                return new ApiValidationResult {IsValid = false, ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("","UKPRN provided already in use")}};
+                return new ApiValidationResult { IsValid = false, ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("", "UKPRN provided already in use") } };
             }
-            
+
             // starts with 9, allow
-            if (q.ToString().StartsWith("9")) return new ApiValidationResult {IsValid = true};
-            
+            if (q.ToString().StartsWith("9")) return new ApiValidationResult { IsValid = true };
+
             var ukrlpResult = await _roatpApiClient.SearchOrganisationInUkrlp(q);
             if (ukrlpResult == null || !ukrlpResult.Any())
             {
-                return new ApiValidationResult {IsValid = false, ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("","UKPRN is unknown")}};
+                return new ApiValidationResult { IsValid = false, ErrorMessages = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("", "UKPRN is unknown") } };
             }
-            
-            return new ApiValidationResult {IsValid = true};
+
+            return new ApiValidationResult { IsValid = true };
         }
     }
 }

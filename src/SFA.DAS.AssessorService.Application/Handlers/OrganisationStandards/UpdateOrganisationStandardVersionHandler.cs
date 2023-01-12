@@ -44,10 +44,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
                 _unitOfWork.Begin();
 
                 var orgStandardVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(request.OrganisationStandardId, request.OrganisationStandardVersion);
-                
+
                 orgStandardVersion.EffectiveFrom = request.EffectiveFrom;
                 orgStandardVersion.EffectiveTo = request.EffectiveTo;
-                
+
                 await _repository.UpdateOrganisationStandardVersion(orgStandardVersion);
 
                 _unitOfWork.Commit();

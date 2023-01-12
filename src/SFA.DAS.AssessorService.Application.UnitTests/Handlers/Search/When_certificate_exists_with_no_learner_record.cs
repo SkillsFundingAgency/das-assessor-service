@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var result = SearchHandler.Handle(new SearchQuery { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
 
-            result.Count.Should().Be(1); 
+            result.Count.Should().Be(1);
         }
 
         [Test]

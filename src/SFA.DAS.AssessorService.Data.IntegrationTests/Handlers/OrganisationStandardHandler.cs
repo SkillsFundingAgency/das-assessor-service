@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
@@ -18,7 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sql =
                 "set identity_insert [OrganisationStandard] ON; INSERT INTO [dbo].[OrganisationStandard] (Id, [EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister]," +
                 "[Comments],[Status]) VALUES (@id, @endPointAssessorOrganisationId, @standardCode, @effectiveFrom, @effectiveTo, @dateStandardApprovedOnRegister, @comments, @status); set identity_insert [OrganisationStandard] OFF; ";
-        
+
             DatabaseService.Execute(sql, organisationStandard);
         }
 

@@ -25,20 +25,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.BatchLog
         public async Task Arrange()
         {
             _mediator = new Mock<IMediator>();
-            
+
             _mediator.Setup(q => q.Send(It.IsAny<UpdateBatchLogSentToPrinterRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(new ValidationResponse()));
-            
+
             _sut = new BatchLogController(_mediator.Object);
-            _result = await _sut.UpdateBatchLogSentToPrinter(_batchNumber, new UpdateBatchLogSentToPrinterRequest 
-            { 
-                BatchNumber = _batchNumber, 
+            _result = await _sut.UpdateBatchLogSentToPrinter(_batchNumber, new UpdateBatchLogSentToPrinterRequest
+            {
+                BatchNumber = _batchNumber,
                 BatchCreated = _utcNow,
                 NumberOfCertificates = 1,
                 NumberOfCoverLetters = 1,
                 CertificatesFileName = "TestFileName",
                 FileUploadStartTime = _utcNow,
-                FileUploadEndTime = _utcNow});
+                FileUploadEndTime = _utcNow
+            });
         }
 
         [Test]
@@ -52,15 +53,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.BatchLog
         public void ThenShouldCallSentToPrinterRequest()
         {
             _mediator.Verify(x => x.Send(
-                It.Is<UpdateBatchLogSentToPrinterRequest>(s => 
-                    s.BatchNumber == _batchNumber && 
+                It.Is<UpdateBatchLogSentToPrinterRequest>(s =>
+                    s.BatchNumber == _batchNumber &&
                     s.BatchCreated == _utcNow &&
                     s.NumberOfCertificates == 1 &&
                     s.NumberOfCoverLetters == 1 &&
                     s.CertificatesFileName == "TestFileName" &&
                     s.FileUploadStartTime == _utcNow &&
-                    s.FileUploadEndTime == _utcNow), 
-                It.IsAny<CancellationToken>()), 
+                    s.FileUploadEndTime == _utcNow),
+                It.IsAny<CancellationToken>()),
                 Times.Once());
         }
     }

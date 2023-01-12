@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DeleteApplicationsHandler> _logger;
 
-        public DeleteApplicationsHandler(IApplyRepository applyRepository, 
+        public DeleteApplicationsHandler(IApplyRepository applyRepository,
             IUnitOfWork unitOfWork, ILogger<DeleteApplicationsHandler> logger)
         {
             _applyRepository = applyRepository;
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 if (request.DeletingContactId.HasValue)
                     deletedBy = request.DeletingContactId.ToString();
 
-                foreach(var id in request.ApplicationIds)
+                foreach (var id in request.ApplicationIds)
                     await _applyRepository.DeleteApplication(id, deletedBy);
 
                 _unitOfWork.Commit();

@@ -1,10 +1,10 @@
-﻿using System.Threading;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.DeleteCertificateHandlerTests
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
                 Uln = 1111111111,
                 StandardCode = 30,
                 UserName = "User Name",
-                ReasonForChange = "Reason for Change",                
+                ReasonForChange = "Reason for Change",
                 IncidentNumber = "12345"
             };
         }
@@ -45,6 +45,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             Assert.IsNotNull(result);
             _certificateRepository.Verify(c => c.Delete(_deleteCertificateRequest.Uln, _deleteCertificateRequest.StandardCode, _deleteCertificateRequest.UserName, CertificateActions.Delete, true, _deleteCertificateRequest.ReasonForChange, _deleteCertificateRequest.IncidentNumber), Times.Once);
         }
-        
+
     }
 }

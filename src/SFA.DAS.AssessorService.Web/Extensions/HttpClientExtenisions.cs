@@ -1,9 +1,9 @@
-﻿using System;
-using System.Net.Http;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
+using System.Net.Http;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {

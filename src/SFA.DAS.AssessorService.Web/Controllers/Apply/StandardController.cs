@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
@@ -281,7 +280,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             DateTime? effectiveTo = appliedVersion.StdVersionEffectiveTo;
             bool optInFollowingWithdrawal = effectiveTo.HasValue;
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
 
@@ -343,12 +342,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return false;
             }
-         
+
             return true;
         }
-        
 
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
+
+        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions,
             List<ApplicationResponse> previousWithdrawals, List<ApplicationResponse> previousApplications)
         {
             bool approved = false;
@@ -392,14 +391,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             bool AppliedViaOptIn = false;
-            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
+            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal
                                                                                         && x.ApplicationStatus == ApplicationStatus.Approved);
             if (previousApplications != null)
                 AppliedViaOptIn = previousApplications
                     .Where(w => (w.ApplicationType != StandardApplicationTypes.StandardWithdrawal) &&
                                 (w.ApplicationType != StandardApplicationTypes.VersionWithdrawal) &&
                                 (w.ApplyViaOptIn == true)).Select(x => x.ApplyViaOptIn).FirstOrDefault();
- 
+
 
             foreach (var withdrawal in withdrawals)
             {

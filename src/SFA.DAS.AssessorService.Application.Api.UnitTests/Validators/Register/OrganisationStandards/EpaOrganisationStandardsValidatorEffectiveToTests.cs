@@ -1,11 +1,11 @@
-﻿using System;
-using Castle.Core.Internal;
+﻿using Castle.Core.Internal;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.OrganisationStandards
 {
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToBeforeStandardEffectiveFrom])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToBeforeStandardEffectiveFrom, "fail"));
-            
+
             _standardService = new Mock<IStandardService>();
             _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(), Mock.Of<IRegisterQueryRepository>(), Mock.Of<ISpecialCharacterCleanserService>(), _localizer.Object, _standardService.Object);
         }

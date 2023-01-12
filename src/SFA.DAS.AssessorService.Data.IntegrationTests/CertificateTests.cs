@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class CertificateTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        
+
         private AssessorDbContext _context;
         private UnitOfWork _unitOfWork;
-        
+
         private CertificateRepository _repository;
-        
+
         private static int _organisationTypeId = 20;
         private static Guid _organisationId = Guid.NewGuid();
 

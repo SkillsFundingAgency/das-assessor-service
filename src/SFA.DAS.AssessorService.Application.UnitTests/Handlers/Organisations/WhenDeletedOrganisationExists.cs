@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 {
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
             _orgRepos.Setup(r => r.UpdateOrganisation(It.IsAny<Organisation>()))
                 .ReturnsAsync(new Organisation());
 
-            _handler = new CreateOrganisationHandler(_orgRepos.Object,             
+            _handler = new CreateOrganisationHandler(_orgRepos.Object,
                 orgQueryRepos.Object,
                 _contactRepository.Object);
         }
@@ -45,13 +45,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         {
             _orgRepos.Setup(r => r.CreateNewOrganisation(It.IsAny<Organisation>()))
                 .Throws(new Exception("Should not be called"));
-            _handler.Handle(new CreateOrganisationRequest(){EndPointAssessorOrganisationId = "12345", EndPointAssessorUkprn = 123}, new CancellationToken()).Wait();
+            _handler.Handle(new CreateOrganisationRequest() { EndPointAssessorOrganisationId = "12345", EndPointAssessorUkprn = 123 }, new CancellationToken()).Wait();
         }
 
         [Test]
         public void ThenExistingOrgIsUpdated()
         {
-            _handler.Handle(new CreateOrganisationRequest(){ EndPointAssessorOrganisationId = "12345", EndPointAssessorUkprn = 123 }, new CancellationToken()).Wait();
+            _handler.Handle(new CreateOrganisationRequest() { EndPointAssessorOrganisationId = "12345", EndPointAssessorUkprn = 123 }, new CancellationToken()).Wait();
             _orgRepos.Verify(r =>
                 r.UpdateOrganisation(
                     It.Is<Organisation>(m => m.EndPointAssessorOrganisationId == "12345")));

@@ -4,6 +4,6 @@
 
     public class DeleteOrganisationRequest : IRequest
     {
-        public string EndPointAssessorOrganisationId { get; set; }                  
+        public string EndPointAssessorOrganisationId { get; set; }
     }
 }

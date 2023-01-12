@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Runtime.Serialization;
-using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {

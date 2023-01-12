@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisations.Update
 {
@@ -17,8 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
         {
             Setup();
 
-            UpdateOrganisationRequest = Builder<UpdateOrganisationRequest>.CreateNew()                
-                .With(q => q.EndPointAssessorName = "Jane")   
+            UpdateOrganisationRequest = Builder<UpdateOrganisationRequest>.CreateNew()
+                .With(q => q.EndPointAssessorName = "Jane")
                 .With(q => q.PrimaryContact = null)
                 .Build();
 
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
         }
 
         [Test]
-        public void ErrormessageShouldNotContainEndPointAssessorName()        
+        public void ErrormessageShouldNotContainEndPointAssessorName()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().BeNull();
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
 
         [Test]
         public void ErrorMessageShouldNotContainDoesNotExist()
-        {       
+        {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
             errors.Should().BeNull();
         }

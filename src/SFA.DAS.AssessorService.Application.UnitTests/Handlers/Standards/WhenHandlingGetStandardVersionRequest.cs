@@ -16,8 +16,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards
     {
         [Test, MoqAutoData]
         public async Task ThenGetsLatestStandardVersion(
-            [Frozen] Mock<IStandardService> standardService, 
-            GetStandardVersionRequest request, 
+            [Frozen] Mock<IStandardService> standardService,
+            GetStandardVersionRequest request,
             Standard standard,
             GetStandardVersionHandler sut)
         {

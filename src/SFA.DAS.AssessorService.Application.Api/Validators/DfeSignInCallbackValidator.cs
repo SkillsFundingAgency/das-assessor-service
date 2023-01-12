@@ -1,7 +1,7 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {

@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using System.Linq;
 using System.Text.Encodings.Web;
 
 namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
@@ -56,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 
         public string GetAlertClass(Alert alert)
         {
-            switch(alert.Type)
+            switch (alert.Type)
             {
                 case AlertType.Success:
                     return AlertSuccessClass;

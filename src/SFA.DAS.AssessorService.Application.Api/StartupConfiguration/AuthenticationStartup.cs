@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Application.Api.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {

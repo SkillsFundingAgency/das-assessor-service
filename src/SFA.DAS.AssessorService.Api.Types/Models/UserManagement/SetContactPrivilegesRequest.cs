@@ -1,6 +1,5 @@
-using System;
 using MediatR;
-using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.UserManagement
 {

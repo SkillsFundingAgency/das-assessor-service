@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.Update
 {

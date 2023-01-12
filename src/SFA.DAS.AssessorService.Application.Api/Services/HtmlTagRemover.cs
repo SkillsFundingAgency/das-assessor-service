@@ -9,13 +9,13 @@
                 return inputText;
 
             var text = inputText;
-  
+
             var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
-            text= rx.Replace(text, string.Empty);
+            text = rx.Replace(text, string.Empty);
 
             while (text.Contains("<"))
             {
-                text = text+">";
+                text = text + ">";
                 text = rx.Replace(text, string.Empty);
             }
 

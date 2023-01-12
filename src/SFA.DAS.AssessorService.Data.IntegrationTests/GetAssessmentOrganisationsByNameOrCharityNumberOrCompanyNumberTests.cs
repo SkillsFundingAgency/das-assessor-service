@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Status = "new",
                 UpdatedAt = null,
                 OrganisationTypeId = null,
-                OrganisationData = "{\"LegalName\":\"City and Guilds(London / ILM)\",\"CompanyNumber\":\""+ "companyNumber 3" +"\",\"CharityNumber\":\"10009931\"}"
+                OrganisationData = "{\"LegalName\":\"City and Guilds(London / ILM)\",\"CompanyNumber\":\"" + "companyNumber 3" + "\",\"CharityNumber\":\"10009931\"}"
             };
 
             _organisation4 = new OrganisationModel
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {
-            OrganisationHandler.DeleteRecords(new List<Guid> { _organisation1.Id, _organisation2.Id, _organisation3.Id, _organisation4.Id});
+            OrganisationHandler.DeleteRecords(new List<Guid> { _organisation1.Id, _organisation2.Id, _organisation3.Id, _organisation4.Id });
         }
     }
 }

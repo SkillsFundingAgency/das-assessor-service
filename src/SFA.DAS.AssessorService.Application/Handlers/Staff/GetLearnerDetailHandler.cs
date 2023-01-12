@@ -1,20 +1,20 @@
-﻿using MediatR;
+﻿using EnumsNET;
+using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.Api.Types.Enums;
-using EnumsNET;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<LearnerDetailResult> Handle(GetLearnerDetailRequest request,
             CancellationToken cancellationToken)
         {
-            var learner = await _learnerRepository.Get(request.Uln, request.StdCode);            
+            var learner = await _learnerRepository.Get(request.Uln, request.StdCode);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
             var logs = new List<CertificateLogSummary>();
@@ -166,7 +166,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             var thisData = JsonConvert.DeserializeObject<CertificateData>(thisLog.CertificateData);
             var prevData = JsonConvert.DeserializeObject<CertificateData>(prevLog.CertificateData);
-            
+
             // do not use generic change calculation for some properties
             var ignoreProperties = new string[] { nameof(CertificateData.EpaDetails),
                 nameof(CertificateData.ReprintReasons), nameof(CertificateData.AmendReasons) };
@@ -175,12 +175,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 if (ignoreProperties.Contains(propertyInfo.Name))
                     continue;
-                
+
                 var propertyIsList = propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType == typeof(List<string>);
 
                 var thisProperty = propertyInfo.GetValue(thisData)?.ToString();
                 var prevProperty = propertyInfo.GetValue(prevData)?.ToString();
-                
+
                 if (prevProperty is null && thisProperty is null)
                     continue;
 
@@ -191,11 +191,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                         thisProperty = result.UtcToTimeZoneTime().ToShortDateString();
                     }
 
-                    changes.Add(new CertificateLogSummary.Difference 
-                    { 
-                        Key = propertyInfo.Name.Spaceyfy(), 
+                    changes.Add(new CertificateLogSummary.Difference
+                    {
+                        Key = propertyInfo.Name.Spaceyfy(),
                         Values = new List<string>
-                        { 
+                        {
                             string.IsNullOrEmpty(thisProperty)
                                 ? "<Empty>"
                                 : thisProperty

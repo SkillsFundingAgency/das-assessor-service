@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.Extensions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Data
@@ -32,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _assessorDbContext.Organisations
                 .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);
         }
-        
+
 
         public async Task<Organisation> Get(string endPointAssessorOrganisationId)
         {
@@ -78,8 +77,8 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(q => q.Contacts)
                 .FirstOrDefaultAsync(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
-             //Ignore calling contact
-             return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
+            //Ignore calling contact
+            return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
         }
 
         public async Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
@@ -87,12 +86,12 @@ namespace SFA.DAS.AssessorService.Data
             var organisations = await _assessorDbContext
                 .OrganisationStandard
                 .Include(c => c.Organisation)
-                .Include(c=>c.OrganisationStandardDeliveryAreas)
-                .ThenInclude(c=>c.DeliveryArea)
+                .Include(c => c.OrganisationStandardDeliveryAreas)
+                .ThenInclude(c => c.DeliveryArea)
                 .Where(c => c.StandardCode == standard)
                 .ToListAsync();
 
-            return organisations.Select(c=>c.Organisation);
+            return organisations.Select(c => c.Organisation);
         }
 
         public async Task<Organisation> GetOrganisationByName(string name)
@@ -110,7 +109,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(c => c.Organisation)
                 .Include(c => c.Organisation.OrganisationType)
                 .FirstOrDefaultAsync(c => c.Id == contactId);
-            
+
             return contact.Organisation;
         }
 
@@ -129,9 +128,9 @@ namespace SFA.DAS.AssessorService.Data
             {
                 queryable = queryable.Where(mo => mo.SecondaryEndPointAssessorOrganisationId == secondaryEPAOId);
             }
-            if(!string.IsNullOrWhiteSpace(orderBy))
+            if (!string.IsNullOrWhiteSpace(orderBy))
             {
-                if(!string.IsNullOrWhiteSpace(orderDirection) && orderDirection.Equals("desc", StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(orderDirection) && orderDirection.Equals("desc", StringComparison.InvariantCultureIgnoreCase))
                 {
                     queryable = queryable.OrderByDescending(orderBy);
                 }
@@ -152,7 +151,7 @@ namespace SFA.DAS.AssessorService.Data
             var result = await queryable
                 .Skip(((pageIndex > 0) ? pageIndex - 1 : 0) * pageSize)
                 .Take(pageSize)
-                .Select(o => new MergeLogEntry() 
+                .Select(o => new MergeLogEntry()
                 {
                     Id = o.Id,
                     PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,

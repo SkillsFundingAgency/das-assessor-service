@@ -1,16 +1,13 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
+﻿using Dapper;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Dapper;
-using Newtonsoft.Json;
 using System.Linq;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -22,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data
             : base(unitOfWork)
         {
             _logger = logger;
-            
+
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -34,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data
                 "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
                     $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
-                    new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
+                    new { org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData }
                 );
 
             return org.OrganisationId;
@@ -47,7 +44,7 @@ namespace SFA.DAS.AssessorService.Data
                 "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
                     "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
+                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId });
 
             _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
 
@@ -125,7 +122,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas, bool applyFollowingWithdrawal=false)
+            List<int> deliveryAreas, bool applyFollowingWithdrawal = false)
         {
             var osdaId = (await _unitOfWork.Connection.QueryAsync<string>(
                 "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
@@ -144,7 +141,7 @@ namespace SFA.DAS.AssessorService.Data
 
             await _unitOfWork.Connection.ExecuteAsync(
                 "Delete from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId not in @deliveryAreas",
-                new {osdaId, deliveryAreas});
+                new { osdaId, deliveryAreas });
 
             foreach (var deliveryAreaId in deliveryAreas.Distinct())
             {
@@ -152,7 +149,7 @@ namespace SFA.DAS.AssessorService.Data
                     "IF NOT EXISTS (select * from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId = @DeliveryAreaId) " +
                         "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
                         "(@osdaId, @deliveryAreaId,'Live'); ",
-                        new {osdaId, deliveryAreaId});
+                        new { osdaId, deliveryAreaId });
             }
 
             await _unitOfWork.Connection.ExecuteAsync(

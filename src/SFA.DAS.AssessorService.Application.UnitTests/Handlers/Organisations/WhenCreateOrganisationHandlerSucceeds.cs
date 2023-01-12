@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -8,10 +6,12 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 {
- public class WhenCreateOrganisationHandlerSucceeds
+    public class WhenCreateOrganisationHandlerSucceeds
     {
         private Mock<IOrganisationRepository> _organisationRepositoryMock;
         private Mock<IContactRepository> _contactRepositoryMock;
@@ -25,10 +25,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
             CreateContractRepositoryMock();
             CreateOrganisationRepositoryMock();
 
-            var createOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew().Build();        
+            var createOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew().Build();
             var organisationQueryRepository = CreateOrganisationQueryRepository();
 
-            var createOrganisationHandler = new CreateOrganisationHandler(_organisationRepositoryMock.Object, 
+            var createOrganisationHandler = new CreateOrganisationHandler(_organisationRepositoryMock.Object,
                 organisationQueryRepository.Object,
                 _contactRepositoryMock.Object);
             _result = createOrganisationHandler.Handle(createOrganisationRequest, new CancellationToken()).Result;
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
         [Test]
         public void ItShouldReturnAResult()
-        { 
+        {
             var result = _result as Organisation;
             result.Should().NotBeNull();
         }

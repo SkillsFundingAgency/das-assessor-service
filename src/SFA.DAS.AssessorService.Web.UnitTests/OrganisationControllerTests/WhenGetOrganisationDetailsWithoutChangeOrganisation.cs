@@ -1,18 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Extensions;
-using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -24,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         public void Arrange()
         {
             base.Arrange(
-                addEpaoClaim: true, 
+                addEpaoClaim: true,
                 addUkprnClaim: false,
                 contactsPrivileges: new List<ContactsPrivilege>
                 {

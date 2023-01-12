@@ -7,7 +7,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Learner;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -230,7 +229,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 .ReturnsAsync(learner);
 
             _mockStandardVersionClient.Setup(c => c.GetStandardVersionsByLarsCode(It.IsAny<int>())).ReturnsAsync(standards);
-                        
+
             _mockSessionService.Setup(c => c.Set(nameof(CertificateSession), It.IsAny<object>()))
                 .Callback<string, object>((key, session) =>
                 {

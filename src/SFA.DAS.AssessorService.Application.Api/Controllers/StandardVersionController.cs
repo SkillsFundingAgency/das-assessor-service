@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation($@"Get Standard Version for Id {id} from Standard Service");
             var standard = await _standardService.GetStandardVersionById(id);
-            if(standard == null)
+            if (standard == null)
             {
                 return NotFound();
             }

@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.De
         private Mock<IUnitOfWork> _mockUnitOfWork;
         private Mock<ILogger<DeleteApplicationsHandler>> _mockLogger;
 
-        private Guid  _applicationId1, _applicationId2;
+        private Guid _applicationId1, _applicationId2;
         private Guid _contactId;
 
         [SetUp]

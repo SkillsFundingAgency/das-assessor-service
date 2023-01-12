@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.CompaniesHouse
         public string company_number { get; set; } // Corporate Only
         public string country_of_registration { get; set; } // Corporate Only
         public string name { get; set; } // Corporate Only
-        
+
         public string title { get; set; } // Natural Only
         public string forename { get; set; } // Natural Only
         public string other_forenames { get; set; } // Natural Only

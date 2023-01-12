@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await LoadViewModel<CertificateSendToViewModel>("~/Views/Certificate/SendTo.cshtml");
         }
-        
+
         [HttpPost(Name = "SendTo")]
         public async Task<IActionResult> SendTo(CertificateSendToViewModel vm)
         {
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SessionService.SetRedirectToCheck(false);
             }
 
-            var actionResult = await SaveViewModel(vm, 
+            var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/SendTo.cshtml",
                 nextAction: nextAction, action: CertificateActions.SendTo);
 

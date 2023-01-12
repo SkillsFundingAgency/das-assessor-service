@@ -23,9 +23,9 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
             var orgTypes = await _unitOfWork.Connection.QueryAsync<OrganisationType>(
-                @"select * from [OrganisationType] where Status <> 'Deleted' order by id", 
+                @"select * from [OrganisationType] where Status <> 'Deleted' order by id",
                 transaction: _unitOfWork.Transaction);
-            
+
             return orgTypes;
         }
 
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Data
                     "WHERE O.EndPointAssessorOrganisationId = @organisationId";
 
             var org = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<EpaOrganisation>(sql, new { organisationId });
-            
+
             return org;
         }
 

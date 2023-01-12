@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             certData.SendTo = SendTo;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
-            
+
             return certificate;
         }
 

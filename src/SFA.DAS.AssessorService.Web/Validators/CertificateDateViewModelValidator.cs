@@ -1,8 +1,8 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Validators
 {

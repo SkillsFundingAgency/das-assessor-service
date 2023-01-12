@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -12,6 +7,11 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
@@ -100,13 +100,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         }
 
         private async Task<Certificate> Update(UpdateCertificateRequest request)
-        { 
+        {
             var logs = await _certificateRepository.GetCertificateLogsFor(request.Certificate.Id);
             var latestLogEntry = logs.OrderByDescending(l => l.EventTime).FirstOrDefault();
-            
+
             if (latestLogEntry != null && latestLogEntry.Action == request.Action && latestLogEntry.CertificateData == request.Certificate.CertificateData && string.IsNullOrWhiteSpace(request.ReasonForChange))
             {
-                return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog:false);
+                return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog: false);
             }
 
             return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog: true, reasonForChange: request.ReasonForChange);

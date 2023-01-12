@@ -12,4 +12,4 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string CourseOption { get; set; }
         public string StandardUId { get; set; }
     }
-}   
+}

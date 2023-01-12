@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
             _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicationApiClient.Object,
                 _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
-        
+
         [Test]
         public async Task Then_ResetApplicationToStage1_calls_ApiToResetApplicationToStage1()
         {

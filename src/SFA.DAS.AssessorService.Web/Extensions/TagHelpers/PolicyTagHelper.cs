@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 {
-    [HtmlTargetElement("div", Attributes = PolicyTagHelperAttributeName )]
-    [HtmlTargetElement("a", Attributes = PolicyTagHelperAttributeName )]
+    [HtmlTargetElement("div", Attributes = PolicyTagHelperAttributeName)]
+    [HtmlTargetElement("a", Attributes = PolicyTagHelperAttributeName)]
     public class PolicyTagHelper : TagHelper
     {
         private readonly IHttpContextAccessor _contextAccessor;

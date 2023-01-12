@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
-using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             var response = await _outerApiClient.Get<GetStandardsListResponse>(new GetActiveStandardsRequest());
             return response.Standards;
-        }       
+        }
 
         public async Task<IEnumerable<StandardDetailResponse>> GetAllStandards()
         {

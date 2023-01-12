@@ -50,11 +50,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if(organisation is null)
+            else if (organisation is null)
             {
                 return RedirectToAction("Index", "OrganisationSearch");
             }
-            else if(user.Status == ContactStatus.Applying || organisation.Status == OrganisationStatus.Applying)
+            else if (user.Status == ContactStatus.Applying || organisation.Status == OrganisationStatus.Applying)
             {
                 return RedirectToAction("Applications", "Application");
             }
@@ -65,7 +65,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else if (user.EndPointAssessorOrganisationId is null)
             {
                 return RedirectToAction("NotRegistered", "Home");
-            }else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
+            }
+            else if (user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
             {
                 return RedirectToAction("NotActivated", "Home");
             }

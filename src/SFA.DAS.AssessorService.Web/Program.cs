@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
+using System;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -36,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web
                     {
                         hostingEnvironment = services
                             .Where(x => x.ServiceType == typeof(IHostingEnvironment))
-                            .Select(x => (IHostingEnvironment) x.ImplementationInstance)
+                            .Select(x => (IHostingEnvironment)x.ImplementationInstance)
                             .First();
                     })
                 .UseStartup<Startup>()

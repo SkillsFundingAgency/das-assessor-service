@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Data
                 .HasOne(c => c.CertificateBatchLog)
                 .WithOne(s => s.Certificate)
                 .HasForeignKey<CertificateBatchLog>(sc => new { sc.CertificateReference, sc.BatchNumber });
-                
+
             modelBuilder.Entity<CertificateBatchLog>()
                 .HasKey(c => new { c.CertificateReference, c.BatchNumber });
 
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Data
                 .HasOne(c => c.Certificate)
                 .WithOne(c => c.CertificateBatchLog)
                 .HasForeignKey<Certificate>(c => new { c.CertificateReference, c.BatchNumber });
-            
+
             modelBuilder.Entity<ContactsPrivilege>()
                 .HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
 
@@ -114,13 +114,13 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandard>()
                 .ToTable("OrganisationStandard");
-            
+
             modelBuilder.Entity<OrganisationStandard>()
                 .HasOne(c => c.Organisation)
                 .WithMany(c => c.OrganisationStandards)
                 .HasPrincipalKey(c => c.EndPointAssessorOrganisationId)
                 .HasForeignKey(c => c.EndPointAssessorOrganisationId);
-            
+
             modelBuilder.Entity<OrganisationStandardVersion>()
                 .ToTable("OrganisationStandardVersion")
                 .HasKey(c => new { c.OrganisationStandardId, c.StandardUId });
@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .ToTable("OrganisationStandardDeliveryArea");
-            
+
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.OrganisationStandard)
                 .WithMany(c => c.OrganisationStandardDeliveryAreas)
@@ -202,7 +202,7 @@ namespace SFA.DAS.AssessorService.Data
                 .HasConversion(
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
-            
+
             modelBuilder.Entity<Organisation>()
                .Property(e => e.OrganisationData)
                .HasConversion(

@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
                 {
                     ApplicationId = _applicationId
                 });
-           
+
             _controller = new WithdrawalDateValidationController(_qnaApiClient.Object, _mockMediator.Object, Mock.Of<ILogger<WithdrawalDateValidationController>>());
         }
 

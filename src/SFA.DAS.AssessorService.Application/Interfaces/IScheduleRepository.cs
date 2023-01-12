@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {

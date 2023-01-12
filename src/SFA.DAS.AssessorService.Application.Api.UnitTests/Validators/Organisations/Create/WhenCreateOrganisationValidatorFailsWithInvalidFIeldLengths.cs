@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisations.Create
-{ 
+{
     public class WhenCreateOrganisationValidatorFailsWithInvalidFIeldLengths : OrganisationCreateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
 
         [Test]
         public void ThenItShouldFail()
-        {        
+        {
             _validationResult.IsValid.Should().BeFalse();
         }
 

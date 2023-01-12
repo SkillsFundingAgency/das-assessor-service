@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -53,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 
             _sut = new ApplicationService(_mockQnaApiClient.Object, _mockApplicatonApiClient.Object, _mockLearnerDetailsApiClient.Object, _mockOrganisationsApiClient.Object);
         }
-        
+
         [Test]
         public async Task Then_GetPipelinesCount_is_called()
         {
@@ -64,8 +63,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
             // Act
             await _sut.BuildStandardWithdrawalRequest(
                 new ContactResponse { Id = Guid.NewGuid() },
-                new OrganisationResponse 
-                { 
+                new OrganisationResponse
+                {
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
@@ -95,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 
             // Assert
             _mockQnaApiClient
-                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p => 
+                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p =>
                 JsonConvert.DeserializeObject<ApplicationData>(p.ApplicationData).PipelinesCount == _pipelinesCount)));
         }
 
@@ -142,7 +141,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 
             // Assert
             _mockQnaApiClient
-                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p => 
+                .Verify(r => r.StartApplications(It.Is<StartApplicationRequest>(p =>
                 JsonConvert.DeserializeObject<ApplicationData>(p.ApplicationData).EarliestDateOfWithdrawal == _earliestWithdrawalDate)));
         }
 

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly ISpecialCharacterCleanserService _cleanser;
         private readonly IEpaOrganisationValidator _validator;
 
-        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, 
+        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger,
                                             ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
         {
             _registerRepository = registerRepository;
@@ -50,23 +50,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
                 //Incase there already an existing organisation then return that , this is part of ON-2084
                 var organisationId = await _registerQueryRepository.GetEpaOrgIdByEndPointAssessmentName(request.Name);
-                if(!string.IsNullOrEmpty(organisationId))
+                if (!string.IsNullOrEmpty(organisationId))
                     return organisationId;
             }
 
-         
+
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
                 throw new Exception("A valid organisation Id could not be generated");
 
             var organisation = MapOrganisationRequestToOrganisation(request, newOrganisationId);
             return await _registerRepository.CreateEpaOrganisation(organisation);
-         
+
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationRequest request)
         {
-            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);           
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);
             request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
             request.TradingName = _cleanser.CleanseStringForSpecialCharacters(request.TradingName);
             request.ProviderName = _cleanser.CleanseStringForSpecialCharacters(request.ProviderName);
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
             request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
             request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
-            
+
             request.OrganisationReferenceType =
                 _cleanser.CleanseStringForSpecialCharacters(request.OrganisationReferenceType);
             request.OrganisationReferenceId =
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     CompanyNumber = request.CompanyNumber,
                     CompanySummary = request.CompanySummary,
                     CharityNumber = request.CharityNumber,
-                    CharitySummary = request.CharitySummary,                    
+                    CharitySummary = request.CharitySummary,
                     OrganisationReferenceType = request.OrganisationReferenceType,
                     OrganisationReferenceId = request.OrganisationReferenceId,
                     RoATPApproved = request.RoATPApproved,

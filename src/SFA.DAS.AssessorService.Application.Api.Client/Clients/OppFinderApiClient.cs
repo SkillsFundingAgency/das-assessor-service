@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class OppFinderApiClient : ApiClientBase, IOppFinderApiClient
     {
-        public OppFinderApiClient(string baseUri,ITokenService tokenService,
+        public OppFinderApiClient(string baseUri, ITokenService tokenService,
             ILogger<OppFinderApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
@@ -37,10 +34,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<GetOppFinderNonApprovedStandardsResponse> GetNonApprovedStandards(GetOppFinderNonApprovedStandardsRequest nonApprovedStandradsRequest )
+        public async Task<GetOppFinderNonApprovedStandardsResponse> GetNonApprovedStandards(GetOppFinderNonApprovedStandardsRequest nonApprovedStandradsRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/nonapproved"))
-            {                    
+            {
                 return await PostPutRequestWithResponse<GetOppFinderNonApprovedStandardsRequest, GetOppFinderNonApprovedStandardsResponse>(request,
                     nonApprovedStandradsRequest);
             }

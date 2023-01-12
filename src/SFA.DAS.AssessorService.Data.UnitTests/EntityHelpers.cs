@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests
 {

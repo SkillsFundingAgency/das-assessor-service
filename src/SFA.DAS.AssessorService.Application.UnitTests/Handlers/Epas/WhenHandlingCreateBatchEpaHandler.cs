@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockMediator.Setup(s => s.Send(It.IsAny<StartCertificateRequest>(), new CancellationToken())).ReturnsAsync(certificate);
-            
+
             //Act
             var result = await _sut.Handle(request, new CancellationToken());
 

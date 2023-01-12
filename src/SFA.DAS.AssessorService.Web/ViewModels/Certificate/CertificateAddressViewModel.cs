@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     public class CertificateAddressViewModel : CertificateSendToViewModel
     {
         public string Employer { get; set; }
-        
+
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }

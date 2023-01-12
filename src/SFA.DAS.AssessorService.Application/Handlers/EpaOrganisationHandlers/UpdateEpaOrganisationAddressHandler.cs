@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationAddressHandler : IRequestHandler<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>
-    { 
+    {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 ? await _contactQueryRepository.GetContactById(request.UpdatedBy.Value)
                 : null;
 
-            string valueAdded = string.Join(", ", 
+            string valueAdded = string.Join(", ",
                 (new List<string>
                 {
                     request.AddressLine1,
@@ -51,13 +51,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 })
                 .Where(p => !string.IsNullOrEmpty(p))
                 .ToArray());
-          
+
             return await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
-                {
-                    OrganisationId = request.OrganisationId,
-                    PropertyChanged = "Contact address",
-                    ValueAdded = valueAdded,
-                    Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+            {
+                OrganisationId = request.OrganisationId,
+                PropertyChanged = "Contact address",
+                ValueAdded = valueAdded,
+                Editor = updatedBy?.DisplayName ?? "EFSA Staff"
             });
         }
     }

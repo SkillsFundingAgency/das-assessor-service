@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +6,12 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -50,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-           
+
             List<string> options = new List<string>();
             var singleOption = string.Empty;
             List<StandardVersion> versions = new List<StandardVersion>();
@@ -104,7 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 versions = versionsResult.ToList();
 
-                if (versionsResult.Count() == 1) 
+                if (versionsResult.Count() == 1)
                 {
                     startCertificateRequest.StandardUId = versionsResult.First().StandardUId;
 

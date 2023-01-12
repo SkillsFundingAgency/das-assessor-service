@@ -31,9 +31,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("organisationstandardversion", Name = "CreateOrganisationStandardVersion")]
         [ValidateBadRequest]
-        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisationStandardVersion(
             [FromBody] OrganisationStandardVersionOptInRequest request)
         {
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var version = await _mediator.Send(request);
 
             return CreatedAtRoute("CreateOrganisationStandardVersion",
-                new {id = version.StandardUId},
+                new { id = version.StandardUId },
                 version);
         }
 
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(EpaoStandardVersionResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task <IActionResult> UpdateOrganisationStandardVersion(
+        public async Task<IActionResult> UpdateOrganisationStandardVersion(
             [FromBody] UpdateOrganisationStandardVersionRequest request)
         {
             try
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 return BadRequest(new EpaoStandardVersionResponse(ex.Message));
             }
-            
+
         }
     }
 }

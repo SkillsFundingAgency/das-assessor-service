@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
             Session = new Mock<ISession>();
             contextAccessor.SetupGet(ca => ca.HttpContext.Session).Returns(Session.Object);
 
-            
+
 
             SearchOrchestrator = new Mock<ISearchOrchestrator>();
 
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .ReturnsAsync(new SearchRequestViewModel()
                 {
                     SearchResults =
-                        new List<ResultViewModel>() {new ResultViewModel() {FamilyName = "Gouge", Uln = "1234567890"}}
+                        new List<ResultViewModel>() { new ResultViewModel() { FamilyName = "Gouge", Uln = "1234567890" } }
                 });
 
             SearchOrchestrator.Setup(s =>
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                     SearchResults =
                         new List<ResultViewModel>()
                 });
-            
+
 
             SessionService = new Mock<ISessionService>();
             SearchController = new SearchController(SearchOrchestrator.Object, SessionService.Object);

@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 context.Response.Headers["Pragma"] = "no-cache";
                 await next();
             });
-            
+
             return app;
         }
     }

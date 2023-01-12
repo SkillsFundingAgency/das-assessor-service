@@ -12,7 +12,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
@@ -215,7 +214,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.StandardCode.Should().Be(standard.LarsCode);
             request.StandardReference.Should().NotBe(standard.IfateReferenceNumber);
             request.StandardUId.Should().Be(standard.StandardUId);
-                        
+
             request.StandardUId.Should().NotBe(certificate.StandardUId);
             request.Version.Should().NotBe(certificateData.Version);
         }
@@ -363,7 +362,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
 
             //Assert
             _mockMediator.Verify(a => a.Send(It.Is<GetStandardVersionRequest>(b => b.StandardId == request.StandardReference && b.Version == null), new System.Threading.CancellationToken()), Times.Once);
-            _mockMediator.Verify(a => a.Send(It.Is<DeleteBatchEpaRequest>(b => 
+            _mockMediator.Verify(a => a.Send(It.Is<DeleteBatchEpaRequest>(b =>
                 b.StandardCode == standard.LarsCode &&
                 b.StandardReference == standard.IfateReferenceNumber &&
                 b.UkPrn == request.UkPrn &&

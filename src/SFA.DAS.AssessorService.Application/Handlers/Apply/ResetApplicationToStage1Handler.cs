@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
-        public ResetApplicationToStage1Handler(IApplyRepository applyRepository, IMediator mediator, 
+        public ResetApplicationToStage1Handler(IApplyRepository applyRepository, IMediator mediator,
             IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository)
         {
             _applyRepository = applyRepository;
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             var contactToNotify = await _contactQueryRepository.GetContactById(submittedBy);
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOCancelApplication);
-            
+
             await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                 new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardWithReference = standardWithReference }), cancellationToken);
         }

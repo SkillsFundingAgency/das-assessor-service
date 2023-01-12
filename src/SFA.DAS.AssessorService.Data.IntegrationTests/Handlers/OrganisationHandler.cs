@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Dapper;
+﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
@@ -21,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES " +
                 $@"(@id,@createdAt, @deletedAt, @endPointAssessorName, @endPointAssessorOrganisationId, @endPointAssessorUkprn, @primaryContact, @status, @updatedAt, @organisationTypeId, @organisationData); ";
 
-            DatabaseService.Execute(sql,organisation);
+            DatabaseService.Execute(sql, organisation);
         }
 
         public static void InsertRecords(List<OrganisationModel> organisations)
@@ -43,12 +41,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sqlToCheckExists =
                     "select CONVERT(BIT,CASE count(0) WHEN 0 THEN 0 else 1 end) FROM [Organisations] " +
                     $@"WHERE EndPointAssessorOrganisationId = '{organisationId}'";
-            return (bool) DatabaseService.ExecuteScalar(sqlToCheckExists);
+            return (bool)DatabaseService.ExecuteScalar(sqlToCheckExists);
         }
 
         public static AssessmentOrganisationSummary GetOrganisationSummaryByOrgId(string orgId)
         {
-             var organisation = DatabaseService.Get<AssessmentOrganisationSummary>($@"select EndpointAssessorName as Name, EndPointAssessorOrganisationId as Id, EndPointAssessorUkprn as ukprn from Organisations where endpointassessororganisationid = '{orgId}'");
+            var organisation = DatabaseService.Get<AssessmentOrganisationSummary>($@"select EndpointAssessorName as Name, EndPointAssessorOrganisationId as Id, EndPointAssessorUkprn as ukprn from Organisations where endpointassessororganisationid = '{orgId}'");
             return organisation;
         }
 

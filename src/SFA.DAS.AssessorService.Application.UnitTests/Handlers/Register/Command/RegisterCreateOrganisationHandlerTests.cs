@@ -1,17 +1,16 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
@@ -41,9 +40,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerQueryRepository = new Mock<IRegisterQueryRepository>();
             _organisationId = "EPA999";
 
-            _requestNoIssues = BuildRequest("name 1",123321);
+            _requestNoIssues = BuildRequest("name 1", 123321);
             _expectedOrganisationNoIssues = BuildOrganisation(_requestNoIssues, _organisationId);
-     
+
             _registerRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
                 .Returns(Task.FromResult(_expectedOrganisationNoIssues.OrganisationId));
             _registerQueryRepository.Setup(x => x.GetEpaOrgIdByEndPointAssessmentName(It.IsAny<string>())).Returns(Task.FromResult("EPA0001"));
@@ -55,8 +54,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(x => x.ValidatorCreateEpaOrganisationRequest(It.IsAny<CreateEpaOrganisationRequest>()))
                 .Returns(validationResponse);
 
-            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _registerQueryRepository.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object, _validator.Object);
-          }
+            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _registerQueryRepository.Object, _idGenerator.Object, _logger.Object, _cleanserService.Object, _validator.Object);
+        }
 
         [Test]
         public void GetOrganisationDetailsRepoIsCalledWhenHandlerInvoked()
@@ -94,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
 
             Assert.Throws<AggregateException>(() => message = createOperation.Result);
         }
-    
+
 
         private CreateEpaOrganisationRequest BuildRequest(string name, long? ukprn)
         {

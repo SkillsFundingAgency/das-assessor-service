@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (null == secondaryOrganisation) throw new ArgumentNullException(nameof(secondaryOrganisation), "secondaryOrganisation must be specified.");
 
             var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
-            return await executionStrategy.ExecuteAsync( async () =>
+            return await executionStrategy.ExecuteAsync(async () =>
             {
                 using (var transaction = _dbContext.Database.BeginTransaction())
                 {
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private bool HasAlreadyMergedAsSecondaryOrganisation(string secondaryEndpointAssessorOrganisationId)
         {
-            return _dbContext.MergeOrganisations.Any(mo => 
+            return _dbContext.MergeOrganisations.Any(mo =>
             mo.SecondaryEndPointAssessorOrganisationId == secondaryEndpointAssessorOrganisationId
             && (mo.Status != MergeOrganisationStatus.Reverted));
         }
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         {
             mo.ApprovedBy = approvedByUser;
             mo.ApprovedAt = DateTime.UtcNow;
-            mo.Status = MergeOrganisationStatus.Approved;            
+            mo.Status = MergeOrganisationStatus.Approved;
         }
 
         private void CompleteMerge(MergeOrganisation mo, string completedByUser)
@@ -224,12 +224,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 // Now read all the versions for this standard for the secondary organisation.
 
-                foreach(var secondaryOrganisationStandardVersion in secondaryOrganisationStandard.OrganisationStandardVersions)
+                foreach (var secondaryOrganisationStandardVersion in secondaryOrganisationStandard.OrganisationStandardVersions)
                 {
                     // Does the standard version exist for this standard in the primary organisation?
 
                     var primaryOrganisationStandardVersion = primaryOrganisationStandard.OrganisationStandardVersions.FirstOrDefault(posv => posv.StandardUId == secondaryOrganisationStandardVersion.StandardUId && posv.Version == secondaryOrganisationStandardVersion.Version);
-                    if(null == primaryOrganisationStandardVersion)
+                    if (null == primaryOrganisationStandardVersion)
                     {
                         // No - so add the standard version to the standard for the primary organisation.
 
@@ -258,7 +258,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     // Does the primary organisation standard have this delivery area?
                     var primaryOrganisationStandardDeliveryArea = primaryOrganisationStandard.OrganisationStandardDeliveryAreas.FirstOrDefault(posda => posda.DeliveryAreaId == secondaryOrganisationStandardDeliveryArea.DeliveryAreaId);
 
-                    if(null == primaryOrganisationStandardDeliveryArea)
+                    if (null == primaryOrganisationStandardDeliveryArea)
                     {
                         // No - so add the area
 
@@ -289,12 +289,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         private void CreateApplySnapshot(MergeOrganisation mergeOrganisation, string endpointAssessorOrganisationId, string replicates)
         {
             var applications = _dbContext.Applications.Include("Organisation").Where(e => e.Organisation.EndPointAssessorOrganisationId == endpointAssessorOrganisationId);
-            foreach(var application in applications)
+            foreach (var application in applications)
             {
                 var mergeApplication = MergeApply.CreateFrom(application);
                 mergeApplication.Replicates = replicates;
                 mergeOrganisation.MergeSecondaryApplications.Add(mergeApplication);
-            }            
+            }
         }
 
         private void DeleteInProgressApplications(Organisation organisation, string deletedByUser)
@@ -302,7 +302,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var applications = _dbContext.Applications.Where(e => e.Organisation.EndPointAssessorOrganisationId == organisation.EndPointAssessorOrganisationId);
             foreach (var application in applications)
             {
-                if(application.ApplicationStatus == ApplyTypes.ApplicationStatus.InProgress)
+                if (application.ApplicationStatus == ApplyTypes.ApplicationStatus.InProgress)
                 {
                     application.DeletedAt = DateTime.UtcNow;
                     application.ApplicationStatus = ApplyTypes.ApplicationStatus.Deleted;

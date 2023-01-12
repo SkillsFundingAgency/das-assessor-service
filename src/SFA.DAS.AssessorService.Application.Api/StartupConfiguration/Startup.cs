@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _logger = logger;
 
             _logger.LogInformation("In startup constructor.  Before GetConfig");
-            
+
             Configuration = ConfigurationService
                 .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             IServiceProvider serviceProvider;
             try
-            {            
+            {
                 services.AddAuthentication(o =>
                     {
                         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -86,8 +86,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                             validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
                             validAudiences.Add(Configuration.ApiAuthentication.ClientId);
                         }
-                        
-                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
+
+                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}";
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
@@ -97,10 +97,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         {
                             OnTokenValidated = context => { return Task.FromResult(0); }
                         };
-                    });    
-                
+                    });
+
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-                
+
                 services.Configure<RequestLocalizationOptions>(options =>
                 {
                     options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     {
                         config.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
                         config.CustomSchemaIds(i => i.FullName);
-                        
+
                         if (_env.IsDevelopment())
                         {
                             var basePath = AppContext.BaseDirectory;
@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                             config.OperationFilter<SecurityRequirementsOperationFilter>();
                         }
                     });
- 
+
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
@@ -169,9 +169,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                
+
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
-                
+
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
@@ -204,10 +204,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-          
+
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
                 config.For<ISignInService>().Use<SignInService>();
-              
+
                 var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
 
@@ -243,7 +243,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 MappingStartup.AddMappings();
 
                 //app.UseSecurityHeaders();
-                
+
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
@@ -261,7 +261,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .UseAuthentication();
 
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-                
+
                 app.UseRequestLocalization();
                 app.UseHealthChecks("/health");
                 app.UseMvc();
@@ -288,6 +288,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 Tenant = ""
             };
         }
-    
+
     }
 }

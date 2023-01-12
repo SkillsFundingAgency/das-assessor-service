@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Web.Controllers;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {
@@ -26,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             _httpContextAccessor = httpContextAccessor;
             _environment = environment;
         }
-        
+
         public void Set(string key, object value)
         {
             _httpContextAccessor.HttpContext.Session.SetString(_environment + "_" + key,
@@ -61,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
             var value = session.GetString(key);
 
-            return string.IsNullOrWhiteSpace(value) ? default(T): JsonConvert.DeserializeObject<T>(value);
+            return string.IsNullOrWhiteSpace(value) ? default(T) : JsonConvert.DeserializeObject<T>(value);
         }
 
         public bool Exists(string key)
@@ -71,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
         public bool TryGet<T>(string key, out T value)
         {
-            if(Exists(key))
+            if (Exists(key))
             {
                 value = Get<T>(key);
                 return true;

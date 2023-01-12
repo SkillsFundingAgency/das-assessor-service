@@ -10,4 +10,3 @@ namespace SFA.DAS.AssessorService.Web.ViewModels
         public long LastRenewedTicks { get; set; }
     }
 }
- 
