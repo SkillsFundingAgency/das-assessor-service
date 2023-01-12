@@ -25,9 +25,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             _mockConfig = new Mock<IWebConfiguration>();
             _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockLogger = new Mock<ILogger<GetPipelinesCountHandler>>();
-            
 
-            _sut = new GetPipelinesCountHandler(_mockConfig.Object, _mockLearnerRepository.Object, _mockLogger.Object); 
+
+            _sut = new GetPipelinesCountHandler(_mockConfig.Object, _mockLearnerRepository.Object, _mockLogger.Object);
         }
 
         [TestCase("EPA0200", 287, 5)]

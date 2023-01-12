@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string PrimaryContact { get; set; }
         public string PrimaryContactName { get; set; }
         public string Status { get; set; }
-        public DateTime? UpdatedAt { get; set; }     
+        public DateTime? UpdatedAt { get; set; }
         public OrganisationData OrganisationData { get; set; }
         public bool ApiEnabled { get; set; }
         public string ApiUser { get; set; }

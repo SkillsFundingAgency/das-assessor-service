@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +6,8 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.InviteUserControllerTests
 {

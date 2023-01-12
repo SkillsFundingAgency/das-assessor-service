@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -66,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationContactRequest request)
         {
-            request.FirstName  = _cleanser.CleanseStringForSpecialCharacters(request.FirstName);
+            request.FirstName = _cleanser.CleanseStringForSpecialCharacters(request.FirstName);
             request.LastName = _cleanser.CleanseStringForSpecialCharacters(request.LastName);
             request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);
             request.PhoneNumber = _cleanser.CleanseStringForSpecialCharacters(request.PhoneNumber);

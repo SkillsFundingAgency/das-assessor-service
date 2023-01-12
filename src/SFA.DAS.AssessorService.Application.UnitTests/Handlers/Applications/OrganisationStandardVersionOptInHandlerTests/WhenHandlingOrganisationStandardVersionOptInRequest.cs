@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
         private Mock<IUnitOfWork> _mockUnitOfWork;
         private Mock<ILogger<OrganisationStandardVersionOptInHandler>> _mockLogger;
 
-        private Guid  _applicationId;
+        private Guid _applicationId;
         private Domain.DTOs.EmailTemplateSummary _emailTemplate;
         private List<string> _emailRequestTokens;
 
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                     x.OrganisationStandardId == 123 &&
                     x.StandardUId == "ST0001_1_2" &&
                     x.Version == "1.2")));
-         }
+        }
 
         [Test]
         public async Task ThenApplicationIsSubmitted()
@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            _mockMediator.Verify(m => m.Send(It.Is<SendEmailRequest>(x => x.Email == "a@b.com" && x.EmailTemplateSummary == _emailTemplate), 
+            _mockMediator.Verify(m => m.Send(It.Is<SendEmailRequest>(x => x.Email == "a@b.com" && x.EmailTemplateSummary == _emailTemplate),
                                                 It.IsAny<CancellationToken>()));
 
             _emailRequestTokens.Should().Contain(expectedTokens);
@@ -181,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 ApplicationId = _applicationId
             };
 
-            _mockRepository.Setup(m => m.CreateOrganisationStandardVersion(It.IsAny< Domain.Entities.OrganisationStandardVersion>()))
+            _mockRepository.Setup(m => m.CreateOrganisationStandardVersion(It.IsAny<Domain.Entities.OrganisationStandardVersion>()))
                             .Throws(new Exception());
 
             //Act
@@ -189,7 +189,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             {
                 await _sut.Handle(request, new CancellationToken());
             }
-            catch(Exception)
+            catch (Exception)
             { }
 
             //Assert

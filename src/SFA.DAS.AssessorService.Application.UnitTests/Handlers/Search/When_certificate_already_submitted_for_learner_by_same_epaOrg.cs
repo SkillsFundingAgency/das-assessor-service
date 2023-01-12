@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -39,8 +38,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
                         CreatedBy = "username",
-                        CertificateLogs = new List<CertificateLog> 
-                        { 
+                        CertificateLogs = new List<CertificateLog>
+                        {
                             new CertificateLog()
                             {
                                 CertificateData = JsonConvert.SerializeObject(new CertificateData
@@ -53,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 EventTime = new DateTime(2018, 2, 3, 13, 23, 33),
                                 Username = "username",
                                 Action = CertificateActions.Submit
-                            } 
+                            }
                         },
                     }
                 });
@@ -78,10 +77,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             ContactRepository.Setup(cr => cr.GetContact("username"))
-                .ReturnsAsync(new Contact() {DisplayName = "EPAO User from same EAPOrg"});
+                .ReturnsAsync(new Contact() { DisplayName = "EPAO User from same EAPOrg" });
 
             LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Domain.Entities.Learner> {new Domain.Entities.Learner() {StdCode = 12, FamilyName = "Lamora"}});
+                .ReturnsAsync(new List<Domain.Entities.Learner> { new Domain.Entities.Learner() { StdCode = 12, FamilyName = "Lamora" } });
         }
 
 
@@ -90,13 +89,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
 
-            result[0].SubmittedAt.Should().Be(new DateTime(2018,2,3,13,23,33));
+            result[0].SubmittedAt.Should().Be(new DateTime(2018, 2, 3, 13, 23, 33));
             result[0].SubmittedBy.Should().Be("EPAO User from same EAPOrg");
-            result[0].LearnStartDate.Should().Be(new DateTime(2015,06,01));
-            result[0].AchDate.Should().Be(new DateTime(2018,06,01));
+            result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
+            result[0].AchDate.Should().Be(new DateTime(2018, 06, 01));
             result[0].OverallGrade.Should().Be("Distinction");
             result[0].ShowExtraInfo.Should().BeTrue();
         }

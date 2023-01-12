@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsControllerTests
 {
@@ -20,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         {
             _result = await Controller.Details(UserId);
         }
-        
+
         [Test]
         public void Then_a_ViewResult_is_returned()
         {

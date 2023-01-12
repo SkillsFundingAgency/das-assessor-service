@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
 using System.Linq;

@@ -541,7 +541,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.OppFinder
                     standardStatus == StandardStatus.InDevelopment
                         ? "in-development"
                         : "proposed");
-                      
+
             var vm = new OppFinderNonApprovedDetailsViewModel
             {
                 StandardStatus = standardStatus,

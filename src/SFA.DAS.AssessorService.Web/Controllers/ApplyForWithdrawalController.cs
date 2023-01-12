@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IStandardVersionClient _standardVersionApiClient;
         private readonly IWebConfiguration _config;
 
-        public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, 
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, 
+        public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient,
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor,
             IStandardsApiClient standardsApiClient, IStandardVersionClient standardVersionApiClient, IWebConfiguration config)
-            : base (applicationApiClient, contactsApiClient, httpContextAccessor)
+            : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
@@ -73,11 +73,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal(TypeOfWithdrawalViewModel viewModel)
         {
-            if(string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
+            if (string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
             {
                 ModelState.AddModelError(nameof(viewModel.TypeOfWithdrawal), "Select standard or register");
             }
-            
+
             if (ModelState.IsValid)
             {
                 if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         new { iFateReferenceNumber = iFateReferenceNumber, backAction = nameof(WholeStandardOrVersion) });
                 else
                     return RedirectToAction(
-                        nameof(ReviewStandardVersions), 
+                        nameof(ReviewStandardVersions),
                         nameof(ApplyForWithdrawalController).RemoveController(),
                         new { iFateReferenceNumber = iFateReferenceNumber });
             }
@@ -183,11 +183,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Level = standard.Level,
                 StandardName = standard.Title,
                 Versions = versions.Select(x => new ReviewStandardVersion()
-                                        {
-                                            Version = x.Version,
-                                            AbleToWithdraw = !applications.Any(a => a.ApplyData.Apply.Versions != null &&
-                                                                                    a.ApplyData.Apply.Versions.Contains(x.Version))
-                                        })
+                {
+                    Version = x.Version,
+                    AbleToWithdraw = !applications.Any(a => a.ApplyData.Apply.Versions != null &&
+                                                            a.ApplyData.Apply.Versions.Contains(x.Version))
+                })
                                         .OrderByDescending(x => x.Version)
                                         .ToList()
             });
@@ -396,7 +396,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return (await _applicationApiClient.GetWithdrawalApplications(contactId))
                     .Where(x => x.IsStandardWithdrawalApplication &&
-                                (iFateReferenceNumber == null || 
+                                (iFateReferenceNumber == null ||
                                     (!string.IsNullOrWhiteSpace(x.StandardReference) &&
                                         x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase))) &&
                                 (x.ApplicationStatus == ApplicationStatus.InProgress ||

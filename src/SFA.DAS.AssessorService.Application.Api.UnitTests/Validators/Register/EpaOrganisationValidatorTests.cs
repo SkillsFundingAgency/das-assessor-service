@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -9,6 +6,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
 {
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var noMessageReturned = _validator.CheckOrganisationName(name).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
-        
+
         [TestCase("name", true)]
         [TestCase("    ", false)]
         [TestCase("", false)]
@@ -223,37 +223,37 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var noMessageReturned = _validator.CheckUkprnIsValid(ukprn).Length == 0;
             Assert.AreEqual(isValid, noMessageReturned);
         }
-        
+
         [TestCase("name", true, "")]
         [TestCase("    ", false, "DisplayNameIsMissing; ")]
         [TestCase("", false, "DisplayNameIsMissing; ")]
-        [TestCase(null, false,"DisplayNameIsMissing; ")]
-        [TestCase("a", false,  "DisplayNameTooShort; ")]
-        [TestCase("  a  ", false,  "DisplayNameTooShort; ")]
+        [TestCase(null, false, "DisplayNameIsMissing; ")]
+        [TestCase("a", false, "DisplayNameTooShort; ")]
+        [TestCase("  a  ", false, "DisplayNameTooShort; ")]
         public void CheckDisplayNameReturnsExpectedMessage(string name, bool isAcceptable, string messageExpected)
         {
             var messageReturned = _validator.CheckDisplayName(name);
             Assert.AreEqual(messageExpected, messageReturned);
-            
+
         }
 
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfOrganisationIdAlreadyUsedReturnExpectedMessage(bool alreadyPresent, bool messageShown)
         {
-            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),string.Empty))
+            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(), string.Empty))
                 .Returns(Task.FromResult(alreadyPresent));
             var noMessageReturned = _validator.CheckOrganisationNameNotUsed("id here").Length > 0;
             Assert.AreEqual(noMessageReturned, alreadyPresent);
         }
-        
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfOrganisationIdAlreadyUsedByOtherOrganisationsReturnExpectedMessage(bool alreadyPresent, bool messageShown)
         {
-            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),It.IsAny<string>()))
+            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(alreadyPresent));
-            var noMessageReturned = _validator.CheckOrganisationNameNotUsedForOtherOrganisations("id here","other org Id").Length > 0;
+            var noMessageReturned = _validator.CheckOrganisationNameNotUsedForOtherOrganisations("id here", "other org Id").Length > 0;
             Assert.AreEqual(noMessageReturned, alreadyPresent);
         }
 
@@ -276,7 +276,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var messageReturned = _validator.CheckIfOrganisationUkprnExists(1234).Length > 0;
             Assert.AreEqual(messageReturned, alreadyPresent);
         }
-        
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfContactExistsReturnExpectedMessage(bool alreadyPresent, bool messageShown)
@@ -319,12 +319,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         }
 
 
-        [TestCase("test@test.com",true)]
+        [TestCase("test@test.com", true)]
         [TestCase("test@test.co.uk", true)]
         [TestCase("test.tester@test.com", true)]
         [TestCase("test.tester@digitaleducation.gov.uk", true)]
         [TestCase("test.terser@test.co.uk", true)]
-        [TestCase("testtest",false)]
+        [TestCase("testtest", false)]
         [TestCase("testtest@com", false)]
         [TestCase("testtest@test..com", false)]
         [TestCase("testtest@", false)]
@@ -332,7 +332,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("n/a", false)]
         [TestCase("test test", false)]
         [TestCase("testtest", false)]
-        [TestCase("",false)]
+        [TestCase("", false)]
         [TestCase("firstname-lastname@domain-one.co.in", true)]
         [TestCase("firstname-lastname@domain-one.com", true)]
         [TestCase("firstname-lastname@domain-one.nz", true)]
@@ -400,7 +400,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(noMessageReturned, exists);
             _registerRepository.Verify(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
         }
-        
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfEmailAlreadyExistsAgainstOtherOrganisationReturnsAnErrorMessage(bool exists, bool noMessageReturned)
@@ -412,7 +412,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(noMessageReturned, exists);
             _registerRepository.Verify(r => r.EmailAlreadyPresentInAnotherOrganisation(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
-        
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfEmailAlreadyExistsAgainstOtherOrganisationNotAssociatedWithContactIdReturnsAnErrorMessage(bool exists, bool noMessageReturned)
@@ -424,10 +424,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(noMessageReturned, exists);
             _registerRepository.Verify(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
         }
-        
+
 
         [TestCase("", false, false)]
-        [TestCase(null,false,false)]
+        [TestCase(null, false, false)]
         [TestCase("02741b43-acfd-45c6-a9d6-780ebe5df65c", true, true)]
         public void CheckIfContactIdExistsReturnsAnErrorMessage(string contactId, bool repositoryCheckResult, bool noMessageReturned)
         {
@@ -441,11 +441,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             else
                 _registerRepository.Verify(r => r.ContactExists(It.IsAny<Guid>()), Times.Once);
         }
-        
-        
-        [TestCase("", "",false, false)]
-        [TestCase("wrong contact id", "valid org id",false, false)]
-        [TestCase(null,"",false,false)]
+
+
+        [TestCase("", "", false, false)]
+        [TestCase("wrong contact id", "valid org id", false, false)]
+        [TestCase(null, "", false, false)]
         [TestCase("3151f01c-ba75-4123-965e-ff1e5f128514", "valid org Id", true, true)]
         public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, string organisationId, bool repositoryCheckResult, bool noMessageReturned)
         {
@@ -465,28 +465,32 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             var request = new CreateEpaOrganisationRequest
             {
-                Name = "test", Ukprn = null, OrganisationTypeId = 9
+                Name = "test",
+                Ukprn = null,
+                OrganisationTypeId = 9
             };
-            
+
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(true));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
-            
+
             Assert.AreEqual(0, result.Errors.Count);
         }
-        
+
         [Test]
         public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeId()
         {
             var request = new CreateEpaOrganisationRequest
             {
-                Name = "test", Ukprn = null, OrganisationTypeId = 9
+                Name = "test",
+                Ukprn = null,
+                OrganisationTypeId = 9
             };
-            
+
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(false));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
-            
+
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual("OrganisationTypeId", result.Errors[0].Field);
         }
@@ -514,16 +518,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             var request = new CreateEpaOrganisationRequest
             {
-                Name = "", Ukprn = null, OrganisationTypeId = 9
+                Name = "",
+                Ukprn = null,
+                OrganisationTypeId = 9
             };
-            
+
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(false));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
-            
+
             Assert.AreEqual(2, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
-            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
-            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Name"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "Name"));
         }
 
         [Test]
@@ -550,19 +556,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             var request = new CreateEpaOrganisationRequest
             {
-                Name = "test", Ukprn = 12345678, OrganisationTypeId = 9
+                Name = "test",
+                Ukprn = 12345678,
+                OrganisationTypeId = 9
             };
-            
+
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(false));
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
                 .Returns(Task.FromResult(true));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
-            
+
             Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
             Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()));
-            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
-            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Ukprn"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "Ukprn"));
         }
     }
 }

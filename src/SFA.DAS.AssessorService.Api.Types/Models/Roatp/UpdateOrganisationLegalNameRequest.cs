@@ -1,10 +1,8 @@
-﻿using System.Runtime.Serialization;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
+    using MediatR;
     using System;
     using System.Runtime.Serialization;
-    using MediatR;
 
     public class UpdateOrganisationLegalNameRequest : IRequest
     {

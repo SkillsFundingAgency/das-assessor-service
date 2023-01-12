@@ -1,9 +1,9 @@
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Settings;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 {
@@ -14,14 +14,14 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         const string SubscriptionKeyRequestHeaderKey = "Ocp-Apim-Subscription-Key";
         const string VersionRequestHeaderKey = "X-Version";
 
-        public OuterApiClient (HttpClient httpClient, IWebConfiguration config)
+        public OuterApiClient(HttpClient httpClient, IWebConfiguration config)
         {
             _httpClient = httpClient;
             _config = config.OuterApi;
             _httpClient.BaseAddress = new Uri(_config.BaseUrl);
         }
-        
-        public async Task<TResponse> Get<TResponse>(IGetApiRequest request) 
+
+        public async Task<TResponse> Get<TResponse>(IGetApiRequest request)
         {
             AddHeaders();
 

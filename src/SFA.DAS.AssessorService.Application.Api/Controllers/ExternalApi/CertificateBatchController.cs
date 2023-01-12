@@ -227,7 +227,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
             };
 
             var standardVersion = await _mediator.Send(new GetStandardVersionRequest { StandardId = standard });
-            
+
             if (standardVersion != null)
             {
                 request.StandardCode = standardVersion.LarsCode;

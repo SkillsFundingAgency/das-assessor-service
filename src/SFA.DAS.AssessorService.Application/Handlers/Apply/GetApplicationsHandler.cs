@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             List<ApplySummary> result = null;
 
-            switch(request.ApplicationType)
+            switch (request.ApplicationType)
             {
                 case ApplicationTypes.Organisation:
                     result = await _applyRepository.GetOrganisationApplications(request.UserId);

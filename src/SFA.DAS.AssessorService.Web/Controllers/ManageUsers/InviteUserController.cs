@@ -1,13 +1,12 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
@@ -17,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IOrganisationsApiClient _organisationsApiClient;
 
-        public InviteUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient) :base(contactsApiClient, contextAccessor)
+        public InviteUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient) : base(contactsApiClient, contextAccessor)
         {
             _contactsApiClient = contactsApiClient;
             _organisationsApiClient = organisationsApiClient;
@@ -32,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             {
                 PrivilegesViewModel = new EditPrivilegesViewModel
                 {
-                    PrivilegeViewModels = privileges.Select(p => new PrivilegeViewModel {Privilege = p}).ToArray()
+                    PrivilegeViewModels = privileges.Select(p => new PrivilegeViewModel { Privilege = p }).ToArray()
                 },
                 BackController = backController,
                 BackAction = backAction
@@ -69,12 +68,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 ModelState.AddModelError("Email", result.ErrorMessage);
 
                 await RebuildViewModel(vm);
-                
+
                 return View("~/Views/ManageUsers/InviteUser/Invite.cshtml", vm);
             }
 
 
-            return RedirectToAction("Invited", new {result.ContactId});
+            return RedirectToAction("Invited", new { result.ContactId });
         }
 
         [HttpGet("/ManageUsers/{contactId}/Invited")]
@@ -82,10 +81,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         {
             var contact = await _contactsApiClient.GetById(contactId);
             var organisation = await _organisationsApiClient.GetOrganisationByUserId(contactId);
-            
-            return View("~/Views/ManageUsers/InviteUser/Invited.cshtml", new InvitedViewModel {Email = contact.Email, Organisation = organisation.EndPointAssessorName});
+
+            return View("~/Views/ManageUsers/InviteUser/Invited.cshtml", new InvitedViewModel { Email = contact.Email, Organisation = organisation.EndPointAssessorName });
         }
-        
+
         private async Task RebuildViewModel(InviteContactViewModel vm)
         {
             var privileges = await _contactsApiClient.GetPrivileges();
@@ -96,6 +95,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             }
         }
 
-        
+
     }
 }

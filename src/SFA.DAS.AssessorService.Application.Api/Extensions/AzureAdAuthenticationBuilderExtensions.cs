@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System;
 
 
 namespace SFA.DAS.AssessorService.Application.Api.Extensions

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
 {
@@ -49,12 +48,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 {
                     Roles = new List<string>() { "ABC", "DEF", "EPA" },
                     UkPrn = 12345,
-                    Username = "username", 
+                    Username = "username",
                     DisplayName = "Display Name",
                     Email = "email@domain.com"
                 }, new CancellationToken()).Wait();
 
-            ContactRepository.Verify(m => m.UpdateUserName(guid, "email@domain.com")); 
+            ContactRepository.Verify(m => m.UpdateUserName(guid, "email@domain.com"));
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -10,6 +7,9 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 foreach (var searchResult in searchResults)
                 {
                     var certificate = certificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode);
-                    
+
                     if (certificate != null)
                     {
                         var hasPreviousSubmission = certificate.CertificateLogs.Any(l => l.Action == CertificateActions.Submit);
@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                         continue;
 
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                    
+
                     // Don't return certificate if the name does not match.
                     if (!string.Equals(certificateData.LearnerFamilyName.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
                         continue;
@@ -169,15 +169,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             searchResult.CertificateId = certificate.Id;
             searchResult.CertificateStatus = certificate.Status;
             searchResult.LearnStartDate = certificateData.LearningStartDate;
-            
+
             // If the Certificate was a fail, maintain the original details of the certificate version and option
             // even if Learner has changed under the hood
             // Otherwise prioritise Learner information which takes precedence
-            if(certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
+            if (certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
             {
                 searchResult.Version = certificateData.Version;
                 searchResult.Option = certificateData.CourseOption;
-            } else
+            }
+            else
             {
                 searchResult.Version = string.IsNullOrWhiteSpace(searchResult.Version) ? certificateData.Version : searchResult.Version;
                 searchResult.Option = string.IsNullOrWhiteSpace(searchResult.Option) ? certificateData.CourseOption : searchResult.Option;

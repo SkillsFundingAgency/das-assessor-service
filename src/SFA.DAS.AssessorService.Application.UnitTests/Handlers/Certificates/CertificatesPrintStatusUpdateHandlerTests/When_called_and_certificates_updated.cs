@@ -17,10 +17,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         private const string CertificateReference = "00123456";
         private const int PreviousBatchNumber = 111;
         private const int CurrentBatchNumber = 222;
-        
+
         private static readonly DateTime PreviousBatchSentToPrinterAt = DateTime.Now.AddHours(-1);
         private static readonly DateTime CurrentBatchPrintedAt = DateTime.Now;
-        
+
         [SetUp]
         public void Arrange()
         {
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             // Act
             _response = await _fixture.Handle(request);
-            
+
             // Assert
             _response.IsValid.Should().Be(true);
             _response.Errors.Count.Should().Be(0);

@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             bool? redirectToCheck = false)
         {
             var actionResult = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
-            if(actionResult is ViewResult viewResult && viewResult.Model is CertificateAddressViewModel viewModel)
+            if (actionResult is ViewResult viewResult && viewResult.Model is CertificateAddressViewModel viewModel)
             {
 
                 viewModel.HasPreviousAddress = hasPreviousAddress;
@@ -76,12 +76,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PreviousAddress()
         {
             var epaOrgId = GetEpaOrgIdFromClaim();
-            
+
             var actionResult = await LoadViewModel<CertificatePreviousAddressViewModel>("~/Views/Certificate/PreviousAddress.cshtml");
             if (actionResult is ViewResult viewResult && viewResult.Model is CertificatePreviousAddressViewModel viewModel)
             {
                 await InitialisePreviousAddress(viewModel, epaOrgId);
-                if(!viewModel.HasPreviousAddress)
+                if (!viewModel.HasPreviousAddress)
                 {
                     actionResult = RedirectToAction("Address", "CertificateAddress");
                 }
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var actionResult = await LoadViewModel<CertificateRecipientViewModel>("~/Views/Certificate/ConfirmAddress.cshtml");
             return actionResult;
         }
-        
+
         [HttpPost(Name = "ConfirmAddress")]
         [Route("confirm")]
         public async Task<IActionResult> ConfirmAddress(CertificateRecipientViewModel vm)

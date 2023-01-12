@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
-using SFA.DAS.AssessorService.Web.ViewModels.Shared;
-using static SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -57,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("Index", vm);
 
             _sessionService.Set("SearchResults", result);
-            
+
             if (result.SearchResults.Any(r => r.IsPrivatelyFunded && r.CertificateStatus == CertificateStatus.Draft))
                 return RedirectToAction("PrivatelyFundedDraft");
             else if (result.SearchResults.Count() > 1)
@@ -65,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 GetChooseStandardViewModel(vm);
                 return RedirectToAction("ChooseStandard");
             }
-            
+
             GetSelectedStandardViewModel(result);
             return RedirectToAction("Result");
         }

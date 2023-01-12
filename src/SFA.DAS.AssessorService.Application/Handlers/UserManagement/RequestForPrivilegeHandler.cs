@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
@@ -9,6 +5,10 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IWebConfiguration _config;
         private readonly IContactRepository _contactRepository;
 
-        public RequestForPrivilegeHandler(IMediator mediator, IContactQueryRepository contactQueryRepository, 
+        public RequestForPrivilegeHandler(IMediator mediator, IContactQueryRepository contactQueryRepository,
             IOrganisationQueryRepository organisationQueryRepository, IWebConfiguration config, IContactRepository contactRepository)
         {
             _mediator = mediator;
@@ -29,16 +29,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _config = config;
             _contactRepository = contactRepository;
         }
-        
+
         public async Task<Unit> Handle(RequestForPrivilegeRequest message, CancellationToken cancellationToken)
         {
             var privilege = (await _contactQueryRepository.GetAllPrivileges()).Single(p => p.Id == message.PrivilegeId);
-            
+
             var requestingContact = await _contactQueryRepository.GetContactById(message.ContactId);
             var organisation = await _organisationQueryRepository.GetOrganisationByContactId(message.ContactId);
 
             var contactsWithUserManagementPrivilege = (await _contactQueryRepository.GetAllContactsIncludePrivileges(organisation.EndPointAssessorOrganisationId))
-                .Where(c => c.ContactsPrivileges.Any(cp => cp.Privilege.Key == Privileges.ManageUsers && 
+                .Where(c => c.ContactsPrivileges.Any(cp => cp.Privilege.Key == Privileges.ManageUsers &&
                     cp.Contact.Status == ContactStatus.Live)).ToList();
 
             if (RequestingUserHasUserManagementPrivilege(contactsWithUserManagementPrivilege, requestingContact))
@@ -47,8 +47,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
             else
             {
-                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest{TemplateName= "EPAOPermissionsRequested" }, cancellationToken);
-            
+                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = "EPAOPermissionsRequested" }, cancellationToken);
+
                 contactsWithUserManagementPrivilege.ForEach(async contact =>
                 {
                     await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                         ServiceTeam = "Apprenticeship assessment service team",
                         LoginLink = _config.ServiceLink
                     }));
-                });   
+                });
             }
             return Unit.Value;
         }
@@ -70,6 +70,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             return contactsWithUserManagementPrivilege.Any(c => c.Id == requestingContact.Id);
         }
 
-       
+
     }
 }

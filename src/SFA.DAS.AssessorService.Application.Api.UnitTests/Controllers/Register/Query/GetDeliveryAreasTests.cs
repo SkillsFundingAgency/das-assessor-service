@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +7,8 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -29,8 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _deliveryArea1 = new DeliveryArea { Id = 1, Area = "Area 9", Status="Live" };
-            _deliveryArea2 = new DeliveryArea { Id = 2, Area = "Area 2", Status="New" };
+            _deliveryArea1 = new DeliveryArea { Id = 1, Area = "Area 9", Status = "Live" };
+            _deliveryArea2 = new DeliveryArea { Id = 2, Area = "Area 2", Status = "New" };
 
             _expectedDeliveryAreas = new List<DeliveryArea>
             {
@@ -65,7 +65,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _result.Should().BeOfType<OkObjectResult>();
         }
 
-        [Test] public void ResultsAreOfTypeListDeliveryArea()
+        [Test]
+        public void ResultsAreOfTypeListDeliveryArea()
         {
             ((OkObjectResult)_result).Value.Should().BeOfType<List<DeliveryArea>>();
         }

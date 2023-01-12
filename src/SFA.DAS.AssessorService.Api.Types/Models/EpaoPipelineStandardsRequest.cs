@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class EpaoPipelineStandardsRequest: IRequest<PaginatedList<EpaoPipelineStandardsResponse>>
+    public class EpaoPipelineStandardsRequest : IRequest<PaginatedList<EpaoPipelineStandardsResponse>>
     {
         public EpaoPipelineStandardsRequest(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection, int? pageIndex, int pageSize)
         {

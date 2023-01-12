@@ -1,23 +1,20 @@
-﻿using System;
-using NUnit.Framework;
-using System.Threading;
-using FizzWare.NBuilder;
-using Moq;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.Notifications.Api.Client;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
-using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
+﻿using FluentAssertions;
 using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Threading.Tasks;
-using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -185,7 +182,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             // during testing
             _emailRequestsSent = new List<string>();
             _mediator
-                .Setup(c => 
+                .Setup(c =>
                     c.Send(
                         It.IsAny<SendEmailRequest>(),
                         It.IsAny<CancellationToken>()))
@@ -203,7 +200,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 
             _sut = new SendOrganisationDetailsAmendedEmailHandler(
                 _eMailTemplateQueryRepository.Object, _mediator.Object, _logger.Object);
-        } 
+        }
 
         private async Task Act()
         {
@@ -224,7 +221,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             await Act();
 
             _mediator.Verify(p => p.Send(
-                It.Is<GetAllContactsIncludePrivilegesRequest>(c => c.EndPointAssessorOrganisationId == EpaOrganisation.OrganisationId), 
+                It.Is<GetAllContactsIncludePrivilegesRequest>(c => c.EndPointAssessorOrganisationId == EpaOrganisation.OrganisationId),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -234,7 +231,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             await Act();
 
             _result.Count.Should().Be(2);
-            _result.Should().OnlyContain(p => 
+            _result.Should().OnlyContain(p =>
                 p.Email == _secondLiveContact.Contact.Email ||
                 p.Email == _thirdLiveContact.Contact.Email);
         }

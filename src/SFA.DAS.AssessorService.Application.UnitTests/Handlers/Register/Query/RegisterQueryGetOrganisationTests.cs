@@ -1,6 +1,4 @@
 ﻿
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -8,6 +6,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected GetAssessmentOrganisationHandler GetAssessmentOrganisationDetailsHandler;
         protected Mock<ILogger<GetAssessmentOrganisationHandler>> Logger;
-        private EpaOrganisation _initialOrganisationDetails; 
+        private EpaOrganisation _initialOrganisationDetails;
         private GetAssessmentOrganisationRequest _requestDetails;
         private const string OrganisationId = "DEF345";
 
@@ -25,10 +25,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-          
+
             Logger = new Mock<ILogger<GetAssessmentOrganisationHandler>>();
 
-            _requestDetails = new GetAssessmentOrganisationRequest {OrganisationId = OrganisationId};
+            _requestDetails = new GetAssessmentOrganisationRequest { OrganisationId = OrganisationId };
 
             _initialOrganisationDetails = new EpaOrganisation
             {
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 Name = "Organisation X",
                 Ukprn = 123456
             };
-            
+
             RegisterQueryRepository.Setup(r => r.GetEpaOrganisationByOrganisationId(OrganisationId))
                 .Returns(Task.FromResult(_initialOrganisationDetails));
 

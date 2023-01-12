@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             _logger.LogInformation("In startup constructor.  Before Config");
             Configuration = configuration;
 
-            if(!bool.TryParse(configuration["UseSandboxServices"], out UseSandbox))
+            if (!bool.TryParse(configuration["UseSandboxServices"], out UseSandbox))
             {
                 UseSandbox = "yes".Equals(configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;                        
+                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
                     });
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });

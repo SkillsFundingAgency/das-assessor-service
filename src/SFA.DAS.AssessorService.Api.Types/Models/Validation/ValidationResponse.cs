@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Validation
 {

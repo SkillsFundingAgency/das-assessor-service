@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             {
                 StandardCode = 1
             };
-            
+
             _mockMediator = new Mock<IMediator>();
             _mockGetValidator = new Mock<IValidator<GetBatchCertificateRequest>>();
 
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             _controller = new CertificateBatchController(_mockMediator.Object,
                 _mockGetValidator.Object,
                 Mock.Of<IValidator<CreateBatchCertificateRequest>>(),
-                Mock.Of<IValidator<UpdateBatchCertificateRequest>> (),
+                Mock.Of<IValidator<UpdateBatchCertificateRequest>>(),
                 Mock.Of<IValidator<SubmitBatchCertificateRequest>>(),
                 Mock.Of<IValidator<DeleteBatchCertificateRequest>>());
         }

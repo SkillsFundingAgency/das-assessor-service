@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers;
+using System;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {

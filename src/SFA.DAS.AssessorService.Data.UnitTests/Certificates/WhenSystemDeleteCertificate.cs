@@ -1,29 +1,26 @@
-﻿using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
-using FluentAssertions;
+﻿using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using Newtonsoft.Json;
-using System.Threading;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Moq;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
     public class WhenSystemDeleteCertificate
     {
-        private CertificateRepository _certificateRepository;        
+        private CertificateRepository _certificateRepository;
         private Mock<AssessorDbContext> _mockDbContext;
         private Mock<IUnitOfWork> _mockUnitOfWork;
-        private Exception _exception;        
+        private Exception _exception;
         private Guid _certificateId;
         private string _incidentNumber;
         private string _reasonForChange;
@@ -37,10 +34,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             var mockCertificate = MockDbSetCreateCertificate();
             var mockCertificateLog = MockDbSetCreateCertificateLog();
-            
+
             _mockDbContext = CreateMockDbContext(mockCertificate, mockCertificateLog);
             _mockUnitOfWork = new Mock<IUnitOfWork>();
-            
+
             _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
         }
 
@@ -50,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         {
             //Act           
             await _certificateRepository.Delete(1111111111, 93, "UserName", CertificateActions.Delete, reasonForChange: _reasonForChange);
-           
+
             //Assert
             var result = _certificateRepository.GetCertificateLogsFor(_certificateId);
             Assert.AreEqual(_reasonForChange, result.Result.First().ReasonForChange);
@@ -64,7 +61,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             await _certificateRepository.Delete(1111111111, 93, "UserName", CertificateActions.Delete, incidentNumber: _incidentNumber);
 
             //Assert
-            var certificate =  _certificateRepository.GetCertificate(_certificateId);            
+            var certificate = _certificateRepository.GetCertificate(_certificateId);
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.Result.CertificateData);
             Assert.AreEqual(certificateData.IncidentNumber, _incidentNumber);
         }
@@ -74,7 +71,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var certificates = Builder<Certificate>.CreateListOfSize(2)
                 .TheFirst(1)
                 .With(x => x.Id = _certificateId)
-                .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())                
+                .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.CertificateData = GetCertificateData())
                 .With(x => x.Uln = 1111111111)
                 .With(x => x.StandardCode = 93)
@@ -119,7 +116,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .With(x => x.Action = CertificateActions.Delete)
                 .With(x => x.EventTime = DateTime.UtcNow)
                 .With(x => x.ReasonForChange = "Test")
-                .Build();                
+                .Build();
 
             var mockCertificateLog = new Mock<DbSet<CertificateLog>>();
 
@@ -143,7 +140,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             mockCertificateLog
                .Setup(m => m.AddAsync(It.IsAny<CertificateLog>(), It.IsAny<CancellationToken>()))
                .Callback((CertificateLog entity, CancellationToken token) => { certificateLogs.Add(entity); })
-               .Returns((CertificateLog entity, CancellationToken token) => Task.FromResult((EntityEntry<CertificateLog>)null));           
+               .Returns((CertificateLog entity, CancellationToken token) => Task.FromResult((EntityEntry<CertificateLog>)null));
 
             return mockCertificateLog;
         }

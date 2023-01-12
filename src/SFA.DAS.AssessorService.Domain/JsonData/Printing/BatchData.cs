@@ -1,5 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
 {
@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
         public DateTime? BatchDate { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? PostalContactCount { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? TotalCertificateCount { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? PrintedDate { get; set; }

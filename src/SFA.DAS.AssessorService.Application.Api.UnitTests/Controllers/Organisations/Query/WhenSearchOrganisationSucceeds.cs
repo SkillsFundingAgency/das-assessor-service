@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
     {
         private Organisation _organisation;
         private IActionResult _result;
-      
+
         [SetUp]
         public void Arrange()
         {
@@ -36,11 +36,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         [Test]
         public void ThenTheQueryReturnsTheCorrectResult()
         {
-            if(!(_result is OkObjectResult result))
-                ((OkObjectResult) null).Should().NotBeNull();
-            else 
+            if (!(_result is OkObjectResult result))
+                ((OkObjectResult)null).Should().NotBeNull();
+            else
                 result.Value.Should().BeOfType<OrganisationResponse>();
 
-        }  
+        }
     }
 }

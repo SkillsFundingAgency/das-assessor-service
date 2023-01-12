@@ -1,18 +1,15 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
@@ -20,14 +17,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
 
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) 
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient)
             : base(contactsApiClient, httpContextAccessor)
         {
             _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet("/ManageUsers/{contactId}")]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> Details(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -40,12 +37,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
 
             vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(contactId);
-            
+
             return View("~/Views/ManageUsers/UserDetails/User.cshtml", vm);
         }
 
         [HttpGet("/ManageUsers/{userid}/permissions")]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> EditPermissions(Guid userid)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(userid);
@@ -87,12 +84,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 {
                     await ContactsApiClient.ApproveContact(vm.ContactId);
                 }
-                
+
                 var response = await ContactsApiClient.SetContactPrivileges(
                     new SetContactPrivilegesRequest()
                     {
                         AmendingContactId = RequestingUser.Id,
-                        ContactId = vm.ContactId, 
+                        ContactId = vm.ContactId,
                         PrivilegeIds = vm.PrivilegeViewModels.Where(pvm => pvm.Selected).Select(pvm => pvm.Privilege.Id).ToArray(),
                         IsNewContact = vm.Button == "Approve"
                     });
@@ -100,15 +97,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 if (!response.Success)
                 {
                     ModelState.AddModelError("permissions", response.ErrorMessage);
-                
+
                     var editVm = await GetUserViewModel(vm.ContactId, securityCheckpoint);
-            
+
                     return View("~/Views/ManageUsers/UserDetails/EditUserPermissions.cshtml", editVm);
                 }
 
-                return response.HasRemovedOwnUserManagement 
-                    ? RedirectToAction("Index", "Dashboard", new {contactId = vm.ContactId}) 
-                    : RedirectToAction("Details", new {contactId = vm.ContactId});
+                return response.HasRemovedOwnUserManagement
+                    ? RedirectToAction("Index", "Dashboard", new { contactId = vm.ContactId })
+                    : RedirectToAction("Details", new { contactId = vm.ContactId });
             }
 
             await ContactsApiClient.RejectContact(vm.ContactId);
@@ -116,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpGet("/ManageUsers/{contactId}/remove")]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> Remove(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -130,7 +127,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         }
 
         [HttpPost("/ManageUsers/{contactId}/remove")]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> RemoveConfirmed(Guid contactId)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
@@ -147,26 +144,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             if (!response.Success)
             {
                 ModelState.AddModelError("permissions", response.ErrorMessage);
-            
+
                 return View("~/Views/ManageUsers/UserDetails/RemoveConfirm.cshtml", UserToBeDisplayed);
             }
             else
             {
-                return response.SelfRemoved 
-                    ? RedirectToAction("SignOut", "Account") 
-                    : RedirectToAction("Removed", "UserDetails", new {contactId, organisationId = removedFrom});
+                return response.SelfRemoved
+                    ? RedirectToAction("SignOut", "Account")
+                    : RedirectToAction("Removed", "UserDetails", new { contactId, organisationId = removedFrom });
             }
         }
 
         [HttpGet("/ManageUsers/{contactId}/removedFrom/{organisationId}")]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> Removed(Guid contactId, Guid organisationId)
         {
             await SecurityCheckAndGetContact(contactId);
 
             var organisation = await _organisationsApiClient.Get(organisationId);
 
-            return View("~/Views/ManageUsers/UserDetails/Removed.cshtml", new UserRemovedViewModel {ContactEmail = UserToBeDisplayed.Email, OrganisationName = organisation.EndPointAssessorName});
-        }   
+            return View("~/Views/ManageUsers/UserDetails/Removed.cshtml", new UserRemovedViewModel { ContactEmail = UserToBeDisplayed.Email, OrganisationName = organisation.EndPointAssessorName });
+        }
     }
 }

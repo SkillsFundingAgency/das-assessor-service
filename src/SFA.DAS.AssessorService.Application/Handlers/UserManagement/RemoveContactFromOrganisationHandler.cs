@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IContactRepository _contactRepository;
 
-        public RemoveContactFromOrganisationHandler(IContactQueryRepository contactQueryRepository, IContactRepository contactRepository) 
+        public RemoveContactFromOrganisationHandler(IContactQueryRepository contactQueryRepository, IContactRepository contactRepository)
         {
             _contactQueryRepository = contactQueryRepository;
             _contactRepository = contactRepository;
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 {
                     return new RemoveContactFromOrganisationResponse()
                     {
-                        Success = false, 
+                        Success = false,
                         ErrorMessage = $"Before you remove this user, you must assign '{currentPrivilege.Privilege.UserPrivilege}' to another user."
                     };
                 }
@@ -38,10 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
             await _contactRepository.RemoveContactFromOrganisation(request.ContactId);
             await _contactRepository.RemoveAllPrivileges(request.ContactId);
-            await _contactRepository.CreateContactLog(request.RequestingUserId, request.ContactId, ContactLogType.UserRemoved, 
+            await _contactRepository.CreateContactLog(request.RequestingUserId, request.ContactId, ContactLogType.UserRemoved,
                 null);
-            
-            
+
+
             await LogContactRemovedChanges(request);
 
             return new RemoveContactFromOrganisationResponse()

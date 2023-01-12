@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards
 
         public string OrderedBy { get; set; }
         public string OrderDirection { get; set; }
-      
+
         public class PipelineFilterItem
         {
             public string Id { get; set; }

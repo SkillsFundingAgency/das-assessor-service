@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {

@@ -1,17 +1,14 @@
-﻿using System;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
@@ -38,8 +35,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             {
                 OrganisationId = _orgId,
                 StandardCode = 3,
-               EffectiveFrom = DateTime.Now,
-               Comments = "this is a comment"
+                EffectiveFrom = DateTime.Now,
+                Comments = "this is a comment"
             };
 
             _mediator.Setup(m => m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationStandardId);

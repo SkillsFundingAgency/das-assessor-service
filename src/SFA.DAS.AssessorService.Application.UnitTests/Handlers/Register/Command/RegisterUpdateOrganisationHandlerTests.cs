@@ -1,18 +1,16 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
@@ -49,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
 
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
-            
+
             _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerQueryRepository.Object, _registerRepository.Object, _logger.Object, _cleanserService.Object, _validator.Object);
         }
 
@@ -97,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         private ValidationResponse BuildErrorResponse(string errorMessage, ValidationStatusCode statusCode)
         {
             var validationResponse = new ValidationResponse();
-            validationResponse.Errors.Add(new ValidationErrorDetail(errorMessage,statusCode));
+            validationResponse.Errors.Add(new ValidationErrorDetail(errorMessage, statusCode));
             return validationResponse;
         }
 

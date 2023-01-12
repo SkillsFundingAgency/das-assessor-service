@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;

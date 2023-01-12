@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 _sut = new CertificatePrintStatusUpdateHandler(_certificateRepository.Object, _batchLogQueryRepository.Object, _mediator.Object, _logger.Object);
             }
 
-            public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificate(string reference, string status, DateTime statusAt, int batchNumber,  DateTime toBePrinted)
+            public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificate(string reference, string status, DateTime statusAt, int batchNumber, DateTime toBePrinted)
             {
                 _certificateRepository.Setup(r => r.GetCertificate(reference))
                     .Returns(Task.FromResult(
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 return this;
             }
 
-            public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificateBatchLog(int batchNumber, string certificateReference, string status, DateTime statusAt, string reasonForChange, DateTime updatedAt )
+            public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificateBatchLog(int batchNumber, string certificateReference, string status, DateTime statusAt, string reasonForChange, DateTime updatedAt)
             {
                 _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(batchNumber, certificateReference))
                     .Returns(Task.FromResult(
@@ -73,9 +73,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 _mediator.Setup(r => r.Send(It.Is<GetBatchLogRequest>(p => p.BatchNumber == batchNumber), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(
-                        new BatchLogResponse 
-                        { 
-                            BatchNumber = batchNumber 
+                        new BatchLogResponse
+                        {
+                            BatchNumber = batchNumber
                         }));
 
                 return this;
@@ -86,13 +86,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 return await _sut.Handle(request, new CancellationToken());
             }
 
-            public void VerifyUpdatePrintStatusCalled(string certificateReference, int batchNumber, 
-                string status, DateTime statusAt, string reasonForChange, 
+            public void VerifyUpdatePrintStatusCalled(string certificateReference, int batchNumber,
+                string status, DateTime statusAt, string reasonForChange,
                 bool updateCertificate, bool updateCertificateLog)
             {
                 _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                    It.Is<Certificate>(c => c.CertificateReference == certificateReference), 
-                    batchNumber, 
+                    It.Is<Certificate>(c => c.CertificateReference == certificateReference),
+                    batchNumber,
                     status, statusAt, reasonForChange, updateCertificate, updateCertificateLog),
                     Times.Once);
             }

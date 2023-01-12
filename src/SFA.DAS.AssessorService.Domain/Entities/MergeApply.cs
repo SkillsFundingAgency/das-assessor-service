@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {

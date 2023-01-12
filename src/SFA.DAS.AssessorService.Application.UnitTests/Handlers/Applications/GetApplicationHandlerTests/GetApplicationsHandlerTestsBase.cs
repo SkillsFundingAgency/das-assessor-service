@@ -5,7 +5,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Handlers.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs;
-using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.GetApplicationHandlerTests
@@ -14,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
     public class GetApplicationsHandlerTestsBase
     {
         protected Mock<IApplyRepository> ApplyRepository;
-        protected GetApplicationsHandler Handler;   
+        protected GetApplicationsHandler Handler;
 
         [SetUp]
         public void Setup()

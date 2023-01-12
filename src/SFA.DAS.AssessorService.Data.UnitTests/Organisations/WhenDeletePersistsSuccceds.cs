@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
     public class WhenDeletePersistsSuccceds
     {
-        private OrganisationRepository _organisationRepository;    
+        private OrganisationRepository _organisationRepository;
         private Mock<AssessorDbContext> _mockDbContext = new Mock<AssessorDbContext>();
 
         [SetUp]
@@ -32,9 +32,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 
             var mockSet = organisations.CreateMockSet(organisations);
             _mockDbContext = CreateMockDbContext(mockSet);
-                                
+
             _organisationRepository = new OrganisationRepository(_mockDbContext.Object);
-           
+
             await _organisationRepository.Delete("123456");
         }
 

@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards.GetEp
             _mockRepository = new Mock<IStandardRepository>();
             _mockLogger = new Mock<ILogger<GetEpaoPipelineStandardsHandler>>();
 
-            _sut = new GetEpaoPipelineStandardsHandler(_mockConfig.Object, _mockRepository.Object, _mockLogger.Object); 
+            _sut = new GetEpaoPipelineStandardsHandler(_mockConfig.Object, _mockRepository.Object, _mockLogger.Object);
         }
 
         [TestCase("EPA0200", 3)]
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards.GetEp
         {
             // Arrange
             var fixture = new Fixture();
-            
+
             _mockRepository
                 .Setup(r => r.GetEpaoPipelineStandards(epaoId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()))
                 .ReturnsAsync(new EpaoPipelineStandardsResult { PageOfResults = fixture.CreateMany<EpaoPipelineStandard>(count).ToList(), TotalCount = count });

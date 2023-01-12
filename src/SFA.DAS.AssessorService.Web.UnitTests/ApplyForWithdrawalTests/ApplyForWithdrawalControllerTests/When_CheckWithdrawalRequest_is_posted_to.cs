@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
             result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
 
-            _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(), 
+            _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(),
                 It.Is<List<string>>(x => x.Contains("1.1") && x.Contains("1.2")), StandardApplicationTypes.VersionWithdrawal));
         }
 
@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                         new StandardVersion() { Version = "1.2" }
                     });
 
-            
+
             _mockApplicationApiClient
                 .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
                 .ReturnsAsync(applicationId);

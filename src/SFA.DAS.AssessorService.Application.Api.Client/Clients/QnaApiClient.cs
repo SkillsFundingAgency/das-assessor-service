@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/start"))
             {
-               return await PostPutRequestWithResponse<StartApplicationRequest,StartApplicationResponse>(request, startAppRequest);
+                return await PostPutRequestWithResponse<StartApplicationRequest, StartApplicationResponse>(request, startAppRequest);
             }
         }
 
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new AddResultConverter());
-                return await PostPutRequestWithResponse<List<Answer>, AddPageAnswerResponse> (request, answer, settings);
+                return await PostPutRequestWithResponse<List<Answer>, AddPageAnswerResponse>(request, answer, settings);
             }
         }
 
@@ -164,7 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer,settings);
+                return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer, settings);
             }
         }
 
@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<SetPageAnswersResponse> Upload(Guid applicationId, Guid sectionId, string pageId,  IFormFileCollection files)
+        public async Task<SetPageAnswersResponse> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/upload"))
             {

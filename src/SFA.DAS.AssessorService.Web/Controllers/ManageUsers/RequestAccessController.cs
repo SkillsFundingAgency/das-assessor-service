@@ -1,12 +1,12 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
@@ -19,23 +19,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         {
             _contactsApiClient = contactsApiClient;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> RequestAccess(AccessDeniedViewModel vm)
         {
             await _contactsApiClient.RequestForPrivilege(vm.ContactId, vm.PrivilegeId);
 
-            return vm.UserHasUserManagement 
-                ? RedirectToAction(vm.ReturnAction, vm.ReturnController) 
-                : RedirectToAction("RequestSent", new {privilegeId = vm.PrivilegeId});
+            return vm.UserHasUserManagement
+                ? RedirectToAction(vm.ReturnAction, vm.ReturnController)
+                : RedirectToAction("RequestSent", new { privilegeId = vm.PrivilegeId });
         }
 
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Dashboard})]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         [HttpGet("/RequestAccess/RequestSent/{privilegeId}")]
         public async Task<IActionResult> RequestSent(Guid privilegeId)
         {
-            var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == privilegeId); 
-            
+            var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == privilegeId);
+
             return View("~/Views/Account/RequestSent.cshtml", privilege.UserPrivilege);
         }
     }

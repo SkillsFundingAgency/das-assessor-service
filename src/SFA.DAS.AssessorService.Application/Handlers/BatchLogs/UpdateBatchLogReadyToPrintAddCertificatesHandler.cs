@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
@@ -38,8 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
                 var includedStatus = new[] { "Submitted", "Reprint" };
 
                 var certificateIds = await _certificateRepository.GetCertificatesReadyToPrint(
-                    request.MaxCertificatesToBeAdded, 
-                    excludedOverallGrades, 
+                    request.MaxCertificatesToBeAdded,
+                    excludedOverallGrades,
                     includedStatus);
 
                 if (certificateIds.Length > 0)
@@ -55,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 
                 return certificateIds.Length;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Failed to add ready to print certificates to batch {request.BatchNumber}");
                 _unitOfWork.Rollback();

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
@@ -27,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             MappingBootstrapper.Initialize();
 
             _certificateId = Guid.NewGuid();
-            
+
             var mockSet = CreateCertificateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
             _mockUnitOfWork = new Mock<IUnitOfWork>();

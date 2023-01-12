@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas
         public string StandardReference { get; set; }
         public string Version { get; set; }
         public string CourseOption { get; set; }
-                
+
         public int UkPrn { get; set; }
 
         public EpaDetails EpaDetails { get; set; }

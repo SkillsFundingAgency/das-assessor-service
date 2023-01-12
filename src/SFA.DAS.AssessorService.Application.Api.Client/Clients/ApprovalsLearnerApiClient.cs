@@ -7,12 +7,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ApprovalsLearnerApiClient : ApiClientBase, IApprovalsLearnerApiClient
     {
-        public ApprovalsLearnerApiClient(string baseUri, ITokenService tokenService, ILogger<ApprovalsLearnerApiClient> logger) 
+        public ApprovalsLearnerApiClient(string baseUri, ITokenService tokenService, ILogger<ApprovalsLearnerApiClient> logger)
             : base(baseUri, tokenService, logger)
         {
         }
 
-        public ApprovalsLearnerApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) 
+        public ApprovalsLearnerApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

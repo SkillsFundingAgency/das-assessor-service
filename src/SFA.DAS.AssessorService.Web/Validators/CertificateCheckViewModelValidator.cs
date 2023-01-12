@@ -30,7 +30,8 @@ namespace SFA.DAS.AssessorService.Web.Validators
                 RuleFor(vm => vm.Name).NotEmpty()
                     .WithMessage(localizer["NameCannotBeEmpty"]);
 
-                When(vm => vm.SendTo == CertificateSendTo.Employer, () => {
+                When(vm => vm.SendTo == CertificateSendTo.Employer, () =>
+                {
                     RuleFor(vm => vm.Employer).NotEmpty()
                         .OverridePropertyName(vm => vm.AddressLine1)
                         .WithMessage(localizer["AddressCannotBeEmpty"]);

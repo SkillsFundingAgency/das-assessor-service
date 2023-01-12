@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 
             // Assert.
 
-            _approvalsExtractRepoMock.Verify(m => m.GetLatestExtractTimestamp());            
+            _approvalsExtractRepoMock.Verify(m => m.GetLatestExtractTimestamp());
         }
 
         [Test]

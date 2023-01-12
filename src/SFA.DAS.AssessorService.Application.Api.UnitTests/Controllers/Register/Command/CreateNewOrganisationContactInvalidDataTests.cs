@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             {
                 EndPointAssessorOrganisationId = "EPA0009",
                 FirstName = "Tester",
-                LastName="McTestFace",
+                LastName = "McTestFace",
                 Email = "tester.mctestface@test.com",
                 PhoneNumber = "555 5555"
             };

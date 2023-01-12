@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Web.ViewModels;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -27,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         public void Arrange()
         {
             base.Arrange(
-                addEpaoClaim: true, 
+                addEpaoClaim: true,
                 addUkprnClaim: false,
                 contactsPrivileges: null);
 
@@ -36,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         public override async Task<IActionResult> Act()
-        {            
+        {
             return await sut.ChangeAddress(new ChangeAddressViewModel
             {
                 AddressLine1 = ValidAddressLine1Different,
@@ -71,13 +69,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
 
             OrganisationApiClient.Verify(c => c.UpdateEpaOrganisationAddress(
-                It.Is<UpdateEpaOrganisationAddressRequest>(p => 
-                    p.OrganisationId == EpaoId && 
+                It.Is<UpdateEpaOrganisationAddressRequest>(p =>
+                    p.OrganisationId == EpaoId &&
                     p.AddressLine1 == addressLine1 &&
                     p.AddressLine2 == addressLine2 &&
                     p.AddressLine3 == addressLine3 &&
                     p.AddressLine4 == addressLine4 &&
-                    p.Postcode == postcode)), 
+                    p.Postcode == postcode)),
                 Times.Once);
         }
 

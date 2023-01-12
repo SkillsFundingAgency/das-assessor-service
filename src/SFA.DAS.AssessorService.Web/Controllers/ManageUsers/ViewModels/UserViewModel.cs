@@ -1,8 +1,8 @@
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
 {
@@ -22,20 +22,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels
             get => _actionRequired ?? (this.Status == ContactStatus.Active ? "No action required" : "");
             set => _actionRequired = value;
         }
-        
+
         public List<ContactsPrivilege> AssignedPrivileges { get; set; }
         public List<Privilege> AllPrivilegeTypes { get; set; }
 
-        public EditPrivilegesViewModel EditPrivilegesViewModel {
-            get { return new EditPrivilegesViewModel()
+        public EditPrivilegesViewModel EditPrivilegesViewModel
+        {
+            get
             {
-                ContactId = Id, 
-                PrivilegeViewModels = AllPrivilegeTypes.Select(pt => new PrivilegeViewModel()
+                return new EditPrivilegesViewModel()
                 {
-                    Privilege = pt,
-                    Selected = AssignedPrivileges.Any(ap => ap.PrivilegeId == pt.Id)
-                }).ToArray()
-            }; }
+                    ContactId = Id,
+                    PrivilegeViewModels = AllPrivilegeTypes.Select(pt => new PrivilegeViewModel()
+                    {
+                        Privilege = pt,
+                        Selected = AssignedPrivileges.Any(ap => ap.PrivilegeId == pt.Id)
+                    }).ToArray()
+                };
+            }
         }
     }
 }

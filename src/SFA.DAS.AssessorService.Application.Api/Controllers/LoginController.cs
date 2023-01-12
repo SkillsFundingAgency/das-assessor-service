@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(LoginResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
             return Ok(await _mediator.Send(loginRequest));
         }

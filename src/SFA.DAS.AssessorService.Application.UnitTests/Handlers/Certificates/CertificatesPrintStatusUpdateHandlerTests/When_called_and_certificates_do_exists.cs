@@ -1,13 +1,9 @@
 ﻿using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests

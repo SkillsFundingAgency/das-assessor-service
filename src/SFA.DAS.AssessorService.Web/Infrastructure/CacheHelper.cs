@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {

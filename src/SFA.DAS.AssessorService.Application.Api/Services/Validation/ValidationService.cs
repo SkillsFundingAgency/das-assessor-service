@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
         {
             if (string.IsNullOrEmpty(charityNumberToCheck?.Trim())) return true;
             var regex = new Regex(@"[^a-zA-Z0-9\\-]");
-            return !regex.Match(charityNumberToCheck).Success; 
+            return !regex.Match(charityNumberToCheck).Success;
         }
 
         public bool CheckPhoneNumberIsValue(string phoneNumberToCheck)
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
         public bool DateIsValid(string dateToCheck)
         {
             var dateUnescaped = HttpUtility.UrlDecode(dateToCheck);
-            if (string.IsNullOrEmpty(dateUnescaped?.Trim()) || dateUnescaped?.Trim()==",,") return true;
+            if (string.IsNullOrEmpty(dateUnescaped?.Trim()) || dateUnescaped?.Trim() == ",,") return true;
             return DateTime.TryParse(dateUnescaped, out DateTime _);
         }
 
@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
         {
             if (string.IsNullOrEmpty(organisationIdToCheck?.Trim())) return true;
             var regex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
-                return regex.Match(organisationIdToCheck).Success;
+            return regex.Match(organisationIdToCheck).Success;
         }
 
         public bool UkprnIsValid(string ukprnToCheck)
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             if (!long.TryParse(ulnToCheck, out long uln))
                 return false;
 
-            return uln  <= 9999999999 && uln>=0;
+            return uln <= 9999999999 && uln >= 0;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class GetCertificatesForBatchNumberHandler : IRequestHandler<GetCertificatesForBatchNumberRequest, CertificatesForBatchNumberResponse>
     {
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
-        
+
         public GetCertificatesForBatchNumberHandler(IBatchLogQueryRepository batchLogQueryRepository)
         {
             _batchLogQueryRepository = batchLogQueryRepository;
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<CertificatesForBatchNumberResponse> Handle(GetCertificatesForBatchNumberRequest request, CancellationToken cancellationToken)
         {
             var certificates = await _batchLogQueryRepository.GetCertificatesForBatch(request.BatchNumber);
-            
+
             var certificatesToBePrintedResponse = new CertificatesForBatchNumberResponse()
             {
                 Certificates = certificates

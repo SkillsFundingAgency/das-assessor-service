@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
 {
@@ -48,13 +48,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
         [Test]
         public void Then_model_should_contain_search_results()
         {
-            ((OkObjectResult) _result).Value.Should().BeOfType<List<SearchResult>>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<List<SearchResult>>();
         }
 
         [Test]
         public void Then_search_results_should_be_correct()
         {
-            var searchResults = ((OkObjectResult) _result).Value as List<SearchResult>;
+            var searchResults = ((OkObjectResult)_result).Value as List<SearchResult>;
             searchResults.Count.Should().Be(1);
             searchResults.First().FamilyName.Should().Be("Smith");
             searchResults.First().Standard.Should().Be("Standard Name 20");

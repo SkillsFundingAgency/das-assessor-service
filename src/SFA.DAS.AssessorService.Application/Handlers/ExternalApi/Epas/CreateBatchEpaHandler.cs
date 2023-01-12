@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             _logger.LogInformation("CreateNewEpa Before Update Cert in db");
-            
+
             await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, epaAction);
 
             return certData.EpaDetails;

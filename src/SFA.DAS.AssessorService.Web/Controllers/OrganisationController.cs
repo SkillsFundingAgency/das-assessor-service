@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
@@ -25,6 +18,11 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -41,9 +39,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<OrganisationController> _logger;
         private readonly IWebConfiguration _webConfiguration;
 
-        public OrganisationController(IHttpContextAccessor contextAccessor, 
+        public OrganisationController(IHttpContextAccessor contextAccessor,
             IOrganisationsApiClient organisationsApiClient, IAzureApiClient externalApiClient, IContactsApiClient contactsApiClient,
-            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger, 
+            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger,
             IWebConfiguration webConfiguration)
         {
             _contextAccessor = contextAccessor;
@@ -109,11 +107,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
                 var userPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userId));
-                
+
                 viewModel.UserHasChangeOrganisationPrivilege =
                     userPrivileges.Any(cp => cp.Privilege.Key == Privileges.ChangeOrganisationDetails);
 
-                if(viewModel.UserHasChangeOrganisationPrivilege == false)
+                if (viewModel.UserHasChangeOrganisationPrivilege == false)
                 {
                     var changeOrganisationPriviledge = (await _contactsApiClient.GetPrivileges()).First(p => p.Key == Privileges.ChangeOrganisationDetails);
                     viewModel.AccessDeniedViewModel = new AccessDeniedViewModel
@@ -239,7 +237,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         ? organisation.PrimaryContact
                         : ModelState[nameof(SelectOrChangeContactNameViewModel.PrimaryContact)]?.AttemptedValue
                 };
-           
+
                 return View(viewModel);
             }
             catch (EntityNotFoundException e)
@@ -280,7 +278,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     if (!ModelState.IsValid)
                     {
                         return RedirectToAction(nameof(SelectOrChangeContactName));
-                    }                   
+                    }
 
                     vm = new SelectOrChangeContactNameViewModel
                     {
@@ -713,7 +711,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         }
 
                         // only check if an web site link has been entered - model has required validator
-                        
+
                         var encodedWebsiteUrl = HttpUtility.UrlEncode(vm.WebsiteLink);
                         _logger.LogInformation($"VALIDATEWEBSITELINK - OrganisationController.ChangeWebsite: {vm.WebsiteLink}, {encodedWebsiteUrl}");
                         if (await _validationApiClient.ValidateWebsiteLink(encodedWebsiteUrl) == false)
@@ -778,8 +776,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task<List<AzureSubscription>> GetExternalApiSubscriptions(string productId, string ukprn)
         {
-          var users = await _externalApiClient.GetUserDetailsByUkprn(ukprn, true);
-          return users.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == productId)).ToList();
+            var users = await _externalApiClient.GetUserDetailsByUkprn(ukprn, true);
+            return users.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == productId)).ToList();
         }
 
         private ViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)

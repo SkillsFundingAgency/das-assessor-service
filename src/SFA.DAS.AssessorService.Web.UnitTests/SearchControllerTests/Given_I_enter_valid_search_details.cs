@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {
@@ -31,19 +30,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .ReturnsAsync(new SearchRequestViewModel()
                 {
                     SearchResults =
-                        new List<ResultViewModel>() 
-                        { 
-                            new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890", 
+                        new List<ResultViewModel>()
+                        {
+                            new ResultViewModel() { FamilyName = "Lamora", Uln = "1234567890",
                                 Versions = new List<StandardVersionViewModel> {
                                     new StandardVersionViewModel { StandardUId="StandardUId1",Version="1.0" },
-                                    new StandardVersionViewModel { StandardUId="StandardUId2",Version="1.1" } } } 
+                                    new StandardVersionViewModel { StandardUId="StandardUId2",Version="1.1" } } }
                         }
                 });
 
             SearchController.Index(new SearchRequestViewModel() { Surname = "Lamora", Uln = "1234567890" })
                 .Wait();
 
-            SessionService.Verify(ss => ss.Set("SelectedStandard", It.Is<SelectedStandardViewModel>(vm => 
+            SessionService.Verify(ss => ss.Set("SelectedStandard", It.Is<SelectedStandardViewModel>(vm =>
                 vm.Versions.Count() == 2
                 && vm.Versions.First().StandardUId == "StandardUId1")));
         }

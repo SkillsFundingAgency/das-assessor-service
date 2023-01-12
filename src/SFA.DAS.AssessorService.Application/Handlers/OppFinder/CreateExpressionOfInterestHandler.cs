@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 _logger.LogInformation($"Creating expression of interest");
                 return await _oppFinderRepository.CreateExpressionOfInterest(request.StandardReference, request.Email, request.OrganisationName, request.ContactName, request.ContactNumber);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, $"Unable to create expression of interest for {request.StandardReference}, {request.Email}, {request.OrganisationName}, {request.ContactName}, {request.ContactNumber}");
                 throw;

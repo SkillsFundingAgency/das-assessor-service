@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.External.Helpers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
@@ -47,15 +46,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         public async Task<IActionResult> GetCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
             var getRequest = new GetBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard };
-            
+
             var response = await _apiClient.GetCertificate(getRequest);
-            
+
             if (response.ValidationErrors.Any())
             {
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", response.ValidationErrors));
                 return StatusCode(error.StatusCode, error);
             }
-            else if(response.Certificate is null)
+            else if (response.Certificate is null)
             {
                 return NoContent();
             }
@@ -70,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 var certificateData = response.Certificate.CertificateData;
 
                 if (!string.IsNullOrEmpty(certificateData.Standard?.StandardReference) && !string.IsNullOrEmpty(certificateData?.LearningDetails?.Version))
-				{
+                {
                     var standardOptions = await _apiClient.GetStandardOptionsByStandardIdAndVersion(certificateData.Standard.StandardReference, certificateData.LearningDetails.Version);
 
                     var hasOptions = standardOptions != null && standardOptions.CourseOption?.Count() > 0;
@@ -94,14 +93,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CreateCertificateRequest> request)
         {
-            if(request.Count() > MAX_CERTIFICATES_IN_REQUEST)
+            if (request.Count() > MAX_CERTIFICATES_IN_REQUEST)
             {
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, MAX_CERTIFICATES_IN_REQUEST_ERROR_MESSAGE);
                 return StatusCode(error.StatusCode, error);
             }
 
             var createRequest = request.Select(req =>
-                new CreateBatchCertificateRequest {
+                new CreateBatchCertificateRequest
+                {
                     UkPrn = _headerInfo.Ukprn,
                     RequestId = req.RequestId,
                     CertificateData = new Models.Request.Certificates.CertificateData
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             var results = await _apiClient.CreateCertificates(createRequest);
 
-            foreach(var result in results)
+            foreach (var result in results)
             {
                 if (CertificateHelpers.IsDraftCertificateDeemedAsReady(result.Certificate))
                 {
@@ -208,7 +208,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.", Produces = new string[] { "application/json" })]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard, string certificateReference)
         {
-            var deleteRequest = new DeleteBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, CertificateReference = certificateReference};
+            var deleteRequest = new DeleteBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Uln = uln, FamilyName = familyName, Standard = standard, CertificateReference = certificateReference };
             var error = await _apiClient.DeleteCertificate(deleteRequest);
 
             if (error is null)

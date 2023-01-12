@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
         private CertificateData _certificateData;
         private Certificate _certificate;
-        
+
         private CertificateRepository _certificateRepository;
 
         [SetUp]

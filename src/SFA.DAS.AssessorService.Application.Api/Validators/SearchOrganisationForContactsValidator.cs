@@ -25,10 +25,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (isValid)
                 validationResult = new ValidationResult();
             else
-                validationResult.Errors.Add(new ValidationFailure("Organisation",                  
+                validationResult.Errors.Add(new ValidationFailure("Organisation",
                     string.Format(_localiser[ResourceMessageName.DoesNotExist].Value, "Organisation", endPointAssessorOrganisationId)));
 
-            return validationResult;            
+            return validationResult;
         }
     }
 }

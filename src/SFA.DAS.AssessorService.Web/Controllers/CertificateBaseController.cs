@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
-            if(SessionService.GetRedirectToCheck())
+            if (SessionService.GetRedirectToCheck())
             {
                 Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);

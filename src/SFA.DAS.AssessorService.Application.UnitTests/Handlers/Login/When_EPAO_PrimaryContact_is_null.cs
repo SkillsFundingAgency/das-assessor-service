@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
 {
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
             Handler.Handle(
                 new LoginRequest()
                 {
-                    Roles = new List<string>() {"ABC", "DEF", "EPA"},
+                    Roles = new List<string>() { "ABC", "DEF", "EPA" },
                     UkPrn = 12345,
                     Username = "username",
                     DisplayName = "Display Name",

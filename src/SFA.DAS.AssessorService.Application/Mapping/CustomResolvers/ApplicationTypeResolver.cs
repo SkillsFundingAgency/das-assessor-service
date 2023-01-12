@@ -11,10 +11,10 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
     {
         public string Resolve(ApplySummary source, ApplicationResponse destination, string destMember, ResolutionContext context)
         {
-            bool OrganisationSectionRequired(int sectionNo) => 
+            bool OrganisationSectionRequired(int sectionNo) =>
                 IsSectionRequired(source.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO, sectionNo);
 
-            if (IsSequenceRequired(source.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO) && 
+            if (IsSequenceRequired(source.ApplyData, ApplyConst.ORGANISATION_SEQUENCE_NO) &&
                 OrganisationSectionRequired(ApplyConst.ORGANISATION_DETAILS_SECTION_NO) &&
                 OrganisationSectionRequired(ApplyConst.DECLARATIONS_SECTION_NO))
             {
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
                 }
                 else return ApplicationTypes.InitialWithoutFinancialHealthChecks;
             }
-            else if(IsSequenceRequired(source.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
+            else if (IsSequenceRequired(source.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (OrganisationSectionRequired(ApplyConst.FINANCIAL_DETAILS_SECTION_NO))
                 {

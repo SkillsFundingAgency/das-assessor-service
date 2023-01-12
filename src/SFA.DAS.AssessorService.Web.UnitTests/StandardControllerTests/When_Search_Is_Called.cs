@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             // Arrange
             _mockStandardVersionApiClient
                .Setup(r => r.GetLatestStandardVersions())
-               .ReturnsAsync(new List<StandardVersion> { 
+               .ReturnsAsync(new List<StandardVersion> {
                    new StandardVersion { IFateReferenceNumber = "ST0001", Title = "Title 1", Version = "1.1"},
                    new StandardVersion { IFateReferenceNumber = "ST0002", Title = "Title 2", Version = "1.0"},
                });

@@ -15,7 +15,7 @@
         public bool RoEPAOApproved { get; set; }
         public string OrganisationType { get; set; }
         public string Status { get; set; }
-                
+
         public string City { get; set; }
         public string Postcode { get; set; }
 

@@ -1,8 +1,8 @@
 ﻿
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
-    using System;
     using MediatR;
+    using System;
 
     public class DuplicateCompanyNumberCheckRequest : IRequest
     {

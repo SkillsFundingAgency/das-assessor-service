@@ -1,11 +1,11 @@
-using System;
 using StackExchange.Redis;
+using System;
 
 namespace SFA.DAS.AssessorService.NLog.Targets.Redis
 {
     internal class RedisConnectionManager : IDisposable
     {
-         private ConnectionMultiplexer _connectionMultiplexer;
+        private ConnectionMultiplexer _connectionMultiplexer;
 
         public RedisConnectionManager(string connectionString)
         {

@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.OrganisationStandards
 {
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 testData.EffectiveFrom,
                 testData.EffectiveTo);
 
-            Assert.AreEqual(results.Length==0, testData.IsValid);
+            Assert.AreEqual(results.Length == 0, testData.IsValid);
         }
 
 

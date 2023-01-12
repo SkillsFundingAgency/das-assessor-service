@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
 using System.Data;
 using System.Threading.Tasks;
 

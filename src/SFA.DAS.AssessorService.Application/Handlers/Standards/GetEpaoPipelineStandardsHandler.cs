@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             var result =
                 await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.StandardFilterId, request.ProviderFilterId, request.EPADateFilterId,
                     _config.PipelineCutoff, request.OrderBy, request.OrderDirection, request.PageSize, request.PageIndex);
-            
+
             var epaoPipelinStandardsResult = result.PageOfResults.Select(o =>
                 new EpaoPipelineStandardsResponse
                 {

@@ -1,10 +1,10 @@
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Collections.Generic;
-using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using System.Linq;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
                 // If only one option set on the certificate
                 certData.CourseOption = SelectedStandardOptions.CourseOption.Single();
             }
-            else if(certificate.StandardUId != StandardUId)
+            else if (certificate.StandardUId != StandardUId)
             {
                 // If changed, wipe the option in case different versions have different options
                 certData.CourseOption = null;

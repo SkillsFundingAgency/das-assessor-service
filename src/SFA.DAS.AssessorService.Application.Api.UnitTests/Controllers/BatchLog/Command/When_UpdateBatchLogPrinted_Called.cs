@@ -24,18 +24,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.BatchLog
         [SetUp]
         public async Task Arrange()
         {
-            _mediator = new Mock<IMediator>();            
-            
+            _mediator = new Mock<IMediator>();
+
             _mediator.Setup(q => q.Send(It.IsAny<UpdateBatchLogPrintedRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(new ValidationResponse()));
-            
+
             _sut = new BatchLogController(_mediator.Object);
-            _result = await _sut.UpdateBatchLogPrinted(_batchNumber, new UpdateBatchLogPrintedRequest 
-            { 
-                BatchNumber = _batchNumber, 
-                BatchDate = _utcNow, 
-                PostalContactCount = 1, 
-                TotalCertificateCount = 1, 
+            _result = await _sut.UpdateBatchLogPrinted(_batchNumber, new UpdateBatchLogPrintedRequest
+            {
+                BatchNumber = _batchNumber,
+                BatchDate = _utcNow,
+                PostalContactCount = 1,
+                TotalCertificateCount = 1,
                 PrintedDate = _utcNow,
                 DateOfResponse = _utcNow
             });
@@ -52,14 +52,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.BatchLog
         public void ThenShouldCallPrintedRequest()
         {
             _mediator.Verify(x => x.Send(
-                It.Is<UpdateBatchLogPrintedRequest>(s => 
-                    s.BatchNumber == _batchNumber && 
-                    s.BatchDate == _utcNow && 
-                    s.PostalContactCount == 1 && 
-                    s.TotalCertificateCount == 1 && 
-                    s.PrintedDate == _utcNow && 
-                    s.DateOfResponse == _utcNow), 
-                It.IsAny<CancellationToken>()), 
+                It.Is<UpdateBatchLogPrintedRequest>(s =>
+                    s.BatchNumber == _batchNumber &&
+                    s.BatchDate == _utcNow &&
+                    s.PostalContactCount == 1 &&
+                    s.TotalCertificateCount == 1 &&
+                    s.PrintedDate == _utcNow &&
+                    s.DateOfResponse == _utcNow),
+                It.IsAny<CancellationToken>()),
                 Times.Once());
         }
     }

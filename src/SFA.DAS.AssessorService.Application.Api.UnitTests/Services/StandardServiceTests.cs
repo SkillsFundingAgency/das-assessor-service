@@ -55,10 +55,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             Assert.IsNull(result);
 
-            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(), 
+            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
                     It.IsAny<FormattedLogValues>(),
-                    It.IsAny<Exception>(), 
-                    It.IsAny<Func<object, Exception, string>>()), 
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<object, Exception, string>>()),
                 Times.Once, "STANDARD OPTIONS: Failed to get standard options");
         }
 
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var standardUId = "ST0023_1.0";
             _mockStandardRepository.Setup(s => s.GetStandardOptionsByStandardUId(standardUId)).ReturnsAsync(option);
-            
+
             var result = await _standardService.GetStandardOptionsByStandardId(standardUId);
 
             result.Should().BeEquivalentTo(option);
@@ -170,12 +170,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
                 .Throws(new Exception());
 
             var result = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
-            
+
             _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
                     It.IsAny<FormattedLogValues>(),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<object, Exception, string>>()),
-                Times.Once, $"Could not find standard with StandardReference: { standardReference } and Version: { version}");
+                Times.Once, $"Could not find standard with StandardReference: {standardReference} and Version: {version}");
 
             Assert.AreEqual(null, result);
         }

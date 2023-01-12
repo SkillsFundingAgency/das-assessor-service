@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
@@ -23,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
         public static EpaContact GetContactById(string contactId)
         {
-              var contact = DatabaseService.Get<EpaContact>($@"select id,EndPointAssessorOrganisationId, Username,DisplayName,Email,PhoneNumber,Status from contacts where id = '{contactId}'");
+            var contact = DatabaseService.Get<EpaContact>($@"select id,EndPointAssessorOrganisationId, Username,DisplayName,Email,PhoneNumber,Status from contacts where id = '{contactId}'");
             return contact;
         }
         public static void InsertRecords(List<OrganisationContactModel> organisationContacts)

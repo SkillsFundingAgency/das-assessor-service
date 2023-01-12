@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
@@ -20,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
         public async Task<Organisation> Handle(GetOrganisationRequest request,
             CancellationToken cancellationToken)
         {
-            var organisation = await _organisationQueryRepository.Get(request.Id);            
+            var organisation = await _organisationQueryRepository.Get(request.Id);
             return organisation;
         }
     }

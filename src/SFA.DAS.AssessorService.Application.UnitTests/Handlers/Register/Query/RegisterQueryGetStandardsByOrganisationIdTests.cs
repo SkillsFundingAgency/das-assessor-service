@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -11,6 +6,11 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private int _id2;
         private int _id3;
         private List<int> _expectedDeliveryAreas;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -50,12 +50,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _id2 = 2;
             _id3 = 3;
             _expectedDeliveryAreas = new List<int> { 1, 2 };
-            
+
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            
-            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1};
-            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2};
-            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3};
+
+            _standard1 = new OrganisationStandardSummary { Id = _id1, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1 };
+            _standard2 = new OrganisationStandardSummary { Id = _id2, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2 };
+            _standard3 = new OrganisationStandardSummary { Id = _id3, OrganisationId = _organisationId, DeliveryAreas = _expectedDeliveryAreas, StandardCode = _standardCode3, EffectiveFrom = effectiveFrom3 };
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             RegisterQueryRepository.Setup(r => r.GetAllOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
-            
+
             GetAllStandardsByOrganisationHandler =
                 new GetAllStandardsByOrganisationHandler(RegisterQueryRepository.Object, Logger.Object);
         }

@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisations.Create
-{ 
+{
     public class WhenCreateOrganisationRequestModelValidatorFails : OrganisationCreateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
@@ -34,12 +34,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
 
         [Test]
         public void ThenItShouldFail()
-        {        
+        {
             _validationResult.IsValid.Should().BeFalse();
         }
 
         [Test]
-        public void ErrorMessageShouldContain_EndPointAssessorOrganisation()       
+        public void ErrorMessageShouldContain_EndPointAssessorOrganisation()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
@@ -47,20 +47,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
 
         [Test]
         public void ErrorMessageShouldContainEndPointAssessorNam()
-        {            
+        {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         }
 
         [Test]
-        public void ErrorMessageShouldContainEndPointAssessorUkprn()    
+        public void ErrorMessageShouldContainEndPointAssessorUkprn()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUkprn" && q.ErrorCode == "InclusiveBetweenValidator");
             errors.Should().NotBeNull();
         }
 
         [Test]
-        public void ErrorMessageShouldContainAlreadyExists()       
+        public void ErrorMessageShouldContainAlreadyExists()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Organisation");
             errors.Should().NotBeNull();

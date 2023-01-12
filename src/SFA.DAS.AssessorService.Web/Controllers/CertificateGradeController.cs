@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -7,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         public CertificateGradeController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
-        {}
+        { }
 
         [HttpGet]
         public async Task<IActionResult> Grade(bool? redirectToCheck = false)
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return await LoadViewModel<CertificateGradeViewModel>("~/Views/Certificate/Grade.cshtml");
         }
 
-        [HttpPost(Name="Grade")]
+        [HttpPost(Name = "Grade")]
         public async Task<IActionResult> Grade(CertificateGradeViewModel vm)
         {
             return await SaveViewModel(vm,

@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-
 using SFA.DAS.AssessorService.Web.ViewModels;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -20,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         public void Arrange()
         {
             base.Arrange(
-                addEpaoClaim: true, 
+                addEpaoClaim: true,
                 addUkprnClaim: false,
                 contactsPrivileges: null);
 
@@ -28,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         public override async Task<IActionResult> Act()
-        {            
+        {
             return await sut.ChangeWebsite(new ChangeWebsiteViewModel
             {
                 WebsiteLink = ValidWebsiteLinkDifferent,

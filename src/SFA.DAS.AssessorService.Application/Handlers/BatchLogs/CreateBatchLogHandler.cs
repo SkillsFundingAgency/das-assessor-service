@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
         public async Task<BatchLogResponse> Handle(CreateBatchLogRequest request, CancellationToken cancellationToken)
         {
             var lastBatchLog = await _batchLogQueryRepository.GetLastBatchLog();
-            
+
             var batchLog = new BatchLog()
             {
                 Period = DateTime.UtcNow.ToString("MMyy"),

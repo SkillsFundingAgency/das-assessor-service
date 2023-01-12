@@ -3,10 +3,6 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Mapping.Structs;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.Structs
 {
@@ -35,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.Structs
         [Test, AutoData]
         public void WhenCreatingStandardId_With_IFateReferenceNumber_SetsUpCorrectly()
         {
-            string ifateReferenceNumber = string.Concat(fixture.Create<string>().Substring(0, 5),"A");
+            string ifateReferenceNumber = string.Concat(fixture.Create<string>().Substring(0, 5), "A");
             var id = new StandardId(ifateReferenceNumber);
 
             id.IdType.Should().Be(StandardId.StandardIdType.IFateReferenceNumber);

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -38,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             if (_validator.CheckIfEmailIsPresentAndInSuitableFormat(email) != string.Empty)
             {
                 _logger.LogInformation($@"Getting AssessmentOrganisation based on contact email with invalid email address format: [{email}]");
-                return (AssessmentOrganisationSummary) null;
+                return (AssessmentOrganisationSummary)null;
             }
 
             _logger.LogInformation($@"Getting AssessmentOrganisation based on contact email: [{email}]");

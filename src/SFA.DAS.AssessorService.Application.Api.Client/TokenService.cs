@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
                 token = result?.AccessToken;
             }
-                
+
             return token;
         }
     }

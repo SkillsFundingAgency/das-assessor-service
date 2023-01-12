@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 AttemptedVersion = standardVersion.Version,
                 BackToCheckPage = redirectToCheck.Value
             };
-           
+
             return View("~/Views/Certificate/VersionNotApproved.cshtml", viewModel);
         }
     }

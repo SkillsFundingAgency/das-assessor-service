@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Domain.DTOs;
+﻿using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {

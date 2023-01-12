@@ -1,23 +1,23 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisations.Create
-{ 
+{
     public class WhenCreateOrganisationRequestValidatorSucceeds : OrganisationCreateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
         [SetUp]
         public void Arrange()
-        { 
+        {
             Setup();
 
-            CreateOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew()  
+            CreateOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew()
                 .With(q => q.EndPointAssessorOrganisationId = "123456")
                 .With(q => q.EndPointAssessorUkprn = 10000001)
                 .Build();
@@ -32,13 +32,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
         }
 
         [Test]
-        public void ThenItShouldSucceed()        
+        public void ThenItShouldSucceed()
         {
             _validationResult.IsValid.Should().BeTrue();
         }
 
         [Test]
-        public void ErrorMessageShouldNotContainEndPointAssessorOrganisationId()      
+        public void ErrorMessageShouldNotContainEndPointAssessorOrganisationId()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().BeNull();
@@ -52,28 +52,28 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
         }
 
         [Test]
-        public void ErrorMessageShouldNotContainEndPointAssessorName()    
+        public void ErrorMessageShouldNotContainEndPointAssessorName()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().BeNull();
         }
 
         [Test]
-        public void ErrorMessageShouldNotContainEndPointAssessorUkPrn()       
+        public void ErrorMessageShouldNotContainEndPointAssessorUkPrn()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUKPRN" && q.ErrorCode == "InclusiveBetweenValidator");
             errors.Should().BeNull();
         }
 
         [Test]
-        public void ErrorMessageShouldNotContainPrimaryContactNotFound()       
+        public void ErrorMessageShouldNotContainPrimaryContactNotFound()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact");
             errors.Should().BeNull();
         }
 
         [Test]
-        public void ErrorMessageShouldNotContainAlreadyExists()        
+        public void ErrorMessageShouldNotContainAlreadyExists()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Organisation");
             errors.Should().BeNull();

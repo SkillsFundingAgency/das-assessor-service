@@ -2,7 +2,6 @@
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using System;
 using System.Collections.Generic;
 

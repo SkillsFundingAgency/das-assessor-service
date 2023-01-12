@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<IEnumerable<StandardVersion>> GetLatestStandardVersions();
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<IEnumerable<StandardVersion>> GetStandardVersionsByLarsCode(int larsCode);
-        
+
         /// <summary>
         /// Method can take LarsCode, IFateReferenceNumber or StandardUId and will return a standard.
         /// If LarsCode or IFateReferenceNumber is supplied, One Standard, the latest version will 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,6 +8,7 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -22,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             hostMock
                 .Setup(m => m.EnvironmentName)
                 .Returns(EnvironmentName.Development);
-            var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object, false);
+            var tokenServiceMock = new TokenService(webConfigMock.Object, hostMock.Object, false);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
@@ -46,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/start")
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
-           
+
             mockHttp
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");

@@ -43,18 +43,18 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     destination.LearnerData = new LearnerData
                     {
                         Standard = source.Learner.Standard is null ? null : new Standard { StandardCode = source.Learner.Standard.LarsCode, StandardReference = source.Learner.Standard.IFateReferenceNumber, StandardName = source.Learner.Standard.Title, Level = source.Learner.Standard.Level },
-                        Learner = new Learner 
-                        { 
-                            Uln = source.Learner.Uln, 
-                            GivenNames = source.Learner.GivenNames, 
+                        Learner = new Learner
+                        {
+                            Uln = source.Learner.Uln,
+                            GivenNames = source.Learner.GivenNames,
                             FamilyName = source.Learner.FamilyName
                         },
-                        LearningDetails = new Models.Response.Learners.LearningDetails 
-                        { 
-                            LearnerReferenceNumber = source.Learner.LearnerReferenceNumber, 
-                            ProviderUkPrn = source.Learner.UkPrn, 
-                            ProviderName = source.Learner.OrganisationName, 
-                            LearningStartDate = source.Learner.LearnerStartDate.DropMilliseconds(), 
+                        LearningDetails = new Models.Response.Learners.LearningDetails
+                        {
+                            LearnerReferenceNumber = source.Learner.LearnerReferenceNumber,
+                            ProviderUkPrn = source.Learner.UkPrn,
+                            ProviderName = source.Learner.OrganisationName,
+                            LearningStartDate = source.Learner.LearnerStartDate.DropMilliseconds(),
                             PlannedEndDate = source.Learner.PlannedEndDate.DropMilliseconds(),
                             Version = GetVersionFromGetBatchLearnerResponse(source, destination),
                             CourseOption = GetCourseOptionFromGetBatchLearnerResponse(source, destination)
@@ -68,10 +68,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     {
                         Standard = certData.Standard,
                         Learner = certData.Learner,
-                        LearningDetails = new Models.Response.Learners.LearningDetails 
-                        { 
-                            ProviderUkPrn = certData.LearningDetails.ProviderUkPrn, 
-                            ProviderName = certData.LearningDetails.ProviderName, 
+                        LearningDetails = new Models.Response.Learners.LearningDetails
+                        {
+                            ProviderUkPrn = certData.LearningDetails.ProviderUkPrn,
+                            ProviderName = certData.LearningDetails.ProviderName,
                             LearningStartDate = certData.LearningDetails.LearningStartDate.DropMilliseconds()
                         }
                     };

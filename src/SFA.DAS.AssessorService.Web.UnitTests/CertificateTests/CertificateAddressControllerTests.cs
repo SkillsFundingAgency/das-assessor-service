@@ -218,11 +218,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
 
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
-            
+
             var redirectToCheck = true;
             _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
-            
-            _mockSessionService.Setup(s => s.Set("RedirectToCheck", It.IsAny<object>())).Callback((string key, object value) => {
+
+            _mockSessionService.Setup(s => s.Set("RedirectToCheck", It.IsAny<object>())).Callback((string key, object value) =>
+            {
                 redirectToCheck = (bool)value;
                 _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
             });
@@ -288,7 +289,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
             var redirectToCheck = true;
             _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
 
-            _mockSessionService.Setup(s => s.Set("RedirectToCheck", It.IsAny<object>())).Callback((string key, object value) => {
+            _mockSessionService.Setup(s => s.Set("RedirectToCheck", It.IsAny<object>())).Callback((string key, object value) =>
+            {
                 redirectToCheck = (bool)value;
                 _mockSessionService.Setup(s => s.TryGet<bool>("RedirectToCheck", out redirectToCheck)).Returns(true);
             });

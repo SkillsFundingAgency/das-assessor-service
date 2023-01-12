@@ -1,6 +1,6 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("versionMajor")]
         public int VersionMajor { get; set; }
-        
+
         [JsonProperty("versionMinor")]
         public int VersionMinor { get; set; }
 
@@ -107,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("contactEmail")]
         public string ContactEmail { get; set; }
-        
+
         [JsonProperty("webLink")]
         public string WebLink { get; set; }
     }

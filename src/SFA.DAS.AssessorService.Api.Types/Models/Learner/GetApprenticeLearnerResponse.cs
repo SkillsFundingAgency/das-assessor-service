@@ -1,5 +1,4 @@
-﻿using MediatR;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {

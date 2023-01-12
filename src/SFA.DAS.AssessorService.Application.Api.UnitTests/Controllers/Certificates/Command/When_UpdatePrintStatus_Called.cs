@@ -4,15 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,15 +36,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             Status = CertificateStatus.NotDelivered,
             StatusAt = DateTime.UtcNow
         };
-        
+
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
-            
+
             _mediator.Setup(q => q.Send(It.IsAny<CertificatePrintStatusUpdateRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(new ValidationResponse()));
-            
+
             _sut = new CertificateController(_mediator.Object);
         }
 
@@ -83,8 +79,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             // Assert
             _mediator.Verify(x => x.Send(
-                It.Is<CertificatePrintStatusUpdateRequest>(s => JsonConvert.SerializeObject(s).Equals(JsonConvert.SerializeObject(_certificatePrintStatusUpdateDelivered))), 
-                It.IsAny<CancellationToken>()), 
+                It.Is<CertificatePrintStatusUpdateRequest>(s => JsonConvert.SerializeObject(s).Equals(JsonConvert.SerializeObject(_certificatePrintStatusUpdateDelivered))),
+                It.IsAny<CancellationToken>()),
                 Times.Once());
         }
 

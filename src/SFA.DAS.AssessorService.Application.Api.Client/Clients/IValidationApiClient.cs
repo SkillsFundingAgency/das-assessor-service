@@ -7,6 +7,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<bool> ValidatePhoneNumber(string phoneNumberToValidate);
         Task<bool> ValidateEmailAddress(string emailToValidate);
         Task<bool> ValidateWebsiteLink(string websiteLinkToValidate);
-        
+
     }
 }

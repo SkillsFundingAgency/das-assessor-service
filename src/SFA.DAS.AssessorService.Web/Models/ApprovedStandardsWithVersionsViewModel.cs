@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SFA.DAS.AssessorService.Web.Models
 {
     public class ApprovedStandardsWithVersionsViewModel
-    {        
+    {
         public PaginatedList<GetEpaoRegisteredStandardsResponse> ApprovedStandardsWithVersions { get; set; }
 
         public bool FinancialInfoStage1Expired { get; set; }

@@ -1,19 +1,17 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
+﻿using AutoMapper;
+using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
-
-using AutoMapper;
-using MediatR;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationWebsiteLinkHandler : IRequestHandler<UpdateEpaOrganisationWebsiteLinkRequest, List<ContactResponse>>
-    { 
+    {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
@@ -37,11 +35,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 : null;
 
             return await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
-                {
-                    OrganisationId = request.OrganisationId,
-                    PropertyChanged = "Website address",
-                    ValueAdded = request.WebsiteLink,
-                    Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+            {
+                OrganisationId = request.OrganisationId,
+                PropertyChanged = "Website address",
+                ValueAdded = request.WebsiteLink,
+                Editor = updatedBy?.DisplayName ?? "EFSA Staff"
             });
         }
     }

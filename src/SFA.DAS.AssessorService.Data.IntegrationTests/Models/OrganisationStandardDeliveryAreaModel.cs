@@ -1,6 +1,6 @@
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
-    public class OrganisationStandardDeliveryAreaModel: TestModel
+    public class OrganisationStandardDeliveryAreaModel : TestModel
     {
         public int Id { get; set; }
         public int OrganisationStandardId { get; set; }

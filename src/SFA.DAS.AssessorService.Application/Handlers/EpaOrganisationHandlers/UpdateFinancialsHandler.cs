@@ -1,9 +1,9 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _registerRepository = registerRepository;
             _registerQueryRepository = registerQueryRepository;
         }
-        
+
         public async Task<Unit> Handle(UpdateFinancialsRequest message, CancellationToken cancellationToken)
         {
             var epaOrg = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(message.EpaOrgId);

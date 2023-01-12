@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
     public class When_called_and_no_existing_learner : ImportLearnerDetailHandlerTestsBase
     {
         private ImportLearnerDetail SecondImportLearnerDetail;
-        
+
         [SetUp]
         public void Arrange()
         {

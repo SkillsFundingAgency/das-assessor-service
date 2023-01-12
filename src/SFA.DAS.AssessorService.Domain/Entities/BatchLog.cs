@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int BatchNumber { get; set; }
         public int NumberOfCertificates { get; set; }
         public int NumberOfCoverLetters { get; set; }
-        public string CertificatesFileName { get; set; }      
+        public string CertificatesFileName { get; set; }
         public DateTime FileUploadStartTime { get; set; }
         public DateTime FileUploadEndTime { get; set; }
         public BatchData BatchData { get; set; }

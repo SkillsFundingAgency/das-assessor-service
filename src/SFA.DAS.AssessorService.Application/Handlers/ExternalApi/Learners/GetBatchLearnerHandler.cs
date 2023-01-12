@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
         private async Task<LearnerDetailForExternalApi> GetLearnerDetails(GetBatchLearnerRequest request, Standard standard, Certificate certFromRepository)
         {
             LearnerDetailForExternalApi learnerDetail = null;
-            
+
             var certData = GetCertificateDataFromCertificate(certFromRepository);
 
             if (standard != null)

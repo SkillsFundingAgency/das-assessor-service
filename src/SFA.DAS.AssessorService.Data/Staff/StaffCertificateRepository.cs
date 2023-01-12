@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
     {
         public StaffCertificateRepository(IUnitOfWork unitOfWork)
             : base(unitOfWork)
-        { 
+        {
         }
 
         public async Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns)
@@ -180,7 +180,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 {
                     BatchNumber = batchNumber,
                     CertificateStatus.PrintProcessStatus,
-                    OffSet = (page-1) * pageSize,
+                    OffSet = (page - 1) * pageSize,
                     PageSize = pageSize
                 },
                 transaction: _unitOfWork.Transaction))
@@ -190,7 +190,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 results.PrintedAt = printResult.PrintedAt;
 
                 results.PageOfResults = multi.Read<CertificateBatchLogSummary>().ToList();
-                results.TotalCount = multi.ReadFirst<int>(); 
+                results.TotalCount = multi.ReadFirst<int>();
             }
 
             return results;

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Middleware
 {
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Middleware
                     _logger.LogError($"Unhandled Exception raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
                     if (ex.InnerException != null)
                     {
-                        _logger.LogError($"Inner Exception raised : {ex.InnerException.Message} : Stack Trace : {ex.InnerException.StackTrace}");    
+                        _logger.LogError($"Inner Exception raised : {ex.InnerException.Message} : Stack Trace : {ex.InnerException.StackTrace}");
                     }
                 }
 

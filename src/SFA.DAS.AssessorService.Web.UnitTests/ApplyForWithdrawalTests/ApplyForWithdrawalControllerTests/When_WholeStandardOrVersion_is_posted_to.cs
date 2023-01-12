@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             {
                 WithdrawalType = WithdrawalType.WholeStandard
             };
-                
+
             // Act
             var result = _sut.WholeStandardOrVersion("ST0001", model) as RedirectToActionResult;
 

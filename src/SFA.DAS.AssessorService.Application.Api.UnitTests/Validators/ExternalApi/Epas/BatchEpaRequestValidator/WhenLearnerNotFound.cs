@@ -2,7 +2,6 @@
 using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;

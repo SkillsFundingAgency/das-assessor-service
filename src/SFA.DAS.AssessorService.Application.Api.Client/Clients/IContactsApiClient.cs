@@ -1,23 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface IContactsApiClient
     {
         Task<List<Privilege>> GetPrivileges();
-        
+
         Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId);
-        
+
         Task<ContactResponse> GetByUsername(string username);
-        
+
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        
+
 
         Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null);
 
         Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId);
-        
+
         Task<ContactResponse> UpdateOrgAndStatus(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
 

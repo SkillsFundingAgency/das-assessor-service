@@ -39,9 +39,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockApplicationService = new Mock<IApplicationService>();
             _mockConfig = new Mock<IWebConfiguration>();
 
-        _mockHttpContextAccessor
-                .Setup(r => r.HttpContext)
-                .Returns(SetupHttpContextSubAuthorityClaim());
+            _mockHttpContextAccessor
+                    .Setup(r => r.HttpContext)
+                    .Returns(SetupHttpContextSubAuthorityClaim());
 
             _mockApiClient
              .Setup(r => r.GetApplication(It.IsAny<Guid>()))
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockApiClient
                 .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
                 .ReturnsAsync(new List<ApplicationResponse>()
-                { 
+                {
                     new ApplicationResponse { StandardCode = 59, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
                     new ApplicationResponse { StandardCode = 131, StandardApplicationType = StandardApplicationTypes.StandardWithdrawal },
                     new ApplicationResponse { StandardCode = 354, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },

@@ -1,5 +1,5 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using MediatR;
+﻿using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models

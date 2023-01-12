@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -26,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public StaffSearchHandler(IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
-            IStaffLearnerRepository staffLearnerRepository, 
+            IStaffLearnerRepository staffLearnerRepository,
             IStandardService staffService)
         {
             _staffCertificateRepository = staffCertificateRepository;
@@ -79,14 +78,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private async Task<StaffReposSearchResult> Search(StaffSearchRequest request)
         {
             if (SearchStringIsAnEpaOrgId(request))
-            {                
+            {
                 var sr = await _staffLearnerRepository.SearchForLearnerByEpaOrgId(request);
                 sr.DisplayEpao = true;
                 return sr;
             }
 
             var pageSize = 10;
-            if (SearchStringIsAUln(request, out var uln))           
+            if (SearchStringIsAUln(request, out var uln))
             {
                 var sr = new StaffReposSearchResult
                 {

@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
             {
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
             });
-            
+
             ContactRepository = new Mock<IContactRepository>();
             ContactQueryRepository = new Mock<IContactQueryRepository>();
             SignInService = new Mock<ISignInService>();

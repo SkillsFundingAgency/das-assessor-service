@@ -3,8 +3,8 @@ using NLog;
 using NLog.Common;
 using NLog.Config;
 using NLog.Targets;
-using System.Collections.Generic;
 using SFA.DAS.AssessorService.NLog.Targets.Redis;
+using System.Collections.Generic;
 
 namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
 {
@@ -73,10 +73,10 @@ namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
         private IDictionary<object, object> GetDictionary(LogEventInfo logEvent, bool includeProperties)
         {
             var message = Layout.Render(logEvent);
-            var properties = !includeProperties 
-                ? new Dictionary<object, object>() 
+            var properties = !includeProperties
+                ? new Dictionary<object, object>()
                 : logEvent.Properties;
-            
+
             properties.Add("message", message);
             properties.Add("level", logEvent.Level.Name);
             properties.Add("@timestamp", logEvent.TimeStamp);

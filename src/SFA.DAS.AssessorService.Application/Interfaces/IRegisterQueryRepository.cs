@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<int> EpaContactUsernameHighestCounter();
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
         Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId);
-        
+
         Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId);
         Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId);
         Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId);

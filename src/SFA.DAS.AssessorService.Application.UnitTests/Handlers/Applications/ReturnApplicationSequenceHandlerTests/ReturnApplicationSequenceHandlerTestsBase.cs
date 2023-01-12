@@ -1,7 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.ReturnApplicationSequenceHandlerTests
 {

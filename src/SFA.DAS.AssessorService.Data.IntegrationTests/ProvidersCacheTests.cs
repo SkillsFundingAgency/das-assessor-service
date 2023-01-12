@@ -1,16 +1,16 @@
-﻿using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using Dapper;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Dapper;
 using FluentAssertions;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -41,8 +41,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, LastName, UKPRN) VALUES (123, 'TestFirstName', 'TestLastName', '10000528');");
             _roatpApiClientMock.Setup(m => m.SearchOrganisationByUkprn(It.IsAny<int>()))
-                .ReturnsAsync(new OrganisationSearchResult[] { new OrganisationSearchResult() { ProviderName = "Test Provider Name" }   });
-        
+                .ReturnsAsync(new OrganisationSearchResult[] { new OrganisationSearchResult() { ProviderName = "Test Provider Name" } });
+
             // Act
 
             await _repository.InsertProvidersFromApprovalsExtract();

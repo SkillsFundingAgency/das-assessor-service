@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {

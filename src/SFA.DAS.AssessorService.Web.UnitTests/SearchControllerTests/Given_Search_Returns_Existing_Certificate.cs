@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {

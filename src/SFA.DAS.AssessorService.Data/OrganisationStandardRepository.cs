@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardReference(string organisationId, string standardReference)
         {
-            var results =  await _unitOfWork.Connection.QueryAsync<OrganisationStandard>(
+            var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandard>(
                 @"SELECT Id, EndPointAssessorOrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, 
                   Comments, Status, ContactId, StandardReference
                 FROM OrganisationStandard
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Data
 
             var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandardVersion>(
                 sql,
-                param: new { organisationStandardId, version},
+                param: new { organisationStandardId, version },
                 transaction: _unitOfWork.Transaction);
 
             return results.FirstOrDefault();
@@ -67,14 +67,15 @@ namespace SFA.DAS.AssessorService.Data
 
             await _unitOfWork.Connection.ExecuteAsync(
                 sql,
-                param: new { 
-                        effectiveFrom = orgStandardVersion.EffectiveFrom,
-                        effectiveTo = orgStandardVersion.EffectiveTo,
-                        dateVersionApproved = orgStandardVersion.DateVersionApproved,
-                        Status = orgStandardVersion.Status,
-                        orgStandardId = orgStandardVersion.OrganisationStandardId,
-                        version = orgStandardVersion.Version
-                    },
+                param: new
+                {
+                    effectiveFrom = orgStandardVersion.EffectiveFrom,
+                    effectiveTo = orgStandardVersion.EffectiveTo,
+                    dateVersionApproved = orgStandardVersion.DateVersionApproved,
+                    Status = orgStandardVersion.Status,
+                    orgStandardId = orgStandardVersion.OrganisationStandardId,
+                    version = orgStandardVersion.Version
+                },
                 transaction: _unitOfWork.Transaction);
 
             return orgStandardVersion;

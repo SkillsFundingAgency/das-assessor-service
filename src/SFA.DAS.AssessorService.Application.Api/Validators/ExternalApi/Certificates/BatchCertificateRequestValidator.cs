@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         var hasOptions = standardOptions != null && standardOptions.HasOptions();
                         var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);
                         var courseOption = m.CertificateData?.CourseOption;
-                        if(null != requestedLearner && !string.IsNullOrWhiteSpace(requestedLearner.CourseOption))
+                        if (null != requestedLearner && !string.IsNullOrWhiteSpace(requestedLearner.CourseOption))
                         {
                             courseOption = requestedLearner.CourseOption;
                         }
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                 {
                     RuleFor(m => m.CertificateData.ContactPostCode).Matches("^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$").WithMessage("Provide a valid UK postcode");
                 });
-                
+
                 RuleFor(m => m.CertificateData.OverallGrade)
                     .Custom((overallGrade, context) =>
                     {

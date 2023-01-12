@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Web.ViewModels;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -23,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         public void Arrange()
         {
             base.Arrange(
-                addEpaoClaim: true, 
+                addEpaoClaim: true,
                 addUkprnClaim: false,
                 contactsPrivileges: null);
 
@@ -32,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         public override async Task<IActionResult> Act()
-        {            
+        {
             return await sut.ChangePhoneNumber(new ChangePhoneNumberViewModel
             {
                 PhoneNumber = ValidPhoneNumberDifferent,
@@ -51,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             _actionResult = await Act();
 
             OrganisationApiClient.Verify(c => c.UpdateEpaOrganisationPhoneNumber(
-                It.Is<UpdateEpaOrganisationPhoneNumberRequest>(p => p.OrganisationId == EpaoId && p.PhoneNumber == ValidPhoneNumberDifferent)), 
+                It.Is<UpdateEpaOrganisationPhoneNumberRequest>(p => p.OrganisationId == EpaoId && p.PhoneNumber == ValidPhoneNumberDifferent)),
                 Times.Once);
         }
 

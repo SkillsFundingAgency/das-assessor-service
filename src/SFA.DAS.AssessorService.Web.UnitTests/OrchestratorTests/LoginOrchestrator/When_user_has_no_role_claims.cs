@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestrator
 {
@@ -27,10 +26,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
 
             var organisationsApiClient = new Mock<IOrganisationsApiClient>();
             var loginApiClient = new Mock<ILoginApiClient>();
-          //  var loginOrchestrator = new Orchestrators.Login.LoginOrchestrator(new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object, contextAccessor.Object,
-          //      loginApiClient.Object);
+            //  var loginOrchestrator = new Orchestrators.Login.LoginOrchestrator(new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object, contextAccessor.Object,
+            //      loginApiClient.Object);
 
-           // loginOrchestrator.Login().Wait();
+            // loginOrchestrator.Login().Wait();
 
 
         }

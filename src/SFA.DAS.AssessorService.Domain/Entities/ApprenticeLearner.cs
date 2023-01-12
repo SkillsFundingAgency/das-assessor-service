@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -30,6 +29,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         /// From Provider Table
         /// </summary>
         public string ProviderName { get; set; }
-        
+
     }
 }

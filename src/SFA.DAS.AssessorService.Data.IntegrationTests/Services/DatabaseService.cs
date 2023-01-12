@@ -1,25 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using Dapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-     
+
         public DatabaseService()
         {
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
-            
+
             WebConfiguration = new TestWebConfiguration
             {
                 SqlConnectionString = Configuration.GetConnectionString("SqlConnectionStringTest")
@@ -81,7 +79,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 var result = connection.Query<T>(sql);
                 connection.Close();
                 return result.FirstOrDefault();
-            }    
+            }
         }
 
         public IEnumerable<T> GetList<T>(string sql)

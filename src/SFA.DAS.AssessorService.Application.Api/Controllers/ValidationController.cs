@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +6,10 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateEmail(string emailToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest{Type = "email", Value = emailToValidate}));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "email", Value = emailToValidate }));
         }
 
         [HttpGet("is-websitelink-format", Name = "ValidateWebsiteLink")]
@@ -155,6 +155,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new ValidationRequest { Type = "charityNumber", Value = charityNumberToCheck }));
         }
 
-        
+
     }
 }

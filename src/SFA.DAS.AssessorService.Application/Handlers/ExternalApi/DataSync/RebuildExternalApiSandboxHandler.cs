@@ -20,9 +20,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.DataSync
         public async Task<Unit> Handle(RebuildExternalApiSandboxRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Rebuild External Api Sandbox Started");
-            
+
             await _sandboxDbRepository.RebuildExternalApiSandbox();
-            
+
             return Unit.Value;
         }
     }

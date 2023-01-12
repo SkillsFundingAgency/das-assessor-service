@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,6 +12,10 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -31,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IStandardsApiClient _standardsApiClient;
         private const int PageSize = 10;
 
-        public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger, 
+        public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger,
             ISessionService sessionService,
             IOrganisationsApiClient organisationsApiClient,
             IStandardsApiClient standardsApiClient,
@@ -50,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index(int? pageIndex)
         {
             var model = new ApprovedStandardsWithVersionsViewModel();
-            
+
             try
             {
                 var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
@@ -69,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("NotRegistered", "Home");
             }
-            
+
             return View("Index", model);
         }
 
@@ -139,14 +138,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             };
 
             var piplelineRecords = (from pipeline in response
-                select new object[]
-                {
+                                    select new object[]
+                                    {
                     $"\"{pipeline.StandardName}, {pipeline.StandardVersion}\"",
                     $"\"{pipeline.Pipeline}\"",
                     $"\"{pipeline.ProviderUkPrn}\"",
                     $"\"{pipeline.EstimatedDate}\"",
                     $"\"{pipeline.ProviderName}\"",
-                }).ToList();
+                                    }).ToList();
 
             var pipelineCsv = new StringBuilder();
             piplelineRecords.ForEach(line =>
@@ -158,7 +157,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return File(buffer, "text/csv", $"EpaPipeline.csv");
         }
 
-        private async Task<OrderedListResultViewModel> GetPipeline(string selectedStandard, string selectedProvider, string selectedEPADate, string orderBy, string orderDirection,int pageSize, int? pageIndex)
+        private async Task<OrderedListResultViewModel> GetPipeline(string selectedStandard, string selectedProvider, string selectedEPADate, string orderBy, string orderDirection, int pageSize, int? pageIndex)
         {
             var orderedListResultViewModel = new OrderedListResultViewModel
             {
@@ -214,9 +213,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private void InitStandardFilter(OrderedListResultViewModel model, IEnumerable<Domain.Entities.EpaoPipelineStandardFilter> items)
         {
-            model.StandardFilter = new List<OrderedListResultViewModel.PipelineFilterItem>() { new OrderedListResultViewModel.PipelineFilterItem() { Id = "ALL", Value = "All standards" }  };
+            model.StandardFilter = new List<OrderedListResultViewModel.PipelineFilterItem>() { new OrderedListResultViewModel.PipelineFilterItem() { Id = "ALL", Value = "All standards" } };
 
-            if(null != items && items.Any())
+            if (null != items && items.Any())
             {
                 model.StandardFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
             }
@@ -241,5 +240,5 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 model.EPADateFilter.AddRange(items.Select(i => new OrderedListResultViewModel.PipelineFilterItem() { Id = i.Id, Value = i.Value }));
             }
         }
-   }
+    }
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class ContactLog 
+    public class ContactLog
     {
         public DateTime DateTime { get; set; }
         public Guid User { get; set; }
@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string ContactLogType { get; set; }
         public string ContactLogDetails { get; set; }
     }
-    
+
     public class ContactLogType
     {
         public const string PrivilegesAmended = "PrivilegesAmended";

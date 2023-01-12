@@ -1,16 +1,15 @@
-﻿using System;
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.Notifications.Api.Client;
+using SFA.DAS.Notifications.Api.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.DTOs;
-using SFA.DAS.Notifications.Api.Client;
-using SFA.DAS.Notifications.Api.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
@@ -19,23 +18,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
         private const string SystemId = "AssessorService";
         private const string ReplyToAddress = "digital.apprenticeship.service@notifications.service.gov.uk";
         private const string Subject = "EPAO user to approve";
-        private readonly INotificationsApi _notificationsApi;        
+        private readonly INotificationsApi _notificationsApi;
         private readonly ILogger<SendEmailHandler> _logger;
 
         public SendEmailHandler(INotificationsApi notificationsApi, ILogger<SendEmailHandler> logger)
         {
-            _notificationsApi = notificationsApi;            
+            _notificationsApi = notificationsApi;
             _logger = logger;
         }
 
-      
+
         public async Task<Unit> Handle(SendEmailRequest message, CancellationToken cancellationToken)
         {
-            var emailTemplateSummary = message.EmailTemplateSummary;            
+            var emailTemplateSummary = message.EmailTemplateSummary;
             var personalisationTokens = GetPersonalisationTokens(message.Tokens);
 
             if (emailTemplateSummary != null && !string.IsNullOrWhiteSpace(message.Email))
-            {                
+            {
                 await SendEmailViaNotificationsApi(message.Email, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
             }
             else if (emailTemplateSummary != null && emailTemplateSummary.Recipients != string.Empty)
@@ -51,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 _logger.LogError($"Cannot send email template {emailTemplateSummary.TemplateName} to '{message.Email}'");
             };
             return Unit.Value;
-        }      
+        }
 
         private Dictionary<string, string> GetPersonalisationTokens(dynamic tokens)
         {
@@ -65,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 }
                 catch (JsonException je)
                 {
-                    _logger.LogError(je,$"Failed to read personalisation tokens");
+                    _logger.LogError(je, $"Failed to read personalisation tokens");
                 }
             }
 
@@ -105,6 +104,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             }
         }
 
-        
+
     }
 }

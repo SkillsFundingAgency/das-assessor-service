@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
@@ -76,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 
                     var classes = output.Attributes.FirstOrDefault(a => a.Name == "class")?.Value.ToString();
 
-                    output.Attributes.SetAttribute("class", 
+                    output.Attributes.SetAttribute("class",
                         string.IsNullOrEmpty(classes)
                             ? $"{sortDirectionClass}"
                             : $"{sortDirectionClass} {classes}");

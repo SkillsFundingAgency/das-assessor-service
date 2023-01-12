@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -175,7 +174,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             // Act
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
-        
+
             act.Should().Throw<InvalidOperationException>().WithMessage($"StandardUId:{request.StandardUId} not found, unable to populate certificate data");
         }
 

@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Exceptions
     {
         public EntityAlreadyExistsException()
         {
-            
+
         }
 
         public EntityAlreadyExistsException(string message) : base(message)

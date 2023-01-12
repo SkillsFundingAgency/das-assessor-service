@@ -1,19 +1,19 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
     public class CreateContactHandler : IRequestHandler<CreateContactRequest, ContactBoolResponse>
     {
-        
+
         private readonly IContactRepository _contactRepository;
         private readonly ISignInService _signInService;
         private readonly IContactQueryRepository _contactQueryRepository;
@@ -36,13 +36,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
         public async Task<ContactBoolResponse> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
             var response = new ContactBoolResponse(true);
-            var newContact = Mapper.Map<Contact>(createContactRequest);           
+            var newContact = Mapper.Map<Contact>(createContactRequest);
             newContact.OrganisationId = null;
             newContact.Status = ContactStatus.New;
             newContact.SignInType = "ASLogin";
             newContact.Title = "";
             newContact.GivenNames = createContactRequest.GivenName;
-            
+
             var existingContact = await _contactRepository.GetContact(newContact.Email);
             if (existingContact == null)
             {

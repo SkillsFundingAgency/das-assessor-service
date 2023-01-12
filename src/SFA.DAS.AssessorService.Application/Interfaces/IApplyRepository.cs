@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
-using SFA.DAS.AssessorService.ApplyTypes;
+﻿using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;

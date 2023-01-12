@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     throw new InvalidOperationException("OrganisationStandardVersion already exists");
                 }
                 else
-                { 
+                {
                     await _repository.CreateOrganisationStandardVersion(entity);
                 }
 

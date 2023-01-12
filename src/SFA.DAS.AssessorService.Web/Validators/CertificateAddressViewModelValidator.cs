@@ -12,10 +12,10 @@ namespace SFA.DAS.AssessorService.Web.Validators
             RuleFor(vm => vm.Employer).NotEmpty()
                 .When(vm => vm.SendTo == CertificateSendTo.Employer)
                 .WithMessage(localizer["EmployerCannotBeEmpty"]);
-            
+
             RuleFor(vm => vm.AddressLine1).NotEmpty()
                 .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
-            
+
             RuleFor(vm => vm.City).NotEmpty()
                 .WithMessage(localizer["CityCannotBeEmpty"]);
 

@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
 
             _mockApplyRepository = new Mock<IApplyRepository>();
             _mockApplyRepository.Setup(s => s.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<ApplySummary> { new ApplySummary { StandardCode = 104, StandardApplicationType = "versionWithdrawal", ReviewStatus="Approved" } });
+                .ReturnsAsync(new List<ApplySummary> { new ApplySummary { StandardCode = 104, StandardApplicationType = "versionWithdrawal", ReviewStatus = "Approved" } });
 
             _sut = new GetAllWithdrawnApplicationsForStandardHandler(_mockApplyRepository.Object);
         }
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
         public async Task Then_organisation_withdrawn_applications_are_retrieved()
         {
             await _sut.Handle(new GetAllWithdrawnApplicationsForStandardRequest(new Guid(), 59), new CancellationToken());
-            _mockApplyRepository.Verify(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(),It.IsAny<int>()), Times.Once);
+            _mockApplyRepository.Verify(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()), Times.Once);
         }
 
         [Test]

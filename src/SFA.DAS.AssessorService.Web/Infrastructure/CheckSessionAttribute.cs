@@ -1,6 +1,6 @@
-﻿using System;
-using SFA.DAS.AssessorService.Web.Controllers;
+﻿using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Extensions;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {

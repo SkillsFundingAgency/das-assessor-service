@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Extenstions
     {
         public static DateTime? DropMilliseconds(this DateTime? dateTime)
         {
-            return dateTime.HasValue ? dateTime.Value.DropMilliseconds() : dateTime;   
+            return dateTime.HasValue ? dateTime.Value.DropMilliseconds() : dateTime;
         }
 
         public static DateTime DropMilliseconds(this DateTime dt)

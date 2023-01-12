@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
     public class GetEarliestWithdrawalDateHandler : IRequestHandler<GetEarliestWithdrawalDateRequest, DateTime>
     {
         private readonly IDateTimeHelper _dateTimeHelper;
-        
+
         public GetEarliestWithdrawalDateHandler(IDateTimeHelper dateTimeHelper)
         {
             _dateTimeHelper = dateTimeHelper;

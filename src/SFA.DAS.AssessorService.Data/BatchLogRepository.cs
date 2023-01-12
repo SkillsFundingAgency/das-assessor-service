@@ -61,11 +61,11 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction);
 
             var response = new ValidationResponse();
-            if(rowsAffected == 0)
+            if (rowsAffected == 0)
             {
                 response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
             }
-            
+
             return response;
         }
 

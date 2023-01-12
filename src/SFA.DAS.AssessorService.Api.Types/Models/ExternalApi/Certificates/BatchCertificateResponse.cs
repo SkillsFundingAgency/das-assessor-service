@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates

@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -8,6 +5,8 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
@@ -25,13 +24,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
             ContactsApiClient = contactsApiClient;
             HttpContextAccessor = httpContextAccessor;
         }
-        
+
         protected async Task<(bool isValid, ContactResponse contact)> SecurityCheckAndGetContact(Guid contactId)
         {
             RequestingUser = await GetRequestingContact();
-            
+
             UserToBeDisplayed = await ContactsApiClient.GetById(contactId);
-            
+
             return (RequestingUser.OrganisationId == UserToBeDisplayed.OrganisationId, UserToBeDisplayed);
         }
 

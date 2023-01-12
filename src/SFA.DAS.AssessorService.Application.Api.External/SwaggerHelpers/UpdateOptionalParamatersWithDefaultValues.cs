@@ -8,12 +8,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {

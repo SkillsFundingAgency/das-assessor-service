@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         }
 
         private async Task<List<SearchResult>> Search(SearchQuery request, CancellationToken cancellationToken)
-        { 
+        {
             _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
             var thisEpao = await _organisationRepository.Get(request.EpaOrgId);
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
 
-            _logger.LogInformation((learnerResults != null && learnerResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation((learnerResults != null && learnerResults.Any()) ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(learnerResults)
                 .MatchUpExistingCompletedStandards(request, likedSurname, approvedStandards, _certificateRepository, _contactRepository, _organisationRepository, _logger)
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var approvedStandardVersions = await _standardService.GetEPAORegisteredStandardVersions(thisEpao.EndPointAssessorOrganisationId);
 
             var approvedStandardCodes = approvedStandardVersions.Select(standard => standard.LarsCode).Distinct();
-          
+
             return approvedStandardCodes;
         }
 

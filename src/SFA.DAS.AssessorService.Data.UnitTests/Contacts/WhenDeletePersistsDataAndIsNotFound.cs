@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             MappingBootstrapper.Initialize();
 
             var userNameToFind = "NotFoundUser";
-           
+
             var contacts = new List<Contact>
             {
                 Builder<Contact>.CreateNew()
@@ -39,19 +39,19 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
 
             try
             {
-               await contactRepository.Delete("testuser");
+                await contactRepository.Delete("testuser");
             }
             catch (Exception exception)
             {
                 _exception = exception;
             }
-        
+
         }
 
         [Test]
         public void ThenNotFoundExceptionSHouldBeThrown()
         {
-            _exception.Should().BeOfType<NotFoundException>();            
+            _exception.Should().BeOfType<NotFoundException>();
         }
 
         private Mock<AssessorDbContext> CreateMockDbContext(IMock<DbSet<Contact>> mockSet)

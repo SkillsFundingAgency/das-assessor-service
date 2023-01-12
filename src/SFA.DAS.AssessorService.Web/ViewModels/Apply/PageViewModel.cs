@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string RedirectAction { get; set; }
         public string ReturnUrl { get; set; }
-        
+
         public string SummaryLink { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 Options = q.Input.Options,
                 Validations = q.Input.Validations,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers,q),
+                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : GetJsonValue(answers, q),
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceNo = SequenceNo,
                 SectionNo = SectionNo,
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
                 return JsonConvert.DeserializeObject<dynamic>(json);
 
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }

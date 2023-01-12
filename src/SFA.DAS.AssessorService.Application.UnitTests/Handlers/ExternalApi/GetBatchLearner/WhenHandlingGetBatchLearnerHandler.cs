@@ -70,10 +70,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _mockCertificateRepoistory.Setup(cr => cr.GetCertificate(_request.Uln, It.IsAny<int>(), _request.FamilyName))
                 .ReturnsAsync(_certificateResponse);
 
-            _handler = new GetBatchLearnerHandler(_mockMediator.Object, 
+            _handler = new GetBatchLearnerHandler(_mockMediator.Object,
                 Mock.Of<ILogger<GetBatchLearnerHandler>>(),
-                _mockLearnerRepository.Object, 
-                _mockOrgQueryRepository.Object, 
+                _mockLearnerRepository.Object,
+                _mockOrgQueryRepository.Object,
                 _mockStandardService.Object,
                 _mockCertificateRepoistory.Object);
         }

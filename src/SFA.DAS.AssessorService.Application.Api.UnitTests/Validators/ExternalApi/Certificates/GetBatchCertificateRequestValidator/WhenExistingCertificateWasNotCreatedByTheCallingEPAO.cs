@@ -16,13 +16,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
         [SetUp]
         public async Task Arrange()
         {
-             _request = Builder<GetBatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 101)
-                .With(i => i.StandardReference = null)
-                .With(i => i.UkPrn = 99999999)
-                .With(i => i.FamilyName = "Test")
-                .Build();
+            _request = Builder<GetBatchCertificateRequest>.CreateNew()
+               .With(i => i.Uln = 1234567890)
+               .With(i => i.StandardCode = 101)
+               .With(i => i.StandardReference = null)
+               .With(i => i.UkPrn = 99999999)
+               .With(i => i.FamilyName = "Test")
+               .Build();
 
             _validationResult = await Validator.ValidateAsync(_request);
         }

@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System;
+using System.Linq;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
@@ -22,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.LegalName, opt => opt.ResolveUsing(source => source.OrganisationData?.LegalName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map< AssessorService.Api.Types.Models.AO.OrganisationData, OrganisationAddress>(source.OrganisationData)))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<AssessorService.Api.Types.Models.AO.OrganisationData, OrganisationAddress>(source.OrganisationData)))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanyNumber))
                 .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber))
                 .ForMember(dest => dest.FinancialDueDate, opt => opt.ResolveUsing(source => source.OrganisationData?.FHADetails?.FinancialDueDate))
@@ -92,8 +91,8 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.DeliveryAreasDetails,
                     opt => opt.MapFrom(src => src.OrganisationStandards.FirstOrDefault().OrganisationStandardDeliveryAreas
                         .Select(Mapper.Map<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>).ToList()))
-                .ForMember(dest =>dest.OrganisationStandard,
-                        opt=>opt.MapFrom(src=>src.OrganisationStandards.FirstOrDefault()))
+                .ForMember(dest => dest.OrganisationStandard,
+                        opt => opt.MapFrom(src => src.OrganisationStandards.FirstOrDefault()))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -113,13 +112,13 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 
     public class OrganisationStandardMapper : Profile
     {
-        public OrganisationStandardMapper ()
+        public OrganisationStandardMapper()
         {
             CreateMap<Domain.Entities.OrganisationStandard, OrganisationStandard>()
-                .ForMember(dest => dest.StandardId, opt=> opt.MapFrom(source =>source.StandardCode))
-                .ForMember(dest => dest.EffectiveFrom, opt=> opt.MapFrom(source =>source.EffectiveFrom))
-                .ForMember(dest => dest.EffectiveTo, opt=> opt.MapFrom(source =>source.EffectiveTo))
-                .ForMember(dest => dest.DateStandardApprovedOnRegister, opt=> opt.MapFrom(source =>source.DateStandardApprovedOnRegister))
+                .ForMember(dest => dest.StandardId, opt => opt.MapFrom(source => source.StandardCode))
+                .ForMember(dest => dest.EffectiveFrom, opt => opt.MapFrom(source => source.EffectiveFrom))
+                .ForMember(dest => dest.EffectiveTo, opt => opt.MapFrom(source => source.EffectiveTo))
+                .ForMember(dest => dest.DateStandardApprovedOnRegister, opt => opt.MapFrom(source => source.DateStandardApprovedOnRegister))
                     .ForAllOtherMembers(dest => dest.Ignore());
         }
     }

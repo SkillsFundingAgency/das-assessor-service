@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +13,10 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -45,12 +43,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _localizer = localizer;
             _config = config;
         }
-        
+
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchOrganisation(int ukprn)
         {
             _logger.LogInformation($"Received Search for an Organisation Request using ukprn {ukprn}");
@@ -69,17 +67,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(organisation);
         }
-        
-        [HttpGet(Name="GetAllOrganisations")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+
+        [HttpGet(Name = "GetAllOrganisations")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllOrganisations()
         {
             _logger.LogInformation("Received request to retrieve All Organisations");
 
             var organisations =
                 Mapper.Map<List<OrganisationResponse>>(await _organisationQueryRepository.GetAllOrganisations());
-                
+
             return Ok(organisations);
         }
 
@@ -115,27 +113,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var decodedName = WebUtility.UrlDecode(name);
             _logger.LogInformation($"Received request to retrieve Organisation {decodedName}");
-            
+
             var organisation = await _organisationQueryRepository.GetOrganisationByName(decodedName);
-            if(organisation == null)
+            if (organisation == null)
             {
                 var ex = new ResourceNotFoundException(name);
                 throw ex;
             }
-            
+
             return Ok(Mapper.Map<OrganisationResponse>(organisation));
         }
-        
+
         [HttpGet("forContact/{userId}")]
         public async Task<IActionResult> GetOrganisationForContact(Guid userId)
         {
             var organisation = await _organisationQueryRepository.GetOrganisationByContactId(userId);
-            if(organisation == null)
+            if (organisation == null)
             {
                 throw new ResourceNotFoundException(userId.ToString());
             }
-            
-            return Ok(Mapper.Map<Organisation,OrganisationResponse>(organisation));
+
+            return Ok(Mapper.Map<Organisation, OrganisationResponse>(organisation));
         }
 
         [HttpGet("organisation/earliest-withdrawal/{id}", Name = "GetOrganisationEarliestWithdrawal")]
@@ -143,9 +141,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationEarliestWithdrawal(Guid id)
-        { 
+        {
             _logger.LogInformation($"Received request to retrieve earliest withdrawal for Organisation: {id}");
-            
+
             return Ok(await _mediator.Send(new GetEarliestWithdrawalDateRequest(id)));
         }
 
@@ -156,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetOrganisationStandardEarliestWithdrawal(Guid id, int standardId)
         {
             _logger.LogInformation($"Received request to retrieve earliest withdrawal for Standard: {standardId} of Organisation: {id}");
-            
+
             return Ok(await _mediator.Send(new GetEarliestWithdrawalDateRequest(id, standardId)));
         }
     }

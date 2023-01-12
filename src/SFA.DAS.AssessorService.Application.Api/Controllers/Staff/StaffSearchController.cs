@@ -20,19 +20,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
     public class StaffSearchController : Controller
     {
         private readonly IMediator _mediator;
-        
+
 
         public StaffSearchController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [HttpGet(Name="StaffSearch")]
+        [HttpGet(Name = "StaffSearch")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchItems>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffSearch(string searchQuery, int? page = 1)
-        {            
+        {
             return Ok(await _mediator.Send(new StaffSearchRequest(searchQuery, page.Value)));
         }
 

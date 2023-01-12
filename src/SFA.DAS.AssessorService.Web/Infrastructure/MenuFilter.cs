@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {
-    public class MenuFilter: IActionFilter
+    public class MenuFilter : IActionFilter
     {
         private readonly ISessionService _sessionService;
         private readonly string _currentPage;

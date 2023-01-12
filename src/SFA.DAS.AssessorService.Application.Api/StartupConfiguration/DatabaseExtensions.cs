@@ -14,7 +14,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public static void AddDatabaseRegistration(this ConfigurationExpression config, string environment, string sqlConnectionString)
         {
-            config.For<IDbConnection>().Use($"Build IDbConnection", c => {
+            config.For<IDbConnection>().Use($"Build IDbConnection", c =>
+            {
                 var azureServiceTokenProvider = new AzureServiceTokenProvider();
                 return environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
                     };
             });
-            
+
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
             config.For<AssessorDbContext>().Use(c => new AssessorDbContext(c.GetInstance<IDbConnection>(), option.Options));
         }

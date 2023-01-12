@@ -5,20 +5,20 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             // Only update if a new status was specified!
-            if(!string.IsNullOrEmpty(organisation.Status))
+            if (!string.IsNullOrEmpty(organisation.Status))
             {
                 organisationEntity.Status = organisation.Status;
             }
@@ -55,14 +55,14 @@ namespace SFA.DAS.AssessorService.Data
 
             organisationEntity.EndPointAssessorName = organisation.EndPointAssessorName;
             organisationEntity.EndPointAssessorUkprn = organisation.EndPointAssessorUkprn;
-            organisationEntity.ApiEnabled = organisation.ApiEnabled ;
+            organisationEntity.ApiEnabled = organisation.ApiEnabled;
             organisationEntity.ApiUser = organisation.ApiUser;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(organisationEntity);
 
             await _assessorDbContext.SaveChangesAsync();
-            
+
             return organisationEntity;
         }
 

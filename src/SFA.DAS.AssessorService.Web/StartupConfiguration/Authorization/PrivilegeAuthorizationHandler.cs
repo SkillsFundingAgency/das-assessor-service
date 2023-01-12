@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -9,6 +5,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             _httpContextAccessor = httpContextAccessor;
             _tempDataProvider = tempDataProvider;
         }
-        
+
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PrivilegeRequirement requirement)
         {
             if (!_httpContextAccessor.HttpContext.User.HasClaim(c => c.Type == "UserId"))
@@ -32,20 +32,20 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 context.Fail();
                 return;
             }
-            
+
             var userid = _httpContextAccessor.HttpContext.User.FindFirst("UserId").Value;
 
             var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
-            
+
             var privilegeRequested = (await _contactsApiClient.GetPrivileges()).FirstOrDefault(p => p.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
             if (privilegeRequested is null || !privilegeRequested.Enabled)
-            {   
+            {
                 var unavailableFeatureContext = new PrivilegeAuthorizationDeniedContext();
-                
-                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> {{"UnavailableFeatureContext", JsonConvert.SerializeObject(unavailableFeatureContext)}});
+
+                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> { { "UnavailableFeatureContext", JsonConvert.SerializeObject(unavailableFeatureContext) } });
                 return;
             }
-            
+
             var contactPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userid));
             if (contactPrivileges.Any(cp => cp.Privilege.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase)))
             {
@@ -59,8 +59,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     Controller = controllerActionDescriptor.ControllerName,
                     Action = controllerActionDescriptor.ActionName
                 };
-                
-                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> {{ nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext)}});
+
+                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> { { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) } });
             }
         }
     }

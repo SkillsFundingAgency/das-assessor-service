@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         private readonly IClaimService _claimService;
         private readonly ILogger<ApplicationAuthorizationHandler> _logger;
 
-        public ApplicationAuthorizationHandler(IApplicationApiClient applicationApiClient, IHttpContextAccessor httpContextAccessor, 
+        public ApplicationAuthorizationHandler(IApplicationApiClient applicationApiClient, IHttpContextAccessor httpContextAccessor,
             IClaimService claimService, ILogger<ApplicationAuthorizationHandler> logger)
         {
             _applicationApiClient = applicationApiClient;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             _claimService = claimService;
             _logger = logger;
         }
-        
+
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ApplicationRequirement requirement)
         {
             var userId = _claimService.UserId;
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             {
                 var routeId = _httpContextAccessor.HttpContext.GetRouteValue(requirement.RouteId) as string
                     ?? _httpContextAccessor.HttpContext.Request.Query[requirement.RouteId][0];
-             
+
                 if (Guid.TryParse(routeId, out Guid id))
                 {
                     try

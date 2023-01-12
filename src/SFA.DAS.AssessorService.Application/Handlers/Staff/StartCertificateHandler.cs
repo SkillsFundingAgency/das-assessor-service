@@ -58,14 +58,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             _logger.LogDebug($"Updating existing certificate for Uln:{request.Uln} StandardCode:{request.StandardCode} StandardUId{request.StandardUId}");
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            if(certificate.Status == CertificateStatus.Deleted)
+            if (certificate.Status == CertificateStatus.Deleted)
             {
                 // Rehydrate cert data when the certificate is deleted
                 certData = new CertificateData();
             };
 
             certificate = await PopulateCertificateData(certificate, certData, request, organisation);
-            
+
             // If the certificate was a fail, reset back to draft and reset achievement date and grade
             if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
             {
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 certificate = await _certificateRepository.Update(certificate, request.Username, null);
             }
-            
+
             return certificate;
         }
 
@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var newCertificate = await _certificateRepository.New(certificate);
 
             _logger.LogDebug($"Created new certificate with Id:{newCertificate.Id} CertificateReference:{newCertificate.CertificateReference}");
-            
+
             return newCertificate;
         }
 
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             _logger.LogDebug($"Populating certificate data for Uln:{request.Uln} StandardCode:{request.StandardCode}");
             var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
-            
+
             _logger.LogDebug($"Populating certificate data with provider UkPrn:{learner.UkPrn}");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
@@ -143,7 +143,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             if (!string.IsNullOrWhiteSpace(request.StandardUId))
             {
                 _logger.LogInformation($"Populating certificate data for StandardUId:{request.StandardUId}");
-                
+
                 var standardVersion = await _standardService.GetStandardVersionById(request.StandardUId);
                 if (standardVersion == null)
                 {
@@ -168,7 +168,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 _logger.LogDebug($"Populating certificate data for standard versions of StdCode:{learner.StdCode}");
                 var standardVersions = await _standardService.GetStandardVersionsByLarsCode(learner.StdCode);
                 var latestStandardVersion = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First();
-                
+
                 certData.StandardName = latestStandardVersion.Title;
                 certData.StandardReference = latestStandardVersion.IfateReferenceNumber;
             }

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
@@ -34,8 +34,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             {
                 var contactsWithPrivileges = await _mediator.Send(new GetAllContactsIncludePrivilegesRequest(organisation.OrganisationId));
                 var contactsWithManageUserPrivilege = contactsWithPrivileges?
-                    .Where(c => 
-                        c.Privileges.Any(p => p.Key == Privileges.ManageUsers) && 
+                    .Where(c =>
+                        c.Privileges.Any(p => p.Key == Privileges.ManageUsers) &&
                         (c.Contact.Status == ContactStatus.Live || c.Contact.Status == ContactStatus.Active))
                     .ToList();
 

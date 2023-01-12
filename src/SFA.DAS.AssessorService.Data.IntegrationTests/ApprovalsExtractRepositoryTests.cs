@@ -1,16 +1,16 @@
-﻿using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
-using SFA.DAS.AssessorService.Domain.Entities;
-using FluentAssertions;
-using System;
-using System.Threading.Tasks;
-using Moq;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {

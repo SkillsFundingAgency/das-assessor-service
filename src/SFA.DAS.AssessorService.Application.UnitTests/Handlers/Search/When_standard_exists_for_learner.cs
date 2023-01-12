@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading;
 using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
 
             LearnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Domain.Entities.Learner> {new Domain.Entities.Learner() {StdCode = 12, FamilyName = "Lamora"}});
+                .ReturnsAsync(new List<Domain.Entities.Learner> { new Domain.Entities.Learner() { StdCode = 12, FamilyName = "Lamora" } });
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
             result.Count.Should().Be(1);
             result[0].Level.Should().Be(2);

@@ -4,8 +4,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -80,16 +78,16 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Standard>> GetAllStandards()
         {
-			var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
+            var sql = @"SELECT [StandardUId],[IFateReferenceNumber],[LarsCode],[Title],[Version],
 [Level],[Status],[TypicalDuration],[MaxFunding],[IsActive],[LastDateStarts],
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
 [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards]
             WHERE [VersionApprovedForDelivery] IS NOT NULL";
 
 
-          var results = await _unitOfWork.Connection.QueryAsync<Standard>(
-                sql,
-                transaction: _unitOfWork.Transaction);
+            var results = await _unitOfWork.Connection.QueryAsync<Standard>(
+                  sql,
+                  transaction: _unitOfWork.Transaction);
 
             return results;
         }
@@ -232,21 +230,22 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
 
             var standardVersionOptions = filterResults.Read<StandardVersionOption>();
 
-            var results = standardVersionOptions.GroupBy(version => new 
-                { 
-                    version.StandardUId, 
-                    version.LarsCode, 
-                    version.IfateReferenceNumber, 
-                    version.Version 
-                })
-                .Select(group => new StandardOptions { 
+            var results = standardVersionOptions.GroupBy(version => new
+            {
+                version.StandardUId,
+                version.LarsCode,
+                version.IfateReferenceNumber,
+                version.Version
+            })
+                .Select(group => new StandardOptions
+                {
                     StandardUId = group.Key.StandardUId,
                     StandardReference = group.Key.IfateReferenceNumber,
                     StandardCode = group.Key.LarsCode,
                     Version = group.Key.Version,
                     CourseOption = group.Select(opt => opt.OptionName)
                 });
-           
+
             return results;
         }
 
@@ -638,7 +637,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
-                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, 
+                    standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route,
                     standard.VersionMajor, standard.VersionMinor,
                     standard.IntegratedDegree, standard.EqaProviderName, standard.EqaProviderContactName, standard.EqaProviderContactEmail, standard.OverviewOfRole);
             }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationPhoneNumberHandler : IRequestHandler<UpdateEpaOrganisationPhoneNumberRequest, List<ContactResponse>>
-    { 
+    {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
@@ -36,11 +36,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 : null;
 
             return await _mediator.Send(new SendOrganisationDetailsAmendedEmailRequest
-                {
-                    OrganisationId = request.OrganisationId,
-                    PropertyChanged = "Contact phone number",
-                    ValueAdded = request.PhoneNumber,
-                    Editor = updatedBy?.DisplayName ?? "EFSA Staff"
+            {
+                OrganisationId = request.OrganisationId,
+                PropertyChanged = "Contact phone number",
+                ValueAdded = request.PhoneNumber,
+                Editor = updatedBy?.DisplayName ?? "EFSA Staff"
             });
         }
     }

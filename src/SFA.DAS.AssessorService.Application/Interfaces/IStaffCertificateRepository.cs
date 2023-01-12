@@ -1,15 +1,14 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStaffCertificateRepository
     {
         Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns);
-        
+
         Task<List<CertificateLogSummary>> GetAllCertificateLogs(Guid certificateId);
         Task<List<CertificateLogSummary>> GetSummaryCertificateLogs(Guid certificateId);
         Task<CertificateLogSummary> GetLatestCertificateLog(Guid certificateId);

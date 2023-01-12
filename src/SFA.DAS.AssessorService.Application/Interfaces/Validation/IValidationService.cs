@@ -4,7 +4,7 @@
     {
         bool CheckPhoneNumberIsValue(string phoneNumberToCheck);
         bool CheckEmailIsValid(string emailToCheck);
-        bool CheckWebsiteLinkIsValid(string websiteLinkToCheck);        
+        bool CheckWebsiteLinkIsValid(string websiteLinkToCheck);
         bool IsNotEmpty(string stringToCheck);
         bool UkprnIsValid(string ukprnToCheck);
         bool UlnIsValid(string ulnToCheck);

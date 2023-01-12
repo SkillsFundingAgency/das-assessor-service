@@ -1,7 +1,6 @@
-﻿using System.Net.Http;
+﻿using Microsoft.Extensions.Logging;
+using System.Net.Http;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {

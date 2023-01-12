@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     StandardPageUrl = "www.standard.com",
                     OverviewOfRole = "Explanation of apprenticeship job role"
                 }
-            };          
+            };
         }
     }
 }

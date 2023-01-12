@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -33,7 +31,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
-        
+
         public bool OrganisationIsLive { get; set; }
     }
 
@@ -45,5 +43,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string City { get; set; }
         public string Postcode { get; set; }
     }
-    
+
 }

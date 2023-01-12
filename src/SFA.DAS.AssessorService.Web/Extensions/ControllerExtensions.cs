@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace SFA.DAS.AssessorService.Web.Extensions
+﻿namespace SFA.DAS.AssessorService.Web.Extensions
 {
     public static class ControllerExtensions
     {

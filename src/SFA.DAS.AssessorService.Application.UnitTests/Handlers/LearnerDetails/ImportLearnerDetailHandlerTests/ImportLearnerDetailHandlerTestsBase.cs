@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         protected ImportLearnerDetailRequest Request;
 
         protected Ilr ModifiedIlr = null;
-        
+
         protected static Ilr LearnerWithCertificate = new Ilr
         {
             Id = new Guid(),

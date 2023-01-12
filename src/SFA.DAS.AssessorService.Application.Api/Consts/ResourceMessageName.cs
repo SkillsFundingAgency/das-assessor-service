@@ -1,8 +1,8 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Consts
 {
     public static class ResourceMessageName
-    {      
-        public const string InvalidUkprn = "InvalidUKPRN";            
+    {
+        public const string InvalidUkprn = "InvalidUKPRN";
         public const string AlreadyExists = "AlreadyExists";
         public const string DoesNotExist = "DoesNotExist";
         public const string MustBeDefined = "MustBeDefined";

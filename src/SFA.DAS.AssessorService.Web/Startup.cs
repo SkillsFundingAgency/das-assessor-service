@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -23,12 +24,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
-    { 
+    {
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _env;
@@ -58,23 +58,23 @@ namespace SFA.DAS.AssessorService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
+
             services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
-            
+
             services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
-            
+            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator, CacheOverrideHtmlGenerator>();
+
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
-           
+
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web
                     throw;
                 }
             }
-            
+
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
-            
+
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", cfg =>
                 {
                     cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
@@ -124,9 +124,9 @@ namespace SFA.DAS.AssessorService.Web
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHealthChecks();
-            
+
             return ConfigureIoc(services);
-        }        
+        }
 
         private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
@@ -150,11 +150,11 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
 
                 config.For<IWebConfiguration>().Use(Configuration);
-                
+
                 config.For<IQnaApiClient>().Use<QnaApiClient>()
                   .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
                   .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
-                
+
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
@@ -169,15 +169,15 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
-                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);               
+                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
-                
-               
-                
+
+
+
                 config.Populate(services);
             });
 
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseHttpsRedirection();
-            
+
             app.UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
@@ -214,6 +214,6 @@ namespace SFA.DAS.AssessorService.Web
                         //,constraints: new { controller = new NotEqualRouteContraint("find-an-assessment-opportunity") }
                         );
                 });
-        }        
+        }
     }
 }

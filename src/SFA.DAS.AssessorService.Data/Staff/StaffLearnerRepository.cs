@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -30,10 +29,10 @@ namespace SFA.DAS.AssessorService.Data.Staff
         public async Task<IEnumerable<Learner>> SearchForLearnerByCertificateReference(string certRef)
         {
             var results = new List<Learner>();
-            
+
             var cert = await _context.Certificates.Include(q => q.Organisation).FirstOrDefaultAsync(c => c.CertificateReference == certRef);
 
-            if(cert != null)
+            if (cert != null)
             {
                 var learner = await _learnerRepository.Get(cert.Uln, cert.StandardCode);
 
@@ -105,7 +104,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             ORDER BY [UpdatedAt] DESC, [CreatedAt] DESC  
                             OFFSET @skip ROWS 
                             FETCH NEXT @take ROWS ONLY",
-                new { uln, skip = (page - 1) * pageSize, take = pageSize} )).ToList();
+                new { uln, skip = (page - 1) * pageSize, take = pageSize })).ToList();
         }
 
         public async Task<int> SearchForLearnerByUlnCount(long uln)

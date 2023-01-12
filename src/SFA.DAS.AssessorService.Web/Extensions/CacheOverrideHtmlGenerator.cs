@@ -1,4 +1,3 @@
-using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using System.Text.Encodings.Web;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions
         public override IHtmlContent GenerateAntiforgery(ViewContext viewContext)
         {
             var result = base.GenerateAntiforgery(viewContext);
-                         
+
             viewContext.HttpContext.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate";
 
             return result;

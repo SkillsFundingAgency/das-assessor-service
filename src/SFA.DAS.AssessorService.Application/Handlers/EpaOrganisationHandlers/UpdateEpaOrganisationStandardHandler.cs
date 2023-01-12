@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -39,13 +38,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
                 _logger.LogError(message);
                 if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
-                {     
+                {
                     throw new BadRequestException(message);
                 }
-                
+
                 throw new Exception(message);
-            } 
-            
+            }
+
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
             return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas);
@@ -73,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 EffectiveTo = request.EffectiveTo,
                 Comments = request.Comments,
                 ContactId = contactId,
-                OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments}
+                OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments }
             };
             return organisationStandard;
         }

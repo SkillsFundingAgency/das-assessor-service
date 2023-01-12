@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     public class ImportLearnerDetailResult
     {
         public long? Uln { get; set; }
-        
+
         public int? StdCode { get; set; }
 
         public string Outcome { get; set; }

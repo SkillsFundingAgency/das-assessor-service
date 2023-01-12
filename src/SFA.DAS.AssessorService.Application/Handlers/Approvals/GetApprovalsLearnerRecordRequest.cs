@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
     {
         public int StdCode { get; }
         public long Uln { get; }
-        
+
         public GetApprovalsLearnerRecordRequest(int stdCode, long uln)
         {
             StdCode = stdCode;

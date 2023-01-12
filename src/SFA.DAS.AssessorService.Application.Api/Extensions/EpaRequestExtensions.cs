@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Api.Extensions

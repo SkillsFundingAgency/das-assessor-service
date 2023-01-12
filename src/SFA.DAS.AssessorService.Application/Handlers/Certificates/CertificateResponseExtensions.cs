@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {

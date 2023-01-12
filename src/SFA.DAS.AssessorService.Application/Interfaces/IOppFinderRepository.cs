@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<OppFinderApprovedStandardDetailsResult> GetOppFinderApprovedStandardDetails(string standardReference);
         Task<OppFinderNonApprovedStandardsResult> GetOppFinderNonApprovedStandards(string searchTerm, string sectorFilters, string levelFilters, string sortColumn, int sortAscending, int pageSize, int pageIndex, string nonApprovedType);
         Task<OppFinderNonApprovedStandardDetailsResult> GetOppFinderNonApprovedStandardDetails(string standardReference);
-        Task UpdateStandardSummary();       
+        Task UpdateStandardSummary();
     }
 
     public class OppFinderFilterStandardsResult

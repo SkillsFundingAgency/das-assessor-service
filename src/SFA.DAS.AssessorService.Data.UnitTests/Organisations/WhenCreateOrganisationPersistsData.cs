@@ -1,36 +1,35 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
-    using OrganisationResponse = Api.Types.Models.OrganisationResponse;
-   
+
     public class WhenCreateOrganisationPersistsData
     {
-        private  OrganisationRepository _organisationRepository;
+        private OrganisationRepository _organisationRepository;
         private Mock<AssessorDbContext> _mockDbContext;
-        private  Organisation _result;
-        
+        private Organisation _result;
+
         [SetUp]
         public void Arrange()
-        { 
+        {
             MappingBootstrapper.Initialize();
 
-            var organisation = Builder<Organisation>.CreateNew().Build();           
-                       
+            var organisation = Builder<Organisation>.CreateNew().Build();
+
             var mockSet = CreateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
 
             _organisationRepository = new OrganisationRepository(_mockDbContext.Object);
             _result = _organisationRepository.CreateNewOrganisation(organisation).Result;
-        }     
+        }
 
         [Test]
         public void ItShouldReturnResult()

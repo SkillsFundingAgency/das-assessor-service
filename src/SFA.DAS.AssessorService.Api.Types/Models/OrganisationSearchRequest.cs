@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -17,9 +13,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Postcode { get; set; }
 
         public string OrganisationType { get; set; }
-        
+
         public IEnumerable<OrganisationSearchResult> Organisations { get; set; }
-        
+
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
     }
 

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Azure;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {

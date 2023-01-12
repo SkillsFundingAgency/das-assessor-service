@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -9,6 +7,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading;
 using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 
@@ -22,8 +22,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             Mapper.Reset();
             Mapper.Initialize(m => m.CreateMap<Domain.Entities.Learner, SearchResult>());
-            
-            
+
+
             var learnerRepository = new Mock<ILearnerRepository>();
 
             learnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
@@ -42,21 +42,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                                           new OrganisationStandardVersion { Title = "Standard 2", Version = "1.0", LarsCode = 2 },
                                                           new OrganisationStandardVersion { Title = "Standard 3", Version = "1.0", LarsCode = 3 }});
             standardService.Setup(c => c.GetStandardVersionById(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new Standard {Title = "Standard Title",  Level = 2 });
-            
-            
+                .ReturnsAsync(new Standard { Title = "Standard Title", Level = 2 });
+
+
             var organisationRepository = new Mock<IOrganisationQueryRepository>();
-            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001"});
+            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001" });
 
             var certificateRepository = new Mock<ICertificateRepository>();
             certificateRepository.Setup(r => r.GetDraftAndCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>());
-            
-            
+
+
             var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
-            var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;
+            var result = handler.Handle(new SearchQuery { Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name" }, new CancellationToken()).Result;
 
             result.Count.Should().Be(3);
         }

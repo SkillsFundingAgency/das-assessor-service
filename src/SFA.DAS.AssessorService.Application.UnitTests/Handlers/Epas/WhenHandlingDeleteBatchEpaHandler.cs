@@ -1,10 +1,8 @@
 ﻿using FluentAssertions;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -14,7 +12,6 @@ using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

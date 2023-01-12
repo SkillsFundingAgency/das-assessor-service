@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<List<EpaoPipelineStandardsExtractResponse>> Handle(EpaoPipelineStandardsExtractRequest request, CancellationToken cancellationToken)
         {
             _logger.LogDebug($"GetEpaoPipelineStandardsExtractHandler: EpaoId = {request.EpaoId}");
-            
+
             var result = await _standardRepository.GetEpaoPipelineStandardsExtract(request.EpaoId, request.StandardFilterId, request.ProviderFilterId, request.EPADateFilterId, _config.PipelineCutoff);
 
             var response = result.Select(o =>

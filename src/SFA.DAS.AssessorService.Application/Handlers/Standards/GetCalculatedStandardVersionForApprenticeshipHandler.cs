@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             //request.StandardId will be IFateRef or LarsCode, this will get latest version of the standard
             var standard = await _standardService.GetStandardVersionById(request.StandardId);
             var learner = await _learnerRepository.Get(request.Uln, standard.LarsCode);
-            
-            if(learner == null)
+
+            if (learner == null)
             {
                 // Can't calculate if no Learner/ILR record.
                 return null;
             }
-            
+
             var versions = await _standardService.GetStandardVersionsByLarsCode(standard.LarsCode);
 
             foreach (var version in versions.OrderBy(s => s.VersionMajor).ThenBy(t => t.VersionMinor))

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +8,10 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -81,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }
             }
 
-            if(null != mergeOrganisation)
+            if (null != mergeOrganisation)
             {
                 return CreatedAtRoute("GetMergeOrganisation", new { id = mergeOrganisation.Id });
             }
@@ -98,8 +98,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Get Merge Organisation Request");
 
-            var mergeOrganisation = await _mediator.Send(new GetMergeOrganisationRequest() { Id = id } );
-            if(null == mergeOrganisation)
+            var mergeOrganisation = await _mediator.Send(new GetMergeOrganisationRequest() { Id = id });
+            if (null == mergeOrganisation)
             {
                 return NotFound();
             }
@@ -114,13 +114,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetMergeLog(int? pageSize, int? pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId)
         {
-            var request = new GetMergeLogRequest() 
-            { 
-                PageSize = pageSize, 
-                PageIndex = pageIndex, 
-                OrderBy = orderBy, 
-                OrderDirection = orderDirection, 
-                PrimaryEPAOId = primaryEPAOId, 
+            var request = new GetMergeLogRequest()
+            {
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                OrderBy = orderBy,
+                OrderDirection = orderDirection,
+                PrimaryEPAOId = primaryEPAOId,
                 SecondaryEPAOId = secondaryEPAOId,
                 Status = "Completed"
             };

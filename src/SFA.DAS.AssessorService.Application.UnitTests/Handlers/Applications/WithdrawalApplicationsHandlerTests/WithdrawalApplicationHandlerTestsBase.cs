@@ -31,9 +31,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
             });
 
             ApplyRepository = new Mock<IApplyRepository>();
-                    
+
             Logger = new Mock<ILogger<WithdrawalApplicationsHandler>>();
-            
+
             StandardRepository = new Mock<IStandardRepository>();
             StandardRepository.Setup(m => m.GetEpaoRegisteredStandardVersions(It.IsAny<string>()))
                 .ReturnsAsync(

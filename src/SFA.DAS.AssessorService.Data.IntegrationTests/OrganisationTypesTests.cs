@@ -1,15 +1,14 @@
 ﻿using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class OrganisationTypesTests:TestBase
+    public class OrganisationTypesTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterQueryRepository _repository;
@@ -26,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             _organisationType1 = new OrganisationTypeModel { Id = 20, Status = "Live", Type = "Award Organisation" };
             _organisationType2 = new OrganisationTypeModel { Id = 21, Status = "New", Type = "Some Other" };
-            var organisationTypes = new List<OrganisationTypeModel> {_organisationType1, _organisationType2};
+            var organisationTypes = new List<OrganisationTypeModel> { _organisationType1, _organisationType2 };
 
             OrganisationTypeHandler.InsertRecords(organisationTypes);
         }
@@ -45,7 +44,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeTearDown]
         public void TearDownOrganisationTypesTests()
         {
-            OrganisationTypeHandler.DeleteRecords(new List<int>{ _organisationType1.Id, _organisationType2.Id });
+            OrganisationTypeHandler.DeleteRecords(new List<int> { _organisationType1.Id, _organisationType2.Id });
         }
     }
 }

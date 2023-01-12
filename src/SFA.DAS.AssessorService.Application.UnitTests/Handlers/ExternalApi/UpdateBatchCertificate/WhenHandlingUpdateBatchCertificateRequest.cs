@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
         public async Task ThenReturnsCertificate()
         {
             // Arrange
-            
+
             // Act
             var result = await _handler.Handle(_request, CancellationToken.None);
 

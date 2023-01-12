@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -26,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         public void Arrange()
         {
             base.Arrange(
-                addEpaoClaim: true, 
+                addEpaoClaim: true,
                 addUkprnClaim: false,
                 contactsPrivileges: new List<ContactsPrivilege>
                 {
@@ -58,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         public override async Task<IActionResult> Act()
-        {            
+        {
             return await sut.SelectOrChangeContactName(new SelectOrChangeContactNameViewModel
             {
                 PrimaryContact = ValidPrimaryContactSameOrganisation,
@@ -77,7 +75,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             _actionResult = await Act();
 
             OrganisationApiClient.Verify(c => c.UpdateEpaOrganisationPrimaryContact(
-                It.Is<UpdateEpaOrganisationPrimaryContactRequest>(p => p.OrganisationId == EpaoId && p.PrimaryContactId == ValidPrimaryContactIdSameOrganisation)), 
+                It.Is<UpdateEpaOrganisationPrimaryContactRequest>(p => p.OrganisationId == EpaoId && p.PrimaryContactId == ValidPrimaryContactIdSameOrganisation)),
                 Times.Once);
         }
 

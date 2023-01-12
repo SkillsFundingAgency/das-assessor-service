@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc.Localization;
+﻿using Microsoft.AspNetCore.Mvc.Localization;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Utils
 {
@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Utils
             {
                 return resource;
             }
-            
+
             if (!resource.Value.Contains("|"))
             {
                 throw new ArgumentException("The resource values must contain a pipe (|) separated pair of values.");

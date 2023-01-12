@@ -5,7 +5,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,14 +24,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
 
             // Act
             var sut = new UpdateBatchLogPrintedHandler(_batchLogRepository.Object);
-            _response = await sut.Handle(new UpdateBatchLogPrintedRequest 
-            { 
-                BatchNumber = _validBatchNumber, 
-                BatchDate = _utcNow, 
-                TotalCertificateCount = 1, 
-                PostalContactCount = 1, 
-                PrintedDate = _utcNow, 
-                DateOfResponse = _utcNow 
+            _response = await sut.Handle(new UpdateBatchLogPrintedRequest
+            {
+                BatchNumber = _validBatchNumber,
+                BatchDate = _utcNow,
+                TotalCertificateCount = 1,
+                PostalContactCount = 1,
+                PrintedDate = _utcNow,
+                DateOfResponse = _utcNow
             }, new CancellationToken());
         }
 
@@ -49,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         {
             // Assert
             _batchLogRepository.Verify(r => r.UpdateBatchLogPrinted(
-                It.Is<BatchLog>(b => 
+                It.Is<BatchLog>(b =>
                     b.BatchNumber == _validBatchNumber &&
                     b.BatchData.BatchNumber == _validBatchNumber &&
                     b.BatchData.BatchDate == _utcNow &&

@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
         }
 
         public async Task<Unit> Handle(ReturnFinancialReviewRequest request, CancellationToken cancellationToken)
-        {           
+        {
             await _applyRepository.ReturnFinancialReview(request.Id, request.UpdatedGrade);
             await UpdateOrganisationWithUpdatedGrade(request.Id, request.UpdatedGrade);
 

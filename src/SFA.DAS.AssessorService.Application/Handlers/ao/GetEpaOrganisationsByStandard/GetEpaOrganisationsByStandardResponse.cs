@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard
 {

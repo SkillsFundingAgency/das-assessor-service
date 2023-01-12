@@ -10,14 +10,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class UpdateOrganisationRequestValidator : AbstractValidator<UpdateOrganisationRequest>
     {
-        private readonly IContactQueryRepository _contactQueryRepository;       
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public UpdateOrganisationRequestValidator(IStringLocalizer<UpdateOrganisationRequestValidator> localiser,
             IContactQueryRepository contactQueryRepository,
             IOrganisationQueryRepository organisationQueryRepository
         )
-        {          
+        {
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
@@ -52,6 +52,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                             string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Organisation", endPointAssessorOrganisationId)));
                     }
                 });
-        }          
+        }
     }
 }

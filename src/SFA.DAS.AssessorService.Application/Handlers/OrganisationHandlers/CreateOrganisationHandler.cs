@@ -1,27 +1,26 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
-        private readonly IContactRepository _contactRepository;    
+        private readonly IContactRepository _contactRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository,                   
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository,
             IOrganisationQueryRepository organisationQueryRepository,
             IContactRepository contactRepository)
         {
             _organisationRepository = organisationRepository;
-            _contactRepository = contactRepository;          
+            _contactRepository = contactRepository;
             _organisationQueryRepository = organisationQueryRepository;
         }
 
@@ -36,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
         private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
             var organisation = Mapper.Map<Organisation>(createOrganisationRequest);
-            
+
             organisation.Status = OrganisationStatus.New;
 
             return await _organisationRepository.CreateNewOrganisation(organisation);
@@ -62,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
                     EndPointAssessorOrganisationId = existingOrganisation.EndPointAssessorOrganisationId,
                     PrimaryContact = existingOrganisation.PrimaryContact,
                     Status = OrganisationStatus.New
-                     
+
                 });
             }
 

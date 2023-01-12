@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
         {
             var result = SearchController.Index();
             result.Should().BeOfType<ViewResult>();
-            ((ViewResult) result).ViewName.Should().Be("Index");
+            ((ViewResult)result).ViewName.Should().Be("Index");
         }
     }
 }

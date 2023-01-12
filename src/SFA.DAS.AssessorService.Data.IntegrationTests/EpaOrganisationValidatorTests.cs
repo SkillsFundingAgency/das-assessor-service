@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _validationRepository = new RegisterValidationRepository(unitOfWork);
-            
+
             _organisationId1 = "EPA0088";
             _ukprn1 = 876533;
             _ukprn2 = 9888;
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void CheckEpaOrganisationIsAlreadyUsingUkprn(long ukprn, bool doesExist)
         {
             var exists = _validationRepository.EpaOrganisationExistsWithUkprn(ukprn).Result;
-            Assert.AreEqual(doesExist,exists);
+            Assert.AreEqual(doesExist, exists);
         }
 
         [Test]

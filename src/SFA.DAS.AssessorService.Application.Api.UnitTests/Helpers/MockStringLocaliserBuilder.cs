@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers
 {
     public class MockStringLocaliserBuilder
     {
-        private string _key  = "DefaultKey";
+        private string _key = "DefaultKey";
         private string _keyValue = "DefaultValue";
 
         public MockStringLocaliserBuilder WithKey(string key)

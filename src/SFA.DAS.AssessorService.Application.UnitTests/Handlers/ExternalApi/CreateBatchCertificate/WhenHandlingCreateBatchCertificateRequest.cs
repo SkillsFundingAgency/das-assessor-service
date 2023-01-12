@@ -46,9 +46,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _mockProvidersRepository = new Mock<IProvidersRepository>();
 
             _learnerRepository.Setup(m => m.Get(uln, stdCode)).ReturnsAsync(new Domain.Entities.Learner() { UkPrn = learnerUkprn });
-            
+
             _organisationQueryRepository.Setup(m => m.GetByUkPrn(ukPrn)).ReturnsAsync(new Organisation() { });
-            
+
             _standardService.Setup(m => m.GetStandardVersionById(stdUId, null)).ReturnsAsync(new Standard() { });
             _standardService.Setup(m => m.GetStandardOptionsByStandardId(stdUId)).ReturnsAsync(new StandardOptions());
 

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
 {
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         [Test]
         public void Then_not_activated_is_returned_when_live_user()
         {
-            OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation{Status = OrganisationStatus.New});
+            OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation { Status = OrganisationStatus.New });
             var response = Handler.Handle(new LoginRequest() { Roles = new List<string>() { "ABC", "DEF", "EPA" }, UkPrn = 12345, SignInId = Guid.NewGuid() }, new CancellationToken()).Result;
             response.Result.Should().Be(LoginResult.NotActivated);
         }

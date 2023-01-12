@@ -1,14 +1,14 @@
-﻿using System;
-using NUnit.Framework;
-using System.Threading;
-using FizzWare.NBuilder;
-using Moq;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.Notifications.Api.Client;
+﻿using FizzWare.NBuilder;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.Notifications.Api.Client;
+using System;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -17,25 +17,25 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         private Mock<INotificationsApi> _notificationApiMock;
         private SendEmailHandler _sendEmailHandler;
         private SendEmailRequest _message;
-        private Mock<ILogger<SendEmailHandler>> _loggerMock;        
+        private Mock<ILogger<SendEmailHandler>> _loggerMock;
 
-       [SetUp]
+        [SetUp]
         public void SetUp()
         {
             _notificationApiMock = new Mock<INotificationsApi>();
-             _loggerMock = new Mock<ILogger<SendEmailHandler>>();
+            _loggerMock = new Mock<ILogger<SendEmailHandler>>();
         }
-        
+
         [Test]
         public void Then_Should_Have_Invoked_NotificationApi_Successfully()
         {
             //arrange
             var eailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            eailTemplate.TemplateId = "TemplateId"; 
-                
+            eailTemplate.TemplateId = "TemplateId";
+
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest("test@test.com", eailTemplate, new { key = "value" })).Build();            
-            
+                new SendEmailRequest("test@test.com", eailTemplate, new { key = "value" })).Build();
+
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
 
             //act
@@ -51,13 +51,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         {
             //arrange
             var emailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            emailTemplate.TemplateId = "TemplateId"; 
-            
+            emailTemplate.TemplateId = "TemplateId";
+
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest("test@test.com", emailTemplate, new {})).Build();            
+                new SendEmailRequest("test@test.com", emailTemplate, new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
-            
+
             //act
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
 
@@ -74,10 +74,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.Recipients = "test@test.com";
 
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest(string.Empty, emailTemplate,  new { })).Build();
+                new SendEmailRequest(string.Empty, emailTemplate, new { })).Build();
 
-            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object,  _loggerMock.Object);
-            
+            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
+
             //act
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
 
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
                 new SendEmailRequest("testemail@test.com", emailTemplate, new { })).Build();
 
-            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);           
+            _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
 
             //act
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();

@@ -1,7 +1,7 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
+using System.Data;
 
 namespace SFA.DAS.AssessorService.Data.DapperTypeHandlers
 {

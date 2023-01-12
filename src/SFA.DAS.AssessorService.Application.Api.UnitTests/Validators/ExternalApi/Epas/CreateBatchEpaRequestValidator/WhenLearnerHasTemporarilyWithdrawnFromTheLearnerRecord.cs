@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

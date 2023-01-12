@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         {
             //Arrange
             var requests = new List<CreateEpaRequest>();
-            for(var i = 0; i < 26; i++)
+            for (var i = 0; i < 26; i++)
             {
                 requests.Add(request);
             }
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         {
             //Arrange
             var response = new ApiResponse((int)HttpStatusCode.BadRequest);
-            
+
             apiClient.Setup(client => client.DeleteEpa(It.Is<DeleteBatchEpaRequest>(s =>
                 s.UkPrn == headerInfo.Object.Ukprn &&
                 s.EpaReference == epaReference && s.Uln == uln && s.FamilyName == familyName && s.Standard == standard))).ReturnsAsync(response);

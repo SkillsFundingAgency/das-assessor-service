@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class GetDeliveryAreasByOrganisationStandardIdTests: TestBase
+    public class GetDeliveryAreasByOrganisationStandardIdTests : TestBase
     {
         private OrganisationModel _organisation1;
         private readonly DatabaseService _databaseService = new DatabaseService();
@@ -25,7 +23,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private DeliveryAreaModel _deliveryArea2;
         private readonly int _deliveryAreaId1 = 1;
         private readonly int _deliveryAreaId2 = 2;
-        
+
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
@@ -33,9 +31,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterQueryRepository(unitOfWork);
-            
+
             _organisationIdCreated = "EPA0987";
-            _organisationId1 = "EPA0987"; 
+            _organisationId1 = "EPA0987";
             _organisation1 = new OrganisationModel
             {
                 Id = Guid.NewGuid(),
@@ -61,44 +59,46 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 EffectiveTo = DateTime.Today.AddDays(10),
                 DateStandardApprovedOnRegister = DateTime.Today.AddDays(-50),
                 Comments = "comments go here"
-            };        
+            };
 
             _deliveryArea1 = new DeliveryAreaModel { Id = 10, Status = "Live", Area = "North West" };
             _deliveryArea2 = new DeliveryAreaModel { Id = 20, Status = "New", Area = "Some Other" };
             var deliveryAreas = new List<DeliveryAreaModel> { _deliveryArea1, _deliveryArea2 };
 
             DeliveryAreaHandler.InsertRecords(deliveryAreas);
-            
-            var deliveryArea1= new OrganisationStandardDeliveryAreaModel {
+
+            var deliveryArea1 = new OrganisationStandardDeliveryAreaModel
+            {
                 Id = _deliveryAreaId1,
                 Comments = "comments 1",
                 DeliveryAreaId = _deliveryArea1.Id,
                 OrganisationStandardId = _orgStandardId,
-                Status = OrganisationStatus.New,  
+                Status = OrganisationStatus.New,
             };
-            
-            var deliveryArea2= new OrganisationStandardDeliveryAreaModel {
+
+            var deliveryArea2 = new OrganisationStandardDeliveryAreaModel
+            {
                 Id = _deliveryAreaId2,
                 Comments = "comments 1",
                 DeliveryAreaId = _deliveryArea2.Id,
                 OrganisationStandardId = _orgStandardId,
                 Status = OrganisationStatus.New
             };
-            
-            OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1});
+
+            OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1 });
             OrganisationStandardHandler.InsertRecord(_organisationStandard);
             OrganisationStandardDeliveryAreaHandler.InsertRecords(new List<OrganisationStandardDeliveryAreaModel>{
                 deliveryArea1,deliveryArea2
             });
-            
+
         }
 
         [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {
-            OrganisationStandardDeliveryAreaHandler.DeleteRecords(new List<int>{1,2});
+            OrganisationStandardDeliveryAreaHandler.DeleteRecords(new List<int> { 1, 2 });
             OrganisationStandardHandler.DeleteRecord(_orgStandardId);
             OrganisationHandler.DeleteRecords(new List<Guid> { _organisation1.Id });
         }
     }
-    }
+}

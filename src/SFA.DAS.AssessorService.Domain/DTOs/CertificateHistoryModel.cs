@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.DTOs
 {

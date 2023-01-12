@@ -1,10 +1,10 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 
         public async Task<Unit> Handle(UpdateContactWithOrgAndStausRequest updateContactStatusRequest, CancellationToken cancellationToken)
         {
-           var contact =  await _contactRepository.UpdateContactWithOrganisationData(updateContactStatusRequest);
+            var contact = await _contactRepository.UpdateContactWithOrganisationData(updateContactStatusRequest);
             if (contact
                     .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(contact
                     .EndPointAssessorOrganisationId)))

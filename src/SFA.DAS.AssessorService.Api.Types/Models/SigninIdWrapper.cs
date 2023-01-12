@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
@@ -12,6 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         }
 
         public Guid SigninId { get; set; }
-        
+
     }
 }

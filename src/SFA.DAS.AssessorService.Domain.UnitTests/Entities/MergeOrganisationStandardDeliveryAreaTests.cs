@@ -18,6 +18,6 @@ namespace SFA.DAS.AssessorService.Domain.UnitTests.Entities
             objectUnderTest.Comments.Should().Be(sourceObject.Comments);
             objectUnderTest.Status.Should().Be(sourceObject.Status);
             objectUnderTest.OrganisationStandardDeliveryAreaId.Should().Be(sourceObject.Id);
-       }
+        }
     }
 }

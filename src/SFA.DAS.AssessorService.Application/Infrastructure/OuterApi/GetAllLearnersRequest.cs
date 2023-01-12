@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         public GetAllLearnersRequest(DateTime? sinceTime, int batchNumber, int batchSize)
         {
             var urlBuilder = new StringBuilder("learners?sinceTime=");
-            if(null != sinceTime && sinceTime.HasValue)
+            if (null != sinceTime && sinceTime.HasValue)
             {
                 urlBuilder.Append(sinceTime.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture));
             }

@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 SessionService.Set("AttemptedStandardVersion", vm.StandardUId);
-                
+
                 return RedirectToAction("NotApprovedToAssess", "CertificateVersionNotApproved", redirectToCheck ? new { redirectToCheck } : null);
             }
 
@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             certSession.StandardUId = vm.StandardUId;
-                        
+
             // To pass in to inherited method.
             vm.SelectedStandardVersion = standardVersion;
             vm.SelectedStandardOptions = options;

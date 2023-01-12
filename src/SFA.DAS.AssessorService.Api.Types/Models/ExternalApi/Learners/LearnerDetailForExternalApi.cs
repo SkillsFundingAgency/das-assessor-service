@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners
         public int? CompletionStatus { get; set; }
 
         public StandardVersion Standard { get; set; }
-        
+
         public string EndPointAssessorOrganisationId { get; set; }
         public int UkPrn { get; set; }
         public string OrganisationName { get; set; }

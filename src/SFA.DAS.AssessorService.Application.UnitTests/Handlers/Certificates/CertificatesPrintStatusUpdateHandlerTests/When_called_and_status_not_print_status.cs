@@ -16,9 +16,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
         private const string CertificateReference = "00123456";
         private const int BatchNumber = 111;
-       
+
         private static readonly DateTime SentToPrinterAt = DateTime.UtcNow.AddHours(-1);
-      
+
         [SetUp]
         public void Arrange()
         {
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             _response.Errors[0].Field.Should().Be("CertificatePrintStatuses");
             _response.Errors.Should().Contain(p => p.ErrorMessage.Contains(invalidPrintStatus));
-            
+
         }
 
         [TestCase("Approved")]

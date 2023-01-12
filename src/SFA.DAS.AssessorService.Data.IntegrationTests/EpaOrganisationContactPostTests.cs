@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class EpaOrganisationContactPostTests: TestBase
+    public class EpaOrganisationContactPostTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 SigninType = "",
                 FirstName = "zzz",
                 LastName = "Ftagn"
-               
+
             };
         }
 
@@ -94,11 +94,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
 
             var isContactPresentBeforeInsert =
-                _validationRepository.ContactIdIsValidForOrganisationId(_contactId,_contact.EndPointAssessorOrganisationId).Result;
+                _validationRepository.ContactIdIsValidForOrganisationId(_contactId, _contact.EndPointAssessorOrganisationId).Result;
             var returnedContactId = _repository.CreateEpaOrganisationContact(_contact).Result;
             var isContactPresenAfterInsert =
                 _validationRepository.ContactIdIsValidForOrganisationId(_contactId, _contact.EndPointAssessorOrganisationId).Result;
-         
+
             Assert.IsFalse(isContactPresentBeforeInsert);
             Assert.IsTrue(isContactPresenAfterInsert);
             Assert.AreEqual(returnedContactId, _contactId.ToString());

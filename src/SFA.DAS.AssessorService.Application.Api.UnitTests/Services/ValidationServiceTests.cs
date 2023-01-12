@@ -1,7 +1,6 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services.Validation;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 {
@@ -25,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckEmailAddress(string emailAddress, bool expectedResult)
         {
             var checkResult = _validationService.CheckEmailIsValid(emailAddress);
-            Assert.AreEqual(expectedResult,checkResult);
+            Assert.AreEqual(expectedResult, checkResult);
         }
 
         [TestCase("", false)]
@@ -57,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("1", true)]
         [TestCase("1000000", true)]
         [TestCase("9999999", true)]
-        [TestCase("9999999999",true)]
+        [TestCase("9999999999", true)]
         [TestCase("10000000000", false)]
         [TestCase("-1", false)]
 

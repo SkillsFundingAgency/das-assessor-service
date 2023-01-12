@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -9,6 +6,9 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Addresses;
 using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Addresses
 {

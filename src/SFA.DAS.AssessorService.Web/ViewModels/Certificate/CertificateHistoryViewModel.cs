@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public int? PageIndex { get; set; }
 
         public GetCertificateHistoryRequest.SortColumns SortColumn { get; set; }
-        public string SortDirection { get; set; } 
+        public string SortDirection { get; set; }
         public string SearchTerm { get; set; }
 
         public PaginatedList<CertificateSummaryResponse> Certificates { get; set; }

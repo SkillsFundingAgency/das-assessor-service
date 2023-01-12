@@ -1,11 +1,10 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
-    public class ApplicationResponse 
+    public class ApplicationResponse
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public bool IsStandardWithdrawalApplication => ApplicationType == ApplicationTypes.StandardWithdrawal;
 
         public bool IsOrganisationWithdrawalApplication => ApplicationType == ApplicationTypes.OrganisationWithdrawal;
-        
+
         public bool IsWithdrawalApplication => IsStandardWithdrawalApplication || IsOrganisationWithdrawalApplication;
     }
 }

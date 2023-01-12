@@ -227,7 +227,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (larsCode.HasValue && larsCode.Value > 0)
             {
                 var versionsOfStandard = await _standardRepository.GetEpaoRegisteredStandardVersions(endPointAssessorOrganisationId, larsCode.Value);
-                    
+
                 return versionsOfStandard.Select(version => (OrganisationStandardVersion)version);
             }
 

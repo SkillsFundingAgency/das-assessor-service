@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit3;
 using AutoMapper;
 using FluentAssertions;
 using MediatR;
@@ -15,8 +11,10 @@ using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
-using OrganisationStandard = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandard;
-using OrganisationStandardDeliveryArea = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardDeliveryArea;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards.Query
 {
@@ -44,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             //Arrange
             mediator
                 .Setup(x => x.Send(
-                    It.Is<GetEpaOrganisationsByStandardQuery>(c=>c.Standard.Equals(standardCode)), 
+                    It.Is<GetEpaOrganisationsByStandardQuery>(c => c.Standard.Equals(standardCode)),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetEpaOrganisationsByStandardResponse
                 {

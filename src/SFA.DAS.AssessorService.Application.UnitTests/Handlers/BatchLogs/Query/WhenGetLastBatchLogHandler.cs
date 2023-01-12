@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Query
     public class WhenGetLastBatchLogHandler
     {
         private Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
-        
+
         private BatchLog _batchLog = new BatchLog { Id = Guid.NewGuid(), BatchNumber = 999 };
         private BatchLogResponse _response;
 

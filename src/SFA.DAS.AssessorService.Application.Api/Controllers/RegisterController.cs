@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 var result = await _mediator.Send(request);
                 return Ok(new EpaOrganisationResponse(result));
             }
-            
+
             catch (AlreadyExistsException ex)
             {
                 _logger.LogError($@"Record already exists for organisation [{ex.Message}]");
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("contacts", Name = "CreateEpaOrganisationContact")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaContact))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         public async Task<IActionResult> CreateOrganisationContact([FromBody] CreateEpaOrganisationContactRequest request)
         {
             try
@@ -252,7 +252,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-        [HttpPost("standards",Name = "CreateEpaOrganisationStandard")]
+        [HttpPost("standards", Name = "CreateEpaOrganisationStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationStandard))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
@@ -301,7 +301,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 _logger.LogInformation($@"Updating Organisation Standard [{request.OrganisationId}, {request.StandardCode}]");
                 var result = await _mediator.Send(request);
                 return Ok(new EpaoStandardResponse(result));
-            }      
+            }
             catch (Exception ex)
             {
                 _logger.LogError($@"Bad request, Message: [{ex.Message}]");

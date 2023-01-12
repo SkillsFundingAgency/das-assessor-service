@@ -18,16 +18,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Dashboard.GetEp
         private Mock<IWebConfiguration> _mockConfig;
         private Mock<IDashboardRepository> _mockRepository;
         private Mock<ILogger<GetEpaoDashboardHandler>> _mockLogger;
-        
+
         [SetUp]
         public void Arrange()
         {
             _mockConfig = new Mock<IWebConfiguration>();
             _mockRepository = new Mock<IDashboardRepository>();
             _mockLogger = new Mock<ILogger<GetEpaoDashboardHandler>>();
-            
 
-            _sut = new GetEpaoDashboardHandler(_mockConfig.Object, _mockRepository.Object, _mockLogger.Object); 
+
+            _sut = new GetEpaoDashboardHandler(_mockConfig.Object, _mockRepository.Object, _mockLogger.Object);
         }
 
         [TestCase("EPA0200", 5)]

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Api.Types.Models.CompaniesHouse;
 using System;
 using System.Linq;
-using SFA.DAS.AssessorService.Api.Types.Models.CompaniesHouse;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.date_of_cessation))
                 .ForMember(dest => dest.IsLiquidated, opt => opt.MapFrom(source => source.has_been_liquidated))
                 .ForMember(dest => dest.PreviousNames, opt => opt.ResolveUsing(source => source.previous_company_names?.Select(pc => pc.name)))
-                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<RegisteredOfficeAddress, AssessorService.Api.Types.CompaniesHouse.Address>(source.registered_office_address))) 
+                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<RegisteredOfficeAddress, AssessorService.Api.Types.CompaniesHouse.Address>(source.registered_office_address)))
                 .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<CompanyDetails, AssessorService.Api.Types.CompaniesHouse.Accounts>(source)))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }

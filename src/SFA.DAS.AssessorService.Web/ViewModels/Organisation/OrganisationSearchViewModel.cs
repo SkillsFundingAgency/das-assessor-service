@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 {
@@ -31,13 +30,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
 
         public string OrganisationFoundString()
         {
-            var result= "0 results found";
-            if(Organisations != null && Organisations.Items.Any())
+            var result = "0 results found";
+            if (Organisations != null && Organisations.Items.Any())
             {
                 var resultsString = Organisations.TotalRecordCount > 1 ? "results" : "result";
                 result = $"{Organisations.TotalRecordCount} {resultsString} found";
             }
-            return result;  
+            return result;
         }
     }
 }

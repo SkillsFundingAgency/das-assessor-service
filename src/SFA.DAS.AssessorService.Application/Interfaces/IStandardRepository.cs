@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IStandardRepository
-    {      
+    {
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
-        Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId,int pageSize, int pageIndex);
+        Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId, int pageSize, int pageIndex);
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string standardFilterId, string providerFilterId, string epaDateFilterId,
             int pipelineCutoff, string orderBy, string orderDirection, int pageSize, int? pageIndex);
         Task<IEnumerable<EpaoPipelineStandardFilter>> GetEpaoPipelineStandardsStandardFilter(string endPointAssessorOrganisationId, int pipelineCutOff);
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Standard>> GetStandardVersionsByLarsCode(int larsCode);
         Task<IEnumerable<Standard>> GetStandardVersionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task<Standard> GetStandardVersionByStandardUId(string standardUId);
-        
+
         /// <summary>
         /// Returns Specific version based on given lars code and version if the latter is supplied
         /// Or returns the latest version of a standard if only lars code supplied

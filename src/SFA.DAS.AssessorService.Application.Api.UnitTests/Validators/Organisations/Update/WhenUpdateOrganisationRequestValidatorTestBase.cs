@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
         protected static UpdateOrganisationRequestValidator UpdateOrganisationRequestValidator;
         protected static Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
-        protected static UpdateOrganisationRequest UpdateOrganisationRequest;        
+        protected static UpdateOrganisationRequest UpdateOrganisationRequest;
 
         public static void Setup()
         {

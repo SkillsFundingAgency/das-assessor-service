@@ -1,11 +1,11 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -39,12 +39,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             organisationStandard.StandardEffectiveTo = standard?.EffectiveTo;
             organisationStandard.StandardLastDateForNewStarts = standard?.LastDateStarts;
             organisationStandard.IFateReferenceNumber = standard?.IfateReferenceNumber;
-    
+
             var versions = await _standardService.GetEPAORegisteredStandardVersions(organisation?.OrganisationId, standard?.LarsCode);
             organisationStandard.Versions = versions.ToList();
 
             if (organisationStandard.ContactId != null)
-                organisationStandard.Contact =  await _registerQueryRepository.GetContactByContactId(organisationStandard.ContactId.GetValueOrDefault());
+                organisationStandard.Contact = await _registerQueryRepository.GetContactByContactId(organisationStandard.ContactId.GetValueOrDefault());
             var orgStandardDeliveryAreas =
                 await _registerQueryRepository.GetDeliveryAreasByOrganisationStandardId(request.OrganisationStandardId);
             var allDeliveryAreas = await _registerQueryRepository.GetDeliveryAreas();
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             organisationStandard.DeliveryAreasDetails = organisationStandardDeliveryAreas.ToList();
             organisationStandard.DeliveryAreas = organisationStandardDeliveryAreas.Select(orgStandardDeliveryArea => orgStandardDeliveryArea.DeliveryAreaId).ToList();
 
-            return organisationStandard;      
+            return organisationStandard;
         }
     }
 }

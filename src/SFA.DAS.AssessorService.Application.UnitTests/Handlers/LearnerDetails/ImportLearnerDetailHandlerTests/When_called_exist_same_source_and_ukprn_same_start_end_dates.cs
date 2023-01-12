@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
     [TestFixture]
     public class When_called_exist_same_source_and_ukprn_same_start_end_dates : ImportLearnerDetailHandlerTestsBase
-    {    
+    {
         public void Arrange(string epaOrgId, string learnActEndDate, int? withdrawReason,
             int? outcome, string achDate, string outGrade)
         {
@@ -60,19 +60,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
             // Assert
             VerifyIlrUpdated(
-                ImportLearnerDetail.Source, 
-                ImportLearnerDetail.Ukprn.Value, 
-                ImportLearnerDetail.Uln.Value, 
+                ImportLearnerDetail.Source,
+                ImportLearnerDetail.Ukprn.Value,
+                ImportLearnerDetail.Uln.Value,
                 ImportLearnerDetail.StdCode.Value,
-                ImportLearnerDetail.FundingModel, 
-                ImportLearnerDetail.GivenNames, 
-                ImportLearnerDetail.FamilyName, 
+                ImportLearnerDetail.FundingModel,
+                ImportLearnerDetail.GivenNames,
+                ImportLearnerDetail.FamilyName,
                 epaOrgId == null ? LearnerWithCertificate.EpaOrgId : ImportLearnerDetail.EpaOrgId, // keep current when null
-                ImportLearnerDetail.LearnStartDate, 
-                ImportLearnerDetail.PlannedEndDate, 
-                ImportLearnerDetail.CompletionStatus, 
-                ImportLearnerDetail.LearnRefNumber, 
-                ImportLearnerDetail.DelLocPostCode, 
+                ImportLearnerDetail.LearnStartDate,
+                ImportLearnerDetail.PlannedEndDate,
+                ImportLearnerDetail.CompletionStatus,
+                ImportLearnerDetail.LearnRefNumber,
+                ImportLearnerDetail.DelLocPostCode,
                 learnActEndDate == null ? LearnerWithCertificate.LearnActEndDate : ImportLearnerDetail.LearnActEndDate.Value, // keep current when null
                 withdrawReason == null ? LearnerWithCertificate.WithdrawReason : ImportLearnerDetail.WithdrawReason, // keep current when null
                 outcome == null ? LearnerWithCertificate.Outcome : ImportLearnerDetail.Outcome, // keep current when null

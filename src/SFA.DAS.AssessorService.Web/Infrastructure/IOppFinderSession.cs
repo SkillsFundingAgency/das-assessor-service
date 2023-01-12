@@ -196,7 +196,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
                 _sessionService.Set("ProposedStandardsPerPage", value);
             }
         }
-        
+
         public OppFinderSearchSortColumn ProposedSortColumn
         {
             get

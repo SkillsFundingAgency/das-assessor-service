@@ -1,11 +1,11 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> Handle(GetEpaoRegisteredStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Retrieving Epao registered standards");
-            var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, request.PageSize, request.PageIndex);
+            var result = await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, request.PageSize, request.PageIndex);
 
             var epaoRegisteredStandardsResult = result.PageOfResults.Select(o =>
                 new GetEpaoRegisteredStandardsResponse
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     NumberOfVersions = o.NumberOfVersions
                 }).ToList();
 
-           return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);
+            return new PaginatedList<GetEpaoRegisteredStandardsResponse>(epaoRegisteredStandardsResult, result.TotalCount, request.PageIndex, request.PageSize);
         }
     }
 }

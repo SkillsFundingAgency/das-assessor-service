@@ -38,12 +38,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     locations.Add(AddressResponse.NoResultsFound);
                 }
-                else if(!includeOrganisations)
+                else if (!includeOrganisations)
                 {
                     locations.ForEach(p => p.Organisation = string.Empty);
                 }
-                
-                 return locations;
+
+                return locations;
             }
             catch (Exception ex)
             {

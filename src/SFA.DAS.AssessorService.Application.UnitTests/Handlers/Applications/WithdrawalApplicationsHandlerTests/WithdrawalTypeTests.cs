@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                             new Domain.Entities.ApplicationListItem()
                             {
 
-                                Versions = null  
+                                Versions = null
                             }
                     }
                 });
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                     10, // page size
                     1, // page index
                     6 // page set size                
-                ), 
+                ),
                 new CancellationToken());
 
             // Assert
@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Wi
                             {
                                 StandardApplicationType = StandardApplicationTypes.VersionWithdrawal,
                                 StandardReference = "ST0205",
-                                Versions = "[\"1.0\"]" 
+                                Versions = "[\"1.0\"]"
                             }
                     }
                 });

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
         }
 
         public string Status { get; set; }
-        public string PageContext { get;  }
+        public string PageContext { get; }
         public List<Section> Sections { get; }
         public List<ApplySection> ApplySections { get; }
         public Guid Id { get; }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -12,6 +9,9 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Delete([FromBody] DeleteCertificateRequest deleteCertificateRequest)
-        {  
+        {
             try
             {
                 await _mediator.Send(deleteCertificateRequest);
@@ -120,8 +120,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 throw new ResourceNotFoundException();
             }
-            
+
             return Ok();
         }
     }
-} 
+}

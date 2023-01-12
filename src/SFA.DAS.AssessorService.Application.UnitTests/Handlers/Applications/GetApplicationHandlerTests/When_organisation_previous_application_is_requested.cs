@@ -1,12 +1,10 @@
 using AutoMapper;
 using FluentAssertions;
-using MediatR;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Handlers.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using System;
 using System.Collections.Generic;
@@ -43,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
         public async Task Then_organisation_previous_application_is_retrieved()
         {
             await _sut.Handle(new GetPreviousApplicationsRequest(new Guid(), ""), new CancellationToken());
-            _mockApplyRepository.Verify(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(),It.IsAny<string>()), Times.Once);
+            _mockApplyRepository.Verify(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]

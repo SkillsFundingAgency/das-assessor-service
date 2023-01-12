@@ -1,6 +1,6 @@
-using System;
 using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
 {
