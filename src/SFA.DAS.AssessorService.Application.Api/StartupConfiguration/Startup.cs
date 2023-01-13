@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             IServiceProvider serviceProvider;
             try
-            {            
+            {
                 services.AddAuthentication(o =>
                     {
                         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         {
                             var basePath = AppContext.BaseDirectory;
                             var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                            //config.IncludeXmlComments(xmlPath);  // @todo .net 3.1 put this back once the auth issue sorted
+                            config.IncludeXmlComments(xmlPath);
                         }
 
                         if (!_env.IsDevelopment())

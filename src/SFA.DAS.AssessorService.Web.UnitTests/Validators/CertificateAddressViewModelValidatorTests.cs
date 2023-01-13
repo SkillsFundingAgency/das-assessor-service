@@ -59,10 +59,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_SendToIsEmployerAndEmployerIsNullOrEmpty_Then_ValidatorReturnsInvalid(string employer)
         {
             _viewModel = CreateValidViewModel(CertificateSendTo.Employer);
-            
             _viewModel.Employer = employer;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Employer, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.Employer);
         }
 
         [TestCase(CertificateSendTo.Apprentice, null)]
@@ -72,10 +72,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_AddressLine1IsNullOrEmpty_Then_ValidatorReturnsInvalid(CertificateSendTo sendTo, string addressLine1)
         {
             _viewModel = CreateValidViewModel(sendTo);
-
             _viewModel.AddressLine1 = addressLine1;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.AddressLine1, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.AddressLine1);
         }
 
         [TestCase(CertificateSendTo.Apprentice, null)]
@@ -85,10 +85,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_CityIsNullOrEmpty_Then_ValidatorReturnsInvalid(CertificateSendTo sendTo, string city)
         {
             _viewModel = CreateValidViewModel(sendTo);
-
             _viewModel.City = city;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.City, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.City);
         }
 
         [TestCase(CertificateSendTo.Apprentice, null)]
@@ -98,10 +98,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_PostcodeIsNullOrEmpty_Then_ValidatorReturnsInvalid(CertificateSendTo sendTo, string postcode)
         {
             _viewModel = CreateValidViewModel(sendTo);
-
             _viewModel.Postcode = postcode;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Postcode, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.Postcode);
         }
 
         [TestCase(CertificateSendTo.Apprentice, "NOT VALID")]
@@ -109,10 +109,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         public void When_PostcodeIsInvalid_Then_ValidatorReturnsInvalid(CertificateSendTo sendTo, string postcode)
         {
             _viewModel = CreateValidViewModel(sendTo);
-
             _viewModel.Postcode = postcode;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Postcode, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.Postcode);
         }
 
         private CertificateAddressViewModel CreateValidViewModel(CertificateSendTo sendTo)

@@ -34,9 +34,9 @@ BEGIN
 		----------------------------------------------------------------------------------------------------------------------
 		WITH LatestVersions
 		AS (
-			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, Larscode, Duration
+			SELECT IFateReferenceNumber StandardReference, Title, Version, StandardUId, LarsCode, Duration
 			FROM (
-				SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, Larscode, ProposedTypicalDuration Duration,
+				SELECT IFateReferenceNumber, Title, Version, Level, StandardUId, LarsCode, ProposedTypicalDuration Duration,
 					ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, LarsCode ORDER BY VersionMajor DESC, VersionMinor DESC) rownumber
 				FROM Standards
 				WHERE VersionApprovedForDelivery IS NOT NULL
@@ -53,7 +53,7 @@ BEGIN
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode
 			WHERE @reset =1 OR
 			 (ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
-			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.Lastupdated)) )
+			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.LastUpdated)) )
 
 			UNION
 			
@@ -62,7 +62,7 @@ BEGIN
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode
 			WHERE @reset =1 OR
 			 (ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
-			  AND (le3.Id IS NULL OR le3.LatestApprovals IS NULL OR le3.LatestApprovals < ax1.Lastupdated) )
+			  AND (le3.Id IS NULL OR le3.LatestApprovals IS NULL OR le3.LatestApprovals < ax1.LastUpdated) )
 			
 			UNION
 			
@@ -133,13 +133,13 @@ BEGIN
 				  ,EmployerAccountId
 				  ,EmployerName
 				  ,CompletionStatus
-				  ,LEAD(UKPRN, 1,0) OVER (PARTITION BY ULN, TrainingCode ORDER BY rownumber ) AS Check_Previous_UKPRN
-				  ,LEAD(ApprenticeshipId, 1,0) OVER (PARTITION BY ULN, TrainingCode ORDER BY rownumber ) AS ApprenticeshipId_1
+				  ,LEAD(UKPRN, 1,0) OVER (PARTITION BY Uln, TrainingCode ORDER BY rownumber ) AS Check_Previous_UKPRN
+				  ,LEAD(ApprenticeshipId, 1,0) OVER (PARTITION BY Uln, TrainingCode ORDER BY rownumber ) AS ApprenticeshipId_1
 				  ,rownumber
 			FROM (
 				SELECT *
 					-- apply rules to determine the chronologically latest Apprenticeship record
-					,ROW_NUMBER() OVER (PARTITION BY ULN, TrainingCode ORDER BY
+					,ROW_NUMBER() OVER (PARTITION BY Uln, TrainingCode ORDER BY
 					   CASE
 					   -- if StopDate of previous record is before Startdate of current record then prefer current record
 					   WHEN StopDate_1 IS NOT NULL AND EOMONTH(StartDate) >= EOMONTH(StopDate_1) THEN 0
@@ -195,10 +195,10 @@ BEGIN
 							WHEN CompletionDate IS NOT NULL THEN 2
 							ELSE (CASE WHEN PaymentStatus = 1 THEN 1 ELSE 0 END) END CompletionStatus
 					  -- Previous Apprenticeship record
-					  ,LAG(UKPRN, 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS UKPRN_1
-					  ,LAG(CONVERT(datetime,StartDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StartDate_1
-					  ,LAG(CONVERT(datetime,EndDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
-					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.ULN, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
+					  ,LAG(UKPRN, 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS UKPRN_1
+					  ,LAG(CONVERT(datetime,StartDate), 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS StartDate_1
+					  ,LAG(CONVERT(datetime,EndDate), 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS EndDate_1
+					  ,LAG(CONVERT(datetime,StopDate), 1,0) OVER (PARTITION BY ap1.Uln, TrainingCode ORDER BY CreatedOn ) AS StopDate_1
 					FROM ApprovalsExtract ap1
  					JOIN LearnerMods ls1 on ls1.Uln = ap1.Uln AND ls1.StdCode = ap1.TrainingCode  -- only include changed learners
 					) ax2
@@ -294,7 +294,7 @@ BEGIN
 				-- Can have explict Transfer code from TP where UKPRNs do match
 				-- Also, where the Employer has Stopped and TP has Paused this is likely to be a forthcoming Transfer
 				-- Or where Employer has Stopped/Paused (in past 2(?) months) and TP is Active
-				CASE WHEN il1.UKPRN != ax1.UKPRN OR il1.IsTransfer = 1
+				CASE WHEN il1.UkPrn != ax1.UKPRN OR il1.IsTransfer = 1
 					 THEN 1
 					 WHEN il1.CompletionStatus = 6 AND ax1.CompletionStatus = 3
 					 THEN 1
@@ -306,7 +306,7 @@ BEGIN
 					 END IsTransfer,
 				CASE WHEN il1.IsTransfer = 1
 					 THEN il1.LastUpdated
-					 WHEN il1.UKPRN != ax1.UKPRN OR (il1.CompletionStatus = 6 AND ax1.CompletionStatus = 3)
+					 WHEN il1.UkPrn != ax1.UKPRN OR (il1.CompletionStatus = 6 AND ax1.CompletionStatus = 3)
 					 THEN (CASE WHEN il1.LastUpdated > ax1.LastUpdated THEN il1.LastUpdated ELSE ax1.LastUpdated END)
 					 WHEN il1.CompletionStatus = 1 AND ax1.CompletionStatus IN (3,6) AND
 						  ISNULL(ax1.StopDate,ax1.PauseDate) >= DATEADD(day,@transferWindow,GETUTCDATE()) AND
@@ -314,7 +314,7 @@ BEGIN
 					 THEN ax1.LastUpdated
 					 ELSE NULL END DateTransferIdentified
 		  FROM ax1
-		  JOIN il1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode	
+		  JOIN il1 ON ax1.Uln = il1.Uln AND il1.StdCode = ax1.TrainingCode	
 		  -- join in previous apprenticeship if there was one and UKPRN differs and matches ILR
 		  LEFT JOIN (SELECT * FROM
 						 (SELECT *
@@ -326,13 +326,13 @@ BEGIN
 								WHEN CompletionDate IS NOT NULL THEN 2
 								ELSE (CASE WHEN PaymentStatus = 1 THEN 1 ELSE 0 END) END CompletionStatus
 						 FROM ApprovalsExtract) ab2 WHERE CompletionStatus != 0
-					 ) ax2 on ax2.ApprenticeshipId = ax1.Previous_ApprenticeshipId AND ax2.UKPRN = il1.UKPRN
+					 ) ax2 on ax2.ApprenticeshipId = ax1.Previous_ApprenticeshipId AND ax2.UKPRN = il1.UkPrn
 		  -- include ILR & Approvals only where match can be found on UKPRN for latest or previous Approvals
 		  -- except where privately funded or only Approvals record is in unknowm status
 		  -- otherwise take ILR only
 		  WHERE il1.FundingModel != 99
 			AND ax1.CompletionStatus != 0
-			AND (il1.UKPRN = ax1.UKPRN OR ax2.ApprenticeshipId IS NOT NULL)
+			AND (il1.UkPrn = ax1.UKPRN OR ax2.ApprenticeshipId IS NOT NULL)
 		
 		----------------------------------------------------------------------------------------------------------------------
 		-- just ILrs (trimmed Expired and Lapsed ILR records!)
@@ -376,18 +376,18 @@ BEGIN
 				null LatestApprovals,
 				null EmployerAccountId,
 				null EmployerName,
-				CASE WHEN (ax1.UKPRN IS NOT NULL AND il1.UKPRN != ax1.UKPRN)
+				CASE WHEN (ax1.UKPRN IS NOT NULL AND il1.UkPrn != ax1.UKPRN)
 					 THEN 1
 					 ELSE il1.IsTransfer END IsTransfer,
 				CASE WHEN il1.IsTransfer = 1
 					 THEN il1.LastUpdated
-					 WHEN (ax1.UKPRN IS NOT NULL AND il1.UKPRN != ax1.UKPRN)
+					 WHEN (ax1.UKPRN IS NOT NULL AND il1.UkPrn != ax1.UKPRN)
 					 THEN il1.LastUpdated
 					 ELSE NULL END DateTransferIdentified
 		  FROM il1
-		  LEFT JOIN ax1 ON ax1.ULN = il1.ULN  AND il1.StdCode = ax1.TrainingCode
+		  LEFT JOIN ax1 ON ax1.Uln = il1.Uln AND il1.StdCode = ax1.TrainingCode
 		  WHERE il1.FundingModel = 99 OR ax1.UKPRN IS NULL OR
-				(ax1.UKPRN IS NOT NULL AND il1.UKPRN != ax1.UKPRN AND (ax1.Previous_UKPRN IS NULL OR il1.UKPRN != ax1.Previous_UKPRN))
+				(ax1.UKPRN IS NOT NULL AND il1.UkPrn != ax1.UKPRN AND (ax1.Previous_UKPRN IS NULL OR il1.UkPrn != ax1.Previous_UKPRN))
 		) upd
 		ON (lm1.Uln = upd.Uln AND lm1.StdCode = upd.StdCode)
 
@@ -395,7 +395,7 @@ BEGIN
 		SET
 			 lm1.GivenNames = upd.GivenNames,
 			 lm1.FamilyName = upd.FamilyName,
-			 lm1.UkPrn = upd.UkPrn,
+			 lm1.UkPrn = upd.UKPRN,
 			 lm1.LearnStartDate = upd.LearnStartDate,
 			 lm1.EpaOrgId = upd.EpaOrgId,
 			 lm1.FundingModel = upd.FundingModel,

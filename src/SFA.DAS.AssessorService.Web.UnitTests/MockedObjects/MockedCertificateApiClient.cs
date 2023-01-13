@@ -18,11 +18,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
             var webConfigMock = new Mock<IWebConfiguration>();
-            var hostMock = new Mock<IHostingEnvironment>();
+            var hostMock = new Mock<IHostEnvironment>();
             hostMock
                 .Setup(m => m.EnvironmentName)
-                .Returns(EnvironmentName.Development);
-            var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object, false);
+                .Returns(Environments.Development);
+            var tokenServiceMock = new TokenService(webConfigMock.Object, hostMock.Object, false);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();

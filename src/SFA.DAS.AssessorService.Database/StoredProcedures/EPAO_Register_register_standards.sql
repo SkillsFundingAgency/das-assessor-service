@@ -4,7 +4,7 @@ AS
 SET NOCOUNT ON;
 
 WITH Standards_CTE as(
-select ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * from Standards)
+select ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * from Standards)
 
 select os.EndPointAssessorOrganisationId as EPA_organisation_identifier,
 o.EndPointAssessorName as 'EPA_organisation (lookup auto-populated)',

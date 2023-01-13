@@ -112,18 +112,4 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="EmployerAccountId" />
   </Operation>
-  <Operation Name="Rename Refactor" Key="9f3ecb35-5ca5-4cd5-a006-0d31c4e55b92" ChangeDateTime="10/27/2021 12:52:40">
-    <Property Name="ElementName" Value="[dbo].[ApprovalsExtract].[ULN]" />
-    <Property Name="ElementType" Value="SqlSimpleColumn" />
-    <Property Name="ParentElementName" Value="[dbo].[ApprovalsExtract]" />
-    <Property Name="ParentElementType" Value="SqlTable" />
-    <Property Name="NewName" Value="Uln" />
-  </Operation>
-  <Operation Name="Rename Refactor" Key="bda20e69-ffca-409c-b9bb-abaa9072c1d9" ChangeDateTime="10/27/2021 12:55:34">
-    <Property Name="ElementName" Value="[dbo].[ApprovalsExtract_Staging].[ULN]" />
-    <Property Name="ElementType" Value="SqlSimpleColumn" />
-    <Property Name="ParentElementName" Value="[dbo].[ApprovalsExtract_Staging]" />
-    <Property Name="ParentElementType" Value="SqlTable" />
-    <Property Name="NewName" Value="Uln" />
-  </Operation>
 </Operations>

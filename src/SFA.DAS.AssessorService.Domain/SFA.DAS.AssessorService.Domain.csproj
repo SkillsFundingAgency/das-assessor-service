@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="newtonsoft.json" Version="13.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
   </ItemGroup>
 
   <ItemGroup>
