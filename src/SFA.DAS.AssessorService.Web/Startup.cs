@@ -197,15 +197,13 @@ namespace SFA.DAS.AssessorService.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseSecurityHeaders()
+            app.UseHttpsRedirection()
+                .UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseHealthChecks("/health")
-
                 .UseRouting()
                 .UseAuthorization()
                 .UseEndpoints(endpoints => 
@@ -215,6 +213,6 @@ namespace SFA.DAS.AssessorService.Web
                         pattern: "{controller}/{action}/{id?}",
                         defaults: new { controller = "Home", action = "Index" });
                 });
-        }        
+        }
     }
 }
