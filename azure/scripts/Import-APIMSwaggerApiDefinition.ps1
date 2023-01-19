@@ -34,6 +34,8 @@ Param(
     [Parameter(Mandatory=$true)]
     [String]$SwaggerSpecificationUrl,
     [Parameter(Mandatory=$false)]
+    [String]$ServiceUrl,
+    [Parameter(Mandatory=$false)]
     [String]$ApiUrlSuffix
 )
 
@@ -50,7 +52,7 @@ try {
 
     # --- Import swagger definition
     Write-Host "Updating API $ApiId\$ServiceName from definition $SwaggerSpecificationUrl"
-    Import-AzApiManagementApi -Context $Context -SpecificationFormat "OpenApi" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
+    Import-AzApiManagementApi -Context $Context -SpecificationFormat "OpenApi" -SpecificationUrl $SwaggerSpecificationUrl -ServiceUrl $ServiceUrl -ApiId $ApiId -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
 } catch {
    throw $_
 }
