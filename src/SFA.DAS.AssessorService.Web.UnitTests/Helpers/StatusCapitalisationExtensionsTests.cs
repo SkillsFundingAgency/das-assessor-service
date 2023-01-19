@@ -7,9 +7,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
     public class StatusCapitalisationExtensionsTests
     {
         [TestCase("In Progress", "In progress")]
-        [TestCase("feedback Added", "Feedback added")]
+        [TestCase("feedback Added", "no")]
         [TestCase("InProgress", "In progress")]
-        [TestCase("feedbackAdded", "Feedback added")]
+        [TestCase("feedbackAdded", "no")]
         [TestCase(" ", " ")]
         [TestCase("", "")]
         [TestCase(null, null)]

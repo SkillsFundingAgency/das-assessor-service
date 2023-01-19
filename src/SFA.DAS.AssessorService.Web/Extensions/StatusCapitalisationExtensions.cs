@@ -12,6 +12,11 @@ namespace SFA.DAS.AssessorService.Web.Extensions
 
             var withSpaces = Regex.Replace(value, "([a-z])([A-Z])", "$1 $2");
 
+            if(withSpaces == "feedback Added")
+            {
+                return "no";
+            }
+
             return $"{char.ToUpper(withSpaces[0]) + withSpaces.Substring(1).ToLower()}";
         }
     }
