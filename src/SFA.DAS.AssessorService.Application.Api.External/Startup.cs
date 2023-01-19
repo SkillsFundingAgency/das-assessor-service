@@ -200,6 +200,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 app.UseHttpsRedirection();
                 app.UseSecurityHeaders();
+
+                app.UseRouting();
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
             }
             catch (Exception e)
             {
