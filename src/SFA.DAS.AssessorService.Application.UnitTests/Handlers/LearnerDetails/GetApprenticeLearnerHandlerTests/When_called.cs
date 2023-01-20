@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Learner;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Testing.AutoFixture;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +16,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
     public class When_called
     {
         [Test, MoqAutoData]
-        public async Task ThenLearnerIsRetrievedFromTheDatabase(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
+        public async Task AndTheLearnerIsNullThenDefaultIsReturned(GetApprenticeLearnerRequest request)
         {
             // Arrange
-            var _mockLearnerRepository = SetupMockRepository(request, learner);
+            var _mockLearnerRepository = SetupMockRepository(request, null);
 
             var _sut = SetupSut(_mockLearnerRepository.Object);
 
@@ -28,8 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             var result = await _sut.Handle(request, new CancellationToken());
 
             // Assert
-            _mockLearnerRepository
-                .Verify(r => r.Get(request.ApprenticeshipId), Times.Once);
+            result.Should().Be(default);
         }
 
         [Test, MoqAutoData]
@@ -40,7 +38,28 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
 
             var _sut = SetupSut(_mockLearnerRepository.Object);
 
-            var expected = SetupResponse(learner);
+            var expected = new GetApprenticeLearnerResponse
+            {
+                ApprenticeshipId = learner.ApprenticeshipId.Value,
+                Ukprn = learner.UkPrn,
+                LearnStartDate = learner.LearnStartDate,
+                PlannedEndDate = learner.PlannedEndDate,
+                StandardCode = learner.StdCode,
+                StandardUId = learner.StandardUId,
+                StandardReference = learner.StandardReference,
+                StandardName = learner.StandardName,
+                CompletionStatus = learner.CompletionStatus,
+                ApprovalsStopDate = learner.ApprovalsStopDate,
+                ApprovalsPauseDate = learner.ApprovalsPauseDate,
+                EstimatedEndDate = learner.EstimatedEndDate,
+                Uln = learner.Uln,
+                GivenNames = learner.GivenNames,
+                FamilyName = learner.FamilyName,
+                LearnActEndDate = learner.LearnActEndDate,
+                IsTransfer = learner.IsTransfer,
+                DateTransferIdentified = learner.DateTransferIdentified,
+                ProviderName = learner.ProviderName
+            };
 
             // Act
             var result = await _sut.Handle(request, new CancellationToken());
@@ -66,32 +85,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             var mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
 
             return new GetApprenticeLearnerHandler(repository, mockLogger.Object);
-        }
-
-        private GetApprenticeLearnerResponse SetupResponse(ApprenticeLearner learner)
-        {
-            return new GetApprenticeLearnerResponse
-            {
-                ApprenticeshipId = learner.ApprenticeshipId.Value,
-                Ukprn = learner.UkPrn,
-                LearnStartDate = learner.LearnStartDate,
-                PlannedEndDate = learner.PlannedEndDate,
-                StandardCode = learner.StdCode,
-                StandardUId = learner.StandardUId,
-                StandardReference = learner.StandardReference,
-                StandardName = learner.StandardName,
-                CompletionStatus = learner.CompletionStatus,
-                ApprovalsStopDate = learner.ApprovalsStopDate,
-                ApprovalsPauseDate = learner.ApprovalsPauseDate,
-                EstimatedEndDate = learner.EstimatedEndDate,
-                Uln = learner.Uln,
-                GivenNames = learner.GivenNames,
-                FamilyName = learner.FamilyName,
-                LearnActEndDate = learner.LearnActEndDate,
-                IsTransfer = learner.IsTransfer,
-                DateTransferIdentified = learner.DateTransferIdentified,
-                ProviderName = learner.ProviderName
-            };
         }
     }
 }
