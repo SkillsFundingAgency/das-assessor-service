@@ -36,6 +36,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
                 .Setup(r => r.Get(request.ApprenticeshipId))
                 .ReturnsAsync(learner);
 
+            var expected = SetupResponse(learner);
+
             // Act
             var result = await _sut.Handle(request, new CancellationToken());
 
@@ -43,26 +45,33 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             _mockLearnerRepository
                 .Verify(r => r.Get(request.ApprenticeshipId), Times.Once);
 
-            result.Should().BeEquivalentTo(new
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        private GetApprenticeLearnerResponse SetupResponse(ApprenticeLearner learner)
+        {
+            return new GetApprenticeLearnerResponse
             {
                 ApprenticeshipId = learner.ApprenticeshipId.Value,
                 Ukprn = learner.UkPrn,
-                learner.LearnStartDate,
-                learner.PlannedEndDate,
+                LearnStartDate = learner.LearnStartDate,
+                PlannedEndDate = learner.PlannedEndDate,
                 StandardCode = learner.StdCode,
-                learner.StandardUId,
-                learner.StandardReference,
-                learner.StandardName,
-                learner.CompletionStatus,
-                learner.ApprovalsStopDate,
-                learner.ApprovalsPauseDate,
-                learner.EstimatedEndDate,
-                learner.Uln,
-                learner.GivenNames,
-                learner.FamilyName,
-                learner.LearnActEndDate,
-                learner.ProviderName
-            });
+                StandardUId = learner.StandardUId,
+                StandardReference = learner.StandardReference,
+                StandardName = learner.StandardName,
+                CompletionStatus = learner.CompletionStatus,
+                ApprovalsStopDate = learner.ApprovalsStopDate,
+                ApprovalsPauseDate = learner.ApprovalsPauseDate,
+                EstimatedEndDate = learner.EstimatedEndDate,
+                Uln = learner.Uln,
+                GivenNames = learner.GivenNames,
+                FamilyName = learner.FamilyName,
+                LearnActEndDate = learner.LearnActEndDate,
+                IsTransfer = learner.IsTransfer,
+                DateTransferIdentified = learner.DateTransferIdentified,
+                ProviderName = learner.ProviderName
+            };
         }
     }
 }
