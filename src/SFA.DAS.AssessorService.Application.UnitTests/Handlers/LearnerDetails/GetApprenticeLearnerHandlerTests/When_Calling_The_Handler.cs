@@ -14,24 +14,17 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.GetApprenticeLearnerHandlerTests
 {
     [TestFixture]
-    public class When_called
+    public class When_Calling_The_Handler
     {
-        private GetApprenticeLearnerHandler _sut;
-        private Mock<ILearnerRepository> _mockLearnerRepository;
-        private Mock<ILogger<GetApprenticeLearnerHandler>> _mockLogger;
-
-        [SetUp]
-        public void Arrange()
-        {
-            _mockLearnerRepository = new Mock<ILearnerRepository>();
-            _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
-            _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object); 
-        }
-
         [Test, MoqAutoData]
-        public async Task ThenLearnerIsRetrievedFromDatabase(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
+        public async Task ThenLearnerIsRetrievedFromTheDatabase(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
         {
             // Arrange
+
+            var _mockLearnerRepository = new Mock<ILearnerRepository>();
+            var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
+            var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
+
             _mockLearnerRepository
                 .Setup(r => r.Get(request.ApprenticeshipId))
                 .ReturnsAsync(learner);
@@ -44,7 +37,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             // Assert
             _mockLearnerRepository
                 .Verify(r => r.Get(request.ApprenticeshipId), Times.Once);
+        }
 
+        [Test, MoqAutoData]
+        public async Task ThenLearnerIsReturnedAsTheCorrectType(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
+        {
+            // Arrange
+
+            var _mockLearnerRepository = new Mock<ILearnerRepository>();
+            var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
+            var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
+
+            _mockLearnerRepository
+                .Setup(r => r.Get(request.ApprenticeshipId))
+                .ReturnsAsync(learner);
+
+            var expected = SetupResponse(learner);
+
+            // Act
+            var result = await _sut.Handle(request, new CancellationToken());
+
+            // Assert
             result.Should().BeOfType<GetApprenticeLearnerResponse>();
             result.Should().BeEquivalentTo(expected);
         }
