@@ -21,10 +21,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         {
             // Arrange
             var _mockLearnerRepository = SetupMockRepository(request, learner);
-            var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
-            var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
 
-            var expected = SetupResponse(learner);
+            var _sut = SetupSut(_mockLearnerRepository.Object);
 
             // Act
             var result = await _sut.Handle(request, new CancellationToken());
@@ -39,8 +37,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         {
             // Arrange
             var _mockLearnerRepository = SetupMockRepository(request, learner);
-            var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
-            var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);            
+
+            var _sut = SetupSut(_mockLearnerRepository.Object);
 
             var expected = SetupResponse(learner);
 
@@ -61,6 +59,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
                 .ReturnsAsync(learner);
 
             return mockLearnerRepository;
+        }
+
+        private GetApprenticeLearnerHandler SetupSut(ILearnerRepository repository)
+        {
+            var mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
+
+            return new GetApprenticeLearnerHandler(repository, mockLogger.Object);
         }
 
         private GetApprenticeLearnerResponse SetupResponse(ApprenticeLearner learner)
