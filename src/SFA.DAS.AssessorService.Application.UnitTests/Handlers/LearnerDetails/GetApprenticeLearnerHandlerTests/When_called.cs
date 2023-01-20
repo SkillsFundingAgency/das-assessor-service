@@ -21,13 +21,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         {
             // Arrange
 
-            var _mockLearnerRepository = new Mock<ILearnerRepository>();
+            var _mockLearnerRepository = SetupMockRepository(request, learner);
             var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
             var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
-
-            _mockLearnerRepository
-                .Setup(r => r.Get(request.ApprenticeshipId))
-                .ReturnsAsync(learner);
 
             var expected = SetupResponse(learner);
 
@@ -44,13 +40,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         {
             // Arrange
 
-            var _mockLearnerRepository = new Mock<ILearnerRepository>();
+            var _mockLearnerRepository = SetupMockRepository(request, learner);
             var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
             var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
 
-            _mockLearnerRepository
-                .Setup(r => r.Get(request.ApprenticeshipId))
-                .ReturnsAsync(learner);
+            
 
             var expected = SetupResponse(learner);
 
@@ -60,6 +54,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             // Assert
             result.Should().BeOfType<GetApprenticeLearnerResponse>();
             result.Should().BeEquivalentTo(expected);
+        }
+
+        private Mock<ILearnerRepository> SetupMockRepository(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
+        {
+            var mockLearnerRepository = new Mock<ILearnerRepository>();
+
+            mockLearnerRepository
+                .Setup(r => r.Get(request.ApprenticeshipId))
+                .ReturnsAsync(learner);
+
+            return mockLearnerRepository;
         }
 
         private GetApprenticeLearnerResponse SetupResponse(ApprenticeLearner learner)
