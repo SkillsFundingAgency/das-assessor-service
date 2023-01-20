@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         public async Task ThenLearnerIsRetrievedFromTheDatabase(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
         {
             // Arrange
-
             var _mockLearnerRepository = SetupMockRepository(request, learner);
             var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
             var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
@@ -39,12 +38,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         public async Task ThenLearnerIsReturnedAsTheCorrectType(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
         {
             // Arrange
-
             var _mockLearnerRepository = SetupMockRepository(request, learner);
             var _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
-            var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
-
-            
+            var _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);            
 
             var expected = SetupResponse(learner);
 
