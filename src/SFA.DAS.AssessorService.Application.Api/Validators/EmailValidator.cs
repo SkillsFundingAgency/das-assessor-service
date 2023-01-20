@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using FluentValidation.Validators;
 using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Domain.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RuleFor(x =>x.EmailToCheck)
                 .NotEmpty()
                 .WithMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
-                .EmailAddress(EmailValidationMode.Net4xRegex)
+                .EmailRegexAddress()
                 .WithMessage(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat);
         }
     }
