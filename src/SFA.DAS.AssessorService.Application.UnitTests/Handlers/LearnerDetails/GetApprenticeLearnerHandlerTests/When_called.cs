@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.GetApprenticeLearnerHandlerTests
 {
     [TestFixture]
-    public class When_Calling_The_Handler
+    public class When_called
     {
         [Test, MoqAutoData]
         public async Task ThenLearnerIsRetrievedFromTheDatabase(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
