@@ -15,13 +15,25 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
     [TestFixture]
     public class When_called
     {
+
+        private GetApprenticeLearnerHandler _sut;
+        private Mock<ILearnerRepository> _mockLearnerRepository;
+        private Mock<ILogger<GetApprenticeLearnerHandler>> _mockLogger;
+
+        [SetUp]
+        public void Arrange()
+        {
+            _mockLearnerRepository = new Mock<ILearnerRepository>();
+            _mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
+            _sut = new GetApprenticeLearnerHandler(_mockLearnerRepository.Object, _mockLogger.Object);
+        }
         [Test, MoqAutoData]
         public async Task AndTheLearnerIsNullThenDefaultIsReturned(GetApprenticeLearnerRequest request)
         {
             // Arrange
-            var _mockLearnerRepository = SetupMockRepository(request, null);
-
-            var _sut = SetupSut(_mockLearnerRepository.Object);
+            _mockLearnerRepository
+                .Setup(r => r.Get(request.ApprenticeshipId))
+                .ReturnsAsync((ApprenticeLearner)null);
 
             // Act
             var result = await _sut.Handle(request, new CancellationToken());
@@ -34,9 +46,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
         public async Task ThenLearnerIsReturnedAsTheCorrectType(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
         {
             // Arrange
-            var _mockLearnerRepository = SetupMockRepository(request, learner);
-
-            var _sut = SetupSut(_mockLearnerRepository.Object);
+            _mockLearnerRepository
+                .Setup(r => r.Get(request.ApprenticeshipId))
+                .ReturnsAsync(learner);
 
             var expected = new GetApprenticeLearnerResponse
             {
@@ -67,24 +79,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             // Assert
             result.Should().BeOfType<GetApprenticeLearnerResponse>();
             result.Should().BeEquivalentTo(expected);
-        }
-
-        private Mock<ILearnerRepository> SetupMockRepository(GetApprenticeLearnerRequest request, ApprenticeLearner learner)
-        {
-            var mockLearnerRepository = new Mock<ILearnerRepository>();
-
-            mockLearnerRepository
-                .Setup(r => r.Get(request.ApprenticeshipId))
-                .ReturnsAsync(learner);
-
-            return mockLearnerRepository;
-        }
-
-        private GetApprenticeLearnerHandler SetupSut(ILearnerRepository repository)
-        {
-            var mockLogger = new Mock<ILogger<GetApprenticeLearnerHandler>>();
-
-            return new GetApprenticeLearnerHandler(repository, mockLogger.Object);
         }
     }
 }
