@@ -45,6 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
             _mockLearnerRepository
                 .Verify(r => r.Get(request.ApprenticeshipId), Times.Once);
 
+            result.Should().BeOfType<GetApprenticeLearnerResponse>();
             result.Should().BeEquivalentTo(expected);
         }
 
