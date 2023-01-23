@@ -33,7 +33,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.WsFederation" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.290" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.295-prerelease-10" />
     <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.295-prerelease-4" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
