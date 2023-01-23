@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
         public void Should_Update_Status()
         {
             _result.Should().NotBeNull();
-            _result.Status.Should().BeEquivalentTo(TaskStatus.RanToCompletion);
+            _result.Status.Should().Be(TaskStatus.RanToCompletion);
         }
     }
 }

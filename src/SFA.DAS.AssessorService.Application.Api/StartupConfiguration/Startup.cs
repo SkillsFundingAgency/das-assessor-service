@@ -4,8 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentValidation;
 using FluentValidation.AspNetCore;
-using JWT;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -125,8 +125,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         opts => { opts.ResourcesPath = "Resources"; })
                     .AddDataAnnotationsLocalization()
                     .AddControllersAsServices()
-                    .AddNewtonsoftJson()
-                    .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+                    .AddNewtonsoftJson();
+
+                services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+                services.AddValidatorsFromAssemblyContaining<Startup>();
 
                 services.AddSwaggerGen(config =>
                     {
@@ -210,8 +212,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-          
-                config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
                 config.For<ISignInService>().Use<SignInService>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;

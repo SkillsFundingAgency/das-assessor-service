@@ -1,4 +1,10 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -19,12 +26,6 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StackExchange.Redis;
 using StructureMap;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -68,8 +69,10 @@ namespace SFA.DAS.AssessorService.Web
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<Startup>();
 
             services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
             
