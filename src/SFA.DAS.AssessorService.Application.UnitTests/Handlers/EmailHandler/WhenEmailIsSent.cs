@@ -1,14 +1,13 @@
 ﻿using System;
-using NUnit.Framework;
 using System.Threading;
 using FizzWare.NBuilder;
-using Moq;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.Notifications.Api.Client;
 using Microsoft.Extensions.Logging;
-//using Microsoft.Extensions.Logging.Internal;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
