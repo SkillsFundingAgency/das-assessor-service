@@ -1,26 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
+namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
 {
     public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
-        private readonly ILogger<QnaApiClient> _logger;
-
-
-        public QnaApiClient(string baseUri, ITokenService qnaTokenService, ILogger<QnaApiClient> logger) : base(baseUri, qnaTokenService, logger)
+        public QnaApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
-            _logger = logger;
         }
 
         public async Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest)

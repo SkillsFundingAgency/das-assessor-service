@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.QnA.Api.Types;
 
-namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
+namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public abstract class ApiClientBase : IDisposable
     {
@@ -30,21 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
-
-        protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
-        {
-            _logger = logger;
-
-            TokenService = tokenService;
-
-            HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
-
-            _retryPolicy = HttpPolicyExtensions
-                    .HandleTransientHttpError()
-//                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
-        }
 
         protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {

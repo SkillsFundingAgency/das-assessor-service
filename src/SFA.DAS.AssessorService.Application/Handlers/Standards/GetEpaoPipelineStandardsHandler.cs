@@ -13,11 +13,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
     public class GetEpaoPipelineStandardsHandler : IRequestHandler<EpaoPipelineStandardsRequest, PaginatedList<EpaoPipelineStandardsResponse>>
     {
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly IStandardRepository _standardRepository;
         private readonly ILogger<GetEpaoPipelineStandardsHandler> _logger;
 
-        public GetEpaoPipelineStandardsHandler(IWebConfiguration config, IStandardRepository standardRepository, ILogger<GetEpaoPipelineStandardsHandler> logger)
+        public GetEpaoPipelineStandardsHandler(IApiConfiguration config, IStandardRepository standardRepository, ILogger<GetEpaoPipelineStandardsHandler> logger)
         {
             _config = config;
             _standardRepository = standardRepository;

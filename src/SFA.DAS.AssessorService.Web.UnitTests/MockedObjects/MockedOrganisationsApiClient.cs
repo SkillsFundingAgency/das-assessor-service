@@ -66,17 +66,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             mockHttp.When($"/api/ao/assessment-organisations/EPA00001/standards")
                 .Respond("application/json", JsonConvert.SerializeObject(standardOrganisartionSummaries));
 
-            var webConfigMock = new Mock<IWebConfiguration>();
-            var hostMock = new Mock<IHostingEnvironment>();
-            hostMock
-                .Setup(m => m.EnvironmentName)
-                .Returns(EnvironmentName.Development);
-
-            var mockTokenService = new Mock<TokenService>(webConfigMock.Object, hostMock.Object, false);
+            var tokenServiceMock = new Mock<ITokenService>();
+            tokenServiceMock
+                .Setup(m => m.GetToken())
+                .Returns(string.Empty);
 
             var apiBaseLogger = new Mock<ILogger<ApiClientBase>>();
 
-            var apiClient = new OrganisationsApiClient(clientlocal, mockTokenService.Object, apiBaseLogger.Object);
+            var apiClient = new OrganisationsApiClient(clientlocal, tokenServiceMock.Object, apiBaseLogger.Object);
 
             return apiClient;
         }

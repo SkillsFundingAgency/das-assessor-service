@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
+namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
 {
     public interface IQnaApiClient
     {

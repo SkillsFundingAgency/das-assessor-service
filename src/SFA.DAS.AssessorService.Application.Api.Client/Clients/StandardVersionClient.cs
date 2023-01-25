@@ -1,18 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class StandardVersionClient : ApiClientBase, IStandardVersionClient
     {
-        public StandardVersionClient(string baseUri, ITokenService tokenService, ILogger<StandardVersionClient> logger) : base(baseUri, tokenService, logger)
-        {
-        }
-
-        public StandardVersionClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public StandardVersionClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
         }
 

@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public OrganisationController(IHttpContextAccessor contextAccessor, 
             IOrganisationsApiClient organisationsApiClient, IAzureApiClient externalApiClient, IContactsApiClient contactsApiClient,
-            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger, 
+            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger,
             IWebConfiguration webConfiguration)
         {
             _contextAccessor = contextAccessor;

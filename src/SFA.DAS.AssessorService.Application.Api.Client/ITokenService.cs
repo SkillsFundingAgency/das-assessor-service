@@ -4,8 +4,4 @@
     {
         string GetToken();
     }
-    
-    public interface IQnaTokenService : ITokenService
-    {
-    }
 }

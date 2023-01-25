@@ -50,14 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         }
 
         public IConfiguration Configuration { get; }
-        public IWebConfiguration ApplicationConfiguration { get; set; }
+        public IExternalApiConfiguration ApplicationConfiguration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             try
             {
-                ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
                 if (UseSandbox)
                 {
@@ -160,8 +160,18 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(UseSandbox);
-                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
+                if (UseSandbox)
+                {
+                    config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxClientApiAuthentication);
+                    config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
+                }
+                else
+                {
+                    config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.AssessorApiAuthentication);
+                    config.For<IApiClient>().Use<ApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
+                }
+
+                config.For<IExternalApiConfiguration>().Use(ApplicationConfiguration);
 
                 config.Populate(services);
             });

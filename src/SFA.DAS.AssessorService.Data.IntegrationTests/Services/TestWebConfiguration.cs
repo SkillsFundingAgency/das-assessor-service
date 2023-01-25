@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string ServiceLink { get; set; }
         public LoginServiceConfig LoginService { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
+        public ClientApiAuthentication ReferenceDataApiAuthentication { get; set; }
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
         public string ReferenceFormat { get; set; }

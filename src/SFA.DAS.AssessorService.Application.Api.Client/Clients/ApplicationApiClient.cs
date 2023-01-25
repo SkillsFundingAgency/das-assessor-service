@@ -1,21 +1,18 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ApplicationApiClient : ApiClientBase, IApplicationApiClient
     {
-        private readonly ILogger<ApplicationApiClient> _logger;
-
-        public ApplicationApiClient(string baseUri, ITokenService tokenService, ILogger<ApplicationApiClient> logger) : base(baseUri, tokenService, logger)
+        public ApplicationApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
-            _logger = logger;
         }
 
         public async Task<List<ApplicationResponse>> GetOrganisationApplications(Guid userId)

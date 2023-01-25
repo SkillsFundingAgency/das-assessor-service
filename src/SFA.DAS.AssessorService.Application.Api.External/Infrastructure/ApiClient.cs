@@ -1,37 +1,36 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
     public class ApiClient : IApiClient
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<ApiClient> _logger;
         private readonly ITokenService _tokenService;
 
-        public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
+        public ApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClient> logger)
         {
-            _client = client;
-            _logger = logger;
+            _httpClient = httpClient;
             _tokenService = tokenService;
+            _logger = logger;
         }
 
         protected async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 try
                 {
@@ -56,10 +55,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         protected async Task<U> Post<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            using (var response = await _httpClient.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 try
                 {
@@ -84,10 +83,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         protected async Task<U> Put<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            using (var response = await _httpClient.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 try
                 {
@@ -112,9 +111,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         protected async Task<T> Delete<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            using (var response = await _httpClient.DeleteAsync(new Uri(uri, UriKind.Relative)))
             {
                 try
                 {
@@ -169,7 +168,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             return apiResponse;
         }
-
 
         public virtual async Task<GetCertificateResponse> GetCertificate(GetBatchCertificateRequest request)
         {

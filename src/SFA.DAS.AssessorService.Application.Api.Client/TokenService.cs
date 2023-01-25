@@ -6,41 +6,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public class TokenService : ITokenService
     {
-        private readonly IWebConfiguration _configuration;
+        private readonly IClientApiAuthentication _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly bool _useSandbox;
 
-        public TokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment, bool useSandbox)
+        public TokenService(IClientApiAuthentication configuration, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
-            _useSandbox = useSandbox;
         }
 
         public string GetToken()
         {
-            string token;
-
             if (_hostingEnvironment.IsDevelopment())
-            {
-                token = string.Empty;
-            }
-            else
-            {
-                var tenantId = _useSandbox ? _configuration.SandboxClientApiAuthentication.TenantId : _configuration.AssessorApiAuthentication.TenantId;
-                var clientId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientId : _configuration.AssessorApiAuthentication.ClientId;
-                var appKey = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientSecret : _configuration.AssessorApiAuthentication.ClientSecret;
-                var resourceId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ResourceId : _configuration.AssessorApiAuthentication.ResourceId;
+                return string.Empty;
 
-                var authority = $"https://login.microsoftonline.com/{tenantId}";
-                var clientCredential = new ClientCredential(clientId, appKey);
-                var context = new AuthenticationContext(authority, true);
-                var result = context.AcquireTokenAsync(resourceId, clientCredential).GetAwaiter().GetResult();
+            var tenantId = _configuration.TenantId;
+            var clientId = _configuration.ClientId;
+            var appKey = _configuration.ClientSecret;
+            var resourceId = _configuration.ResourceId;
 
-                token = result?.AccessToken;
-            }
-                
-            return token;
+            var authority = $"https://login.microsoftonline.com/{tenantId}";
+            var clientCredential = new ClientCredential(clientId, appKey);
+            var context = new AuthenticationContext(authority, true);
+            var result = context.AcquireTokenAsync(resourceId, clientCredential).GetAwaiter().GetResult();
+
+            return result?.AccessToken;
         }
     }
 }

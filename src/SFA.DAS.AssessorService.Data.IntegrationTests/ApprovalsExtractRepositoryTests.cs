@@ -1,16 +1,16 @@
-﻿using NUnit.Framework;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
-using SFA.DAS.AssessorService.Domain.Entities;
-using FluentAssertions;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
-using Moq;
-using SFA.DAS.AssessorService.Application.Infrastructure;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
-                new ApprovalsExtract() { ApprenticeshipId = 123 }
+                new ApprovalsExtract() { ApprenticeshipId = 123, ULN = "11345473" }
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName) VALUES (123, 'TestName');");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
-                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated" }
+                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated", ULN = "11345473" }
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
@@ -87,11 +87,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             // Arrange
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
-            _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName) VALUES (123, 'TestName');");
+            _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, ULN) VALUES (123, 'TestName', '11345473')");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
-                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated" },
-                new ApprovalsExtract() { ApprenticeshipId = 456, FirstName = "SecondTestName" }
+                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated", ULN = "11345473" },
+                new ApprovalsExtract() { ApprenticeshipId = 456, FirstName = "SecondTestName", ULN = "383838311" }
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);

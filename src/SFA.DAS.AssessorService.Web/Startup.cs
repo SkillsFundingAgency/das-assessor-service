@@ -1,4 +1,8 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,6 +15,8 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.QnA;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -19,11 +25,6 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StackExchange.Redis;
 using StructureMap;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -46,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            Configuration = ConfigurationService.GetConfigWeb(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
             //services.AddApplicationInsightsTelemetry();
 
@@ -58,23 +59,23 @@ namespace SFA.DAS.AssessorService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
+
             services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
-            
+
             services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
-            
+            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator, CacheOverrideHtmlGenerator>();
+
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
-           
+
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
@@ -105,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web
                     throw;
                 }
             }
-            
+
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
@@ -115,18 +116,36 @@ namespace SFA.DAS.AssessorService.Web
                     HttpOnly = true
                 };
             });
-            
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", cfg =>
+
+            services.AddHttpClient<IOrganisationsApiClient, OrganisationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IStandardsApiClient, StandardsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IOppFinderApiClient, OppFinderApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IDashboardApiClient, DashboardApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IContactsApiClient, ContactsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<ISearchApiClient, SearchApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IEmailApiClient, EmailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IValidationApiClient, ValidationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<ICertificateApiClient, CertificateApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<ILoginApiClient, LoginApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<ILearnerDetailsApiClient, LearnerDetailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IApprovalsLearnerApiClient, ApprovalsLearnerApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+            services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
                 {
                     cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
                     cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
                 })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+            services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
+
             services.AddHealthChecks();
-            
+
             return ConfigureIoc(services);
-        }        
+        }
 
         private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
@@ -140,44 +159,45 @@ namespace SFA.DAS.AssessorService.Web
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>();
-                config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
-                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
-
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOppFinderSession>().Use<OppFinderSession>();
                 config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
-
                 config.For<IWebConfiguration>().Use(Configuration);
-                
-                config.For<IQnaApiClient>().Use<QnaApiClient>()
-                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
-                  .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
-                
-                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
+
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
+
+                config.For<ITokenService>().Use<TokenService>().Named("AssessorTokenService")
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication);
+
+                config.For<ITokenService>().Use<TokenService>().Named("QnATokenService")
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication);
+
+                config.For<ITokenService>().Use<TokenService>().Named("RoatpTokenService")
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication);
+
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+
+                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("QnATokenService"));
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("RoatpTokenService"));
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
-                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);               
-                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
-                config.For<IApiValidationService>().Use<ApiValidationService>();
-
+                config.For<IApiValidationService>().Use<ApiValidationService>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
-                
-               
-                
+
                 config.Populate(services);
             });
 
