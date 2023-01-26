@@ -33,8 +33,8 @@ jobs:
             SubscriptionId: $(SubscriptionId)
             Location: $(ResourceGroupLocation)
             Environment: ${{ parameters.Environment }}
-            TemplatePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService.Web/azure/template.json
-            ParametersPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService.Web/azure/template.parameters.json
+            TemplatePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/template.json
+            ParametersPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/template.parameters.json
             IsMultiRepoCheckout: true
             TemplateSecrets:
               LoggingRedisConnectionString: $(LoggingRedisConnectionString)
