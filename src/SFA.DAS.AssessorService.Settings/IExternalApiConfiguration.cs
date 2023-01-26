@@ -4,6 +4,6 @@
     {
         ClientApiAuthentication AssessorApiAuthentication { get; set; }
 
-        ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
+        ClientApiAuthentication SandboxAssessorApiAuthentication { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace SFA.DAS.AssessorService.Settings
     {
         [JsonRequired] public ClientApiAuthentication AssessorApiAuthentication { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
+        [JsonRequired] public ClientApiAuthentication SandboxAssessorApiAuthentication { get; set; }
     }
 }

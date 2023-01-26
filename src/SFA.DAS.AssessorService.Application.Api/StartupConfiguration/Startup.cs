@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.AssessorService";
+        private const string ServiceName = "SFA.DAS.AssessorService.Api";
         private const string Version = "1.0";
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             IServiceProvider serviceProvider;
             try
-            {            
+            {
                 services.AddAuthentication(o =>
                     {
                         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,12 +79,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         if (UseSandbox)
                         {
                             validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
-                            validAudiences.Add(Configuration.SandboxApiAuthentication.ClientId);
                         }
                         else
                         {
                             validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
-                            validAudiences.Add(Configuration.ApiAuthentication.ClientId);
                         }
                         
                         o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
@@ -297,6 +295,5 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 Tenant = ""
             };
         }
-    
     }
 }

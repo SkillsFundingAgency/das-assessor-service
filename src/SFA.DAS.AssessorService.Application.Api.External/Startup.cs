@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
     {
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.AssessorService";
+        private const string ServiceName = "SFA.DAS.AssessorService.ExternalApi";
         private const string Version = "1.0";
         private readonly bool UseSandbox;
 
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
-                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxClientApiAuthentication.ApiBaseAddress);
+                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxAssessorApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                         config.Timeout = TimeSpan.FromMinutes(5);
                     });
@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 if (UseSandbox)
                 {
-                    config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxClientApiAuthentication);
+                    config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication);
                     config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
                 }
                 else

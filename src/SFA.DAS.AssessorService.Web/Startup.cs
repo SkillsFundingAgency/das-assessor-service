@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _env;
-        private const string ServiceName = "SFA.DAS.AssessorService";
+        private const string ServiceName = "SFA.DAS.AssessorService.Web";
         private const string Version = "1.0";
 
         public Startup(IConfiguration config, ILogger<Startup> logger, IHostingEnvironment env)
