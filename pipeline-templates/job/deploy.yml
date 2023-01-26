@@ -44,8 +44,8 @@ jobs:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             ApimResourceGroup: $(SharedApimResourceGroup)
             ApimName: $(SharedApimName)
-            SubscriptionId: $(AppServiceName)
-            PipelineVariableName: PublicSectorReportingApimSubscriptionKey
+            SubscriptionId: $(UiAppServiceName)
+            PipelineVariableName: AssessorApimSubscriptionKey
             IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/generate-config.yml@das-platform-building-blocks
           parameters:
@@ -66,7 +66,7 @@ jobs:
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
             SqlPassword: $(SharedSQLServerPassword)
-            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/SFA.DAS.PSRService.Database/bin/Output/SFA.DAS.AssessorService.Database.dacpac
+            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/SFA.DAS.AssessorService.Database/bin/Release/SFA.DAS.AssessorService.Database.dacpac
             DatabaseName: $(DatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
             Environment: ${{ parameters.Environment }}
@@ -74,4 +74,30 @@ jobs:
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             AppServiceName: $(AppServiceName)
-            DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.PSRService.Web/SFA.DAS.AssessorService.Web.zip
+            DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService.Web/SFA.DAS.AssessorService.Web.zip
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(AppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService.Api/SFA.DAS.AssessorService.Api.zip
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(AppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService.Api.External/SFA.DAS.AssessorService.Api.External.zip
+        - task: AzurePowerShell@5
+          displayName: 'Import Swagger Definition'
+          inputs:
+            azureSubscription: 'NAS Pre-Prod (ARM)'
+            ScriptPath: '$(System.DefaultWorkingDirectory)/das-assessor-service/AssessorService/Azure/scripts/Import-APIMSwaggerApiDefinition.ps1'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(ApiId)"  -SwaggerSpecificationUrl "$(SwaggerSpecificationUrl)" -ApiUrlSuffix "$(ApiUrlSuffix)"'
+            azurePowerShellVersion: LatestVersion
+            pwsh: true
+        - task: AzurePowerShell@5
+          displayName: 'Set API Level Policy'
+          inputs:
+            azureSubscription: 'NAS Pre-Prod (ARM)'
+            ScriptPath: '$(System.DefaultWorkingDirectory)/das-assessor-service/AssessorService/Azure/scripts/Set-ApimApiPolicy.ps1'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(ApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
+            azurePowerShellVersion: LatestVersion
+            pwsh: true

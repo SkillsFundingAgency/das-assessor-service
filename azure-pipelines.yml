@@ -52,7 +52,6 @@ stages:
     parameters:
       SolutionBaseName: $(SolutionBaseName).Database
       SqlProjectPath: src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
-- template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
 
 - stage: Deploy_AT
   dependsOn: Build
@@ -62,6 +61,7 @@ stages:
   - group: DevTest Management Resources
   - group: AT DevTest Shared Resources
   - group: AT das-assessor-service
+  - group: AT APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -76,6 +76,22 @@ stages:
   - group: DevTest Management Resources
   - group: TEST DevTest Shared Resources
   - group: TEST das-assessor-service
+  - group: TEST APIM
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: TEST
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+
+- stage: Deploy_TEST2
+  dependsOn: Build
+  displayName: Deploy to TEST2
+  variables:
+  - group: DevTest Management Resources
+  - group: TEST2 DevTest Shared Resources
+  - group: TEST2 das-assessor-service
+  - group: TEST APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -90,6 +106,7 @@ stages:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
   - group: PREPROD das-assessor-service
+  - group: TEST APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -104,6 +121,7 @@ stages:
   - group: Prod Management Resources
   - group: Prod Shared Resources
   - group: PROD das-assessor-service
+  - group: Prod APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
