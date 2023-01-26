@@ -76,7 +76,7 @@ stages:
   - group: DevTest Management Resources
   - group: TEST DevTest Shared Resources
   - group: TEST das-assessor-service
-  - group: TEST APIM
+  - group: TEST (inc. PP) APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -91,7 +91,7 @@ stages:
   - group: DevTest Management Resources
   - group: TEST2 DevTest Shared Resources
   - group: TEST2 das-assessor-service
-  - group: TEST APIM
+  - group: TEST (inc. PP) APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -106,7 +106,7 @@ stages:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
   - group: PREPROD das-assessor-service
-  - group: TEST APIM
+  - group: TEST (inc. PP) APIM
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
