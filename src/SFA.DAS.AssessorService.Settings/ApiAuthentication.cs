@@ -6,8 +6,6 @@ namespace SFA.DAS.AssessorService.Settings
     {
         [JsonRequired] public string ClientId { get; set; }
 
-        [JsonRequired] public string Instance { get; set; }
-
         [JsonRequired] public string TenantId { get; set; }
 
         [JsonRequired] public string Audience { get; set; }
