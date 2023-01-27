@@ -57,7 +57,7 @@ jobs:
             TargetFileName: '*.schema.json'
             TableName: Configuration
             ConfigurationSecrets:
-              PublicSectorReportingApimSubscriptionKey: $(PublicSectorReportingApimSubscriptionKey)
+              AssessorApimSubscriptionKey: $(AssessorApimSubscriptionKey)
               IdentityClientSecret: $(IdentityClientSecret)
               SessionStoreConectionString: $(SessionStoreConectionString)
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
