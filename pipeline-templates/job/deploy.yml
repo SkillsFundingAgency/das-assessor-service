@@ -81,17 +81,17 @@ jobs:
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppServiceName: $(AppServiceName)
+            AppServiceName: $(UiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Web.zip
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppServiceName: $(AppServiceName)
+            AppServiceName: $(apiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Api.zip
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppServiceName: $(AppServiceName)
+            AppServiceName: $(externalApiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Api.External.zip
         - task: AzurePowerShell@5
           displayName: 'Import Swagger Definition'
