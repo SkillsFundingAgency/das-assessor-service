@@ -65,6 +65,7 @@ jobs:
               ReferenceDataApiAuthenticationClientSecret: $(ReferenceDataApiAuthenticationClientSecret)
               RoatpApiAuthenticationClientSecret: $(RoatpApiAuthenticationClientSecret)
               SandboxApiAuthenticationClientSecret: $(SandboxApiAuthenticationClientSecret)
+              ApiNotificationsClientToken: $(ApiNotificationsClientToken)
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
           parameters:
             AzureSubscription: ${{ parameters.ServiceConnection }}
