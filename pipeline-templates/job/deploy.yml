@@ -105,7 +105,7 @@ jobs:
           displayName: 'Set API Level Policy'
           inputs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
-            ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1'
+            ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
