@@ -98,7 +98,7 @@ jobs:
           inputs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
             ScriptPath: '$(System.DefaultWorkingDirectory)/das-assessor-service/AssessorService/Azure/scripts/Import-APIMSwaggerApiDefinition.ps1'
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(ApiId)"  -SwaggerSpecificationUrl "$(SwaggerSpecificationUrl)" -ApiUrlSuffix "$(ApiUrlSuffix)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -SwaggerSpecificationUrl "$(externalApiSwaggerUrl)" -ApiUrlSuffix "$(externalApiUrlSuffix)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
         - task: AzurePowerShell@5
@@ -106,6 +106,6 @@ jobs:
           inputs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
             ScriptPath: '$(System.DefaultWorkingDirectory)/das-assessor-service/AssessorService/Azure/scripts/Set-ApimApiPolicy.ps1'
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(ApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
