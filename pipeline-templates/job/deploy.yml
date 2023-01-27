@@ -97,7 +97,7 @@ jobs:
           displayName: 'Import Swagger Definition'
           inputs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
-            ScriptPath: '$(System.DefaultWorkingDirectory)/das-assessor-service/AssessorService/Azure/scripts/Import-APIMSwaggerApiDefinition.ps1'
+            ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -SwaggerSpecificationUrl "$(externalApiSwaggerUrl)" -ApiUrlSuffix "$(externalApiUrlSuffix)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
@@ -105,7 +105,7 @@ jobs:
           displayName: 'Set API Level Policy'
           inputs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
-            ScriptPath: '$(System.DefaultWorkingDirectory)/das-assessor-service/AssessorService/Azure/scripts/Set-ApimApiPolicy.ps1'
+            ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1'
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
