@@ -1,4 +1,4 @@
-parameters:
+sysparameters:
 - name: OverrideBlockOnPossibleDataLoss
   displayName: Add /p:BlockOnPossibleDataLoss=false argument to DACPAC deployment
   type: boolean
