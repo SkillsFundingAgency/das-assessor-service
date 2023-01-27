@@ -58,8 +58,13 @@ jobs:
             TableName: Configuration
             ConfigurationSecrets:
               AssessorApimSubscriptionKey: $(AssessorApimSubscriptionKey)
-              IdentityClientSecret: $(IdentityClientSecret)
-              SessionStoreConectionString: $(SessionStoreConectionString)
+              LoginServiceApiClientSecret: $(LoginServiceApiClientSecret)
+              LoginServiceClientSecret: $(LoginServiceClientSecret)
+              AssessorApiAuthenticationClientSecret: $(AssessorApiAuthenticationClientSecret)
+              AzureApiAuthenticationKey: $(AzureApiAuthenticationKey)
+              ReferenceDataApiAuthenticationClientSecret: $(ReferenceDataApiAuthenticationClientSecret)
+              RoatpApiAuthenticationClientSecret: $(RoatpApiAuthenticationClientSecret)
+              SandboxApiAuthenticationClientSecret: $(SandboxApiAuthenticationClientSecret)
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
           parameters:
             AzureSubscription: ${{ parameters.ServiceConnection }}
