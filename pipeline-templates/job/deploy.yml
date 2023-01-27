@@ -67,6 +67,7 @@ jobs:
               SandboxApiAuthenticationClientSecret: $(SandboxApiAuthenticationClientSecret)
               ApiNotificationsClientToken: $(ApiNotificationsClientToken)
               SessionRedisConnectionString: $(SessionRedisConnectionString)
+              CompaniesHouseApiAuthenticationApiKey: $(CompaniesHouseApiAuthenticationApiKey)
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
           parameters:
             AzureSubscription: ${{ parameters.ServiceConnection }}
