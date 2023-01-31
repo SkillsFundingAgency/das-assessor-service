@@ -2,7 +2,6 @@ parameters:
   Environment:
   ServiceConnection:
   OverrideBlockOnPossibleDataLoss: false
-  SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 jobs:
 - deployment: DeployResources
@@ -112,7 +111,7 @@ jobs:
             azurePowerShellVersion: LatestVersion
             pwsh: true
 - deployment: DeploySandboxResources
-  condition: and(succeeded(), eq('${{ parameters.SandBoxDeploy }}', 'true'))
+  condition: $[in(${{ parameters.Environment }}, 'PP', 'PROD', 'MO')]
   pool:
     name: DAS - Continuous Deployment Agents
   environment: ${{ parameters.Environment }}
