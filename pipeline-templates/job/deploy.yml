@@ -2,7 +2,7 @@ parameters:
   Environment:
   ServiceConnection:
   OverrideBlockOnPossibleDataLoss: false
-  SandBoxDeploy:
+  SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 jobs:
 - deployment: DeployResources

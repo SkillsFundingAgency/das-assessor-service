@@ -116,7 +116,6 @@ stages:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 - stage: Deploy_PROD
   dependsOn: Build
@@ -132,7 +131,6 @@ stages:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 - stage: Deploy_MO
   dependsOn: Build
@@ -147,7 +145,6 @@ stages:
       Environment: MO
       ServiceConnection: SFA-ASM-ModelOffice-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 - stage: Deploy_DEMO
   dependsOn: Build
