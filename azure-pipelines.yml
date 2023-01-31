@@ -3,6 +3,9 @@ parameters:
   displayName: Add /p:BlockOnPossibleDataLoss=false argument to DACPAC deployment
   type: boolean
   default: false
+- name: SandboxDeploy
+  type: boolean
+  default: false
 
 trigger:
   batch: true
@@ -21,8 +24,6 @@ variables:
 - group: RELEASE das-assessor-service
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
-- name: SandboxDeploy
-  value: false
 
 resources:
   repositories:
@@ -70,7 +71,6 @@ stages:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandboxDeploy: $(SandboxDeploy)
 
 - stage: Deploy_TEST
   dependsOn: Build
@@ -86,7 +86,6 @@ stages:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandboxDeploy: $(SandboxDeploy)
 
 - stage: Deploy_TEST2
   dependsOn: Build
@@ -99,10 +98,9 @@ stages:
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
-      Environment: TEST
+      Environment: TEST2
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandboxDeploy: $(SandboxDeploy)
 
 - stage: Deploy_PP
   dependsOn: Build
@@ -118,7 +116,7 @@ stages:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandBoxDeploy: true
+      SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 - stage: Deploy_PROD
   dependsOn: Build
@@ -134,7 +132,7 @@ stages:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandBoxDeploy: true
+      SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 - stage: Deploy_MO
   dependsOn: Build
@@ -149,7 +147,7 @@ stages:
       Environment: MO
       ServiceConnection: SFA-ASM-ModelOffice-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandBoxDeploy: true
+      SandBoxDeploy: $[in(variables['Environment'], 'PP', 'PROD', 'MO')]
 
 - stage: Deploy_DEMO
   dependsOn: Build
@@ -164,4 +162,3 @@ stages:
       Environment: DEMO
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
-      SandboxDeploy: $(SandboxDeploy)
