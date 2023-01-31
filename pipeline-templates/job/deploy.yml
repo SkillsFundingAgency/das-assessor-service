@@ -2,6 +2,7 @@ parameters:
   Environment:
   ServiceConnection:
   OverrideBlockOnPossibleDataLoss: false
+  SandBoxDeploy:
 
 jobs:
 - deployment: DeployResources
@@ -108,5 +109,68 @@ jobs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
+            azurePowerShellVersion: LatestVersion
+            pwsh: true
+- deployment: DeploySandboxResources
+  condition: and(succeeded(), eq('${{ parameters.SandBoxDeploy }}', 'true'))
+  pool:
+    name: DAS - Continuous Deployment Agents
+  environment: ${{ parameters.Environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - template: azure-pipelines-templates/deploy/step/wait-azure-devops-deployment.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            EnvironmentId: $(Environment.Id)
+            PipelineName: $(Build.DefinitionName)
+            RunId: $(Build.BuildId)
+        - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SubscriptionId: $(SubscriptionId)
+            Location: $(ResourceGroupLocation)
+            Environment: ${{ parameters.Environment }}
+            TemplatePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/active-sandbox-template
+            ParametersPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/active-sandbox-template.parameters.json
+            IsMultiRepoCheckout: true
+            TemplateSecrets:
+              LoggingRedisConnectionString: $(LoggingRedisConnectionString)
+              ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
+        - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
+          parameters:
+            AzureSubscription: ${{ parameters.ServiceConnection }}
+            ServerName: $(SharedSQLServerFQDN)
+            SqlUsername: $(SharedSQLServerUsername)
+            SqlPassword: $(SharedSQLServerPassword)
+            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/SFA.DAS.AssessorService.Database/bin/Output/SFA.DAS.AssessorService.Database.dacpac
+            DatabaseName: $(SandboxDatabaseName)
+            OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+            Environment: ${{ parameters.Environment }}
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(InternalApiActiveSandboxAppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.zip
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(ExternalApiActiveSandboxAppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.External.zip
+        - task: AzurePowerShell@5
+          displayName: 'Import Swagger Definition'
+          inputs:
+            azureSubscription: 'NAS Pre-Prod (ARM)'
+            ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -SwaggerSpecificationUrl "$(externalApiSandboxSwaggerUrl)" -ApiUrlSuffix "$(externalApiSandboxUrlSuffix)"'
+            azurePowerShellVersion: LatestVersion
+            pwsh: true
+        - task: AzurePowerShell@5
+          displayName: 'Set API Level Policy'
+          inputs:
+            azureSubscription: 'NAS Pre-Prod (ARM)'
+            ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true

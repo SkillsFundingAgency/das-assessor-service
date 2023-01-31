@@ -21,6 +21,8 @@ variables:
 - group: RELEASE das-assessor-service
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
+- name: SandboxDeploy
+  value: false
 
 resources:
   repositories:
@@ -68,6 +70,7 @@ stages:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandboxDeploy: $(SandboxDeploy)
 
 - stage: Deploy_TEST
   dependsOn: Build
@@ -83,6 +86,7 @@ stages:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandboxDeploy: $(SandboxDeploy)
 
 - stage: Deploy_TEST2
   dependsOn: Build
@@ -98,6 +102,7 @@ stages:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandboxDeploy: $(SandboxDeploy)
 
 - stage: Deploy_PP
   dependsOn: Build
@@ -113,6 +118,7 @@ stages:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandBoxDeploy: true
 
 - stage: Deploy_PROD
   dependsOn: Build
@@ -128,6 +134,7 @@ stages:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandBoxDeploy: true
 
 - stage: Deploy_MO
   dependsOn: Build
@@ -142,6 +149,7 @@ stages:
       Environment: MO
       ServiceConnection: SFA-ASM-ModelOffice-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandBoxDeploy: true
 
 - stage: Deploy_DEMO
   dependsOn: Build
@@ -156,3 +164,4 @@ stages:
       Environment: DEMO
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      SandboxDeploy: $(SandboxDeploy)
