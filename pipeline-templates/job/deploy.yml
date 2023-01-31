@@ -111,7 +111,7 @@ jobs:
             azurePowerShellVersion: LatestVersion
             pwsh: true
 - deployment: DeploySandboxResources
-  condition: in(${{ parameters.Environment }}, 'PP', 'PROD', 'MO')
+  condition: in('${{ parameters.Environment }}', 'PP', 'PROD', 'MO')
   pool:
     name: DAS - Continuous Deployment Agents
   environment: ${{ parameters.Environment }}
