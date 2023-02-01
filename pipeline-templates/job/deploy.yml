@@ -131,7 +131,7 @@ jobs:
             SubscriptionId: $(SubscriptionId)
             Location: $(ResourceGroupLocation)
             Environment: ${{ parameters.Environment }}
-            TemplatePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/active-sandbox-template
+            TemplatePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/active-sandbox-template.json
             ParametersPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/active-sandbox-template.parameters.json
             IsMultiRepoCheckout: true
             TemplateSecrets:
