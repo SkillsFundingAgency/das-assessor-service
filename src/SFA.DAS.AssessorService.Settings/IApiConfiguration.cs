@@ -6,8 +6,6 @@
 
         ApiAuthentication ApiAuthentication { get; set; }
         ApiAuthentication SandboxApiAuthentication { get; set; }
-
-        AzureApiAuthentication AzureApiAuthentication { get; set; }
         
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 

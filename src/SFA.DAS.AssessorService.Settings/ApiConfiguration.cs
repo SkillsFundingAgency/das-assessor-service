@@ -10,8 +10,6 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
         [JsonRequired] public ApiAuthentication SandboxApiAuthentication { get; set; }
 
-        [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
-
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
