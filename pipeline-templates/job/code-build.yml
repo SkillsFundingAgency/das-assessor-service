@@ -1,0 +1,56 @@
+parameters:
+  SolutionBaseName:
+  BuildConfiguration:
+
+jobs:
+- job: CodeBuild
+  pool:
+    name: DAS - Continuous Integration
+    workspace:
+      clean: all
+  variables:
+  - group: BUILD Management Resources
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish Assessor Service Web
+    inputs:
+      command: publish
+      publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
+      projects: src/${{ parameters.SolutionBaseName }}.Web/${{ parameters.SolutionBaseName }}.Web.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish Assessor Service Api
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/${{ parameters.SolutionBaseName }}.Application.Api/${{ parameters.SolutionBaseName }}.Application.Api.csproj
+      arguments: --configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish - dotnet publish Assessor Service Api External
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: src/${{ parameters.SolutionBaseName }}.Application.Api.External/${{ parameters.SolutionBaseName }}.Application.Api.External.csproj
+      arguments: --configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build
+
+  - task: CopyFiles@2
+    displayName: Copy Files to $(build.artifactstagingdirectory)/publish
+    inputs:
+      Contents: |
+        azure/**
+      TargetFolder: $(build.artifactstagingdirectory)/publish
+      OverWrite: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: ${{ parameters.SolutionBaseName }}
