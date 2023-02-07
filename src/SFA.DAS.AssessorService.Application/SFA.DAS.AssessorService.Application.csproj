@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.4" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Enums.NET" Version="4.0.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="AutoMapper" Version="7.0.1" />
-    <PackageReference Include="MediatR" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.2" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.210" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.290" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.3.0" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.291" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
   <ItemGroup>
