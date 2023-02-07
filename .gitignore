@@ -295,3 +295,6 @@ src/global.json
 .sonarqube/
 SonarQube.Analysis.xml
 **/*.slconfig
+/src.backup/SFA.DAS.AssessorService.Web
+/src/UpgradeReport.sarif
+/src/upgrade-assistant.clef
