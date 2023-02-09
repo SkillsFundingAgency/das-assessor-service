@@ -671,9 +671,9 @@ namespace SFA.DAS.AssessorService.Data
                        NEWID(),
                        @action,
                        c.Id,
-                       {(eventTime.HasValue ? "@eventTime" : "c.UpdatedAt")},
-                       {(!string.IsNullOrEmpty(status) ? "@status" : "c.Status")},
-                       {(!string.IsNullOrEmpty(certificateData) ? "@certificateData" : "c.CertificateData")},
+                       @eventTimeToUse,
+                       @statusToUse,
+                       @certificateDataToUse,
                        @username,
                        @batchNumber,
                        @reasonForChange
@@ -682,9 +682,13 @@ namespace SFA.DAS.AssessorService.Data
                    WHERE
                        c.Id IN @certificateIds";
 
+            var eventTimeToUse = eventTime.HasValue ? "@eventTime" : "c.UpdatedAt";
+            var statusToUse = !string.IsNullOrEmpty(status) ? "@status" : "c.Status";
+            var certificateDataToUse = !string.IsNullOrEmpty(certificateData) ? "@certificateData" : "c.CertificateData";
+
             await _unitOfWork.Connection.ExecuteAsync(
                    sql,
-                   param: new { certificateIds, action, status, eventTime, certificateData, username, batchNumber, reasonForChange },
+                   param: new { certificateIds, action, statusToUse, eventTimeToUse, certificateDataToUse, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
     }
