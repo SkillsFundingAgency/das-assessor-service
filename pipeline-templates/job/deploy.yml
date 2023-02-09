@@ -94,6 +94,15 @@ jobs:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             AppServiceName: $(externalApiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.External.zip
+- deployment: DeployExternalAPIAPIMResources
+  condition: in('${{ parameters.Environment }}', 'AT', 'TEST', 'TEST2', 'PP', 'PROD')
+  pool:
+    name: DAS - Continuous Deployment Agents
+  environment: ${{ parameters.Environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
         - task: AzurePowerShell@5
           displayName: 'Import Swagger Definition'
           inputs:
