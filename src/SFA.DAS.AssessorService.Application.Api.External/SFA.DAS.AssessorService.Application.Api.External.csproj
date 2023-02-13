@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.1\SFA.DAS.AssessorService.Application.Api.External.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
