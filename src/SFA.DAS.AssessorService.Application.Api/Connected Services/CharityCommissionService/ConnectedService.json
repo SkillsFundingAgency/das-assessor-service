@@ -4,14 +4,14 @@
       "https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx?WSDL"
     ],
     "collectionTypes": [
-      "System.Array",
-      "System.Collections.Generic.Dictionary`2"
+      "System.Collections.Generic.Dictionary`2",
+      "System.Collections.Generic.List`1"
     ],
     "messageContract": true,
     "namespaceMappings": [
       "*, CharityCommissionService"
     ],
-    "targetFramework": "netcoreapp3.1",
+    "targetFramework": "net6.0",
     "typeReuseMode": "None"
   }
 }
