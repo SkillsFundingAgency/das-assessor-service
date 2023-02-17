@@ -20,7 +20,7 @@
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
                                     <th class="govuk-table__header" scope="col">Standard</th>
-                                    <th class="govuk-table__header" scope="col">Action</th>
+                                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="govuk-table__body" scope="col">
@@ -31,7 +31,7 @@
                                             @item.StandardName (Level @item.Level)
                                             <p class="govuk-body">@item.ReferenceNumber</p>
                                         </th>
-                                        <td class="govuk-table__cell">
+                                        <td class="govuk-table__cell govuk-table__cell--numeric">
                                             @if (item.ApplicationId.HasValue)
                                             {
                                                 <a asp-action="SequenceSignPost" asp-controller="Application" asp-route-id="@item.ApplicationId" class="govuk-link">Select<span class="govuk-visually-hidden">Select standard withdraw from @item.StandardName</span></a>
