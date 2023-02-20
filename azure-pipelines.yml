@@ -83,7 +83,6 @@ stages:
     parameters:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
-      LegacyApimServiceConnection: NAS Pre-Prod (ARM)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
 
 - stage: Deploy_TEST2
@@ -99,7 +98,6 @@ stages:
     parameters:
       Environment: TEST2
       ServiceConnection: SFA-DAS-DevTest-ARM
-      LegacyApimServiceConnection: NAS Pre-Prod (ARM)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
 
 - stage: Deploy_PP
@@ -115,7 +113,6 @@ stages:
     parameters:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
-      LegacyApimServiceConnection: NAS Pre-Prod (ARM)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
 
 - stage: Deploy_PROD
@@ -131,7 +128,6 @@ stages:
     parameters:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
-      LegacyApimServiceConnection: NAS Pre-Prod (ARM)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
 
 - stage: Deploy_MO
