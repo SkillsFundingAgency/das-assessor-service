@@ -35,27 +35,27 @@
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input"
-                                       id="TypeOfWithdrawal"
+                                       id="withdrawal-type-standard"
                                        name="TypeOfWithdrawal"
                                        type="radio"
                                        value="@ApplicationTypes.StandardWithdrawal"
                                        asp-for="TypeOfWithdrawal"
                                        sfa-validation-for="TypeOfWithdrawal"
                                        sfa-validationerror-class="govuk-input--error">
-                                <label class="govuk-label govuk-radios__label" for="withdrawal-type">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-standard">
                                     Assessing a specific standard or version(s) of that standard
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input"
-                                       id="TypeOfWithdrawal-2"
+                                       id="withdrawal-type-register"
                                        name="TypeOfWithdrawal"
                                        type="radio"
                                        value="@ApplicationTypes.OrganisationWithdrawal"
                                        asp-for="TypeOfWithdrawal"
                                        sfa-validation-for="TypeOfWithdrawal"
                                        sfa-validationerror-class="govuk-input--error">
-                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-2">
+                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-register">
                                     The register of end-point assessment organisations
                                 </label>
                             </div>

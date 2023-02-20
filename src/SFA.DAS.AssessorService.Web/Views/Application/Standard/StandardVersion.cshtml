@@ -17,7 +17,7 @@
             </h1>
 
             <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
-            <p class="govuk-body">For more information visit <a class="govuk-link--no-visited-state" target="_blank" href="@Model.SelectedStandard?.StandardPageUrl">the iFATE page for this standard (opens in a new tab or window)</a>.</p>
+            <p class="govuk-body">For more information visit <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="@Model.SelectedStandard?.StandardPageUrl">the iFATE page for this standard (opens in a new tab or window)</a>.</p>
             <div class="govuk-inset-text" wfd-id="10">
                 <strong> What does it mean to opt-in or apply for a standard version?</strong>
                 <br><br>
@@ -59,7 +59,7 @@
                                 <td class="govuk-table__cell">You can apply</td>
                             }
 
-                            <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/confirm-standard/@Model.StandardReference/@version.Version">Apply for standard version</a></td>
+                            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/standard/@Model.Id/confirm-standard/@Model.StandardReference/@version.Version">Apply for standard version</a></td>
                         }
                         else if (version.VersionStatus == VersionStatus.NewVersionNoChange)
                         {
@@ -72,7 +72,7 @@
                                 <td class="govuk-table__cell">You can opt-in</td>
                             }
 
-                            <td class="govuk-table__cell"><a class="govuk-link--no-visited-state" href="/standard/@Model.Id/opt-in/@Model.StandardReference/@version.Version">Opt into standard version</a></td>
+                            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/standard/@Model.Id/opt-in/@Model.StandardReference/@version.Version">Opt into standard version</a></td>
                         }
                         else if (version.VersionStatus == VersionStatus.InProgress)
                         {
