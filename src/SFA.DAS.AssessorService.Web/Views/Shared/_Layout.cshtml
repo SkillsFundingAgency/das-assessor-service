@@ -16,7 +16,7 @@
         <div class="das-user-panel">
             <div class="govuk-width-container">
                 <div class="das-user-panel__content">
-                    <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
+                    <div class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
                         <p class="govuk-!-margin-top-0 das-!-margin-bottom-xs das-no-wrap">
                             <span class="govuk-visually-hidden">Signed in as </span>
                             @User.Identity.Name
@@ -31,7 +31,7 @@
                                 }
                             </p>
                         }
-                    </span>
+                    </div>
                     <span class="govuk-body-s das-user-panel__item">
                         <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact</a>
                     </span>
