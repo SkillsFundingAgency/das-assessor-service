@@ -57,99 +57,90 @@
         <div class="govuk-grid-column-two-thirds">
             @if (@Model.Organisations != null && @Model.Organisations.Items.Any())
             {
-
                 <span class="govuk-body">@Model.OrganisationFoundString()</span>
-                <table class="govuk-table table.responsive">
-                    <tbody class="govuk-table__body">
-                        @foreach (var result in Model.Organisations.Items)
+                @foreach (var result in Model.Organisations.Items)
+                {
+                    <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
+                        <input asp-for="SearchString" type="hidden" />
+                        <input asp-for="Name" value="@result.Name" type="hidden" />
+                        <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
+                        <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
+                        <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+                        <input asp-for="PageIndex" value="@Model.Organisations.PageIndex" type="hidden"/>
+
+                        <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-1">
+                            <button type="submit" class="govuk-button govuk-button__looks-like-link--no-decoration">@result.Name</button>
+                        </p>
+                    </form>
+                    <p class="govuk-body govuk-!-margin-bottom-1">
+                        @if (result.Address?.Postcode == null)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header--no-bottom-border">
-                                    <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
-                                        <input asp-for="SearchString" type="hidden" />
-                                        <input asp-for="Name" value="@result.Name" type="hidden" />
-                                        <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
-                                        <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
-                                        <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
-                                        <input asp-for="PageIndex" value="@Model.Organisations.PageIndex" type="hidden"/>
-
-                                        <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-1">
-                                            <button type="submit" class="govuk-button govuk-button__looks-like-link--no-decoration">@result.Name</button>
-                                        </p>
-                                    </form>
-                                    <p class="govuk-body govuk-!-margin-bottom-1">
-                                        @if (result.Address?.Postcode == null)
-                                        {
-                                            @("Address not found");
-                                        }
-                                        else
-                                        {
-                                            var addressArray = new[] { @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode };
-                                            @string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
-                                        }
-                                    </p>
-                                    @*Caters for both PROD and PREPROD*@
-                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
-                                    {
-                                        @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
-                                        @if (result.OrganisationType != null)
-                                        {
-                                            <p class="govuk-body govuk-!-margin-bottom-1">
-                                                <span class="govuk-!-font-weight-bold">Type:</span>
-                                                @result.OrganisationType
-                                            </p>
-                                        }
-                                        <p class="govuk-body">
-                                            <span class="govuk-!-font-weight-bold">Found on:</span>
-                                            @if (result.RoEPAOApproved)
-                                            {
-                                                <span>RoEPAO</span>
-                                            }
-                                            @if (result.RoEPAOApproved && result.RoATPApproved)
-                                            {
-                                                <span> and </span>
-                                            }
-                                            @if (result.RoATPApproved)
-                                            {
-                                                <span>RoATP</span>
-                                            }
-                                            @if (!result.RoEPAOApproved && !result.RoATPApproved)
-                                            {
-                                                switch (result.EasApiOrganisationType)
-                                                {
-                                                    case "Charity":<span>Charity Commission</span> break;
-                                                    case "Company": <span>Companies House</span> break;
-                                                    case "PublicSector": <span>EASAPI - Public Sector</span>break;
-                                                    case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
-                                                    default: <span>EASAPI</span>break;
-                                                }
-                                            }
-                                        </p>
-                                    }
-
-                                    @if (result.RoEPAOApproved && result.OrganisationIsLive)
-                                    {
-                                        <p class="govuk-body">
-                                            <strong class="govuk-tag">
-                                                ACTIVE ACCOUNT
-                                            </strong>
-                                        </p>
-                                    }
-                                </td>
-                            </tr>
+                            @("Address not found");
                         }
-                    </tbody>
-                </table>
+                        else
+                        {
+                            var addressArray = new[] { @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode };
+                            @string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
+                        }
+                    </p>
+                    @*Caters for both PROD and PREPROD*@
+                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                        @if (result.OrganisationType != null)
+                        {
+                            <p class="govuk-body govuk-!-margin-bottom-1">
+                                <span class="govuk-!-font-weight-bold">Type:</span>
+                                @result.OrganisationType
+                            </p>
+                        }
+                        <p class="govuk-body">
+                            <span class="govuk-!-font-weight-bold">Found on:</span>
+                            @if (result.RoEPAOApproved)
+                            {
+                                <span>RoEPAO</span>
+                            }
+                            @if (result.RoEPAOApproved && result.RoATPApproved)
+                            {
+                                <span> and </span>
+                            }
+                            @if (result.RoATPApproved)
+                            {
+                                <span>RoATP</span>
+                            }
+                            @if (!result.RoEPAOApproved && !result.RoATPApproved)
+                            {
+                                switch (result.EasApiOrganisationType)
+                                {
+                                    case "Charity":<span>Charity Commission</span> break;
+                                    case "Company": <span>Companies House</span> break;
+                                    case "PublicSector": <span>EASAPI - Public Sector</span>break;
+                                    case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
+                                    default: <span>EASAPI</span>break;
+                                }
+                            }
+                        </p>
+                    }
+
+                    @if (result.RoEPAOApproved && result.OrganisationIsLive)
+                    {
+                        <p class="govuk-body">
+                            <strong class="govuk-tag">
+                                ACTIVE ACCOUNT
+                            </strong>
+                        </p>
+                    }
+                }
 
                 await Html.RenderPartialAsync("_OrgSearchPaginationLinks", new ViewDataDictionary(ViewData)
                         {
-                        {"PageIndex", Model.Organisations.PageIndex},
-                        {"TotalPages", Model.Organisations.TotalPages},
-                        {"HasPreviousPage", Model.Organisations.HasPreviousPage},
-                        {"HasNextPage", Model.Organisations.HasNextPage},
-                        {"SearchTerm",Model.SearchString },
-                        {"Action", "NextResults"}
-                    });
+                            {"PageIndex", Model.Organisations.PageIndex},
+                            {"TotalPages", Model.Organisations.TotalPages},
+                            {"HasPreviousPage", Model.Organisations.HasPreviousPage},
+                            {"HasNextPage", Model.Organisations.HasNextPage},
+                            {"SearchTerm",Model.SearchString },
+                            {"Action", "NextResults"}
+                        });
 
 
 
