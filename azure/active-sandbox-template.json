@@ -47,9 +47,6 @@
         "internalApiSandboxAppServiceCertificateName": {
             "type": "string"
         },
-        "sandboxSqlDbConnectionString": {
-            "type": "string"
-        },
         "sharedEnvResourceGroup": {
             "type": "string"
         },
@@ -369,11 +366,6 @@
                                 {
                                     "name": "Redis",
                                     "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                    "type": "Custom"
-                                },
-                                {
-                                    "name": "SandboxSqlDbConnectionString",
-                                    "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
                                     "type": "Custom"
                                 }
                             ]
