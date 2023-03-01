@@ -12,7 +12,7 @@
     <PackageReference Include="MediatR" Version="11.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.210" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.291" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 

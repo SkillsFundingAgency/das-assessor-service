@@ -60,7 +60,14 @@
                             </td>
                             <td class="govuk-table__cell">@application.ApplicationStatus.FormatStatus()</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">
-                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View</a>
+                                @if (application.ApplyData.RequiredSequences.Contains(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
+                                {
+                                    <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View<span class="govuk-visually-hidden">View register withdrawal request</span></a>
+                                }
+                                else if (application.ApplyData.RequiredSequences.Contains(ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+                                {
+                                    <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = application.Id })">View<span class="govuk-visually-hidden">View standard withdrawal request</span></a>
+                                }
                             </td>
                         </tr>
                     }

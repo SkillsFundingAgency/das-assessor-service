@@ -1,6 +1,7 @@
 parameters:  
   Environment:
   ServiceConnection:
+  LegacyApimServiceConnection: NAS Pre-Prod (ARM)
   OverrideBlockOnPossibleDataLoss: false
 
 jobs:
@@ -95,7 +96,7 @@ jobs:
             AppServiceName: $(externalApiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.External.zip
 - deployment: DeployExternalAPIAPIMResources
-  condition: and(succeeded(), in('${{ parameters.Environment }}', 'AT', 'TEST', 'TEST2', 'PP', 'PROD'))
+  condition: in('${{ parameters.Environment }}', 'AT', 'TEST', 'TEST2', 'PP', 'PROD')
   pool:
     name: DAS - Continuous Deployment Agents
   environment: ${{ parameters.Environment }}
@@ -106,7 +107,7 @@ jobs:
         - task: AzurePowerShell@5
           displayName: 'Import Swagger Definition'
           inputs:
-            azureSubscription: 'NAS Pre-Prod (ARM)'
+            azureSubscription: ${{ parameters.LegacyApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -SwaggerSpecificationUrl "$(externalApiSwaggerUrl)" -ApiUrlSuffix "$(externalApiUrlSuffix)"'
             azurePowerShellVersion: LatestVersion
@@ -114,7 +115,7 @@ jobs:
         - task: AzurePowerShell@5
           displayName: 'Set API Level Policy'
           inputs:
-            azureSubscription: 'NAS Pre-Prod (ARM)'
+            azureSubscription: ${{ parameters.LegacyApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion
