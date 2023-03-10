@@ -106,7 +106,8 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<Certificate> GetCertificate(Guid id, bool includeLogs = false)
+        public async Task<Certificate> GetCertificate(Guid id, 
+            bool includeLogs = false)
         {
             if (!includeLogs)
             {
@@ -119,122 +120,96 @@ namespace SFA.DAS.AssessorService.Data
                 .SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Certificate> GetCertificate(long uln, int standardCode)
+        public async Task<Certificate> GetCertificate(long uln, 
+            int standardCode)
         {
             return await _context.Certificates
                  .Include(q => q.CertificateBatchLog)
                  .SingleOrDefaultAsync(c =>
-                 c.Uln == uln && c.StandardCode == standardCode);
+                    c.Uln == uln && 
+                    c.StandardCode == standardCode);
         }
 
-        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, bool includeLogs)
+        public async Task<Certificate> GetCertificate(long uln, 
+            int standardCode, string familyName, bool includeLogs = false)
         {
-            Certificate certificate;
-
-            if (includeLogs)
+            if (!includeLogs)
             {
-                certificate = await _context.Certificates
-                   .Include(q => q.CertificateBatchLog)
-                   .Include(q => q.CertificateLogs)
-                   .SingleOrDefaultAsync(c =>
-                   c.Uln == uln && c.StandardCode == standardCode);
+                return await _context.Certificates
+                 .Include(q => q.CertificateBatchLog)
+                 .SingleOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    c.StandardCode == standardCode &&
+                    c.LearnerFamilyName.Equals(familyName));
             }
             else
             {
-                certificate = await GetCertificate(uln, standardCode);
+                return await _context.Certificates
+                   .Include(q => q.CertificateBatchLog)
+                   .Include(q => q.CertificateLogs)
+                   .SingleOrDefaultAsync(c =>
+                        c.Uln == uln &&
+                        c.StandardCode == standardCode &&
+                        c.LearnerFamilyName.Equals(familyName));
+                
             }
-
-            if (certificate is null)
-                return certificate;
-
-            return CheckCertificateData(certificate, familyName) ? certificate : null;
         }
 
-        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName)
+        public async Task<Certificate> GetCertificate(long uln,
+            int standardCode, string familyName, string endpointOrganisationId)
         {
-            var certificate = await GetCertificate(uln, standardCode);
-
-            if (certificate is null)
-                return certificate;
-
-            return CheckCertificateData(certificate, familyName) ? certificate : null;
-        }
-
-        public async Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln,
-            string endpointOrganisationId, string lastName, int standardCode)
-        {
-            var existingCert = await _context.Certificates
+            return await _context.Certificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
-                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
                     c.StandardCode == standardCode &&
-                    CheckCertificateData(c, lastName));
-            return existingCert;
+                    c.LearnerFamilyName.Equals(familyName) &&
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId);
         }
 
-        public async Task<Certificate> GetCertificateByUlnLastname(long uln,
-            string lastName)
+        public async Task<Certificate> GetCertificate(long uln,
+            string familyName)
         {
-            var existingCert = await _context.Certificates
+            var certificate = await _context.Certificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
-                    CheckCertificateData(c, lastName));
+                    c.LearnerFamilyName.Equals(familyName));
 
-            return existingCert;
+            return certificate;
         }
 
         public async Task<bool> CertifciateExistsForUln(long uln)
         {
-            var existingCert = await _context.Certificates
+            return await _context.Certificates
                 .AnyAsync(c =>
                     c.Uln == uln);
-
-            return existingCert;
         }
 
         public async Task<Certificate> GetCertificateDeletedByUln(long uln)
         {
-            var existingCert = await _context.Certificates
+            return await _context.Certificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.Status == CertificateStatus.Deleted);
-
-            return existingCert;
         }
 
-        private bool CheckCertificateData(Certificate certificate, string lastName)
+        public async Task<Certificate> GetCertificate(string certificateReference,
+            string familyName,  DateTime? achievementDate)
         {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            return certificateData.LearnerFamilyName.Equals(lastName, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        public async Task<Certificate> GetCertificate(
-            string certificateReference,
-            string lastName,
-            DateTime? achievementDate)
-        {
-            var certificate = await
-                _context.Certificates
-                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && CheckCertificateData(q, lastName, achievementDate));
-            return certificate;
+            return await _context.Certificates
+                .FirstOrDefaultAsync(c =>
+                    c.CertificateReference == certificateReference &&
+                    c.LearnerFamilyName.Equals(familyName) &&
+                    c.AchievementDate.Equals(achievementDate));
         }
 
         public async Task<Certificate> GetCertificate(string certificateReference)
         {
-            var certificate = await
-               _context.Certificates
-                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
-            return certificate;
-        }
-
-        private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
-        {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
+            return await _context.Certificates
+                .FirstOrDefaultAsync(c => 
+                    c.CertificateReference == certificateReference);
         }
 
         public async Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln)

@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         {
             //arrange
             var eailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            eailTemplate.TemplateId = "TemplateId"; 
-                
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest("test@test.com", eailTemplate, new { key = "value" })).Build();            
+            eailTemplate.TemplateId = "TemplateId";
+
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
+                new SendEmailRequest("test@test.com", eailTemplate, new { key = "value" })).Build();
             
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
 
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var emailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             emailTemplate.TemplateId = "TemplateId"; 
             
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                 new SendEmailRequest("test@test.com", emailTemplate, new {})).Build();            
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.TemplateId = "TemplateId";
             emailTemplate.Recipients = "test@test.com";
 
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                 new SendEmailRequest(string.Empty, emailTemplate,  new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object,  _loggerMock.Object);
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.TemplateId = "TemplateId";
             emailTemplate.Recipients = "test@test.com";
 
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                 new SendEmailRequest("testemail@test.com", emailTemplate, new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);           
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.TemplateId = "TemplateId";
             emailTemplate.Recipients = string.Empty;
 
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                   new SendEmailRequest(string.Empty, emailTemplate, new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);

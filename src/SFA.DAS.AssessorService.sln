@@ -64,6 +64,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Dom
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65304A52-BDD9-4C65-9BF1-56F0D36C3067}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.TestHelper", "SFA.DAS.AssessorService.TestHelper\SFA.DAS.AssessorService.TestHelper.csproj", "{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +153,10 @@ Global
 		{8A61489A-FB92-45D1-9DD7-A92DCF0551BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A61489A-FB92-45D1-9DD7-A92DCF0551BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A61489A-FB92-45D1-9DD7-A92DCF0551BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -165,6 +171,7 @@ Global
 		{5319DB03-A39B-49EC-B375-A8957E21C1D6} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{327FF62D-DA54-4FC8-B9D2-BC8A631F5485} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{8A61489A-FB92-45D1-9DD7-A92DCF0551BB} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}

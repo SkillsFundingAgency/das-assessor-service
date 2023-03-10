@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                         }
                         else
                         {
-                            var existingCertificateCreatedByCallingEpao = await certificateRepository.GetCertificateByUlnOrgIdLastnameAndStandardCode(m.Uln, submittingEpao.EndPointAssessorOrganisationId, m.FamilyName, m.StandardCode);
+                            var existingCertificateCreatedByCallingEpao = await certificateRepository.GetCertificate(m.Uln, m.StandardCode, m.FamilyName, submittingEpao.EndPointAssessorOrganisationId);
 
                             if (existingCertificateCreatedByCallingEpao == null)
                             {

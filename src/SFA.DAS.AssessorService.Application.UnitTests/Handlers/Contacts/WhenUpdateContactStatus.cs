@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
 
             var updateContactStatusRequestMock =
                 Builder<UpdateContactStatusRequest>.CreateNew()
-                    .WithConstructor(() => new UpdateContactStatusRequest(It.IsAny<Guid>(), It.IsAny<string>())).Build();
+                    .WithFactory(() => new UpdateContactStatusRequest(It.IsAny<Guid>(), It.IsAny<string>())).Build();
 
             contactRepositoryMock.Setup(x => x.UpdateStatus(updateContactStatusRequestMock))
                 .Returns(Task.CompletedTask);

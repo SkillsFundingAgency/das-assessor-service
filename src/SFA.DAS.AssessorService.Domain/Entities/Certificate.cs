@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -42,6 +42,15 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         [JsonIgnore]
         public virtual CertificateBatchLog CertificateBatchLog { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string LearnerFamilyName { get; private set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string LearnerGivenNames { get; private set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string LearnerFullNameNoSpaces { get; private set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string FullName { get; private set; }
@@ -93,5 +102,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string ContactPostCode { get; private set; }
+        
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string LatestEPAOutcome { get; private set; }
     }
 }
