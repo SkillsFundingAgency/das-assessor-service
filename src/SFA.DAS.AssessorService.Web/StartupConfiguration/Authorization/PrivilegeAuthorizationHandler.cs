@@ -51,26 +51,32 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             }
             else
             {
-                if (context.Resource is RouteEndpoint routeEndpoint)
+                if (context.Resource is HttpContext httpContext)
                 {
-                    var controllerActionDescriptor = routeEndpoint.Metadata
-                        .OfType<ControllerActionDescriptor>()
-                        .SingleOrDefault();
-
-                    if (controllerActionDescriptor != null)
+                    if (httpContext.GetEndpoint() is RouteEndpoint routeEndpoint)
                     {
-                        var deniedContext = new PrivilegeAuthorizationDeniedContext
+                        var controllerActionDescriptor = routeEndpoint.Metadata
+                            .OfType<ControllerActionDescriptor>()
+                            .SingleOrDefault();
+
+                        if (controllerActionDescriptor != null)
                         {
-                            PrivilegeId = privilegeRequested.Id,
-                            Controller = controllerActionDescriptor.ControllerName,
-                            Action = controllerActionDescriptor.ActionName
-                        };
+                            var deniedContext = new PrivilegeAuthorizationDeniedContext
+                            {
+                                PrivilegeId = privilegeRequested.Id,
+                                Controller = controllerActionDescriptor.ControllerName,
+                                Action = controllerActionDescriptor.ActionName
+                            };
 
-                        _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> { { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) } });
-                        return;
+                            _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, 
+                                new Dictionary<string, object> 
+                                {
+                                    { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) } 
+                                });
+
+                            return;
+                        }
                     }
-
-                    context.Fail();
                 }
             }
         }
