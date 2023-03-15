@@ -38,7 +38,7 @@ FROM (
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS [EPA Submitted],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] IN ('Printed','Delivered','NotDelivered','SentToPrinter','Reprint') THEN 1 ELSE 0 END) AS [EPA Printed],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted],
-	  MIN(UPPER(ISNULL([StandardName],''))) OVER (PARTITION BY ISNULL([StandardReference],'')) seq1
+	  MIN(UPPER(ISNULL([StandardName],''))) OVER (PARTITION BY ISNULL([StandardReference],'')) [sequenceForOrderBy]
 
   FROM [dbo].[Certificates] ce
   JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
@@ -74,13 +74,13 @@ FROM (
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS [EPA Submitted],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS [EPA Printed],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted],
-	  null seq1
+	  null sequenceForOrderBy
   FROM [dbo].[Certificates] ce
   JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
   WHERE org.EndPointAssessorOrganisationId != 'EPA0000'
 ) st
 
-  ORDER BY [EPAO ID], seq1, [Grade], [orderVersion]
+  ORDER BY [EPAO ID], [sequenceForOrderBy], [Grade], [orderVersion]
 RETURN 0
 
 		 
