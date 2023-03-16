@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
     /// Companies House API docs are located at: https://developer.companieshouse.gov.uk/api/docs/index.html
     /// There is a Web-Friendly version located at: https://beta.companieshouse.gov.uk/
     /// </summary>
-    public class CompaniesHouseApiClient
+    public class CompaniesHouseApiClient : ICompaniesHouseApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<CompaniesHouseApiClient> _logger;
@@ -50,14 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 
             if (company != null)
             {
-                if(company.Status is null && "charitable-incorporated-organisation".Equals(company.Type, StringComparison.InvariantCultureIgnoreCase))
+                if (company.Status is null && "charitable-incorporated-organisation".Equals(company.Type, StringComparison.InvariantCultureIgnoreCase))
                 {
                     isTrading = company.DissolvedOn == null && company.IsLiquidated != true;
                 }
-                else 
+                else
                 {
                     isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase);
-                } 
+                }
             }
 
             return isTrading;

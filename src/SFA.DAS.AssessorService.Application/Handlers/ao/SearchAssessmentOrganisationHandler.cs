@@ -59,21 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             if (resultFromUkprn != null)    
                 result.AddRange(resultFromUkprn);
 
-            return result.Distinct(new AssessmentOrganisationSummaryEqualityComparer()).Where(x => x.Status != "Applying").ToList();
-        }
-
-    }
-
-    internal class AssessmentOrganisationSummaryEqualityComparer : IEqualityComparer<AssessmentOrganisationSummary>
-    {
-        public bool Equals(AssessmentOrganisationSummary x, AssessmentOrganisationSummary y)
-        {
-            return y != null && (x != null && x.Id == y.Id);
-        }
-
-        public int GetHashCode(AssessmentOrganisationSummary obj)
-        {
-            return obj.Id.GetHashCode();
+            return result.Distinct(new AssessmentOrganisationSummary.EqualityComparer()).Where(x => x.Status != "Applying").ToList();
         }
     }
 }

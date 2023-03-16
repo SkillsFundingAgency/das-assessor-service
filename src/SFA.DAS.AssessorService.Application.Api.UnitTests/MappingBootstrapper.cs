@@ -1,9 +1,7 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
+﻿using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests
 {
-    using AssessorService.Api.Types.Models;
-
     class MappingBootstrapper
     {
         public static void Initialize()
@@ -15,13 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests
         {
             AutoMapper.Mapper.Reset();
 
-            AutoMapper.Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<CreateOrganisationRequest, Organisation>();
-                cfg.CreateMap<Organisation, OrganisationResponse>();
-                cfg.CreateMap<Contact, CreateContactRequest>();
-                cfg.CreateMap<Contact, ContactResponse>();
-            });
+            MappingStartup.AddMappings();
         }
     }
 }

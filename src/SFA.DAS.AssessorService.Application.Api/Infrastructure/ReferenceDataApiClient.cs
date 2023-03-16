@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 {
-    public class ReferenceDataApiClient
+    public class ReferenceDataApiClient : IReferenceDataApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<ReferenceDataApiClient> _logger;
