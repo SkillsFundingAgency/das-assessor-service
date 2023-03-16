@@ -97,7 +97,7 @@
                 {
                     <p class="govuk-body">Only submit once you've answered all of the questions.</p>
                     <p class="govuk-body">By submitting your answers, you confirm that you have the authority to act on behalf of the organisation.</p>
-                    <form asp-action="Submit" asp-controller="Application">
+                    <form asp-action="Submit" asp-controller="Application" asp-route-id="@Model.Id" asp-route-sequenceNo="@Model.SequenceNo">
                         <input type="hidden" id="Id" name="Id" value="@Model.Id" />
                         <input type="hidden" id="sequenceNo" name="sequenceNo" value="@Model.SequenceNo" />
                         <div class="govuk-form-group">

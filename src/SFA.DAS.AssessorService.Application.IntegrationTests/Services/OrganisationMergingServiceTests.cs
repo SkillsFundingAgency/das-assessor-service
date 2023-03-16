@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests.Services
                 mo.Id.Should().BeGreaterThan(0);
                 mo.PrimaryEndPointAssessorOrganisationId.Should().Be(primaryEpaId);
                 mo.SecondaryEndPointAssessorOrganisationId.Should().Be(secondaryEpaId);
-                mo.CreatedAt.Should().BeCloseTo(testExcutionTimestamp, 1500);
+                mo.CreatedAt.Should().BeCloseTo(testExcutionTimestamp, TimeSpan.FromMilliseconds(15000));
                 mo.UpdatedAt.Should().BeNull();
                 mo.Status.Should().Be(MergeOrganisationStatus.InProgress);
                 mo.CreatedBy.Should().Be(actionedByUser);

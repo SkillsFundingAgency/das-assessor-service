@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         [Test, MoqAutoData]
         public async Task Then_If_OrgId_Not_Supplied_Return_BadRequest(
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         public async Task Then_If_No_Pipeline_Data_Return_Ok_No_Data(
             string epaoId,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         public async Task Then_If_Pipeline_Data_Exists_Return_Ok_With_Filters(
             string epaoId,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 

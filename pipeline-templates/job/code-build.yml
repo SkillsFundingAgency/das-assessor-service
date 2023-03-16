@@ -5,7 +5,7 @@ parameters:
 jobs:
 - job: CodeBuild
   pool:
-    name: DAS - Continuous Integration
+    name: DAS - Continuous Integration Agents
     workspace:
       clean: all
   variables:

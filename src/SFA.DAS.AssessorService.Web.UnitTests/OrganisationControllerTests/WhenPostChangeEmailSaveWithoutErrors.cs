@@ -10,8 +10,7 @@ using SFA.DAS.AssessorService.Web.ViewModels;
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     [TestFixture]
-    public class WhenPostChangeEmailSaveWithoutErrors
-        : OrganisationControllerTestBaseForModel<ChangeEmailViewModel>
+    public class WhenPostChangeEmailSaveWithoutErrors : OrganisationControllerTestBase
     {
         private const string ValidEmailDifferent = "differentcontact@validcompany.com";
         private const string ActionChoiceSave = "Save";
@@ -27,8 +26,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             ValidateApiClient.Setup(c => c.ValidateEmailAddress(ValidEmailDifferent)).ReturnsAsync(true);
         }
 
-        public override async Task<IActionResult> Act()
-        {            
+        public async Task<IActionResult> Act()
+        {
             return await sut.ChangeEmail(new ChangeEmailViewModel
             {
                 Email = ValidEmailDifferent,
@@ -36,9 +35,31 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
         }
 
-        public override async Task<IActionResult> Act(ChangeEmailViewModel viewModel)
+        public async Task<IActionResult> Act(ChangeEmailViewModel viewModel)
         {
             return await sut.ChangeEmail(viewModel);
+        }
+
+        [Test]
+        public async Task Should_get_an_organisation_by_epao()
+        {
+            _actionResult = await Act();
+            OrganisationApiClient.Verify(a => a.GetEpaOrganisation(EpaoId));
+        }
+
+        [Test]
+        public async Task Should_return_a_viewresult()
+        {
+            _actionResult = await Act();
+            _actionResult.Should().BeOfType<ViewResult>();
+        }
+
+        [Test]
+        public async Task Should_return_a_model()
+        {
+            _actionResult = await Act();
+            var result = _actionResult as ViewResult;
+            result.Model.Should().BeOfType<ChangeEmailViewModel>();
         }
 
         [Test]

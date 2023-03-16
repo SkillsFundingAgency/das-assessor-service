@@ -1,18 +1,14 @@
 ﻿using System.Threading;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
-using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Linq;
 using System;
-using FizzWare.NBuilder;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.DeleteCertificateHandlerTests
 {
@@ -38,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             _mockCertificateRepository.Setup(c => c.Delete(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), CertificateActions.Delete, true, It.IsAny<string>(), It.IsAny<string>()))
                .Returns(() => Task.Run(() => { })).Verifiable();
 
-            _certificateIds = Builder<Guid>.CreateListOfSize(10).All().Build().ToArray();
+            _certificateIds = Enumerable.Range(0, 10).Select(x => Guid.NewGuid()).ToArray();
             _mockCertificateRepository.Setup(s => s.GetCertificatesReadyToPrint(It.IsAny<int>(), It.IsAny<string[]>(), It.IsAny<string[]>()))
                 .ReturnsAsync(_certificateIds);
 

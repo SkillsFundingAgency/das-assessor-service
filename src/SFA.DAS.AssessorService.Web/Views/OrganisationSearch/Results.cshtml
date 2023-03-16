@@ -84,7 +84,7 @@
                                         }
                                         else
                                         {
-                                            var addressArray = new[] { @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode };
+                                            var addressArray = new[] { result.Address?.Address1, result.Address?.City, result.Address.Postcode };
                                             @string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
                                         }
                                     </p>
