@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
@@ -25,6 +18,11 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -714,7 +712,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                         // only check if an web site link has been entered - model has required validator
                         
-                        var encodedWebsiteUrl = HttpUtility.UrlEncode(vm.WebsiteLink);
+                        var encodedWebsiteUrl = WebUtility.UrlEncode(vm.WebsiteLink);
                         _logger.LogInformation($"VALIDATEWEBSITELINK - OrganisationController.ChangeWebsite: {vm.WebsiteLink}, {encodedWebsiteUrl}");
                         if (await _validationApiClient.ValidateWebsiteLink(encodedWebsiteUrl) == false)
                         {

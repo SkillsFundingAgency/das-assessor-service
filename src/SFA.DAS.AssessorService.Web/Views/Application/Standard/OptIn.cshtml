@@ -46,7 +46,10 @@
                     </tr>
                 </tbody>
             </table>
-            <form asp-action="OptInPost" asp-controller="Standard" method="post">
+            <form asp-action="OptInPost" asp-controller="Standard" 
+                  asp-route-id="@Model.Id" 
+                  asp-route-standardReference="@Model.StandardReference" 
+                  asp-route-version="@Model.Version" method="post">
                 <button class="govuk-button" type="submit">Confirm and opt in</button>
             </form>
         </div>

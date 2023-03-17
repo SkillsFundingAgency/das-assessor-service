@@ -7,17 +7,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
     public class TokenService : ITokenService
     {
         private readonly IClientApiAuthentication _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHostEnvironment _hostEnvironment;
 
-        public TokenService(IClientApiAuthentication configuration, IHostingEnvironment hostingEnvironment)
+        public TokenService(IClientApiAuthentication configuration, IHostEnvironment hostEnvironment)
         {
             _configuration = configuration;
-            _hostingEnvironment = hostingEnvironment;
+            _hostEnvironment = hostEnvironment;
         }
 
         public string GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
+            if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
             var tenantId = _configuration.TenantId;

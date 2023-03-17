@@ -111,8 +111,8 @@ BEGIN
 				FROM OrganisationStandard os2 
 				JOIN (SELECT DISTINCT OrganisationStandardId 
 						FROM OrganisationStandardVersion 
-					   WHERE status = 'Live' AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() ) 
-					 ) osv ON os2.id = osv.OrganisationStandardId
+					   WHERE [Status] = 'Live' AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() ) 
+					 ) osv ON os2.Id = osv.OrganisationStandardId
 				WHERE os2.Status = 'Live' 
 				  AND (os2.EffectiveTo IS NULL OR os2.EffectiveTo > GETDATE() ) 
 			) os1 
@@ -152,7 +152,7 @@ BEGIN
 	WHERE NOT (Region = 'Other' AND Learners = 0 AND Assessments = 0)
 	GROUP BY StandardReference, Region, Ordering
 	) Total On Total.StandardReference = ac.StandardReference
-	ORDER BY StandardReference, Ordering
+	ORDER BY Total.StandardReference, Total.Ordering
 	
 	
 	-- populate the StandardVersionSummary table
@@ -160,15 +160,15 @@ BEGIN
 	
 	INSERT INTO StandardVersionSummary
 	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
-	SELECT st1.Larscode StandardCode
-		,st1.IfateReferenceNumber StandardReference
+	SELECT st1.LarsCode StandardCode
+		,st1.IFateReferenceNumber StandardReference
 		,st1.Version
 		,ActiveApprentices
 		,CompletedAssessments
 		,EndPointAssessors
 		,GETDATE() UpdatedAt
 	FROM Standards st1 
-	JOIN @StandardsCore ac ON ac.StandardReference = st1.IfateReferenceNumber
+	JOIN @StandardsCore ac ON ac.StandardReference = st1.IFateReferenceNumber
 	JOIN (
 		SELECT StandardUId
 			  ,MAX(ActiveApprentices) ActiveApprentices

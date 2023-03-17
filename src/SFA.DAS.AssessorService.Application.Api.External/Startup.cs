@@ -1,10 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
@@ -14,38 +22,31 @@ using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
-using Swashbuckle.AspNetCore.Examples;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.AssessorService.ExternalApi";
-        private const string Version = "1.0";
-        private readonly bool UseSandbox;
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService.ExternalApi";
+        private const string VERSION = "1.0";
+        private readonly bool _useSandbox;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
             _logger.LogInformation("In startup constructor.  Before Config");
             Configuration = configuration;
 
-            if(!bool.TryParse(configuration["UseSandboxServices"], out UseSandbox))
+            if(!bool.TryParse(configuration["UseSandboxServices"], out _useSandbox))
             {
-                UseSandbox = "yes".Equals(configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+                _useSandbox = "yes".Equals(configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
 
-            _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
+            _logger.LogInformation($"UseSandbox is: {_useSandbox.ToString()}");
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
@@ -57,9 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             try
             {
-                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-                if (UseSandbox)
+                if (_useSandbox)
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
@@ -80,11 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v1", new Info { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
                     c.EnableAnnotations();
-                    c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
-                    c.OperationFilter<ExamplesOperationFilter>();
-                    c.SchemaFilter<NullableSchemaFilter>();
+                    c.ExampleFilters();
                     c.SchemaFilter<SwaggerRequiredSchemaFilter>();
                     c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
 
@@ -95,12 +94,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         c.IncludeXmlComments(xmlPath);
                     }
                 });
+                services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
                 services.AddHttpContextAccessor();
 
                 services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .ConfigureApiBehaviorOptions(options =>
                     {
                         options.InvalidModelStateResponseFactory = context =>
@@ -122,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         };
                     }
                     )
-                    .AddJsonOptions(options =>
+                    .AddNewtonsoftJson(options =>
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
@@ -160,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     _.WithDefaultConventions();
                 });
 
-                if (UseSandbox)
+                if (_useSandbox)
                 {
                     config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication);
                     config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
@@ -180,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             try
             {
@@ -202,7 +201,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
-                if (UseSandbox)
+                if (_useSandbox)
                 {
                     app.UseMiddleware<SandboxHeadersMiddleware>();
                 }
@@ -210,7 +209,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 app.UseMiddleware<GetHeadersMiddleware>();
 
                 app.UseHttpsRedirection();
-                app.UseSecurityHeaders().UseMvc();
+                app.UseSecurityHeaders();
+
+                app.UseRouting();
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
             }
             catch (Exception e)
             {

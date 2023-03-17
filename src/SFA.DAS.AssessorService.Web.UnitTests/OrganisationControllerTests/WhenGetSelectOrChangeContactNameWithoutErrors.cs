@@ -16,8 +16,7 @@ using SFA.DAS.AssessorService.Web.ViewModels;
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     [TestFixture]
-    public class WhenGetSelectOrChangeContactNameWithoutErrors
-        : OrganisationControllerTestBaseForModel<SelectOrChangeContactNameViewModel>
+    public class WhenGetSelectOrChangeContactNameWithoutErrors : OrganisationControllerTestBase
     {
         [SetUp]
         public void Arrange()
@@ -32,9 +31,31 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 });
         }
 
-        public override async Task<IActionResult> Act()
+        public async Task<IActionResult> Act()
         {
             return await sut.SelectOrChangeContactName();
+        }
+
+        [Test]
+        public async Task Should_get_an_organisation_by_epao()
+        {
+            _actionResult = await Act();
+            OrganisationApiClient.Verify(a => a.GetEpaOrganisation(EpaoId));
+        }
+
+        [Test]
+        public async Task Should_return_a_viewresult()
+        {
+            _actionResult = await Act();
+            _actionResult.Should().BeOfType<ViewResult>();
+        }
+
+        [Test]
+        public async Task Should_return_a_model()
+        {
+            _actionResult = await Act();
+            var result = _actionResult as ViewResult;
+            result.Model.Should().BeOfType<SelectOrChangeContactNameViewModel>();
         }
 
         [Test]

@@ -1939,3 +1939,9 @@ th[aria-sort="ascending"] a:after {
 .das-text-align-right {
   text-align: right !important;
 }
+
+.govuk-list > li.app-list-spacer {
+  padding-bottom: 30px;
+  border-bottom: 1px solid #b1b4b6;
+  margin-bottom: 30px;
+}
