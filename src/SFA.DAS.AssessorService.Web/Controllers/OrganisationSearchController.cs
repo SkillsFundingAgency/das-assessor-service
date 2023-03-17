@@ -28,12 +28,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private const int PageSize = 10;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IMapper _mapper;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IWebConfiguration _config;
         private readonly ISessionService _sessionService;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger,
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMapper mapper,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,
             IContactsApiClient contactsApiClient,
             IWebConfiguration config,
@@ -41,6 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _mapper = mapper;
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
             _config = config;
@@ -381,9 +383,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 TradingName = organisationSearchResult.TradingName,
                 ProviderName = organisationSearchResult.ProviderName,
                 CompanyNumber = organisationSearchResult.CompanyNumber,
-                CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails),
+                CompanySummary = _mapper.Map<CompaniesHouseSummary>(companyDetails),
                 CharityNumber = organisationSearchResult.CharityNumber,
-                CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails),
+                CharitySummary = _mapper.Map<CharityCommissionSummary>(charityDetails),
                 Address1 = organisationSearchResult.Address?.Address1,
                 Address2 = organisationSearchResult.Address?.Address2,
                 Address3 = organisationSearchResult.Address?.Address3,
@@ -426,7 +428,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private ViewResult RequestAccess(OrganisationSearchViewModel viewModel, OrganisationSearchResult organisationSearchResult)
         {
-            var newViewModel = Mapper.Map<RequestAccessOrgSearchViewModel>(viewModel);
+            var newViewModel = _mapper.Map<RequestAccessOrgSearchViewModel>(viewModel);
             var addressArray = new[] { organisationSearchResult.Address?.Address1, organisationSearchResult.Address?.City, organisationSearchResult.Address.Postcode };
             newViewModel.Address = string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
             newViewModel.RoEPAOApproved = organisationSearchResult.RoEPAOApproved;

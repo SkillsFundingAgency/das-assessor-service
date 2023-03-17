@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -80,8 +81,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            result.StandardCode.Should().Equals(999);
-            result.StandardReference.Should().Equals("ST0001");
+            using (new AssertionScope())
+            {
+                result.StandardCode.Should().Be(999);
+                result.StandardReference.Should().Be("ST0001");
+            }
         }
 
         [Test]
@@ -97,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            result.EqaProvider.Should().Equals("EMAIL");
+            result.EqaProvider.Should().Be("EMAIL");
         }
 
         [Test]
@@ -113,9 +117,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            result.RegionResults.Count.Should().Equals(2);
-            result.RegionResults[0].Region.Should().Equals("REGION1");
-            result.RegionResults[1].Region.Should().Equals("REGION2");
+            result.RegionResults.Count.Should().Be(2);
+            using (new AssertionScope())
+            {
+                result.RegionResults[0].Region.Should().Be("REGION1");
+                result.RegionResults[1].Region.Should().Be("REGION2");
+            }
         }
 
         [Test]
@@ -131,9 +138,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            result.VersionResults.Count.Should().Equals(2);
-            result.VersionResults[0].Version.Should().Equals(1.0m);
-            result.VersionResults[1].Version.Should().Equals(1.1m);
+            result.VersionResults.Count.Should().Be(2);
+            using (new AssertionScope())
+            {
+                result.VersionResults[0].Version.Should().Be("1.0");
+                result.VersionResults[1].Version.Should().Be("1.1");
+            }
         }
     }
 }

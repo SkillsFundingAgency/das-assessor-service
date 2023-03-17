@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions
                 context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
                 context.Response.Headers["Pragma"] = "no-cache";
                 await next();
-            });            
+            });
 
             return app;
         }

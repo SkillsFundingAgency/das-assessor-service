@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         }
 
         [Test]
-        public async Task And_ValidatorReturnsError_Then_ThrowException()
+        public void And_ValidatorReturnsError_Then_ThrowException()
         {
             _mockValidator.Setup(v => v.ValidatorUpdateOrganisationStandardVersionRequest(_request))
                 .ReturnsAsync(new ValidationResponse()
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
                     }
                 });
 
-            var ex = Assert.ThrowsAsync<BadRequestException>(() => _handler.Handle(_request, CancellationToken.None));
+            var ex = Assert.ThrowsAsync<BadRequestException>(async () => await _handler.Handle(_request, CancellationToken.None));
         }
     }
 }

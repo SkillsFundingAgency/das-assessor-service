@@ -109,7 +109,7 @@ jobs:
           inputs:
             azureSubscription: ${{ parameters.LegacyApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -SwaggerSpecificationUrl "$(externalApiSwaggerUrl)" -ApiUrlSuffix "$(externalApiUrlSuffix)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -SwaggerSpecificationUrl "$(externalApiSwaggerUrl)" -ApiUrlSuffix "$(externalApiUrlSuffix)" -ServiceUrl "https://$(externalApiCustomHostname)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
         - task: AzurePowerShell@5
@@ -172,7 +172,7 @@ jobs:
           inputs:
             azureSubscription: 'NAS Pre-Prod (ARM)'
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -SwaggerSpecificationUrl "$(externalApiSandboxSwaggerUrl)" -ApiUrlSuffix "$(externalApiSandboxUrlSuffix)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -SwaggerSpecificationUrl "$(externalApiSandboxSwaggerUrl)" -ApiUrlSuffix "$(externalApiSandboxUrlSuffix)" -ServiceUrl "https://$(externalApiSandboxCustomHostname)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
         - task: AzurePowerShell@5

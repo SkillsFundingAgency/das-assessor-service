@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 testData.StandardEffectiveTo,
                 testData.StandardLastDateForNewStarts);
 
-            Assert.AreEqual(results.IsNullOrEmpty(), testData.IsValid);
+            Assert.AreEqual(string.IsNullOrEmpty(results), testData.IsValid);
         }
 
         public class TestDataForEffectiveFrom

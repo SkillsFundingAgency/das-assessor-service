@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         private static IWebConfiguration _configuration;
 
         public static void AddAndConfigureAuthentication(this IServiceCollection services,
-            IWebConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment env)
+            IWebConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment env)
         {
             _configuration = configuration;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

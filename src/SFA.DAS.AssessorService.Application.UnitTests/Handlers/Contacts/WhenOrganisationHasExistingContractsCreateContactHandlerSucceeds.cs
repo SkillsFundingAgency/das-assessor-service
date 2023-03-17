@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using OfficeOpenXml.ConditionalFormatting;
+//using OfficeOpenXml.ConditionalFormatting;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.ContactHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;

@@ -1,12 +1,12 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Request;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class SubmitCertificateExample : IExamplesProvider
+    public class SubmitCertificateExample : IExamplesProvider<List<SubmitCertificateRequest>>
     {
-        public object GetExamples()
+        public List<SubmitCertificateRequest> GetExamples()
         {
             return new List<SubmitCertificateRequest>
             {

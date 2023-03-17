@@ -4,7 +4,7 @@
 AS
 BEGIN 
     SELECT 
-        DISTINCT UkPrn AS [Id], ProviderName AS [Value]
+        DISTINCT Ukprn AS [Id], ProviderName AS [Value]
     FROM 
         [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL, @pipelineCutOff)
     ORDER BY ProviderName
