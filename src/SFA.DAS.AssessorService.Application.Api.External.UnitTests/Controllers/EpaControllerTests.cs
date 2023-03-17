@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             [Frozen] Mock<IApiClient> apiClient,
             CreateEpaRequest request,
             IEnumerable<CreateEpaResponse> response,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             apiClient.Setup(client => client.CreateEpas(It.Is<IEnumerable<CreateBatchEpaRequest>>(s =>
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [Test, MoqAutoData]
         public async Task When_CreatingEpaRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
             CreateEpaRequest request,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             var requests = new List<CreateEpaRequest>();
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             [Frozen] Mock<IApiClient> apiClient,
             UpdateEpaRequest request,
             IEnumerable<UpdateEpaResponse> response,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             apiClient.Setup(client => client.UpdateEpas(It.Is<IEnumerable<UpdateBatchEpaRequest>>(s =>
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         [Test, MoqAutoData]
         public async Task When_UpdatingEpaRecord_WithTooManyRequestsInBatch_CallsInternalApi_Then_ReturnApiResponseWithResponseCode403(
             UpdateEpaRequest request,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             var requests = new List<UpdateEpaRequest>();
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             [Frozen] Mock<IApiClient> apiClient,
             long uln, string familyName, string standard, string epaReference,
             ApiResponse response,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             response = null;
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             [Frozen] Mock<IHeaderInfo> headerInfo,
             [Frozen] Mock<IApiClient> apiClient,
             long uln, string familyName, string standard, string epaReference,
-            EpaController sut)
+            [Greedy] EpaController sut)
         {
             //Arrange
             var response = new ApiResponse((int)HttpStatusCode.BadRequest);

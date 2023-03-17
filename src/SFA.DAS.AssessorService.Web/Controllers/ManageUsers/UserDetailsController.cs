@@ -1,15 +1,12 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -19,11 +16,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
     public class UserDetailsController : ManageUsersBaseController
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IMapper _mapper;
 
-        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient) 
+        public UserDetailsController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IMapper mapper,
+            IOrganisationsApiClient organisationsApiClient) 
             : base(contactsApiClient, httpContextAccessor)
         {
             _organisationsApiClient = organisationsApiClient;
+            _mapper = mapper;
         }
 
         [HttpGet("/ManageUsers/{contactId}")]
@@ -37,40 +37,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
                 return Unauthorized();
             }
 
-            var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
+            var vm = _mapper.Map<UserViewModel>(securityCheckpoint.contact);
 
             vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(contactId);
             
             return View("~/Views/ManageUsers/UserDetails/User.cshtml", vm);
         }
 
-        [HttpGet("/ManageUsers/{userid}/permissions")]
+        [HttpGet("/ManageUsers/{contactId}/permissions")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Organisations})]
-        public async Task<IActionResult> EditPermissions(Guid userid)
+        public async Task<IActionResult> EditPermissions(Guid contactId)
         {
-            var securityCheckpoint = await SecurityCheckAndGetContact(userid);
+            var securityCheckpoint = await SecurityCheckAndGetContact(contactId);
 
             if (!securityCheckpoint.isValid)
             {
                 return Unauthorized();
             }
 
-            var vm = await GetUserViewModel(userid, securityCheckpoint);
+            var vm = await GetUserViewModel(contactId, securityCheckpoint);
 
             return View("~/Views/ManageUsers/UserDetails/EditUserPermissions.cshtml", vm);
         }
 
-        private async Task<UserViewModel> GetUserViewModel(Guid userid, (bool isValid, ContactResponse contact) securityCheckpoint)
+        private async Task<UserViewModel> GetUserViewModel(Guid contactId, (bool isValid, ContactResponse contact) securityCheckpoint)
         {
-            var vm = Mapper.Map<UserViewModel>(securityCheckpoint.contact);
+            var vm = _mapper.Map<UserViewModel>(securityCheckpoint.contact);
 
-            vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(userid);
+            vm.AssignedPrivileges = await ContactsApiClient.GetContactPrivileges(contactId);
 
             vm.AllPrivilegeTypes = await ContactsApiClient.GetPrivileges();
             return vm;
         }
 
-        [HttpPost("/ManageUsers/{userid}/permissions")]
+        [HttpPost("/ManageUsers/{contactId}/permissions")]
         public async Task<IActionResult> EditPermissions(EditPrivilegesViewModel vm)
         {
             var securityCheckpoint = await SecurityCheckAndGetContact(vm.ContactId);

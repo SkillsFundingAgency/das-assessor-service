@@ -2,15 +2,15 @@
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Epa;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
 using SFA.DAS.AssessorService.Domain.Consts;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class GetLearnerExample : IExamplesProvider
+    public class GetLearnerExample : IExamplesProvider<GetLearner>
     {
-        public object GetExamples()
+        public GetLearner GetExamples()
         {
             return new GetLearner
             {

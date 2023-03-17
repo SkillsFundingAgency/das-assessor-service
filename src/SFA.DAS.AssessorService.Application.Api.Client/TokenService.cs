@@ -7,13 +7,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
     public class TokenService : ITokenService
     {
         private readonly IWebConfiguration _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHostEnvironment _hostEnvironment;
         private readonly bool _useSandbox;
 
-        public TokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment, bool useSandbox)
+        public TokenService(IWebConfiguration configuration, IHostEnvironment hostEnvironment, bool useSandbox)
         {
             _configuration = configuration;
-            _hostingEnvironment = hostingEnvironment;
+            _hostEnvironment = hostEnvironment;
             _useSandbox = useSandbox;
         }
 
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
         {
             string token;
 
-            if (_hostingEnvironment.IsDevelopment())
+            if (_hostEnvironment.IsDevelopment())
             {
                 token = string.Empty;
             }

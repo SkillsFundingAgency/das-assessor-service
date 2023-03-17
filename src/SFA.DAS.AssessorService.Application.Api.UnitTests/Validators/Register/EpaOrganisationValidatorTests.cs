@@ -319,12 +319,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         }
 
 
-        [TestCase("test@test.com",true)]
+        [TestCase("test@test.com", true)]
         [TestCase("test@test.co.uk", true)]
         [TestCase("test.tester@test.com", true)]
         [TestCase("test.tester@digitaleducation.gov.uk", true)]
         [TestCase("test.terser@test.co.uk", true)]
-        [TestCase("testtest",false)]
+        [TestCase("testtest", false)]
         [TestCase("testtest@com", false)]
         [TestCase("testtest@test..com", false)]
         [TestCase("testtest@", false)]
@@ -332,7 +332,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("n/a", false)]
         [TestCase("test test", false)]
         [TestCase("testtest", false)]
-        [TestCase("",false)]
+        [TestCase("", false)]
         [TestCase("firstname-lastname@domain-one.co.in", true)]
         [TestCase("firstname-lastname@domain-one.com", true)]
         [TestCase("firstname-lastname@domain-one.nz", true)]

@@ -11,7 +11,7 @@ namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
     [Target("Redis")]
     public sealed class RedisTarget : TargetWithLayout
     {
-        private const string AppNameKey = "app_Name";
+        private const string APP_NAME_KEY = "app_Name";
         private RedisConnectionManager _redisConnectionManager;
         private string _key = "logstash";
         private string _connectionString;
@@ -80,9 +80,9 @@ namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
             properties.Add("message", message);
             properties.Add("level", logEvent.Level.Name);
             properties.Add("@timestamp", logEvent.TimeStamp);
-            if (!properties.ContainsKey(AppNameKey))
+            if (!properties.ContainsKey(APP_NAME_KEY))
             {
-                properties.Add(AppNameKey, AppName);
+                properties.Add(APP_NAME_KEY, AppName);
             }
 
             if (!properties.ContainsKey("Environment"))

@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _mockMediator.Setup(m => m.Send(It.IsAny<GetBatchCertificateRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_certificateResponse);
 
-            _mockCertificateRepoistory.Setup(cr => cr.GetCertificate(_request.Uln, It.IsAny<int>(), _request.FamilyName))
+            _mockCertificateRepoistory.Setup(cr => cr.GetCertificate(_request.Uln, It.IsAny<int>(), _request.FamilyName, false))
                 .ReturnsAsync(_certificateResponse);
 
             _handler = new GetBatchLearnerHandler(_mockMediator.Object, 

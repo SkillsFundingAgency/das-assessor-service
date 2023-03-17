@@ -67,10 +67,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .Respond("application/json", JsonConvert.SerializeObject(standardOrganisartionSummaries));
 
             var webConfigMock = new Mock<IWebConfiguration>();
-            var hostMock = new Mock<IHostingEnvironment>();
+            var hostMock = new Mock<IHostEnvironment>();
             hostMock
                 .Setup(m => m.EnvironmentName)
-                .Returns(EnvironmentName.Development);
+                .Returns(Environments.Development);
 
             var mockTokenService = new Mock<TokenService>(webConfigMock.Object, hostMock.Object, false);
 

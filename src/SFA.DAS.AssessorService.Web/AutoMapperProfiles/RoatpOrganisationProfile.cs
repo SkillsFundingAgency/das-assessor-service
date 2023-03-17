@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.UKPRN))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.UKPRN))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.LegalName))
-                .ForMember(dest => dest.TradingName, opt => opt.ResolveUsing(source => string.IsNullOrEmpty(source.TradingName) || "NULL".Equals(source.TradingName, StringComparison.InvariantCultureIgnoreCase) ? null : source.TradingName))
-                .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanyNumber))
-                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber))
+                .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => string.IsNullOrEmpty(source.TradingName) || "NULL".Equals(source.TradingName, StringComparison.InvariantCultureIgnoreCase) ? null : source.TradingName))
+                .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => (null == source.OrganisationData) ? null : source.OrganisationData.CompanyNumber))
+                .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => (null == source.OrganisationData) ? null : source.OrganisationData.CharityNumber))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }

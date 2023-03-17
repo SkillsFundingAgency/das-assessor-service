@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Domain.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -11,12 +8,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     {
         public EmailValidator()
         { 
-        RuleFor(x =>x.EmailToCheck)
-            .NotEmpty()
-            .WithMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
-            .EmailAddress()
-            .WithMessage(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat);
-            }
+            RuleFor(x =>x.EmailToCheck)
+                .NotEmpty()
+                .WithMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
+                .EmailRegexAddress()
+                .WithMessage(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat);
+        }
     }
 
     public class EmailChecker
