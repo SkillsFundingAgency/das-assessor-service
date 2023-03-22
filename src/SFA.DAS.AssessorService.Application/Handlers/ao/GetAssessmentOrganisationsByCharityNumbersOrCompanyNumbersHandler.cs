@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAssessmentOrganisationsByCompanyNumbersHandler : IRequestHandler<GetAssessmentOrganisationsByCompanyNumbersRequest, List<AssessmentOrganisationSummary>>
+    public class GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersHandler : IRequestHandler<GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest, List<AssessmentOrganisationSummary>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
 
-        public GetAssessmentOrganisationsByCompanyNumbersHandler(IRegisterQueryRepository registerQueryRepository)
+        public GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersHandler(IRegisterQueryRepository registerQueryRepository)
         {
             _registerQueryRepository = registerQueryRepository;
         }
 
-        public async Task<List<AssessmentOrganisationSummary>> Handle(GetAssessmentOrganisationsByCompanyNumbersRequest request, CancellationToken cancellationToken)
+        public async Task<List<AssessmentOrganisationSummary>> Handle(GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest request, CancellationToken cancellationToken)
         {
-            var results = await _registerQueryRepository.GetAssessmentOrganisationsByCompanyNumbers(request.CompanyNumbers.ToArray());
+            var results = await _registerQueryRepository.GetAssessmentOrganisationsCharityNumbersOrCompanyNumbers(request.Numbers.ToArray());
             return results.Distinct(new AssessmentOrganisationSummary.EqualityComparer()).Where(x => x.Status != "Applying").ToList();
         }
     }

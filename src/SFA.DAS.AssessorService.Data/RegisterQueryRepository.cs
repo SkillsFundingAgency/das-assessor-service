@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
@@ -369,7 +370,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
         }
 
-        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByCompanyNumbers(params string[] numbers)
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsCharityNumbersOrCompanyNumbers(params string[] numbers)
         {
             var sql = @"
                 SELECT 
@@ -379,22 +380,8 @@ namespace SFA.DAS.AssessorService.Data
                     LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId
                     LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
                 WHERE 
-                    REPLACE(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') IN @Numbers";
-
-            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { Numbers = numbers });
-        }
-
-        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByCharityNumbers(params string[] numbers)
-        {
-            var sql = @"
-                SELECT 
-                    o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, 
-                    o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email
-                FROM [Organisations] o
-                    LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId
-                    LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
-                WHERE 
-                    REPLACE(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') IN @Numbers";
+                    REPLACE(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') IN @Numbers
+                    OR REPLACE(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') IN @Numbers";
 
             return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { Numbers = numbers });
         }

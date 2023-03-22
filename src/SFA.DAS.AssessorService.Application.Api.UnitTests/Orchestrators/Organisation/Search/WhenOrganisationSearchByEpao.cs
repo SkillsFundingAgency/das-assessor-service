@@ -9,47 +9,32 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
 {
     public class WhenOrganisationSearchByEpao : OrganisationSearchTestBase
     {
-        [TestCaseSource(nameof(ThenOrganisationFoundCorrectlyCases))]
-        public async Task ThenOrganisationFoundCorrectly(string searchTerm, List<ThenOrganisationFoundCorrectlyResult> expectedResults)
+        [TestCase("EPA0006")]
+        public async Task ThenEmptyCollectionReturnedIfMatchFails(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _regexHelper.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
             var results = await sut.OrganisationSearchByEpao(searchTerm);
 
             // Assert
-            results.Select(p => new { p.Name, p.Id, p.RoEPAOApproved }).Should().BeEquivalentTo(expectedResults);
+            Assert.That(results, Is.Empty);
         }
 
-        public static object[] ThenOrganisationFoundCorrectlyCases =
+        [TestCase("EPA0001", "Blue Barns Limited", "EPA0001", true)]
+        [TestCase("EPA0004", "Green Grass Limited", "EPA0004", true)]
+        public async Task ThenResultHasMatchingIdAndNameAndReEPAOApproved(string searchTerm, string expectedCompanyName, string expectedId, bool expectedRoEPAOApproved)
         {
-            new object[] 
-            { 
-                "EPA0001", 
-                new List<ThenOrganisationFoundCorrectlyResult>
-                {
-                    new ThenOrganisationFoundCorrectlyResult { Name = "Blue Barns Limited", Id = "EPA0001", RoEPAOApproved = true },
-                }
-            },
-            new object[] 
-            {   
-                "EPA0006", 
-                new List<ThenOrganisationFoundCorrectlyResult> { }
-            },
-            new object[] 
-            {   
-                "EPA0004", 
-                new List<ThenOrganisationFoundCorrectlyResult>
-                {
-                    new ThenOrganisationFoundCorrectlyResult { Name = "Green Grass Limited", Id = "EPA0004", RoEPAOApproved = true}
-                }
-            }
-        };
+            // Act
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var results = await sut.OrganisationSearchByEpao(searchTerm);
 
-        public class ThenOrganisationFoundCorrectlyResult
-        {
-            public string Name { get; set; }
-            public string Id { get; set; }
-            public bool RoEPAOApproved { get; set; }
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(results.Single().Name, Is.EqualTo(expectedCompanyName));
+                Assert.That(results.Single().Id, Is.EqualTo(expectedId));
+                Assert.That(results.Single().RoEPAOApproved, Is.EqualTo(expectedRoEPAOApproved));
+            });
         }
     }
 }

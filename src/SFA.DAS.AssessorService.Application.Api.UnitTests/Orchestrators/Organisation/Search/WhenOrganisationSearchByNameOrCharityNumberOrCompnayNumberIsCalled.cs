@@ -1,7 +1,5 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Orchestrators;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenOrganisationReturnedIfNameContainsSearchTerm(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _regexHelper.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
@@ -28,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenOrganisationReturnedIfAnyWordInSearchTermMatches(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _regexHelper.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
@@ -44,27 +42,27 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenEmptyCollectionReturnedIfMatchFails(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _regexHelper.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
             Assert.That(results, Is.Empty);
         }
 
-        [TestCase("00030004", "Green Grass Limited")]
-        [TestCase("00030001", "Blue Barns Limited")]
-        [TestCase("00030002", "Sky Blue Ltd")]
-        public async Task ThenResultHasMatchingCompanyNumberAndName(string number, string expectedName)
+        [TestCase("00030004", "00030004", "Green Grass Limited")]
+        [TestCase("00030001", "00030001", "Blue Barns Limited")]
+        [TestCase("00030002", "00030002", "Sky Blue Ltd")]
+        public async Task ThenResultHasMatchingCompanyNumberAndName(string searchTerm, string expectedCompanyNumber, string expectedCompanyName)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _regexHelper.Object);
-            var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(number);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(results.Single().CompanyNumber, Is.EqualTo(number));
-                Assert.That(results.Single().Name, Is.EqualTo(expectedName));
+                Assert.That(results.Single().CompanyNumber, Is.EqualTo(expectedCompanyNumber));
+                Assert.That(results.Single().Name, Is.EqualTo(expectedCompanyName));
             });
         }
     }

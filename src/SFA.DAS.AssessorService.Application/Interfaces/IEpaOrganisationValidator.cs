@@ -47,7 +47,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckAddressDetailsForOrganisation(string address1, string address2, string address3, string address4);
         string CheckPostcodeIsPresentForOrganisation(string postcode);
 
+        bool ValidateUkprn(long? ukprn);
         string CheckUkprnForOrganisation(long? ukprn);
+
+        bool ValidateEpaOrganisationId(string epaId);
+
         string CheckContactCountForOrganisation(int? numberOfContacts);
         string CheckStandardCountForOrganisation(int? numberOfStandards);
 

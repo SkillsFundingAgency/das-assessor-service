@@ -1,12 +1,11 @@
-﻿using FluentAssertions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Api.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.OrganisationSearch
 {
@@ -16,31 +15,47 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IReferenceDataApiClient> _referenceDataApiClient;
         private Mock<IMediator> _mediator;
-        private Mock<IRegexHelper> _regexHelper;
+        private Mock<IEpaOrganisationValidator> _epaOrganisationValidator;
 
-        [TestCase("", 0, false)]
-        [TestCase("notanumber", 0, false)]
-        [TestCase("9999999", 9999999, false)]
-        [TestCase("100000001", 100000001, false)]
-        [TestCase("10000000", 10000000, true)]
-        [TestCase("54321234", 54321234, true)]
-        [TestCase("99999999", 99999999, true)]
-        public void ThenValidityIsCheckedCorrectly(string stringToCheck, int ukprnExpected, bool isValid)
+        [TestCase("100000001")]
+        [TestCase("54321234")]
+        [TestCase("99999999")]
+        public void ThenValidityIsCheckedWhenNumber(string stringToCheck)
         {
             // Arrange
             _logger = new Mock<ILogger<OrganisationSearchOrchestrator>>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _referenceDataApiClient = new Mock<IReferenceDataApiClient>();
             _mediator = new Mock<IMediator>();
-            _regexHelper = new Mock<IRegexHelper>();
+            _epaOrganisationValidator = new Mock<IEpaOrganisationValidator>();
 
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _regexHelper.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
             var result = sut.IsValidUkprn(stringToCheck, out int ukprnActual);
 
             // Assert
-            result.Should().Be(isValid);
-            ukprnActual.Should().Be(ukprnExpected);
+            Assert.That(int.TryParse(stringToCheck, out int number), Is.True);
+            _epaOrganisationValidator.Verify(p => p.ValidateUkprn(number), Times.Once());
+        }
+
+        [TestCase("")]
+        [TestCase("notanumber")]
+        public void ThenValidityIsNotCheckedWhenNotANumber(string stringToCheck)
+        {
+            // Arrange
+            _logger = new Mock<ILogger<OrganisationSearchOrchestrator>>();
+            _roatpApiClient = new Mock<IRoatpApiClient>();
+            _referenceDataApiClient = new Mock<IReferenceDataApiClient>();
+            _mediator = new Mock<IMediator>();
+            _epaOrganisationValidator = new Mock<IEpaOrganisationValidator>();
+
+            // Act
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var result = sut.IsValidUkprn(stringToCheck, out int ukprnActual);
+
+            // Assert
+            Assert.That(int.TryParse(stringToCheck, out int number), Is.False);
+            _epaOrganisationValidator.Verify(p => p.ValidateUkprn(It.IsAny<long?>()), Times.Never());
         }
     }
 }

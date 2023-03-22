@@ -3,15 +3,12 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.CompaniesHouse;
-using SFA.DAS.AssessorService.Application.Api.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
@@ -22,20 +19,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IReferenceDataApiClient _referenceDataApiClient;
         private readonly IMediator _mediator;
-        private readonly IRegexHelper _regexHelper;
+        private readonly IEpaOrganisationValidator _epaOrganisationValidator;
 
-        public OrganisationSearchOrchestrator(ILogger<OrganisationSearchOrchestrator> logger, IRoatpApiClient roatpApClient, IReferenceDataApiClient referenceDataApClient, IMediator mediator, IRegexHelper regexHelper)
+        public OrganisationSearchOrchestrator(ILogger<OrganisationSearchOrchestrator> logger, IRoatpApiClient roatpApClient, IReferenceDataApiClient referenceDataApClient, IMediator mediator, IEpaOrganisationValidator epaOrganisationValidator)
         {
             _logger = logger;
             _roatpApiClient = roatpApClient;
             _referenceDataApiClient = referenceDataApClient;
             _mediator = mediator;
-            _regexHelper = regexHelper;
+            _epaOrganisationValidator = epaOrganisationValidator;
         }
 
         public bool IsValidEpaOrganisationId(string organisationIdToCheck)
         {
-            return _regexHelper.RegexMatchSuccess(organisationIdToCheck, @"[eE][pP][aA][0-9]{4,9}$");
+            return _epaOrganisationValidator.ValidateEpaOrganisationId(organisationIdToCheck);
         }
 
         public bool IsValidUkprn(string stringToCheck, out int ukprn)
@@ -45,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 return false;
             }
 
-            return ukprn >= 10000000 && ukprn <= 99999999;
+            return _epaOrganisationValidator.ValidateUkprn(ukprn);
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
@@ -150,21 +147,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             // previous registration which has the same company number or charity number
             if (referenceResults.Any())
             {
-                var companyNumbers = referenceResults
-                    .Where(searchResult => !string.IsNullOrEmpty(searchResult.CompanyNumber))
-                    .Select(searchResult => searchResult.CompanyNumber);
+                var numbers = referenceResults
+                    .SelectMany(f => new List<string>() { f.CharityNumber, f.CompanyNumber })
+                    .Where(number => !string.IsNullOrEmpty(number))
+                    .Distinct();
 
-                var additionalEpaoResultsForCompanyNumbers = await GetAdditionalEpaoRegisterResultsForCompanyNumbers(companyNumbers);
-
-                var charityNumbers = referenceResults
-                    .Where(searchResult => !string.IsNullOrEmpty(searchResult.CharityNumber))
-                    .Select(searchResult => searchResult.CompanyNumber);
-
-                var additionalEpaoResultsForCharityNumbers = await GetAdditionalEpaoRegisterResultsForCharityNumbers(companyNumbers);
+                var additionalEpaoResults = await GetAdditionalEpaoRegisterResults(numbers);
 
                 epaoResults = epaoResults
-                    .Concat(additionalEpaoResultsForCompanyNumbers)
-                    .Concat(additionalEpaoResultsForCharityNumbers);
+                    .Concat(additionalEpaoResults);
             }
 
             return Dedupe(epaoResults.Concat(roatpResults).Concat(providerResults).Concat(referenceResults));
@@ -172,103 +163,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 
         public IEnumerable<OrganisationSearchResult> Dedupe(IEnumerable<OrganisationSearchResult> organisations)
         {
-            var nameMerge = organisations.GroupBy(org => org.Name.ToUpperInvariant())
-                .Select(group =>
-                    new OrganisationSearchResult
-                    {
-                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
-                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
-                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
-                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
-                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
-                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
-                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
-                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
-                        RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
-                        RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
-                        CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
-                        CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
-                        EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
-                        FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
-                    }
-                );
+            var nameMerge = organisations.GroupBy(org => new { filter = org.Name.ToUpperInvariant() })
+                .Select(group => DedupeTransform(group));
 
             var ukprnMerge = nameMerge.GroupBy(org => new { filter = org.Ukprn.HasValue ? org.Ukprn.ToString() : org.Name.ToUpperInvariant() })
-                .Select(group =>
-                    new OrganisationSearchResult
-                    {
-                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
-                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
-                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
-                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
-                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
-                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
-                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
-                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
-                        RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
-                        RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
-                        CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
-                        CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
-                        EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
-                        FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
-                    }
-                );
+                .Select(group => DedupeTransform(group));
 
             var companyNumberMerge = ukprnMerge.GroupBy(org => new { filter = org.CompanyNumber != null ? org.CompanyNumber.PadLeft(8, '0') : org.Name.ToUpperInvariant() })
-                .Select(group =>
-                    new OrganisationSearchResult
-                    {
-                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
-                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
-                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
-                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
-                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
-                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
-                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
-                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
-                        RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
-                        RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
-                        CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
-                        CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
-                        EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
-                        FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
-                    }
-                );
+                .Select(group => DedupeTransform(group));
 
             var charityNumberMerge = companyNumberMerge.GroupBy(org => new { filter = org.CharityNumber != null ? org.CharityNumber.PadLeft(8, '0') : org.Name.ToUpperInvariant() })
-                .Select(group =>
-                    new OrganisationSearchResult
-                    {
-                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
-                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
-                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
-                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
-                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
-                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
-                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
-                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
-                        RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
-                        RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
-                        CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
-                        CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
-                        EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
-                        FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsLive => OrganisationIsLive)
-                    }
-                );
+                .Select(group => DedupeTransform(group));
 
             return charityNumberMerge.OrderByDescending(org => org.Ukprn).ToList();
+        }
+
+        private OrganisationSearchResult DedupeTransform(IGrouping<dynamic, OrganisationSearchResult> group)
+        {
+            return new OrganisationSearchResult
+            {
+                Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
+                Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
+                LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
+                TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
+                ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
+                Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
+                OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
+                OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
+                OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
+                RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
+                RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
+                CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
+                CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
+                EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
+                FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
+                FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
+                OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault()
+            };
         }
 
         private async Task<IEnumerable<OrganisationSearchResult>> GetEpaoRegisterResults(string searchTerm)
@@ -298,15 +229,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return results;
         }
 
-        private async Task<IEnumerable<OrganisationSearchResult>> GetAdditionalEpaoRegisterResultsForCompanyNumbers(IEnumerable<string> companyNumbers)
+        private async Task<IEnumerable<OrganisationSearchResult>> GetAdditionalEpaoRegisterResults(IEnumerable<string> numbers)
         {
             var results = new List<OrganisationSearchResult>();
 
-            if (companyNumbers.Any())
+            if (numbers.Any())
             {
                 try
                 {
-                    var response = await _mediator.Send(new GetAssessmentOrganisationsByCompanyNumbersRequest { CompanyNumbers = companyNumbers });
+                    var response = await _mediator.Send(new GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest { Numbers = numbers });
 
                     var organisationSearchResults =
                         Mapper.Map<IEnumerable<AssessmentOrganisationSummary>, IEnumerable<OrganisationSearchResult>>(response);
@@ -316,32 +247,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Error from EPAO Register. CompanyNumbers: {companyNumbers}, Message: {ex.Message}");
-                }
-            }
-           
-            return results;
-        }
-
-        private async Task<IEnumerable<OrganisationSearchResult>> GetAdditionalEpaoRegisterResultsForCharityNumbers(IEnumerable<string> charityNumbers)
-        {
-            var results = new List<OrganisationSearchResult>();
-
-            if (charityNumbers.Any())
-            {
-                try
-                {
-                    var response = await _mediator.Send(new GetAssessmentOrganisationsByCharityNumbersRequest { CharityNumbers = charityNumbers });
-
-                    var organisationSearchResults =
-                        Mapper.Map<IEnumerable<AssessmentOrganisationSummary>, IEnumerable<OrganisationSearchResult>>(response);
-
-                    if (organisationSearchResults != null)
-                        results.AddRange(organisationSearchResults);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from EPAO Register. CharityNumbers: {charityNumbers}, Message: {ex.Message}");
+                    _logger.LogError($"Error from EPAO Register. Numbers: {numbers}, Message: {ex.Message}");
                 }
             }
 

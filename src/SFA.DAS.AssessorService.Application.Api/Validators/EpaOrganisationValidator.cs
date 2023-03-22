@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
-
+        private const string EpaOrganisationIdRegex = "[eE][pP][aA][0-9]{4,9}$";
 
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
                                          ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer, IStandardService standardService) 
@@ -84,17 +85,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationTypeIsRequired);
         }
 
+        public bool ValidateUkprn(long ?ukprn)
+        {
+            if (ukprn == null) return false;
+            return ukprn >= 10000000 && ukprn <= 99999999;
+        }
 
         public string CheckUkprnIsValid(long? ukprn)
         {
-            if (ukprn == null) return string.Empty;
-            var isValid = ukprn >= 10000000 && ukprn <= 99999999;
-            return isValid ? string.Empty : FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsInvalid);
+            return ValidateUkprn(ukprn) ? string.Empty : FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsInvalid);
+        }
+
+        public bool ValidateEpaOrganisationId(string epaId)
+        {
+            return Regex.IsMatch(epaId, EpaOrganisationIdRegex);
         }
 
         public string CheckCompanyNumberIsValid(string companyNumber)
         {
-
             if (String.IsNullOrWhiteSpace(companyNumber))
             {
                 return string.Empty;

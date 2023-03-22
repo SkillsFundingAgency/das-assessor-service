@@ -6,10 +6,10 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Api.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Application.Infrastructure;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         protected Mock<IRoatpApiClient> _roatpApiClient;
         protected Mock<IReferenceDataApiClient> _referenceDataApiClient;
         protected Mock<IMediator> _mediator;
-        protected Mock<IRegexHelper> _regexHelper;
+        protected Mock<IEpaOrganisationValidator> _epaOrganisationValidator;
 
         [SetUp]
         public void Arrange()
@@ -55,13 +55,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
                 .Setup(p => p.Send(It.IsAny<SearchAssessmentOrganisationsRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((SearchAssessmentOrganisationsRequest request, CancellationToken token) => TestAssessmentOrganisationSummary(request.SearchTerm).ToList());
             _mediator
-                .Setup(p => p.Send(It.IsAny<GetAssessmentOrganisationsByCompanyNumbersRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((GetAssessmentOrganisationsByCompanyNumbersRequest request, CancellationToken token) => TestAssessmentOrganisationSummaryByCompanyNumbers(request.CompanyNumbers).ToList());
-            _mediator
-                .Setup(p => p.Send(It.IsAny<GetAssessmentOrganisationsByCharityNumbersRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((GetAssessmentOrganisationsByCharityNumbersRequest request, CancellationToken token) => TestAssessmentOrganisationSummaryByCharityNumbers(request.CharityNumbers).ToList());
+                .Setup(p => p.Send(It.IsAny<GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest request, CancellationToken token) => TestAssessmentOrganisationSummaryByCharityNumbers(request.Numbers).ToList());
 
-            _regexHelper = new Mock<IRegexHelper>();
+            _epaOrganisationValidator = new Mock<IEpaOrganisationValidator>();
         }
 
         static IEnumerable<AssessmentOrganisationSummary> TestAssessmentOrganisationSummary(string searchTerm)
@@ -75,7 +72,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
                 BuildAssessmentOrganisationSummary(ukprn: 31245678, id: "EPA0003", name: "Earth Brown Ltd", legalName: "Earth Brown Ltd",
                      companyNumber: "00030003", charityNumber: "00040003", organisationType: "1"),
                 BuildAssessmentOrganisationSummary(ukprn: 41235678, id: "EPA0004", name: "Green Grass Limited", legalName: "Green Grass Limited",
-                         companyNumber: "00030004", charityNumber: "", organisationType: "1")
+                         companyNumber: "00030004", charityNumber: "", organisationType: "1"),
+                BuildAssessmentOrganisationSummary(ukprn: 81234567, id: "EPA0008", name: "White Moon Limited", legalName: "White Moon Limited",
+                         companyNumber: "00030008", charityNumber: "", organisationType: "1"),
+                BuildAssessmentOrganisationSummary(ukprn: 91234567, id: "EPA0009", name: "Purple Flower Ltd", legalName: "Purple Flower Ltd",
+                         companyNumber: "00030009", charityNumber: "", organisationType: "1"),
+                BuildAssessmentOrganisationSummary(ukprn: 92134567, id: "EPA0010", name: "Large Giving Limited", legalName: "Large Giving Limited",
+                         companyNumber: "", charityNumber: "00040010", organisationType: "1"),
+                BuildAssessmentOrganisationSummary(ukprn: 93124567, id: "EPA0011", name: "Medium Giving Limited", legalName: "Medium Giving Limited",
+                         companyNumber: "", charityNumber: "00040011", organisationType: "1"),
+                BuildAssessmentOrganisationSummary(ukprn: 94123567, id: "EPA0012", name: "Small Giving Ltd", legalName: "Small Giving Ltd",
+                         companyNumber: "", charityNumber: "00040012", organisationType: "1")
             };
 
             List<AssessmentOrganisationSummary> matchedAssessmentOrganisationSummaries = new List<AssessmentOrganisationSummary>();
@@ -136,48 +143,44 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
                 organisationSearchResultSix
             };
 
-            if (name != null && (!exactMatch.HasValue || !exactMatch.Value) && ukprn == null)
+            return (name, exactMatch, ukprn) switch
             {
-                return allOrganisationSearchResults.Where(p => p.Name.Contains(name));
-            }
-            else if (name != null && exactMatch.HasValue && exactMatch == true && ukprn == null)
-            {
-                return allOrganisationSearchResults.Where(p => p.Name == name);
-            }
-            else if(name == null && !exactMatch.HasValue && ukprn != null)
-            {
-                return allOrganisationSearchResults.Where(p => p.Ukprn == ukprn);
-            }
-
-            throw new Exception("Invalid parameters for test setup");
+                { name: not null, ukprn: null } when (!exactMatch.HasValue || !exactMatch.Value) => allOrganisationSearchResults.Where(p => p.Name.Contains(name)),
+                { name: not null, ukprn: null } when (exactMatch.HasValue && exactMatch == true) => allOrganisationSearchResults.Where(p => p.Name == name),
+                { name: null, ukprn: not null } when !exactMatch.HasValue => allOrganisationSearchResults.Where(p => p.Ukprn == ukprn),
+                _ => throw new Exception("Invalid parameters for test setup")
+            };
         }
 
         static IEnumerable<OrganisationSearchResult> TestOrganisationSearchResultFromEASAPI(string name, bool? exactMatch, long? ukprn)
         {
             var allOrganisationSearchResults = new List<OrganisationSearchResult>
             {
-                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00030004", legalName: "Green Trees Limited", tradingName: "Green Trees Limited", providerName: "Blue Seas Limited",
+                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00030004", legalName: "Green Grass Limited (New Name)", tradingName: "Green Grass Limited (New Name)", providerName: "Green Grass Limited (New Name)",
                          companyNumber: "00030004", charityNumber: "", organisationType: ReferenceDataOrganisationType.Company.ToString()),
                 BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00030005", legalName: "Red Sky Limited", tradingName: "Red Sky Limited", providerName: "Red Sky Limited",
                          companyNumber: "00030005", charityNumber: "", organisationType: ReferenceDataOrganisationType.EducationOrganisation.ToString()),
                 BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00030007", legalName: "Green Bush Ltd", tradingName: "Green Bush Ltd", providerName: "Green Bush Ltd",
-                         companyNumber: "00030007", charityNumber: "", organisationType: ReferenceDataOrganisationType.Company.ToString())
+                         companyNumber: "00030007", charityNumber: "", organisationType: ReferenceDataOrganisationType.Company.ToString()),
+                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00030008", legalName: "White Moon Limited (New Name)", tradingName: "White Moon Limited (New Name)", providerName: "White Moon Limited (New Name)",
+                         companyNumber: "00030008", charityNumber: "", organisationType: ReferenceDataOrganisationType.Company.ToString()),
+                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00030009", legalName: "Purple Flower Ltd (New Name)", tradingName: "Purple Flower Ltd (New Name)", providerName: "Purple Flower Ltd (New Name)",
+                         companyNumber: "00030009", charityNumber: "", organisationType: ReferenceDataOrganisationType.Company.ToString()),
+                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00040010", legalName: "Large Giving Limited (New Name)", tradingName: "Large Giving Limited (New Name)", providerName: "Large Giving Limited (New Name)",
+                         companyNumber: "", charityNumber: "00040010", organisationType: ReferenceDataOrganisationType.Charity.ToString()),
+                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00040011", legalName: "Medium Giving Limited (New Name)", tradingName: "Medium Giving Limited (New Name)", providerName: "Medium Giving Limited (New Name)",
+                         companyNumber: "", charityNumber: "00040011", organisationType: ReferenceDataOrganisationType.Charity.ToString()),
+                BuildOrganisationSearchResult(organisationReferenceType: "EASAPI", roatpApproved: false, ukprn: null, id: "00040012", legalName: "Small Giving Ltd (New Name)", tradingName : "Small Giving Ltd (New Name)", providerName : "Small Giving Ltd (New Name)",
+                         companyNumber: "", charityNumber: "00040012", organisationType: ReferenceDataOrganisationType.Charity.ToString()),
             };
 
-            if (name != null && (!exactMatch.HasValue || !exactMatch.Value) && ukprn == null)
+            return (name, exactMatch, ukprn) switch
             {
-                return allOrganisationSearchResults.Where(p => p.Name.Contains(name));
-            }
-            else if (name != null && exactMatch.HasValue && exactMatch == true && ukprn == null)
-            {
-                return allOrganisationSearchResults.Where(p => p.Name == name);
-            }
-            else if (name == null && !exactMatch.HasValue && ukprn != null)
-            {
-                return allOrganisationSearchResults.Where(p => p.Ukprn == ukprn);
-            }
-
-            throw new Exception("Invalid parameters for test setup");
+                { name: not null, ukprn: null } when (!exactMatch.HasValue || !exactMatch.Value) => allOrganisationSearchResults.Where(p => p.Name.Contains(name)),
+                { name: not null, ukprn: null } when (exactMatch.HasValue && exactMatch == true) => allOrganisationSearchResults.Where(p => p.Name == name),
+                { name: null, ukprn: not null } when !exactMatch.HasValue => allOrganisationSearchResults.Where(p => p.Ukprn == ukprn),
+                _ => throw new Exception("Invalid parameters for test setup")
+            };
         }
 
         private static AssessmentOrganisationSummary BuildAssessmentOrganisationSummary(long? ukprn, string id, string name, 
