@@ -93,6 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckUkprnIsValid(long? ukprn)
         {
+            if (ukprn == null) return string.Empty;
             return ValidateUkprn(ukprn) ? string.Empty : FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsInvalid);
         }
 
