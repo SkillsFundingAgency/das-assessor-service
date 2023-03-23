@@ -9,7 +9,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         protected Mock<IRoatpApiClient> _roatpApiClient;
         protected Mock<IReferenceDataApiClient> _referenceDataApiClient;
         protected Mock<IMediator> _mediator;
-        protected Mock<IEpaOrganisationValidator> _epaOrganisationValidator;
 
         [SetUp]
         public void Arrange()
@@ -57,8 +55,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
             _mediator
                 .Setup(p => p.Send(It.IsAny<GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((GetAssessmentOrganisationsByCharityNumbersOrCompanyNumbersRequest request, CancellationToken token) => TestAssessmentOrganisationSummaryByCharityNumbers(request.Numbers).ToList());
-
-            _epaOrganisationValidator = new Mock<IEpaOrganisationValidator>();
         }
 
         static IEnumerable<AssessmentOrganisationSummary> TestAssessmentOrganisationSummary(string searchTerm)

@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenOrganisationReturnedIfNameContainsSearchTerm(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenOrganisationReturnedIfAnyWordInSearchTermMatches(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenEmptyCollectionReturnedIfMatchFails(string searchTerm)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenResultHasMatchingCompanyNumberAndName(string searchTerm, string expectedCompanyNumber, string expectedCompanyName)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
 
             // Assert

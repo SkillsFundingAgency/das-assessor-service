@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         [TestCase("Purple Flower Ltd (New Name)", "Purple Flower Ltd", "00030009")]
         public async Task ThenExistingOrganisationFoundByCompanyNumberWhereCompanyNameHasChanged(string newCompanyName, string oldCompanyName, string companyNumber)
         {
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(newCompanyName);
 
             // Assert
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         [TestCase("Small Giving Ltd (New Name)", "Small Giving Ltd", "00040012")]
         public async Task ThenExistingOrganisationFoundByCharityNumberWhereCharityNameHasChanged(string newCharityName, string oldCharityName, string charityNumber)
         {
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByNameOrCharityNumberOrCompanyNumber(newCharityName);
 
             // Assert

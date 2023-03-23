@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         public async Task ThenUkprnFoundCorrectlyForApprovedOrganisations(int searchTerm, string expectedCompanyName, int expectedUkprn, bool expectedRoEPAOApproved)
         {
             // Act
-            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object, _epaOrganisationValidator.Object);
+            var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
             var results = await sut.OrganisationSearchByUkprn(searchTerm);
 
             // Assert

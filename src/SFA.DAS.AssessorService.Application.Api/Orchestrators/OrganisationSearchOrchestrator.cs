@@ -19,30 +19,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IReferenceDataApiClient _referenceDataApiClient;
         private readonly IMediator _mediator;
-        private readonly IEpaOrganisationValidator _epaOrganisationValidator;
 
-        public OrganisationSearchOrchestrator(ILogger<OrganisationSearchOrchestrator> logger, IRoatpApiClient roatpApClient, IReferenceDataApiClient referenceDataApClient, IMediator mediator, IEpaOrganisationValidator epaOrganisationValidator)
+        public OrganisationSearchOrchestrator(ILogger<OrganisationSearchOrchestrator> logger, IRoatpApiClient roatpApClient, IReferenceDataApiClient referenceDataApClient, IMediator mediator)
         {
             _logger = logger;
             _roatpApiClient = roatpApClient;
             _referenceDataApiClient = referenceDataApClient;
             _mediator = mediator;
-            _epaOrganisationValidator = epaOrganisationValidator;
-        }
-
-        public bool IsValidEpaOrganisationId(string organisationIdToCheck)
-        {
-            return _epaOrganisationValidator.ValidateEpaOrganisationId(organisationIdToCheck);
-        }
-
-        public bool IsValidUkprn(string stringToCheck, out int ukprn)
-        {
-            if (!int.TryParse(stringToCheck, out ukprn))
-            {
-                return false;
-            }
-
-            return _epaOrganisationValidator.ValidateUkprn(ukprn);
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)

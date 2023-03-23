@@ -37,9 +37,26 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             Assert.AreEqual(expectedResult, checkResult);
         }
 
-        [TestCase("1", false)]
         [TestCase("", true)]
         [TestCase(" ", true)]
+        [TestCase(null, true)]
+        [TestCase("1", false)]
+        [TestCase("10000000", true)]
+        [TestCase("99999999", true)]
+        [TestCase("100000000", false)]
+        [TestCase("999999999", false)]
+        [TestCase("1000000", false)]
+        [TestCase("9999999", false)]
+        public void CheckUkprnIsNullOrEmptyOrValid(string stringToCheck, bool expectedResult)
+        {
+            var checkResult = _validationService.UkprnIsNullOrEmptyOrValid(stringToCheck);
+            Assert.AreEqual(expectedResult, checkResult);
+        }
+
+        [TestCase("", false)]
+        [TestCase(" ", false)]
+        [TestCase(null, false)]
+        [TestCase("1", false)]
         [TestCase("10000000", true)]
         [TestCase("99999999", true)]
         [TestCase("100000000", false)]
@@ -48,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("9999999", false)]
         public void CheckUkprnIsValid(string stringToCheck, bool expectedResult)
         {
-            var checkResult = _validationService.UkprnIsValid(stringToCheck);
+            var checkResult = _validationService.UkprnIsValid(stringToCheck, out _);
             Assert.AreEqual(expectedResult, checkResult);
         }
 
@@ -151,9 +168,31 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("ePA7777777", true)]
         [TestCase("epA88888888", true)]
         [TestCase("Epa999999999", true)]
-        [TestCase("EPA33333A", false)]
-        [TestCase("EPAA33333", false)]
-        public void CheckOrganisationId(string organisationIdToCheck, bool expectedResult)
+        [TestCase("EPA4444A", false)]
+        [TestCase("EPAA4444", false)]
+        [TestCase("XEPA4444", false)]
+        public void CheckOrganisationIdIsNullOrEmptyOrValid(string organisationIdToCheck, bool expectedResult)
+        {
+            var checkResult = _validationService.OrganisationIdIsNullOrEmptyOrValid(organisationIdToCheck);
+            Assert.AreEqual(expectedResult, checkResult);
+        }
+
+        [TestCase("", false)]
+        [TestCase(" ", false)]
+        [TestCase(null, false)]
+        [TestCase("EPA1", false)]
+        [TestCase("EPA22", false)]
+        [TestCase("EPA333", false)]
+        [TestCase("EPA4444", true)]
+        [TestCase("EPa55555", true)]
+        [TestCase("EpA666666", true)]
+        [TestCase("ePA7777777", true)]
+        [TestCase("epA88888888", true)]
+        [TestCase("Epa999999999", true)]
+        [TestCase("EPA4444A", false)]
+        [TestCase("EPAA4444", false)]
+        [TestCase("XEPA4444", false)]
+        public void CheckOrganisationIdIsValid(string organisationIdToCheck, bool expectedResult)
         {
             var checkResult = _validationService.OrganisationIdIsValid(organisationIdToCheck);
             Assert.AreEqual(expectedResult, checkResult);

@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Orchestrators;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
@@ -22,14 +23,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationSearchOrchestrator _organisationSearchOrchestrator;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
+        private readonly IValidationService _validationService;
 
         public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IOrganisationSearchOrchestrator organisationSearchOrchestrator, 
-            ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
+            ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient, IValidationService validationService)
         {
             _logger = logger;
             _organisationSearchOrchestrator = organisationSearchOrchestrator;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
+            _validationService = validationService;
         }
 
         [HttpGet("organisations")]
@@ -42,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult>(), 0, 1, 1);
             }
 
-            if (_organisationSearchOrchestrator.IsValidEpaOrganisationId(searchTerm))
+            if (_validationService.OrganisationIdIsValid(searchTerm))
             {
                 _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
                 var orgByEpaoSearchResult = await _organisationSearchOrchestrator.OrganisationSearchByEpao(searchTerm);
@@ -52,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
             var results = new List<OrganisationSearchResult>();
-            if (_organisationSearchOrchestrator.IsValidUkprn(searchTerm, out var ukprn))
+            if (_validationService.UkprnIsValid(searchTerm, out var ukprn))
             {
                 _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
                 var resultFromUkprn = await _organisationSearchOrchestrator.OrganisationSearchByUkprn(ukprn);

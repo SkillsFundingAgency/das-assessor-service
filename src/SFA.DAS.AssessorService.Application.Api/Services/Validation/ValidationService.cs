@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using System;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -80,17 +81,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             return !string.IsNullOrEmpty(stringToCheck?.Trim());
         }
 
-        public bool OrganisationIdIsValid(string organisationIdToCheck)
+        public bool OrganisationIdIsNullOrEmptyOrValid(string organisationIdToCheck)
         {
             if (string.IsNullOrEmpty(organisationIdToCheck?.Trim())) return true;
-            var regex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
-                return regex.Match(organisationIdToCheck).Success;
+
+            return OrganisationIdIsValid(organisationIdToCheck);
         }
 
-        public bool UkprnIsValid(string ukprnToCheck)
+        public bool OrganisationIdIsValid(string organisationIdToCheck)
+        {
+            if(organisationIdToCheck == null) return false;
+
+            var regex = new Regex(@"^[eE][pP][aA][0-9]{4,9}$");
+            return regex.Match(organisationIdToCheck).Success;
+        }
+
+        public bool UkprnIsNullOrEmptyOrValid(string ukprnToCheck)
         {
             if (string.IsNullOrEmpty(ukprnToCheck?.Trim())) return true;
-            if (!int.TryParse(ukprnToCheck, out int ukprn))
+
+            return UkprnIsValid(ukprnToCheck, out _);
+        }
+
+        public bool UkprnIsValid(string ukprnToCheck, out int ukprn)
+        {
+            if (!int.TryParse(ukprnToCheck, out ukprn))
                 return false;
 
             return ukprn >= 10000000 && ukprn <= 99999999;
