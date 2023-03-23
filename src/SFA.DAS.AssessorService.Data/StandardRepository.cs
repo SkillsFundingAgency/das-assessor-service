@@ -157,12 +157,12 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
 [EffectiveFrom],[EffectiveTo],[VersionEarliestStartDate],[VersionLatestStartDate],[VersionLatestEndDate],
 [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding],[EPAChanged],[StandardPageUrl] FROM [Standards] Where [StandardUId] = @standardUId";
 
-            var result = await _unitOfWork.Connection.QuerySingleAsync<Standard>(
+            var result = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
                 param: new { standardUId },
                 transaction: _unitOfWork.Transaction);
 
-            return result;
+            return result.FirstOrDefault();
         }
 
         public async Task<Standard> GetStandardVersionByLarsCode(int larsCode, string version = null)
@@ -295,12 +295,12 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                                      [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding]  
                         FROM [Standards] WHERE [LarsCode] = @larsCode ORDER BY [dbo].[ExpandedVersion](Version) desc";
 
-            var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
+            var result = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
                 param: new { larsCode },
                 transaction: _unitOfWork.Transaction);
 
-            return result;
+            return result.FirstOrDefault();
         }
 
         private async Task<Standard> GetLatestStandardVersionByIFateReferenceNumberInternal(string iFateReferenceNumber)
@@ -311,12 +311,12 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                                      [VersionApprovedForDelivery],[ProposedTypicalDuration],[ProposedMaxFunding]
                         FROM [Standards] WHERE [IfateReferenceNumber] = @iFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) desc";
 
-            var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<Standard>(
+            var result = await _unitOfWork.Connection.QueryAsync<Standard>(
                 sql,
                 param: new { iFateReferenceNumber },
                 transaction: _unitOfWork.Transaction);
 
-            return result;
+            return result.FirstOrDefault();
         }
 
         private async Task<Standard> GetStandardByIFateReferenceNumberAndVersionInternal(string ifateReferenceNumber, string version)
@@ -331,7 +331,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 param: new { ifateReferenceNumber, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.First();
+            return results.FirstOrDefault();
         }
 
         private async Task<Standard> GetStandardByLarsCodeAndVersionInternal(int larsCode, string version)
@@ -346,7 +346,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 param: new { larsCode, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.First();
+            return results.FirstOrDefault();
         }
 
         private async Task<List<Option>> GetOptionsInternal(List<int> stdCodes, bool? isLive = null)

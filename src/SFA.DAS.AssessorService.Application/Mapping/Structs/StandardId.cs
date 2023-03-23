@@ -13,7 +13,11 @@
             IFateReferenceNumber = null;
             LarsCode = -1;
 
-            if (int.TryParse(id, out var larsCode)) // Lars Code
+            if (id == null)
+            {
+                IdType = StandardIdType.Unknown;
+            }
+            else if (int.TryParse(id, out var larsCode)) // Lars Code
             {
                 LarsCode = larsCode;
                 IdType = StandardIdType.LarsCode;
@@ -34,7 +38,8 @@
         {
             StandardUId,
             LarsCode,
-            IFateReferenceNumber
+            IFateReferenceNumber,
+            Unknown
         }
     }
 }
