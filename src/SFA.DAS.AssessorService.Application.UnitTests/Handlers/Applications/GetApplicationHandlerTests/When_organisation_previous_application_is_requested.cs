@@ -56,8 +56,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            result.Count.Should().Equals(1);
-            result[0].StandardCode.Should().Equals(59);
+            result.Count.Should().Be(1);
+            result[0].StandardCode.Should().Be(59);
         }
 
     }

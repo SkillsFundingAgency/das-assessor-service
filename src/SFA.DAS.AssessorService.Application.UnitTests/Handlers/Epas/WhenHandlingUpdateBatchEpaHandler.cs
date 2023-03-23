@@ -31,16 +31,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
         }
 
         [Test, MoqAutoData]
-        public void AndCertificateNotFound_ThrowsNotFound(UpdateBatchEpaRequest request)
+        public async Task AndCertificateNotFound_ThrowsNotFound(UpdateBatchEpaRequest request)
         {
-            //Arrange
+            // Arrange
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
 
-            //Act
+            // Act
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
 
-            //Assert
-            act.Should().Throw<NotFoundException>();
+            // Assert
+            await act.Should().ThrowAsync<NotFoundException>();
         }
 
         [Test, RecursiveMoqAutoData]

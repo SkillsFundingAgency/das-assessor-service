@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                         It.IsAny<SendEmailRequest>(),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Unit())
-                .Callback<IRequest, CancellationToken>((request, token) =>
+                .Callback<IRequest<Unit>, CancellationToken>((request, token) =>
                 {
                     var sendEmailRequest = request as SendEmailRequest;
                     _emailRequestTokens.Add(JsonConvert.SerializeObject(sendEmailRequest.Tokens));

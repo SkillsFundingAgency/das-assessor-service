@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
 
         public class MapManualEntryRequiredAction : IMappingAction<Charity, CharityCommissionSummary>
         {
-            public void Process(Charity source, CharityCommissionSummary destination)
+            public void Process(Charity source, CharityCommissionSummary destination, ResolutionContext context)
             {
                 if (destination != null
                      && (destination.Trustees is null || destination.Trustees.Count == 0))

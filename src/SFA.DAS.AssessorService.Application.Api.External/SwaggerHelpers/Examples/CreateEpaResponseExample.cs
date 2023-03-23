@@ -1,12 +1,12 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class CreateEpaResponseExample : IExamplesProvider
+    public class CreateEpaResponseExample : IExamplesProvider<List<CreateEpaResponse>>
     {
-        public object GetExamples()
+        public List<CreateEpaResponse> GetExamples()
         {
             return new List<CreateEpaResponse>
             {

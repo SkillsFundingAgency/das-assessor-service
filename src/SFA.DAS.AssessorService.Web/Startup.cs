@@ -1,16 +1,23 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
@@ -19,11 +26,6 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StackExchange.Redis;
 using StructureMap;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -31,11 +33,11 @@ namespace SFA.DAS.AssessorService.Web
     { 
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
-        private readonly IHostingEnvironment _env;
-        private const string ServiceName = "SFA.DAS.AssessorService";
-        private const string Version = "1.0";
+        private readonly IWebHostEnvironment _env;
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
+        private const string VERSION = "1.0";
 
-        public Startup(IConfiguration config, ILogger<Startup> logger, IHostingEnvironment env)
+        public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
             _config = config;
             _logger = logger;
@@ -46,9 +48,9 @@ namespace SFA.DAS.AssessorService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            //services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry();
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddAndConfigureAuthentication(Configuration, _logger, _env);
@@ -64,12 +66,13 @@ namespace SFA.DAS.AssessorService.Web
             services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>();})
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<Startup>();
 
             services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
             
@@ -124,9 +127,9 @@ namespace SFA.DAS.AssessorService.Web
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHealthChecks();
-            
+
             return ConfigureIoc(services);
-        }        
+        }
 
         private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
@@ -175,18 +178,18 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IApiValidationService>().Use<ApiValidationService>();
 
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
-                
-               
-                
+
+                var mapper = services.AddMappings().CreateMapper();
+                config.For<IMapper>().Use(mapper);
+
                 config.Populate(services);
             });
 
             return container.GetInstance<IServiceProvider>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -197,23 +200,22 @@ namespace SFA.DAS.AssessorService.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            
-            app.UseSecurityHeaders()
+            app.UseHttpsRedirection()
+                .UseSecurityHeaders()
                 .UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseHealthChecks("/health")
-                .UseMvc(routes =>
+                .UseRouting()
+                .UseAuthorization()
+                .UseEndpoints(endpoints => 
                 {
-                    routes.MapRoute(
+                    endpoints.MapControllerRoute(
                         name: "default",
-                        template: "{controller}/{action}/{id?}",
-                        defaults: new { controller = "Home", action = "Index" }
-                        //,constraints: new { controller = new NotEqualRouteContraint("find-an-assessment-opportunity") }
-                        );
+                        pattern: "{controller}/{action}/{id?}",
+                        defaults: new { controller = "Home", action = "Index" });
                 });
-        }        
+        }
     }
 }

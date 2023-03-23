@@ -50,9 +50,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543211, 101)).ReturnsAsync(GenerateEpaCertificate(9876543211, 101, "test", new Guid("99999999999999999999999999999999"), false, overallGrade: "Pass"));
 
             // This allows us to test, retrieving by ilr/learner data if the calling organisation was not the one that created it
-            certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "99999999", "Test", 1))
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1, "Test", "99999999"))
                 .ReturnsAsync((Certificate)null);
-            certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "12345678", "Test", 1))
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1, "Test", "12345678"))
                 .ReturnsAsync(GenerateCertificate(1234567890, 1, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
             // This is for SV-1255 testing standard and option validation on updates 

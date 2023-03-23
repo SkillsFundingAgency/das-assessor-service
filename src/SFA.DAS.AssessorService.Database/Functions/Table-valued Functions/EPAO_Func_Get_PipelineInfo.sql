@@ -12,7 +12,7 @@ AS
 RETURN 
 (
 	SELECT
-		pv1.UkPrn,
+		pv1.Ukprn,
 		StdCode,
 		Title,
 		EstimatedEndDate EstimateDate,
@@ -22,7 +22,7 @@ RETURN
 	(
 
 		--Get most up to date data from Learner and Ilrs tables
-		SELECT le2.Ukprn, 
+		SELECT le2.UkPrn, 
 			   le2.StdCode, 
 			   le2.StandardReference, 
 			   le2.StandardName Title, 
@@ -45,7 +45,7 @@ RETURN
 					AND ( os1.StandardCode = @stdCode OR @stdCode IS NULL ) 
 				) os2 on os2.Standardcode = le2.StdCode
 		LEFT JOIN 
-			( SELECT DISTINCT ULN, StandardCode FROM Certificates ) [ExistingCertificate] ON [ExistingCertificate].ULN = le2.ULN AND [ExistingCertificate].StandardCode = le2.StdCode
+			( SELECT DISTINCT Uln, StandardCode FROM Certificates ) [ExistingCertificate] ON [ExistingCertificate].Uln = le2.Uln AND [ExistingCertificate].StandardCode = le2.StdCode
 		WHERE 1=1
 			-- exclude already created certificates (by uln and standardcode)
 			AND [ExistingCertificate].Uln IS NULL	  -- only include learner data for the given EPAO which is Active, or completed
@@ -62,6 +62,6 @@ RETURN
 			-- limit Pipeline to the Estimated End Date is no more than the configurable pipeline cut off.
 			AND EstimatedEndDate >= DATEADD(month, -@pipelineCutOff, GETDATE())
 		) [PipelineInfo]
-		INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].Ukprn 
+		INNER JOIN Providers pv1 ON pv1.Ukprn = [PipelineInfo].UkPrn 
 
  )

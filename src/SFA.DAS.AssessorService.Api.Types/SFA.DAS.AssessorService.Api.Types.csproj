@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Types</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Types</RepositoryUrl>
@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
-    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
   </ItemGroup>
 
   <ItemGroup>
