@@ -15,6 +15,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="3.0.169" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.1" />
   </ItemGroup>
 
   <ItemGroup>
