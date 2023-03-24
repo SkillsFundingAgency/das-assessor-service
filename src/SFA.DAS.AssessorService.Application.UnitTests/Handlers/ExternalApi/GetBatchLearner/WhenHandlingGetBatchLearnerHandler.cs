@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         private Mock<IOrganisationQueryRepository> _mockOrgQueryRepository;
         private Mock<IStandardService> _mockStandardService;
         private Mock<ICertificateRepository> _mockCertificateRepoistory;
+        private Mock<ILogger<GetBatchLearnerHandler>> _mockLogger;
 
         private CertificateData _certificateData;
         private Standard _standardResponse;
@@ -54,6 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             _mockOrgQueryRepository = new Mock<IOrganisationQueryRepository>();
             _mockStandardService = new Mock<IStandardService>();
             _mockCertificateRepoistory = new Mock<ICertificateRepository>();
+            _mockLogger = new Mock<ILogger<GetBatchLearnerHandler>>();
 
             _mockStandardService.Setup(ss => ss.GetStandardVersionById(_request.Standard, null))
                 .ReturnsAsync(_standardResponse);
@@ -71,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
                 .ReturnsAsync(_certificateResponse);
 
             _handler = new GetBatchLearnerHandler(_mockMediator.Object, 
-                Mock.Of<ILogger<GetBatchLearnerHandler>>(),
+                _mockLogger.Object,
                 _mockLearnerRepository.Object, 
                 _mockOrgQueryRepository.Object, 
                 _mockStandardService.Object,
@@ -109,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         }
 
         [Test]
-        public async Task And_LearnerNotFound_Then_ReturnNull()
+        public async Task And_LearnerNotFound_Then_LogInfo_And_ReturnNull()
         {
             _mockLearnerRepository.Setup(ilr => ilr.Get(_request.Uln, It.IsAny<int>()))
                 .ReturnsAsync((Domain.Entities.Learner)null);
@@ -118,7 +121,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
 
             result.Should().BeOfType<GetBatchLearnerResponse>();
             result.Learner.Should().BeNull();
+            VerifyLogger(LogLevel.Information, new EventId(0), $"Could not find learner for ULN {_request.Uln} and StandardCode {_standardResponse.LarsCode}");
         }
 
+        private void VerifyLogger(LogLevel logLevel, EventId eventId, string message)
+        {
+            _mockLogger.Verify(logger => logger.Log(
+                It.Is<LogLevel>(p => p == logLevel),
+                It.Is<EventId>(p => p == eventId),
+                It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == message && @type.Name == "FormattedLogValues"),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
+        }
     }
 }

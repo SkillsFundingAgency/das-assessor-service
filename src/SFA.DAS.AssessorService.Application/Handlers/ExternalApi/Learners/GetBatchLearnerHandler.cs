@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                 }
                 else
                 {
-                    _logger.LogError($"Could not find learner for ULN {request.Uln} and StandardCode {standard.LarsCode}");
+                    _logger.LogInformation($"Could not find learner for ULN {request.Uln} and StandardCode {standard.LarsCode}");
                 }
             }
 
