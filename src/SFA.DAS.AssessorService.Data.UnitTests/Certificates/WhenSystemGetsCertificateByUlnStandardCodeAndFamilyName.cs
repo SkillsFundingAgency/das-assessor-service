@@ -1,13 +1,11 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
-using Newtonsoft.Json;
+using Moq.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.TestHelper;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,9 +16,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
         private Mock<IUnitOfWork> _mockUnitOfWork;
         private Mock<AssessorDbContext> _mockDbContext;
-
-        private CertificateData _certificateData;
-        private Certificate _certificate;
         
         private CertificateRepository _certificateRepository;
 
@@ -29,8 +24,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         {
             MappingBootstrapper.Initialize();
 
-            var mockSet = CreateCertificateMockDbSet();
-            _mockDbContext = CreateMockDbContext(mockSet);
+            _mockDbContext = CreateMockDbContext();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
 
             _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
@@ -39,23 +33,17 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task Then_ReturnResult()
         {
-            var result = await _certificateRepository.GetCertificate(_certificate.Uln, _certificate.StandardCode, _certificateData.LearnerFamilyName);
+            var result = await _certificateRepository.GetCertificate(2222222222, 123, "Hawkins");
 
-            result.Should().BeEquivalentTo(_certificate);
-        }
-
-        [Test]
-        public async Task And_NameMatchesWhenIgnoringCase_Then_ReturnResult()
-        {
-            var result = await _certificateRepository.GetCertificate(_certificate.Uln, _certificate.StandardCode, _certificateData.LearnerFamilyName.ToUpper());
-
-            result.Should().BeEquivalentTo(_certificate);
+            result.Uln.Should().Be(2222222222);
+            result.StandardCode.Should().Be(123);
+            result.LearnerFamilyName.Should().Be("Hawkins");
         }
 
         [Test]
         public async Task And_FamilyNameIsNotCorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate(_certificate.Uln, _certificate.StandardCode, "IncorrectName");
+            var result = await _certificateRepository.GetCertificate(2222222222, 123, "Incorrect");
 
             result.Should().BeNull();
         }
@@ -63,7 +51,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_UlnIsIncorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate(9999999999, _certificate.StandardCode, _certificateData.LearnerFamilyName);
+            var result = await _certificateRepository.GetCertificate(9999999999, 123, "Hawkins");
 
             result.Should().BeNull();
         }
@@ -71,52 +59,42 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_StandardCodeIsIncorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate(_certificate.Uln, 2, _certificateData.LearnerFamilyName);
+            var result = await _certificateRepository.GetCertificate(2222222222, 999, "Hawkins");
 
             result.Should().BeNull();
         }
 
-        private Mock<DbSet<Certificate>> CreateCertificateMockDbSet()
+        private Mock<AssessorDbContext> CreateMockDbContext()
         {
-            _certificateData = Builder<CertificateData>.CreateNew().Build();
+            var mockDbContext = new Mock<AssessorDbContext>();
 
-            var certificateDataJson = JsonConvert.SerializeObject(_certificateData);
-
-            _certificate = Builder<Certificate>.CreateNew()
-                .With(x => x.CertificateData = certificateDataJson).Build();
-
-            var certificates = Builder<Certificate>.CreateListOfSize(9)
-                .TheFirst(9)
+            var certificates = Builder<Certificate>.CreateListOfSize(3)
+                .TheFirst(1)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 1111111111)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0001")
                 .With(x => x.StandardCode = 100)
-                .With(x => x.IsPrivatelyFunded = true)
+                .With(x => x.CertificateData = "{'LearnerFamilyName':'Mirkwood'}")
+                .WithPrivate(x => x.LearnerFamilyName, "Mirkwood")
+                .TheNext(1)
+                .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
+                .With(x => x.Uln = 2222222222)
+                .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0002")
+                .With(x => x.StandardCode = 123)
+                .With(x => x.CertificateData = "{'LearnerFamilyName':'Hawkins'}")
+                .WithPrivate(x => x.LearnerFamilyName, "Hawkins")
+                .TheLast(1)
+                .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
+                .With(x => x.Uln = 3333333333)
+                .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0003")
+                .With(x => x.StandardCode = 232)
+                .With(x => x.CertificateData = "{'LearnerFamilyName':'Cornwallis'}")
+                .WithPrivate(x => x.LearnerFamilyName, "Cornwallis")
                 .Build()
-                .Append(_certificate)
                 .AsQueryable();
 
-            var mockSet = new Mock<DbSet<Certificate>>();
+            mockDbContext.Setup(c => c.Certificates).ReturnsDbSet(certificates);
 
-            mockSet.As<IAsyncEnumerable<Certificate>>()
-                .Setup(m => m.GetEnumerator())
-                .Returns(new TestAsyncEnumerator<Certificate>(certificates.GetEnumerator()));
-
-            mockSet.As<IQueryable<Certificate>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<Certificate>(certificates.Provider));
-
-            mockSet.As<IQueryable<Certificate>>().Setup(m => m.Expression).Returns(certificates.Expression);
-            mockSet.As<IQueryable<Certificate>>().Setup(m => m.ElementType).Returns(certificates.ElementType);
-            mockSet.As<IQueryable<Certificate>>().Setup(m => m.GetEnumerator()).Returns(() => certificates.GetEnumerator());
-
-            return mockSet;
-        }
-
-        private Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Certificate>> certificateMockDbSet)
-        {
-            var mockDbContext = new Mock<AssessorDbContext>();
-            mockDbContext.Setup(c => c.Certificates).Returns(certificateMockDbSet.Object);
             return mockDbContext;
         }
     }

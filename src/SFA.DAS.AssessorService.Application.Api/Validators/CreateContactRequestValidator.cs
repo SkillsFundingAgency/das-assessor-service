@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -25,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
                     nameof(createContactRequest.Email), 120))
-                .EmailAddress()
+                .EmailRegexAddress()
                 .WithMessage(string.Format(localiser[ResourceMessageName.MustBeValidEmailAddress].Value));
 
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(

@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[EmailTemplatesRecipients]
+CREATE TABLE [dbo].[EMailTemplatesRecipients]
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[Recipients]  [nvarchar](max) NULL,
@@ -13,12 +13,12 @@ CREATE TABLE [dbo].[EmailTemplatesRecipients]
 ) ON [PRIMARY] 
 GO
 
-ALTER TABLE [dbo].[EmailTemplatesRecipients] 
+ALTER TABLE [dbo].[EMailTemplatesRecipients] 
 ADD CONSTRAINT [FK_EmailTemplates_EmailTemplatesRecipients] 
 FOREIGN KEY([EmailTemplateId])
-REFERENCES [dbo].[EmailTemplates] ([Id]);
+REFERENCES [dbo].[EMailTemplates] ([Id]);
 GO
 
-ALTER TABLE [dbo].[EmailTemplatesRecipients]
+ALTER TABLE [dbo].[EMailTemplatesRecipients]
 ADD CONSTRAINT [UK_EmailTemplateId] UNIQUE (EmailTemplateId)   
 GO  

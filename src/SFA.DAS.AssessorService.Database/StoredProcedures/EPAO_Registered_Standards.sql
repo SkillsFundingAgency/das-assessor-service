@@ -7,9 +7,9 @@ BEGIN
 WITH LatestVersions
 AS
 (
-	SELECT IFateReferenceNumber, Title, Version, [dbo].[ExpandedVersion](Version) MaxVersion, Level, Larscode
+	SELECT IFateReferenceNumber, Title, Version, [dbo].[ExpandedVersion](Version) MaxVersion, Level, LarsCode
 	FROM (
-	SELECT IFateReferenceNumber, Title, Version, Level, Larscode, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) DESC) rownumber FROM Standards
+	SELECT IFateReferenceNumber, Title, Version, Level, LarsCode, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) DESC) rownumber FROM Standards
 	WHERE VersionApprovedForDelivery IS NOT NULL
 	) sv1 WHERE rownumber = 1
 ),
@@ -19,11 +19,11 @@ AppliedVersions AS
 	FROM Apply ap1
 	CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH (version VARCHAR(10) '$') v1
 	CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
-	JOIN Organisations og1 on og1.id = ap1.OrganisationId
+	JOIN Organisations og1 on og1.Id = ap1.OrganisationId
 	WHERE 1=1
 	  AND sequence.NotRequired = 0
 	  AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
-	  AND ap1.standardreference IS NOT NULL
+	  AND ap1.StandardReference IS NOT NULL
 	  AND ap1.ApplicationStatus NOT IN('Approved', 'Declined')
 	  AND ap1.DeletedAt IS NULL
 	  AND og1.EndPointAssessorOrganisationId = @EPAOID

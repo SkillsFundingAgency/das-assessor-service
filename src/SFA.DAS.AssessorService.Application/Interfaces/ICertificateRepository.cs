@@ -16,17 +16,15 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<Certificate> GetCertificate(long uln, int standardCode);
 
-        Task<Certificate> GetCertificate(long uln, int standardCode, string familyName);
+        Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, bool includeLogs = false);
 
-        Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, bool includeLogs);
+        Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, string endpointOrganisationId);
+
+        Task<Certificate> GetCertificate(long uln, string familyName);
 
         Task<Certificate> GetCertificate(string certificateReference);
 
-        Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
-
-        Task<Certificate> GetCertificateByUlnOrgIdLastnameAndStandardCode(long uln, string endpointOrganisationId, string lastName, int standardCode);
-
-        Task<Certificate> GetCertificateByUlnLastname(long uln, string lastName);
+        Task<Certificate> GetCertificate(string certificateReference, string familyName, DateTime? achievementDate);
 
         Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
 

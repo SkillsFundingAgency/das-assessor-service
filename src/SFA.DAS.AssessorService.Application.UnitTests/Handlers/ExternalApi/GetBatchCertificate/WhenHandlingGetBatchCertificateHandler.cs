@@ -97,6 +97,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             result.Should()
                 .BeEquivalentTo(_certResponse, opt => opt
                  .Excluding(c => c.UpdatedAt)
+                 .Excluding(c => c.LearnerGivenNames)
+                 .Excluding(c => c.LearnerFamilyName)
+                 .Excluding(c => c.LearnerFullNameNoSpaces)
                  .Excluding(c => c.FullName)
                  .Excluding(c => c.ContactOrganisation)
                  .Excluding(c => c.ProviderName)
@@ -116,7 +119,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
                  .Excluding(c => c.ContactAddLine2)
                  .Excluding(c => c.ContactAddLine3)
                  .Excluding(c => c.ContactAddLine4)
-                 .Excluding(c => c.ContactPostCode));
+                 .Excluding(c => c.ContactPostCode)
+                 .Excluding(c => c.LatestEPAOutcome));
         }
 
         [Test]

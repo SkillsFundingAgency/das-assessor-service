@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
 
         public class MapManualEntryRequiredAction : IMappingAction<Company, CompaniesHouseSummary>
         {
-            public void Process(Company source, CompaniesHouseSummary destination)
+            public void Process(Company source, CompaniesHouseSummary destination, ResolutionContext context)
             {
                 if (destination != null
                      && (destination.Directors is null || destination.Directors.Count == 0)

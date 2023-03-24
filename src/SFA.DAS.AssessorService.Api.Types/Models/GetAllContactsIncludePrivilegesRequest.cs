@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             WithUser = withUser;
         }
 
-        public string EndPointAssessorOrganisationId { get;}
+        public string EndPointAssessorOrganisationId { get; }
         public bool? WithUser { get; }
     }
 }

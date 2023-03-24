@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
 
             var updateContactStatusRequestMock =
                 Builder<UpdateContactStatusRequest>.CreateNew()
-                    .WithConstructor(() => new UpdateContactStatusRequest(It.IsAny<Guid>(), It.IsAny<string>())).Build();
+                    .WithFactory(() => new UpdateContactStatusRequest(It.IsAny<Guid>(), It.IsAny<string>())).Build();
 
             contactRepositoryMock.Setup(x => x.UpdateStatus(updateContactStatusRequestMock))
                 .Returns(Task.CompletedTask);
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
         public void Should_Update_Status()
         {
             _result.Should().NotBeNull();
-            _result.Status.Should().BeEquivalentTo(TaskStatus.RanToCompletion);
+            _result.Status.Should().Be(TaskStatus.RanToCompletion);
         }
     }
 }

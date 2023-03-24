@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             var contactCreateDomainModel = Builder<Contact>.CreateNew().Build();
 
             var mockSet = CreateMockSet();
-            CreateMockDbCOntext(mockSet);
+            CreateMockDbContext(mockSet);
 
             _contactRepository = new ContactRepository(_assessorDbContext.Object, new Mock<IUnitOfWork>().Object);
             _result = _contactRepository.CreateNewContact(contactCreateDomainModel).Result;
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             _result.Should().NotBeNull();
         }
 
-        private void CreateMockDbCOntext(Mock<DbSet<Contact>> mockSet)
+        private void CreateMockDbContext(Mock<DbSet<Contact>> mockSet)
         {
             _assessorDbContext = new Mock<AssessorDbContext>();
             _assessorDbContext.Setup(q => q.Contacts).Returns(mockSet.Object);

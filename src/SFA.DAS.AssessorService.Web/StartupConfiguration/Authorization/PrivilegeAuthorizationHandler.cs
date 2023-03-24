@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
@@ -35,8 +35,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             
             var userid = _httpContextAccessor.HttpContext.User.FindFirst("UserId").Value;
 
-            var controllerActionDescriptor = (context.Resource as AuthorizationFilterContext).ActionDescriptor as ControllerActionDescriptor;
-            
             var privilegeRequested = (await _contactsApiClient.GetPrivileges()).FirstOrDefault(p => p.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
             if (privilegeRequested is null || !privilegeRequested.Enabled)
             {   
@@ -53,14 +51,33 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             }
             else
             {
-                var deniedContext = new PrivilegeAuthorizationDeniedContext
+                if (context.Resource is HttpContext httpContext)
                 {
-                    PrivilegeId = privilegeRequested.Id,
-                    Controller = controllerActionDescriptor.ControllerName,
-                    Action = controllerActionDescriptor.ActionName
-                };
-                
-                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> {{ nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext)}});
+                    if (httpContext.GetEndpoint() is RouteEndpoint routeEndpoint)
+                    {
+                        var controllerActionDescriptor = routeEndpoint.Metadata
+                            .OfType<ControllerActionDescriptor>()
+                            .SingleOrDefault();
+
+                        if (controllerActionDescriptor != null)
+                        {
+                            var deniedContext = new PrivilegeAuthorizationDeniedContext
+                            {
+                                PrivilegeId = privilegeRequested.Id,
+                                Controller = controllerActionDescriptor.ControllerName,
+                                Action = controllerActionDescriptor.ActionName
+                            };
+
+                            _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, 
+                                new Dictionary<string, object> 
+                                {
+                                    { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) } 
+                                });
+
+                            return;
+                        }
+                    }
+                }
             }
         }
     }

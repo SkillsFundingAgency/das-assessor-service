@@ -15,8 +15,7 @@ using SFA.DAS.AssessorService.Web.ViewModels;
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     [TestFixture]
-    public class WhenPostSelectOrChangeContactNameConfirm
-        : OrganisationControllerTestBaseForModel<SelectOrChangeContactNameViewModel>
+    public class WhenPostSelectOrChangeContactNameConfirm : OrganisationControllerTestBase
     {
         private Guid ValidPrimaryContactIdSameOrganisation = Guid.NewGuid();
         private const string ValidPrimaryContactSameOrganisation = "another@valid.com";
@@ -57,8 +56,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 .ReturnsAsync(new List<ContactResponse>());
         }
 
-        public override async Task<IActionResult> Act()
-        {            
+        public async Task<IActionResult> Act()
+        {
             return await sut.SelectOrChangeContactName(new SelectOrChangeContactNameViewModel
             {
                 PrimaryContact = ValidPrimaryContactSameOrganisation,
@@ -66,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
         }
 
-        public override async Task<IActionResult> Act(SelectOrChangeContactNameViewModel viewModel)
+        public async Task<IActionResult> Act(SelectOrChangeContactNameViewModel viewModel)
         {
             return await sut.SelectOrChangeContactName(viewModel);
         }
