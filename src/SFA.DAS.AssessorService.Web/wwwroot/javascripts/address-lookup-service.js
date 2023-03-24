@@ -182,8 +182,12 @@
     function populateAddressField(className, addressValue) {
         if ($(className).length) {
             $(className).val(addressValue);
-            $(".js-address-panel ul").append("<li>" + addressValue + "</li>");
+            $(".js-address-panel ul").append("<li>" + htmlEncode(addressValue) + "</li>");
         }
+    }
+
+    function htmlEncode(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     function restorePreviousAddress() {
