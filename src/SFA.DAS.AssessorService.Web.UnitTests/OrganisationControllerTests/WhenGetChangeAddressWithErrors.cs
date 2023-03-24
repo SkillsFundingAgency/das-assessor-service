@@ -1,12 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using EnumsNET;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NUnit.Framework;
-
 using SFA.DAS.AssessorService.Web.ViewModels;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
