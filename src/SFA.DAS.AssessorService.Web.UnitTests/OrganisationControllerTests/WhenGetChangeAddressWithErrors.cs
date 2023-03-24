@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-
+﻿using System.Linq;
+using System.Threading.Tasks;
+using EnumsNET;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -96,6 +97,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             result.ViewData.ModelState[nameof(ChangeAddressViewModel.AddressLine3)].Errors.Should().Contain(p => p.ErrorMessage == (string.IsNullOrEmpty(addressLine3) ? "An error message" : string.Empty));
             result.ViewData.ModelState[nameof(ChangeAddressViewModel.AddressLine4)].Errors.Should().Contain(p => p.ErrorMessage == (string.IsNullOrEmpty(addressLine4) ? "An error message" : string.Empty));
             result.ViewData.ModelState[nameof(ChangeAddressViewModel.Postcode)].Errors.Should().Contain(p => p.ErrorMessage == (string.IsNullOrEmpty(postcode) ? "An error message" : string.Empty));
+        }
+
+        [TestCase("VALUE", "VALUE", "VALUE", "VALUE", "<VALUE")]
+        [TestCase("VALUE", "VALUE", "VALUE", ">VALUE", "VALUE")]
+        [TestCase("VALUE", "VALUE", "VALUE ; ", "VALUE", "VALUE")]
+        [TestCase("VALUE", "VALUE<", "VALUE", "VALUE", "VALUE")]
+        [TestCase("VALUE>", "VALUE", "VALUE", "VALUE", "VALUE")]
+        public async Task Should_return_invalid_model_for_invalid_input(string addressLine1, string addressLine2, string addressLine3, string addressLine4, string postcode)
+        {
+            var result = await Act(addressLine1, addressLine2, addressLine3, addressLine4, postcode) as ViewResult;
+
+            Assert.That(result.ViewData.ModelState.IsValid, Is.False);
         }
     }
 }

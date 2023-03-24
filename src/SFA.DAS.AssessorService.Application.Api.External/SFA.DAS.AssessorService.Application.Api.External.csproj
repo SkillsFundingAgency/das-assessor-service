@@ -21,12 +21,12 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
-    <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
+    <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
   </ItemGroup>
 
