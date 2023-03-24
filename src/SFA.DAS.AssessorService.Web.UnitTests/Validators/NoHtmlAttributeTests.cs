@@ -3,7 +3,7 @@
     using NUnit.Framework;
     using SFA.DAS.AssessorService.Web.Validators;
 
-    public class NoHtmlTagsAttributeTests
+    public class NoHtmlAttributeTests
     {
         
         [TestCase("<a onmouseovealert(document.cookie)> XSS Attack </a>")]
@@ -13,7 +13,7 @@
         [TestCase("123 blah road>")]
         public void IsValid_Returns_False_ForInvalidInput(string input)
         {
-            Assert.That(new NoHtmlTagsAttribute().IsValid(input), Is.False);
+            Assert.That(new NoHtmlAttribute().IsValid(input), Is.False);
         }
 
         [TestCase("123 blah road")]
@@ -21,7 +21,7 @@
         [TestCase("N9 7BN")]
         public void IsValid_Returns_True_ForValidInput(string input)
         {
-            Assert.That(new NoHtmlTagsAttribute().IsValid(input), Is.True);
+            Assert.That(new NoHtmlAttribute().IsValid(input), Is.True);
         }
     }
 }

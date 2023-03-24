@@ -5,7 +5,7 @@ using System.Linq;
 namespace SFA.DAS.AssessorService.Web.Validators
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    internal class NoHtmlTagsAttribute : ValidationAttribute
+    internal class NoHtmlAttribute : ValidationAttribute
     {
         private readonly string[] invalidInput = { "<", ">", "&lt;", "&gt;" };
 
