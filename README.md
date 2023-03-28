@@ -13,13 +13,13 @@ This repository represents the Assessors API code base. This service ...
 
 In order to run this solution locally you will need the following:
 
-* Install [.NET Core 2.2 SDK](https://www.microsoft.com/net/download)
-* Install [Visual Studio 2019](https://www.visualstudio.com/downloads/) with these workloads:
+* Install [.NET 6.0 SDK](https://www.microsoft.com/net/download)
+* Install [Visual Studio 2022](https://www.visualstudio.com/downloads/) with these workloads:
     * ASP.NET and web development
     * Azure development
 * Install [SQL Server 2017 Developer Edition](https://go.microsoft.com/fwlink/?linkid=853016)
 * Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
-* Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on atleast v5.3)
+* Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409)
 * Install [Azure Storage Explorer](http://storageexplorer.com/) 
 * Administrator Access
 
