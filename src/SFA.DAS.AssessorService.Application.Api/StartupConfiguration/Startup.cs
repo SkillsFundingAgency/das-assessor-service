@@ -226,18 +226,21 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                config.For<ITokenService>().Use<TokenService>().Named("QnATokenService")
+                const string qnATokenService = "QnATokenService";
+                config.For<ITokenService>().Use<TokenService>().Named(qnATokenService)
                     .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication);
 
-                config.For<ITokenService>().Use<TokenService>().Named("ReferenceDataTokenService")
+                const string referenceDataTokenService = "ReferenceDataTokenService";
+                config.For<ITokenService>().Use<TokenService>().Named(referenceDataTokenService)
                     .Ctor<IClientApiAuthentication>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                config.For<ITokenService>().Use<TokenService>().Named("RoatpTokenService")
+                const string roatpTokenService = "RoatpTokenService";
+                config.For<ITokenService>().Use<TokenService>().Named(roatpTokenService)
                     .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication);
 
-                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("QnATokenService"));
-                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("ReferenceDataTokenService"));
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("RoatpTokenService"));
+                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(qnATokenService));
+                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(referenceDataTokenService));
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(roatpTokenService));
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()

@@ -169,36 +169,39 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
 
-                config.For<ITokenService>().Use<TokenService>().Named("AssessorTokenService")
+                const string assessorTokenService = "AssessorTokenService";
+                config.For<ITokenService>().Use<TokenService>().Named(assessorTokenService)
                     .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication);
 
-                config.For<ITokenService>().Use<TokenService>().Named("QnATokenService")
+                const string qnATokenService = "QnATokenService";
+                config.For<ITokenService>().Use<TokenService>().Named(qnATokenService)
                     .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication);
 
-                config.For<ITokenService>().Use<TokenService>().Named("RoatpTokenService")
+                const string roatpTokenService = "RoatpTokenService";
+                config.For<ITokenService>().Use<TokenService>().Named(roatpTokenService)
                     .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication);
 
-                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
-                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
+                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
 
-                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("QnATokenService"));
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("RoatpTokenService"));
+                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(qnATokenService));
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(roatpTokenService));
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
-                config.For<IApiValidationService>().Use<ApiValidationService>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>("AssessorTokenService"));
+                config.For<IApiValidationService>().Use<ApiValidationService>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(assessorTokenService));
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
 
                 var mapper = services.AddMappings().CreateMapper();
