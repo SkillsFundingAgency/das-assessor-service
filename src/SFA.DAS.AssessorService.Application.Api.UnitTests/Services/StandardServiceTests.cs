@@ -275,7 +275,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardVersionsByIFateReferenceNumber(standardReference);
 
-            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for IFATE reference number: {standardReference}");
+            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for iFateReferenceNumber: {standardReference}");
 
             Assert.AreEqual(null, result);
         }
@@ -339,13 +339,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardVersionById_And_TheStandardIdTypeUnknown_And_StandardIsNotFound_Then_LogInfo_And_ReturnNull(string version)
+        public async Task When_GettingStandardVersionById_And_TheStandardIdTypeUnknown_Then_LogError_And_ReturnNull(string version)
         {
             string standardReference = null;
 
             var result = await _standardService.GetStandardVersionById(standardReference, version);
 
-            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for Id: {standardReference}, version: {version} and standard id type: {StandardId.StandardIdType.Unknown}");
+            VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD VERSION: Failed to get for standard id: {standardReference}");
 
             Assert.AreEqual(null, result);
         }
@@ -403,7 +403,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardVersionsByLarsCode(standardReference);
 
-            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for Id: {standardReference}");
+            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for larsCode: {standardReference}");
 
             Assert.AreEqual(null, result);
         }
@@ -416,7 +416,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardVersionsByLarsCode(standardReference);
 
-            VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD: Failed to get for LARS code: {standardReference}");
+            VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD: Failed to get for larsCode: {standardReference}");
 
             Assert.AreEqual(null, result);
         }
@@ -429,7 +429,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardVersionByStandardUId(standardReference);
 
-            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for standard uid: {standardReference}");
+            VerifyLogger(LogLevel.Information, new EventId(0), $"Unable to find standard for standardUId: {standardReference}");
 
             Assert.AreEqual(null, result);
         }
@@ -442,7 +442,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardVersionByStandardUId(standardReference);
 
-            VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD: Failed to get for standard id: {standardReference}");
+            VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD: Failed to get for standardUId: {standardReference}");
 
             Assert.AreEqual(null, result);
         }

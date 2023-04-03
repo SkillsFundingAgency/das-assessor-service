@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 if (standards == null || !standards.Any())
                 {
-                    _logger.LogInformation($"Unable to find standard for IFATE reference number: {iFateReferenceNumber}");
+                    _logger.LogInformation($"Unable to find standard for iFateReferenceNumber: {iFateReferenceNumber}");
                 }
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                         standard = await _standardRepository.GetStandardVersionByStandardUId(standardId.StandardUId);
                         break;
                     case StandardId.StandardIdType.Unknown:
-                        break;
+                        throw new ArgumentOutOfRangeException("id", "StandardId was not of type StandardUId, LarsCode or iFateReferenceNumber");                        
                 }
                 if (standard == null)
                 {
@@ -115,12 +115,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 if (standards == null || !standards.Any())
                 {
-                    _logger.LogInformation($"Unable to find standard for Id: {larsCode}");
+                    _logger.LogInformation($"Unable to find standard for larsCode: {larsCode}");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"STANDARD: Failed to get for LARS code: {larsCode}");
+                _logger.LogError(ex, $"STANDARD: Failed to get for larsCode: {larsCode}");
             }
 
             return standards;
@@ -136,12 +136,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 if (standard == null)
                 {
-                    _logger.LogInformation($"Unable to find standard for standard uid: {standardUId}");
+                    _logger.LogInformation($"Unable to find standard for standardUId: {standardUId}");
                 }    
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"STANDARD: Failed to get for standard id: {standardUId}");
+                _logger.LogError(ex, $"STANDARD: Failed to get for standardUId: {standardUId}");
             }
 
             return standard;
@@ -196,6 +196,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                     case StandardId.StandardIdType.StandardUId:
                         options = await _standardRepository.GetStandardOptionsByStandardUId(standardId.StandardUId);
                         break;
+                    case StandardId.StandardIdType.Unknown:
+                        throw new ArgumentOutOfRangeException("id", "StandardId was not of type StandardUId, LarsCode or iFateReferenceNumber");
                 }
                 if (options == null)
                 {
