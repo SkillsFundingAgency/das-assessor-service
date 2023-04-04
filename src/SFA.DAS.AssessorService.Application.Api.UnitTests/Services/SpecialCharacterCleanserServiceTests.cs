@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
 

@@ -15,8 +15,6 @@ using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
-using OrganisationStandard = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandard;
-using OrganisationStandardDeliveryArea = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardDeliveryArea;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards.Query
 {

@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
-
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.SearchRequestValidator
+﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.SearchRequestValidator
 {
     //[TestFixture]
     //public class WhenRequestTypeIsDobSurname

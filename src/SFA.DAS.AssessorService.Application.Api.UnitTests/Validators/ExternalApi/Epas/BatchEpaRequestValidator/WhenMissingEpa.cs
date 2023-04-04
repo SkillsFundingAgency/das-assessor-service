@@ -3,9 +3,6 @@ using FluentAssertions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalApi.Epas.BatchEpaRequestValidator

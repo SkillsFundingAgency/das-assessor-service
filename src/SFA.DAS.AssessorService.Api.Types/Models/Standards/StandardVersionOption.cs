@@ -1,5 +1,4 @@
-﻿
-namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
     public class StandardVersionOption
     {

@@ -1,6 +1,5 @@
 using AutoMapper;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;

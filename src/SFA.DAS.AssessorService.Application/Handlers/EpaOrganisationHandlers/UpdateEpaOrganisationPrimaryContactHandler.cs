@@ -1,12 +1,10 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-
 using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-
 using System;
 using System.Collections.Generic;
 using System.Threading;

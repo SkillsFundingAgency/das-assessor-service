@@ -1,11 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using NUnit.Framework;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
 {

@@ -1,10 +1,9 @@
-﻿
+﻿using System;
+using MediatR;
+using System.Runtime.Serialization;
+
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
-    using System;
-    using MediatR;
-    using System.Runtime.Serialization;
-
     public class UpdateOrganisationFinancialTrackRecordRequest: IRequest
     {
         [DataMember]

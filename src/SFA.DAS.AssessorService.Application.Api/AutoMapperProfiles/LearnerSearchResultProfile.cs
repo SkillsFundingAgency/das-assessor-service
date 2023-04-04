@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {

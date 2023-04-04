@@ -1,8 +1,7 @@
-﻿
+﻿using System;
+
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
-    using System;
-
     public class Organisation
     {
         public Guid Id { get; set; }

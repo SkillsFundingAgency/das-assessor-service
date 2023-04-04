@@ -1,5 +1,4 @@
 ﻿using System;
-using Castle.Core.Internal;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;

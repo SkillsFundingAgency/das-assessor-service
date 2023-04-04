@@ -4,7 +4,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Linq;

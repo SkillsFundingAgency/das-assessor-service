@@ -1,9 +1,8 @@
 ﻿using System;
+using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
-    using MediatR;
-
     public class CreateOrganisationRequest : IRequest<bool>
     {
         public int ProviderTypeId { get; set; }

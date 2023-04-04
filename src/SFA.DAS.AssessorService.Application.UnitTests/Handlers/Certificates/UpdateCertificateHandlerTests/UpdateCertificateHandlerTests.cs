@@ -1,5 +1,4 @@
 ﻿using FizzWare.NBuilder;
-using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;

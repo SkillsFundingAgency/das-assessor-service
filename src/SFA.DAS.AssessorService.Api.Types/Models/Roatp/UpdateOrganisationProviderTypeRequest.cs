@@ -1,9 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
-{
-    using MediatR;
-    using System;
-    using System.Runtime.Serialization;
+﻿using MediatR;
+using System;
+using System.Runtime.Serialization;
 
+namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
+{
     public class UpdateOrganisationProviderTypeRequest : IRequest
     {
         [DataMember]

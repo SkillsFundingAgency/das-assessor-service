@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
-using Microsoft.Extensions.Localization;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Validators;
+﻿using NUnit.Framework;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Login
 {
