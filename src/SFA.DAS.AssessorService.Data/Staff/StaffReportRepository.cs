@@ -44,11 +44,11 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
         {
-            var proc = storedProcedure;
-            return (await _connection.QueryAsync(proc, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
+            var inputStoredProcedure = storedProcedure;
+            return (await _connection.QueryAsync(inputStoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
         }
 
-        Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId) //method
+        Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId)
         {
             return Task.Run(() =>
             {
