@@ -29,10 +29,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public bool RoEPAOApproved { get; set; }
         public string EndPointAssessmentOrgId { get; set; }
         public List<FinancialGrade> FinancialGrades { get; set; }
-        public FHADetails FHADetails { get; set; }
+        public FhaDetails FHADetails { get; set; }
     }
 
-    public class FHADetails
+    public class FhaDetails
     {
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }

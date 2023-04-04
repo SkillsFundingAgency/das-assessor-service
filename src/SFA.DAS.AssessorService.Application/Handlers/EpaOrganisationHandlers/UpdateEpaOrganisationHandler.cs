@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoEPAOApproved = roEPAOApproved,
                     EndPointAssessmentOrgId = existingOrganisation?.OrganisationData?.EndPointAssessmentOrgId,
                     FinancialGrades = existingOrganisation?.OrganisationData?.FinancialGrades ?? new List<ApplyTypes.FinancialGrade>(),
-                    FHADetails = new FHADetails
+                    FHADetails = new FhaDetails
                     {
                         FinancialDueDate = request.FinancialDueDate,
                         FinancialExempt = request.FinancialExempt

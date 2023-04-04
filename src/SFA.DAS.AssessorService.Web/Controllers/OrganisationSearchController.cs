@@ -394,7 +394,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 RoATPApproved =  organisationSearchResult.RoATPApproved,
                 RoEPAOApproved= false,
                 EndPointAssessmentOrgId = null,
-                FHADetails = new Api.Types.Models.AO.FHADetails
+                FHADetails = new Api.Types.Models.AO.FhaDetails
                 {
                     FinancialDueDate = organisationSearchResult.FinancialDueDate,
                     FinancialExempt = organisationSearchResult.FinancialExempt

@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             if (epaOrg != null)
             {
-                epaOrg.OrganisationData.FHADetails = new FHADetails()
+                epaOrg.OrganisationData.FHADetails = new FhaDetails()
                 {
                     FinancialDueDate = message.FinancialDueDate,
                     FinancialExempt = message.FinancialExempt
