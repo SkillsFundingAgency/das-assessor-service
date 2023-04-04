@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             _httpContextAccessor = httpContextAccessor;
             _tempDataProvider = tempDataProvider;
         }
-        
+
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PrivilegeRequirement requirement)
         {
             if (!_httpContextAccessor.HttpContext.User.HasClaim(c => c.Type == "UserId"))
@@ -32,18 +32,18 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 context.Fail();
                 return;
             }
-            
+
             var userid = _httpContextAccessor.HttpContext.User.FindFirst("UserId").Value;
 
             var privilegeRequested = (await _contactsApiClient.GetPrivileges()).FirstOrDefault(p => p.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase));
             if (privilegeRequested is null || !privilegeRequested.Enabled)
-            {   
+            {
                 var unavailableFeatureContext = new PrivilegeAuthorizationDeniedContext();
-                
-                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> {{"UnavailableFeatureContext", JsonConvert.SerializeObject(unavailableFeatureContext)}});
+
+                _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, new Dictionary<string, object> { { "UnavailableFeatureContext", JsonConvert.SerializeObject(unavailableFeatureContext) } });
                 return;
             }
-            
+
             var contactPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userid));
             if (contactPrivileges.Any(cp => cp.Privilege.Key.Equals(requirement.Privilege, StringComparison.InvariantCultureIgnoreCase)))
             {
@@ -51,31 +51,28 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             }
             else
             {
-                if (context.Resource is HttpContext httpContext)
+                if (context.Resource is HttpContext httpContext && httpContext.GetEndpoint() is RouteEndpoint routeEndpoint)
                 {
-                    if (httpContext.GetEndpoint() is RouteEndpoint routeEndpoint)
+                    var controllerActionDescriptor = routeEndpoint.Metadata
+                        .OfType<ControllerActionDescriptor>()
+                        .SingleOrDefault();
+
+                    if (controllerActionDescriptor != null)
                     {
-                        var controllerActionDescriptor = routeEndpoint.Metadata
-                            .OfType<ControllerActionDescriptor>()
-                            .SingleOrDefault();
-
-                        if (controllerActionDescriptor != null)
+                        var deniedContext = new PrivilegeAuthorizationDeniedContext
                         {
-                            var deniedContext = new PrivilegeAuthorizationDeniedContext
+                            PrivilegeId = privilegeRequested.Id,
+                            Controller = controllerActionDescriptor.ControllerName,
+                            Action = controllerActionDescriptor.ActionName
+                        };
+
+                        _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext,
+                            new Dictionary<string, object>
                             {
-                                PrivilegeId = privilegeRequested.Id,
-                                Controller = controllerActionDescriptor.ControllerName,
-                                Action = controllerActionDescriptor.ActionName
-                            };
+                                    { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) }
+                            });
 
-                            _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, 
-                                new Dictionary<string, object> 
-                                {
-                                    { nameof(PrivilegeAuthorizationDeniedContext), JsonConvert.SerializeObject(deniedContext) } 
-                                });
-
-                            return;
-                        }
+                        return;
                     }
                 }
             }
