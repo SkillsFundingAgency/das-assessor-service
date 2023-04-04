@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     {
         public string SelectedGrade { get; set; }       
 
-        public List<SelectListItem> Grades = new List<SelectListItem>
+        private List<SelectListItem> grades = new List<SelectListItem>
         {
             new SelectListItem {Text = CertificateGrade.Pass, Value = CertificateGrade.Pass},
             new SelectListItem {Text = CertificateGrade.Credit, Value = CertificateGrade.Credit},
@@ -21,6 +21,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             new SelectListItem {Text = CertificateGrade.NoGradeAwarded, Value = CertificateGrade.NoGradeAwarded},
             new SelectListItem {Text = CertificateGrade.Fail, Value = CertificateGrade.Fail}
         };
+
+        public List<SelectListItem> Grades
+        {
+            get { return grades; }
+            set { grades = value; }
+        }
+
         public override void FromCertificate(Domain.Entities.Certificate cert)
         {
             base.FromCertificate(cert);

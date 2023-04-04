@@ -5,7 +5,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class GetContactRequest: IRequest<AssessmentOrganisationContact>
     {
-        public string ContactId;
+        private string contactId;
+
+        public string ContactId
+        {
+            get { return contactId; }
+            set { contactId = value; }
+        }
         
     }
 }

@@ -5,6 +5,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class GetOrganisationStandardRequest: IRequest<OrganisationStandard>
     {
-        public int OrganisationStandardId;    
+        private int organisationStandardId;
+
+        public int OrganisationStandardId
+        {
+            get { return organisationStandardId; }
+            set { organisationStandardId = value; }
+        }
     }
 }
