@@ -13,8 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid userId);
         Task<List<ApplicationResponse>> GetOrganisationWithdrawalApplications(Guid userId);
         Task<List<ApplicationResponse>> GetStandardWithdrawalApplications(Guid userId);
-        Task<ApplicationResponse> GetApplication(Guid id);
-        Task<ApplicationResponse> GetApplicationForUser(Guid id, Guid userId);
+        Task<ApplicationResponse> GetApplication(Guid applicationId);
+        Task<ApplicationResponse> GetApplicationForUser(Guid applicationId, Guid userId);
         Task<List<ApplicationResponse>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference);
         Task<List<ApplicationResponse>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode);
 
