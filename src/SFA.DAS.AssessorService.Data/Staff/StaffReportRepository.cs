@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -45,10 +44,11 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
         {
-            return (await _connection.QueryAsync(storedProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
+            var proc = storedProcedure;
+            return (await _connection.QueryAsync(proc, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
         }
 
-        Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId)
+        Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId) //method
         {
             return Task.Run(() =>
             {
