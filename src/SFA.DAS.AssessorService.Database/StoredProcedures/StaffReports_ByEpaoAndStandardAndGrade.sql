@@ -22,13 +22,13 @@ FROM (
   SELECT
 	  org.[EndPointAssessorName] AS [EPAO Name],
 	  org.[EndPointAssessorOrganisationId] AS [EPAO ID],
-	  TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')) AS [Standard Name],
-	  UPPER(JSON_VALUE(ce.[CertificateData], '$.StandardReference')) AS [Standard Reference],
-	  CONVERT(CHAR(10), ce.[StandardCode]) AS 'Standard Code',
-	  'LEVEL ' + JSON_VALUE(ce.[CertificateData], '$.StandardLevel') AS [Level],
-	  ISNULL(JSON_VALUE(ce.[CertificateData], '$.Version'),'') AS [Standard Version],
-	  [dbo].[ExpandedVersion](ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),''))  AS [orderVersion],      
-	  (CASE WHEN JSON_VALUE(ce.[CertificateData], '$.OverallGrade') IS NULL THEN '' ELSE  UPPER(JSON_VALUE(ce.[CertificateData], '$.OverallGrade')) END) AS [Grade],
+	  UPPER(ISNULL([StandardName],'')) AS [Standard Name],
+	  ISNULL([StandardReference],'') AS [Standard Reference],
+	  ce.[StandardCode] AS [Standard Code],
+	  CASE WHEN CONVERT(VARCHAR(10), ce.[StandardLevel]) = '0' THEN '' ELSE 'LEVEL ' + CONVERT(VARCHAR(10), ce.[StandardLevel]) END AS [Level],
+	  ISNULL(ce.[Version],'') AS [Standard Version],
+	  ISNULL([dbo].[ExpandedVersion](ce.[Version]),'')  AS [orderVersion],	  
+	  UPPER(ISNULL(ce.[OverallGrade],'')) AS [Grade],
 	  COUNT(*) AS [Total],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS [Manual Total],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 THEN 1 ELSE 0 END) AS [EPA Service Total],
@@ -36,19 +36,22 @@ FROM (
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 And ce.[CreatedBy] = 'manual' THEN 1 ELSE 0 END) AS [EPA Service (Manual)],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Draft' THEN 1 ELSE 0 END) AS [EPA Draft],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS [EPA Submitted],
-	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS [EPA Printed],
-	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted]
+	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] IN ('Printed','Delivered','NotDelivered','SentToPrinter','Reprint') THEN 1 ELSE 0 END) AS [EPA Printed],
+	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted],
+	  MIN(UPPER(ISNULL([StandardName],''))) OVER (PARTITION BY ISNULL([StandardReference],'')) [sequenceForOrderBy]
+
   FROM [dbo].[Certificates] ce
-  INNER JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
+  JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
+  WHERE org.EndPointAssessorOrganisationId != 'EPA0000'
   GROUP BY 
 	  org.[EndPointAssessorName],
 	  org.[EndPointAssessorOrganisationId],
-	  TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')),
-	  UPPER(JSON_VALUE(ce.[CertificateData], '$.StandardReference')),
-      ce.[StandardCode],
-	  'LEVEL ' + JSON_VALUE(ce.[CertificateData], '$.StandardLevel'),
-	  JSON_VALUE(ce.[CertificateData], '$.Version'),
-	  (CASE WHEN JSON_VALUE(ce.[CertificateData], '$.OverallGrade') IS NULL THEN '' ELSE  UPPER(JSON_VALUE(ce.[CertificateData], '$.OverallGrade')) END)
+	  UPPER(ISNULL([StandardName],'')),
+	  ce.[StandardReference],
+	  ce.[StandardCode],
+	  CONVERT(VARCHAR(10), ce.[StandardLevel]),
+	  ce.[Version],
+	  UPPER(ISNULL(ce.[OverallGrade],''))
 
   UNION
   
@@ -60,7 +63,7 @@ FROM (
 	  '' AS [Standard Reference],
 	  '' AS [Level],
 	  '' AS [Standard Version],
-	  '' AS [orderVersion],      
+	  '' AS [orderVersion],	  
 	  '' AS [Grade],
 	  COUNT(*) AS [Total], 
 	  SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS [Manual Total],
@@ -70,14 +73,14 @@ FROM (
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Draft' THEN 1 ELSE 0 END) AS [EPA Draft],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS [EPA Submitted],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS [EPA Printed],
-	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted]
+	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted],
+	  null sequenceForOrderBy
   FROM [dbo].[Certificates] ce
+  JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
+  WHERE org.EndPointAssessorOrganisationId != 'EPA0000'
 ) st
 
-  ORDER BY [EPAO ID], MIN([Standard Name]) OVER (PARTITION BY [Standard Reference]) /*[Standard Name] */, 
-		 [Grade], [orderVersion], 
-		 SUM([EPA Service Total]) OVER (PARTITION BY [Standard Reference]) /* [EPA Service Total] */ DESC,
-		 SUM([Total]) OVER (PARTITION BY [Standard Reference]) /* [Total] */ DESC
+  ORDER BY [EPAO ID], [sequenceForOrderBy], [Grade], [orderVersion]
 RETURN 0
 
-         
+		 

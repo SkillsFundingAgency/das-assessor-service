@@ -67,7 +67,7 @@ stages:
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
-      LegacyApimServiceConnection: NAS-PreProd-ARM
+      LegacyApimServiceConnection: NAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
 
 - stage: Deploy_TEST
