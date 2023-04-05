@@ -15,12 +15,14 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
     public class SearchOrchestrator : ISearchOrchestrator
     {
         private readonly ILogger<SearchController> _logger;
+        private readonly IMapper _mapper;
         private readonly ISearchApiClient _searchApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public SearchOrchestrator(ILogger<SearchController> logger, ISearchApiClient searchApiClient, IHttpContextAccessor contextAccessor)
+        public SearchOrchestrator(ILogger<SearchController> logger, IMapper mapper, ISearchApiClient searchApiClient, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
+            _mapper = mapper;
             _searchApiClient = searchApiClient;
             _contextAccessor = contextAccessor;
         }
@@ -51,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
                     StdCode = Convert.ToString(result.StdCode),
                     Version = result.Version,
                     VersionConfirmed = result.VersionConfirmed,
-                    Versions = Mapper.Map<List<StandardVersionViewModel>>(result.Versions),
+                    Versions = _mapper.Map<List<StandardVersionViewModel>>(result.Versions),
                     OverallGrade = result.OverallGrade,
                     CertificateReference = result.CertificateReference,
                     CertificateStatus = result.CertificateStatus,

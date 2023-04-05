@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -54,12 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             var result = await _standardService.GetAllStandardOptions();
 
             Assert.IsNull(result);
-
-            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(), 
-                    It.IsAny<FormattedLogValues>(),
-                    It.IsAny<Exception>(), 
-                    It.IsAny<Func<object, Exception, string>>()), 
-                Times.Once, "STANDARD OPTIONS: Failed to get standard options");
+            VerifyLogger(LogLevel.Error, new EventId(0), "STANDARD OPTIONS: Failed to get standard options");
         }
 
         [Test, AutoData]
@@ -81,12 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             var result = await _standardService.GetStandardOptionsForLatestStandardVersions();
 
             Assert.IsNull(result);
-
-            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
-                    It.IsAny<FormattedLogValues>(),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<object, Exception, string>>()),
-                Times.Once);
+            VerifyLogger(LogLevel.Error, new EventId(0), "STANDARD OPTIONS: Failed to get options for latest version of each standard");
         }
 
         [Test, AutoData]
@@ -129,12 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardOptionsByStandardId(standardUId);
             Assert.IsNull(result);
-
-            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
-                    It.IsAny<FormattedLogValues>(),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<object, Exception, string>>()),
-                Times.Once, $"STANDARD OPTIONS: Failed to get standard options for id {standardUId}");
+            VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD OPTIONS: Failed to get standard options for id {standardUId}");
         }
 
         [Test, AutoData]
@@ -164,20 +148,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test, AutoData]
-        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_And_StandardWithReferenceAndVersionIsNotFound_Then_LogError_And_ReturnNull(string standardReference, string version)
+        public async Task When_GettingStandardOptionsByStandardReferenceAndVersion_And_StandardWithReferenceAndVersionIsNotFound_Then_LogError_And_ReturnNull(string version)
         {
+            var standardReference = "ST0001";
+
             _mockStandardRepository.Setup(repository => repository.GetStandardVersionByIFateReferenceNumber(It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception());
 
             var result = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
-            
-            _mockLogger.Verify(logger => logger.Log(LogLevel.Error, It.IsAny<EventId>(),
-                    It.IsAny<FormattedLogValues>(),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<object, Exception, string>>()),
-                Times.Once, $"Could not find standard with StandardReference: { standardReference } and Version: { version}");
-
             Assert.AreEqual(null, result);
+            
+            VerifyLogger(LogLevel.Error, new EventId(0), $"Could not find standard with id: {standardReference} and Version: {version}");
         }
 
         [Test, AutoData]
@@ -297,6 +278,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             var result = await _standardService.GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(endPointAssessorOrganisationId, iFateReferenceNumber);
 
             result.Should().BeEquivalentTo(versions);
+        }
+
+        private void VerifyLogger(LogLevel logLevel, EventId eventId, string message)
+        {
+            _mockLogger.Verify(logger => logger.Log(
+                It.Is<LogLevel>(p => p == logLevel),
+                It.Is<EventId>(p => p == eventId),
+                It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == message && @type.Name == "FormattedLogValues"),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
     }
 }

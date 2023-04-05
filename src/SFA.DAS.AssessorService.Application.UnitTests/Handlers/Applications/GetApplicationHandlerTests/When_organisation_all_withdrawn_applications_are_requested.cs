@@ -1,5 +1,6 @@
 using AutoMapper;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
@@ -15,7 +16,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
 {
     public class When_organisation_all_withdrawn_applications_are_requested
     {
-
         private Mock<IApplyRepository> _mockApplyRepository;
         private GetAllWithdrawnApplicationsForStandardHandler _sut;
 
@@ -52,9 +52,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
             //Act
             var result = await _sut.Handle(request, new CancellationToken());
 
-            //Assert
-            result.Count.Should().Equals(1);
-            result[0].StandardCode.Should().Equals(133);
+            // Assert
+            result.Count.Should().Be(1);
+            result[0].StandardCode.Should().Be(104);
         }
 
     }

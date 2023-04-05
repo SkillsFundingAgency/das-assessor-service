@@ -1,7 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using FluentValidation;
 using FluentValidation.AspNetCore;
-using JWT;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -9,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -25,24 +33,19 @@ using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
+using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private const string ServiceName = "SFA.DAS.AssessorService";
-        private const string Version = "1.0";
-        private readonly IHostingEnvironment _env;
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
+        private const string VERSION = "1.0";
+        private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private readonly bool UseSandbox;
+        private readonly bool _useSandbox;
 
-        public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
+        public Startup(IWebHostEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
@@ -50,14 +53,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
             Configuration = ConfigurationService
-                .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+                .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            if (!bool.TryParse(config["UseSandboxServices"], out UseSandbox))
+            if (!bool.TryParse(config["UseSandboxServices"], out _useSandbox))
             {
-                UseSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
+                _useSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
 
-            _logger.LogInformation($"UseSandbox is: {UseSandbox.ToString()}");
+            _logger.LogInformation($"UseSandbox is: {_useSandbox.ToString()}");
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
@@ -67,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             IServiceProvider serviceProvider;
             try
-            {            
+            {
                 services.AddAuthentication(o =>
                     {
                         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     {
                         var validAudiences = new List<string>();
 
-                        if (UseSandbox)
+                        if (_useSandbox)
                         {
                             validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
                             validAudiences.Add(Configuration.SandboxApiAuthentication.ClientId);
@@ -109,6 +112,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     options.RequestCultureProviders.Clear();
                 });
 
+                services.Configure<IISServerOptions>(options => { options.AutomaticAuthentication = false; });
+
                 IMvcBuilder mvcBuilder;
                 if (_env.IsDevelopment())
                     mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
@@ -120,7 +125,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         opts => { opts.ResourcesPath = "Resources"; })
                     .AddDataAnnotationsLocalization()
                     .AddControllersAsServices()
-                    .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+                    .AddNewtonsoftJson();
+
+                services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+                services.AddValidatorsFromAssemblyContaining<Startup>();
 
                 services.AddSwaggerGen(config =>
                     {
@@ -204,11 +212,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-          
-                config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
                 config.For<ISignInService>().Use<SignInService>();
               
-                var sqlConnectionString = UseSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
+                var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
@@ -226,7 +232,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                   .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
+                    .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
                 // End of SOAP Services
 
@@ -236,13 +243,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             return container.GetInstance<IServiceProvider>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             try
             {
                 MappingStartup.AddMappings();
-
-                //app.UseSecurityHeaders();
                 
                 if (env.IsDevelopment())
                 {
@@ -264,14 +269,27 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 
                 app.UseRequestLocalization();
                 app.UseHealthChecks("/health");
-                app.UseMvc();
+
+                app.UseRouting();
+                app.UseAuthentication();
+                app.UseAuthorization();
+                app.UseEndpoints(endpoints =>
+                {
+                    if (env.IsDevelopment())
+                    {
+                        endpoints.MapControllers().WithMetadata(new AllowAnonymousAttribute());
+                    }
+                    else
+                    {
+                        endpoints.MapControllers();
+                    }
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error during Startup Configure");
                 throw;
             }
-
         }
 
         private Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration NotificationConfiguration()

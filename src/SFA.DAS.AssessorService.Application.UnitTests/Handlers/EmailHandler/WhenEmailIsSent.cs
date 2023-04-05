@@ -1,14 +1,13 @@
 ﻿using System;
-using NUnit.Framework;
 using System.Threading;
 using FizzWare.NBuilder;
-using Moq;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.Notifications.Api.Client;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -31,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
         {
             //arrange
             var eailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
-            eailTemplate.TemplateId = "TemplateId"; 
-                
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
-                new SendEmailRequest("test@test.com", eailTemplate, new { key = "value" })).Build();            
+            eailTemplate.TemplateId = "TemplateId";
+
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
+                new SendEmailRequest("test@test.com", eailTemplate, new { key = "value" })).Build();
             
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
 
@@ -53,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var emailTemplate = Builder<EmailTemplateSummary>.CreateNew().Build();
             emailTemplate.TemplateId = "TemplateId"; 
             
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                 new SendEmailRequest("test@test.com", emailTemplate, new {})).Build();            
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
@@ -73,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.TemplateId = "TemplateId";
             emailTemplate.Recipients = "test@test.com";
 
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                 new SendEmailRequest(string.Empty, emailTemplate,  new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object,  _loggerMock.Object);
@@ -93,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.TemplateId = "TemplateId";
             emailTemplate.Recipients = "test@test.com";
 
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                 new SendEmailRequest("testemail@test.com", emailTemplate, new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);           
@@ -113,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             emailTemplate.TemplateId = "TemplateId";
             emailTemplate.Recipients = string.Empty;
 
-            _message = Builder<SendEmailRequest>.CreateNew().WithConstructor(() =>
+            _message = Builder<SendEmailRequest>.CreateNew().WithFactory(() =>
                   new SendEmailRequest(string.Empty, emailTemplate, new { })).Build();
 
             _sendEmailHandler = new SendEmailHandler(_notificationApiMock.Object, _loggerMock.Object);
@@ -122,9 +121,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             _sendEmailHandler.Handle(_message, new CancellationToken()).Wait();
 
             //assert
-            _loggerMock.Verify(
-                x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(),
-                    It.IsAny<Func<object, Exception, string>>()), Times.Once);
+            VerifyLogger(LogLevel.Error, new EventId(0));
+        }
+
+        private void VerifyLogger(LogLevel logLevel, EventId eventId)
+        {
+            _loggerMock.Verify(logger => logger.Log(
+                It.Is<LogLevel>(p => p == logLevel),
+                It.Is<EventId>(p => p == eventId),
+                It.Is<It.IsAnyType>((@object, @type) => @type.Name == "FormattedLogValues"),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
         }
     }
 }

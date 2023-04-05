@@ -158,7 +158,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         }
 
         [Test, RecursiveMoqAutoData]
-        public void WhenHandlingStartCertificateRequest_AndNoExistingCertificate_WhenStandardUIdSet_ButVersionInvalid_ThrowsException(
+        public async Task WhenHandlingStartCertificateRequest_AndNoExistingCertificate_WhenStandardUIdSet_ButVersionInvalid_ThrowsException(
             StartCertificateRequest request,
             Domain.Entities.Learner learnerRecord,
             Organisation organisationRecord,
@@ -176,7 +176,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Act
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
         
-            act.Should().Throw<InvalidOperationException>().WithMessage($"StandardUId:{request.StandardUId} not found, unable to populate certificate data");
+            // Assert
+            await act.Should().ThrowAsync<InvalidOperationException>().WithMessage($"StandardUId:{request.StandardUId} not found, unable to populate certificate data");
         }
 
         [Test, RecursiveMoqAutoData]

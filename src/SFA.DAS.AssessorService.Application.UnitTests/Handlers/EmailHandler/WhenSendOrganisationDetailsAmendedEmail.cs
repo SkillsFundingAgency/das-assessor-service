@@ -1,13 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
 using System.Threading;
-using FizzWare.NBuilder;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.Notifications.Api.Client;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
 using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -179,10 +176,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 
             // this callback is being used to capture the send email requests which are later
             // compared; this is done like this due to the anonymous object for Tokens
-            // which cannot be verified in the normal style - NOTE: also the
-            // Returns(Task.CompletedTask) which is necessary for a null returning async
-            // Mock which is handled by a callback to avoid a NullReferenceException
-            // during testing
+            // which cannot be verified in the normal style
             _emailRequestsSent = new List<string>();
             _mediator
                 .Setup(c => 
@@ -190,7 +184,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
                         It.IsAny<SendEmailRequest>(),
                         It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Unit())
-                .Callback<IRequest, CancellationToken>((request, token) =>
+                .Callback<IRequest<Unit>, CancellationToken>((request, token) =>
                 {
                     var sendEmailRequest = request as SendEmailRequest;
                     _emailRequestsSent.Add(JsonConvert.SerializeObject(new

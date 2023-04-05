@@ -10,7 +10,7 @@ BEGIN
     AS
     (
         SELECT 
-            StdCode, Title, Version, UkPrn AS ProviderUkPrn, ProviderName, COUNT(*) Pipeline, EstimateDate
+            StdCode, Title, Version, Ukprn AS ProviderUkPrn, ProviderName, COUNT(*) Pipeline, EstimateDate
         FROM 
             [dbo].[EPAO_Func_Get_PipelineInfo] (@epaOrgId, NULL, @pipelineCutOff)
         WHERE
