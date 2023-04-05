@@ -275,7 +275,7 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { certificateIds, batchNumber, updatedBy = SystemUsers.PrintFunction },
                 transaction: _unitOfWork.Transaction);
 
-            await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, null, null, null, SystemUsers.PrintFunction, batchNumber, null);
+            await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, SystemUsers.PrintFunction, batchNumber, null);
         }
 
         public async Task<PaginatedList<CertificateHistoryModel>> GetCertificateHistory(string endPointAssessorOrganisationId,
@@ -627,7 +627,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        private async Task AddMultipleCertificateLogs(Guid[] certificateIds, string action, string status, DateTime? eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
+        private async Task AddMultipleCertificateLogs(Guid[] certificateIds, string action, string username, int? batchNumber, string reasonForChange = null)
         {
             var sql =
                 $@"INSERT INTO [CertificateLogs]
@@ -643,27 +643,23 @@ namespace SFA.DAS.AssessorService.Data
                        ReasonForChange
                    )
                    SELECT
-                       NEWID(),
+                       NEWID(), 
                        @action,
                        c.Id,
-                       @eventTimeToUse,
-                       @statusToUse,
-                       @certificateDataToUse,
+                       c.UpdatedAt,
+                       c.Status,
+                       c.CertificateData,
                        @username,
                        @batchNumber,
                        @reasonForChange
                   FROM
                        [Certificates] c
-                   WHERE
+                  WHERE
                        c.Id IN @certificateIds";
-
-            var eventTimeToUse = eventTime.HasValue ? "@eventTime" : "c.UpdatedAt";
-            var statusToUse = !string.IsNullOrEmpty(status) ? "@status" : "c.Status";
-            var certificateDataToUse = !string.IsNullOrEmpty(certificateData) ? "@certificateData" : "c.CertificateData";
 
             await _unitOfWork.Connection.ExecuteAsync(
                    sql,
-                   param: new { certificateIds, action, statusToUse, eventTimeToUse, certificateDataToUse, username, batchNumber, reasonForChange },
+                   param: new { certificateIds, action, username, batchNumber, reasonForChange },
                    transaction: _unitOfWork.Transaction);
         }
     }
