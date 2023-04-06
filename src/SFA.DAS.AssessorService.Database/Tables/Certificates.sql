@@ -78,3 +78,9 @@ GO
 
 CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
 GO
+
+CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId]) INCLUDE ([StandardName], [StandardReference],
+[StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
+GO
+
+      
