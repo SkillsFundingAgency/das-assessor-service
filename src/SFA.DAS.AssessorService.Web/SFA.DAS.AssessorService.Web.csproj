@@ -35,4 +35,15 @@
       </ReferencePath>
     </ItemGroup>
   </Target>
+  <PropertyGroup>
+    <!-- File with mtime of last successful npm install -->
+    <NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
+  </PropertyGroup>
+  <Target Name="NpmInstall"
+    BeforeTargets="BeforeBuild"
+    Inputs="wwwroot/javascripts/lib/package.json"
+    Outputs="$(NpmInstallStampFile)">
+    <Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib"/>
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+  </Target>
 </Project>
