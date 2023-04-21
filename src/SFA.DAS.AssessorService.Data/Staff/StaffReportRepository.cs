@@ -45,14 +45,14 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             try
             {
-                var reportId = (Guid?)_assessorDbContext.StaffReports.FirstOrDefault(rep => rep.StoredProcedure == storedProcedure.Trim()).Id;
+                var reportId = _assessorDbContext.StaffReports.FirstOrDefault(rep => rep.StoredProcedure == storedProcedure.Trim());
 
                 if (reportId is null)
                 {
                     return null;
                 }
 
-                return await GetReport((Guid)reportId);
+                return await GetReport(reportId.Id);
             }
             catch
             {
