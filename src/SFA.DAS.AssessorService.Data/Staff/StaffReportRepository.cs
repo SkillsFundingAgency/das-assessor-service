@@ -41,11 +41,23 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return (await _connection.QueryAsync(report.StoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
         }
 
-
         public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
         {
-            var inputStoredProcedure = storedProcedure;
-            return (await _connection.QueryAsync(inputStoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
+            try
+            {
+                var reportId = (Guid?)_assessorDbContext.StaffReports.FirstOrDefault(rep => rep.StoredProcedure == storedProcedure.Trim()).Id;
+
+                if (reportId is null)
+                {
+                    return null;
+                }
+
+                return await GetReport((Guid)reportId);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId)
