@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                     .ToList();
 
                 var organisationDetailsAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationDetailsAmended);
-                if (organisationDetailsAmendedEmailTemplate != null)
+                if (organisationDetailsAmendedEmailTemplate != null && contactsWithManageUserPrivilege != null)
                 {
                     foreach (var contactWithManageUserPrivilege in contactsWithManageUserPrivilege)
                     {
