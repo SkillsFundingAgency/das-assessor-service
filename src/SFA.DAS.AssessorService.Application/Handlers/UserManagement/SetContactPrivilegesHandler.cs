@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -85,15 +84,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
                     {TemplateName= "EPAOPermissionsAmended" });
 
-                var amendingContact = 
+                var amendingContact =
                     request.AmendingContactId.Equals(Guid.Empty)
                         ? null
                         : await ContactQueryRepository.GetContactById(request.AmendingContactId);
 
-                var amendingContactDispalyName =
+                    var amendingContactDisplayName =
                     request.AmendingContactId.Equals(Guid.Empty)
-                        ? "EFSA Staff" 
-                        : amendingContact.DisplayName;
+                        ? "EFSA Staff"
+                        : (amendingContact.DisplayName.Equals(null) ? "EFSA Staff" : amendingContact.DisplayName);
+                
 
                 var contactBeingAmended = await ContactQueryRepository.GetContactById(request.ContactId);
             
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 {
                     ServiceName = "Apprenticeship assessment service",
                     Contact = contactBeingAmended.DisplayName,
-                    Editor = amendingContactDispalyName,
+                    Editor = amendingContactDisplayName,
                     ServiceTeam = "Apprenticeship assessment service team",
                     PermissionsAdded = addedText,
                     PermissionsRemoved = removedText
