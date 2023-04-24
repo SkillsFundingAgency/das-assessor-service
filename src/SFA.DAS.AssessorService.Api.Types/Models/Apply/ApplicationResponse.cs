@@ -1,7 +1,6 @@
 ﻿using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {

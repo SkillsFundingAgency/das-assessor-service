@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
     public class SubmitApplicationSequenceHandler : IRequestHandler<SubmitApplicationSequenceRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
-        private readonly IContactQueryRepository _contactQueryRepository;     
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IMediator _mediator;
 
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void UpdateSequenceAndSectionStatus(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
+        private void UpdateSequenceAndSectionStatus(ApplyData applyData, int sequenceNo, Dictionary<int, bool?> dictOfRequestedFeedbackAnswered)
         {
             if (applyData.Sequences != null)
             {
@@ -128,16 +128,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences != null)
             {
-                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired))
+                var sequence = applyData.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired);
+
+                if (sequence != null)
                 {
-                    // NOTE: Get Status for a required Section 3 - Financial
-                    if (sequence.Sections != null)
-                    {
-                        foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired))
-                        {
-                            return section.Status;
-                        }
-                    }
+                    var section = sequence.Sections.FirstOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired);
+                    if (section != null) { return section?.Status; }
                 }
             }
             return null;
@@ -211,7 +207,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
 
-                var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);               
+                var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);
                 await _mediator.Send(new SendEmailRequest(string.Empty, emailTemplateAlert, new { contactname, reference }), cancellationToken);
             }
             else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)

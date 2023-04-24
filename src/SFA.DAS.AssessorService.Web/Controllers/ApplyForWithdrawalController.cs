@@ -375,6 +375,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     }
                 }
 
+                if (standard == null)
+                {
+                    ModelState.AddModelError(nameof(model.StandardName), "Standard could not be found.");
+                    return View(model);
+                }
+
                 var id = await CreateWithdrawalApplication(contact, organisation,
                             standard.LarsCode,
                             iFateReferenceNumber,

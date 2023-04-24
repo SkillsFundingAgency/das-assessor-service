@@ -52,15 +52,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _logger.LogInformation("Start of Sign In");
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
             return Challenge(
-                new AuthenticationProperties {RedirectUri = redirectUrl},
+                new AuthenticationProperties { RedirectUri = redirectUrl },
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
-        { 
+        {
             var loginResult = await _loginOrchestrator.Login();
-//            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+            //            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
             var epaoId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    
+
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             ResetCookies();
 
-            if(!User.Identity.IsAuthenticated)
+            if (!User.Identity.IsAuthenticated)
             {
                 // If they are no longer authenticated then the cookie has expired. Don't try to signout.
                 return RedirectToAction(nameof(HomeController.Index), "Home");
@@ -154,16 +154,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("InvitePending", "Home");
                 }
 
-                if (organisation != null && organisation.Status == OrganisationStatus.Applying ||
-                    organisation.Status == OrganisationStatus.New)
+                if (organisation != null)
                 {
-                    return RedirectToAction("Index", "Dashboard");
+                    if (organisation.Status == OrganisationStatus.Applying ||
+                    organisation.Status == OrganisationStatus.New)
+                    {
+                        return RedirectToAction("Index", "Dashboard");
+                    }
+
                 }
 
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedContext.PrivilegeId);
 
                 var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
-                
+
                 return View("~/Views/Account/AccessDeniedForPrivilege.cshtml", new AccessDeniedViewModel
                 {
                     Title = privilege.UserPrivilege,
@@ -213,11 +217,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var inviteSuccess =
-                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email));
+                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email, null, vm.Email));
 
             _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
             return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
-            
+
         }
         [HttpGet]
         public IActionResult InviteSent()
