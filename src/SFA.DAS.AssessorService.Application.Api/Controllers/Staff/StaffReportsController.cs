@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -95,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             }
             catch (SqlException sqlEx)
             {
-                _logger.LogInformation($"Could not generate data from stored procedure [{storedProcedure}] report due to : {sqlEx.Message}");
+                _logger.LogError($"Could not generate data from stored procedure [{storedProcedure}] report due to : {sqlEx.Message}");
                 return NoContent();
             }
         }
@@ -115,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             }
             catch (SqlException sqlEx)
             {
-                _logger.LogInformation($"Could not generate report due to : {sqlEx.Message}");
+                _logger.LogError($"Could not generate data from report Id [{reportId}] due to : {sqlEx.Message}");
                 return NoContent();
             }
         }
