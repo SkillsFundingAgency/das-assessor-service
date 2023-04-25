@@ -44,14 +44,14 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
         {
-            var reportId = _assessorDbContext.StaffReports.FirstOrDefault(rep => rep.StoredProcedure == storedProcedure.Trim());
+            var report = _assessorDbContext.StaffReports.FirstOrDefault(rep => rep.StoredProcedure == storedProcedure.Trim());
 
-            if (reportId is null)
+            if (report is null)
             {
                 return null;
             }
 
-            return await GetReport(reportId.Id);
+            return await GetReport(report.Id);
         }
 
         Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId)
