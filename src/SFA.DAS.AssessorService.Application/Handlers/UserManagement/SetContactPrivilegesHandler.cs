@@ -89,10 +89,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                         ? null
                         : await ContactQueryRepository.GetContactById(request.AmendingContactId);
 
-                var amendingContactDisplayName =
-                 request.AmendingContactId.Equals(Guid.Empty)
-                     ? "EFSA Staff"
-                     : (amendingContact.Equals(null) ? "EFSA Staff" : amendingContact.DisplayName);
+                var amendingContactDisplayName = 
+                    amendingContact == null
+                    ? "ESFA Staff"
+                    : amendingContact.DisplayName;
 
 
                 var contactBeingAmended = await ContactQueryRepository.GetContactById(request.ContactId);
