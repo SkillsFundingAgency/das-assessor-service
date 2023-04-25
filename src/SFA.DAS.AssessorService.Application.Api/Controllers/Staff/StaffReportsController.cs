@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReport(Guid reportId)
         {
-            _logger.LogInformation($"Received request to generate report : {reportId}");
+            _logger.LogError($"Received request to generate report : {reportId}");
 
             try
             {
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             }
             catch (SqlException sqlEx)
             {
-                _logger.LogInformation($"Could not generate report due to : {sqlEx.Message}");
+                _logger.LogError($"Could not generate data from report Id [{reportId}] due to : {sqlEx.Message}");
                 return NoContent();
             }
         }
