@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;

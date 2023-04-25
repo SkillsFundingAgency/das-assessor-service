@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
     using System;
     using System.Runtime.Serialization;

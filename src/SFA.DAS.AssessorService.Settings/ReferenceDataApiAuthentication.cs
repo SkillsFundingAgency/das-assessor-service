@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Settings
+﻿namespace SFA.DAS.AssessorService.Settings
 {
     public class ReferenceDataApiAuthentication
     {
