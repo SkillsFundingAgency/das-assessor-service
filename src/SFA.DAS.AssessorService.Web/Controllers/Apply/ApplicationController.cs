@@ -527,7 +527,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         {
                             var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
-                            if (!string.IsNullOrEmpty(nextAction.Action))
+                            if (!string.IsNullOrEmpty(nextAction?.Action))
                             {
                                 if (__redirectAction == "Feedback")
                                 {
