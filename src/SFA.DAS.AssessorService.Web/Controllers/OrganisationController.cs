@@ -260,6 +260,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ? await _contactsApiClient.GetByUsername(vm.PrimaryContact)
                     : null;
 
+                if (primaryContact == null)
+                {
+                    ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The primary contact could not be found");
+                    return View("SelectOrChangeContactNameConfirm", vm);
+                }
+
                 if (vm.ActionChoice == "Save")
                 {
                     if (ModelState.IsValid)
@@ -284,7 +290,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     {
                         Contacts = null,
                         PrimaryContact = vm.PrimaryContact,
-                        PrimaryContactName = primaryContact.DisplayName
+                        PrimaryContactName = primaryContact?.DisplayName ?? String.Empty
                     };
 
                     return View("SelectOrChangeContactNameConfirm", vm);
@@ -306,7 +312,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         {
                             Contacts = notifiedContacts,
                             PrimaryContact = vm.PrimaryContact,
-                            PrimaryContactName = primaryContact.DisplayName
+                            PrimaryContactName = primaryContact?.DisplayName ?? String.Empty
                         };
 
                         return View("SelectOrChangeContactNameUpdated", vm);
