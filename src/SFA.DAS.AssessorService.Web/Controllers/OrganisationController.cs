@@ -263,7 +263,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 if (primaryContact == null)
                 {
                     ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The primary contact could not be found");
-                    return View("SelectOrChangeContactNameConfirm", vm);
+                    return RedirectToAction(nameof(SelectOrChangeContactName));
                 }
 
                 if (vm.ActionChoice == "Save")
