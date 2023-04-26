@@ -28,7 +28,7 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/2.1.2
+    ref: refs/heads/QF-1329-BackendMajorReliabilityImprovements
     endpoint: SkillsFundingAgency
   - repository: das-platform-automation
     type: github
