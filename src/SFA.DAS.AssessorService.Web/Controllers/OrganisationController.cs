@@ -300,7 +300,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
                     var request = new UpdateEpaOrganisationPrimaryContactRequest
                     {
-                        PrimaryContactId = primaryContact.Id,
+                        PrimaryContactId = primaryContact?.Id ?? Guid.NewGuid(),
                         OrganisationId = organisation.OrganisationId,
                         UpdatedBy = Guid.Parse(userId)
                     };
