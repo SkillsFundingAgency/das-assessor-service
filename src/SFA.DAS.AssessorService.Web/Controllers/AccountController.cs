@@ -155,7 +155,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
 
                 if (organisation != null && organisation.Status == OrganisationStatus.Applying ||
-                    organisation.Status == OrganisationStatus.New)
+                    organisation != null && organisation.Status == OrganisationStatus.New)
                 {
                     return RedirectToAction("Index", "Dashboard");
                 }
