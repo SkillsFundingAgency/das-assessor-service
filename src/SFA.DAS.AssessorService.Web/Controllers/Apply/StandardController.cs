@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 };
                 standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
                 standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
-                standardViewModel.EarliestVersionEffectiveFrom = earliestStandard.VersionEarliestStartDate;
+                standardViewModel.EarliestVersionEffectiveFrom = earliestStandard?.VersionEarliestStartDate;
                 if (standardVersions.Count() == 1)
                     standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version });
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
