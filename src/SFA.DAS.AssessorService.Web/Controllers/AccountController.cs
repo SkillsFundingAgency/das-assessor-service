@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -154,8 +155,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("InvitePending", "Home");
                 }
 
-                if (organisation != null && organisation.Status == OrganisationStatus.Applying ||
-                    organisation != null && organisation.Status == OrganisationStatus.New)
+                if (organisation != null && organisation.Status == OrganisationStatus.Applying)
+                {
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                else if (organisation != null && organisation.Status == OrganisationStatus.New)
                 {
                     return RedirectToAction("Index", "Dashboard");
                 }
