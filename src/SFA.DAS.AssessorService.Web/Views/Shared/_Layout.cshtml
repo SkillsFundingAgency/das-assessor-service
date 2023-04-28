@@ -32,12 +32,24 @@
                             </p>
                         }
                     </div>
-                    <span class="govuk-body-s das-user-panel__item">
-                        <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact</a>
-                    </span>
-                    <span class="govuk-body-s das-user-panel__item">
-                        <a class="govuk-link govuk-link--white" asp-controller="Account" asp-action="SignOut">Sign out</a>
-                    </span>
+                    <nav class="das-user-navigation" id="das-user-navigation">
+                        <ul class="das-user-navigation__list" role="menu">
+                            <li class="das-user-navigation__list-item" role="menuitem">
+                                <a class="das-user-navigation__link" asp-controller="Home" asp-action="ContactUs">Contact</a>
+                            </li>
+                            <li role="menuitem" class="das-user-navigation__list-item das-user-navigation__list-item--has-sub-menu">
+                                <a href="/" class="das-user-navigation__link">Settings</a>
+                                <ul role="menu" class="das-user-navigation__sub-menu js-hidden" aria-expanded="false">
+                                    <li class="das-user-navigation__sub-menu-list-item" role="menuitem">
+                                        <a href="SOMEWHERE" class="das-user-navigation__sub-menu-link">Change your sign-in details</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="das-user-navigation__list-item" role="menuitem">
+                                <a class="das-user-navigation__link" asp-controller="Account" asp-action="SignOut">Sign out</a>
+                            </li>                
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
