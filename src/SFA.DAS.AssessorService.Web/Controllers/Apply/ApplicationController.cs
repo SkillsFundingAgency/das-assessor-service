@@ -523,7 +523,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             }
                             return RedirectToAction("Feedback", new { Id });
                         }
-                        else if (pageAddResponse.ValidationErrors?.Count == 0 || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$")))
+                        else if (( pageAddResponse != null && pageAddResponse.ValidationErrors?.Count == 0) || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$")))
                         {
                             var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
