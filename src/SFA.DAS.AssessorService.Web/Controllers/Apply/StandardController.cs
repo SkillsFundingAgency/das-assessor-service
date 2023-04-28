@@ -167,14 +167,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (string.IsNullOrWhiteSpace(version))
             {
                 selectedStandard = standardVersions.LastOrDefault();
-                versions = model.SelectedVersions ?? new List<string> { selectedStandard.Version };
+                versions = model.SelectedVersions ?? new List<string> { selectedStandard?.Version };
                 if (model.SelectedVersions != null)
                     applicationStatus = await ApplicationStandardStatus(application, standardReference, model.SelectedVersions);
             }
             else
             {
                 selectedStandard = standardVersions.FirstOrDefault(x => x.Version == version);
-                versions = new List<string> { selectedStandard.Version };
+                versions = new List<string> { selectedStandard?.Version };
             }
 
             // check that the confirm checkbox has been selected
@@ -203,6 +203,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else if (anyExistingVersions)
             {
+                if (selectedStandard == null)
+                {
+                    ModelState.AddModelError(nameof(model.SelectedStandard), "Selected standard is null.");
+                }
                 await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
 
                 // update QnA application data to include the version Application Type but remove the Organisation Type
