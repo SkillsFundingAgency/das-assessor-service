@@ -662,7 +662,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         return RedirectToAction("Feedback", new { Id });
                     }
 
-                    if (!string.IsNullOrEmpty(updatePageResult.NextAction))
+                    if (updatePageResult != null && !string.IsNullOrEmpty(updatePageResult.NextAction))
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction);
                 }
 
