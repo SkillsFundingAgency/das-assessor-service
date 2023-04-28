@@ -911,7 +911,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private bool HasAtLeastOneAnswerChanged(Page page, List<Answer> answers)
         {
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes" : "No")}");
-            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page.Questions == null ? "Yes" : "No")}");
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page?.Questions == null ? "Yes" : "No")}");
 
             foreach (var pageQuestion in page.Questions)
             {
