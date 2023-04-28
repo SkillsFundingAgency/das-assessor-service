@@ -913,53 +913,56 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes" : "No")}");
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page?.Questions == null ? "Yes" : "No")}");
 
-            foreach (var pageQuestion in page.Questions)
+            if  (page != null)
             {
-                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes" : "No")}");
-                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes" : "No")}");
-            }
-
-            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
-
-            var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
-
-            foreach (var question in page.Questions)
-            {
-                var answer = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-                var existingAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-                atLeastOneAnswerChanged = atLeastOneAnswerChanged
-                    ? true
-                    : !answer?.Value.Equals(existingAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
-
-                if (question.Input.Options != null)
+                foreach (var pageQuestion in page.Questions)
                 {
-                    foreach (var option in question.Input.Options)
+                    _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes" : "No")}");
+                    _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes" : "No")}");
+                }
+
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
+
+                var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+
+                foreach (var question in page.Questions)
+                {
+                    var answer = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                    var existingAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                    atLeastOneAnswerChanged = atLeastOneAnswerChanged
+                        ? true
+                        : !answer?.Value.Equals(existingAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
+
+                    if (question.Input.Options != null)
                     {
-                        if (answer?.Value == option.Value.ToString())
+                        foreach (var option in question.Input.Options)
                         {
-                            if (option.FurtherQuestions != null)
+                            if (answer?.Value == option.Value.ToString())
                             {
-                                var atLeastOneFutherQuestionAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
-
-                                foreach (var furtherQuestion in option.FurtherQuestions)
+                                if (option.FurtherQuestions != null)
                                 {
-                                    var furtherAnswer = answers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
-                                    var existingFutherAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                                    var atLeastOneFutherQuestionAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
 
-                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
-                                        ? true
-                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
+                                    foreach (var furtherQuestion in option.FurtherQuestions)
+                                    {
+                                        var furtherAnswer = answers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                                        var existingFutherAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+
+                                        atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
+                                            ? true
+                                            : !furtherAnswer?.Value.Equals(existingFutherAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
+                                    }
+
+                                    atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
                                 }
-
-                                atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
                             }
                         }
                     }
+                    return atLeastOneAnswerChanged;
                 }
             }
-
-            return atLeastOneAnswerChanged;
+            return false;
         }
 
         private async Task<IActionResult> ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
