@@ -128,6 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences != null)
             {
+                string financialSectionStatus = null;
                 foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired))
                 {
                     // NOTE: Get Status for a required Section 3 - Financial
@@ -135,10 +136,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     {
                         foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired))
                         {
-                            return section.Status;
+                            financialSectionStatus = section.Status;
                         }
                     }
                 }
+                return financialSectionStatus;
             }
             return null;
         }
