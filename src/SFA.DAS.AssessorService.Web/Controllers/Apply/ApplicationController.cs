@@ -538,7 +538,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                         {
                                             redirectNextAction = true;
                                         }
-                                        break;
                                     }
 
                                     if (redirectNextAction) { return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction, "Hide"); }
