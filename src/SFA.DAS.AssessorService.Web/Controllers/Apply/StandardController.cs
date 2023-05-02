@@ -207,7 +207,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     ModelState.AddModelError(nameof(model.SelectedStandard), "Selected standard is null.");
                 }
-                await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
+                await _applicationApiClient.UpdateStandardData(id, (int)selectedStandard?.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
 
                 // update QnA application data to include the version Application Type but remove the Organisation Type
                 // as the QnA service does not include AND operations for NotRequiredConditions. The presence of
