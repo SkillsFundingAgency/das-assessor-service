@@ -652,14 +652,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                     if (__redirectAction == "Feedback")
                     {
+                        var redirectToNextAction = false;
                         foreach (var answer in answers)
                         {
                             if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                             {
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction, "Hide");
+                                redirectToNextAction = true;
                             }
-                            break;
                         }
+
+                        if (redirectToNextAction) { return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction, "Hide"); }
 
                         return RedirectToAction("Feedback", new { Id });
                     }
