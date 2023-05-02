@@ -595,9 +595,9 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 application.ReviewStatus = ApplicationReviewStatus.Deleted;
                 application.DeletedBy = deletedBy;
 
-                if (application.ApplyData?.Sequences != null)
+                if (application?.ApplyData?.Sequences != null)
                 {
-                    foreach (var sequence in application.ApplyData?.Sequences)
+                    foreach (var sequence in application?.ApplyData?.Sequences)
                     {
                         sequence.IsActive = false;
                         sequence.Status = ApplicationSequenceStatus.Declined;
