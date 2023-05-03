@@ -49,12 +49,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
                 await _registerQueryRepository.GetDeliveryAreasByOrganisationStandardId(request.OrganisationStandardId);
             var allDeliveryAreas = await _registerQueryRepository.GetDeliveryAreas();
             var organisationStandardDeliveryAreas = orgStandardDeliveryAreas as OrganisationStandardDeliveryArea[] ?? orgStandardDeliveryAreas.ToArray();
-            if (allDeliveryAreas.Any())
+            if (organisationStandardDeliveryAreas.Any())
             {
                 foreach (var orgStandardDeliveryArea in organisationStandardDeliveryAreas)
                 {
-                    orgStandardDeliveryArea.DeliveryArea =
+                    if (orgStandardDeliveryArea.DeliveryAreaId != null)
+                    {
+                        orgStandardDeliveryArea.DeliveryArea =
                         allDeliveryAreas.FirstOrDefault(x => x.Id == orgStandardDeliveryArea.DeliveryAreaId).Area;
+                    }
                 }
             }
 
