@@ -232,7 +232,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // the QnA application data must not be updated here as this could be a full stage 2 standard application
                 // where the tagged questions in stage 1 are required to approve the application, updating the application
                 // data would overwrite the tagged questions
-                await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Full);
+                if (selectedStandard == null)
+                {
+                    ModelState.AddModelError(nameof(model.SelectedStandard), "Selected standard is null.");
+                }
+                else if (selectedStandard.LarsCode == null)
+                {
+                    ModelState.AddModelError(nameof(model.SelectedStandard), "Selected standard's LarsCode is null.");
+                }
+                else
+                {
+                    await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Full);
+                }
             }
 
             return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
