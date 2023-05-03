@@ -53,11 +53,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             {
                 foreach (var orgStandardDeliveryArea in organisationStandardDeliveryAreas)
                 {
-                    if (orgStandardDeliveryArea.DeliveryAreaId != null)
-                    {
                         orgStandardDeliveryArea.DeliveryArea =
-                        allDeliveryAreas.FirstOrDefault(x => x.Id == orgStandardDeliveryArea.DeliveryAreaId).Area;
-                    }
+                        allDeliveryAreas.FirstOrDefault(x => x.Id == orgStandardDeliveryArea.DeliveryAreaId)?.Area;
                 }
             }
 
