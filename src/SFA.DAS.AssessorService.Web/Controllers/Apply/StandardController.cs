@@ -207,7 +207,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     ModelState.AddModelError(nameof(model.SelectedStandard), "Selected standard is null.");
                 }
-                await _applicationApiClient.UpdateStandardData(id, (int)selectedStandard?.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
+                else if (selectedStandard.LarsCode == null)
+                {
+                    ModelState.AddModelError(nameof(model.SelectedStandard), "Selected standard's LarsCode is null.");
+                }
+                else
+                {
+                    await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
+                }
 
                 // update QnA application data to include the version Application Type but remove the Organisation Type
                 // as the QnA service does not include AND operations for NotRequiredConditions. The presence of
@@ -284,7 +291,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             DateTime? effectiveTo = appliedVersion.StdVersionEffectiveTo;
             bool optInFollowingWithdrawal = effectiveTo.HasValue;
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
+            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");
             return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
         }
 
@@ -346,12 +353,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return false;
             }
-         
+
             return true;
         }
-        
 
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
+
+        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions,
             List<ApplicationResponse> previousWithdrawals, List<ApplicationResponse> previousApplications)
         {
             bool approved = false;
@@ -395,14 +402,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             bool AppliedViaOptIn = false;
-            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
+            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal
                                                                                         && x.ApplicationStatus == ApplicationStatus.Approved);
             if (previousApplications != null)
                 AppliedViaOptIn = previousApplications
                     .Where(w => (w.ApplicationType != StandardApplicationTypes.StandardWithdrawal) &&
                                 (w.ApplicationType != StandardApplicationTypes.VersionWithdrawal) &&
                                 (w.ApplyViaOptIn == true)).Select(x => x.ApplyViaOptIn).FirstOrDefault();
- 
+
 
             foreach (var withdrawal in withdrawals)
             {
