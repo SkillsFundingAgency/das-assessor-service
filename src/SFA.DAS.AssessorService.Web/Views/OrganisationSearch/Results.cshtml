@@ -60,12 +60,12 @@
 
                 <span class="govuk-body">@Model.OrganisationFoundString()</span>
                 <table class="govuk-table table.responsive">
+                    <thead>
+                        <tr>
+                            <th aria-hidden="true"></th>
+                        </tr>
+                    </thead>
                     <tbody class="govuk-table__body">
-                        <thead>
-                            <tr>
-                                <th aria-hidden="true"></th>
-                            </tr>
-                        </thead>
                         @foreach (var result in Model.Organisations.Items)
                         {
                             <tr class="govuk-table__row">
