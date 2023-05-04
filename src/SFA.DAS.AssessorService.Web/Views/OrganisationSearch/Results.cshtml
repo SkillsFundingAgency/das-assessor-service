@@ -59,12 +59,11 @@
             {
 
                 <span class="govuk-body">@Model.OrganisationFoundString()</span>
-                <table class="govuk-table table.responsive">
-                    <tbody class="govuk-table__body">
+                <ul class="govuk-list">
                         @foreach (var result in Model.Organisations.Items)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header--no-bottom-border">
+                            <li class="govuk-!-margin-bottom-4">
+                          
                                     <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
@@ -135,11 +134,9 @@
                                             </strong>
                                         </p>
                                     }
-                                </td>
-                            </tr>
+                            </li>
                         }
-                    </tbody>
-                </table>
+                    </ul>
 
                 await Html.RenderPartialAsync("_OrgSearchPaginationLinks", new ViewDataDictionary(ViewData)
                         {
