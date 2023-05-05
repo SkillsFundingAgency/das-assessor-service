@@ -12,9 +12,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-
-    //test sonarcloud
-
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/approvals/")]
     [ValidateBadRequest]
