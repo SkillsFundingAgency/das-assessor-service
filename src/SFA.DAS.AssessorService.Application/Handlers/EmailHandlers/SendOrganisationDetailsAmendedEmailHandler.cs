@@ -39,28 +39,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                         (c.Contact.Status == ContactStatus.Live || c.Contact.Status == ContactStatus.Active))
                     .ToList();
 
-                var organisationDetailsAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationDetailsAmended);
-                if (organisationDetailsAmendedEmailTemplate != null && contactsWithManageUserPrivilege != null)
+                if (contactsWithManageUserPrivilege != null)
                 {
-                    foreach (var contactWithManageUserPrivilege in contactsWithManageUserPrivilege)
+                    var organisationDetailsAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationDetailsAmended);
+
+                    if (organisationDetailsAmendedEmailTemplate != null)
                     {
-                        _logger.LogInformation($"Sending email to notify amended {request.PropertyChanged} {request.ValueAdded} for organisation {organisation.Name} to {contactWithManageUserPrivilege.Contact.Email}");
+                        foreach (var contactWithManageUserPrivilege in contactsWithManageUserPrivilege)
+                        {
+                            _logger.LogInformation($"Sending email to notify amended {request.PropertyChanged} {request.ValueAdded} for organisation {organisation.Name} to {contactWithManageUserPrivilege.Contact.Email}");
 
-                        var sendEmailRequest = new SendEmailRequest(contactWithManageUserPrivilege.Contact.Email,
-                            organisationDetailsAmendedEmailTemplate, new
-                            {
-                                Contact = $"{contactWithManageUserPrivilege.Contact.GivenNames}",
-                                Organisation = organisation.Name,
-                                request.PropertyChanged,
-                                request.ValueAdded,
-                                ServiceTeam = "Apprenticeship assessment services team",
-                                request.Editor
-                            });
+                            var sendEmailRequest = new SendEmailRequest(contactWithManageUserPrivilege.Contact.Email,
+                                organisationDetailsAmendedEmailTemplate, new
+                                {
+                                    Contact = $"{contactWithManageUserPrivilege.Contact.GivenNames}",
+                                    Organisation = organisation.Name,
+                                    request.PropertyChanged,
+                                    request.ValueAdded,
+                                    ServiceTeam = "Apprenticeship assessment services team",
+                                    request.Editor
+                                });
 
-                        await _mediator.Send(sendEmailRequest, cancellationToken);
+                            await _mediator.Send(sendEmailRequest, cancellationToken);
+                        }
                     }
                 }
-
+               
                 return contactsWithManageUserPrivilege
                     .Select(x => x.Contact)
                     .ToList();
