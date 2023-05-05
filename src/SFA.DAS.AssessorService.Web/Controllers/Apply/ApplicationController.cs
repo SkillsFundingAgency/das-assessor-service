@@ -508,7 +508,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                         var nextAction = pageAddResponse.Page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
-                        if (nextAction != null && !string.IsNullOrEmpty(nextAction.Action))
+                        if (!string.IsNullOrEmpty(nextAction?.Action))
                             return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction);
                     }
                     else if (page.PageOfAnswers?.Count > 0 && formAction != "Add")
