@@ -66,15 +66,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Only 1 version no need for a selection
                 var singularStandard = certSession.Versions.First();
                 var options = await _standardVersionClient.GetStandardOptions(singularStandard.StandardUId);
-                if (options != null && options?.HasOptions() != null)
+                if (options?.HasOptions() ?? false)
                 {
-                    if (options.HasOptions())
-                    {
-                        certSession.StandardUId = singularStandard.StandardUId;
-                        certSession.Options = options.CourseOption.ToList();
-                        SessionService.Set(nameof(CertificateSession), certSession);
-                        return RedirectToAction("Option", "CertificateOption");
-                    }
+                    certSession.StandardUId = singularStandard.StandardUId;
+                    certSession.Options = options.CourseOption.ToList();
+                    SessionService.Set(nameof(CertificateSession), certSession);
+                    return RedirectToAction("Option", "CertificateOption");
                 }
 
                 return RedirectToAction("Declare", "CertificateDeclaration");
