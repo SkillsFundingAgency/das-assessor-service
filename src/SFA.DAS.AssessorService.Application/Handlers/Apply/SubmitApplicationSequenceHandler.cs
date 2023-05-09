@@ -132,8 +132,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 if (sequence != null)
                 {
-                    var section = sequence.Sections.FirstOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired).Status;
-                    if (section != null) { return section; }
+                    var section = sequence.Sections.FirstOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired);
+                    if (section != null) { return section.Status; }
                 }
             }
             return null;
