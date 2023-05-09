@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.Http;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -18,14 +20,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [ValidateBadRequest]
     public class OppFinderController : Controller
     {
-        private readonly ILogger<OppFinderController> _logger;
         private readonly IMediator _mediator;
+        private readonly IBackgroundTaskQueue _taskQueue;
+        private readonly ILogger<OppFinderController> _logger;
 
-        public OppFinderController(IMediator mediator, ILogger<OppFinderController> logger)
+        public OppFinderController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<OppFinderController> logger)
         {
             _mediator = mediator;
+            _taskQueue = taskQueue;
             _logger = logger;
-
         }
 
         [HttpPost("expression-of-interest", Name = "CreateExpressionOfInterest")]
@@ -53,20 +56,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("update-standard-summary", Name = "UpdateStandardSummary")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
+        public IActionResult UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
         {
+            const string name = "update standard summary";
+
             try
             {
-                _logger.LogInformation($"Received request to update standard summary");
-                await _mediator.Send(request);
+                _logger.LogInformation($"Received request to {name}");
+
+                _taskQueue.QueueBackgroundWorkItem(async token =>
+                {
+                    await _mediator.Send(request);
+                    _logger.LogInformation($"Request to {name} completed successfully");
+                }, name);
+
+                return Accepted();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Request to update standard summary failed");
-                throw new Exception("Request to update standard summary failed");
+                _logger.LogError(ex, $"Request to update {name} failed");
+                return StatusCode(500);
             }
         }
     }
