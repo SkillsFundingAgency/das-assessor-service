@@ -128,17 +128,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences != null)
             {
-                string financialSectionStatus = null;
-
-                var sequence = applyData.Sequences.Where(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired).FirstOrDefault();
+                var sequence = applyData.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired);
 
                 if (sequence != null)
                 {
-                    var section = sequence.Sections.Where(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired).FirstOrDefault();
-                    if (section != null) { return section.Status; }
+                    var section = sequence.Sections.FirstOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired).Status;
+                    if (section != null) { return section; }
                 }
             }
-
             return null;
         }
 
