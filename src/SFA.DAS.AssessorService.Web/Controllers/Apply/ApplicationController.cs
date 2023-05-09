@@ -932,7 +932,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
 
             var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
-            bool? returnAtLeastOneAnswerChanged = null;
 
             foreach (var question in page.Questions)
             {
@@ -968,9 +967,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         }
                     }
                 }
-                returnAtLeastOneAnswerChanged = atLeastOneAnswerChanged;
-
-                if (returnAtLeastOneAnswerChanged != null) { return (bool)returnAtLeastOneAnswerChanged; }
             }
             return false;
         }
