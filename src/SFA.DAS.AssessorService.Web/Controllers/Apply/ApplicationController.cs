@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("/Application")]
         public async Task<IActionResult> Applications()
         {
-            _logger.LogInformation($"Got LoggedInUser from Session: { User.Identity.Name}");
+            _logger.LogInformation($"Got LoggedInUser from Session: {User.Identity.Name}");
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("SequenceSignPost", new { Id = id });
         }
 
-        
+
         [HttpGet("/Application/Finance", Name = "StartOrResumeApplication")]  // Need to differentiate ourselves from the other Get
         public async Task<IActionResult> StartOrResumeApplication()
         {
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
+            else if (IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (string.IsNullOrWhiteSpace(standardName))
                 {
@@ -215,11 +215,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
                 }
             }
-            else if(IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
+            else if (IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+            else if (IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
@@ -297,7 +297,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return View(new ApplicationCancelledViewModel { Id = id, StandardWithReference = standardWithReference });
             }
-            
+
             return RedirectToAction(nameof(SequenceSignPost), new { Id = id });
         }
 
@@ -311,9 +311,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (GetAllowCancelApplication(application))
                 {
-                    return View(new ConfirmCancelApplicationViewModel 
-                    { 
-                        Id = application.Id, 
+                    return View(new ConfirmCancelApplicationViewModel
+                    {
+                        Id = application.Id,
                         StandardWithReference =
                         application.ApplyData.Apply.StandardWithReference,
                         BackAction = application.ApplicationStatus == ApplicationStatus.FeedbackAdded
@@ -354,13 +354,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                     else if (viewModel.AreYouSure == "No")
                     {
-                        switch(application.ApplicationStatus)
+                        switch (application.ApplicationStatus)
                         {
                             case ApplicationStatus.FeedbackAdded:
-                                return RedirectToAction(nameof(Feedback), 
+                                return RedirectToAction(nameof(Feedback),
                                     new { viewModel.Id });
                             default:
-                                return RedirectToAction(nameof(SequenceSignPost), 
+                                return RedirectToAction(nameof(SequenceSignPost),
                                     new { viewModel.Id });
                         }
                     }
@@ -523,7 +523,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             }
                             return RedirectToAction("Feedback", new { Id });
                         }
-                        else if (( pageAddResponse != null && pageAddResponse.ValidationErrors?.Count == 0) || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$")))
+                        else if ((pageAddResponse != null && pageAddResponse.ValidationErrors?.Count == 0) || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$")))
                         {
                             var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
@@ -541,7 +541,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                     }
 
                                     if (redirectNextAction) { return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction, "Hide"); }
-                                    
+
                                     return RedirectToAction("Feedback", new { Id });
                                 }
 
@@ -752,7 +752,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!CanUpdateApplication(application, sequenceNo))
             {
                 return RedirectToAction("Applications");
-            }        
+            }
 
             var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -777,7 +777,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
-            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO) {
+            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+            {
                 bool qnaFinancialQuestionsComplete = false;
                 var financialQnAComplete = sections.Where(w => w.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && w.SequenceNo == ApplyConst.FINANCIAL_SEQUENCE_NO);
                 if (financialQnAComplete != null)
@@ -917,55 +918,58 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes" : "No")}");
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page?.Questions == null ? "Yes" : "No")}");
 
-            if  (page != null)
+            if (page == null)
             {
-                foreach (var pageQuestion in page.Questions)
+                return false;
+            }
+
+            foreach (var pageQuestion in page.Questions)
+            {
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes" : "No")}");
+                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes" : "No")}");
+            }
+
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
+
+            var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+            bool? returnAtLeastOneAnswerChanged = null;
+
+            foreach (var question in page.Questions)
+            {
+                var answer = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                var existingAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                atLeastOneAnswerChanged = atLeastOneAnswerChanged
+                    ? true
+                    : !answer?.Value.Equals(existingAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
+
+                if (question.Input.Options != null)
                 {
-                    _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input null? {(pageQuestion.Input == null ? "Yes" : "No")}");
-                    _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Question.Id {pageQuestion.QuestionId} Input.Type null? {(pageQuestion.Input.Type == null ? "Yes" : "No")}");
-                }
-
-                _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Checks ok.  Page JSON: {JsonConvert.SerializeObject(page)}");
-
-                var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
-                bool? returnAtLeastOneAnswerChanged = null;
-
-                foreach (var question in page.Questions)
-                {
-                    var answer = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-                    var existingAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-                    atLeastOneAnswerChanged = atLeastOneAnswerChanged
-                        ? true
-                        : !answer?.Value.Equals(existingAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? answer != existingAnswer;
-
-                    if (question.Input.Options != null)
+                    foreach (var option in question.Input.Options)
                     {
-                        foreach (var option in question.Input.Options)
+                        if (answer?.Value == option.Value.ToString())
                         {
-                            if (answer?.Value == option.Value.ToString())
+                            if (option.FurtherQuestions != null)
                             {
-                                if (option.FurtherQuestions != null)
+                                var atLeastOneFutherQuestionAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+
+                                foreach (var furtherQuestion in option.FurtherQuestions)
                                 {
-                                    var atLeastOneFutherQuestionAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+                                    var furtherAnswer = answers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                                    var existingFutherAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
 
-                                    foreach (var furtherQuestion in option.FurtherQuestions)
-                                    {
-                                        var furtherAnswer = answers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
-                                        var existingFutherAnswer = page.PageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
-
-                                        atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
-                                            ? true
-                                            : !furtherAnswer?.Value.Equals(existingFutherAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
-                                    }
-
-                                    atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
+                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
+                                        ? true
+                                        : !furtherAnswer?.Value.Equals(existingFutherAnswer?.Value, StringComparison.OrdinalIgnoreCase) ?? furtherAnswer != existingFutherAnswer;
                                 }
+
+                                atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
                             }
                         }
                     }
-                    returnAtLeastOneAnswerChanged = atLeastOneAnswerChanged;
                 }
+                returnAtLeastOneAnswerChanged = atLeastOneAnswerChanged;
+
                 if (returnAtLeastOneAnswerChanged != null) { return (bool)returnAtLeastOneAnswerChanged; }
             }
             return false;
@@ -986,7 +990,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             string pageContext = string.Empty;
             if (sequence.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO || sequence.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply?.StandardName}";
+                pageContext = $"{application?.ApplyData?.Apply?.StandardReference} {application?.ApplyData?.Apply?.StandardName}";
             }
             else if (sequence.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
