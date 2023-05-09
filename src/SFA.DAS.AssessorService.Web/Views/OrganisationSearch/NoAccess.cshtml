@@ -26,25 +26,23 @@
                     </p>
                 }
                 <table class="govuk-table table.responsive">
-                    <thead>
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header">Organisation</th>
-                            <td class="govuk-table__cell">@Model.Name</td>
-                        </tr>
-                    </thead>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><strong>Address</strong></td>
+                            <th class="govuk-table__header" scope="row">Organisation</th>
+                            <td class="govuk-table__cell">@Model.Name</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Address</th>
                             <td class="govuk-table__cell">@Model.Address</td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><strong>Type</strong></td>
+                            <th class="govuk-table__header" scope="row">Type</th>
                             <td class="govuk-table__cell">@Model.OrganisationType</td>
                         </tr>
                         @if (!string.IsNullOrEmpty(Model.CompanyNumber))
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><strong>@Model.CompanyOrCharityDisplayText</strong></td>
+                                <th class="govuk-table__header" scope="row">@Model.CompanyOrCharityDisplayText</th>
                                 <td class="govuk-table__cell">@Model.CompanyNumber</td>
                             </tr>
                         }
