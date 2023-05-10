@@ -648,7 +648,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                     if (__redirectAction == "Feedback")
                     {
-                        //var redirectToNextAction = false;
                         var answer = answers.FirstOrDefault();
 
                         if (answer != null && page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
