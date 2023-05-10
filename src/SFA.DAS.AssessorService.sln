@@ -48,7 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.IntegrationTests", "SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.Data.IntegrationTests.csproj", "{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.ManualIntegrationTests", "SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.Data.ManualIntegrationTests.csproj", "{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External", "SFA.DAS.AssessorService.Application.Api.External\SFA.DAS.AssessorService.Application.Api.External.csproj", "{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}"
 EndProject
@@ -58,13 +58,13 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.AssessorService.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External.UnitTests", "SFA.DAS.AssessorService.Application.Api.External.UnitTests\SFA.DAS.AssessorService.Application.Api.External.UnitTests.csproj", "{5319DB03-A39B-49EC-B375-A8957E21C1D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.IntegrationTests", "SFA.DAS.AssessorService.Application.IntegrationTests\SFA.DAS.AssessorService.Application.Api.IntegrationTests.csproj", "{327FF62D-DA54-4FC8-B9D2-BC8A631F5485}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.ManualIntegrationTests", "SFA.DAS.AssessorService.Application.IntegrationTests\SFA.DAS.AssessorService.Application.Api.ManualIntegrationTests.csproj", "{327FF62D-DA54-4FC8-B9D2-BC8A631F5485}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Domain.UnitTests", "SFA.DAS.AssessorService.Domain.UnitTests\SFA.DAS.AssessorService.Domain.UnitTests.csproj", "{8A61489A-FB92-45D1-9DD7-A92DCF0551BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65304A52-BDD9-4C65-9BF1-56F0D36C3067}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.TestHelper", "SFA.DAS.AssessorService.TestHelper\SFA.DAS.AssessorService.TestHelper.csproj", "{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.TestHelper", "SFA.DAS.AssessorService.TestHelper\SFA.DAS.AssessorService.TestHelper.csproj", "{C7A2FDAD-5DAE-4CE6-A77E-08F00E1566DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
