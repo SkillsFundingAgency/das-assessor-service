@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,6 +28,11 @@ using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration

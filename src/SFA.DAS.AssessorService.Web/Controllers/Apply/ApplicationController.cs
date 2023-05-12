@@ -452,7 +452,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                         return RedirectToAction("Applications");
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -565,7 +565,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
-                throw ex;
+                throw;
             }
         }
 
@@ -683,7 +683,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 _logger.LogError(ex, ex.Message);
 
-                throw ex;
+                throw;
             }
         }
 
