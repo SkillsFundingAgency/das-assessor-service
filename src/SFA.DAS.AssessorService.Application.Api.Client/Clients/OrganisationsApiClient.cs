@@ -33,15 +33,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationResponse> GetOrganisationByName(string name)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{WebUtility.UrlEncode(name)}"))
-            {
-                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
-                    $"Could not find the organisations");
-            }
-        }
-
         public async Task<OrganisationResponse> GetOrganisationByUserId(Guid userId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/forContact/{userId}"))

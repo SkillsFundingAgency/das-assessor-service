@@ -191,9 +191,14 @@
             @if (Model.Questions?.Exists(p => p.Type == "Address") ?? false)
             {
                 @section Scripts {
-                    <script src="@Url.Content("~/javascripts/lib/jquery/jquery.min.js")"></script>
-                    <script src="@Url.Content("~/javascripts/lib/jquery-ui/dist/jquery-ui.min.js")"></script>
-                    <script src="@Url.Content("~/javascripts/address-lookup-service.min.js")"></script>
+                    <environment include="Development">
+                        <script src="@Url.Content("~/javascripts/lib/node_modules/jquery/dist/jquery.min.js")"></script>
+                        <script src="@Url.Content("~/javascripts/lib/node_modules/jquery-ui/dist/jquery-ui.min.js")"></script>
+                        <script src="@Url.Content("~/javascripts/address-lookup-service.js")"></script>
+                    </environment>
+                    <environment exclude="Development">
+                        <script src="@Url.Content("~/javascripts/address-lookup-service.min.js")"></script>
+                    </environment>
                 }
             }
 
