@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ApplicationApiClient : ApiClientBase, IApplicationApiClient
     {
-        public ApplicationApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public ApplicationApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

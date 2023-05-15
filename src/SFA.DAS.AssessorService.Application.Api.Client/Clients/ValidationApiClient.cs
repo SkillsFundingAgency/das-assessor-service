@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<ApiClientBase> _logger;
 
-        public ValidationApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public ValidationApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
             _logger = logger;

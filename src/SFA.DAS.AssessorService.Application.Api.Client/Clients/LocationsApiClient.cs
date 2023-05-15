@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class LocationsApiClient : ApiClientBase, ILocationsApiClient
     {
-        public LocationsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public LocationsApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

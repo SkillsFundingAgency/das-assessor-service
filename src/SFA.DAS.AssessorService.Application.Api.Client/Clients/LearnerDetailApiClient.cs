@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class LearnerDetailApiClient : ApiClientBase, ILearnerDetailsApiClient
     {
-        public LearnerDetailApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public LearnerDetailApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

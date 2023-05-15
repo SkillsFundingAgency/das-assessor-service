@@ -8,6 +8,7 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Infrastructure
@@ -16,13 +17,13 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure
     {
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
-        private readonly IWebConfiguration _config;
+        private readonly ITokenService _tokenService;
 
-        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IWebConfiguration configurationService)
+        public RoatpApiClient(HttpClient client, IRoATPTokenService tokenService, ILogger<RoatpApiClient> logger)
         {
             _client = client;
+            _tokenService = tokenService;
             _logger = logger;
-            _config = configurationService;
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure
 
         private async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
@@ -80,21 +81,6 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure
 
                 return default(T);
             }
-        }
-
-        private string GetToken()
-        {
-            var tenantId = _config.RoatpApiAuthentication.TenantId;
-            var clientId = _config.RoatpApiAuthentication.ClientId;
-            var clientSecret = _config.RoatpApiAuthentication.ClientSecret;
-            var resourceId = _config.RoatpApiAuthentication.ResourceId;
-
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
-            var clientCredential = new ClientCredential(clientId, clientSecret);
-            var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
-
-            return result.AccessToken;
         }
 
         private async Task<IEnumerable<OrganisationSearchResult>> GetOrganisationSearchResultsFromRoatp(int ukprn)

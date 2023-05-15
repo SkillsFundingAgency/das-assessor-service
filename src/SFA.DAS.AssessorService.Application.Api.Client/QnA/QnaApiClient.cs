@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
 {
     public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
-        public QnaApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public QnaApiClient(HttpClient httpClient, IQnATokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

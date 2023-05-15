@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly ILogger<ApiValidationService> _logger;
         private readonly string _clientApiCallValidationName;
 
-        public ApiValidationService(IWebConfiguration config, ITokenService tokenService, ILogger<ApiValidationService> logger)
+        public ApiValidationService(IWebConfiguration config, IAssessorTokenService tokenService, ILogger<ApiValidationService> logger)
         {
             _config = config;
             _tokenService = tokenService;

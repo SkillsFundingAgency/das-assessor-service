@@ -4,4 +4,8 @@
     {
         string GetToken();
     }
+
+    public interface IAssessorTokenService : ITokenService { }
+    public interface IQnATokenService : ITokenService { }
+    public interface IRoATPTokenService : ITokenService { }
 }

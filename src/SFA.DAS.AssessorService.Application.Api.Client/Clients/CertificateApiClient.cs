@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class CertificateApiClient : ApiClientBase, ICertificateApiClient
     {
-        public CertificateApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public CertificateApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

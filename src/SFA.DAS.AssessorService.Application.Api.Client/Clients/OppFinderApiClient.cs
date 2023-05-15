@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class OppFinderApiClient : ApiClientBase, IOppFinderApiClient
     {
-        public OppFinderApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public OppFinderApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

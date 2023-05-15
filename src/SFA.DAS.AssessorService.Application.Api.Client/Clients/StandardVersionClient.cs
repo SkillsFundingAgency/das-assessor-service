@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class StandardVersionClient : ApiClientBase, IStandardVersionClient
     {
-        public StandardVersionClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        public StandardVersionClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
             : base(httpClient, tokenService, logger)
         {
         }

@@ -4,22 +4,22 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class TokenService : ITokenService
+    public class TokenService : IAssessorTokenService, IQnATokenService, IRoATPTokenService
     {
         private readonly IClientApiAuthentication _configuration;
-        private readonly IHostEnvironment _hostEnvironment;
+        private readonly string _environmentName;
 
-        public TokenService(IClientApiAuthentication configuration, IHostEnvironment hostEnvironment)
+        public TokenService(IClientApiAuthentication configuration, string environmentName)
         {
             _configuration = configuration;
-            _hostEnvironment = hostEnvironment;
+            _environmentName = environmentName;
         }
 
         public string GetToken()
         {
-            if (_hostEnvironment.IsDevelopment())
+            if(_environmentName == "LOCAL")
                 return string.Empty;
-
+            
             var tenantId = _configuration.TenantId;
             var clientId = _configuration.ClientId;
             var appKey = _configuration.ClientSecret;
