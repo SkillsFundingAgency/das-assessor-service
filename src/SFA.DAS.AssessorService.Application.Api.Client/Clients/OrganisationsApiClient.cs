@@ -15,7 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
     using SFA.DAS.AssessorService.Domain.Consts;
-    using System.Net;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
@@ -33,15 +32,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/"))
             {
                 return await RequestAndDeserialiseAsync<IEnumerable<OrganisationResponse>>(request,
-                    $"Could not find the organisations");
-            }
-        }
-
-        public async Task<OrganisationResponse> GetOrganisationByName(string name)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{WebUtility.UrlEncode(name)}"))
-            {
-                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
                     $"Could not find the organisations");
             }
         }

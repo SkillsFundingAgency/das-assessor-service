@@ -94,14 +94,6 @@ namespace SFA.DAS.AssessorService.Data
             return organisations.Select(c=>c.Organisation);
         }
 
-        public async Task<Organisation> GetOrganisationByName(string name)
-        {
-
-            return await _assessorDbContext.Organisations
-                .Include(x => x.OrganisationType)
-                .FirstOrDefaultAsync(x => x.OrganisationData.LegalName == name);
-        }
-
         public async Task<Organisation> GetOrganisationByContactId(Guid contactId)
         {
             var contact = await _assessorDbContext
