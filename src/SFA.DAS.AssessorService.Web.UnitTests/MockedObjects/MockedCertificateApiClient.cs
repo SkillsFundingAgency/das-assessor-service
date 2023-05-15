@@ -18,12 +18,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
             var clientApiAuthenticationMock = new Mock<IClientApiAuthentication>();
-
-            var hostEnvironmentMock = new Mock<IHostEnvironment>();
-            hostEnvironmentMock.Setup(m => m.EnvironmentName)
-                .Returns(Environments.Development);
-
-            var tokenService = new TokenService(clientApiAuthenticationMock.Object, hostEnvironmentMock.Object);
+            
+            var tokenServiceMock = new Mock<IAssessorTokenService>();
+            tokenServiceMock
+                .Setup(m => m.GetToken())
+                .Returns(string.Empty);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
@@ -52,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new CertificateApiClient(client, tokenService, apiClientLoggerMock.Object);
+            var apiClient = new CertificateApiClient(client, tokenServiceMock.Object, apiClientLoggerMock.Object);
 
             return apiClient;
         }
