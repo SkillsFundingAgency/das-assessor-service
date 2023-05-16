@@ -41,20 +41,20 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         private const string SERVICE_NAME = "SFA.DAS.AssessorService.Api";
         private const string VERSION = "1.0";
-        private readonly IWebHostEnvironment _env;
+        
+        private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
+        private readonly IWebHostEnvironment _env;
         private readonly bool _useSandbox;
 
-        public Startup(IWebHostEnvironment env, IConfiguration config, ILogger<Startup> logger)
+        public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
-            _env = env;
+            _config = config;
             _logger = logger;
-
+            _env = env;
+            
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
-            Configuration = ConfigurationService
-                .GetConfigApi(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
             if (!bool.TryParse(config["UseSandboxServices"], out _useSandbox))
             {
                 _useSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
@@ -64,10 +64,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
-        public IApiConfiguration Configuration { get; }
+        private IApiConfiguration Configuration { get; set; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            Configuration = ConfigurationService
+                .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
+
             IServiceProvider serviceProvider;
             try
             {
@@ -186,9 +189,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 serviceProvider = ConfigureIOC(services);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, "Error during Startup Configure Services");
+                _logger.LogError(ex, "Error during Startup Configure Services");
                 throw;
             }
 
@@ -225,21 +228,21 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                const string qnATokenService = "QnATokenService";
-                config.For<ITokenService>().Use<TokenService>().Named(qnATokenService)
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication);
+                config.For<IQnATokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
 
-                const string referenceDataTokenService = "ReferenceDataTokenService";
-                config.For<ITokenService>().Use<TokenService>().Named(referenceDataTokenService)
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.ReferenceDataApiAuthentication);
+                config.For<IReferenceDataTokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.ReferenceDataApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
 
-                const string roatpTokenService = "RoatpTokenService";
-                config.For<ITokenService>().Use<TokenService>().Named(roatpTokenService)
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication);
+                config.For<IRoatpTokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
 
-                config.For<IQnaApiClient>().Use<QnaApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(qnATokenService));
-                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(referenceDataTokenService));
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>(roatpTokenService));
+                config.For<IQnaApiClient>().Use<QnaApiClient>();
+                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()

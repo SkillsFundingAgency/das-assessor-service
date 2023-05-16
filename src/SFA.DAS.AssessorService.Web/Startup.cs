@@ -31,12 +31,13 @@ using StructureMap;
 namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
-    { 
+    {
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Web";
+        private const string VERSION = "1.0";
+
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Web";
-        private const string VERSION = "1.0";
 
         public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
@@ -51,103 +52,114 @@ namespace SFA.DAS.AssessorService.Web
         {
             Configuration = ConfigurationService.GetConfigWeb(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            services.AddApplicationInsightsTelemetry();
-
-            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration, _logger, _env);
-            services.Configure<RequestLocalizationOptions>(options =>
+            IServiceProvider serviceProvider;
+            try
             {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
-                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
-                options.RequestCultureProviders.Clear();
-            });
+                services.AddApplicationInsightsTelemetry();
 
-            services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
-
-            services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
-
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
-                .AddControllersAsServices()
-                .AddSessionStateTempDataProvider()
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
-
-            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-            services.AddValidatorsFromAssemblyContaining<Startup>();
-
-            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator, CacheOverrideHtmlGenerator>();
-
-            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
-
-            if (_env.IsDevelopment())
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
-                    .SetApplicationName("AssessorApply");
-
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                try
+                services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+                services.AddAndConfigureAuthentication(Configuration, _logger, _env);
+                services.Configure<RequestLocalizationOptions>(options =>
                 {
-                    var redis = ConnectionMultiplexer.Connect(
-                        $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+                    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
+                    options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                    options.RequestCultureProviders.Clear();
+                });
 
+                services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
+
+                services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
+                services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
+
+                services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+                    .AddControllersAsServices()
+                    .AddSessionStateTempDataProvider()
+                    .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+                services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+                services.AddValidatorsFromAssemblyContaining<Startup>();
+
+                services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator, CacheOverrideHtmlGenerator>();
+
+                services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
+
+                if (_env.IsDevelopment())
+                {
                     services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
                         .SetApplicationName("AssessorApply");
-                    services.AddDistributedRedisCache(options =>
-                    {
-                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
-                    });
+
+                    services.AddDistributedMemoryCache();
                 }
-                catch (Exception e)
+                else
                 {
-                    _logger.LogError(e,
-                        $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
-                    throw;
+                    try
+                    {
+                        var redis = ConnectionMultiplexer.Connect(
+                            $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+
+                        services.AddDataProtection()
+                            .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                            .SetApplicationName("AssessorApply");
+                        services.AddDistributedRedisCache(options =>
+                        {
+                            options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e,
+                            $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
+                        throw;
+                    }
                 }
+
+                services.AddSession(opt =>
+                {
+                    opt.IdleTimeout = TimeSpan.FromHours(1);
+                    opt.Cookie = new CookieBuilder()
+                    {
+                        Name = ".Assessors.Session",
+                        HttpOnly = true
+                    };
+                });
+
+                services.AddHttpClient<IOrganisationsApiClient, OrganisationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IStandardsApiClient, StandardsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IOppFinderApiClient, OppFinderApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IDashboardApiClient, DashboardApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IContactsApiClient, ContactsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ISearchApiClient, SearchApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IEmailApiClient, EmailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IValidationApiClient, ValidationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ICertificateApiClient, CertificateApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILoginApiClient, LoginApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILearnerDetailsApiClient, LearnerDetailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IApprovalsLearnerApiClient, ApprovalsLearnerApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
+
+                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
+                    {
+                        cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                        cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHealthChecks();
+
+                serviceProvider = ConfigureIoc(services);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error during Startup Configure Services");
+                throw;
             }
 
-            services.AddSession(opt =>
-            {
-                opt.IdleTimeout = TimeSpan.FromHours(1);
-                opt.Cookie = new CookieBuilder()
-                {
-                    Name = ".Assessors.Session",
-                    HttpOnly = true
-                };
-            });
-
-            services.AddHttpClient<IOrganisationsApiClient, OrganisationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IStandardsApiClient, StandardsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IOppFinderApiClient, OppFinderApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IDashboardApiClient, DashboardApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IContactsApiClient, ContactsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<ISearchApiClient, SearchApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IEmailApiClient, EmailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IValidationApiClient, ValidationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<ICertificateApiClient, CertificateApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<ILoginApiClient, LoginApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<ILearnerDetailsApiClient, LearnerDetailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IApprovalsLearnerApiClient, ApprovalsLearnerApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-            services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-
-            services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
-
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHealthChecks();
-
-            return ConfigureIoc(services);
+            return serviceProvider;
         }
 
         private IServiceProvider ConfigureIoc(IServiceCollection services)
@@ -177,7 +189,7 @@ namespace SFA.DAS.AssessorService.Web
                     .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);
                 
-                config.For<IRoATPTokenService>().Use<TokenService>()
+                config.For<IRoatpTokenService>().Use<TokenService>()
                     .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);
 

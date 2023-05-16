@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure
         private readonly ILogger<RoatpApiClient> _logger;
         private readonly ITokenService _tokenService;
 
-        public RoatpApiClient(HttpClient client, IRoATPTokenService tokenService, ILogger<RoatpApiClient> logger)
+        public RoatpApiClient(HttpClient client, IRoatpTokenService tokenService, ILogger<RoatpApiClient> logger)
         {
             _client = client;
             _tokenService = tokenService;

@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
         private readonly ITokenService _tokenService;
         private readonly ILogger<ReferenceDataApiClient> _logger;
 
-        public ReferenceDataApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ReferenceDataApiClient> logger)
+        public ReferenceDataApiClient(HttpClient httpClient, IReferenceDataTokenService tokenService, ILogger<ReferenceDataApiClient> logger)
         {
             _httpClient = httpClient;
             _tokenService = tokenService;
