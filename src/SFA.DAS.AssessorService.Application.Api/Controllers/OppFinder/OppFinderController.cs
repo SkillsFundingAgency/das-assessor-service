@@ -60,23 +60,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public IActionResult UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
         {
-            const string name = "update standard summary";
+            const string requestName = "update standard summary";
 
             try
             {
-                _logger.LogInformation($"Received request to {name}");
+                _logger.LogInformation($"Received request to {requestName}");
 
-                _taskQueue.QueueBackgroundWorkItem(async token =>
-                {
-                    await _mediator.Send(request);
-                    _logger.LogInformation($"Request to {name} completed successfully");
-                }, name);
+                _taskQueue.QueueBackgroundRequest(request, requestName);
+
+                _logger.LogInformation($"Queued request to {requestName}");
 
                 return Accepted();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Request to update {name} failed");
+                _logger.LogError(ex, $"Request to update {requestName} failed");
                 return StatusCode(500);
             }
         }

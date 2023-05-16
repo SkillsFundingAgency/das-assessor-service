@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SFA.DAS.AssessorService.Application.Api.TaskQueue
 {
@@ -10,12 +12,15 @@ namespace SFA.DAS.AssessorService.Application.Api.TaskQueue
     {
         private readonly ILogger<TaskQueueHostedService> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
+        private readonly IServiceProvider _serviceProvider;
 
         public TaskQueueHostedService(IBackgroundTaskQueue taskQueue,
-            ILogger<TaskQueueHostedService> logger)
+            ILogger<TaskQueueHostedService> logger,
+            IServiceProvider serviceProvider)
         {
             _taskQueue = taskQueue;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,16 +29,29 @@ namespace SFA.DAS.AssessorService.Application.Api.TaskQueue
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var (workItem, workItemName) = await _taskQueue.DequeueAsync(stoppingToken);
+                var (request, requestName) = await _taskQueue.DequeueAsync(stoppingToken);
 
-                try
+                // cannot use the default per-HTTP scope as it will be cleared when the request finishes
+                // this would introduce a race condition, create a new DI scope instead
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    await workItem(stoppingToken);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex,
-                       "Error occurred executing {WorkItemName}.", workItemName);
+                    try
+                    {
+                        var scopedMediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                        var scopedLogger = scope.ServiceProvider.GetRequiredService<ILogger<TaskQueueHostedService>>();
+
+                        Func<CancellationToken, Task> workItem = async token =>
+                        {
+                            await scopedMediator.Send(request);
+                            scopedLogger.LogInformation($"Request to {requestName} completed successfully");
+                        };
+
+                        await workItem(stoppingToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error occurred executing {requestName}.", requestName);
+                    }
                 }
             }
 
