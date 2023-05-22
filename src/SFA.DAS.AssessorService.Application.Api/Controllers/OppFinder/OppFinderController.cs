@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Request to update {requestName} failed");
+                _logger.LogError(ex, $"Request to {requestName} failed");
                 return StatusCode(500);
             }
         }
