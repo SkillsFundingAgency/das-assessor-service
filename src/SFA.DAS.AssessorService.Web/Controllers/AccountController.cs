@@ -241,5 +241,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public IActionResult ChangeYourSignInDetails()
+        {
+            return View();
+        }
     }
 }
