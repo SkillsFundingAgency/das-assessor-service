@@ -10,7 +10,8 @@
 	[Status] [nvarchar](10) NOT NULL, 
 	[ContactId] [UNIQUEIDENTIFIER] NULL,
     OrganisationStandardData [nvarchar](max) NULL,
-    [StandardReference] NVARCHAR(10) NULL ,
+    [StandardReference] NVARCHAR(10) NULL,
+	[OfqualRecognised] BIT DEFAULT 0,
 ) ON [PRIMARY]
 
 GO
