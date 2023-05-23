@@ -181,7 +181,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
                 services.AddHostedService<TaskQueueHostedService>();
 
                 services.AddHealthChecks();
