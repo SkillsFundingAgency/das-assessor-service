@@ -161,12 +161,18 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 if (_useSandbox)
                 {
-                    config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication);
+                    config.For<ITokenService>().Use<TokenService>()
+                        .Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication)
+                        .Ctor<string>().Is(Configuration["EnvironmentName"]);
+
                     config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
                 }
                 else
                 {
-                    config.For<ITokenService>().Use<TokenService>().Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.AssessorApiAuthentication);
+                    config.For<ITokenService>().Use<TokenService>()
+                        .Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.AssessorApiAuthentication)
+                        .Ctor<string>().Is(Configuration["EnvironmentName"]);
+
                     config.For<IApiClient>().Use<ApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
                 }
 
