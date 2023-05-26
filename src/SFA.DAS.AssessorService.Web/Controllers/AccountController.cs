@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Models;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Validators;
@@ -242,9 +243,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangeYourSignInDetails()
+        public IActionResult ChangeSignInDetails()
         {
-            return View();
+            return View(new ChangeSignInDetailsViewModel(_config.Environment));
         }
     }
 }

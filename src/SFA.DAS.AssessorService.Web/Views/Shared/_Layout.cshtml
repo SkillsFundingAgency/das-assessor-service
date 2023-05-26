@@ -11,7 +11,7 @@
 
 @section ServiceHeader
 {
-    @if (!User.Identity.IsAuthenticated)
+    @if (User.Identity.IsAuthenticated)
     {
         <div class="das-user-panel">
             <div class="govuk-width-container">
@@ -43,7 +43,7 @@
                                     <a href="/" class="das-user-navigation__link">Settings</a>
                                     <ul role="menu" class="das-user-navigation__sub-menu js-hidden" aria-expanded="false">
                                         <li class="das-user-navigation__sub-menu-list-item" role="menuitem">
-                                            <a href="@Url.Action("ChangeYourSignInDetails", "Account")" class="das-user-navigation__sub-menu-link">Change your sign-in details</a>
+                                            <a href="@Url.Action("ChangeSignInDetails", "Account")" class="das-user-navigation__sub-menu-link">Change your sign-in details</a>
                                         </li>
                                     </ul>
                                 </li>    

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ChangeSignInDetailsViewModel
+@{
     ViewBag.Title = "Change your sign-in details";
     Layout = "_Layout";
 }
@@ -20,7 +21,7 @@
                 <li>password</li>
                 <li>how you get security codes to sign in</li>
             </ul>
-            <a href="https://home.account.gov.uk/settings " class="govuk-link" target="_blank" rel="noopener noreferrer">
+            <a href="@Model.SettingsLink" class="govuk-link" target="_blank" rel="noopener noreferrer">
                 Change your sign-in details for your GOV.UK One Login (opens in new tab).
             </a>
         </div>
