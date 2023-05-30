@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog.LayoutRenderers.Wrappers;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -9,8 +10,12 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using StructureMap.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +41,131 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _standardVersionApiClient = standardVersionApiClient;
             _applicationService = applicationService;
             _config = config;
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search?}", Name= "AddStandardSearchRouteGet")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult AddStandardSearch(string search)
+        {
+            var standardViewModel = new AddStandardViewModel()
+            {
+                StandardToFind = ModelState.IsValid
+                    ? search
+                    : ModelState[nameof(AddStandardViewModel.StandardToFind)]?.AttemptedValue
+            };
+
+            return View(standardViewModel);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/add-standard", Name = "AddStandardSearchRoutePost")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult AddStandardSearch(AddStandardViewModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AddStandardSearch), new { search = model.StandardToFind });
+            }
+            
+            return RedirectToAction(nameof(AddStandardSearchResults), new { search = model.StandardToFind });
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search}/results", Name = "AddStandardSearchResultsRouteGet")]
+        public async Task<IActionResult> AddStandardSearchResults(string search)
+        {
+            var standards = await _standardVersionApiClient.GetLatestStandardVersions();
+            var model = new AddStandardViewModel
+            {
+                StandardToFind = search,
+                Results = standards
+                .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                .ToList()
+            };
+
+            return View(model);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm-versions", Name = "AddStandardConfirmVersionsRouteGet")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public async Task<IActionResult> AddStandardConfirmVersions(string search, string referenceNumber)
+        {
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var model = new AddStandardConfirmViewModel
+            {
+                StandardToFind = search,
+                SelectedStandard = standardVersions.FirstOrDefault(),
+                StandardReference = referenceNumber,
+                Results = standardVersions.ToList(),
+                EarliestVersionEffectiveFrom = standardVersions.FirstOrDefault()?.VersionEarliestStartDate,
+                IsConfirmed = ModelState.IsValid
+                    ? false
+                    : bool.Parse(ModelState[nameof(AddStandardConfirmViewModel.IsConfirmed)]?.AttemptedValue ?? "false"),
+                SelectedVersions = ModelState.IsValid
+                    ? null
+                    : ModelState[nameof(AddStandardConfirmViewModel.SelectedVersions)]?.AttemptedValue == null
+                        ? null
+                        : new List<string>(ModelState[nameof(AddStandardConfirmViewModel.SelectedVersions)]?.AttemptedValue.Split(","))
+            };
+
+            return View(model);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/add-standard/confirm-version", Name = "AddStandardConfirmVersionsRoutePost")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult AddStandardConfirmVersions(AddStandardConfirmViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToRoute("AddStandardConfirmVersionsRouteGet", new { search = model.StandardToFind, referenceNumber = model.StandardReference });
+            }
+
+            return RedirectToRoute("AddStandardConfirmOptInRouteGet", new { search = model.StandardToFind, referenceNumber = model.StandardReference, versions = model.SelectedVersions });
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm-opt-in", Name = "AddStandardConfirmOptInRouteGet")]
+        public async Task<IActionResult> AddStandardConfirmOptIn(string search, string referenceNumber, [FromQuery] List<string> versions)
+        {
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var model = new AddStandardConfirmViewModel
+            {
+                StandardToFind = search,
+                SelectedStandard = standardVersions.FirstOrDefault(),
+                StandardReference = referenceNumber,
+                Results = standardVersions.ToList(),
+                EarliestVersionEffectiveFrom = standardVersions.FirstOrDefault()?.VersionEarliestStartDate,
+                IsConfirmed = true,
+                SelectedVersions = versions
+            };
+
+
+            return View(model);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/add-standard/confirm-opt-in", Name = "AddStandardConfirmOptInRoutePost")]
+        public IActionResult AddStandardConfirmOptIn(AddStandardConfirmViewModel model)
+        {
+            return RedirectToRoute("AddStandardOptInConfirmationRouteGet", new {referenceNumber = model.StandardReference});
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{referenceNumber}/opt-in-confirmation", Name = "AddStandardOptInConfirmationRouteGet")]
+        public async Task<IActionResult> AddStandardOptInConfirmation(string referenceNumber)
+        {
+            var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
+            var model = new AddStandardOptInConfirmationViewModel
+            {
+                StandardTitle = standardVersions.FirstOrDefault()?.Title,
+                Versions = standardVersions.Select(x => x.Version).ToList(),
+                FeedbackUrl = _config.FeedbackUrl,
+            };
+
+            return View(model);
         }
 
         [HttpGet("Standard/{id}")]

@@ -1,0 +1,116 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model AddStandardConfirmViewModel
+
+@{
+    ViewBag.Title = "Confirm Standard";
+    Layout = "_Layout";
+    var multipleVersions = (Model.Results?.Count() ?? 0) > 1;
+}
+
+<a asp-route="AddStandardSearchResultsRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search results</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="SelectedVersions"></a></li>
+                    <li><a sfa-validation-for="IsConfirmed"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm and opt-in for standard:</span>
+                @Model.SelectedStandard?.Title
+            </h1>
+            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective from</th>
+                        <td class="govuk-table__cell">@Model.EarliestVersionEffectiveFrom.ToSfaShortDateString()</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective to</th>
+                        <td class="govuk-table__cell">
+                            @if (@Model.SelectedStandard?.VersionLatestEndDate == null)
+                            {
+                                @Html.Raw("Expiry date not set")
+                            }
+                            else
+                            {
+                                @Model.SelectedStandard?.VersionLatestEndDate.ToSfaShortDateString()
+                            }
+                        </td>
+                    </tr>
+                    @if (!multipleVersions)
+                    {
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Version</th>
+                            <td class="govuk-table__cell">@Model.SelectedStandard?.Version</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <form asp-route="AddStandardConfirmVersionsRoutePost">
+                <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
+                <input asp-for="StandardToFind" value="@Model.StandardToFind" type="hidden" />
+
+                @if (multipleVersions)
+                {
+                    <div class="govuk-form-group" sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-form-group--error">
+                        <fieldset class="govuk-fieldset" id="SelectedVersions">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
+                            <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                            <div class="govuk-checkboxes govuk-checkboxes--small">
+                                @foreach (var version in Model.Results)
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" 
+                                        id="@version.Version" 
+                                            value="@version.Version" 
+                                            name="SelectedVersions" 
+                                            type="checkbox" 
+                                            checked="@Model.SelectedVersions?.Contains(version.Version)">
+                                        <label class="govuk-label govuk-checkboxes__label" for="@version.Version">
+                                            Version @version.Version
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+                    
+                    <hr class="govuk-!-margin-bottom-7" />
+                }
+
+                <div class="govuk-form-group" sfa-validation-for="IsConfirmed" sfa-validationerror-class="govuk-form-group--error">
+                    <sfa-validationerror-detail sfa-validation-for="IsConfirmed" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" 
+                            name="IsConfirmed"
+                            asp-for="@Model.IsConfirmed"
+                            sfa-validation-for="IsConfirmed"
+                            sfa-validationerror-class="govuk-input--error"
+                            type="checkbox">
+                        <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
+                            By continuing, you confirm you have read and understood the relevant assessment plan(s) for <a href="@Model.SelectedStandard?.StandardPageUrl" target="_blank" class="govuk-link">this standard.</a>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+            </form>
+        </div>
+    </div>
+</main>

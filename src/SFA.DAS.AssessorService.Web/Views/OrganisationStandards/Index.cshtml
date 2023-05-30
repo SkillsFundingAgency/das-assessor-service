@@ -112,6 +112,8 @@
         </div>
     }
 
+    <a asp-action="AddStandardSearch" asp-controller="Standard" class="govuk-button">Add standard</a>
+    
     @if (Model.ApprovedStandardsWithVersions.HasPreviousPage || Model.ApprovedStandardsWithVersions.HasNextPage)
     {
         <div class="govuk-grid-row">

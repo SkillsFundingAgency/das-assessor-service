@@ -1,0 +1,56 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model AddStandardConfirmViewModel
+
+@{
+    ViewBag.Title = "Confirm you want to opt in to standard";
+    Layout = "_Layout";
+}
+
+<a asp-route="AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to confirm versions</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to opt in:</span>
+                @Model.SelectedStandard?.Title
+            </h1>
+
+            <p class="govuk-body-l">Reference: @Model.StandardReference</p>
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <caption class="govuk-table__caption govuk-table__caption--m"><p></p></caption>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective from</th>
+                        <td class="govuk-table__cell">@Model.SelectedStandard?.EffectiveFrom.ToSfaShortDateString()</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective to</th>
+                        <td class="govuk-table__cell">
+                            @if (@Model.SelectedStandard?.EffectiveTo == null)
+                            {
+                                @Html.Raw("Expiry date not set")
+                            }
+                            else
+                            {
+                                @Model.SelectedStandard?.EffectiveTo.ToSfaShortDateString()
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Version</th>
+                        <td class="govuk-table__cell">@string.Join(", ", Model.SelectedVersions)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <form asp-route="AddStandardConfirmOptInRoutePost" method="post">
+                @Html.HiddenFor(m => m.StandardReference)
+                @Html.HiddenFor(m => m.SelectedVersions)
+                <button class="govuk-button" type="submit">Confirm and opt in</button>
+            </form>
+        </div>
+    </div>
+</main>
