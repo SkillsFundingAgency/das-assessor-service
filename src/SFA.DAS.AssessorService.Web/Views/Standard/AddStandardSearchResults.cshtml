@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 
-<a asp-route="AddStandardSearchRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search 3</a>
+<a asp-route="AddStandardSearchRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -40,7 +40,14 @@
                                     <td class="govuk-table__cell" data-label="Name">@result.Title</td>
                                     <td class="govuk-table__cell" data-label="Reference">@result.IFateReferenceNumber</td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a asp-route="AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Opt-in for standard</a>
+                                        @if (Model.IsApprovedForStandard(result))
+                                        {
+                                            <span>Approved</span>
+                                        }
+                                        else
+                                        {
+                                            <a asp-route="AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Opt-in for standard</a>
+                                        }
                                     </td>
                                 </tr>
                             }

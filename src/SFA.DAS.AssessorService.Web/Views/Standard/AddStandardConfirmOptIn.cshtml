@@ -48,7 +48,11 @@
             </table>
             <form asp-route="AddStandardConfirmOptInRoutePost" method="post">
                 @Html.HiddenFor(m => m.StandardReference)
-                @Html.HiddenFor(m => m.SelectedVersions)
+                @foreach (var SelectedVersions in Model.SelectedVersions)
+                {
+                    @Html.HiddenFor(m => SelectedVersions)
+                }
+
                 <button class="govuk-button" type="submit">Confirm and opt in</button>
             </form>
         </div>

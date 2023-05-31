@@ -1,21 +1,18 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NLog.LayoutRenderers.Wrappers;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
-using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
-using StructureMap.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,13 +72,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("standard/add-standard/{search}/results", Name = "AddStandardSearchResultsRouteGet")]
         public async Task<IActionResult> AddStandardSearchResults(string search)
         {
-            var standards = await _standardVersionApiClient.GetLatestStandardVersions();
+            var allStandards = await _standardVersionApiClient.GetLatestStandardVersions();
+            var approvedStandards = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim());
+
             var model = new AddStandardViewModel
             {
-                StandardToFind = search,
-                Results = standards
-                .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
-                .ToList()
+                Approved = approvedStandards
+                    .Where(standardVersion => standardVersion.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                    .GroupBy(standardVersion => standardVersion.IFateReferenceNumber)
+                    .Where(group => group.Any())
+                    .Select(group => group.FirstOrDefault())
+                    .ToList(),
+                Results = allStandards
+                    .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList(),
+                StandardToFind = search
             };
 
             return View(model);
@@ -139,7 +144,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 Results = standardVersions.ToList(),
                 EarliestVersionEffectiveFrom = standardVersions.FirstOrDefault()?.VersionEarliestStartDate,
                 IsConfirmed = true,
-                SelectedVersions = versions
+                SelectedVersions = versions.Count() > 0
+                    ? versions
+                    : standardVersions.Select(m => m.Version).ToList()
             };
 
 
@@ -148,9 +155,38 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard/confirm-opt-in", Name = "AddStandardConfirmOptInRoutePost")]
-        public IActionResult AddStandardConfirmOptIn(AddStandardConfirmViewModel model)
+        public async Task<IActionResult> AddStandardConfirmOptIn(AddStandardConfirmViewModel model)
         {
+            var epaOrganisation = await _orgApiClient.GetEpaOrganisation(GetEpaOrgIdFromClaim());
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(model.StandardReference);
+
+            var request = new CreateEpaOrganisationStandardRequest
+            {
+                StandardCode = standardVersions.FirstOrDefault()?.LarsCode ?? 0,
+                EffectiveFrom = DateTime.UtcNow.Date,
+                OrganisationId = epaOrganisation.OrganisationId,
+                StandardVersions = model.SelectedVersions,
+                StandardReference = model.StandardReference,
+                DeliveryAreas = await GetDeliveryAreas(),
+                StandardApplicationType = StandardApplicationTypes.Full,
+                EffectiveTo = null,
+                DateStandardApprovedOnRegister = DateTime.Now.Date,
+                DeliveryAreasComments = string.Empty,
+                Comments = string.Empty,
+                ContactId = (await GetUserId()).ToString()
+            };
+
+
+            await _orgApiClient.CreateEpaOrganisationStandard(request);
+
+
             return RedirectToRoute("AddStandardOptInConfirmationRouteGet", new {referenceNumber = model.StandardReference});
+        }
+
+        private async Task<List<int>> GetDeliveryAreas()
+        {
+            var areas = await _applicationApiClient.GetQuestionDataFedOptions();
+            return areas.Select(a => a.Id).ToList();
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]

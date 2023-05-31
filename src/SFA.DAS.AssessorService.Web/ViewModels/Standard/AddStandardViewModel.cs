@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 
         public List<StandardVersion> Results { get; set; }
 
+        public List<StandardVersion> Approved { get; set; }
+
         public StandardVersion SelectedStandard { get; set; }
 
         public List<string> SelectedVersions { get; set; }
@@ -25,5 +27,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
         public bool FromStandardsVersion { get; set; }
 
         public DateTime? EarliestVersionEffectiveFrom { get; set; }
+
+        public bool IsApprovedForStandard(StandardVersion standardVersion)
+        {
+            return Approved.Exists(p => p.IFateReferenceNumber == standardVersion.IFateReferenceNumber);
+        }
     }
 }

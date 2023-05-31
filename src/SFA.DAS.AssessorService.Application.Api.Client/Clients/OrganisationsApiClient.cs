@@ -259,6 +259,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<EpaoStandardResponse> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest createEpaOrganisationStandardRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "api/ao/assessment-organisations/standards"))
+            {
+                return await PostPutRequestWithResponse<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>(request, 
+                    createEpaOrganisationStandardRequest);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
