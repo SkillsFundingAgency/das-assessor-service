@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -27,6 +30,42 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger = logger;
             _mediator = mediator;
+        }
+
+        [HttpPost("organisationstandard", Name = "AddOrganisationStandard")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaoStandardResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> AddOrganisationStandard([FromBody] OrganisationStandardAddRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Adding new Organisation Standard and Versions");
+                var result = await _mediator.Send(request);
+                return Ok(new EpaoStandardResponse(result));
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogError($@"Record is not available for organisation / standard: [{request.OrganisationId}, {request.StandardReference}]");
+                return NotFound(new EpaoStandardResponse(ex.Message));
+            }
+            catch (AlreadyExistsException ex)
+            {
+                _logger.LogError($@"Record already exists for organisation/standard [{request.OrganisationId}, {request.StandardReference}]");
+                return Conflict(new EpaoStandardResponse(ex.Message));
+            }
+            catch (BadRequestException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new EpaoStandardResponse(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
         }
 
         [HttpPost("organisationstandardversion", Name = "CreateOrganisationStandardVersion")]
@@ -66,7 +105,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 return BadRequest(new EpaoStandardVersionResponse(ex.Message));
             }
-            
         }
     }
 }

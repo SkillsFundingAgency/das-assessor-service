@@ -2,6 +2,7 @@ using SFA.DAS.AssessorService.Api.Types.CharityCommission;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Paging;
@@ -34,7 +35,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 
-        Task<EpaoStandardResponse> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest createEpaOrganisationStandardRequest);
+        Task<EpaoStandardResponse> AddOrganisationStandard(OrganisationStandardAddRequest organisationStandardAddRequest);
+
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
 

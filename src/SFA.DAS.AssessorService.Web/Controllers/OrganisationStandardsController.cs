@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("/[controller]/")]
+        [Route("/[controller]/", Name = "OrganisationStandardsIndexGetRoute")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
