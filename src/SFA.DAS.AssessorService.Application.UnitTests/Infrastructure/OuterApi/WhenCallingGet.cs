@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             OuterApiConfiguration config)
         {
             //Arrange
-            var configMock = new Mock<IWebConfiguration>();
+            var configMock = new Mock<IApiConfiguration>();
             config.BaseUrl = "https://test.local/";
             configMock.Setup(x => x.OuterApi).Returns(config);
             var getTestRequest = new GetTestRequest();
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             OuterApiConfiguration config)
         {
             //Arrange
-            var configMock = new Mock<IWebConfiguration>();
+            var configMock = new Mock<IApiConfiguration>();
             config.BaseUrl = "https://test.local/";
             configMock.Setup(x => x.OuterApi).Returns(config);
             var getTestRequest = new GetTestRequest();
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             OuterApiConfiguration config)
         {
             //Arrange
-            var configMock = new Mock<IWebConfiguration>();
+            var configMock = new Mock<IApiConfiguration>();
             config.BaseUrl = "https://test.local/";
             configMock.Setup(x => x.OuterApi).Returns(config);
             var getTestRequest = new GetTestRequest();

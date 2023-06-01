@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly ILogger<ApiValidationService> _logger;
         private readonly string _clientApiCallValidationName;
 
-        public ApiValidationService(IWebConfiguration config, ITokenService tokenService, ILogger<ApiValidationService> logger)
+        public ApiValidationService(IWebConfiguration config, IAssessorTokenService tokenService, ILogger<ApiValidationService> logger)
         {
             _config = config;
             _tokenService = tokenService;
@@ -33,12 +33,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 _logger.LogInformation("Page has question with api validation");
                 var validationResult = new ApiValidationResult() { IsValid = true };
-                
+
                 var apiBaseUri = new Uri(_config.AssessorApiAuthentication.ApiBaseAddress, UriKind.Absolute);
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.BaseAddress = apiBaseUri;
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());    
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
                 
                     _logger.LogInformation("Auth set");
                     
@@ -75,6 +75,4 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return new ApiValidationResult() {IsValid = true};
         }
     }
-    
-    
 }

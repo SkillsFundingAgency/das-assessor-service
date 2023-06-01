@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
                 ContactQueryRepositoryMock.Object,
                 _searchOrganisationForContactsValidator,
                 MediatorMock.Object,
-                ControllerLoggerMock.Object, new Mock<IWebConfiguration>().Object);
+                ControllerLoggerMock.Object, new Mock<IApiConfiguration>().Object);
         }
 
         private void SetupControllerMocks()
