@@ -14,7 +14,6 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.Annotations;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
@@ -29,12 +28,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
             IMediator mediator,
-            ILogger<ContactQueryController> logger, IWebConfiguration config)
+            ILogger<ContactQueryController> logger, IApiConfiguration config)
         {
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;

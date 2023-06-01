@@ -12,10 +12,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class SignInService: ISignInService
     {
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly ILogger<SignInService> _logger;
 
-        public SignInService(IWebConfiguration config, ILogger<SignInService> logger)
+        public SignInService(IApiConfiguration config, ILogger<SignInService> logger)
         {
             _config = config;
             _logger = logger;

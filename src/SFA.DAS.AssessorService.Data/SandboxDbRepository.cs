@@ -15,12 +15,12 @@ namespace SFA.DAS.AssessorService.Data
     public class SandboxDbRepository : Repository, ISandboxDbRepository
     {
         private readonly SqlBulkCopyOptions _bulkCopyOptions;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly ILogger<SandboxDbRepository> _logger;
 
         private const string AzureResource = "https://database.windows.net/";
 
-        public SandboxDbRepository(IUnitOfWork unitOfWork, IWebConfiguration config, ILogger<SandboxDbRepository> logger)
+        public SandboxDbRepository(IUnitOfWork unitOfWork, IApiConfiguration config, ILogger<SandboxDbRepository> logger)
             : base(unitOfWork)
         {
             _config = config;

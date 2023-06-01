@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult SignOut()
+        public new IActionResult SignOut()
         {
             ResetCookies();
 
