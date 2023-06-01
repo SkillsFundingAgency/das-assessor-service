@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MediatR.Pipeline;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -24,12 +25,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
 
         public async Task<string> Handle(OrganisationStandardAddRequest request, CancellationToken cancellationToken)
         {
-            var standardVersion = (await _standardRepository.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
+            var standard = (await _standardRepository.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .FirstOrDefault();
+
+            if(standard == null)
+            {
+                throw new ArgumentException($"The {request.StandardReference} cannot be found.");
+            }
 
             var createEpaOrganisationStandardRequest = new CreateEpaOrganisationStandardRequest
             {
-                StandardCode = standardVersion.LarsCode,
+                StandardCode = standard.LarsCode,
                 EffectiveFrom = DateTime.UtcNow.Date,
                 OrganisationId = request.OrganisationId,
                 StandardVersions = request.StandardVersions,
