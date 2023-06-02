@@ -65,15 +65,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var applyFollowingWithdrawal = (await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(
                 request.OrganisationId, request.StandardReference) != null);
 
-            var oganisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
+            var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
             if (applyFollowingWithdrawal) 
             {
-                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(oganisationStandard, request.DeliveryAreas, true);
+                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas, true);
             }
             else
             {
-                return await _registerRepository.CreateEpaOrganisationStandard(oganisationStandard, request.DeliveryAreas);
+                return await _registerRepository.CreateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
             }
         }
 
