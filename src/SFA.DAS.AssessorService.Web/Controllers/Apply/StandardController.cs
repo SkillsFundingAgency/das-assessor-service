@@ -62,68 +62,45 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
         }
 
-        [HttpGet("standard/view-standard/{standardReference}")]
-        public async Task<IActionResult> ViewStandard(string standardReference)
+        ////The below controller method is the old controller method and has been replaced with the 'StandardDetails' controller method.
+        //[HttpGet("standard/view-standard/{standardReference}")]
+        //public async Task<IActionResult> ViewStandard(string standardReference)
+        //{
+        //    var contact = await GetUserContact();
+        //    var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
+
+        //    var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))
+        //        .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
+
+        //    var existingEmptyApplication = existingApplications.FirstOrDefault(x => x.StandardCode == null);
+        //    if (existingEmptyApplication != null)
+        //        return RedirectToAction("ConfirmStandard", new { Id = existingEmptyApplication.Id, StandardReference = standardReference });
+        //    else
+        //    {
+        //        var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
+        //        var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
+        //        return RedirectToAction("ConfirmStandard", new { Id = id, StandardReference = standardReference });
+        //    }
+        //}
+
+        [HttpGet("standard/standard-details/{standardReference}")]
+        public async Task<IActionResult> StandardDetails(string standardReference, string version)
         {
             var contact = await GetUserContact();
-            var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-            var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
-                .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
-
-            var existingEmptyApplication = existingApplications.FirstOrDefault(x => x.StandardCode == null);
-            if (existingEmptyApplication != null)
-                return RedirectToAction("ConfirmStandard", new { Id = existingEmptyApplication.Id, StandardReference = standardReference });
-            else
-            {
-                var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
-                var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-                return RedirectToAction("ConfirmStandard", new { Id = id, StandardReference = standardReference });
-            }
-        }
-
-        [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
-        [HttpGet("standard/{id}/confirm-standard/{standardReference}/{version}")]
-        [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference, string version)
-        {
-            var application = await _applicationApiClient.GetApplication(id);
-            if (!CanUpdateApplicationAsync(application))
-            {
-                return RedirectToAction("Applications", "Application");
-            }
-
-            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var org = await _orgApiClient.GetEpaOrganisation(contact.OrganisationId.ToString());
             var standardVersions = (await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference))
                                         .OrderBy(s => s.Version);
-            var earliestStandard = standardVersions.FirstOrDefault();
-            var latestStandard = standardVersions.LastOrDefault();
-            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
+            var oldestVersion = standardVersions.FirstOrDefault();
+            var newestVersion = standardVersions.LastOrDefault();
+            var anyOptedInVersions = standardVersions.Any(v => v.OptedIn == true);
 
-            var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
-            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
-
-            if (!string.IsNullOrWhiteSpace(version))
-            {
-                // specific version selected (from standversion view)
-                var standardViewModel = new StandardVersionViewModel
-                {
-                    Id = id,
-                    StandardReference = standardReference,
-                    FromStandardsVersion = true
-                };
-                standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version == version);
-                standardViewModel.EarliestVersionEffectiveFrom = standardViewModel.SelectedStandard.VersionEarliestStartDate;
-                standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
-                standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
-            }
-            else if (anyExistingVersions)
+            //if (!string.IsNullOrWhiteSpace(Version)) - this is for the apply journey.
+            if (anyOptedInVersions)
             {
                 // existing approved versions for this standard
-                var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
-                model.SelectedStandard = new StandardVersionApplication(latestStandard);
-                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard, previousApplications).OrderByDescending(x => x.Version).ToList();
+                var model = new StandardVersionApplicationViewModel { StandardReference = standardReference };
+                model.SelectedStandard = new StandardVersionApplication(newestVersion);
+                model.Results = ApplyVersionStatuses(standardVersions).OrderByDescending(x => x.Version).ToList();
                 return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
             }
             else
@@ -131,18 +108,78 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 // no existing approved versions for this standard
                 var standardViewModel = new StandardVersionViewModel
                 {
-                    Id = id,
                     StandardReference = standardReference,
                     FromStandardsVersion = false
                 };
                 standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
-                standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
-                standardViewModel.EarliestVersionEffectiveFrom = earliestStandard.VersionEarliestStartDate;
-                if (standardVersions.Count() == 1)
-                    standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version });
+                standardViewModel.SelectedStandard = (StandardVersion)newestVersion;
+                standardViewModel.EarliestVersionEffectiveFrom = oldestVersion.VersionEarliestStartDate;
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
             }
         }
+
+        //[HttpGet("standard/{id}/confirm-standard/{standardReference}")]
+        //[HttpGet("standard/{id}/confirm-standard/{standardReference}/{version}")]
+        //[ApplicationAuthorize(routeId: "Id")]
+        //public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference, string version)
+        //{
+        //    var application = await _applicationApiClient.GetApplication(id);
+        //    if (!CanUpdateApplicationAsync(application))
+        //    {
+        //        return RedirectToAction("Applications", "Application");
+        //    }
+
+        //    var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+        //    //OrganisationStandardVersion Table
+        //    var standardVersions = (await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference))
+        //                                .OrderBy(s => s.Version);
+        //    var earliestStandard = standardVersions.FirstOrDefault();
+        //    var latestStandard = standardVersions.LastOrDefault();
+        //    bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
+
+        //    var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
+        //    var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
+
+        //    if (!string.IsNullOrWhiteSpace(version))
+        //    {
+        //        // specific version selected (from standversion view)
+        //        var standardViewModel = new StandardVersionViewModel
+        //        {
+        //            Id = id,
+        //            StandardReference = standardReference,
+        //            FromStandardsVersion = true
+        //        };
+        //        standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version == version);
+        //        standardViewModel.EarliestVersionEffectiveFrom = standardViewModel.SelectedStandard.VersionEarliestStartDate;
+        //        standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
+        //        standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
+        //        return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
+        //    }
+        //    else if (anyExistingVersions)
+        //    {
+        //        // existing approved versions for this standard
+        //        var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
+        //        model.SelectedStandard = new StandardVersionApplication(latestStandard);
+        //        model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard, previousApplications).OrderByDescending(x => x.Version).ToList();
+        //        return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
+        //    }
+        //    else
+        //    {
+        //        // no existing approved versions for this standard
+        //        var standardViewModel = new StandardVersionViewModel
+        //        {
+        //            Id = id,
+        //            StandardReference = standardReference,
+        //            FromStandardsVersion = false
+        //        };
+        //        standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
+        //        standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
+        //        standardViewModel.EarliestVersionEffectiveFrom = earliestStandard.VersionEarliestStartDate;
+        //        if (standardVersions.Count() == 1)
+        //            standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version });
+        //        return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
+        //    }
+        //}
 
         [HttpPost("standard/{id}/confirm-standard/{standardReference}")]
         [HttpPost("standard/{id}/confirm-standard/{standardReference}/{version}")]
@@ -342,33 +379,37 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return false;
             }
-         
+
             return true;
         }
-        
 
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
-            List<ApplicationResponse> previousWithdrawals, List<ApplicationResponse> previousApplications)
+
+        //can be removed following REPAO changes.
+        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions,
+            List<ApplicationResponse> previousWithdrawals = null, List<ApplicationResponse> previousApplications = null)
         {
             bool approved = false;
             bool changed = false;
+            bool optedIn = false;
             var results = new List<StandardVersionApplication>();
 
             foreach (var version in versions.OrderBy(s => s.Version))
             {
                 var stdVersion = new StandardVersionApplication(version);
 
-                if (version.ApprovedStatus == ApprovedStatus.Approved)
+                if (version.OptedIn == ApprovedStatus.OptedIn)
                 {
-                    approved = true;
+                    //approved = true;
                     changed = false;
-                    stdVersion.VersionStatus = VersionStatus.Approved;
+
+                    optedIn = true;
+                    stdVersion.OptedIn = VersionStatus.OptedIn;
                 }
                 else
                 {
-                    stdVersion.VersionStatus = MapUnapprovedVersionStatus(version, approved, changed);
+                    stdVersion.VersionStatus = MapUnapprovedVersionStatus(version, optedIn, changed);
 
-                    if (approved && version.EPAChanged)
+                    if (optedIn && version.EPAChanged)
                         changed = true;
                 }
 
@@ -376,13 +417,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             // now do it again in reverse order to handle any versions prior to the first approved version
-            var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.VersionStatus == VersionStatus.Approved);
+            var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.OptedIn == VersionStatus.OptedIn);
             if (firstApproved != null)
             {
                 changed = firstApproved.EPAChanged;
 
                 foreach (var version in results
-                    .Where(s => s.VersionStatus == null)
+                    .Where(s => s.OptedIn == null)
                     .OrderByDescending(s => s.Version))
                 {
                     version.VersionStatus = changed ? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
@@ -391,14 +432,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             bool AppliedViaOptIn = false;
-            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
-                                                                                        && x.ApplicationStatus == ApplicationStatus.Approved);
+            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal
+                                                                                        && x.ApplicationStatus == ApplicationStatus.OptedIn);
             if (previousApplications != null)
                 AppliedViaOptIn = previousApplications
                     .Where(w => (w.ApplicationType != StandardApplicationTypes.StandardWithdrawal) &&
                                 (w.ApplicationType != StandardApplicationTypes.VersionWithdrawal) &&
                                 (w.ApplyViaOptIn == true)).Select(x => x.ApplyViaOptIn).FirstOrDefault();
- 
+
 
             foreach (var withdrawal in withdrawals)
             {
