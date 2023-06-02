@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 
 namespace SFA.DAS.AssessorService.Web.Validators.Standard
 {
-    public class AddStandardViewModelValidator : AbstractValidator<AddStandardViewModel>
+    public class AddStandardViewModelValidator : AbstractValidator<AddStandardSearchViewModel>
     {
         public AddStandardViewModelValidator()
         {

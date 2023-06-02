@@ -1,12 +1,14 @@
+@using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
 @using SFA.DAS.AssessorService.Web.ViewModels.Standard
-@model AddStandardViewModel
+@model AddStandardSearchViewModel
 
 @{
     ViewBag.Title = "Add standard";
     Layout = "_Layout";
 }
 
-<a asp-route="OrganisationStandardsIndexGetRoute" class="govuk-back-link">Return to your standards and versions</a>
+<a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-back-link">Return to your standards and versions</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -25,7 +27,7 @@
     }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form asp-route="AddStandardSearchRoutePost">
+            <form asp-route="@StandardController.AddStandardSearchRoutePost">
                 <div class="govuk-form-group">
                     <div class="govuk-form-group" sfa-validation-for="StandardToFind" sfa-validationerror-class="govuk-form-group--error">
                         <h1 class="govuk-label-wrapper">

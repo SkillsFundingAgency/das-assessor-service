@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+﻿@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
 @using SFA.DAS.AssessorService.Domain.Extensions
 @model AddStandardConfirmViewModel
 
@@ -7,7 +8,7 @@
     Layout = "_Layout";
 }
 
-<a asp-route="AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@Model.StandardReference" class="govuk-back-link">Return to confirm versions</a>
+<a asp-route="@StandardController.AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@Model.StandardReference" class="govuk-back-link">Return to confirm versions</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -46,7 +47,7 @@
                     </tr>
                 </tbody>
             </table>
-            <form asp-route="AddStandardConfirmOptInRoutePost" method="post">
+            <form asp-route="@StandardController.AddStandardConfirmOptInRoutePost" method="post">
                 @Html.HiddenFor(m => m.StandardReference)
                 @foreach (var SelectedVersions in Model.SelectedVersions)
                 {

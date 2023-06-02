@@ -1,14 +1,14 @@
 ﻿@using SFA.DAS.AssessorService.Web.Controllers.Apply;
 @using SFA.DAS.AssessorService.Web.ViewModels.Standard
 @using SFA.DAS.AssessorService.Web.Extensions
-@model AddStandardViewModel
+@model AddStandardSearchViewModel
 
 @{
     ViewBag.Title = "Standard Results";
     Layout = "_Layout";
 }
 
-<a asp-route="AddStandardSearchRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search</a>
+<a asp-route="@StandardController.AddStandardSearchRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -46,7 +46,7 @@
                                         }
                                         else
                                         {
-                                            <a asp-route="AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Opt-in for standard</a>
+                                            <a asp-route="@StandardController.AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Opt-in for standard</a>
                                         }
                                     </td>
                                 </tr>

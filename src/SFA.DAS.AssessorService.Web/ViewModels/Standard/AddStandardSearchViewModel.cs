@@ -4,29 +4,17 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 {
-    public class AddStandardViewModel
+    public class AddStandardSearchViewModel
     {
-        public Guid Id { get; set; }
-
         public string StandardToFind { get; set; }
-
-        public string StandardReference { get; set; }
 
         public List<StandardVersion> Results { get; set; }
 
         public List<StandardVersion> Approved { get; set; }
 
-        public StandardVersion SelectedStandard { get; set; }
-
         public List<string> SelectedVersions { get; set; }
 
         public bool IsConfirmed { get; set; }
-
-        public string ApplicationStatus { get; set; }
-
-        public bool FromStandardsVersion { get; set; }
-
-        public DateTime? EarliestVersionEffectiveFrom { get; set; }
 
         public bool IsApprovedForStandard(StandardVersion standardVersion)
         {
