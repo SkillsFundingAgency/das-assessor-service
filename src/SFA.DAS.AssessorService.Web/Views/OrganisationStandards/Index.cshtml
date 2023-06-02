@@ -79,7 +79,8 @@
                                         }
                                         else
                                         {
-                                            <a class="govuk-link govuk-link--no-visited-state" href="/standard/view-standard/@item.ReferenceNumber">@Html.DisplayFor(modelItem => item.StandardName)</a>
+                                            @*<a class="govuk-link govuk-link--no-visited-state" href="/standard/view-standard/@item.ReferenceNumber">@Html.DisplayFor(modelItem => item.StandardName)</a>*@
+                                            <a class="govuk-link govuk-link--no-visited-state" href="/standard/standard-details/@item.ReferenceNumber">@Html.DisplayFor(modelItem => item.StandardName)</a>
                                         }
                                         @if (item.NewVersionAvailable)
                                         {
