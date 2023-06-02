@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
@@ -432,7 +431,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return results;
         }
 
+        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions)
+        {
+            var results = new List<StandardVersionApplication>();
 
+            foreach (var version in versions.OrderBy(s => s.Version))
+            {
+                var stdVersion = new StandardVersionApplication(version);
+
+                if (version.OptedIn == ApprovedStatus.OptedIn)
+                {
+                    stdVersion.OptedIn = VersionStatus.OptedIn;
+                }
+                else
+                {
+                    stdVersion.OptedIn = VersionStatus.OptedOut;
+                }
+
+                results.Add(stdVersion);
+            }
+            return results;
+        }
+
+
+        //can remove following REPAO changes
         private string MapUnapprovedVersionStatus(AppliedStandardVersion version, bool approved, bool previouslyChanged)
         {
             string versionStatus = null;
