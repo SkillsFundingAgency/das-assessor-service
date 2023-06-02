@@ -39,5 +39,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await _contactsApiClient.GetContactBySignInId(signinId);
         }
+
+        protected async Task<string> GetEpaoIdFromClaim()
+        {
+            var epaoid = _httpContextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            return epaoid;
+        }
     }
 }
