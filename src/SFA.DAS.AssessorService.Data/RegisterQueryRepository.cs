@@ -248,8 +248,21 @@ namespace SFA.DAS.AssessorService.Data
             return orgStandard;
         }
 
+        public async Task<IEnumerable<AppliedStandardVersion>> GetOptedInStatusForAppliedStandardVersions(string organisationId, string standardReference)
+        {
+            var sql = @"SELECT StandardUId
+                FROM OrganisationStandardVersion
+                JOIN OrganisationStandard
+                ON OrganisationStandardVersion.OrganisationStandardId = OrganisationStandard.Id
+                WHERE OrganisationStandard.EndPointAssessorOrganisationId = 'EPA0201'
+                AND StandardReference = 'ST0129'
+                AND (OrganisationStandardVersion.EffectiveTo >= GETDATE() OR OrganisationStandardVersion.EffectiveTo IS NULL)";
+            return await _unitOfWork.Connection.QueryAsync<AppliedStandardVersion>(
+                    sql, new { organisationId = organisationId, standardReference = standardReference });
 
+        }
 
+        //This should be changed following REPAO changes, the 'ApprovedStatus' value will no longer be needed. However, the method will still be used to return all standard versions (opted in or not) for a standard.
         public async Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference)
         {
             var sql =

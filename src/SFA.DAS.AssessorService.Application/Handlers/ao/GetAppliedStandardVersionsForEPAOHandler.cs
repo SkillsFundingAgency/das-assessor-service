@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -24,7 +25,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             _logger.LogInformation($@"Handling GetStandardVersionsByOrganisationIdAndStandardReference Request for OrganisationId [{request.OrganisationId}] and Standard Reference[{request.StandardReference}]");
             
-            return await _registerQueryRepository.GetAppliedStandardVersionsForEPAO(request.OrganisationId, request.StandardReference);
+            var standardVersions = await _registerQueryRepository.GetAppliedStandardVersionsForEPAO(request.OrganisationId, request.StandardReference);
+            var optedInStandardVersions = await _registerQueryRepository.GetOptedInStatusForAppliedStandardVersions(request.OrganisationId, request.StandardReference);
+
+            foreach(var optedInVersion in optedInStandardVersions)
+            {
+                var standardVersion = standardVersions.FirstOrDefault(x => x.StandardUId == optedInVersion.StandardUId);
+                standardVersion.OptedIn = true;
+            }
+            return standardVersions;
         }
     } 
 }
