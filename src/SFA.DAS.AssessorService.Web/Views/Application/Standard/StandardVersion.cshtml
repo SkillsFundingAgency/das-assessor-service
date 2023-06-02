@@ -41,64 +41,25 @@
                 <tbody class="govuk-table__body">
                     @foreach (var version in Model.Results)
                     {
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">@version.Version</th>
-                        @if (version.VersionStatus == VersionStatus.Approved)
-                        {
-                            <td class="govuk-table__cell">Approved</td>
-                            <td class="govuk-table__cell"></td>
-                        }
-                        else if (version.VersionStatus == VersionStatus.NewVersionChanged)
-                        {
-                            if (version.PreviouslyWithdrawn)
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">@version.Version</th>
+                            @if (version.OptedIn == VersionStatus.OptedIn)
                             {
-                                <td class="govuk-table__cell">Withdrawn</td>
+                                <td class="govuk-table__cell">Approved</td>
+                                <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="#">Opt out of standard version</a></td>
                             }
-                            else
-                            {
-                                <td class="govuk-table__cell">You can apply</td>
-                            }
-
-                            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/standard/@Model.Id/confirm-standard/@Model.StandardReference/@version.Version">Apply for standard version</a></td>
-                        }
-                        else if (version.VersionStatus == VersionStatus.NewVersionNoChange)
-                        {
-                            if (version.PreviouslyWithdrawn)
-                            {
-                                <td class="govuk-table__cell">Withdrawn</td>
-                            }
-                            else
+                            else if (version.OptedIn == VersionStatus.OptedOut)
                             {
                                 <td class="govuk-table__cell">You can opt-in</td>
-                            }
 
-                            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/standard/@Model.Id/opt-in/@Model.StandardReference/@version.Version">Opt into standard version</a></td>
-                        }
-                        else if (version.VersionStatus == VersionStatus.InProgress)
-                        {
-                            <td class="govuk-table__cell">@version.ApplicationStatus</td>
-                            <td class="govuk-table__cell">
-                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = version.ApplicationId })">View</a>
-                            </td>
-                        }
-                        else if (version.VersionStatus == VersionStatus.FeedbackAdded)
-                        {
-                            <td class="govuk-table__cell">Feedback added</td>
-                            <td class="govuk-table__cell">
-                                <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new { Id = version.ApplicationId })">View</a>
-                            </td>
-                        }
-                        else if (version.VersionStatus == VersionStatus.Withdrawn)
-                        {
-                            <td class="govuk-table__cell">Withdrawn</td>
-                            <td class="govuk-table__cell"></td>
-                        }
-                        else
-                        {
-                            <td class="govuk-table__cell"></td>
-                            <td class="govuk-table__cell"></td>
-                        }
-                    </tr>
+                                <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="#">Opt into standard version</a></td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell"></td>
+                                <td class="govuk-table__cell"></td>
+                            }
+                        </tr>
                     }
                 </tbody>
             </table>
