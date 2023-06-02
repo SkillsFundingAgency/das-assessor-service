@@ -475,5 +475,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             return versionStatus;
         }
+
+        private async Task<IEnumerable<StandardVersion>> GetEpaoOptedInVersions(string referenceNumber)
+        {
+            var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaoIdFromClaim().Result, referenceNumber);
+            return standardVersions;
+        }
     }
 }
