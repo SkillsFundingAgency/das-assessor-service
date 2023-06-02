@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {
     public class StandardVersionApplicationViewModel
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         public string StandardReference { get; set; }
 

@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (org.RoEPAOApproved)
                     {
-                        // an organistion maybe registered without any applications because it has been 
+                        // an organistion may be registered without any applications because it has been 
                         // migrated in the approved state from the pre-digital service
                         return RedirectToAction(nameof(StandardApplications));
                     }

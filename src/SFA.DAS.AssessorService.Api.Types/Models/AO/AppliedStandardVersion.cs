@@ -5,6 +5,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class AppliedStandardVersion
     {
+        public bool OptedIn { get; set; }
+
+        //ApprovedStatus property can be removed following REPAO changes. 
         public string ApprovedStatus { get; set; }
         public Guid ApplicationId { get; set; }
         public string StandardUId { get; set; }

@@ -5,6 +5,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
     public class StandardVersionApplication : StandardVersion
     {
+        public bool OptedIn { get; set; }
+
+        //Most of the properties below can be removed following REPAO changes. 
         public string VersionStatus { get; set; }
         public string ApplicationStatus { get; set; }
         public Guid ApplicationId { get; set; }

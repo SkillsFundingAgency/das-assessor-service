@@ -2,6 +2,10 @@
 {
     public static class VersionStatus
     {
+        public const bool OptedIn = true;
+        public const bool OptedOut = false;
+
+// The below version statuses can be removed following the REPAO changes.
         public const string Approved = "Approved";
         public const string NewVersionNoChange = "NewVersionNoChange";
         public const string NewVersionChanged = "NewVersionChanged";

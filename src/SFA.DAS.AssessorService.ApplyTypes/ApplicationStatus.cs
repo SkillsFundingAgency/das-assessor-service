@@ -2,6 +2,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public static class ApplicationStatus
     {
+        public const string OptedIn = "Opted in";
+
+        // The below statuses refer to the previously possible application statuses before the REPAO changes. 
         public const string New = "New";
         public const string InProgress = "In Progress";
         public const string Submitted = "Submitted";
