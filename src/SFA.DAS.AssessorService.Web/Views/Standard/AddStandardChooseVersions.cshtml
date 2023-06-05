@@ -4,12 +4,12 @@
 @model AddStandardConfirmViewModel
 
 @{
-    ViewBag.Title = "Confirm Standard";
+    ViewBag.Title = "Add standard choose verions";
     Layout = "_Layout";
-    var multipleVersions = (Model.Results?.Count() ?? 0) > 1;
+    var multipleVersions = (Model.StandardVersions?.Count() ?? 0) > 1;
 }
 
-<a asp-route="@StandardController.AddStandardSearchResultsRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search results</a>
+<a asp-route="@StandardController.AddStandardSearchResultsRouteGet" asp-route-search="@Model.Search" class="govuk-back-link">Return to search results</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
@@ -29,27 +29,27 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
-                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm and opt-in for standard:</span>
-                @Model.SelectedStandard?.Title
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Choose the versions you want to add for:</span>
+                @Model.Standard?.Title
             </h1>
-            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
+            <p class="govuk-body-l">Reference: @Model.Standard?.IFateReferenceNumber</p>
 
             <table class="govuk-table govuk-!-margin-bottom-7">
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective from</th>
-                        <td class="govuk-table__cell">@Model.EarliestVersionEffectiveFrom.ToSfaShortDateString()</td>
+                        <td class="govuk-table__cell">@Model.StandardEffectiveFrom</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective to</th>
                         <td class="govuk-table__cell">
-                            @if (@Model.SelectedStandard?.EffectiveTo == null)
+                            @if (@Model.StandardEffectiveTo == null)
                             {
                                 @Html.Raw("Expiry date not set")
                             }
                             else
                             {
-                                @Model.SelectedStandard?.EffectiveTo.ToSfaShortDateString()
+                                @Model.StandardEffectiveTo
                             }
                         </td>
                     </tr>
@@ -57,19 +57,19 @@
                     {
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="row">Version</th>
-                            <td class="govuk-table__cell">@Model.SelectedStandard?.Version</td>
+                            <td class="govuk-table__cell">@Model.Standard?.Version</td>
                         </tr>
                     }
                 </tbody>
             </table>
 
-            <form asp-route="@StandardController.AddStandardConfirmVersionsRoutePost">
+            <form asp-route="@StandardController.AddStandardChooseVersionsRoutePost">
                 <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
-                <input asp-for="StandardToFind" value="@Model.StandardToFind" type="hidden" />
+                <input asp-for="Search" value="@Model.Search" type="hidden" />
 
                 @if (!multipleVersions)
                 {
-                    <input asp-for="SelectedVersions" value="@Model.SelectedStandard?.Version" type="hidden" />
+                    <input asp-for="SelectedVersions" value="@Model.Standard?.Version" type="hidden" />
                 }
                 else
                 {
@@ -78,7 +78,7 @@
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
                             <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                             <div class="govuk-checkboxes govuk-checkboxes--small">
-                                @foreach (var version in Model.Results)
+                                @foreach (var version in Model.StandardVersions)
                                 {
                                     <div class="govuk-checkboxes__item">
                                         <input class="govuk-checkboxes__input" 
@@ -109,12 +109,12 @@
                             sfa-validationerror-class="govuk-input--error"
                             type="checkbox">
                         <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
-                            By continuing, you confirm you have read and understood the relevant assessment plan(s) for <a href="@Model.SelectedStandard?.StandardPageUrl" target="_blank" class="govuk-link">this standard.</a>
+                            I confirm I have read and understood the relevant <a href="@Model.Standard?.StandardPageUrl" target="_blank" class="govuk-link">assessment plans for this standard</a>.
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" class="govuk-button">Confirm and continue</button>
+                <button type="submit" class="govuk-button">Continue</button>
             </form>
         </div>
     </div>

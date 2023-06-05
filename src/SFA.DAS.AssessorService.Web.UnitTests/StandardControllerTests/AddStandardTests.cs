@@ -119,7 +119,7 @@
         }
 
         [Test]
-        public async Task AddStandardConfirmVersions_ReturnsViewWithPrePopulatedViewModel_WhenGetCalledWithInvalidModelState()
+        public async Task AddStandardChooseVersions_ReturnsViewWithPrePopulatedViewModel_WhenGetCalledWithInvalidModelState()
         {
             // Arrange
             var search = "Tec";
@@ -136,15 +136,15 @@
             var isConfirmed = false.ToString();
 
             var modelState = new ModelStateDictionary();
-            modelState.AddModelError(nameof(AddStandardSearchViewModel.SelectedVersions), "Error");
-            modelState.SetModelValue(nameof(AddStandardSearchViewModel.SelectedVersions), selectedVersions, selectedVersions);
-            modelState.AddModelError(nameof(AddStandardSearchViewModel.IsConfirmed), "Error");
-            modelState.SetModelValue(nameof(AddStandardSearchViewModel.IsConfirmed), isConfirmed, isConfirmed);
+            modelState.AddModelError(nameof(AddStandardConfirmViewModel.SelectedVersions), "Error");
+            modelState.SetModelValue(nameof(AddStandardConfirmViewModel.SelectedVersions), selectedVersions, selectedVersions);
+            modelState.AddModelError(nameof(AddStandardConfirmViewModel.IsConfirmed), "Error");
+            modelState.SetModelValue(nameof(AddStandardConfirmViewModel.IsConfirmed), isConfirmed, isConfirmed);
 
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
-            var result = await _sut.AddStandardConfirmVersions(search, referenceNumber);
+            var result = await _sut.AddStandardChooseVersions(search, referenceNumber);
 
             // Assert
             Assert.IsInstanceOf<ViewResult>(result);
@@ -152,16 +152,16 @@
             Assert.IsInstanceOf<AddStandardConfirmViewModel>(viewResult.Model);
 
             var model = viewResult.Model as AddStandardConfirmViewModel;
-            Assert.AreEqual(search, model.StandardToFind);
+            Assert.AreEqual(search, model.Search);
             Assert.AreEqual(referenceNumber, model.StandardReference);
-            Assert.AreEqual(standardVersions.Count, model.Results.Count);
-            Assert.AreEqual(standardVersions.FirstOrDefault(), model.SelectedStandard);
+            Assert.AreEqual(standardVersions.Count, model.StandardVersions.Count);
+            Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
             Assert.AreEqual(selectedVersions.Split(',').ToList(), model.SelectedVersions);
             Assert.AreEqual(bool.Parse(isConfirmed), model.IsConfirmed);
         }
 
         [Test]
-        public async Task AddStandardConfirmVersions_ReturnsViewModel_WhenGetCalledWithValidModelState()
+        public async Task AddStandardChooseVersions_ReturnsViewModel_WhenGetCalledWithValidModelState()
         {
             // Arrange
             var search = "Tec";
@@ -178,7 +178,7 @@
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
-            var result = await _sut.AddStandardConfirmVersions(search, referenceNumber);
+            var result = await _sut.AddStandardChooseVersions(search, referenceNumber);
 
             // Assert
             Assert.IsInstanceOf<ViewResult>(result);
@@ -186,36 +186,36 @@
             Assert.IsInstanceOf<AddStandardConfirmViewModel>(viewResult.Model);
 
             var model = viewResult.Model as AddStandardConfirmViewModel;
-            Assert.AreEqual(search, model.StandardToFind);
+            Assert.AreEqual(search, model.Search);
             Assert.AreEqual(referenceNumber, model.StandardReference);
-            Assert.AreEqual(standardVersions.Count, model.Results.Count);
-            Assert.AreEqual(standardVersions.FirstOrDefault(), model.SelectedStandard);
+            Assert.AreEqual(standardVersions.Count, model.StandardVersions.Count);
+            Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
             Assert.AreEqual(new List<string>(), model.SelectedVersions);
             Assert.AreEqual(false, model.IsConfirmed);
         }
 
         [Test]
-        public void AddStandardConfirmVersions_RedirectsToGet_WhenPostCalledWithInvalidModelState()
+        public void AddStandardChooseVersions_RedirectsToGet_WhenPostCalledWithInvalidModelState()
         {
             // Arrange
             var modelState = new ModelStateDictionary();
-            modelState.AddModelError(nameof(AddStandardSearchViewModel.IsConfirmed), "Error");
-            modelState.SetModelValue(nameof(AddStandardSearchViewModel.StandardToFind), "false", "false");
+            modelState.AddModelError(nameof(AddStandardConfirmViewModel.IsConfirmed), "Error");
+            modelState.SetModelValue(nameof(AddStandardConfirmViewModel.Search), "false", "false");
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
-            var result = _sut.AddStandardConfirmVersions(new AddStandardConfirmViewModel());
+            var result = _sut.AddStandardChooseVersions(new AddStandardConfirmViewModel());
 
             // Assert
             // Assert
             Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
             var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.AreEqual(StandardController.AddStandardConfirmVersionsRouteGet, redirectToRouteResult.RouteName);
+            Assert.AreEqual(StandardController.AddStandardChooseVersionsRouteGet, redirectToRouteResult.RouteName);
         }
 
         [Test]
-        public void AddStandardConfirmVersions_RedirectsToAddStandardConfirmOptIn_WhenPostCalledWithInvalidModelState()
+        public void AddStandardChooseVersions_RedirectsToAddStandardConfirm_WhenPostCalledWithInvalidModelState()
         {
             // Arrange
             var modelState = new ModelStateDictionary();
@@ -223,56 +223,56 @@
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
-            var result = _sut.AddStandardConfirmVersions(new AddStandardConfirmViewModel());
+            var result = _sut.AddStandardChooseVersions(new AddStandardConfirmViewModel());
 
             // Assert
             Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
             var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.AreEqual(StandardController.AddStandardConfirmOptInRouteGet, redirectToRouteResult.RouteName);
+            Assert.AreEqual(StandardController.AddStandardConfirmRouteGet, redirectToRouteResult.RouteName);
         }
 
         [Test]
-        public void AddStandardConfirmOptIn_WhenSearchIsNull_ShouldThrowException()
+        public void AddStandardConfirm_WhenSearchIsNull_ShouldThrowException()
         {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirmOptIn(null, "ST0001", new List<string> { "1.0" }));
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm(null, "ST0001", new List<string> { "1.0" }));
         }
 
         [Test]
-        public void AddStandardConfirmOptIn_WhenReferenceNumberIsNull_ShouldThrowException()
+        public void AddStandardConfirm_WhenReferenceNumberIsNull_ShouldThrowException()
         {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirmOptIn("Tech", null, new List<string> { "1.0" }));
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm("Tech", null, new List<string> { "1.0" }));
         }
 
         [Test]
-        public void AddStandardConfirmOptIn_WhenVersionsIsNull_ShouldThrowException()
+        public void AddStandardConfirm_WhenVersionsIsNull_ShouldThrowException()
         {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirmOptIn("Tech", "ST0001", null));
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm("Tech", "ST0001", null));
         }
 
         [Test]
-        public void AddStandardConfirmOptIn_WhenVersionsIsEmpty_ShouldThrowException()
+        public void AddStandardConfirm_WhenVersionsIsEmpty_ShouldThrowException()
         {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirmOptIn("Tech", "ST0001", new List<string>()));
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm("Tech", "ST0001", new List<string>()));
         }
 
 
         [Test]
-        public async Task AddStandardConfirmOptIn_WhenParametersAreValid_ReturnsView()
+        public async Task AddStandardConfirm_WhenParametersAreValid_ReturnsView()
         {
             // Arrange
             var standardVersions = new List<StandardVersion> { new StandardVersion { IFateReferenceNumber = "ST0001" } };
             _mockStandardVersionApiClient.Setup(svc => svc.GetStandardVersionsByIFateReferenceNumber(It.IsAny<string>())).ReturnsAsync(standardVersions);
 
             // Act
-            var result = await _sut.AddStandardConfirmOptIn("Tech", "ST0001", new List<string> { "1.0" });
+            var result = await _sut.AddStandardConfirm("Tech", "ST0001", new List<string> { "1.0" });
 
             // Assert
             Assert.IsInstanceOf<ViewResult>(result);
         }
 
         [Test]
-        public async Task AddStandardConfirmOptIn_WhenParametersAreValid_SetsModelCorrectly()
+        public async Task AddStandardConfirm_WhenParametersAreValid_SetsModelCorrectly()
         {
             // Arrange
             var standardVersions = new List<StandardVersion> {
@@ -289,7 +289,7 @@
             _mockStandardVersionApiClient.Setup(svc => svc.GetStandardVersionsByIFateReferenceNumber(It.IsAny<string>())).ReturnsAsync(standardVersions);
 
             // Act
-            var result = await _sut.AddStandardConfirmOptIn("Tech", "ST0001", new List<string> { "1.0" });
+            var result = await _sut.AddStandardConfirm("Tech", "ST0001", new List<string> { "1.0" });
 
             // Assert
             var viewResult = result as ViewResult;
@@ -297,13 +297,13 @@
 
             var model = viewResult.Model as AddStandardConfirmViewModel;
             Assert.IsNotNull(model);
-            Assert.AreEqual("Tech", model.StandardToFind);
+            Assert.AreEqual("Tech", model.Search);
             Assert.AreEqual("ST0001", model.StandardReference);
-            Assert.AreEqual(standardVersions.First(), model.SelectedStandard);
+            Assert.AreEqual(standardVersions.First(), model.Standard);
         }
 
         [Test]
-        public async Task AddStandardConfirmOptIn_GivenValidViewModel_ReturnsRedirectToRouteResult()
+        public async Task AddStandardConfirm_GivenValidViewModel_ReturnsRedirectToRouteResult()
         {
             // Arrange
             var model = new AddStandardConfirmViewModel();
@@ -311,19 +311,19 @@
             _mockOrgApiClient.Setup(x => x.GetEpaOrganisation(It.IsAny<string>())).ReturnsAsync(org);
 
             // Act
-            var result = await _sut.AddStandardConfirmOptIn(model);
+            var result = await _sut.AddStandardConfirm(model);
 
             // Assert
             Assert.IsInstanceOf<RedirectToRouteResult>(result);
         }
 
         [Test]
-        public async Task AddStandardConfirmOptIn_GivenValidViewModel_CallsAddOrganisationStandardWithCorrectParameters()
+        public async Task AddStandardConfirm_GivenValidViewModel_CallsAddOrganisationStandardWithCorrectParameters()
         {
             // Arrange
             var model = new AddStandardConfirmViewModel
             {
-                StandardReference = "ref",
+                Standard = new StandardVersion { IFateReferenceNumber = "ST0001"},
                 SelectedVersions = new List<string> { "1.0" }
             };
 
@@ -332,7 +332,7 @@
             _mockOrgApiClient.Setup(x => x.GetEpaOrganisation(It.IsAny<string>())).ReturnsAsync(org);
 
             // Act
-            await _sut.AddStandardConfirmOptIn(model);
+            await _sut.AddStandardConfirm(model);
 
             // Assert
             _mockOrgApiClient.Verify(x => x.AddOrganisationStandard(It.Is<OrganisationStandardAddRequest>(request =>
@@ -344,14 +344,14 @@
 
         [TestCase(null)]
         [TestCase("")]
-        public void AddStandardOptInConfirmation_GivenInvalidReferenceNumber_ThrowsArgumentOutOfRangeException(string referenceNumber)
+        public void AddStandardConfirmation_GivenInvalidReferenceNumber_ThrowsArgumentOutOfRangeException(string referenceNumber)
         {
             // Act & Assert
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardOptInConfirmation(referenceNumber));
+            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirmation(referenceNumber));
         }
 
         [Test]
-        public async Task AddStandardOptInConfirmation_GivenValidReferenceNumber_ReturnsViewWithCorrectModel()
+        public async Task AddStandardConfirmation_GivenValidReferenceNumber_ReturnsViewWithCorrectModel()
         {
             // Arrange
             var referenceNumber = "ST0001";
@@ -360,17 +360,17 @@
             _mockConfig.SetupGet(x => x.FeedbackUrl).Returns("http://feedbackurl");
 
             // Act
-            var result = await _sut.AddStandardOptInConfirmation(referenceNumber);
+            var result = await _sut.AddStandardConfirmation(referenceNumber);
 
             // Assert
             Assert.IsInstanceOf<ViewResult>(result);
             var viewResult = result as ViewResult;
             
-            Assert.IsInstanceOf<AddStandardOptInConfirmationViewModel>(viewResult.Model);
-            var model = viewResult.Model as AddStandardOptInConfirmationViewModel;
+            Assert.IsInstanceOf<AddStandardConfirmationViewModel>(viewResult.Model);
+            var model = viewResult.Model as AddStandardConfirmationViewModel;
 
             Assert.AreEqual(standardVersions.First().Title, model.StandardTitle);
-            Assert.AreEqual(standardVersions.Select(x => x.Version).ToList(), model.Versions);
+            Assert.AreEqual(standardVersions.Select(x => x.Version).ToList(), model.StandardVersions);
             Assert.AreEqual("http://feedbackurl", model.FeedbackUrl);
         }
     }

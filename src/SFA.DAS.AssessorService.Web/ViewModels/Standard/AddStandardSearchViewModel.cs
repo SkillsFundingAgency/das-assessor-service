@@ -12,10 +12,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 
         public List<StandardVersion> Approved { get; set; }
 
-        public List<string> SelectedVersions { get; set; }
-
-        public bool IsConfirmed { get; set; }
-
         public bool IsApprovedForStandard(StandardVersion standardVersion)
         {
             return Approved.Exists(p => p.IFateReferenceNumber == standardVersion.IFateReferenceNumber);

@@ -1,23 +1,32 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using System;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 {
     public class AddStandardConfirmViewModel
     {
-        public string StandardToFind { get; set; }
-
+        public string Search { get; set; }
+        
         public string StandardReference { get; set; }
 
-        public List<StandardVersion> Results { get; set; }
+        public StandardVersion Standard { get; set; }
 
-        public StandardVersion SelectedStandard { get; set; }
+        public List<StandardVersion> StandardVersions { get; set; }
 
         public List<string> SelectedVersions { get; set; }
 
         public bool IsConfirmed { get; set; }
 
-        public DateTime? EarliestVersionEffectiveFrom { get; set; }
+        public string StandardTitle => Standard?.Title;
+
+        public string StandardEffectiveFrom => Standard?.EffectiveFrom?.ToSfaShortDateString();
+
+        public string StandardEffectiveTo => Standard?.EffectiveTo?.ToSfaShortDateString();
+
+        public string SelectedVersionsText => $"Version{(SelectedVersions?.Count > 1 ? "s" : string.Empty)}";
+
+        public string SelectedVersionsValue => SelectedVersions != null ? string.Join(", ", SelectedVersions) : string.Empty;
     }
 }

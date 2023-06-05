@@ -32,14 +32,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
 
         #region Routes
-        public const string AddStandardSearchRouteGet = "AddStandardSearchRouteGet";
-        public const string AddStandardSearchRoutePost = "AddStandardSearchRoutePost";
-        public const string AddStandardSearchResultsRouteGet = "AddStandardSearchResultsRouteGet";
-        public const string AddStandardConfirmVersionsRouteGet = "AddStandardConfirmVersionsRouteGet";
-        public const string AddStandardConfirmVersionsRoutePost = "AddStandardConfirmVersionsRoutePost";
-        public const string AddStandardConfirmOptInRouteGet = "AddStandardConfirmOptInRouteGet";
-        public const string AddStandardConfirmOptInRoutePost = "AddStandardConfirmOptInRoutePost";
-        public const string AddStandardOptInConfirmationRouteGet = "AddStandardOptInConfirmationRouteGet";
+        public const string AddStandardSearchRouteGet = nameof(AddStandardSearchRouteGet);
+        public const string AddStandardSearchRoutePost = nameof(AddStandardSearchRoutePost);
+        public const string AddStandardSearchResultsRouteGet = nameof(AddStandardSearchResultsRouteGet);
+        public const string AddStandardChooseVersionsRouteGet = nameof(AddStandardChooseVersionsRouteGet);
+        public const string AddStandardChooseVersionsRoutePost = nameof(AddStandardChooseVersionsRoutePost);
+        public const string AddStandardConfirmRouteGet = nameof(AddStandardConfirmRouteGet);
+        public const string AddStandardConfirmRoutePost = nameof(AddStandardConfirmRoutePost);
+        public const string AddStandardConfirmationRouteGet = nameof(AddStandardConfirmationRouteGet);
         #endregion
 
         public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
@@ -107,9 +107,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm-versions", Name = AddStandardConfirmVersionsRouteGet)]
+        [HttpGet("standard/add-standard/{search}/{referenceNumber}/choose-versions", Name = AddStandardChooseVersionsRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> AddStandardConfirmVersions(string search, string referenceNumber)
+        public async Task<IActionResult> AddStandardChooseVersions(string search, string referenceNumber)
         {
             if (string.IsNullOrEmpty(search))
                 throw new ArgumentOutOfRangeException(nameof(search));
@@ -120,11 +120,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var model = new AddStandardConfirmViewModel
             {
-                StandardToFind = search,
-                SelectedStandard = standardVersions.FirstOrDefault(),
+                Search = search,
                 StandardReference = referenceNumber,
-                Results = standardVersions.ToList(),
-                EarliestVersionEffectiveFrom = standardVersions.FirstOrDefault()?.VersionEarliestStartDate,
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.ToList(),
                 IsConfirmed = ModelState
                     .GetAttemptedValueWhenInvalid(nameof(AddStandardConfirmViewModel.IsConfirmed), false),
                 SelectedVersions = ModelState
@@ -135,21 +134,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpPost("standard/add-standard/confirm-version", Name = AddStandardConfirmVersionsRoutePost)]
+        [HttpPost("standard/add-standard/choose-versions", Name = AddStandardChooseVersionsRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult AddStandardConfirmVersions(AddStandardConfirmViewModel model)
+        public IActionResult AddStandardChooseVersions(AddStandardConfirmViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToRoute(AddStandardConfirmVersionsRouteGet, new { search = model.StandardToFind, referenceNumber = model.StandardReference });
+                return RedirectToRoute(AddStandardChooseVersionsRouteGet, new { search = model.Search, referenceNumber = model.StandardReference });
             }
 
-            return RedirectToRoute(AddStandardConfirmOptInRouteGet, new { search = model.StandardToFind, referenceNumber = model.StandardReference, versions = model.SelectedVersions });
+            return RedirectToRoute(AddStandardConfirmRouteGet, new { search = model.Search, referenceNumber = model.StandardReference, versions = model.SelectedVersions });
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm-opt-in", Name = AddStandardConfirmOptInRouteGet)]
-        public async Task<IActionResult> AddStandardConfirmOptIn(string search, string referenceNumber, [FromQuery] List<string> versions)
+        [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm", Name = AddStandardConfirmRouteGet)]
+        public async Task<IActionResult> AddStandardConfirm(string search, string referenceNumber, [FromQuery] List<string> versions)
         {
             if(string.IsNullOrEmpty(search))
                 throw new ArgumentOutOfRangeException(nameof(search));
@@ -163,11 +162,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var model = new AddStandardConfirmViewModel
             {
-                StandardToFind = search,
-                SelectedStandard = standardVersions.FirstOrDefault(),
+                Search = search,
                 StandardReference = referenceNumber,
-                Results = standardVersions.ToList(),
-                EarliestVersionEffectiveFrom = standardVersions.FirstOrDefault()?.VersionEarliestStartDate,
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.ToList(),
                 IsConfirmed = true,
                 SelectedVersions = versions
             };
@@ -176,8 +174,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpPost("standard/add-standard/confirm-opt-in", Name = AddStandardConfirmOptInRoutePost)]
-        public async Task<IActionResult> AddStandardConfirmOptIn(AddStandardConfirmViewModel model)
+        [HttpPost("standard/add-standard/confirm", Name = AddStandardConfirmRoutePost)]
+        public async Task<IActionResult> AddStandardConfirm(AddStandardConfirmViewModel model)
         {
             var epaOrganisation = await _orgApiClient.GetEpaOrganisation(GetEpaOrgIdFromClaim());
 
@@ -191,21 +189,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             await _orgApiClient.AddOrganisationStandard(request);
 
-            return RedirectToRoute(AddStandardOptInConfirmationRouteGet, new {referenceNumber = model.StandardReference});
+            return RedirectToRoute(AddStandardConfirmationRouteGet, new {referenceNumber = model.StandardReference});
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpGet("standard/add-standard/{referenceNumber}/opt-in-confirmation", Name = AddStandardOptInConfirmationRouteGet)]
-        public async Task<IActionResult> AddStandardOptInConfirmation(string referenceNumber)
+        [HttpGet("standard/add-standard/{referenceNumber}/confirmation", Name = AddStandardConfirmationRouteGet)]
+        public async Task<IActionResult> AddStandardConfirmation(string referenceNumber)
         {
             if (string.IsNullOrEmpty(referenceNumber))
                 throw new ArgumentOutOfRangeException(nameof(referenceNumber));
 
             var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
-            var model = new AddStandardOptInConfirmationViewModel
+            var model = new AddStandardConfirmationViewModel
             {
-                StandardTitle = standardVersions.FirstOrDefault()?.Title,
-                Versions = standardVersions.Select(x => x.Version).ToList(),
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.Select(x => x.Version).ToList(),
                 FeedbackUrl = _config.FeedbackUrl,
             };
 

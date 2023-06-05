@@ -4,19 +4,19 @@
 @model AddStandardConfirmViewModel
 
 @{
-    ViewBag.Title = "Confirm you want to opt in to standard";
+    ViewBag.Title = "Add standard confirm";
     Layout = "_Layout";
 }
 
-<a asp-route="@StandardController.AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@Model.StandardReference" class="govuk-back-link">Return to confirm versions</a>
+<a asp-route="@StandardController.AddStandardChooseVersionsRouteGet" asp-route-search="@Model.Search" asp-route-referenceNumber="@Model.StandardReference" class="govuk-back-link">Return to confirm versions</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
-                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to opt in:</span>
-                @Model.SelectedStandard?.Title
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to add this standard:</span>
+                @Model.Standard?.Title
             </h1>
 
             <p class="govuk-body-l">Reference: @Model.StandardReference</p>
@@ -26,35 +26,35 @@
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective from</th>
-                        <td class="govuk-table__cell">@Model.SelectedStandard?.EffectiveFrom.ToSfaShortDateString()</td>
+                        <td class="govuk-table__cell">@Model.StandardEffectiveFrom</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Effective to</th>
                         <td class="govuk-table__cell">
-                            @if (@Model.SelectedStandard?.EffectiveTo == null)
+                            @if (@Model.StandardEffectiveTo == null)
                             {
                                 @Html.Raw("Expiry date not set")
                             }
                             else
                             {
-                                @Model.SelectedStandard?.EffectiveTo.ToSfaShortDateString()
+                                @Model.StandardEffectiveTo
                             }
                         </td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="row">Version</th>
-                        <td class="govuk-table__cell">@string.Join(", ", Model.SelectedVersions)</td>
+                        <th class="govuk-table__header" scope="row">@Model.SelectedVersionsText</th>
+                        <td class="govuk-table__cell">@Model.SelectedVersionsValue</td>
                     </tr>
                 </tbody>
             </table>
-            <form asp-route="@StandardController.AddStandardConfirmOptInRoutePost" method="post">
+            <form asp-route="@StandardController.AddStandardConfirmRoutePost" method="post">
                 @Html.HiddenFor(m => m.StandardReference)
                 @foreach (var SelectedVersions in Model.SelectedVersions)
                 {
                     @Html.HiddenFor(m => SelectedVersions)
                 }
 
-                <button class="govuk-button" type="submit">Confirm and opt in</button>
+                <button class="govuk-button" type="submit">Confirm and add</button>
             </form>
         </div>
     </div>

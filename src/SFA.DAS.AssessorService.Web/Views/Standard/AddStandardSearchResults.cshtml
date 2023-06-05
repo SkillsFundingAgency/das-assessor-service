@@ -4,7 +4,7 @@
 @model AddStandardSearchViewModel
 
 @{
-    ViewBag.Title = "Standard Results";
+    ViewBag.Title = "Add standard search results";
     Layout = "_Layout";
 }
 
@@ -46,7 +46,7 @@
                                         }
                                         else
                                         {
-                                            <a asp-route="@StandardController.AddStandardConfirmVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Opt-in for standard</a>
+                                            <a asp-route="@StandardController.AddStandardChooseVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Add standard</a>
                                         }
                                     </td>
                                 </tr>
