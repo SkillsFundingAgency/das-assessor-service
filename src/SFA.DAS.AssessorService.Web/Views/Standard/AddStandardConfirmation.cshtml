@@ -10,11 +10,14 @@
         <div class="govuk-grid-column-two-thirds">
 
             <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">
+                <div class="govuk-panel__body">
                     You've added
+                </div>
+                <h1 class="govuk-panel__title">
+                    @Model.StandardTitle
                 </h1>
                 <div class="govuk-panel__body">
-                    @Model.StandardTitle<br />@Model.StandardReference<br>@Model.ConfirmedVersionsText
+                    @Model.StandardReference<br>@Model.ConfirmedVersionsText
                 </div>
             </div>
 
@@ -27,7 +30,8 @@
             </p>
 
             <p class="govuk-body govuk-!-margin-bottom-8">
-                You can <a route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">add other standards</a>
+                You can <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">add other standards</a> or
+                <a asp-route="@DashboardController.DashboardIndexRouteGet" class="govuk-link--no-visited-state">return to your account</a>
             </p>
 
             <p class="govuk-body">
