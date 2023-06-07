@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
         private readonly IMediator _mediator;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
 
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
-        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository, IWebConfiguration config, IMediator mediator)
+        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository, IApiConfiguration config, IMediator mediator)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;

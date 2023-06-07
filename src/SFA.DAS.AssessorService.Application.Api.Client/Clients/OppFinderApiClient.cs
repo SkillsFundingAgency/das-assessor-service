@@ -1,21 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class OppFinderApiClient : ApiClientBase, IOppFinderApiClient
     {
-        public OppFinderApiClient(string baseUri,ITokenService tokenService,
-            ILogger<OppFinderApiClient> logger) : base(baseUri, tokenService, logger)
-        {
-        }
-
-        public OppFinderApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public OppFinderApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
         }
 
