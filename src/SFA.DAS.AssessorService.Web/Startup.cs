@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
@@ -30,12 +31,13 @@ using StructureMap;
 namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
-    { 
+    {
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Web";
+        private const string VERSION = "1.0";
+
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
-        private const string VERSION = "1.0";
 
         public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
@@ -48,87 +50,116 @@ namespace SFA.DAS.AssessorService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
+            Configuration = ConfigurationService.GetConfigWeb(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            services.AddApplicationInsightsTelemetry();
-
-            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration, _logger, _env);
-            services.Configure<RequestLocalizationOptions>(options =>
+            IServiceProvider serviceProvider;
+            try
             {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
-                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
-                options.RequestCultureProviders.Clear();
-            });
-            
-            services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
-            
-            services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
-            services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
+                services.AddApplicationInsightsTelemetry();
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
-                .AddControllersAsServices()
-                .AddSessionStateTempDataProvider()
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
-
-            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-            services.AddValidatorsFromAssemblyContaining<Startup>();
-
-            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
-            
-            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
-           
-            if (_env.IsDevelopment())
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
-                    .SetApplicationName("AssessorApply");
-
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                try
+                services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+                services.AddAndConfigureAuthentication(Configuration, _logger, _env);
+                services.Configure<RequestLocalizationOptions>(options =>
                 {
-                    var redis = ConnectionMultiplexer.Connect(
-                        $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+                    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
+                    options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                    options.RequestCultureProviders.Clear();
+                });
 
+                services.AddSingleton<IAuthorizationPolicyProvider, AssessorPolicyProvider>();
+
+                services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
+                services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
+
+                services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+                    .AddControllersAsServices()
+                    .AddSessionStateTempDataProvider()
+                    .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+                services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+                services.AddValidatorsFromAssemblyContaining<Startup>();
+
+                services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator, CacheOverrideHtmlGenerator>();
+
+                services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
+
+                if (_env.IsDevelopment())
+                {
                     services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
                         .SetApplicationName("AssessorApply");
-                    services.AddDistributedRedisCache(options =>
+
+                    services.AddDistributedMemoryCache();
+                }
+                else
+                {
+                    try
                     {
-                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
-                    });
+                        var redis = ConnectionMultiplexer.Connect(
+                            $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+
+                        services.AddDataProtection()
+                            .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                            .SetApplicationName("AssessorApply");
+                        services.AddDistributedRedisCache(options =>
+                        {
+                            options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e,
+                            $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
+                        throw;
+                    }
                 }
-                catch (Exception e)
+
+                services.AddSession(opt =>
                 {
-                    _logger.LogError(e,
-                        $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
-                    throw;
-                }
+                    opt.IdleTimeout = TimeSpan.FromHours(1);
+                    opt.Cookie = new CookieBuilder()
+                    {
+                        Name = ".Assessors.Session",
+                        HttpOnly = true
+                    };
+                });
+
+                services.AddHttpClient<IOrganisationsApiClient, OrganisationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IStandardsApiClient, StandardsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IOppFinderApiClient, OppFinderApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IDashboardApiClient, DashboardApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IContactsApiClient, ContactsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ISearchApiClient, SearchApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IEmailApiClient, EmailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IValidationApiClient, ValidationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ICertificateApiClient, CertificateApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILoginApiClient, LoginApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILearnerDetailsApiClient, LearnerDetailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IApprovalsLearnerApiClient, ApprovalsLearnerApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
+
+                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
+                    {
+                        cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                        cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddHealthChecks();
+
+                serviceProvider = ConfigureIoc(services);
             }
-            
-            services.AddSession(opt =>
+            catch(Exception ex)
             {
-                opt.IdleTimeout = TimeSpan.FromHours(1);
-                opt.Cookie = new CookieBuilder()
-                {
-                    Name = ".Assessors.Session",
-                    HttpOnly = true
-                };
-            });
-            
-            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", cfg =>
-                {
-                    cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                _logger.LogError(ex, "Error during Startup Configure Services");
+                throw;
+            }
 
-            services.AddHealthChecks();
-
-            return ConfigureIoc(services);
+            return serviceProvider;
         }
 
         private IServiceProvider ConfigureIoc(IServiceCollection services)
@@ -143,40 +174,47 @@ namespace SFA.DAS.AssessorService.Web
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>();
-                config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
-                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false); // Always false unless we want to start integrating with the sandbox environment;
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
-
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOppFinderSession>().Use<OppFinderSession>();
                 config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
-
                 config.For<IWebConfiguration>().Use(Configuration);
+
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
+
+                config.For<IAssessorTokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
+
+                config.For<IQnATokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
                 
-                config.For<IQnaApiClient>().Use<QnaApiClient>()
-                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
-                  .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                config.For<IRoatpTokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
+
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
+                config.For<IStandardsApiClient>().Use<StandardsApiClient>();
+                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>();
+                config.For<IDashboardApiClient>().Use<DashboardApiClient>();
+                config.For<IContactsApiClient>().Use<ContactsApiClient>();
+                config.For<ISearchApiClient>().Use<SearchApiClient>();
+                config.For<IEmailApiClient>().Use<EmailApiClient>();
+                config.For<IValidationApiClient>().Use<ValidationApiClient>();
+                config.For<ICertificateApiClient>().Use<CertificateApiClient>();
+                config.For<ILoginApiClient>().Use<LoginApiClient>();
+                config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
+                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>();
+                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>();
+                config.For<ILocationsApiClient>().Use<LocationsApiClient>();
+                config.For<IStandardVersionClient>().Use<StandardVersionClient>();
+
+                config.For<IQnaApiClient>().Use<QnaApiClient>();
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
                 
-                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IValidationApiClient>().Use<ValidationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IApplicationApiClient>().Use<ApplicationApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
-                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
-                config.For<ILocationsApiClient>().Use<LocationsApiClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);               
-                config.For<IStandardVersionClient>().Use<StandardVersionClient>().Ctor<string>().Is(Configuration.AssessorApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
-
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
 
                 var mapper = services.AddMappings().CreateMapper();
