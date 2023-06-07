@@ -10,12 +10,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 {
     public class GetPipelinesCountHandler : IRequestHandler<GetPipelinesCountRequest, int>
     {
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly ILearnerRepository _learnerRepository;
         private readonly ILogger<GetPipelinesCountHandler> _logger;
         
 
-        public GetPipelinesCountHandler(IWebConfiguration config, ILearnerRepository learnerRepository, ILogger<GetPipelinesCountHandler> logger)
+        public GetPipelinesCountHandler(IApiConfiguration config, ILearnerRepository learnerRepository, ILogger<GetPipelinesCountHandler> logger)
         {
             _config = config;
             _learnerRepository = learnerRepository;

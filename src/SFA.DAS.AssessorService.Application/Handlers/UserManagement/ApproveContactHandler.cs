@@ -15,11 +15,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IMediator _mediator;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public ApproveContactHandler(IContactRepository contactRepository, IContactQueryRepository contactQueryRepository,
-            IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator, IWebConfiguration config, IOrganisationQueryRepository organisationQueryRepository)
+            IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator, IApiConfiguration config, IOrganisationQueryRepository organisationQueryRepository)
         {
             _contactRepository = contactRepository;
             _contactQueryRepository = contactQueryRepository;
