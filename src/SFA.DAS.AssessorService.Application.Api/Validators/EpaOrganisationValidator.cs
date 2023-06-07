@@ -706,7 +706,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             else
             {
                 var contacts = _registerQueryRepository.GetAssessmentOrganisationContacts(request.OrganisationId).Result;
-                var standards = _standardService.GetEpaoRegisteredStandards(request.OrganisationId).Result;
                 
                 RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
                 RunValidationCheckAndAppendAnyError("Address", CheckAddressDetailsForOrganisation(request.Address1, request.Address2, request.Address3, request.Address4), validationResult, ValidationStatusCode.BadRequest);
