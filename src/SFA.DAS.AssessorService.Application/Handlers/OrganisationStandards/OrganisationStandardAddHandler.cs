@@ -15,17 +15,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
     public class AddOrganisationStandardRequestHandler : IRequestHandler<OrganisationStandardAddRequest, string>
     {
         private readonly IMediator _mediator;
-        private readonly IStandardRepository _standardRepository;
+        private readonly IStandardService _standardService;
 
-        public AddOrganisationStandardRequestHandler(IMediator mediator, IStandardRepository standardRepository)
+        public AddOrganisationStandardRequestHandler(IMediator mediator, IStandardService standardService)
         {
             _mediator = mediator;
-            _standardRepository = standardRepository;
+            _standardService = standardService;
         }
 
         public async Task<string> Handle(OrganisationStandardAddRequest request, CancellationToken cancellationToken)
         {
-            var standard = (await _standardRepository.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
+            var standard = (await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .FirstOrDefault();
 
             if(standard == null)

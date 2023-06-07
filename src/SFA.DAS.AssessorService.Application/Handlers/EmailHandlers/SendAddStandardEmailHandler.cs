@@ -14,22 +14,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
     {
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IStandardRepository _standardRepository;
+        private readonly IStandardService _standardService;
         private readonly IMediator _mediator;
-        private readonly ILogger<SendOrganisationDetailsAmendedEmailHandler> _logger;
+        private readonly ILogger<SendAddStandardEmailHandler> _logger;
 
         public SendAddStandardEmailHandler(IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository,
-            IStandardRepository standardRepository, IMediator mediator, ILogger<SendOrganisationDetailsAmendedEmailHandler> logger)
+            IStandardService standardService, IMediator mediator, ILogger<SendAddStandardEmailHandler> logger)
         {
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
             _contactQueryRepository = contactQueryRepository;
-            _standardRepository = standardRepository;
+            _standardService = standardService;
             _mediator = mediator;
             _logger = logger;
         }
 
         public async Task<Unit> Handle(SendAddStandardEmailRequest request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"Sending email to notify that standard {request.StandardReference} has been added by contact {request.ContactId}");
+
             var contactToNotify = Guid.TryParse(request.ContactId, out Guid contactId)
                 ? await _contactQueryRepository.GetContactById(contactId)
                 : null;
@@ -39,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 throw new Exception($"Unable to send email for add standard, cannot find contact {request.ContactId}");
             }
 
-            var standard = (await _standardRepository.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
+            var standard = (await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .FirstOrDefault();
             
             if (standard == null)

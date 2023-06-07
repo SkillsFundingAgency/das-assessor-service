@@ -18,17 +18,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
     [TestFixture]
     public class AddOrganisationStandardRequestHandlerTests
     {
-        private Mock<IStandardRepository> _mockStandardRepo;
+        private Mock<IStandardService> _mockStandardService;
         private Mock<IMediator> _mockMediator;
         private AddOrganisationStandardRequestHandler _handler;
 
         [SetUp]
         public void SetUp()
         {
-            _mockStandardRepo = new Mock<IStandardRepository>();
+            _mockStandardService = new Mock<IStandardService>();
             _mockMediator = new Mock<IMediator>();
 
-            _handler = new AddOrganisationStandardRequestHandler(_mockMediator.Object, _mockStandardRepo.Object);
+            _handler = new AddOrganisationStandardRequestHandler(_mockMediator.Object, _mockStandardService.Object);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
 
             var deliveryAreas = new List<DeliveryArea> { new DeliveryArea { Id = 1 }, new DeliveryArea { Id = 2 } };
 
-            _mockStandardRepo.Setup(repo => repo.GetStandardVersionsByIFateReferenceNumber(It.IsAny<string>())).ReturnsAsync(new List<Standard> { standard });
+            _mockStandardService.Setup(repo => repo.GetStandardVersionsByIFateReferenceNumber(It.IsAny<string>())).ReturnsAsync(new List<Standard> { standard });
             _mockMediator.Setup(med => med.Send(It.IsAny<GetDeliveryAreasRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(deliveryAreas);
 
 
