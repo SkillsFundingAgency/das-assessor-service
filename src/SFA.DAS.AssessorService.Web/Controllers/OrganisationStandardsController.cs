@@ -31,6 +31,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IStandardsApiClient _standardsApiClient;
         private const int PageSize = 10;
 
+        #region Routes
+        public const string OrganisationStandardsIndexGetRoute = nameof(OrganisationStandardsIndexGetRoute);
+        #endregion
+
         public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger, 
             ISessionService sessionService,
             IOrganisationsApiClient organisationsApiClient,
@@ -45,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("/[controller]/")]
+        [Route("/[controller]/", Name = OrganisationStandardsIndexGetRoute)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {

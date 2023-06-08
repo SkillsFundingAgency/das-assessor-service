@@ -29,6 +29,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return contact?.Id ?? Guid.Empty;
         }
 
+        protected string GetEpaOrgIdFromClaim()
+        {
+            var epaoid = _httpContextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+            return epaoid;
+        }
+
         protected async Task<ContactResponse> GetUserContact()
         {
             var signinId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;

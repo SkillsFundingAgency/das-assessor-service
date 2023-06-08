@@ -1,13 +1,14 @@
-﻿@using SFA.DAS.AssessorService.Web.ViewModels
+﻿@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels
 @using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardOptInViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Standard.OptInStandardVersionViewModel
 
 @{
     ViewBag.Title = "Confirm you want to opt in to standard version";
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("ConfirmStandard", "Standard", new {id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Return to standard details</a>
+<a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@Model.StandardReference" asp-route-version="@Model.Version" class="govuk-back-link">Return to standard details</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -46,10 +47,11 @@
                     </tr>
                 </tbody>
             </table>
-            <form asp-action="OptInPost" asp-controller="Standard" 
-                  asp-route-id="@Model.Id" 
-                  asp-route-standardReference="@Model.StandardReference" 
-                  asp-route-version="@Model.Version" method="post">
+            <form asp-route="@StandardController.OptInStandardVersionRoutePost" method="post">
+                <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
+                <input asp-for="Version" value="@Model.Version" type="hidden" />
+                <input asp-for="EffectiveFrom" value="@Model.EffectiveFrom" type="hidden" />
+                <input asp-for="EffectiveTo" value="@Model.EffectiveTo" type="hidden" />
                 <button class="govuk-button" type="submit">Confirm and opt in</button>
             </form>
         </div>

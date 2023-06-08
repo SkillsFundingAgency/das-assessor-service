@@ -440,23 +440,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
-            string standardReference, string version, string standardUId, bool optInFollowingWithdrawal, string comments)
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(string endPointAssessorOrganisationId,
+            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
         {
             var createVersionRequest = new OrganisationStandardVersionOptInRequest
             {
-                ApplicationId = applicationId,
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                 StandardReference = standardReference,
                 Version = version,
-                StandardUId = standardUId,
-                EffectiveFrom = DateTime.Today,
-                EffectiveTo = null,
-                DateVersionApproved = null,
-                Comments = comments,
-                Status = OrganisationStatus.Live,
-                SubmittingContactId = contactId,
-                OptInFollowingWithdrawal = optInFollowingWithdrawal
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo,
+                ContactId = contactId
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))

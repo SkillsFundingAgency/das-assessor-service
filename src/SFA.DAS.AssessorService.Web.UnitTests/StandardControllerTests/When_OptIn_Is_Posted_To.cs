@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -68,10 +69,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion(new OptInStandardVersionViewModel { StandardReference = "ST0001", Version = "1.2" })) as RedirectToActionResult;
 
             // Assert
-            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", "1.2", It.IsAny<string>(), true, "Opted in by EPAO by USERNAME"));
+            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn("EPA0001", "ST0001", "1.2", DateTime.Now, DateTime.Now, It.IsAny<Guid>()));
 
             Assert.AreEqual("Application", results.ControllerName);
             Assert.AreEqual("OptInConfirmation", results.ActionName);
@@ -90,10 +91,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion(new OptInStandardVersionViewModel { StandardReference = "ST0001", Version = "1.2" })) as RedirectToActionResult;
 
             // Assert
-            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn(It.IsAny<Guid>(), It.IsAny<Guid>(), "12345", "ST0001", "1.2", It.IsAny<string>(), false, "Opted in by EPAO by USERNAME"));
+            _mockOrgApiClient.Verify(m => m.OrganisationStandardVersionOptIn("EPA0001", "ST0001", "1.2", DateTime.Now, DateTime.Now, Guid.NewGuid()));
 
             Assert.AreEqual("Application", results.ControllerName);
             Assert.AreEqual("OptInConfirmation", results.ActionName);
@@ -112,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion(new OptInStandardVersionViewModel { StandardReference = "ST0001", Version = "1.2" })) as RedirectToActionResult;
 
             Assert.AreEqual("Application", results.ControllerName);
             Assert.AreEqual("Applications", results.ActionName);
@@ -131,7 +132,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion( new OptInStandardVersionViewModel { StandardReference = "ST0001", Version = "1.2" })) as RedirectToActionResult;
 
             Assert.AreEqual("Application", results.ControllerName);
             Assert.AreEqual("Applications", results.ActionName);
@@ -150,7 +151,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(Guid.NewGuid(), "ST0001", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion( new OptInStandardVersionViewModel { StandardReference = "ST0001", Version = "1.2" })) as RedirectToActionResult;
 
             Assert.AreEqual("Application", results.ControllerName);
             Assert.AreEqual("Applications", results.ActionName);
@@ -165,7 +166,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                .ReturnsAsync(new List<AppliedStandardVersion>());
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(Guid.NewGuid(), "ST0002", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion( new OptInStandardVersionViewModel { StandardReference = "ST0002", Version = "1.2" })) as RedirectToActionResult;
 
             // Assert
             Assert.AreEqual("Application", results.ControllerName);
@@ -181,7 +182,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(null as EpaOrganisation);
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(new Guid(NOT_FOUND_ID), "ZZ0001", "1.2")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion( new OptInStandardVersionViewModel { StandardReference = "ZZ0001", Version = "1.2" })) as RedirectToActionResult;
 
             // Assert
             Assert.AreEqual("Application", results.ControllerName);
@@ -197,7 +198,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(null as EpaOrganisation);
 
             // Act
-            RedirectToActionResult results = (await _sut.OptInPost(new Guid(NOT_FOUND_ID), "ZZ0001", "1.0")) as RedirectToActionResult;
+            RedirectToActionResult results = (await _sut.OptInStandardVersion(new OptInStandardVersionViewModel { StandardReference = "ZZ0001", Version = "1.0" })) as RedirectToActionResult;
 
             // Assert
             Assert.AreEqual("Application", results.ControllerName);

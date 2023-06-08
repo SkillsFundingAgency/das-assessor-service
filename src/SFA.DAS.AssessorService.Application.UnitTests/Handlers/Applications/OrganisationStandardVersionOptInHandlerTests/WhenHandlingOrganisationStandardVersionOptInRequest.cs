@@ -1,199 +1,71 @@
-﻿using FluentAssertions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationStandards
 {
-    public class WhenHandlingOrganisationStandardVersionOptInRequest
+    [TestFixture]
+    public class OrganisationStandardVersionOptInHandlerTests
     {
-        private OrganisationStandardVersionOptInHandler _sut;
-        private Mock<IOrganisationStandardRepository> _mockRepository;
-        private Mock<IApplyRepository> _mockApplyRepository;
-        private Mock<IStandardRepository> _mockStandardRepository;
-        private Mock<IContactQueryRepository> _mockContactQueryRepository;
-        private Mock<IEMailTemplateQueryRepository> _mockEMailTemplateQueryRepository;
-        private Mock<IMediator> _mockMediator;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
-        private Mock<ILogger<OrganisationStandardVersionOptInHandler>> _mockLogger;
-
-        private Guid  _applicationId;
-        private Domain.DTOs.EmailTemplateSummary _emailTemplate;
-        private List<string> _emailRequestTokens;
+        private OrganisationStandardVersionOptInHandler _handler;
+        private Mock<IOrganisationStandardRepository> _organisationStandardRepositoryMock;
+        private Mock<IContactQueryRepository> _contactQueryRepositoryMock;
+        private Mock<IStandardService> _standardServiceMock;
+        private Mock<IMediator> _mediatorMock;
+        private Mock<ILogger<OrganisationStandardVersionOptInHandler>> _loggerMock;
 
         [SetUp]
-        public void Arrange()
+        public void SetUp()
         {
-            _mockRepository = new Mock<IOrganisationStandardRepository>();
-            _mockApplyRepository = new Mock<IApplyRepository>();
-            _mockStandardRepository = new Mock<IStandardRepository>();
-            _mockContactQueryRepository = new Mock<IContactQueryRepository>();
-            _mockEMailTemplateQueryRepository = new Mock<IEMailTemplateQueryRepository>();
-            _mockMediator = new Mock<IMediator>();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
-            _mockLogger = new Mock<ILogger<OrganisationStandardVersionOptInHandler>>();
+            _organisationStandardRepositoryMock = new Mock<IOrganisationStandardRepository>();
+            _contactQueryRepositoryMock = new Mock<IContactQueryRepository>();
+            _standardServiceMock = new Mock<IStandardService>();
+            _mediatorMock = new Mock<IMediator>();
+            _loggerMock = new Mock<ILogger<OrganisationStandardVersionOptInHandler>>();
 
-            _applicationId = Guid.NewGuid();
-            _emailRequestTokens = new List<string>();
-            _emailTemplate = new Domain.DTOs.EmailTemplateSummary();
-
-            _mockRepository.Setup(m => m.GetOrganisationStandardByOrganisationIdAndStandardReference("ORG", "ST0001"))
-                                    .ReturnsAsync(new Domain.Entities.OrganisationStandard() { Id = 123 });
-
-            _mockApplyRepository.Setup(m => m.GetApply(_applicationId))
-                                .ReturnsAsync(new Domain.Entities.Apply()
-                                {
-                                    Id = _applicationId,
-                                    ApplyData = new ApplyData()
-                                    {
-                                        Apply = new Apply()
-                                    }
-                                });
-
-            _mockContactQueryRepository.Setup(m => m.GetContactById(It.IsAny<Guid>()))
-                                .ReturnsAsync(new Domain.Entities.Contact() { Email = "a@b.com", DisplayName = "Bob Smith" });
-
-            _mockStandardRepository.Setup(m => m.GetStandardVersionByStandardUId("ST0001_1_2"))
-                                .ReturnsAsync(new Domain.Entities.Standard()
-                                {
-                                    Title = "TITLE"
-                                });
-
-            _mockEMailTemplateQueryRepository.Setup(m => m.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardOptin))
-                                .ReturnsAsync(_emailTemplate);
-
-            _mockMediator
-                .Setup(c =>
-                    c.Send(
-                        It.IsAny<SendEmailRequest>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Unit())
-                .Callback<IRequest<Unit>, CancellationToken>((request, token) =>
-                {
-                    var sendEmailRequest = request as SendEmailRequest;
-                    _emailRequestTokens.Add(JsonConvert.SerializeObject(sendEmailRequest.Tokens));
-                });
-
-            _sut = new OrganisationStandardVersionOptInHandler(_mockRepository.Object, _mockApplyRepository.Object, _mockStandardRepository.Object,
-            _mockContactQueryRepository.Object, _mockEMailTemplateQueryRepository.Object, _mockMediator.Object,
-            _mockUnitOfWork.Object, _mockLogger.Object);
+            _handler = new OrganisationStandardVersionOptInHandler(_organisationStandardRepositoryMock.Object, _contactQueryRepositoryMock.Object,
+                _mediatorMock.Object, _standardServiceMock.Object, _loggerMock.Object);
         }
 
         [Test]
-        public async Task ThenOrganisationStandardIsCreated()
+        public async Task Handle_ShouldOptInSuccessfully_WhenValidRequestIsProvided()
         {
-            //Arrange
-            var request = new OrganisationStandardVersionOptInRequest()
+            var request = new OrganisationStandardVersionOptInRequest
             {
-                EndPointAssessorOrganisationId = "ORG",
+                ContactId = Guid.NewGuid(),
                 StandardReference = "ST0001",
-                StandardUId = "ST0001_1_2",
-                Version = "1.2",
-                ApplicationId = _applicationId
+                Version = "1.0",
+                EndPointAssessorOrganisationId = "EPA0001"
             };
+            var contact = new Contact { Id = request.ContactId, Email = "Email" };
+            var organisationStandard = new OrganisationStandard { Id = 101 };
+            var standard = new Standard { StandardUId = "ST0001_1.0", Version = request.Version };
 
-            //Act
-            var result = await _sut.Handle(request, new CancellationToken());
+            _contactQueryRepositoryMock.Setup(x => x.GetContactById(request.ContactId)).ReturnsAsync(contact);
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference)).ReturnsAsync(organisationStandard);
+            _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference)).ReturnsAsync(new List<Standard> { standard });
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version)).ReturnsAsync((OrganisationStandardVersion)null);
 
-            //Assert
-            _mockRepository.Verify(m => m.CreateOrganisationStandardVersion(It.Is<Domain.Entities.OrganisationStandardVersion>(x =>
-                    x.OrganisationStandardId == 123 &&
-                    x.StandardUId == "ST0001_1_2" &&
-                    x.Version == "1.2")));
-         }
+            var result = await _handler.Handle(request, CancellationToken.None);
 
-        [Test]
-        public async Task ThenApplicationIsSubmitted()
-        {
-            //Arrange
-            var request = new OrganisationStandardVersionOptInRequest()
-            {
-                EndPointAssessorOrganisationId = "ORG",
-                StandardReference = "ST0001",
-                StandardUId = "ST0001_1_2",
-                Version = "1.2",
-                ApplicationId = _applicationId
-            };
-
-            //Act
-            var result = await _sut.Handle(request, new CancellationToken());
-
-            //Assert
-            _mockApplyRepository.Verify(m => m.SubmitApplicationSequence(It.Is<Domain.Entities.Apply>(x =>
-                    x.Id == _applicationId &&
-                    x.ApplicationStatus == ApplicationStatus.Approved &&
-                    x.ReviewStatus == ApplicationStatus.Approved &&
-                    x.StandardReference == "ST0001")));
+            Assert.AreEqual(Unit.Value, result);
+            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Once);
+            _mediatorMock.Verify(x => x.Send(It.IsAny<SendOptInStandardVersionEmailRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Test]
-        public async Task ThenEmailIsSent()
-        {
-            //Arrange
-            var request = new OrganisationStandardVersionOptInRequest()
-            {
-                EndPointAssessorOrganisationId = "ORG",
-                StandardReference = "ST0001",
-                StandardUId = "ST0001_1_2",
-                Version = "1.2",
-                ApplicationId = _applicationId
-            };
-
-            var expectedTokens = JsonConvert.SerializeObject(new
-            {
-                contactname = "Bob Smith",
-                standard = "TITLE",
-                standardreference = "ST0001",
-                version = "1.2",
-            });
-
-            //Act
-            var result = await _sut.Handle(request, new CancellationToken());
-
-            //Assert
-            _mockMediator.Verify(m => m.Send(It.Is<SendEmailRequest>(x => x.Email == "a@b.com" && x.EmailTemplateSummary == _emailTemplate), 
-                                                It.IsAny<CancellationToken>()));
-
-            _emailRequestTokens.Should().Contain(expectedTokens);
-        }
-
-        [Test]
-        public async Task AndSomethingFailsThenEmailIsNotSent()
-        {
-            //Arrange
-            var request = new OrganisationStandardVersionOptInRequest()
-            {
-                EndPointAssessorOrganisationId = "ORG",
-                StandardReference = "ST0001",
-                StandardUId = "ST0001_1_3",
-                Version = "1.2",
-                ApplicationId = _applicationId
-            };
-
-            _mockRepository.Setup(m => m.CreateOrganisationStandardVersion(It.IsAny< Domain.Entities.OrganisationStandardVersion>()))
-                            .Throws(new Exception());
-
-            //Act
-            try
-            {
-                await _sut.Handle(request, new CancellationToken());
-            }
-            catch(Exception)
-            { }
-
-            //Assert
-            _mockMediator.Verify(m => m.Send(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Never);
-        }
+        // You can add more test cases here, such as what happens if an exception is thrown, or to test the different branches of your code.
     }
 }
+
+

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
+namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 {
-    public class StandardOptInViewModel
+    public class OptInStandardVersionViewModel
     {
         public Guid Id { get; set; }
         public string StandardReference { get; set; }

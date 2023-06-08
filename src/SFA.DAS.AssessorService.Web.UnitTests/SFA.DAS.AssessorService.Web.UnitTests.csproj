@@ -21,4 +21,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web\SFA.DAS.AssessorService.Web.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ApplicationControllerTests\" />
+  </ItemGroup>
 </Project>

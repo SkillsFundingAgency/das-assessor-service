@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -34,10 +34,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });                                                                                     
 
             // Act
-            var results = (await _sut.OptIn(Guid.NewGuid(), "ST0001", "1.2")) as ViewResult;
+            var results = (await _sut.OptInStandardVersion("ST0001", "1.2")) as ViewResult;
 
             // Assert
-            var vm = results.Model as StandardOptInViewModel;
+            var vm = results.Model as OptInStandardVersionViewModel;
             Assert.AreEqual("ST0001", vm.StandardReference);
             Assert.AreEqual("1.2", vm.Version);
             Assert.AreEqual("~/Views/Application/Standard/OptIn.cshtml", results.ViewName);

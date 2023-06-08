@@ -1,6 +1,7 @@
 ﻿@inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Domain.Paging
+@using SFA.DAS.AssessorService.Web.Controllers.Apply;
 @model ApprovedStandardsWithVersionsViewModel
 
 @{
@@ -79,7 +80,7 @@
                                         }
                                         else
                                         {
-                                            <a class="govuk-link govuk-link--no-visited-state" href="/standard/view-standard/@item.ReferenceNumber">@Html.DisplayFor(modelItem => item.StandardName)</a>
+                                            <a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@item.ReferenceNumber" class="govuk-link govuk-link--no-visited-state">@Html.DisplayFor(modelItem => item.StandardName)</a>
                                         }
                                         @if (item.NewVersionAvailable)
                                         {
