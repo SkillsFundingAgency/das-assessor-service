@@ -1,17 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.Dashboard;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Dashboard;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class DashboardApiClient : ApiClientBase, IDashboardApiClient
     {
-        private readonly ILogger<DashboardApiClient> _logger;
-
-        public DashboardApiClient(string baseUri, ITokenService tokenService, ILogger<DashboardApiClient> logger) : base(baseUri, tokenService, logger)
+        public DashboardApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
-            _logger = logger;
         }
 
         public async Task<GetEpaoDashboardResponse> GetEpaoDashboard(string epaoId)
