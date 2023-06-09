@@ -38,7 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 
             if (contactToNotify == null)
             {
-                throw new Exception($"Unable to send email for add standard, cannot find contact {request.ContactId}");
+                throw new ArgumentException($"Unable to send email for add standard, cannot find contact {request.ContactId}", 
+                    nameof(request.ContactId));
             }
 
             var standard = (await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
@@ -46,13 +47,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             
             if (standard == null)
             {
-                throw new Exception($"Unable to send email for add standard, cannot find standard reference {request.StandardReference}");
+                throw new ArgumentException($"Unable to send email for add standard, cannot find standard reference {request.StandardReference}",
+                    nameof(request.StandardReference));
             }
 
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardAdd);
             if (emailTemplate == null)
             {
-                throw new Exception($"Unable to send email for add standard, cannot find email template {EmailTemplateNames.EPAOStandardAdd}");
+                throw new ApplicationException($"Unable to send email for add standard, cannot find email template {EmailTemplateNames.EPAOStandardAdd}");
             }
 
             var standardversioninfo = $"version{(request.StandardVersions.Count > 1 ? "s" : string.Empty)} {string.Join(", ", request.StandardVersions)}";

@@ -118,6 +118,17 @@
             Assert.AreEqual(allStandards.Count, model.Results.Count);
         }
 
+        [TestCase(null)]
+        [TestCase("")]
+        public async Task AddStandardSearchResults_ReturnsBadRequest_WhenCalledWithInvalidSearchParameter(string search)
+        {
+            // Act
+            var result = await _sut.AddStandardSearchResults(search);
+
+            // Assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
         [Test]
         public async Task AddStandardChooseVersions_ReturnsViewWithPrePopulatedViewModel_WhenGetCalledWithInvalidModelState()
         {
@@ -192,6 +203,19 @@
             Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
             Assert.AreEqual(new List<string>(), model.SelectedVersions);
             Assert.AreEqual(false, model.IsConfirmed);
+        }
+
+        [TestCase(null, null)]
+        [TestCase("", "")]
+        [TestCase("", null)]
+        [TestCase(null, "")]
+        public async Task AddStandardChooseVersions_ReturnsBadRequest_WhenGetCalledWithInvalidParameters(string search, string referenceNumber)
+        {
+            // Act
+            var result = await _sut.AddStandardChooseVersions(search, referenceNumber);
+
+            // Assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
         }
 
         [Test]

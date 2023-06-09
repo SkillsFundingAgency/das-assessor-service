@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var request = new SendAddStandardEmailRequest { ContactId = Guid.NewGuid().ToString() };
 
             // Act & Assert
-            Assert.ThrowsAsync<Exception>(async () => await _handler.Handle(request, new CancellationToken()));
+            Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(request, new CancellationToken()));
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             _mockContactRepo.Setup(repo => repo.GetContactById(It.IsAny<Guid>())).ReturnsAsync(contact);
 
             // Act & Assert
-            Assert.ThrowsAsync<Exception>(async () => await _handler.Handle(request, new CancellationToken()));
+            Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(request, new CancellationToken()));
         }
     }
 }

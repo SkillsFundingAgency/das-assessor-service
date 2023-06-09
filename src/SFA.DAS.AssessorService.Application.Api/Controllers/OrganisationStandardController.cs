@@ -32,6 +32,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Adds a standard and versions to the given organisation
+        /// </summary>
+        /// <param name="request">A request containing details of a standard and versions to be added to a given organisation</param>
+        /// <returns></returns>
         [HttpPost("organisationstandard", Name = "AddOrganisationStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaoStandardResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse))]
