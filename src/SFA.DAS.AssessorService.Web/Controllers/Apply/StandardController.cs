@@ -51,20 +51,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("standard/standard-details/{referenceNumber}", Name = StandardDetailsRouteGet)]
         public async Task<IActionResult> StandardDetails(string referenceNumber)
         {
-            if (string.IsNullOrEmpty(referenceNumber))
-                throw new ArgumentOutOfRangeException(nameof(referenceNumber));
-
-            var allVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
-
-            var model = new StandardDetailsViewModel
+            try
             {
-                SelectedStandard = allVersions.FirstOrDefault(),
-                AllVersions = allVersions.ToList(),
-                ApprovedVersions = approvedVersions.ToList(),
-            };
+                if (string.IsNullOrEmpty(referenceNumber))
+                    throw new ArgumentException(nameof(referenceNumber));
 
-            return View(model);
+                var allVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+                var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
+
+                var model = new StandardDetailsViewModel
+                {
+                    SelectedStandard = allVersions.FirstOrDefault(),
+                    AllVersions = allVersions.ToList(),
+                    ApprovedVersions = approvedVersions.ToList(),
+                };
+
+                return View(model);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("Standard/{id}")]
@@ -251,64 +258,116 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("standard/opt-in/{referenceNumber}/{version}", Name = OptInStandardVersionRouteGet)]
         public async Task<IActionResult> OptInStandardVersion(string referenceNumber, string version)
         {
-            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-            var standardVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
-
-            var model = new OptInStandardVersionViewModel()
+            try
             {
-                StandardReference = standardVersion.IFateReferenceNumber,
-                StandardTitle = standardVersion.Title,
-                Version = standardVersion.Version,
-                EffectiveFrom = standardVersion.VersionEarliestStartDate ?? DateTime.Today,
-                EffectiveTo = standardVersion.VersionLatestEndDate
-            };
+                if (string.IsNullOrEmpty(referenceNumber))
+                    throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
-            return View(model);
+                if (string.IsNullOrEmpty(version))
+                    throw new ArgumentException("Value cannot be null or empty", nameof(version));
+
+                var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+                var standardVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+
+                var model = new OptInStandardVersionViewModel()
+                {
+                    StandardReference = standardVersion.IFateReferenceNumber,
+                    StandardTitle = standardVersion.Title,
+                    Version = standardVersion.Version,
+                    EffectiveFrom = standardVersion.VersionEarliestStartDate ?? DateTime.Today,
+                    EffectiveTo = standardVersion.VersionLatestEndDate
+                };
+
+                return View(model);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("standard/opt-in", Name = OptInStandardVersionRoutePost)]
         public async Task<IActionResult> OptInStandardVersion(OptInStandardVersionViewModel model)
         {
-            var contact = await GetUserContact();
-            var epaOrgId = GetEpaOrgIdFromClaim();
-
-            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
-            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) != null)
+            try
             {
-                throw new ArgumentException($"Unable to opt in to standard {model.StandardReference} organisation {epaOrgId} does not assess standard");
+                if (string.IsNullOrEmpty(model.StandardReference))
+                    throw new ArgumentException("StandardReference cannot be null or empty");
+
+                if (string.IsNullOrEmpty(model.Version))
+                    throw new ArgumentException("Version cannot be null or empty");
+
+                var contact = await GetUserContact();
+                var epaOrgId = GetEpaOrgIdFromClaim();
+
+                var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
+                if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) != null)
+                {
+                    throw new ArgumentException($"Unable to opt in to StandardReference {model.StandardReference} organisation {epaOrgId} does not assess standard");
+                }
+
+                await _orgApiClient.OrganisationStandardVersionOptIn(
+                    epaOrgId,
+                    model.StandardReference,
+                    model.Version,
+                    model.EffectiveFrom,
+                    model.EffectiveTo,
+                    contact.Id);
+
+                return RedirectToRoute(OptInStandardVersionConfirmationRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
             }
-
-            await _orgApiClient.OrganisationStandardVersionOptIn(
-                epaOrgId, 
-                model.StandardReference, 
-                model.Version,
-                model.EffectiveFrom,
-                model.EffectiveTo,
-                contact.Id);
-
-            return RedirectToRoute(OptInStandardVersionConfirmationRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("standard/opt-out/{referenceNumber}/{version}", Name = OptOutStandardVersionRouteGet)]
         public IActionResult OptOut(string referenceNumber, string version)
         {
-            return View();
+            try
+            {
+                if (string.IsNullOrEmpty(referenceNumber))
+                    throw new ArgumentException("Value cannot be null or empty", referenceNumber);
+
+                if (string.IsNullOrEmpty(version))
+                    throw new ArgumentException("Value cannot be null or empty", version);
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("standard/opt-in/{referenceNumber}/{version}/confirmation", Name = OptInStandardVersionConfirmationRouteGet)]
         public async Task<IActionResult> OptInStandardVersionConfirmation(string referenceNumber, string version)
         {
-            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-
-            var model = new OptInStandardVersionConfirmationViewModel()
+            try
             {
-                StandardTitle = standardVersions.FirstOrDefault().Title,
-                StandardReference = referenceNumber,
-                Version = version,
-                FeedbackUrl = _config.FeedbackUrl,
-            };
+                if (string.IsNullOrEmpty(referenceNumber))
+                    throw new ArgumentException("Value cannot be null or empty", referenceNumber);
 
-            return View(model);
+                if (string.IsNullOrEmpty(version))
+                    throw new ArgumentException("Value cannot be null or empty", version);
+
+                var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+
+                var model = new OptInStandardVersionConfirmationViewModel()
+                {
+                    StandardTitle = standardVersions.FirstOrDefault().Title,
+                    StandardReference = referenceNumber,
+                    Version = version,
+                    FeedbackUrl = _config.FeedbackUrl,
+                };
+
+                return View(model);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private bool CanUpdateApplicationAsync(ApplicationResponse application)

@@ -450,7 +450,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 Version = version,
                 EffectiveFrom = effectiveFrom,
                 EffectiveTo = effectiveTo,
-                ContactId = contactId
+                ContactId = contactId,
+                OptInRequestedAt = DateTime.Now
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))

@@ -17,6 +17,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public DateTime? EffectiveTo { get; set; }
 
         public Guid ContactId { get; set; }
+
+        public DateTime OptInRequestedAt { get; set; }
     }
 
 }

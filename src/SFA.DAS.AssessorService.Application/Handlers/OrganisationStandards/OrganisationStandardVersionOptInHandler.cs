@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using System;
 using System.Linq;
 using System.Threading;
@@ -38,27 +39,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var contact = await _contactQueryRepository.GetContactById(request.ContactId);
                 if (contact == null)
                 {
-                    throw new ArgumentException($"Cannnot opt in to standard {request.StandardReference} as contact {request.ContactId} cannot be found", 
-                        nameof(request.ContactId));
+                    throw new NotFoundException($"Cannot opt in to StandardReference {request.StandardReference} as ContactId {request.ContactId} cannot be found");
                 }
 
                 var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
                 if (organisationStandard == null)
                 {
-                    throw new ArgumentException($"Cannnot opt in as standard {request.StandardReference} for EPAO {request.EndPointAssessorOrganisationId} cannot be found", 
-                        nameof(request.EndPointAssessorOrganisationId));
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
                 }
 
                 var allVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
                 var optInVersion = allVersions.FirstOrDefault(x => x.Version.Equals(request.Version, StringComparison.InvariantCultureIgnoreCase));
                 if (optInVersion == null)
                 {
-                    throw new ArgumentException($"Cannnot opt in as standard {request.StandardReference} version {request.Version} cannot be found",
-                        nameof(request.Version));
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
                 }
 
                 var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);
-                var newComment = $"Opted in by EPAO {contact.Email} at {DateTime.Now}";
+                var newComment = $"Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}";
 
                 var entity = new Domain.Entities.OrganisationStandardVersion
                 {
@@ -96,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to opt-in standard version {request.StandardReference} {request.Version} for Organisation {request.EndPointAssessorOrganisationId}");
+                _logger.LogError(ex, $"Failed to opt-in StandardReference {request.StandardReference} Version {request.Version} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId}");
                 throw;
             }
         }
