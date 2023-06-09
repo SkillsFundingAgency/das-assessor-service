@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using System;
 using System.Linq;
 using System.Threading;
@@ -38,8 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 
             if (contactToNotify == null)
             {
-                throw new ArgumentException($"Unable to send email for add standard, cannot find contact {request.ContactId}", 
-                    nameof(request.ContactId));
+                throw new NotFoundException($"Unable to send email for add standard, cannot find ContactId {request.ContactId}");
             }
 
             var standard = (await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
@@ -47,14 +47,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             
             if (standard == null)
             {
-                throw new ArgumentException($"Unable to send email for add standard, cannot find standard reference {request.StandardReference}",
-                    nameof(request.StandardReference));
+                throw new NotFoundException($"Unable to send email for add standard, cannot find StandardReference {request.StandardReference}");
             }
 
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardAdd);
             if (emailTemplate == null)
             {
-                throw new ApplicationException($"Unable to send email for add standard, cannot find email template {EmailTemplateNames.EPAOStandardAdd}");
+                throw new NotFoundException($"Unable to send email for add standard, cannot find email template {EmailTemplateNames.EPAOStandardAdd}");
             }
 
             var standardversioninfo = $"version{(request.StandardVersions.Count > 1 ? "s" : string.Empty)} {string.Join(", ", request.StandardVersions)}";

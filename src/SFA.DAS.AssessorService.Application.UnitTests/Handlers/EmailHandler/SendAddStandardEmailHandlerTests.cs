@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Api.Types.Consts;
 using System.Threading.Tasks;
 using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
@@ -71,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             var request = new SendAddStandardEmailRequest { ContactId = Guid.NewGuid().ToString() };
 
             // Act & Assert
-            Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(request, new CancellationToken()));
+            Assert.ThrowsAsync<NotFoundException>(async () => await _handler.Handle(request, new CancellationToken()));
         }
 
         [Test]
@@ -84,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             _mockContactRepo.Setup(repo => repo.GetContactById(It.IsAny<Guid>())).ReturnsAsync(contact);
 
             // Act & Assert
-            Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(request, new CancellationToken()));
+            Assert.ThrowsAsync<NotFoundException>(async () => await _handler.Handle(request, new CancellationToken()));
         }
     }
 }
