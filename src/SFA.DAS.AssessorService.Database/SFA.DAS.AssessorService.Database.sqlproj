@@ -185,7 +185,6 @@
     <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
     <None Include="PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql" />
     <Build Include="StoredProcedures\StaffReports_List_Approved_Standards.sql" />
-    <Build Include="Tables\OrganisationDeliveryArea.sql" />
     <Build Include="Tables\OfqualOrganisation.sql" />
     <Build Include="Tables\StagingOfqualOrganisation.sql" />
     <Build Include="Tables\OfqualStandard.sql" />
