@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
@@ -33,28 +27,34 @@ using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Api";
         private const string VERSION = "1.0";
-        private readonly IWebHostEnvironment _env;
+        
+        private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
+        private readonly IWebHostEnvironment _env;
         private readonly bool _useSandbox;
 
-        public Startup(IWebHostEnvironment env, IConfiguration config, ILogger<Startup> logger)
+        public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
-            _env = env;
+            _config = config;
             _logger = logger;
-
+            _env = env;
+            
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
-            Configuration = ConfigurationService
-                .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
             if (!bool.TryParse(config["UseSandboxServices"], out _useSandbox))
             {
                 _useSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
@@ -64,10 +64,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
-        public IWebConfiguration Configuration { get; }
+        private IApiConfiguration Configuration { get; set; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            Configuration = ConfigurationService
+                .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
+
             IServiceProvider serviceProvider;
             try
             {
@@ -82,12 +85,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         if (_useSandbox)
                         {
                             validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
-                            validAudiences.Add(Configuration.SandboxApiAuthentication.ClientId);
                         }
                         else
                         {
                             validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
-                            validAudiences.Add(Configuration.ApiAuthentication.ClientId);
                         }
                         
                         o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
@@ -155,7 +156,12 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                             config.OperationFilter<SecurityRequirementsOperationFilter>();
                         }
                     });
- 
+
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnAApiClient", config => 
+                    { 
+                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); 
+                    });
+
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
@@ -177,16 +183,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
                 
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, "Error during Startup Configure Services");
+                _logger.LogError(ex, "Error during Startup Configure Services");
                 throw;
             }
 
@@ -209,7 +214,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
                 });
 
-                config.For<IWebConfiguration>().Use(Configuration);
+                config.For<IApiConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
                 config.For<ISignInService>().Use<SignInService>();
@@ -223,13 +228,21 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                config.For<ITokenService>().Use<TokenService>();
-                config.For<ITokenService>().Add<QnaTokenService>().Named("qnaTokenService");
-                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(false);
+                config.For<IQnATokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
 
-                config.For<IQnaApiClient>().Use<QnaApiClient>()
-                  .Ctor<ITokenService>("qnaTokenService").Is(c => c.GetInstance<ITokenService>("qnaTokenService"))
-                  .Ctor<string>().Is(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                config.For<IReferenceDataTokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.ReferenceDataApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
+
+                config.For<IRoatpTokenService>().Use<TokenService>()
+                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
+                    .Ctor<string>().Is(_config["EnvironmentName"]);
+
+                config.For<IQnaApiClient>().Use<QnaApiClient>();
+                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
@@ -306,6 +319,5 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 Tenant = ""
             };
         }
-    
     }
 }

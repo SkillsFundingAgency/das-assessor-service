@@ -10,11 +10,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Dashboard
 {
     public class GetEpaoDashboardHandler : IRequestHandler<GetEpaoDashboardRequest, GetEpaoDashboardResponse>
     {
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly IDashboardRepository _dashboardRespository;
         private readonly ILogger<GetEpaoDashboardHandler> _logger;
 
-        public GetEpaoDashboardHandler(IWebConfiguration config, IDashboardRepository dashboardRespository, ILogger<GetEpaoDashboardHandler> logger)
+        public GetEpaoDashboardHandler(IApiConfiguration config, IDashboardRepository dashboardRespository, ILogger<GetEpaoDashboardHandler> logger)
         {
             _config = config;
             _dashboardRespository = dashboardRespository;
