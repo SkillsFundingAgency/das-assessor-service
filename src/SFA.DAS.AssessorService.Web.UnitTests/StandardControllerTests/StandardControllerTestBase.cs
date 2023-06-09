@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             };
         }
 
-        private HttpContext SetupHttpContextSubAuthorityClaim(Guid signInId, string epaOrgId)
+        private static HttpContext SetupHttpContextSubAuthorityClaim(Guid signInId, string epaOrgId)
         {
             var fakeClaims = new List<Claim>()
             {

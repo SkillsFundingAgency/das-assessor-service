@@ -1,8 +1,5 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.Validators.Standard
 {
