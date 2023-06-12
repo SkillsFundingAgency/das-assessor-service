@@ -54,10 +54,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             try
             {
                 if (string.IsNullOrEmpty(referenceNumber))
-                    throw new ArgumentException(nameof(referenceNumber));
+                    throw new ArgumentException("The value must not be null or empty", nameof(referenceNumber));
 
                 var allVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
                 var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
+
+                if (!allVersions.Any())
+                    throw new ArgumentException($"There are no versions for the {referenceNumber}", nameof(referenceNumber));
 
                 var model = new StandardDetailsViewModel
                 {
@@ -297,13 +300,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 if (string.IsNullOrEmpty(model.Version))
                     throw new ArgumentException("Version cannot be null or empty");
 
-                var contact = await GetUserContact();
+                var contactId = await GetUserId();
                 var epaOrgId = GetEpaOrgIdFromClaim();
 
                 var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
                 if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) != null)
                 {
-                    throw new ArgumentException($"Unable to opt in to StandardReference {model.StandardReference} organisation {epaOrgId} does not assess standard");
+                    throw new ArgumentException($"Unable to opt in to StandardReference {model.StandardReference} organisation {epaOrgId} already assesses this standard version");
                 }
 
                 await _orgApiClient.OrganisationStandardVersionOptIn(
@@ -312,7 +315,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     model.Version,
                     model.EffectiveFrom,
                     model.EffectiveTo,
-                    contact.Id);
+                    contactId);
 
                 return RedirectToRoute(OptInStandardVersionConfirmationRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
             }
