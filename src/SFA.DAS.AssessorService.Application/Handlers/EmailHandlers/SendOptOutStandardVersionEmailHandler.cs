@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
-    public class SendOptInStandardVersionEmailHandler : IRequestHandler<SendOptInStandardVersionEmailRequest>
+    public class SendOptOutStandardVersionEmailHandler : IRequestHandler<SendOptOutStandardVersionEmailRequest>
     {
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
         private readonly IMediator _mediator;
         private readonly ILogger<SendOptInStandardVersionEmailHandler> _logger;
 
-        public SendOptInStandardVersionEmailHandler(IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository,
+        public SendOptOutStandardVersionEmailHandler(IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository,
             IStandardService standardService, IMediator mediator, ILogger<SendOptInStandardVersionEmailHandler> logger)
         {
             _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
@@ -28,27 +28,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(SendOptInStandardVersionEmailRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SendOptOutStandardVersionEmailRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Sending email to notify that standard {request.StandardReference} version {request.Version} has been opted in by contact {request.ContactId}");
+            _logger.LogInformation($"Sending email to notify that standard {request.StandardReference} version {request.Version} has been opted out by contact {request.ContactId}");
 
             var contactToNotify = await _contactQueryRepository.GetContactById(request.ContactId);
             if (contactToNotify == null)
             {
-                throw new ArgumentException($"Unable to send email for opt in standard version, cannot find contact {request.ContactId}", 
+                throw new ArgumentException($"Unable to send email for opt out standard version, cannot find contact {request.ContactId}", 
                     nameof(request.ContactId));
             }
 
             var standardVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
             if (!standardVersions?.Any() ?? false)
             {
-                throw new Exception($"Unable to send email for opt in standard version, cannot find version {request.Version} for standard reference {request.StandardReference}");
+                throw new Exception($"Unable to send email for opt out standard version, cannot find version {request.Version} for standard reference {request.StandardReference}");
             }
 
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptIn);
+            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptOut);
             if (emailTemplate == null)
             {
-                throw new Exception($"Unable to send email for opt in standard version, cannot find email template {EmailTemplateNames.EPAOStandardConfimOptIn}");
+                throw new Exception($"Unable to send email for opt out standard version, cannot find email template {EmailTemplateNames.EPAOStandardConfimOptOut}");
             }
 
             await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,

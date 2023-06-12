@@ -24,11 +24,6 @@
         public const string APPLY_EPAO_RESPONSE = "ApplyEPAOResponse";
 
         /// <summary>
-        /// Requires tokens: { contactname, standard, standardreference, version }
-        /// </summary>
-        public const string ApplyEPAOStandardOptin = "ApplyEPAOStandardOptin";
-
-        /// <summary>
         /// Requires tokens: { primaryEPAO, contactName, effectiveToDate }
         /// </summary>
         public const string MergeConfirmationForPrimaryEpao = "MergeConfirmationForPrimaryEpao";
@@ -37,5 +32,15 @@
         /// Requires tokens: { secondaryEPAO, contactName, effectiveToDate }
         /// </summary>
         public const string MergeConfirmationForSecondaryEpao = "MergeConfirmationForSecondaryEpao";
+
+        /// <summary>
+        /// Requires tokens: { contactname, standard, standardreference, version, servicename }
+        /// </summary>
+        public const string EPAOStandardConfimOptIn = "EPAOStandardConfimOptIn";
+
+        /// <summary>
+        /// Requires tokens: { contactname, standard, standardreference, version, servicename }
+        /// </summary>
+        public const string EPAOStandardConfimOptOut = "EPAOStandardConfimOptOut";
     }
 }

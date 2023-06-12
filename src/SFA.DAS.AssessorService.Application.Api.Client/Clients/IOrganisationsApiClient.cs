@@ -65,5 +65,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(string endPointAssessorOrganisationId,
            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId);
+
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptOut(string endPointAssessorOrganisationId,
+           string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId);
     }
 }

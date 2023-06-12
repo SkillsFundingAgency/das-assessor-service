@@ -2,12 +2,15 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
@@ -37,6 +40,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                     IFateReferenceNumber = "ST0001",
                     Title = "Standard Title One",
                     Version = "1.1",
+                    VersionEarliestStartDate = DateTime.Today.AddDays(-9),
+                    VersionLatestEndDate = DateTime.Today.AddDays(11)
+                },
+                new StandardVersion
+                {
+                    IFateReferenceNumber = "ST0002",
+                    Title = "Standard Title Two",
+                    Version = "2.0",
                     VersionEarliestStartDate = DateTime.Today.AddDays(-9),
                     VersionLatestEndDate = DateTime.Today.AddDays(11)
                 }
@@ -83,28 +94,26 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
+        public void OptInStandardVersion_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
         {
-            var result = await _sut.OptInStandardVersion(referenceNumber, "1.0");
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(referenceNumber, "1.0"));
+            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenGetCalledWithNullOrEmptyVersion(string version)
+        public void OptInStandardVersion_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
         {
-            var result = await _sut.OptInStandardVersion("ST0001", version);
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion("ST0001", version));
+            Assert.That(ex.ParamName, Is.EqualTo("version"));
         }
 
-        [Test]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenGetCalledWithNonExistentVersion()
+        [TestCase("ST0001", "1.3")]
+        [TestCase("ST0002", "1.1")]
+        public void OptInStandardVersion_ThrowsArgumentException_WhenGetCalledWithNonExistentReferenceNumberAndVersionCombination(string referenceNumber, string version)
         {
-            var result = await _sut.OptInStandardVersion("ST0001", "2.0");
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(referenceNumber, version));
+            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
         [Test]
@@ -130,16 +139,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenPostCalledWithNullModel()
+        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
         {
-            var result = await _sut.OptInStandardVersion(null);
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(null));
+            Assert.That(ex.ParamName, Is.EqualTo("model"));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenPostCalledWithNullOrEmptyStandardReference(string standardReference)
+        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullOrEmptyStandardReference(string standardReference)
         {
             var model = new OptInStandardVersionViewModel
             {
@@ -147,14 +155,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 Version = "1.0"
             };
 
-            var result = await _sut.OptInStandardVersion(model);
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(model));
+            Assert.That(ex.ParamName, Is.EqualTo(nameof(model.StandardReference)));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenPostCalledWithNullOrEmptyVersion(string version)
+        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullOrEmptyVersion(string version)
         {
             var model = new OptInStandardVersionViewModel
             {
@@ -162,13 +169,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 Version = version
             };
 
-            var result = await _sut.OptInStandardVersion(model);
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(model));
+            Assert.That(ex.ParamName, Is.EqualTo(nameof(model.Version)));
         }
 
         [Test]
-        public async Task OptInStandardVersion_ReturnsBadRequest_WhenPostCalledWithExistingVersionForStandard()
+        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithExistingVersionForStandard()
         {
             var model = new OptInStandardVersionViewModel
             {
@@ -176,9 +182,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 Version = "1.1"
             };
 
-            var result = await _sut.OptInStandardVersion(model);
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.ThrowsAsync<AlreadyExistsException>(async () => await _sut.OptInStandardVersion(model));
         }
 
         [Test]
@@ -201,28 +205,24 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task OptInStandardVersionConfirmation_ReturnsBadRequest_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
+        public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
         {
-            var result = await _sut.OptInStandardVersionConfirmation(referenceNumber, "1.0");
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersionConfirmation(referenceNumber, "1.0"));
+            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task OptInStandardVersionConfirmation_ReturnsBadRequest_WhenGetCalledWithNullOrEmptyVersion(string version)
+        public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
         {
-            var result = await _sut.OptInStandardVersionConfirmation("Ref123", version);
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersionConfirmation("ST0001", version));
+            Assert.That(ex.ParamName, Is.EqualTo("version"));
         }
 
         [Test]
-        public async Task OptInStandardVersionConfirmation_ReturnsBadRequest_WhenGetCalledWithNonExistentReference()
+        public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNonExistentReference()
         {
-            var result = await _sut.OptInStandardVersionConfirmation("RefNonExistent", "1.0");
-
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptInStandardVersionConfirmation("ST0099", "1.0"));
         }
 
 

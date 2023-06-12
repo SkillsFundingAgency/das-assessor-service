@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class OrganisationStandardVersionOptInHandler : IRequestHandler<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>
+    public class OrganisationStandardVersionOptOutHandler : IRequestHandler<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>
     {
         private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IMediator _mediator;
         private readonly ILogger<OrganisationStandardVersionOptInHandler> _logger;
 
-        public OrganisationStandardVersionOptInHandler(IOrganisationStandardRepository organisationStandardRepository, 
+        public OrganisationStandardVersionOptOutHandler(IOrganisationStandardRepository organisationStandardRepository, 
             IContactQueryRepository contactQueryRepository, IMediator mediator,
             IStandardService standardService,
             ILogger<OrganisationStandardVersionOptInHandler> logger)
@@ -32,35 +32,33 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             _logger = logger;
         }
 
-        public async Task<OrganisationStandardVersion> Handle(OrganisationStandardVersionOptInRequest request, CancellationToken cancellationToken)
+        public async Task<OrganisationStandardVersion> Handle(OrganisationStandardVersionOptOutRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 var contact = await _contactQueryRepository.GetContactById(request.ContactId);
                 if (contact == null)
                 {
-                    throw new NotFoundException($"Cannot opt in to StandardReference {request.StandardReference} as ContactId {request.ContactId} cannot be found");
+                    throw new NotFoundException($"Cannot opt out to StandardReference {request.StandardReference} as ContactId {request.ContactId} cannot be found");
                 }
 
                 var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
                 if (organisationStandard == null)
                 {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
-                }
-
-                var allVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
-                var optInVersion = allVersions.FirstOrDefault(x => x.Version.Equals(request.Version, StringComparison.InvariantCultureIgnoreCase));
-                if (optInVersion == null)
-                {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
+                    throw new NotFoundException($"Cannot opt out as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
                 }
 
                 var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);
-                var newComment = $"Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}";
+                if(existingVersion == null)
+                {
+                    throw new NotFoundException($"Cannot opt out as StandardReference {request.StandardReference} Version {request.Version} for {request.EndPointAssessorOrganisationId} cannot be found");
+                }
+
+                var newComment = $"Opted out by EPAO {contact.Email} at {request.OptOutRequestedAt}";
 
                 var entity = new Domain.Entities.OrganisationStandardVersion
                 {
-                    StandardUId = optInVersion.StandardUId,
+                    StandardUId = existingVersion.StandardUId,
                     Version = request.Version,
                     OrganisationStandardId = organisationStandard.Id,
                     EffectiveFrom = request.EffectiveFrom,
@@ -72,18 +70,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     Status = OrganisationStatus.Live
                 };
 
-                if (existingVersion != null)
-                {
-                    await _organisationStandardRepository.UpdateOrganisationStandardVersion(entity);
-                }
-                else
-                { 
-                    await _organisationStandardRepository.CreateOrganisationStandardVersion(entity);
-                }
+                await _organisationStandardRepository.UpdateOrganisationStandardVersion(entity);
 
                 var organisationStandardVersion = (OrganisationStandardVersion)entity;
 
-                await _mediator.Send(new SendOptInStandardVersionEmailRequest
+                await _mediator.Send(new SendOptOutStandardVersionEmailRequest
                 {
                     ContactId = request.ContactId,
                     StandardReference = request.StandardReference,
@@ -94,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to opt-in StandardReference {request.StandardReference} Version {request.Version} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId}");
+                _logger.LogError(ex, $"Failed to opt-out StandardReference {request.StandardReference} Version {request.Version} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId}");
                 throw;
             }
         }

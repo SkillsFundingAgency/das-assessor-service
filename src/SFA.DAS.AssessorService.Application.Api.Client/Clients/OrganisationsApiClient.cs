@@ -454,7 +454,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 OptInRequestedAt = DateTime.Now
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-in"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
+            }
+        }
+
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptOut(string endPointAssessorOrganisationId,
+            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
+        {
+            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            {
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                StandardReference = standardReference,
+                Version = version,
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo,
+                ContactId = contactId,
+                OptInRequestedAt = DateTime.Now
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-out"))
             {
                 return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
             }

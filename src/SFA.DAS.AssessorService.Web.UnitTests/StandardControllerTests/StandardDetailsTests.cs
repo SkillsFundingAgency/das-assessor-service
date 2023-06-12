@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
@@ -80,23 +81,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task StandardDetails_ReturnsBadRequest_WhenGetCalledWithNullOrEmptyReference_(string referenceNumber)
+        public void StandardDetails_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyReference_(string referenceNumber)
         {
-            // Act
-            var result = await _sut.StandardDetails(referenceNumber);
-
-            // Assert
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.StandardDetails(referenceNumber));
+            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
         [Test]
-        public async Task StandardDetails_ReturnsBadRequest_WhenGetCalledWithNonExistentReference()
+        public void StandardDetails_ReturnsBadRequest_WhenGetCalledWithNonExistentReference()
         {
-            // Act
-            var result = await _sut.StandardDetails("ST0003");
-
-            // Assert
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.StandardDetails("ST0003"));
         }
     }
 }

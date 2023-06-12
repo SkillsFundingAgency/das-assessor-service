@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
                             [EffectiveFrom] = @effectiveFrom,
                             [EffectiveTo] = @effectiveTo,
                             [DateVersionApproved] = @dateVersionApproved,
-                            [Comments] = @comments
+                            [Comments] = @comments,
                             [Status] = @status
                         WHERE
                             [OrganisationStandardId] = @organisationStandardId AND [Version] = @version";
