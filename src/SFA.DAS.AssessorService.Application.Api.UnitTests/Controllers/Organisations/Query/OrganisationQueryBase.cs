@@ -27,9 +27,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
         protected Mock<ILogger<OrganisationQueryController>> ControllerLoggerMock;
 
-        protected Mock<IWebConfiguration> ConfigMock = new Mock<IWebConfiguration>();
-
-
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
         protected  void Setup()
@@ -44,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, ConfigMock.Object);
+            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object);
         }
 
         private void SetupControllerMocks()

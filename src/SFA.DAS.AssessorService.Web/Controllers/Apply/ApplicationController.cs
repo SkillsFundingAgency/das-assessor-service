@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -17,12 +24,6 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -451,7 +452,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                         return RedirectToAction("Applications");
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -562,7 +563,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
-                throw ex;
+                throw;
             }
         }
 
@@ -678,7 +679,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 _logger.LogError(ex, ex.Message);
 
-                throw ex;
+                throw;
             }
         }
 

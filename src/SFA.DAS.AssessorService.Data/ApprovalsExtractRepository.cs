@@ -44,10 +44,6 @@ namespace SFA.DAS.AssessorService.Data
 
                 await BulkInsertApprovalsExtractStaging(approvalsExtract);
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
             finally
             {
                 if (_unitOfWork.Connection.State != ConnectionState.Closed)
@@ -124,32 +120,18 @@ namespace SFA.DAS.AssessorService.Data
         /// <returns></returns>
         public async Task PopulateApprovalsExtract()
         {
-            try
-            {
-                var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("ImportIntoApprovalsExtract_FromApprovalsExtract_Staging", transaction: _unitOfWork.Transaction, commandType: CommandType.StoredProcedure, commandTimeout: 0);
+            var result = await _unitOfWork.Connection.ExecuteScalarAsync<int>("ImportIntoApprovalsExtract_FromApprovalsExtract_Staging", transaction: _unitOfWork.Transaction, commandType: CommandType.StoredProcedure, commandTimeout: 0);
 
-                if (result != 0)
-                {
-                    throw new Exception("Stored procedure ImportIntoApprovalsExtract_FromApprovalsExtract_Staging failed to complete successfully.");
-                }
-            }
-            catch (Exception ex)
+            if (result != 0)
             {
-                throw ex;
+                throw new Exception("Stored procedure ImportIntoApprovalsExtract_FromApprovalsExtract_Staging failed to complete successfully.");
             }
         }
 
         public async Task<int> PopulateLearner()
         {
-            try
-            {
-                var upsertedCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure, commandTimeout: 0);
-                return upsertedCount;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var upsertedCount = await _unitOfWork.Connection.ExecuteScalarAsync<int>("PopulateLearner", commandType: CommandType.StoredProcedure, commandTimeout: 0);
+            return upsertedCount;
         }
 
         public async Task InsertProvidersFromApprovalsExtract()

@@ -15,14 +15,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
     public class When_called
     {
         private GetPipelinesCountHandler _sut;
-        private Mock<IWebConfiguration> _mockConfig;
+        private Mock<IApiConfiguration> _mockConfig;
         private Mock<ILearnerRepository> _mockLearnerRepository;
         private Mock<ILogger<GetPipelinesCountHandler>> _mockLogger;
 
         [SetUp]
         public void Arrange()
         {
-            _mockConfig = new Mock<IWebConfiguration>();
+            _mockConfig = new Mock<IApiConfiguration>();
             _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockLogger = new Mock<ILogger<GetPipelinesCountHandler>>();
             

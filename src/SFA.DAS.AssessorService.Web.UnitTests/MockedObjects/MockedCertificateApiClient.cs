@@ -1,5 +1,6 @@
 ﻿using System;
 using FizzWare.NBuilder;
+using FluentAssertions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -16,12 +17,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var webConfigMock = new Mock<IWebConfiguration>();
-            var hostMock = new Mock<IHostEnvironment>();
-            hostMock
-                .Setup(m => m.EnvironmentName)
-                .Returns(Environments.Development);
-            var tokenServiceMock = new TokenService(webConfigMock.Object, hostMock.Object, false);
+            var clientApiAuthenticationMock = new Mock<IClientApiAuthentication>();
+            
+            var tokenServiceMock = new Mock<IAssessorTokenService>();
+            tokenServiceMock
+                .Setup(m => m.GetToken())
+                .Returns(string.Empty);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
@@ -50,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new CertificateApiClient(client, tokenServiceMock, apiClientLoggerMock.Object);
+            var apiClient = new CertificateApiClient(client, tokenServiceMock.Object, apiClientLoggerMock.Object);
 
             return apiClient;
         }

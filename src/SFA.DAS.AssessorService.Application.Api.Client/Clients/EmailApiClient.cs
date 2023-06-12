@@ -8,16 +8,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class EmailApiClient : ApiClientBase, IEmailApiClient
     {
-        private readonly ILogger<EmailApiClient> _logger;
+        private readonly ILogger<ApiClientBase> _logger;
 
-        public EmailApiClient(string baseUri, ITokenService tokenService, ILogger<EmailApiClient> logger) : base(baseUri, tokenService, logger)
+        public EmailApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
             _logger = logger;
         }
 
-        public EmailApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
-        {
-        }
         public async Task<EmailTemplateSummary> GetEmailTemplate(string templateName)
         {
 
