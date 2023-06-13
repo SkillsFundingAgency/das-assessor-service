@@ -11,22 +11,23 @@
             <div class="govuk-panel govuk-panel--confirmation">
                 <div class="govuk-panel__body">
                     <h1 class="govuk-panel__title">
-                        You have opted out of Version @Model.Version
+                        You've opted out of @Model.Version of @Model.StandardTitle @Model.StandardReference
                     </h1>
                 </div>
             </div>
 
-            <p class="govuk-body">We have sent you a confirmation email.</p>
+            <p class="govuk-body">We've sent you a confirmation email.</p>
 
-            <h3 class="govuk-heading-m">What happens next</h3>
+            <h3 class="govuk-heading-m">What happens next:</h3>
 
-            <p class="govuk-body">You are now approved to assess Version @Model.Version of the @Model.StandardTitle (@Model.StandardReference) standard.</p>
+            <p class="govuk-body">
+                You can no longer assess and record outcomes for @Model.Version of @Model.StandardTitle @Model.StandardReference unless you opt back in.
+            </p>
 
             <p class="govuk-body govuk-!-margin-bottom-8">
-            
-            <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">Go back to your standards and versions</a></p>
-
-            <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link--no-visited-state">What do you think of this service?</a> (Takes 60 seconds)</p>
+                You can opt back in at any time by going back to 
+                <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">your standards and versions</a>.
+            </p>
         </div>
     </div>
 </main>
