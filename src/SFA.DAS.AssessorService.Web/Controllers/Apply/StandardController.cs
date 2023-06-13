@@ -84,33 +84,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("standard/add-standard/{search}/results", Name = AddStandardSearchResultsRouteGet)]
         public async Task<IActionResult> AddStandardSearchResults(string search)
         {
-            try
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            var allStandards = await _standardVersionApiClient.GetLatestStandardVersions();
+            var approvedStandards = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim());
+
+            var model = new AddStandardSearchViewModel
             {
-                if (string.IsNullOrEmpty(search))
-                    throw new ArgumentException("The parameter cannot be null or empty", nameof(search));
+                Approved = approvedStandards
+                    .GroupBy(standardVersion => standardVersion.IFateReferenceNumber)
+                    .Where(group => group.Any())
+                    .Select(group => group.FirstOrDefault())
+                    .ToList(),
+                Results = allStandards
+                    .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList(),
+                StandardToFind = search
+            };
 
-                var allStandards = await _standardVersionApiClient.GetLatestStandardVersions();
-                var approvedStandards = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim());
-
-                var model = new AddStandardSearchViewModel
-                {
-                    Approved = approvedStandards
-                        .GroupBy(standardVersion => standardVersion.IFateReferenceNumber)
-                        .Where(group => group.Any())
-                        .Select(group => group.FirstOrDefault())
-                        .ToList(),
-                    Results = allStandards
-                        .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
-                        .ToList(),
-                    StandardToFind = search
-                };
-
-                return View(model);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return View(model);
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
@@ -118,33 +111,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> AddStandardChooseVersions(string search, string referenceNumber)
         {
-            try
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var model = new AddStandardConfirmViewModel
             {
-                if (string.IsNullOrEmpty(search))
-                    throw new ArgumentException("The parameter cannot be null or empty", nameof(search));
+                Search = search,
+                StandardReference = referenceNumber,
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.ToList(),
+                IsConfirmed = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(AddStandardConfirmViewModel.IsConfirmed), false),
+                SelectedVersions = ModelState
+                    .GetAttemptedValueListWhenInvalid(nameof(AddStandardConfirmViewModel.SelectedVersions), new List<string>(), ','),
+            };
 
-                if (string.IsNullOrEmpty(referenceNumber))
-                    throw new ArgumentException("The parameter cannot be null or empty", nameof(search));
-
-                var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-                var model = new AddStandardConfirmViewModel
-                {
-                    Search = search,
-                    StandardReference = referenceNumber,
-                    Standard = standardVersions.FirstOrDefault(),
-                    StandardVersions = standardVersions.ToList(),
-                    IsConfirmed = ModelState
-                        .GetAttemptedValueWhenInvalid(nameof(AddStandardConfirmViewModel.IsConfirmed), false),
-                    SelectedVersions = ModelState
-                        .GetAttemptedValueListWhenInvalid(nameof(AddStandardConfirmViewModel.SelectedVersions), new List<string>(), ','),
-                };
-
-                return View(model);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return View(model);
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
@@ -165,13 +151,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> AddStandardConfirm(string search, string referenceNumber, [FromQuery] List<string> versions)
         {
             if(string.IsNullOrEmpty(search))
-                throw new ArgumentOutOfRangeException(nameof(search));
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
 
             if(string.IsNullOrEmpty(referenceNumber))
-                throw new ArgumentOutOfRangeException(nameof(referenceNumber));
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
             if (!(versions?.Any() ?? false))
-                throw new ArgumentOutOfRangeException(nameof(versions));
+                throw new ArgumentException("Value must contain elements", nameof(versions));
             
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var model = new AddStandardConfirmViewModel

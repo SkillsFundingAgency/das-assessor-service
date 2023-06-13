@@ -1,20 +1,19 @@
-﻿namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
-{
-    using Moq;
-    using NUnit.Framework;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using SFA.DAS.AssessorService.Web.ViewModels.Standard;
-    using SFA.DAS.AssessorService.Web.Controllers.Apply;
-    using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using System.Linq;
-    using System;
-    using SFA.DAS.AssessorService.Api.Types.Models.AO;
-    using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Web.Controllers.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
+namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
+{
     [TestFixture]
     public class AddStandardTests : StandardControllerTestBase
     {
@@ -120,13 +119,10 @@
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task AddStandardSearchResults_ReturnsBadRequest_WhenCalledWithInvalidSearchParameter(string search)
+        public void AddStandardSearchResults_ThrowsArgumentException_WhenCalledWithInvalidSearchParameter(string search)
         {
-            // Act
-            var result = await _sut.AddStandardSearchResults(search);
-
-            // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(() => _sut.AddStandardSearchResults(search));
         }
 
         [Test]
@@ -209,13 +205,10 @@
         [TestCase("", "")]
         [TestCase("", null)]
         [TestCase(null, "")]
-        public async Task AddStandardChooseVersions_ReturnsBadRequest_WhenGetCalledWithInvalidParameters(string search, string referenceNumber)
+        public void AddStandardChooseVersions_ThrowsArugumentException_WhenGetCalledWithInvalidParameters(string search, string referenceNumber)
         {
-            // Act
-            var result = await _sut.AddStandardChooseVersions(search, referenceNumber);
-
-            // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(() => _sut.AddStandardChooseVersions(search, referenceNumber));
         }
 
         [Test]
@@ -230,7 +223,6 @@
             // Act
             var result = _sut.AddStandardChooseVersions(new AddStandardConfirmViewModel());
 
-            // Assert
             // Assert
             Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
@@ -256,33 +248,27 @@
             Assert.AreEqual(StandardController.AddStandardConfirmRouteGet, redirectToRouteResult.RouteName);
         }
 
-        [Test]
-        public void AddStandardConfirm_WhenSearchIsNull_ShouldThrowException()
+        [TestCase(null, null, "1.0")]
+        [TestCase("", "", "1.0")]
+        [TestCase("", null, "1.0")]
+        [TestCase(null, "", "1.0")]
+        [TestCase("Tech", "ST0001", null)]
+        [TestCase("Tech", "ST0001", "")]
+        public void AddStandardConfirm_ThrowsArugumentException_WhenGetCalledWithInvalidParameters(string search, string referenceNumber, string version)
         {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm(null, "ST0001", new List<string> { "1.0" }));
+            // Arrange
+            var versions = new List<string>();
+            if(!string.IsNullOrEmpty(version))
+            {
+                versions.Add(version);
+            }
+            
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(() => _sut.AddStandardConfirm(search, referenceNumber, versions));
         }
 
         [Test]
-        public void AddStandardConfirm_WhenReferenceNumberIsNull_ShouldThrowException()
-        {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm("Tech", null, new List<string> { "1.0" }));
-        }
-
-        [Test]
-        public void AddStandardConfirm_WhenVersionsIsNull_ShouldThrowException()
-        {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm("Tech", "ST0001", null));
-        }
-
-        [Test]
-        public void AddStandardConfirm_WhenVersionsIsEmpty_ShouldThrowException()
-        {
-            Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirm("Tech", "ST0001", new List<string>()));
-        }
-
-
-        [Test]
-        public async Task AddStandardConfirm_WhenParametersAreValid_ReturnsView()
+        public async Task AddStandardConfirm_ReturnsView_WhenGetCalledWithValidParameters()
         {
             // Arrange
             var standardVersions = new List<StandardVersion> { new StandardVersion { IFateReferenceNumber = "ST0001" } };
@@ -296,7 +282,7 @@
         }
 
         [Test]
-        public async Task AddStandardConfirm_WhenParametersAreValid_SetsModelCorrectly()
+        public async Task AddStandardConfirm_SetsModelCorrectly_WhenGetCalledWithValidParameters()
         {
             // Arrange
             var standardVersions = new List<StandardVersion> {
@@ -327,7 +313,7 @@
         }
 
         [Test]
-        public async Task AddStandardConfirm_GivenValidViewModel_ReturnsRedirectToRouteResult()
+        public async Task AddStandardConfirm_ReturnsRedirectToRouteResult_WhenGetCalledWithValidViewModel()
         {
             // Arrange
             var model = new AddStandardConfirmViewModel();
@@ -342,7 +328,7 @@
         }
 
         [Test]
-        public async Task AddStandardConfirm_GivenValidViewModel_CallsAddOrganisationStandardWithCorrectParameters()
+        public async Task AddStandardConfirm_CallsAddOrganisationStandardWithCorrectParameters_WhenGetCalledWithValidViewModel()
         {
             // Arrange
             var model = new AddStandardConfirmViewModel
@@ -368,14 +354,14 @@
 
         [TestCase(null)]
         [TestCase("")]
-        public void AddStandardConfirmation_GivenInvalidReferenceNumber_ThrowsArgumentOutOfRangeException(string referenceNumber)
+        public void AddStandardConfirmation_ThrowsArgumentOutOfRangeException_WhenGetCalledWithInvalidReferenceNumber(string referenceNumber)
         {
             // Act & Assert
             Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.AddStandardConfirmation(referenceNumber));
         }
 
         [Test]
-        public async Task AddStandardConfirmation_GivenValidReferenceNumber_ReturnsViewWithCorrectModel()
+        public async Task AddStandardConfirmation_ReturnsViewWithCorrectModel_WhenGetCalledWithValidReferenceNumber()
         {
             // Arrange
             var referenceNumber = "ST0001";
