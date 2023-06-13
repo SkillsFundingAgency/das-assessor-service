@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class TokenService 
+    public class TokenService
         : IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
     {
         private readonly IClientApiAuthentication _configuration;
@@ -18,9 +18,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
         public string GetToken()
         {
-            if(_environmentName == "LOCAL")
+            Uri uri = new Uri(_configuration.ApiBaseAddress);
+            if (uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "::1")
                 return string.Empty;
-            
+
             var tenantId = _configuration.TenantId;
             var clientId = _configuration.ClientId;
             var appKey = _configuration.ClientSecret;
