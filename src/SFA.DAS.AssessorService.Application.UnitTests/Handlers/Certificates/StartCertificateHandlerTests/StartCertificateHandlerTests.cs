@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
+using SFA.DAS.AssessorService.Application.Helpers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             // Act
             Func<Task> act = async () => { await _sut.Handle(request, new CancellationToken()); };
-        
+
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>().WithMessage($"StandardUId:{request.StandardUId} not found, unable to populate certificate data");
         }
@@ -319,6 +319,115 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             responseCertData.FullName.Should().Be($"{learnerRecord.GivenNames} {learnerRecord.FamilyName}");
 
             _mockCertificateRepository.Verify(s => s.Update(existingCertificate, request.Username, null, true, null), Times.Once);
+        }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task WhenHandlingStartCertificateRequest_AndNamesAreInLowerCase_ThenRunProperCaseAlgorithm(StartCertificateRequest request,
+            Domain.Entities.Learner learnerRecord,
+            Organisation organisationRecord,
+            Provider provider,
+            Certificate stubCertificate,
+            IEnumerable<Standard> standards)
+        {
+            // Arrange
+            request.StandardUId = null;
+            learnerRecord.FundingModel = 81;
+            learnerRecord.GivenNames = learnerRecord.GivenNames.ToLower();
+            learnerRecord.FamilyName = learnerRecord.FamilyName.ToLower();
+            _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
+            _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
+            _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
+            _mockProvidersRepository.Setup(s => s.GetProvider(learnerRecord.UkPrn)).ReturnsAsync(provider);
+            _mockStandardService.Setup(s => s.GetStandardVersionsByLarsCode(learnerRecord.StdCode)).ReturnsAsync(standards);
+            Certificate createdCertificate = null;
+
+            _mockCertificateRepository.Setup(s => s.New(It.IsAny<Certificate>())).Callback<Certificate>((cert) =>
+            {
+                createdCertificate = cert;
+            }).ReturnsAsync(stubCertificate);
+
+
+            // Act
+            var response = await _sut.Handle(request, new CancellationToken());
+
+            // Assertions
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(learnerRecord.GivenNames.ProperCase() == response.LearnerGivenNames);
+                Assert.IsTrue(learnerRecord.FamilyName.ProperCase() == response.LearnerFamilyName);
+            });
+        }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task WhenHandlingStartCertificateRequest_AndNamesAreInUpperCase_ThenRunProperCaseAlgorithm(StartCertificateRequest request,
+            Domain.Entities.Learner learnerRecord,
+            Organisation organisationRecord,
+            Provider provider,
+            Certificate stubCertificate,
+            IEnumerable<Standard> standards)
+        {
+            // Arrange
+            request.StandardUId = null;
+            learnerRecord.FundingModel = 81;
+            learnerRecord.GivenNames = learnerRecord.GivenNames.ToUpper();
+            learnerRecord.FamilyName = learnerRecord.FamilyName.ToUpper();
+            _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
+            _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
+            _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
+            _mockProvidersRepository.Setup(s => s.GetProvider(learnerRecord.UkPrn)).ReturnsAsync(provider);
+            _mockStandardService.Setup(s => s.GetStandardVersionsByLarsCode(learnerRecord.StdCode)).ReturnsAsync(standards);
+            Certificate createdCertificate = null;
+
+            _mockCertificateRepository.Setup(s => s.New(It.IsAny<Certificate>())).Callback<Certificate>((cert) =>
+            {
+                createdCertificate = cert;
+            }).ReturnsAsync(stubCertificate);
+
+
+            // Act
+            var response = await _sut.Handle(request, new CancellationToken());
+
+            // Assertions
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(learnerRecord.GivenNames.ProperCase() == response.LearnerGivenNames);
+                Assert.IsTrue(learnerRecord.FamilyName.ProperCase() == response.LearnerFamilyName);
+            });
+        }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task WhenHandlingStartCertificateRequest_AndNamesAreInMixedCase_ThenDoNotRunProperCaseAlgorithm(StartCertificateRequest request,
+            Domain.Entities.Learner learnerRecord,
+            Organisation organisationRecord,
+            Provider provider,
+            Certificate stubCertificate,
+            IEnumerable<Standard> standards)
+        {
+            // Arrange
+            request.StandardUId = null;
+            learnerRecord.FundingModel = 81;
+            _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
+            _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
+            _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
+            _mockProvidersRepository.Setup(s => s.GetProvider(learnerRecord.UkPrn)).ReturnsAsync(provider);
+            _mockStandardService.Setup(s => s.GetStandardVersionsByLarsCode(learnerRecord.StdCode)).ReturnsAsync(standards);
+            Certificate createdCertificate = null;
+
+            _mockCertificateRepository.Setup(s => s.New(It.IsAny<Certificate>())).Callback<Certificate>((cert) =>
+            {
+                createdCertificate = cert;
+            }).ReturnsAsync(stubCertificate);
+
+
+            // Act
+            var response = await _sut.Handle(request, new CancellationToken());
+
+            // Assertions
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(learnerRecord.GivenNames == response.LearnerGivenNames);
+                Assert.IsTrue(learnerRecord.FamilyName == response.LearnerFamilyName);
+            });
         }
     }
 }
