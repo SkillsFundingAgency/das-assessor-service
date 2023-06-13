@@ -255,6 +255,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/opt-in/{referenceNumber}/{version}", Name = OptInStandardVersionRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptInStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -282,6 +283,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("standard/opt-in", Name = OptInStandardVersionRoutePost)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptInStandardVersion(OptInStandardVersionViewModel model)
         {
             if (model == null)
@@ -314,6 +316,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/opt-in/{referenceNumber}/{version}/confirmation", Name = OptInStandardVersionConfirmationRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptInStandardVersionConfirmation(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -338,6 +341,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/opt-out/{referenceNumber}/{version}", Name = OptOutStandardVersionRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptOutStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -362,6 +366,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpPost("standard/opt-out", Name = OptOutStandardVersionRoutePost)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
         {
             if (string.IsNullOrEmpty(model.StandardReference))
@@ -391,6 +396,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/opt-out/{referenceNumber}/{version}/confirmation", Name = OptOutStandardVersionConfirmationRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptOutStandardVersionConfirmation(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))

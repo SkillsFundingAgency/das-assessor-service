@@ -383,6 +383,12 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
             string endPointAssessorOrganisationId, int pageSize, int pageIndex)
         {
+            return await GetEpaoRegisteredStandards(endPointAssessorOrganisationId, true, pageSize, pageIndex);
+        }
+
+        public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
+            string endPointAssessorOrganisationId, bool requireAtLeastOneVersion, int pageSize, int pageIndex)
+        {
             var epoRegisteredStandardsResult = new EpoRegisteredStandardsResult
             {
                 PageOfResults = new List<EPORegisteredStandards>(),
@@ -395,6 +401,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 param: new
                 {
                     EPAOId = endPointAssessorOrganisationId,
+                    RequireAtLeastOneVersion = requireAtLeastOneVersion,
                     Skip = skip,
                     Take = pageSize
                 },
