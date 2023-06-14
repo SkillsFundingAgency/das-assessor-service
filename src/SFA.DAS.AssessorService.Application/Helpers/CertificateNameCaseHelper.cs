@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         public static void CleanseStringForSpecialCharacters(ref string inputString)
         {
             if (string.IsNullOrEmpty(inputString)) return;
-            inputString.Trim();
+            inputString = inputString.Trim();
 
             var specialCharacters = SpecialCharactersInString(inputString);
 
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
             {
                 var matchingEntry = AlternateCharacters.First(x => x.Key == specialCharacter);
                 inputString = inputString.Replace(matchingEntry.Key, matchingEntry.Value);
-                inputString.Trim();
+                inputString = inputString.Trim();
             }
         }
 
