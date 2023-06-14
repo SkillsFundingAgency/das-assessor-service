@@ -6,14 +6,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
     public class WhenUsingTheCertificateNameCaseHelper
     {
         [TestCase(" Test")]
-        [TestCase(" Test")]
+        [TestCase("     Test")]
         [TestCase("Test ")]
-        [TestCase("Test ")]
+        [TestCase("Test     ")]
+        [TestCase("  Test     ")]
         public void AndANameHasLeadingOrTrailingWhiteSpaces_ThenTheSpacesAreRemoved(string name)
         {
             var expectedName = name.Trim();
 
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         {
             var expectedName = "";
 
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -34,11 +35,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         [TestCase("O`Reilly", "O\'Reilly")]
         [TestCase("Johnson-McCarthy", "Johnson-McCarthy")]
         [TestCase("Smith\u00A0Jones", "Smith Jones")]
-        [TestCase("Smith    Jones", "Smith Jones")]
         [TestCase("Smith%Jones", "Smith Jones")]
         public void AndNameHasSpecialCharacters_ThenTheSpecialCharactersAreReplacedCorrectly(string inputName, string expectedName)
         {
-            var actualName = inputName.ProperCase();
+            var actualName = inputName.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         {
             var expectedName = name.Substring(0, 1).ToUpper() + name.Substring(1, name.Length - 1).ToLower();
 
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         [TestCase("MacEdo", "Macedo")]
         public void AndNameHasMacMcPrefixAndIsOnTheExceptionsList_ThenTheNameIsCapitalisedCorrectly(string name, string expectedName)
         {
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         [TestCase("MCMULLAN", "McMullan")]
         public void AndNameHasMcOrMac_AndIsNotOnExceptionsList_ThenNameIsCapitalisedCorrectly(string name, string expectedName)
         {
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         [TestCase("Son Family Name", "son Family Name")]
         public void AndNameIsNonEnglishAndIsOnTheRulesList_ThenTheNameIsCapitalisedCorrectly(string name, string expectedName)
         {
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Helpers
         [TestCase("gonzález e IGLESIAS", "González e Iglesias")]
         public void AndNameHasSpanishConjuntions_ThenNameIsCapitalisedCorrectly(string name, string expectedName)
         {
-            var actualName = name.ProperCase();
+            var actualName = name.ProperCase(true);
 
             Assert.AreEqual(expectedName, actualName);
         }
