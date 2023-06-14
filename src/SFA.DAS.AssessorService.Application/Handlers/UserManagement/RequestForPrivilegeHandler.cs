@@ -17,11 +17,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IMediator _mediator;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly IContactRepository _contactRepository;
 
         public RequestForPrivilegeHandler(IMediator mediator, IContactQueryRepository contactQueryRepository, 
-            IOrganisationQueryRepository organisationQueryRepository, IWebConfiguration config, IContactRepository contactRepository)
+            IOrganisationQueryRepository organisationQueryRepository, IApiConfiguration config, IContactRepository contactRepository)
         {
             _mediator = mediator;
             _contactQueryRepository = contactQueryRepository;

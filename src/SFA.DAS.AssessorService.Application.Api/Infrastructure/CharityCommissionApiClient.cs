@@ -15,9 +15,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
     {
         private readonly ISearchCharitiesV1SoapClient _client;
         private readonly ILogger<CharityCommissionApiClient> _logger;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
 
-        public CharityCommissionApiClient(ISearchCharitiesV1SoapClient client, ILogger<CharityCommissionApiClient> logger, IWebConfiguration configurationService)
+        public CharityCommissionApiClient(ISearchCharitiesV1SoapClient client, ILogger<CharityCommissionApiClient> logger, IApiConfiguration configurationService)
         {
             _client = client;
             _logger = logger;

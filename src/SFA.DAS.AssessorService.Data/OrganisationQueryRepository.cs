@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -93,14 +92,6 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
 
             return organisations.Select(c=>c.Organisation);
-        }
-
-        public async Task<Organisation> GetOrganisationByName(string name)
-        {
-
-            return await _assessorDbContext.Organisations
-                .Include(x => x.OrganisationType)
-                .FirstOrDefaultAsync(x => x.OrganisationData.LegalName == name);
         }
 
         public async Task<Organisation> GetOrganisationByContactId(Guid contactId)

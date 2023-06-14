@@ -15,14 +15,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Dashboard.GetEp
     public class When_called
     {
         private GetEpaoDashboardHandler _sut;
-        private Mock<IWebConfiguration> _mockConfig;
+        private Mock<IApiConfiguration> _mockConfig;
         private Mock<IDashboardRepository> _mockRepository;
         private Mock<ILogger<GetEpaoDashboardHandler>> _mockLogger;
         
         [SetUp]
         public void Arrange()
         {
-            _mockConfig = new Mock<IWebConfiguration>();
+            _mockConfig = new Mock<IApiConfiguration>();
             _mockRepository = new Mock<IDashboardRepository>();
             _mockLogger = new Mock<ILogger<GetEpaoDashboardHandler>>();
             

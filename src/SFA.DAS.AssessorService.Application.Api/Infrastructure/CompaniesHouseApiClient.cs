@@ -19,10 +19,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
     {
         private readonly HttpClient _client;
         private readonly ILogger<CompaniesHouseApiClient> _logger;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
 
         public CompaniesHouseApiClient(HttpClient client, ILogger<CompaniesHouseApiClient> logger,
-            IWebConfiguration configurationService)
+            IApiConfiguration configurationService)
         {
             _client = client;
             _logger = logger;
