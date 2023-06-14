@@ -12,5 +12,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public DateTime? DateStandardApprovedOnRegister { get; set; }
         public string Comments { get; set; }
         public string Status { get; set; }
+        public string StandardReference { get; set; }
     }
 }

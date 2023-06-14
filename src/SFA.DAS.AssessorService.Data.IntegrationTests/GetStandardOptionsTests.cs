@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -111,7 +112,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
                 },
                 new StandardModel
                 {
@@ -126,7 +128,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
                 },
                  new StandardModel
                 {
@@ -141,7 +144,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
                 },
                 new StandardModel
                 {
@@ -156,7 +160,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
                 }
             };
         }

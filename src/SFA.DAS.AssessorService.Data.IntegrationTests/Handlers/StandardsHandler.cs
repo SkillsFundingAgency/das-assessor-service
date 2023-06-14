@@ -27,7 +27,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [EPAChanged]" +
                     ", [TrailblazerContact]" +
                     ", [StandardPageUrl]" +
-                    ", [OverviewOfRole])" +
+                    ", [OverviewOfRole]" +
+                    ", [VersionApprovedForDelivery])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
@@ -44,7 +45,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @epaChanged" +
                     ", @trailblazerContact" +
                     ", @standardPageUrl" +
-                    ", @overviewOfRole)";
+                    ", @overviewOfRole" + 
+                    ", @versionApprovedForDelivery)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }
