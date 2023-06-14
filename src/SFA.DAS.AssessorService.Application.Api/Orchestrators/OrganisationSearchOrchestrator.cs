@@ -366,9 +366,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                     try
                     {
                         var response = await _referenceDataApiClient.SearchOrgansiation(exactName, true);
-                        if (response != null)
+                        if (ukprn.HasValue)
                         {
-                            if (ukprn.HasValue)
+                            if (response != null)
                             {
                                 // The results from this API don't currently return UKPRN
                                 foreach (var r in response)
