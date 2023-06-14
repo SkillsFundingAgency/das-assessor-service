@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Helpers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -125,14 +126,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogDebug($"Populating certificate data with provider UkPrn:{learner.UkPrn}");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
-            certData.LearnerGivenNames = learner.GivenNames;
-            certData.LearnerFamilyName = learner.FamilyName;
+            if (learner.GivenNames.All(letter => char.IsLower(letter)) || learner.GivenNames.All(letter => char.IsUpper(letter)))
+            {
+                certData.LearnerGivenNames = learner.GivenNames.ProperCase();
+            }
+            else
+            {
+                certData.LearnerGivenNames = learner.GivenNames;
+            }
+
+            if (learner.FamilyName.All(letter => char.IsLower(letter)) || learner.FamilyName.All(letter => char.IsUpper(letter)))
+            {
+                certData.LearnerFamilyName = learner.FamilyName.ProperCase(true);
+            }
+            else
+            {
+                certData.LearnerFamilyName = learner.FamilyName;
+            }
 
             certData.EmployerAccountId = learner.EmployerAccountId;
             certData.EmployerName = learner.EmployerName;
 
             certData.LearningStartDate = learner.LearnStartDate;
-            certData.FullName = $"{learner.GivenNames} {learner.FamilyName}";
+            certData.FullName = $"{learner.GivenNames.ProperCase()} {learner.FamilyName.ProperCase()}";
             certData.ProviderName = provider.Name;
 
             certificate.ProviderUkPrn = learner.UkPrn;
