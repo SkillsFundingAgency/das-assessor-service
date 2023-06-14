@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using CharityCommissionService;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -243,43 +245,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 
             if (ukprn.HasValue)
             {
-                try
-                {
-                    var response = await _roatpApiClient.SearchOrganisationByUkprn(ukprn.Value);
-                    if (response != null) results.AddRange(response);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from ATP Register. UKPRN: {ukprn} , Message: {ex.Message}");
-                }
+                results = await SearchRoatpOrganisationByUkprn(ukprn.Value, results);
             }
 
             if (!string.IsNullOrEmpty(name))
             {
-                try
-                {
-                    var response = await _roatpApiClient.SearchOrganisationByName(name, false);
-                    if (response != null) results.AddRange(response);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from ATP Register. {name} , Message: {ex.Message}");
-                }
+                results = await SearchRoatpOrganisationByName(name, false, results);
             }
 
             if (exactNames != null)
             {
                 foreach (var exactName in exactNames)
                 {
-                    try
-                    {
-                        var response = await _roatpApiClient.SearchOrganisationByName(exactName, true);
-                        if (response != null) results.AddRange(response);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Error from ATP Register. Exact Name: {exactName} , Message: {ex.Message}");
-                    }
+                    results = await SearchRoatpOrganisationByName(exactName, true,results);                    
                 }
             }
 
@@ -292,43 +270,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 
             if (ukprn.HasValue)
             {
-                try
-                {
-                    var ukprnResponse = await _roatpApiClient.GetOrganisationByUkprn(ukprn.Value);
-                    if (ukprnResponse != null) results.Add(ukprnResponse);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from Provider Register. UKPRN: {ukprn.Value} , Message: {ex.Message}");
-                }
+                results = await SearchRoatpOrganisationByUkprn(ukprn.Value, results);
             }
 
             if (!string.IsNullOrEmpty(name))
             {
-                try
-                {
-                    var response = await _roatpApiClient.SearchOrganisationByName(name, false);
-                    if (response != null) results.AddRange(response);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from Provider Register. {name} , Message: {ex.Message}");
-                }
+                results = await SearchRoatpOrganisationByName(name, false, results);                
             }
 
             if (exactNames != null)
             {
                 foreach (var exactName in exactNames)
                 {
-                    try
-                    {
-                        var response = await _roatpApiClient.SearchOrganisationByName(exactName, true);
-                        if (response != null) results.AddRange(response);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Error from Provider Register. Exact Name: {exactName} , Message: {ex.Message}");
-                    }
+                    results = await SearchRoatpOrganisationByName(exactName, true, results);                    
                 }
             }
 
@@ -387,6 +341,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 }
             }
 
+            return results;
+        }
+
+        private async Task<List<OrganisationSearchResult>> SearchRoatpOrganisationByName(string searchTerm, bool exactMatch, List<OrganisationSearchResult> results)
+        {
+            try
+            {
+                var response = await _roatpApiClient.SearchOrganisationByName(searchTerm, false);
+                if (response != null) results.AddRange(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Provider Register. {searchTerm} , Message: {ex.Message}");
+            }
+            return results;
+        }
+
+        private async Task<List<OrganisationSearchResult>> SearchRoatpOrganisationByUkprn(int? ukprn, List<OrganisationSearchResult> results)
+        {
+            try
+            {
+                var ukprnResponse = await _roatpApiClient.GetOrganisationByUkprn(ukprn.Value);
+                if (ukprnResponse != null) results.Add(ukprnResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Provider Register. UKPRN: {ukprn.Value} , Message: {ex.Message}");
+            }
             return results;
         }
     }
