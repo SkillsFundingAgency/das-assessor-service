@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogDebug($"Populating certificate data with provider UkPrn:{learner.UkPrn}");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
-            if (learner.GivenNames.All(letter => char.IsLower(letter)) || learner.GivenNames.All(letter => char.IsUpper(letter)))
+            if ((learner.GivenNames.ToLower() == learner.GivenNames) || (learner.GivenNames.ToUpper() == learner.GivenNames))
             {
                 certData.LearnerGivenNames = learner.GivenNames.ProperCase();
             }
@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certData.LearnerGivenNames = learner.GivenNames;
             }
 
-            if (learner.FamilyName.All(letter => char.IsLower(letter)) || learner.FamilyName.All(letter => char.IsUpper(letter)))
+            if ((learner.FamilyName.ToLower() == learner.FamilyName) || (learner.FamilyName.ToUpper() == learner.FamilyName))
             {
                 certData.LearnerFamilyName = learner.FamilyName.ProperCase(true);
             }
@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certData.EmployerName = learner.EmployerName;
 
             certData.LearningStartDate = learner.LearnStartDate;
-            certData.FullName = $"{learner.GivenNames.ProperCase()} {learner.FamilyName.ProperCase()}";
+            certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
             certData.ProviderName = provider.Name;
 
             certificate.ProviderUkPrn = learner.UkPrn;
