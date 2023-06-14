@@ -1,46 +1,38 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class TokenService : ITokenService
+    public class TokenService 
+        : IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
     {
-        private readonly IWebConfiguration _configuration;
-        private readonly IHostEnvironment _hostEnvironment;
-        private readonly bool _useSandbox;
+        private readonly IClientApiAuthentication _configuration;
+        private readonly string _environmentName;
 
-        public TokenService(IWebConfiguration configuration, IHostEnvironment hostEnvironment, bool useSandbox)
+        public TokenService(IClientApiAuthentication configuration, string environmentName)
         {
             _configuration = configuration;
-            _hostEnvironment = hostEnvironment;
-            _useSandbox = useSandbox;
+            _environmentName = environmentName;
         }
 
         public string GetToken()
         {
-            string token;
+            Uri uri = new Uri(_configuration.ApiBaseAddress);
+            if (uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "::1")
+                return string.Empty;
 
-            if (_hostEnvironment.IsDevelopment())
-            {
-                token = string.Empty;
-            }
-            else
-            {
-                var tenantId = _useSandbox ? _configuration.SandboxClientApiAuthentication.TenantId : _configuration.AssessorApiAuthentication.TenantId;
-                var clientId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientId : _configuration.AssessorApiAuthentication.ClientId;
-                var appKey = _useSandbox ? _configuration.SandboxClientApiAuthentication.ClientSecret : _configuration.AssessorApiAuthentication.ClientSecret;
-                var resourceId = _useSandbox ? _configuration.SandboxClientApiAuthentication.ResourceId : _configuration.AssessorApiAuthentication.ResourceId;
+            var tenantId = _configuration.TenantId;
+            var clientId = _configuration.ClientId;
+            var appKey = _configuration.ClientSecret;
+            var resourceId = _configuration.ResourceId;
 
-                var authority = $"https://login.microsoftonline.com/{tenantId}";
-                var clientCredential = new ClientCredential(clientId, appKey);
-                var context = new AuthenticationContext(authority, true);
-                var result = context.AcquireTokenAsync(resourceId, clientCredential).GetAwaiter().GetResult();
+            var authority = $"https://login.microsoftonline.com/{tenantId}";
+            var clientCredential = new ClientCredential(clientId, appKey);
+            var context = new AuthenticationContext(authority, true);
+            var result = context.AcquireTokenAsync(resourceId, clientCredential).GetAwaiter().GetResult();
 
-                token = result?.AccessToken;
-            }
-                
-            return token;
+            return result?.AccessToken;
         }
     }
 }

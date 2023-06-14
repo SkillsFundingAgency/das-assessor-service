@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
     {
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService";
+        private const string SERVICE_NAME = "SFA.DAS.AssessorService.ExternalApi";
         private const string VERSION = "1.0";
         private readonly bool _useSandbox;
 
@@ -51,20 +51,20 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         }
 
         public IConfiguration Configuration { get; }
-        public IWebConfiguration ApplicationConfiguration { get; set; }
+        public IExternalApiConfiguration ApplicationConfiguration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             try
             {
-                ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
+                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
                 if (_useSandbox)
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
-                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxClientApiAuthentication.ApiBaseAddress);
+                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxAssessorApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                         config.Timeout = TimeSpan.FromMinutes(5);
                     });
@@ -159,8 +159,24 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     _.WithDefaultConventions();
                 });
 
-                config.For<ITokenService>().Use<TokenService>().Ctor<bool>("useSandbox").Is(_useSandbox);
-                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
+                if (_useSandbox)
+                {
+                    config.For<ITokenService>().Use<TokenService>()
+                        .Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication)
+                        .Ctor<string>().Is(Configuration["EnvironmentName"]);
+
+                    config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
+                }
+                else
+                {
+                    config.For<ITokenService>().Use<TokenService>()
+                        .Ctor<IClientApiAuthentication>().Is(ApplicationConfiguration.AssessorApiAuthentication)
+                        .Ctor<string>().Is(Configuration["EnvironmentName"]);
+
+                    config.For<IApiClient>().Use<ApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
+                }
+
+                config.For<IExternalApiConfiguration>().Use(ApplicationConfiguration);
 
                 config.Populate(services);
             });
