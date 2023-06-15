@@ -75,9 +75,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByEpao(string epaoId)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(epaoId);
-            IEnumerable<OrganisationSearchResult> roatpResults;
-            IEnumerable<OrganisationSearchResult> providerResults;
-            IEnumerable<OrganisationSearchResult> referenceResults;
+            //IEnumerable<OrganisationSearchResult> roatpResults;
+            //IEnumerable<OrganisationSearchResult> providerResults;
+            //IEnumerable<OrganisationSearchResult> referenceResults;
             int? ukprn = null;
 
             var atpRegisterNames = new List<string>();
@@ -87,24 +87,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 atpRegisterNames.Add(epaoResults.First().LegalName);
                 ukprn = epaoResults.First().Ukprn;
             }
-            roatpResults = await GetRegisterResults(null, atpRegisterNames, ukprn);
+            //roatpResults = await GetRegisterResults(null, atpRegisterNames, ukprn);
 
-            var providerRegisterNames = new List<string>(atpRegisterNames);
-            if (roatpResults?.Count() == 1)
-            {
-                providerRegisterNames.Add(roatpResults.First().ProviderName);
-            }
-            providerResults = await GetRegisterResults(null, providerRegisterNames, ukprn);
+            //var providerRegisterNames = new List<string>(atpRegisterNames);
+            //if (roatpResults?.Count() == 1)
+            //{
+            //    providerRegisterNames.Add(roatpResults.First().ProviderName);
+            //}
+            //providerResults = await GetRegisterResults(null, providerRegisterNames, ukprn);
 
             // if Reference Data API is searched by EPAO ID it interprets this as Company Number so must use actual name instead
-            var referenceDataApiNames = new List<string>(providerRegisterNames);
-            if (providerResults?.Count() == 1)
-            {
-                referenceDataApiNames.Add(providerResults.First().ProviderName);
-            }
-            referenceResults = await GetReferenceDataResults(null, referenceDataApiNames, ukprn);
+            //var referenceDataApiNames = new List<string>(providerRegisterNames);
+            //if (providerResults?.Count() == 1)
+            //{
+            //    referenceDataApiNames.Add(providerResults.First().ProviderName);
+            //}
+            //referenceResults = await GetReferenceDataResults(null, referenceDataApiNames, ukprn);
 
-            return Dedupe(epaoResults.Concat(roatpResults).Concat(providerResults).Concat(referenceResults));
+            return Dedupe(epaoResults/*.Concat(roatpResults).Concat(providerResults).Concat(referenceResults)*/);
         }
 
         /// <summary>Organisations search by name or charity number or company number.</summary>
@@ -112,9 +112,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByNameOrCharityNumberOrCompanyNumber(string searchTerm)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(searchTerm);
-            IEnumerable<OrganisationSearchResult> roatpResults;
-            IEnumerable<OrganisationSearchResult> providerResults;
-            IEnumerable<OrganisationSearchResult> referenceResults;
+            //IEnumerable<OrganisationSearchResult> roatpResults;
+            //IEnumerable<OrganisationSearchResult> providerResults;
+            //IEnumerable<OrganisationSearchResult> referenceResults;
             int? ukprn = null;
 
             var atpRegisterNames = new List<string>();
@@ -124,40 +124,40 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 atpRegisterNames.Add(epaoResults.First().LegalName);
                 ukprn = epaoResults.First().Ukprn;
             }
-            roatpResults = await GetRegisterResults(searchTerm, atpRegisterNames, ukprn);
+            //roatpResults = await GetRegisterResults(searchTerm, atpRegisterNames, ukprn);
 
-            var providerRegisterNames = new List<string>(atpRegisterNames);
-            if (roatpResults?.Count() == 1)
-            {
-                providerRegisterNames.Add(roatpResults.First().ProviderName);
-            }
-            providerResults = await GetRegisterResults(searchTerm, providerRegisterNames, ukprn);
+            //var providerRegisterNames = new List<string>(atpRegisterNames);
+            //if (roatpResults?.Count() == 1)
+            //{
+            //    providerRegisterNames.Add(roatpResults.First().ProviderName);
+            //}
+            //providerResults = await GetRegisterResults(searchTerm, providerRegisterNames, ukprn);
 
-            var referenceDataApiNames = new List<string>(providerRegisterNames);
-            if (providerResults?.Count() == 1)
-            {
-                referenceDataApiNames.Add(providerResults.First().ProviderName);
-            }
-            referenceResults = await GetReferenceDataResults(searchTerm, referenceDataApiNames, ukprn);
+            //var referenceDataApiNames = new List<string>(providerRegisterNames);
+            //if (providerResults?.Count() == 1)
+            //{
+            //    referenceDataApiNames.Add(providerResults.First().ProviderName);
+            //}
+            //referenceResults = await GetReferenceDataResults(searchTerm, referenceDataApiNames, ukprn);
 
-            // for any results found search the register again using the company number 
-            // and charity number to pickup cases where the company name or charity name
-            // has changed since the previous registration, this will then return the
-            // previous registration which has the same company number or charity number
-            if (referenceResults.Any())
-            {
-                var numbers = referenceResults
-                    .SelectMany(f => new List<string>() { f.CharityNumber, f.CompanyNumber })
-                    .Where(number => !string.IsNullOrEmpty(number))
-                    .Distinct();
+            //// for any results found search the register again using the company number 
+            //// and charity number to pickup cases where the company name or charity name
+            //// has changed since the previous registration, this will then return the
+            //// previous registration which has the same company number or charity number
+            //if (referenceResults.Any())
+            //{
+            //    var numbers = referenceResults
+            //        .SelectMany(f => new List<string>() { f.CharityNumber, f.CompanyNumber })
+            //        .Where(number => !string.IsNullOrEmpty(number))
+            //        .Distinct();
 
-                var additionalEpaoResults = await GetAdditionalEpaoRegisterResults(numbers);
+            //    var additionalEpaoResults = await GetAdditionalEpaoRegisterResults(numbers);
 
-                epaoResults = epaoResults
-                    .Concat(additionalEpaoResults);
-            }
+            //    epaoResults = epaoResults
+            //        .Concat(additionalEpaoResults);
+            //}
 
-            return Dedupe(epaoResults.Concat(roatpResults).Concat(providerResults).Concat(referenceResults));
+            return Dedupe(epaoResults/*.Concat(roatpResults).Concat(providerResults).Concat(referenceResults)*/);
         }
 
         /// <summary>Dedupes the specified organisations.</summary>

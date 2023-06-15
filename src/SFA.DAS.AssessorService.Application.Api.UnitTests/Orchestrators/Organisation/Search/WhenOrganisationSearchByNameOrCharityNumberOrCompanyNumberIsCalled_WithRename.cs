@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         [TestCase("Green Grass Limited (New Name)", "Green Grass Limited", "00030004")]
         [TestCase("White Moon Limited (New Name)", "White Moon Limited", "00030008")]
         [TestCase("Purple Flower Ltd (New Name)", "Purple Flower Ltd", "00030009")]
+        [Ignore("Tested code to be removed")]
         public async Task ThenExistingOrganisationFoundByCompanyNumberWhereCompanyNameHasChanged(string newCompanyName, string oldCompanyName, string companyNumber)
         {
             var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
@@ -27,6 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Orchestrators.Organi
         [TestCase("Large Giving Limited (New Name)", "Large Giving Limited", "00040010")]
         [TestCase("Medium Giving Limited (New Name)", "Medium Giving Limited", "00040011")]
         [TestCase("Small Giving Ltd (New Name)", "Small Giving Ltd", "00040012")]
+        [Ignore("Tested code to be removed")]
         public async Task ThenExistingOrganisationFoundByCharityNumberWhereCharityNameHasChanged(string newCharityName, string oldCharityName, string charityNumber)
         {
             var sut = new OrganisationSearchOrchestrator(_logger.Object, _roatpApiClient.Object, _referenceDataApiClient.Object, _mediator.Object);
