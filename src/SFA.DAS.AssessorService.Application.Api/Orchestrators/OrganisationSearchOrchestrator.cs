@@ -286,50 +286,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 
             if (!string.IsNullOrEmpty(name))
             {
-                try
-                {
-                    var response = await _referenceDataApiClient.SearchOrgansiation(name, false);
-                    if (response != null) results.AddRange(response);
-
-                    if (int.TryParse(name, out int companyOrCharityNumber))
-                    {
-                        // NOTE: API requires leading zeroes in order to search company number or charity number
-                        var response2 = await _referenceDataApiClient.SearchOrgansiation(companyOrCharityNumber.ToString("D8"), false);
-                        if (response2 != null) results.AddRange(response2);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from Reference Data Api. Name: {name} , Message: {ex.Message}");
-                }
+                results = await SearchReferenceDataByNameOrCharityNumber(name, false, results);
             }
 
             if (exactNames != null)
             {
-                foreach (var exactName in exactNames)
-                {
-                    try
-                    {
-                        var response = await _referenceDataApiClient.SearchOrgansiation(exactName, true);
-                        if (ukprn.HasValue)
-                        {
-                            if (response != null)
-                            {
-                                // The results from this API don't currently return UKPRN
-                                foreach (var r in response)
-                                {
-                                    r.Ukprn = ukprn;
-                                }
-                            }
-
-                            results.AddRange(response);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Error from Provider Register. Exact Name: {exactName} , Message: {ex.Message}");
-                    }
-                }
+                results = await SearchReferenceDataByExactNames(exactNames, ukprn, true, results);                
             }
 
             return results;
@@ -360,6 +322,58 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             {
                 _logger.LogError($"Error from Provider Register. UKPRN: {ukprn.Value} , Message: {ex.Message}");
             }
+            return results;
+        }
+
+        private async Task<List<OrganisationSearchResult>> SearchReferenceDataByNameOrCharityNumber(string name, bool exactMatch, List<OrganisationSearchResult> results)
+        {
+            try
+            {
+                var response = await _referenceDataApiClient.SearchOrgansiation(name, exactMatch);
+                if (response != null) results.AddRange(response);
+
+                if (int.TryParse(name, out int companyOrCharityNumber))
+                {
+                    // NOTE: API requires leading zeroes in order to search company number or charity number
+                    var response2 = await _referenceDataApiClient.SearchOrgansiation(companyOrCharityNumber.ToString("D8"), exactMatch);
+                    if (response2 != null) results.AddRange(response2);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Reference Data Api. Name: {name} , Message: {ex.Message}");
+            }
+
+            return results;
+        }
+
+        private async Task<List<OrganisationSearchResult>> SearchReferenceDataByExactNames(IEnumerable<string> exactNames, int? ukprn, bool exactMatch, List<OrganisationSearchResult> results)
+        {
+            foreach (var exactName in exactNames)
+            {
+                try
+                {
+                    var response = await _referenceDataApiClient.SearchOrgansiation(exactName, exactMatch);
+                    if (ukprn.HasValue)
+                    {
+                        if (response != null)
+                        {
+                            // The results from this API don't currently return UKPRN
+                            foreach (var r in response)
+                            {
+                                r.Ukprn = ukprn;
+                            }
+                        }
+
+                        results.AddRange(response);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error from Provider Register. Exact Name: {exactName} , Message: {ex.Message}");
+                }                
+            }
+
             return results;
         }
     }
