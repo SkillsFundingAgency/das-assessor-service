@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -17,7 +15,6 @@ using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -31,19 +28,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
-        private readonly IWebConfiguration _config;
 
         public OrganisationQueryController(
-            ILogger<OrganisationQueryController> logger, IMediator mediator, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
-            IWebConfiguration config
-        )
+            ILogger<OrganisationQueryController> logger, IMediator mediator, IOrganisationQueryRepository organisationQueryRepository, 
+            UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer)
         {
             _logger = logger;
             _mediator = mediator;
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
-            _config = config;
         }
         
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
@@ -104,26 +98,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($"Received request to retrieve contacts for Organisation: {id}");
 
             return Ok(await _mediator.Send(new GetContactsForOrganisationRequest(id)));
-        }
-
-        [HttpGet("{*name}", Name = "GetOrganisationByName")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetOrganisationByName(string name)
-        {
-            var decodedName = WebUtility.UrlDecode(name);
-            _logger.LogInformation($"Received request to retrieve Organisation {decodedName}");
-            
-            var organisation = await _organisationQueryRepository.GetOrganisationByName(decodedName);
-            if(organisation == null)
-            {
-                var ex = new ResourceNotFoundException(name);
-                throw ex;
-            }
-            
-            return Ok(Mapper.Map<OrganisationResponse>(organisation));
         }
         
         [HttpGet("forContact/{userId}")]

@@ -8,7 +8,26 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public static class ConfigurationService
     {
-        public static async Task<IWebConfiguration> GetConfig(string environment, string storageConnectionString, string version, string serviceName)
+        public static async Task<IApiConfiguration> GetConfigApi(string environment, string storageConnectionString, string version, string serviceName)
+        {
+            var config = await GetConfig<ApiConfiguration>(environment, storageConnectionString, version, serviceName);
+            config.Environment = environment;
+            return config;
+        }
+
+        public static async Task<IExternalApiConfiguration> GetConfigExternalApi(string environment, string storageConnectionString, string version, string serviceName)
+        {
+            var config = await GetConfig<ExternalApiConfiguration>(environment, storageConnectionString, version, serviceName);
+            return config;
+        }
+
+        public static async Task<IWebConfiguration> GetConfigWeb(string environment, string storageConnectionString, string version, string serviceName)
+        {
+            var config = await GetConfig <WebConfiguration>(environment, storageConnectionString, version, serviceName);
+            return config;
+        }
+
+        private static async Task<T> GetConfig<T>(string environment, string storageConnectionString, string version, string serviceName)
         {
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
@@ -31,9 +50,7 @@ namespace SFA.DAS.AssessorService.Settings
             var dynResult = result.Result as DynamicTableEntity;
             var data = dynResult.Properties["Data"].StringValue;
 
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
-            webConfig.Environment = environment;
-
+            var webConfig = JsonConvert.DeserializeObject<T>(data);
             return webConfig;
         }
     }

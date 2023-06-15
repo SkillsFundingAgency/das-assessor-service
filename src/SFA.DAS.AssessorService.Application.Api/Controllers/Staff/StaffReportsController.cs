@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             }
             catch (SqlException sqlEx)
             {
-                _logger.LogInformation($"Could not generate data from stored procedure [{storedProcedure}] report due to : {sqlEx.Message}");
+                _logger.LogError($"Could not generate data from stored procedure [{storedProcedure}] report due to : {sqlEx.Message}");
                 return NoContent();
             }
         }
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             }
             catch (SqlException sqlEx)
             {
-                _logger.LogInformation($"Could not generate report due to : {sqlEx.Message}");
+                _logger.LogError($"Could not generate data from report Id [{reportId}] due to : {sqlEx.Message}");
                 return NoContent();
             }
         }

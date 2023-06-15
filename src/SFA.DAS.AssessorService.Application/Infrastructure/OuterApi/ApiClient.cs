@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         const string SubscriptionKeyRequestHeaderKey = "Ocp-Apim-Subscription-Key";
         const string VersionRequestHeaderKey = "X-Version";
 
-        public OuterApiClient (HttpClient httpClient, IWebConfiguration config)
+        public OuterApiClient (HttpClient httpClient, IApiConfiguration config)
         {
             _httpClient = httpClient;
             _config = config.OuterApi;

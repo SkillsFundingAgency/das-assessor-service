@@ -11,7 +11,7 @@ using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 
-namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
+namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public abstract class ApiClientBase : IDisposable
     {
@@ -29,18 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
         };
-
-        protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
-        {
-            _logger = logger;
-            _tokenService = tokenService;
-            _httpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
-           
-            _retryPolicy = HttpPolicyExtensions
-                    .HandleTransientHttpError()
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
-        }
 
         protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
