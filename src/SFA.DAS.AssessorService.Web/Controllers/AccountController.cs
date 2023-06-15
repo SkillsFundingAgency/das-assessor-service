@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILoginOrchestrator _loginOrchestrator;
         private readonly ISessionService _sessionService;
         private readonly IWebConfiguration _config;
+        private readonly IConfiguration _configuration;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
@@ -35,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
             ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient)
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient, IConfiguration configuration)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
@@ -45,6 +47,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
             _organisationsApiClient = organisationsApiClient;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -245,7 +248,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public IActionResult ChangeSignInDetails()
         {
-            return View(new ChangeSignInDetailsViewModel(_config.Environment));
+            // redirect the user to home page if UseGovSignIn is set false.
+            if (!_config.UseGovSignIn) return RedirectToAction("Index", "Home");
+
+            return View(new ChangeSignInDetailsViewModel(_configuration["ResourceEnvironmentName"]));
         }
     }
 }

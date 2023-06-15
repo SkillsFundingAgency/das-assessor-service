@@ -244,8 +244,12 @@
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
                                 {
-                                    "name": "EnvironmentName",
-                                    "value": "[toUpper(parameters('environmentName'))]"
+                                  "name": "EnvironmentName",
+                                  "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                  "name": "ResourceEnvironmentName",
+                                  "value": "[parameters('resourceEnvironmentName')]"
                                 }
                             ]
                         }

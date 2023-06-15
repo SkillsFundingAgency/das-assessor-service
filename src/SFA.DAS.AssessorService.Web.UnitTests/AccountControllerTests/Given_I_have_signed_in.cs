@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 using SFA.DAS.AssessorService.Web.Validators;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 {
@@ -25,6 +26,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         private Mock<CreateAccountValidator> _validatorMock;
         private Mock<IContactsApiClient> _contactsApiClientMock;
         private Mock<IOrganisationsApiClient> _organisationClientMock;
+        private Mock<IConfiguration> _mockConfiguration;
 
 
         [SetUp]
@@ -37,8 +39,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 .Returns(new Claim("http://schemas.portal.com/ukprn", "12345"));
             _contactsApiClientMock = new Mock<IContactsApiClient>();
             _organisationClientMock = new Mock<IOrganisationsApiClient>();
+            _mockConfiguration = new Mock<IConfiguration>();
 
-            var mockSession = new Mock<ISession>();
+        var mockSession = new Mock<ISession>();
 
             _contextAccessor.SetupGet(a => a.HttpContext.Session).Returns(mockSession.Object);
 
@@ -46,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
                 _loginOrchestrator.Object, new Mock<ISessionService>().Object, _webConfigurationMock.Object, _contactsApiClientMock.Object,
-                _contextAccessor.Object, _validatorMock.Object, _organisationClientMock.Object);
+                _contextAccessor.Object, _validatorMock.Object, _organisationClientMock.Object, _mockConfiguration.Object);
         }
 
         [Test]

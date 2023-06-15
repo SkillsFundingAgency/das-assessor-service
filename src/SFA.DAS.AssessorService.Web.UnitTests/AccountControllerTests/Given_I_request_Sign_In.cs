@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -22,6 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         private Mock<CreateAccountValidator> _validatorMock;
         private Mock<IContactsApiClient> _contactsApiClientMock;
         private Mock<IOrganisationsApiClient> _organisationClientMock;
+        private Mock<IConfiguration> _mockConfiguration;
 
         [SetUp]
         public void Arrange()
@@ -31,6 +33,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             _contactsApiClientMock = new Mock<IContactsApiClient>();
             _organisationClientMock = new Mock<IOrganisationsApiClient>();
+            _mockConfiguration = new Mock<IConfiguration>();
+
             mockUrlHelper
                 .Setup(
                     x => x.Action(
@@ -42,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
                 new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object, _webConfigurstionMock.Object, _contactsApiClientMock.Object,
-                new Mock<IHttpContextAccessor>().Object, _validatorMock.Object, _organisationClientMock.Object);
+                new Mock<IHttpContextAccessor>().Object, _validatorMock.Object, _organisationClientMock.Object, _mockConfiguration.Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }
