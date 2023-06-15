@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     ContactId = request.ContactId,
                     StandardReference = request.StandardReference,
                     Version = request.Version,
-                });
+                }, cancellationToken);
 
                 return organisationStandardVersion;
             }

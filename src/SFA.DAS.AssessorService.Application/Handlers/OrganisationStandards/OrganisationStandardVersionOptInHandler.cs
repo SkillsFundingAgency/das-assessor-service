@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     ContactId = request.ContactId,
                     StandardReference = request.StandardReference,
                     Version = request.Version,
-                });
+                }, cancellationToken);
 
                 return organisationStandardVersion;
             }

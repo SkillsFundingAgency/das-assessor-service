@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 new 
                 {
                     request.StandardReference, 
-                    Standard = standardVersions.FirstOrDefault().Title, 
+                    Standard = standardVersions?.FirstOrDefault()?.Title, 
                     request.Version, 
                     ContactName = contactToNotify.DisplayName,
                     EmailTemplateTokens.ServiceName,

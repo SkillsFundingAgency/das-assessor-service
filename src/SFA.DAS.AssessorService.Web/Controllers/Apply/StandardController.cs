@@ -135,9 +135,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var earliestStandard = standardVersions.FirstOrDefault();
             var latestStandard = standardVersions.LastOrDefault();
 
-            var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
-            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
-
             if (!string.IsNullOrWhiteSpace(version))
             {
                 // specific version selected (from standversion view)
@@ -290,10 +287,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 throw new ArgumentException("Value cannot be null or empty", nameof(model));
 
             if (string.IsNullOrEmpty(model.StandardReference))
-                throw new ArgumentException("Value cannot be null or empty", nameof(model.StandardReference));
+                throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
             if (string.IsNullOrEmpty(model.Version))
-                throw new ArgumentException("Value cannot be null or empty", nameof(model.Version));
+                throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
@@ -326,12 +323,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 throw new ArgumentException("Value cannot be null or empty", nameof(version));
 
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-            if (!standardVersions.Any())
+            if (!standardVersions?.Any() ?? false)
                 throw new NotFoundException($"The standard reference {referenceNumber} cannot be found");
 
             var model = new OptInStandardVersionConfirmationViewModel()
             {
-                StandardTitle = standardVersions.FirstOrDefault().Title,
+                StandardTitle = standardVersions?.FirstOrDefault()?.Title,
                 StandardReference = referenceNumber,
                 Version = version,
                 FeedbackUrl = _config.FeedbackUrl,
@@ -376,10 +373,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 throw new ArgumentException("Value cannot be null or empty", nameof(model));
 
             if (string.IsNullOrEmpty(model.StandardReference))
-                throw new ArgumentException("Value cannot be null or empty", nameof(model.StandardReference));
+                throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
             if (string.IsNullOrEmpty(model.Version))
-                throw new ArgumentException("Value cannot be null or empty", nameof(model.Version));
+                throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
@@ -412,12 +409,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 throw new ArgumentException("Value cannot be null or empty", nameof(version));
 
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-            if (!standardVersions.Any())
+            if (!standardVersions?.Any() ?? false)
                 throw new NotFoundException($"The standard reference {referenceNumber} cannot be found");
 
             var model = new OptOutStandardVersionConfirmationViewModel()
             {
-                StandardTitle = standardVersions.FirstOrDefault().Title,
+                StandardTitle = standardVersions?.FirstOrDefault()?.Title,
                 StandardReference = referenceNumber,
                 Version = version,
                 FeedbackUrl = _config.FeedbackUrl,
@@ -473,126 +470,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return string.Empty;
-        }
-
-
-        private bool ReApplyViaSevenQuestions(DateTime? previousWithdrawalDate, bool? prevApplyViaOptIn)
-        {
-            // If previously applied via opt in and previous withdrawal is older than 12 months then
-            // allow 7 question apply
-            if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
-            {
-                return false;
-            }
-         
-            return true;
-        }
-        
-
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
-            List<ApplicationResponse> previousWithdrawals, List<ApplicationResponse> previousApplications)
-        {
-            bool approved = false;
-            bool changed = false;
-            var results = new List<StandardVersionApplication>();
-
-            foreach (var version in versions.OrderBy(s => s.Version))
-            {
-                var stdVersion = new StandardVersionApplication(version);
-
-                if (version.ApprovedStatus == ApprovedStatus.Approved)
-                {
-                    approved = true;
-                    changed = false;
-                    stdVersion.VersionStatus = VersionStatus.Approved;
-                }
-                else
-                {
-                    stdVersion.VersionStatus = MapUnapprovedVersionStatus(version, approved, changed);
-
-                    if (approved && version.EPAChanged)
-                        changed = true;
-                }
-
-                results.Add(stdVersion);
-            }
-
-            // now do it again in reverse order to handle any versions prior to the first approved version
-            var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.VersionStatus == VersionStatus.Approved);
-            if (firstApproved != null)
-            {
-                changed = firstApproved.EPAChanged;
-
-                foreach (var version in results
-                    .Where(s => s.VersionStatus == null)
-                    .OrderByDescending(s => s.Version))
-                {
-                    version.VersionStatus = changed ? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
-                    changed = version.EPAChanged || changed;
-                }
-            }
-
-            bool AppliedViaOptIn = false;
-            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
-                                                                                        && x.ApplicationStatus == ApplicationStatus.Approved);
-            if (previousApplications != null)
-                AppliedViaOptIn = previousApplications
-                    .Where(w => (w.ApplicationType != StandardApplicationTypes.StandardWithdrawal) &&
-                                (w.ApplicationType != StandardApplicationTypes.VersionWithdrawal) &&
-                                (w.ApplyViaOptIn == true)).Select(x => x.ApplyViaOptIn).FirstOrDefault();
- 
-
-            foreach (var withdrawal in withdrawals)
-            {
-                List<string> vers = withdrawal.ApplyData.Apply.Versions;
-
-                foreach (var res in results.Where(x => x.VersionStatus == VersionStatus.Withdrawn))
-                {
-                    var checkVer = vers.Where(x => x.Contains(res.Version)).FirstOrDefault();
-                    if (checkVer != null)
-                    {
-                        DateTime? previousWithdrawalDate = withdrawal.ApplyData.Sequences
-                                .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                                .Select(y => y.ApprovedDate).FirstOrDefault();
-
-                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, AppliedViaOptIn))
-                        {
-                            res.VersionStatus = VersionStatus.NewVersionChanged;
-                            res.PreviouslyWithdrawn = true;
-                        }
-                        else
-                        {
-                            res.VersionStatus = VersionStatus.NewVersionNoChange;
-                            res.PreviouslyWithdrawn = true;
-                        }
-                    }
-
-                }
-            }
-
-            return results;
-        }
-
-
-        private string MapUnapprovedVersionStatus(AppliedStandardVersion version, bool approved, bool previouslyChanged)
-        {
-            string versionStatus = null;
-
-            if (version.ApprovedStatus == ApprovedStatus.ApplyInProgress)
-                versionStatus = VersionStatus.InProgress;
-            else if (version.ApprovedStatus == ApprovedStatus.Withdrawn)
-                versionStatus = VersionStatus.Withdrawn;
-            else if (version.ApprovedStatus == ApprovedStatus.FeedbackAdded)
-                versionStatus = VersionStatus.FeedbackAdded;
-            else if (version.ApprovedStatus == ApprovedStatus.NotYetApplied && approved)
-            {
-                if (version.EPAChanged || previouslyChanged)
-                    versionStatus = VersionStatus.NewVersionChanged;
-                else
-                    versionStatus = VersionStatus.NewVersionNoChange;
-            }
-
-            return versionStatus;
         }
     }
 }

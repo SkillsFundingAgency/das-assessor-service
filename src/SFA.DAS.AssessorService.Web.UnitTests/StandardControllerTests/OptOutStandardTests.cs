@@ -154,7 +154,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             };
 
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(model));
-            Assert.That(ex.ParamName, Is.EqualTo(nameof(model.StandardReference)));
         }
 
         [TestCase(null)]
@@ -168,7 +167,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             };
 
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(model));
-            Assert.That(ex.ParamName, Is.EqualTo(nameof(model.Version)));
         }
 
         [Test]

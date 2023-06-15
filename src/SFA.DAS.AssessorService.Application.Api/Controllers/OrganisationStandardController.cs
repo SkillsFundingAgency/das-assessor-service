@@ -29,6 +29,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Opt in to of the organisation standard version given in the request
+        /// </summary>
+        /// <param name="request">The request containing details of the standard version and organisation</param>
+        /// <returns></returns>
         [HttpPost("organisationstandardversion/opt-in", Name = "OptInOrganisationStandardVersion")]
         [ValidateBadRequest]
         [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
@@ -39,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Received Opt-in Organisation Standard Version Request");
+                _logger.LogInformation("Received Opt in Organisation Standard Version Request");
 
                 var version = await _mediator.Send(request);
 
@@ -53,6 +58,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Opt out of the organisation standard version given in the request
+        /// </summary>
+        /// <param name="request">The request containing details of the standard version and organisation</param>
+        /// <returns></returns>
         [HttpPost("organisationstandardversion/opt-out", Name = "OptOutOrganisationStandardVersion")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
@@ -63,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Received Opt-out Organisation Standard Version Request");
+                _logger.LogInformation("Received Opt out Organisation Standard Version Request");
 
                 var version = await _mediator.Send(request);
 
@@ -75,6 +85,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Update the organisation standard version given in the request
+        /// </summary>
+        /// <param name="request">The request containing details of the standard version and organisation</param>
+        /// <returns></returns>
         [HttpPut("organisationstandardversion/update")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(EpaoStandardVersionResponse))]

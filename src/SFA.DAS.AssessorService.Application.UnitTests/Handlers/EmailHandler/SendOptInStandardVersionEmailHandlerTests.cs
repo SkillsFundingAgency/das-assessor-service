@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
             await func.Should().ThrowAsync<NotFoundException>();
         }
 
-        private string GetSerializedSendEmailRequest(string email, string templateName, string standard, string standardReference, string version, string contactName)
+        private static string GetSerializedSendEmailRequest(string email, string templateName, string standard, string standardReference, string version, string contactName)
         {
             var sendEmailRequest = JsonConvert.SerializeObject(new
             {

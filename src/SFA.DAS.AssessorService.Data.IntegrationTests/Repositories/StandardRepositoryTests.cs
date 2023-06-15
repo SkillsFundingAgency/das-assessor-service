@@ -302,7 +302,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
                 DeleteAllRecords();
             }
 
-            private void DeleteAllRecords()
+            private static void DeleteAllRecords()
             {
                 OrganisationStandardVersionHandler.DeleteAllRecords();
                 OrganisationStandardHandler.DeleteAllRecords();
