@@ -85,6 +85,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationTypeIsRequired);
         }
 
+        /// <summary>Validates the ukprn.</summary>
+        /// <param name="ukprn">The ukprn.</param>
         public bool ValidateUkprn(long ?ukprn)
         {
             if (ukprn == null) return false;
@@ -97,6 +99,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return ValidateUkprn(ukprn) ? string.Empty : FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsInvalid);
         }
 
+        /// <summary>Validates the epa organisation identifier.</summary>
+        /// <param name="epaId">The epa identifier.</param>
         public bool ValidateEpaOrganisationId(string epaId)
         {
             return Regex.IsMatch(epaId, EpaOrganisationIdRegex);

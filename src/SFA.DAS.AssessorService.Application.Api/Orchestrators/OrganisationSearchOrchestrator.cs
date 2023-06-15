@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 {
+    /// <summary>
+    /// Searches for the organisation
+    /// </summary>
     public class OrganisationSearchOrchestrator : IOrganisationSearchOrchestrator
     {
         private readonly ILogger<OrganisationSearchOrchestrator> _logger;
@@ -22,6 +25,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
         private readonly IReferenceDataApiClient _referenceDataApiClient;
         private readonly IMediator _mediator;
 
+        /// <summary>Initializes a new instance of the <see cref="OrganisationSearchOrchestrator" /> class.</summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="roatpApClient">The roatp ap client.</param>
+        /// <param name="referenceDataApClient">The reference data ap client.</param>
+        /// <param name="mediator">The mediator.</param>
         public OrganisationSearchOrchestrator(ILogger<OrganisationSearchOrchestrator> logger, IRoatpApiClient roatpApClient, IReferenceDataApiClient referenceDataApClient, IMediator mediator)
         {
             _logger = logger;
@@ -30,10 +38,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             _mediator = mediator;
         }
 
+        /// <summary>Organisations search by ukprn.</summary>
+        /// <param name="ukprn">The ukprn.</param>
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(ukprn.ToString());
-            IEnumerable<OrganisationSearchResult> roatpResults = await GetAtpRegisterResults(null, null, ukprn);
+            IEnumerable<OrganisationSearchResult> roatpResults = await GetRegisterResults(null, null, ukprn);
             IEnumerable<OrganisationSearchResult> providerResults;
             IEnumerable<OrganisationSearchResult> referenceResults;
 
@@ -47,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             {
                 providerRegisterNames.Add(roatpResults.First().ProviderName);
             }
-            providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
+            providerResults = await GetRegisterResults(null, providerRegisterNames, ukprn);
 
             // if Reference Data API is searched by UKPRN it interprets this as Company Number so must use actual name instead
             var referenceDataApiNames = new List<string>(providerRegisterNames);
@@ -60,6 +70,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return Dedupe(epaoResults.Concat(roatpResults).Concat(providerResults).Concat(referenceResults));
         }
 
+        /// <summary>Organisations search by Epao.</summary>
+        /// <param name="epaoId"></param>
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByEpao(string epaoId)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(epaoId);
@@ -75,14 +87,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 atpRegisterNames.Add(epaoResults.First().LegalName);
                 ukprn = epaoResults.First().Ukprn;
             }
-            roatpResults = await GetAtpRegisterResults(null, atpRegisterNames, ukprn);
+            roatpResults = await GetRegisterResults(null, atpRegisterNames, ukprn);
 
             var providerRegisterNames = new List<string>(atpRegisterNames);
             if (roatpResults?.Count() == 1)
             {
                 providerRegisterNames.Add(roatpResults.First().ProviderName);
             }
-            providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
+            providerResults = await GetRegisterResults(null, providerRegisterNames, ukprn);
 
             // if Reference Data API is searched by EPAO ID it interprets this as Company Number so must use actual name instead
             var referenceDataApiNames = new List<string>(providerRegisterNames);
@@ -95,6 +107,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return Dedupe(epaoResults.Concat(roatpResults).Concat(providerResults).Concat(referenceResults));
         }
 
+        /// <summary>Organisations search by name or charity number or company number.</summary>
+        /// <param name="searchTerm">The search term.</param>
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByNameOrCharityNumberOrCompanyNumber(string searchTerm)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(searchTerm);
@@ -110,14 +124,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
                 atpRegisterNames.Add(epaoResults.First().LegalName);
                 ukprn = epaoResults.First().Ukprn;
             }
-            roatpResults = await GetAtpRegisterResults(searchTerm, atpRegisterNames, ukprn);
+            roatpResults = await GetRegisterResults(searchTerm, atpRegisterNames, ukprn);
 
             var providerRegisterNames = new List<string>(atpRegisterNames);
             if (roatpResults?.Count() == 1)
             {
                 providerRegisterNames.Add(roatpResults.First().ProviderName);
             }
-            providerResults = await GetProviderRegisterResults(searchTerm, providerRegisterNames, ukprn);
+            providerResults = await GetRegisterResults(searchTerm, providerRegisterNames, ukprn);
 
             var referenceDataApiNames = new List<string>(providerRegisterNames);
             if (providerResults?.Count() == 1)
@@ -146,6 +160,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return Dedupe(epaoResults.Concat(roatpResults).Concat(providerResults).Concat(referenceResults));
         }
 
+        /// <summary>Dedupes the specified organisations.</summary>
+        /// <param name="organisations">The organisations.</param>
         public IEnumerable<OrganisationSearchResult> Dedupe(IEnumerable<OrganisationSearchResult> organisations)
         {
             var nameMerge = organisations.GroupBy(org => new { filter = org.Name.ToUpperInvariant() })
@@ -239,7 +255,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return results;
         }
 
-        private async Task<IEnumerable<OrganisationSearchResult>> GetAtpRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
+        private async Task<IEnumerable<OrganisationSearchResult>> GetRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
         {
             var results = new List<OrganisationSearchResult>();
 
@@ -262,32 +278,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             }
 
             return results.GroupBy(r => r.Ukprn).Select(group => group.First()).ToList();
-        }
-
-        private async Task<IEnumerable<OrganisationSearchResult>> GetProviderRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
-        {
-            var results = new List<OrganisationSearchResult>();
-
-            if (ukprn.HasValue)
-            {
-                results = await SearchRoatpOrganisationByUkprn(ukprn.Value, results);
-            }
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                results = await SearchRoatpOrganisationByName(name, false, results);                
-            }
-
-            if (exactNames != null)
-            {
-                foreach (var exactName in exactNames)
-                {
-                    results = await SearchRoatpOrganisationByName(exactName, true, results);                    
-                }
-            }
-
-            return results.GroupBy(r => r.Ukprn).Select(group => group.First()).ToList();
-        }
+        }     
 
         private async Task<IEnumerable<OrganisationSearchResult>> GetReferenceDataResults(string name, IEnumerable<string> exactNames, int? ukprn)
         {
@@ -348,7 +339,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
         {
             try
             {
-                var response = await _roatpApiClient.SearchOrganisationByName(searchTerm, false);
+                var response = await _roatpApiClient.SearchOrganisationByName(searchTerm, exactMatch);
                 if (response != null) results.AddRange(response);
             }
             catch (Exception ex)

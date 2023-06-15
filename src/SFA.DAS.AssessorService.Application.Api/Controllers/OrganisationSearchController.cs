@@ -25,6 +25,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IValidationService _validationService;
 
+        /// <summary>Initializes a new instance of the <see cref="OrganisationSearchController" /> class.</summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="organisationSearchOrchestrator">The organisation search orchestrator.</param>
+        /// <param name="companiesHouseApiClient">The companies house API client.</param>
+        /// <param name="charityCommissionApiClient">The charity commission API client.</param>
+        /// <param name="validationService">The validation service.</param>
         public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IOrganisationSearchOrchestrator organisationSearchOrchestrator, 
             ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient, IValidationService validationService)
         {

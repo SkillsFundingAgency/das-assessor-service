@@ -81,6 +81,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             return !string.IsNullOrEmpty(stringToCheck?.Trim());
         }
 
+        /// <summary>Organisations check if the identifier is null or empty or valid.</summary>
+        /// <param name="organisationIdToCheck">The organisation identifier to check.</param>
         public bool OrganisationIdIsNullOrEmptyOrValid(string organisationIdToCheck)
         {
             if (string.IsNullOrEmpty(organisationIdToCheck?.Trim())) return true;
@@ -96,6 +98,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             return regex.Match(organisationIdToCheck).Success;
         }
 
+        /// <summary>Ukprn check if it is null or empty or valid.</summary>
+        /// <param name="ukprnToCheck">The ukprn to check.</param>
         public bool UkprnIsNullOrEmptyOrValid(string ukprnToCheck)
         {
             if (string.IsNullOrEmpty(ukprnToCheck?.Trim())) return true;
@@ -103,6 +107,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             return UkprnIsValid(ukprnToCheck, out _);
         }
 
+        /// <summary>Check the ukprn is valid.</summary>
+        /// <param name="ukprnToCheck">The ukprn to check.</param>
+        /// <param name="ukprn">The ukprn.</param>
         public bool UkprnIsValid(string ukprnToCheck, out int ukprn)
         {
             if (!int.TryParse(ukprnToCheck, out ukprn))
