@@ -28,7 +28,6 @@ INSERT #OrganisationType VALUES (8, N'Other', N'Deleted', NULL, 0)
 INSERT #OrganisationType VALUES (9, N'Public Sector', N'Live', N'Incorporated as a public sector body', 1)
 INSERT #OrganisationType VALUES (10, N'College', N'Live', N'General further education (GFE) college currently receiving funding from the ESFA, 6th form or further education (FE) college', 1)
 INSERT #OrganisationType VALUES (11, N'Academy or Free School', N'Live', N'Academy or Free school registered with the ESFA', 1)
-INSERT #OrganisationType VALUES (12, N'OFQUAL Recognised Organisations', N'Live', N'Organisations recognised by OFQUAL for Apprenticeship Standards', 1)
 
 SET IDENTITY_INSERT [dbo].[OrganisationType] ON 
 
