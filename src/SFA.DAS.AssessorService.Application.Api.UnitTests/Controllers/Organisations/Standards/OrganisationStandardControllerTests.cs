@@ -1,51 +1,160 @@
-﻿using FluentAssertions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using System.Net;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Standards
 {
+    [TestFixture]
     public class OrganisationStandardControllerTests
     {
-        private Mock<ILogger<OrganisationStandardController>> _mockLogger;
-        private Mock<IMediator> _mockMediator;
-
+        private Mock<ILogger<OrganisationStandardController>> _loggerMock;
+        private Mock<IMediator> _mediatorMock;
         private OrganisationStandardController _controller;
-       
 
         [SetUp]
         public void SetUp()
         {
-            _mockLogger = new Mock<ILogger<OrganisationStandardController>>();
-            _mockMediator = new Mock<IMediator>();
-
-            _controller = new OrganisationStandardController(_mockLogger.Object, _mockMediator.Object);
+            _loggerMock = new Mock<ILogger<OrganisationStandardController>>();
+            _mediatorMock = new Mock<IMediator>();
+            _controller = new OrganisationStandardController(_loggerMock.Object, _mediatorMock.Object);
         }
 
         [Test]
-        public async Task OptInOrganisationStandardVersion_ReturnsCreatedAtRouteResultWithStandardUIdAndVersion_WhenPostCalled()
+        public async Task OptInOrganisationStandardVersion_ReturnsCreatedResult_OnSuccess()
+        {
+            var request = new OrganisationStandardVersionOptInRequest();
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1.2" }));
+
+            var result = await _controller.OptInOrganisationStandardVersion(request);
+
+            Assert.IsInstanceOf<CreatedAtRouteResult>(result);
+        }
+
+        [Test]
+        public async Task OptOutOrganisationStandardVersion_ReturnsOkResult_OnSuccess()
+        {
+            var request = new OrganisationStandardVersionOptOutRequest();
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1.2" }));
+
+            var result = await _controller.OptOutOrganisationStandardVersion(request);
+
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public async Task UpdateOrganisationStandardVersion_ReturnsOkResult_OnSuccess()
+        {
+            var request = new UpdateOrganisationStandardVersionRequest();
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1.2" }));
+
+            var result = await _controller.UpdateOrganisationStandardVersion(request);
+
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public async Task OptInOrganisationStandardVersion_ReturnsCorrectData_OnSuccess()
         {
             var request = new OrganisationStandardVersionOptInRequest();
 
-            _mockMediator.Setup(s => s.Send(request, Moq.It.IsAny<CancellationToken>()))
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1.2" }));
 
-            var controllerResult = await _controller.OptInOrganisationStandardVersion(request) as CreatedAtRouteResult;
+            var result = await _controller.OptInOrganisationStandardVersion(request) as CreatedAtRouteResult;
+            var model = result.Value as OrganisationStandardVersion;
 
-            controllerResult.StatusCode.Should().Be((int)HttpStatusCode.Created);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(model.Version, Is.EqualTo("1.2"));
+            Assert.That(model.StandardUId, Is.EqualTo("ST0001_1.2"));
+        }
 
-            var model = controllerResult.Value as OrganisationStandardVersion;
+        [Test]
+        public async Task OptInOrganisationStandardVersion_ReturnsBadRequest_OnError()
+        {
+            var request = new OrganisationStandardVersionOptInRequest();
 
-            model.Version.Should().Be("1.2");
-            model.StandardUId.Should().Be("ST0001_1.2");
+            var exMessage = "Test Exception Message";
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Throws(new Exception(exMessage));
+
+            var result = await _controller.OptInOrganisationStandardVersion(request) as BadRequestObjectResult;
+            var response = result.Value as EpaoStandardVersionResponse;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Details, Is.EqualTo(exMessage));
+        }
+
+        [Test]
+        public async Task OptOutOrganisationStandardVersion_ReturnsCorrectData_OnSuccess()
+        {
+            var request = new OrganisationStandardVersionOptOutRequest();
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1.2" }));
+
+            var result = await _controller.OptOutOrganisationStandardVersion(request) as OkObjectResult;
+
+            var model = result.Value as EpaoStandardVersionResponse;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(model.Details, Is.EqualTo("1.2"));
+        }
+
+        [Test]
+        public async Task OptOutOrganisationStandardVersion_ReturnsBadRequest_OnError()
+        {
+            var request = new OrganisationStandardVersionOptOutRequest();
+            var exMessage = "Test Exception Message";
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Throws(new Exception(exMessage));
+
+            var result = await _controller.OptOutOrganisationStandardVersion(request) as BadRequestObjectResult;
+            var response = result.Value as EpaoStandardVersionResponse;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Details, Is.EqualTo(exMessage));
+        }
+
+        [Test]
+        public async Task UpdateOrganisationStandardVersion_ReturnsCorrectData_OnSuccess()
+        {
+            var request = new UpdateOrganisationStandardVersionRequest();
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new OrganisationStandardVersion() { Version = "1.2", StandardUId = "ST0001_1.2" }));
+
+            var result = await _controller.UpdateOrganisationStandardVersion(request) as OkObjectResult;
+            var model = result.Value as EpaoStandardVersionResponse;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(model.Details, Is.EqualTo("1.2"));
+        }
+
+        [Test]
+        public async Task UpdateOrganisationStandardVersion_ReturnsBadRequest_OnError()
+        {
+            var request = new UpdateOrganisationStandardVersionRequest();
+            var exMessage = "Test Exception Message";
+            _mediatorMock.Setup(s => s.Send(request, It.IsAny<CancellationToken>()))
+                .Throws(new Exception(exMessage));
+
+            var result = await _controller.UpdateOrganisationStandardVersion(request) as BadRequestObjectResult;
+            var response = result.Value as EpaoStandardVersionResponse;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Details, Is.EqualTo(exMessage));
         }
     }
 }

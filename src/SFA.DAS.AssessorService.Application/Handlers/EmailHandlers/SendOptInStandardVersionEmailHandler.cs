@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,20 +35,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             var contactToNotify = await _contactQueryRepository.GetContactById(request.ContactId);
             if (contactToNotify == null)
             {
-                throw new ArgumentException($"Unable to send email for opt in standard version, cannot find contact {request.ContactId}", 
-                    nameof(request.ContactId));
+                throw new NotFoundException($"Unable to send email for opt in standard version, cannot find contact {request.ContactId}");
             }
 
             var standardVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
             if (!standardVersions?.Any() ?? false)
             {
-                throw new Exception($"Unable to send email for opt in standard version, cannot find version {request.Version} for standard reference {request.StandardReference}");
+                throw new NotFoundException($"Unable to send email for opt in standard version, cannot find version {request.Version} for standard reference {request.StandardReference}");
             }
 
             var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptIn);
             if (emailTemplate == null)
             {
-                throw new Exception($"Unable to send email for opt in standard version, cannot find email template {EmailTemplateNames.EPAOStandardConfimOptIn}");
+                throw new NotFoundException($"Unable to send email for opt in standard version, cannot find email template {EmailTemplateNames.EPAOStandardConfimOptIn}");
             }
 
             await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,

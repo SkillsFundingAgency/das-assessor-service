@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
      [TestFixture]
-    public class OptInStandardTests : StandardControllerTestBase
+    public class OptOutStandardTests : StandardControllerTestBase
     {
         private List<StandardVersion> _approvedVersions;
 
@@ -72,16 +72,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task OptInStandardVersion_ReturnsViewWithModel_WhenGetCalledWithValidReferenceAndVersion([ValueSource(nameof(TestDataForOptInStandardVersion))] TestDataOptInStandardVersion testData)
+        public async Task OptOutStandardVersion_ReturnsViewWithModel_WhenGetCalledWithValidReferenceAndVersion([ValueSource(nameof(TestDataForOptOutStandardVersion))] TestDataOptOutStandardVersion testData)
         {
             // Act
-            var result = await _sut.OptInStandardVersion(testData.ReferenceNumber, testData.Version);
+            var result = await _sut.OptOutStandardVersion(testData.ReferenceNumber, testData.Version);
 
             // Assert
             Assert.That(result, Is.TypeOf<ViewResult>());
             var viewResult = result as ViewResult;
-            Assert.That(viewResult.Model, Is.TypeOf<OptInStandardVersionViewModel>());
-            var model = viewResult.Model as OptInStandardVersionViewModel;
+            Assert.That(viewResult.Model, Is.TypeOf<OptOutStandardVersionViewModel>());
+            var model = viewResult.Model as OptOutStandardVersionViewModel;
 
             // Assert all fields are populated correctly
             Assert.AreEqual(testData.ReferenceNumber, model.StandardReference);
@@ -93,107 +93,107 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
+        public void OptOutStandardVersion_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
         {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(referenceNumber, "1.0"));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(referenceNumber, "1.0"));
             Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
+        public void OptOutStandardVersion_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
         {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion("ST0001", version));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion("ST0001", version));
             Assert.That(ex.ParamName, Is.EqualTo("version"));
         }
 
         [TestCase("ST0001", "1.3")]
         [TestCase("ST0002", "1.1")]
-        public void OptInStandardVersion_ThrowsNotFoundException_WhenGetCalledWithNonExistentReferenceNumberAndVersionCombination(string referenceNumber, string version)
+        public void OptOutStandardVersion_ThrowsNotFoundException_WhenGetCalledWithNonExistentReferenceNumberAndVersionCombination(string referenceNumber, string version)
         {
-            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptInStandardVersion(referenceNumber, version));
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptOutStandardVersion(referenceNumber, version));
         }
 
         [Test]
-        public async Task OptInStandardVersion_ReturnsRedirectResult_WhenPostCalledWithValidModel()
+        public async Task OptOutStandardVersion_ReturnsRedirectResult_WhenPostCalledWithValidModel()
         {
             // Arrange
-            var model = new OptInStandardVersionViewModel
+            var model = new OptOutStandardVersionViewModel
             {
                 StandardReference = "ST0001",
-                Version = "1.0",
+                Version = "1.1",
                 EffectiveFrom = DateTime.Today.AddDays(-5),
                 EffectiveTo = DateTime.Today.AddDays(5)
             };
 
-            var result = await _sut.OptInStandardVersion(model);
+            var result = await _sut.OptOutStandardVersion(model);
 
             Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
             
             var redirectResult = result as RedirectToRouteResult;
-            Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptInStandardVersionConfirmationRouteGet));
+            Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionConfirmationRouteGet));
             Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
             Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
         }
 
         [Test]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
+        public void OptOutStandardVersion_ThrowsArgumentException_WhenPostCalledWithNullModel()
         {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(null));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(null));
             Assert.That(ex.ParamName, Is.EqualTo("model"));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullOrEmptyStandardReference(string standardReference)
+        public void OptOutStandardVersion_ThrowsArgumentException_WhenPostCalledWithNullOrEmptyStandardReference(string standardReference)
         {
-            var model = new OptInStandardVersionViewModel
+            var model = new OptOutStandardVersionViewModel
             {
                 StandardReference = standardReference,
                 Version = "1.0"
             };
 
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(model));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(model));
             Assert.That(ex.ParamName, Is.EqualTo(nameof(model.StandardReference)));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullOrEmptyVersion(string version)
+        public void OptPOutStandardVersion_ThrowsArgumentException_WhenPostCalledWithNullOrEmptyVersion(string version)
         {
-            var model = new OptInStandardVersionViewModel
+            var model = new OptOutStandardVersionViewModel
             {
                 StandardReference = "ST0001",
                 Version = version
             };
 
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(model));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(model));
             Assert.That(ex.ParamName, Is.EqualTo(nameof(model.Version)));
         }
 
         [Test]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithExistingVersionForStandard()
+        public void OptOutStandardVersion_ThrowsNotFoundException_WhenPostCalledWithExistingVersionForStandard()
         {
-            var model = new OptInStandardVersionViewModel
+            var model = new OptOutStandardVersionViewModel
             {
                 StandardReference = "ST0001",
-                Version = "1.1"
+                Version = "1.0"
             };
 
-            Assert.ThrowsAsync<AlreadyExistsException>(async () => await _sut.OptInStandardVersion(model));
+            Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptOutStandardVersion(model));
         }
 
         [Test]
-        public async Task OptInStandardVersionConfirmation_ReturnsViewWithModel_WhenGetCalledWithValidReferenceAndVersion()
+        public async Task OptOutStandardVersionConfirmation_ReturnsViewWithModel_WhenGetCalledWithValidReferenceAndVersion()
         {
             // Act
-            var result = await _sut.OptInStandardVersionConfirmation("ST0001", "1.0");
+            var result = await _sut.OptOutStandardVersionConfirmation("ST0001", "1.0");
 
             // Assert
             Assert.That(result, Is.TypeOf<ViewResult>());
             var viewResult = result as ViewResult;
-            Assert.That(viewResult.Model, Is.TypeOf<OptInStandardVersionConfirmationViewModel>());
-            var model = viewResult.Model as OptInStandardVersionConfirmationViewModel;
+            Assert.That(viewResult.Model, Is.TypeOf<OptOutStandardVersionConfirmationViewModel>());
+            var model = viewResult.Model as OptOutStandardVersionConfirmationViewModel;
 
             Assert.AreEqual("Standard Title One", model.StandardTitle);
             Assert.AreEqual("ST0001", model.StandardReference);
@@ -203,28 +203,28 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
+        public void OptOutStandardVersionConfirmation_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
         {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersionConfirmation(referenceNumber, "1.0"));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersionConfirmation(referenceNumber, "1.0"));
             Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
+        public void OptOutStandardVersionConfirmation_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
         {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersionConfirmation("ST0001", version));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersionConfirmation("ST0001", version));
             Assert.That(ex.ParamName, Is.EqualTo("version"));
         }
 
         [Test]
-        public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNonExistentReference()
+        public void OptOutStandardVersionConfirmation_ThrowsArgumentException_WhenGetCalledWithNonExistentReference()
         {
-            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptInStandardVersionConfirmation("ST0099", "1.0"));
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptOutStandardVersionConfirmation("ST0099", "1.0"));
         }
 
 
-        public class TestDataOptInStandardVersion
+        public class TestDataOptOutStandardVersion
         {
             public string ReferenceNumber { get; set; }
             public string Version { get; set; }
@@ -234,16 +234,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             public DateTime ExpectedVersionLatestEndDate { get; set;}
         }
 
-        private static readonly TestDataOptInStandardVersion[] TestDataForOptInStandardVersion =
+        private static readonly TestDataOptOutStandardVersion[] TestDataForOptOutStandardVersion =
         {
-            new TestDataOptInStandardVersion
+            new TestDataOptOutStandardVersion
             {
                 ReferenceNumber = "ST0001",
                 Version = "1.0",
                 ExpectedTitle = "Standard Title One",
                 ExpectedVersion = "1.0",
                 ExpectedVersionEarliestStartDate = DateTime.Now.AddDays(-10).Date,
-                ExpectedVersionLatestEndDate = DateTime.Now.AddDays(10).Date
+                ExpectedVersionLatestEndDate = DateTime.Today
             }
         };
     }

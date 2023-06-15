@@ -268,7 +268,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var standardVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
 
             if (standardVersion == null)
-                throw new ArgumentException($"The reference number {referenceNumber} version {version} cannot be found", nameof(referenceNumber));
+                throw new NotFoundException($"The reference number {referenceNumber} version {version} cannot be found");
 
             var model = new OptInStandardVersionViewModel()
             {
@@ -327,7 +327,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             if (!standardVersions.Any())
-                throw new NotFoundException($"The standard reference {referenceNumber} does not have the version {version}");
+                throw new NotFoundException($"The standard reference {referenceNumber} cannot be found");
 
             var model = new OptInStandardVersionConfirmationViewModel()
             {
@@ -345,13 +345,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> OptOutStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
-                throw new ArgumentException("Value cannot be null or empty", referenceNumber);
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
             if (string.IsNullOrEmpty(version))
-                throw new ArgumentException("Value cannot be null or empty", version);
+                throw new ArgumentException("Value cannot be null or empty", nameof(version));
 
             var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
-            var standardVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+            var standardVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+
+            if (standardVersion == null)
+                throw new NotFoundException($"The reference number {referenceNumber} version {version} cannot be found");
 
             var model = new OptOutStandardVersionViewModel()
             {
@@ -369,11 +372,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
         {
+            if (model == null)
+                throw new ArgumentException("Value cannot be null or empty", nameof(model));
+
             if (string.IsNullOrEmpty(model.StandardReference))
-                throw new ArgumentException("StandardReference cannot be null or empty");
+                throw new ArgumentException("Value cannot be null or empty", nameof(model.StandardReference));
 
             if (string.IsNullOrEmpty(model.Version))
-                throw new ArgumentException("Version cannot be null or empty");
+                throw new ArgumentException("Value cannot be null or empty", nameof(model.Version));
 
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
@@ -381,7 +387,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
             if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) == null)
             {
-                throw new ArgumentException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");
+                throw new NotFoundException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");
             }
 
             await _orgApiClient.OrganisationStandardVersionOptOut(
@@ -400,12 +406,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> OptOutStandardVersionConfirmation(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
-                throw new ArgumentException("Value cannot be null or empty", referenceNumber);
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
             if (string.IsNullOrEmpty(version))
-                throw new ArgumentException("Value cannot be null or empty", version);
+                throw new ArgumentException("Value cannot be null or empty", nameof(version));
 
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            if (!standardVersions.Any())
+                throw new NotFoundException($"The standard reference {referenceNumber} cannot be found");
 
             var model = new OptOutStandardVersionConfirmationViewModel()
             {

@@ -16,18 +16,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
     {
         private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IStandardService _standardService;
         private readonly IMediator _mediator;
-        private readonly ILogger<OrganisationStandardVersionOptInHandler> _logger;
+        private readonly ILogger<OrganisationStandardVersionOptOutHandler> _logger;
 
         public OrganisationStandardVersionOptOutHandler(IOrganisationStandardRepository organisationStandardRepository, 
             IContactQueryRepository contactQueryRepository, IMediator mediator,
-            IStandardService standardService,
-            ILogger<OrganisationStandardVersionOptInHandler> logger)
+            ILogger<OrganisationStandardVersionOptOutHandler> logger)
         {
             _organisationStandardRepository = organisationStandardRepository;
             _contactQueryRepository = contactQueryRepository;
-            _standardService = standardService;
             _mediator = mediator;
             _logger = logger;
         }
