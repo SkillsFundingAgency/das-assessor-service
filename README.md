@@ -5,8 +5,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-assessor-service&metric=alert_status)](https://sonarcloud.io/project/overview?id=SkillsFundingAgency_das-assessor-service)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)
 
-This repository represents the Assessors API code base. 
-This service comprises the changes to downgrade the Register of End-Point Assessor Organisations to become a consolidated list of End-Point Assessors that are registered/approved/recognised by several External Quality Assurance Providers (EQAP), including OFQUAL.
+This repository represents the Assessors API code base. This service ...
 
 ## Developer Setup
 
