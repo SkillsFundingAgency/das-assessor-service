@@ -8,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -63,7 +64,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
                 if (worksheetDetails == null)
                 {
-                    throw new Exception($"No matching report found for stored procedure '{storedProcedure}'");
+                    throw new NotFoundException($"No matching report found for stored procedure '{storedProcedure}'");
                 }
 
             return (await _connection.QueryAsync(worksheetDetails.StoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
