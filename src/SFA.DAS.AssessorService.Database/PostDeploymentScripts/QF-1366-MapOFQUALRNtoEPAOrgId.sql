@@ -122,3 +122,10 @@ UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6104'  WHERE EndPointAs
 UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6107'  WHERE EndPointAssessorOrganisationId = 'EPA0530' AND [RecognitionNumber] IS NULL;
 UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6111'  WHERE EndPointAssessorOrganisationId = 'EPA0547' AND [RecognitionNumber] IS NULL;
 UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6114'  WHERE EndPointAssessorOrganisationId = 'EPA0338' AND [RecognitionNumber] IS NULL;
+-- Additions 19/0623
+UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6032'  WHERE EndPointAssessorOrganisationId = 'EPA0497' AND [RecognitionNumber] IS NULL;
+UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6049'  WHERE EndPointAssessorOrganisationId = 'EPA0085' AND [RecognitionNumber] IS NULL;
+UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6062'  WHERE EndPointAssessorOrganisationId = 'EPA0224' AND [RecognitionNumber] IS NULL;
+UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6116'  WHERE EndPointAssessorOrganisationId = 'EPA0204' AND [RecognitionNumber] IS NULL;
+
+
