@@ -3,3 +3,5 @@
 	
 	1) [Organisations]
 */
+
+DELETE FROM [dbo].[OrganisationType] WHERE [Type] = 'OFQUAL Recognised Organisations';
