@@ -97,35 +97,35 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(ukprn.ToString());
-            IEnumerable<OrganisationSearchResult> roatpResults = await GetAtpRegisterResults(null, null, ukprn);
-            IEnumerable<OrganisationSearchResult> providerResults;
-            IEnumerable<OrganisationSearchResult> referenceResults;
+            //IEnumerable<OrganisationSearchResult> roatpResults = await GetAtpRegisterResults(null, null, ukprn);
+            //IEnumerable<OrganisationSearchResult> providerResults;
+            //IEnumerable<OrganisationSearchResult> referenceResults;
 
-            var providerRegisterNames = new List<string>();
-            if (epaoResults?.Count() == 1)
-            {
-                providerRegisterNames.Add(epaoResults.First().TradingName);
-                providerRegisterNames.Add(epaoResults.First().LegalName);
-            }
-            if (roatpResults?.Count() == 1)
-            {
-                providerRegisterNames.Add(roatpResults.First().ProviderName);
-            }
-            providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
+            //var providerRegisterNames = new List<string>();
+            //if (epaoResults?.Count() == 1)
+            //{
+            //    providerRegisterNames.Add(epaoResults.First().TradingName);
+            //    providerRegisterNames.Add(epaoResults.First().LegalName);
+            //}
+            //if (roatpResults?.Count() == 1)
+            //{
+            //    providerRegisterNames.Add(roatpResults.First().ProviderName);
+            //}
+            //providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
 
-            // If you try to search Reference Data API by UKPRN it interprets this as Company Number so must use actual name instead
-            var referenceDataApiNames = new List<string>(providerRegisterNames);
-            if (providerResults?.Count() == 1)
-            {
-                referenceDataApiNames.Add(providerResults.First().ProviderName);
-            }
-            referenceResults = await GetReferenceDataResults(null, referenceDataApiNames, ukprn);
+            //// If you try to search Reference Data API by UKPRN it interprets this as Company Number so must use actual name instead
+            //var referenceDataApiNames = new List<string>(providerRegisterNames);
+            //if (providerResults?.Count() == 1)
+            //{
+            //    referenceDataApiNames.Add(providerResults.First().ProviderName);
+            //}
+            //referenceResults = await GetReferenceDataResults(null, referenceDataApiNames, ukprn);
 
             var results = new List<OrganisationSearchResult>();
             if (epaoResults != null) results.AddRange(epaoResults);
-            if (roatpResults != null) results.AddRange(roatpResults);
-            if (providerResults != null) results.AddRange(providerResults);
-            if (referenceResults != null) results.AddRange(referenceResults);
+            //if (roatpResults != null) results.AddRange(roatpResults);
+            //if (providerResults != null) results.AddRange(providerResults);
+            //if (referenceResults != null) results.AddRange(referenceResults);
 
             return Dedupe(results);
         }
