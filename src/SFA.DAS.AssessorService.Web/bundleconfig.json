@@ -10,6 +10,7 @@
     "inputFiles": [
       "wwwroot/javascripts/lib/node_modules/jquery/dist/jquery.min.js",
       "wwwroot/javascripts/das-cookie-banner.js",
+      "wwwroot/javascripts/user-navigation.js",
       "wwwroot/javascripts/das-expandable-table.js",
       "wwwroot/javascripts/application.js"
     ],

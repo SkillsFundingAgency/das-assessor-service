@@ -51,3 +51,6 @@ WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
 --SV-889 Update Apply With ApplyViaOptInStatus
 :r .\PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql
+
+--QF-1366 Map OFQUAL RN to EPAOrgId
+:r .\PostDeploymentScripts\QF-1366-MapOFQUALRNtoEPAOrgId.sql

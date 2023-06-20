@@ -5,7 +5,8 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-assessor-service&metric=alert_status)](https://sonarcloud.io/project/overview?id=SkillsFundingAgency_das-assessor-service)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)
 
-This repository represents the Assessors API code base. This service ...
+This repository represents the Assessors API code base. 
+This service comprises the changes to downgrade the Register of End-Point Assessor Organisations to become a consolidated list of End-Point Assessors that are registered/approved/recognised by several External Quality Assurance Providers (EQAP), including OFQUAL.
 
 ## Developer Setup
 
@@ -13,11 +14,11 @@ This repository represents the Assessors API code base. This service ...
 
 In order to run this solution locally you will need the following:
 
-* Install [.NET Core 2.2 SDK](https://www.microsoft.com/net/download)
-* Install [Visual Studio 2019](https://www.visualstudio.com/downloads/) with these workloads:
+* Install [.NET 6.0 SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks)
+* Install [Visual Studio 2022](https://www.visualstudio.com/downloads/) with these workloads:
     * ASP.NET and web development
     * Azure development
-* Install [SQL Server 2017 Developer Edition](https://go.microsoft.com/fwlink/?linkid=853016)
+* Install [SQL Server 2019 (or later) Developer Edition](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 * Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 * Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on atleast v5.3)
 * Install [Azure Storage Explorer](http://storageexplorer.com/) 
