@@ -442,7 +442,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(string endPointAssessorOrganisationId,
             string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
         {
-            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            var optInRequest = new OrganisationStandardVersionOptInRequest
             {
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                 StandardReference = standardReference,
@@ -455,14 +455,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-in"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, optInRequest);
             }
         }
 
         public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptOut(string endPointAssessorOrganisationId,
             string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
         {
-            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            var optOutRequest = new OrganisationStandardVersionOptOutRequest
             {
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                 StandardReference = standardReference,
@@ -470,12 +470,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 EffectiveFrom = effectiveFrom,
                 EffectiveTo = effectiveTo,
                 ContactId = contactId,
-                OptInRequestedAt = DateTime.Now
+                OptOutRequestedAt = DateTime.Now
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-out"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
             }
         }
     }
