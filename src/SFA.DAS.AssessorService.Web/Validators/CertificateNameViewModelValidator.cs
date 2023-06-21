@@ -7,14 +7,14 @@ namespace SFA.DAS.AssessorService.Web.Validators
     {
         public CertificateNameViewModelValidator()
         {
-            RuleFor(vm => vm.GivenNames).NotEmpty().WithMessage("First names must not be empty").WithName("GivenNames").DependentRules(() =>
+            RuleFor(vm => vm.InputGivenNames).NotEmpty().WithMessage("First names must not be empty").WithName("InputGivenNames").DependentRules(() =>
             {
-                RuleFor(vm => vm.GivenNames.ToLower()).NotEmpty().Equal(vm => vm.PreviousGivenNames.ToLower()).WithMessage("You can only change the casing of the first names").WithName("GivenNames");
+                RuleFor(vm => vm.InputGivenNames.ToLower()).NotEmpty().Equal(vm => vm.GivenNames.ToLower()).WithMessage("You can only change the casing of the first names").WithName("InputGivenNames");
             });
 
-            RuleFor(vm => vm.FamilyName).NotEmpty().WithMessage("Last name must not be empty").WithName("FamilyName").DependentRules(() =>
+            RuleFor(vm => vm.InputFamilyName).NotEmpty().WithMessage("Last name must not be empty").WithName("InputFamilyName").DependentRules(() =>
             {
-                RuleFor(vm => vm.FamilyName.ToLower()).NotEmpty().Equal(vm => vm.PreviousFamilyName.ToLower()).WithMessage("You can only change the casing of the last name").WithName("FamilyName");
+                RuleFor(vm => vm.InputFamilyName.ToLower()).NotEmpty().Equal(vm => vm.FamilyName.ToLower()).WithMessage("You can only change the casing of the last name").WithName("InputFamilyName");
             });
         }
     }

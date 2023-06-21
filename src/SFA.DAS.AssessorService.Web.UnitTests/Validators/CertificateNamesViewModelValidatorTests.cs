@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             var result = _validator.TestValidate(_viewModel);
 
             result.IsValid.Should().Be(false);
-            result.ShouldHaveValidationErrorFor(x => x.GivenNames);
+            result.ShouldHaveValidationErrorFor(x => x.InputGivenNames);
         }
 
         [Test, MoqAutoData]
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             var result = _validator.TestValidate(_viewModel);
 
             result.IsValid.Should().Be(false);
-            result.ShouldHaveValidationErrorFor(x => x.FamilyName);
+            result.ShouldHaveValidationErrorFor(x => x.InputFamilyName);
         }
 
         [Test, MoqAutoData]
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             var result = _validator.TestValidate(_viewModel);
 
             result.IsValid.Should().Be(false);
-            result.ShouldHaveValidationErrorFor(x => x.GivenNames);
+            result.ShouldHaveValidationErrorFor(x => x.InputGivenNames);
         }
 
         [Test, MoqAutoData]
@@ -79,13 +79,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             var result = _validator.TestValidate(_viewModel);
 
             result.IsValid.Should().Be(false);
-            result.ShouldHaveValidationErrorFor(x => x.FamilyName);
+            result.ShouldHaveValidationErrorFor(x => x.InputFamilyName);
         }
 
 
         private CertificateNamesViewModel CreateValidViewModel(CertificateBaseViewModel _baseViewModel)
         {
-            return new CertificateNamesViewModel() { PreviousGivenNames = _baseViewModel.GivenNames, PreviousFamilyName = _baseViewModel.FamilyName };
+            return new CertificateNamesViewModel() { InputGivenNames = _baseViewModel.GivenNames, InputFamilyName = _baseViewModel.FamilyName, GivenNames = _baseViewModel.GivenNames, FamilyName = _baseViewModel.FamilyName };
         }
 
     }

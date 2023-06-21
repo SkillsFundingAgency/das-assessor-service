@@ -5,8 +5,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateNamesViewModel : CertificateBaseViewModel
     {
-        public string PreviousGivenNames { get; set; }
-        public string PreviousFamilyName { get; set; }
+        public string InputGivenNames { get; set; }
+        public string InputFamilyName { get; set; }
 
         public override Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
