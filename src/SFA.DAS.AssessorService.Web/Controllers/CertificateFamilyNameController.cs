@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             return await SaveViewModel(viewModel,
                 returnToIfModelNotValid: "~/Views/Certificate/FamilyName.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateCheck"), action: CertificateActions.FirstName);
+                nextAction: RedirectToAction("Check", "CertificateCheck"), action: CertificateActions.LastName);
         }
 
         protected async Task<IActionResult> LoadCertificateFamilyNameViewModel<T>(string view) where T : CertificateBaseViewModel, new()
