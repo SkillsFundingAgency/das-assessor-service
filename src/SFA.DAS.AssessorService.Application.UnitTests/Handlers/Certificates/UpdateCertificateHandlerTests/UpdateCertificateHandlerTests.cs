@@ -1,5 +1,4 @@
 ﻿using FizzWare.NBuilder;
-using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -236,7 +235,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 {
                     _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
                         MatchCertificateOnContactAddressDetails(updatedCertificate,
-                        fullNameTransferred ? GetCertificateData(_certificate).FullName : null,
+                        fullNameTransferred ? GetCertificateData(_certificate).FullName.ToUpper() : null,
                         null, 
                         null, 
                         null, 
@@ -249,7 +248,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 {
                     _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
                         MatchCertificateOnContactAddressDetails(updatedCertificate,
-                            fullNameTransferred ? GetCertificateData(_certificate).FullName : GetCertificateData(_certificate).ContactName,
+                            fullNameTransferred ? GetCertificateData(_certificate).FullName.ToUpper() : GetCertificateData(_certificate).ContactName.ToUpper(),
                             GetCertificateData(_certificate).Department,
                             GetCertificateData(_certificate).ContactOrganisation,
                             GetCertificateData(_certificate).ContactAddLine1,
