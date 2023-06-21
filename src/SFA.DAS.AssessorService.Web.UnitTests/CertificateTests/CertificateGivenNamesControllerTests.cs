@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var result = await _controller.GivenNames(mockViewModel) as ViewResult;
 
-            result.ViewName.Should().Be("/Views/Certificate/GivenNames.cshtml");
+            result.ViewName.Should().Be("~/Views/Certificate/GivenNames.cshtml");
             result.ViewData.ModelState.ErrorCount.Should().BeGreaterThanOrEqualTo(1);
         }
     }
