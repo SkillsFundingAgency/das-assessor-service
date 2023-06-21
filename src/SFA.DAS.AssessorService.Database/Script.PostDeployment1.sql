@@ -54,3 +54,7 @@ WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
 --QF-1366 Map OFQUAL RN to EPAOrgId
 :r .\PostDeploymentScripts\QF-1366-MapOFQUALRNtoEPAOrgId.sql
+
+--QF-1517 Map OFQUAL RN to EPAOrgId for Applying orgnaisations
+:r .\PostDeploymentScripts\QF-1517_Set_RN_for_Applying_Already_Approved_by_OFQUAL.sql
+
