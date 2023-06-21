@@ -1,0 +1,36 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.Certificate
+@model CertificateNamesViewModel
+
+@{
+    Layout = "_DashboardLayout";
+}
+
+<div class="govuk-width-container">
+    <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">What is the apprentice's last name?</h1>
+                <p class="govuk-body">You can edit the apprentice's last or family name if the letter case is incorrect. <br />For example your can change 'smith' to 'Smith' so that it begins with a capital letter.</p>
+                <p class="govuk-body">You cannot change the spelling or add more names. You'll need to contact the training provider to do this.</p>
+                <p class="govuk-body">Once you've saved the changes, that's how the apprentice's name will appear on their printed certificate.</p>
+                <form class="" method="post" asp-controller="CertificateFamilyName" asp-action="FamilyName">
+                    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="GivenNames" value="@Model.GivenNames" />
+                    <input type="hidden" name="PreviousGivenNames" value="@Model.GivenNames" />
+                    <input type="hidden" name="PreviousFamilyName" value="@Model.FamilyName" />
+                    <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="family-name">
+                            What is the apprentice's last name?
+                        </label>
+                        <sfa-validationerror-detail sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <input class="govuk-input" id="family-name" asp-for="FamilyName" type="text" spellcheck="false" autocomplete="family-name" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" />
+                    </div>
+                    <button type="submit" class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
