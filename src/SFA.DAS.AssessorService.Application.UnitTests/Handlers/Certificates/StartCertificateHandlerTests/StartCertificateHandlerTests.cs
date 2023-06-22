@@ -446,7 +446,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             });
         }
 
-        protected string CapitaliseFirstLetterOfName(string name)
+        protected static string CapitaliseFirstLetterOfName(string name)
         {
             return string.Concat(name.Substring(0, 1).ToUpper(), name.Substring(1, name.Length - 1));
         }
