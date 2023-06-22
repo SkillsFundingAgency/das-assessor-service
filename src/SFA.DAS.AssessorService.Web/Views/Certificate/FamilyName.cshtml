@@ -33,18 +33,18 @@
                         </div>
                     }
 
-                    <h1 class="govuk-heading-xl">What is the apprentice's last name?</h1>
-                    <p class="govuk-body">You can edit the apprentice's last or family name if the letter case is incorrect. <br />For example your can change 'smith' to 'Smith' so that it begins with a capital letter.</p>
+                    <h1 class="govuk-heading-xl">Apprentice's last name</h1>
+                    <p class="govuk-body">You can edit the apprentice's last or family name if the letter case is incorrect. <br />For example you can change 'smith' to 'Smith' so that it begins with a capital letter.</p>
                     <p class="govuk-body">You cannot change the spelling or add more names. You'll need to contact the training provider to do this.</p>
                     <p class="govuk-body">Once you've saved the changes, that's how the apprentice's name will appear on their printed certificate.</p>
 
                     <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                        <label class="govuk-label" for="InputFamilyName">
+                        <label class="govuk-label govuk-label--m" for="InputFamilyName">
                             What is the apprentice's last name?
                         </label>
                         <span class="govuk-visually-hidden">Error:</span>
                         <span class="govuk-error-message" asp-validation-for="InputFamilyName"></span>
-                        <input class="govuk-input" id="InputFamilyName" asp-for="InputFamilyName" type="text" spellcheck="false" autocomplete="last-name" sfa-validation-for="InputFamilyName" sfa-validationerror-class="govuk-input--error" />
+                        <input class="govuk-input" id="InputFamilyName" asp-for="InputFamilyName" type="text" spellcheck="false" autocomplete="family-name" sfa-validation-for="InputFamilyName" sfa-validationerror-class="govuk-input--error" />
                     </div>
 
                     <button type="submit" class="govuk-button" data-module="govuk-button">
