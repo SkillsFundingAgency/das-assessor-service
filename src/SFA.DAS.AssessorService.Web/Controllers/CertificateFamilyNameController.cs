@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> FamilyName()
         {
-            return await LoadCertificateFamilyNameViewModel<CertificateNamesViewModel>("~/Views/Certificate/FamilyName.cshtml");
+            return await LoadViewModel<CertificateNamesViewModel>("~/Views/Certificate/FamilyName.cshtml", false);
         }
 
         [HttpPost]
@@ -45,34 +45,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return await SaveViewModel(viewModel,
                 returnToIfModelNotValid: "~/Views/Certificate/FamilyName.cshtml",
                 nextAction: RedirectToAction("Check", "CertificateCheck"), action: CertificateActions.LastName);
-        }
-
-        protected async Task<IActionResult> LoadCertificateFamilyNameViewModel<T>(string view) where T : CertificateBaseViewModel, new()
-        {
-            var username = GetUsernameFromClaim();
-
-            Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
-
-            var viewModel = new CertificateNamesViewModel();
-
-            CheckAndSetRedirectToCheck(viewModel);
-
-            if (!TryGetCertificateSession(typeof(T).Name, username, out var certSession))
-            {
-                return RedirectToAction("Index", "Search");
-            }
-
-            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
-
-            Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
-
-            viewModel.FromCertificate(certificate);
-
-            Logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");
-
-            viewModel.InputFamilyName = viewModel.FamilyName;
-
-            return View(view, viewModel);
         }
     }
 }
