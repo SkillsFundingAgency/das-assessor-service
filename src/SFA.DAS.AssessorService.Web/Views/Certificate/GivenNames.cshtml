@@ -2,6 +2,7 @@
 @model CertificateNamesViewModel
 
 @{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's first name";
     Layout = "_DashboardLayout";
 }
 
