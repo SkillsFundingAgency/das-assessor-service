@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         }
 
 
-        private CertificateNamesViewModel CreateValidViewModel(CertificateBaseViewModel _baseViewModel)
+        private static CertificateNamesViewModel CreateValidViewModel(CertificateBaseViewModel _baseViewModel)
         {
             return new CertificateNamesViewModel() { InputGivenNames = _baseViewModel.GivenNames, InputFamilyName = _baseViewModel.FamilyName, GivenNames = _baseViewModel.GivenNames, FamilyName = _baseViewModel.FamilyName };
         }
