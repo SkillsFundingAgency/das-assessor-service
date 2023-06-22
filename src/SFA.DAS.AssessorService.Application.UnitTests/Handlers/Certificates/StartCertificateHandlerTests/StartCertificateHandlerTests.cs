@@ -56,8 +56,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             request.StandardUId = null;
             learnerRecord.FundingModel = 81;
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0, 1).ToUpper() + learnerRecord.GivenNames.Substring(1, learnerRecord.GivenNames.Length - 1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -115,8 +115,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             request.StandardUId = null;
             learnerRecord.FundingModel = 99;
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0,1).ToUpper() + learnerRecord.GivenNames.Substring(1,learnerRecord.GivenNames.Length-1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -172,8 +172,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             IEnumerable<Standard> standards)
         {
             // Arrange
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0, 1).ToUpper() + learnerRecord.GivenNames.Substring(1, learnerRecord.GivenNames.Length - 1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -198,8 +198,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         {
             // Arrange
             learnerRecord.FundingModel = 81;
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0, 1).ToUpper() + learnerRecord.GivenNames.Substring(1, learnerRecord.GivenNames.Length - 1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -262,8 +262,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             Domain.Entities.Learner learnerRecord)
         {
             // Arrange
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0, 1).ToUpper() + learnerRecord.GivenNames.Substring(1, learnerRecord.GivenNames.Length - 1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             existingCertificate.Status = CertificateStatus.Submitted;
             certificateData.OverallGrade = CertificateGrade.Fail;
             existingCertificate.CertificateData = JsonConvert.SerializeObject(certificateData);
@@ -302,8 +302,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         {
             // Arrange
             learnerRecord.FundingModel = 81;
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0, 1).ToUpper() + learnerRecord.GivenNames.Substring(1, learnerRecord.GivenNames.Length - 1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             existingCertificate.Status = CertificateStatus.Deleted;
             existingCertificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -420,8 +420,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             request.StandardUId = null;
             learnerRecord.FundingModel = 81;
-            learnerRecord.GivenNames = learnerRecord.GivenNames.Substring(0, 1).ToUpper() + learnerRecord.GivenNames.Substring(1, learnerRecord.GivenNames.Length - 1);
-            learnerRecord.FamilyName = learnerRecord.FamilyName.Substring(0, 1).ToUpper() + learnerRecord.FamilyName.Substring(1, learnerRecord.FamilyName.Length - 1);
+            learnerRecord.GivenNames = CapitaliseFirstLetterOfName(learnerRecord.GivenNames);
+            learnerRecord.FamilyName = CapitaliseFirstLetterOfName(learnerRecord.FamilyName);
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -444,6 +444,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Never);
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Never);
             });
+        }
+
+        protected string CapitaliseFirstLetterOfName(string name)
+        {
+            return string.Concat(name.Substring(0, 1).ToUpper(), name.Substring(1, name.Length - 1));
         }
     }
 }
