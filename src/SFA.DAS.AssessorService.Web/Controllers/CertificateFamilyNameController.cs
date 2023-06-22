@@ -21,9 +21,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FamilyName(bool? redirectToCheck = true)
+        public async Task<IActionResult> FamilyName()
         {
-            return await LoadViewModel<CertificateNamesViewModel>("~/Views/Certificate/FamilyName.cshtml");
+            return await LoadCertificateFamilyNameViewModel<CertificateNamesViewModel>("~/Views/Certificate/FamilyName.cshtml");
         }
 
         [HttpPost]

@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             var sessionString = JsonConvert.SerializeObject(session);
             _mockSessionService.Setup(s => s.Get(nameof(CertificateSession))).Returns(sessionString);
 
-            var result = await _controller.FamilyName(true) as ViewResult;
+            var result = await _controller.FamilyName() as ViewResult;
 
             result.ViewName.Should().Be("~/Views/Certificate/FamilyName.cshtml");
             result.Model.Should().BeOfType<CertificateNamesViewModel>();
