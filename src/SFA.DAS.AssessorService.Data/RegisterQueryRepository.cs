@@ -217,6 +217,43 @@ namespace SFA.DAS.AssessorService.Data
             return organisationStandardSummaries;
         }
 
+        public async Task<IEnumerable<OrganisationsStandardsSummary>> GetAllOrganisationsWithActiveStandards()
+        {
+            var sql = @"SELECT
+                            os.EndPointAssessorOrganisationId, EndPointAssessorName, EndPointAssessorUkprn, 
+                            MIN(os.DateStandardApprovedOnRegister) EarliestDateStandardApprovedOnRegister,
+                            MIN (os.EffectiveFrom) EarliestStandardEffectiveFromDate
+                        FROM
+                            OrganisationStandard os
+                            INNER JOIN 
+                            (
+                                SELECT OrganisationStandardId
+                                FROM OrganisationStandardVersion 
+                                WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) 
+                                AND [Status] = 'Live' 
+                            ) [ActiveStandardVersions] ON [ActiveStandardVersions].OrganisationStandardId = os.Id
+                            INNER JOIN Organisations o ON os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+                            INNER JOIN 
+                            (
+                                SELECT DISTINCT TRIM(IFateReferenceNumber) IFateReferenceNumber
+                                FROM Standards 
+                                WHERE Larscode != 0 
+                                AND (EffectiveTo is null OR EffectiveTo > GETDATE())
+                            )  [ActiveStandards] ON os.StandardReference = [ActiveStandards].IFateReferenceNumber
+                        WHERE
+                            o.[Status] = 'Live'
+                            AND o.EndPointAssessorOrganisationId <> 'EPA0000'
+                            AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
+                            AND os.[Status] = 'Live'
+                        GROUP BY 
+                            os.EndPointAssessorOrganisationId, EndPointAssessorName, EndPointAssessorUkprn";
+
+            var results = await _unitOfWork.Connection.QueryAsync<OrganisationsStandardsSummary>(
+                sql);
+
+            return results;
+        }
+
         public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
         {
             OrganisationStandard orgStandard;

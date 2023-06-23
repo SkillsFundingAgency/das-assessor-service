@@ -59,6 +59,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 var reader = comm.ExecuteReader();
                 reader.Close();
             }
+
+            LookupDataHelper.AddLookupData();
         }
 
         public void Execute(string sql)
