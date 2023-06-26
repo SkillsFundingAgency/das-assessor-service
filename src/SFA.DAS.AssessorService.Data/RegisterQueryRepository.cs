@@ -220,26 +220,26 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<IEnumerable<OrganisationsStandardsSummary>> GetAllOrganisationsWithActiveStandards()
         {
             var sql = @"SELECT
-                            os.EndPointAssessorOrganisationId, EndPointAssessorName, EndPointAssessorUkprn, 
+                            os.EndPointAssessorOrganisationId, EndPointAssessorName, EndPointAssessorUkprn,
                             MIN(os.DateStandardApprovedOnRegister) EarliestDateStandardApprovedOnRegister,
-                            MIN (os.EffectiveFrom) EarliestStandardEffectiveFromDate
+                            MIN(os.EffectiveFrom) EarliestStandardEffectiveFromDate
                         FROM
-                            OrganisationStandard os
-                            INNER JOIN 
-                            (
-                                SELECT OrganisationStandardId
-                                FROM OrganisationStandardVersion 
-                                WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) 
-                                AND [Status] = 'Live' 
-                            ) [ActiveStandardVersions] ON [ActiveStandardVersions].OrganisationStandardId = os.Id
-                            INNER JOIN Organisations o ON os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
-                            INNER JOIN 
-                            (
-                                SELECT DISTINCT TRIM(IFateReferenceNumber) IFateReferenceNumber
-                                FROM Standards 
-                                WHERE Larscode != 0 
-                                AND (EffectiveTo is null OR EffectiveTo > GETDATE())
-                            )  [ActiveStandards] ON os.StandardReference = [ActiveStandards].IFateReferenceNumber
+                        OrganisationStandard os
+                        INNER JOIN 
+                        (
+                            SELECT OrganisationStandardId, StandardUId 
+                            FROM OrganisationStandardVersion 
+                            WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) 
+                            AND [Status] = 'Live' 
+                        ) [ActiveStandardVersions] ON [ActiveStandardVersions].OrganisationStandardId = os.Id
+                        INNER JOIN Organisations o ON os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+                        INNER JOIN 
+                        (
+                            SELECT StandardUId
+                            FROM Standards 
+                            WHERE Larscode != 0 
+                            AND (EffectiveTo is null OR EffectiveTo > GETDATE())
+                        ) [ActiveStandards] ON [ActiveStandards].StandardUid = [ActiveStandardVersions].StandardUId
                         WHERE
                             o.[Status] = 'Live'
                             AND o.EndPointAssessorOrganisationId <> 'EPA0000'
