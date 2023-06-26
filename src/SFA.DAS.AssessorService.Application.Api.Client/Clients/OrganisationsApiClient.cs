@@ -14,6 +14,13 @@ using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
+    using AssessorService.Api.Types.Models;
+    using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+    using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+    using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
+    using SFA.DAS.AssessorService.Api.Types.Models.Register;
+    using SFA.DAS.AssessorService.Domain.Consts;
+
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
         public OrganisationsApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
@@ -250,6 +257,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for standard using [{searchstring.Trim()}]");
+            }
+        }
+
+        public async Task<EpaoStandardResponse> AddOrganisationStandard(OrganisationStandardAddRequest organisationStandardAddRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/organisationstandard"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardAddRequest, EpaoStandardResponse>(request,
+                    organisationStandardAddRequest);
             }
         }
 

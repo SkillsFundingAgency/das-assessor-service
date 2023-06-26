@@ -112,6 +112,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
                 .ReturnsAsync(new List<OrganisationStandardSummary>());
 
+            _mockContactsApiClient
+                .Setup(r => r.GetContactBySignInId(SignInId.ToString()))
+                .ReturnsAsync(new ContactResponse { Id = UserId, SignInId = SignInId });
+
             _mockApiClient
                 .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int?>()))
                 .ReturnsAsync(new List<ApplicationResponse>());

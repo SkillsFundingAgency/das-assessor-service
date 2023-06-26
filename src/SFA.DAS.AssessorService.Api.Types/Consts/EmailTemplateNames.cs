@@ -34,6 +34,11 @@
         public const string MergeConfirmationForSecondaryEpao = "MergeConfirmationForSecondaryEpao";
 
         /// <summary>
+        /// Requires tokens: { standardreference, standard, standardversioninfo}
+        /// </summary>
+        public const string EPAOStandardAdd = "EPAOStandardAdd";
+
+        /// <summary>
         /// Requires tokens: { contactname, standard, standardreference, version, servicename }
         /// </summary>
         public const string EPAOStandardConfimOptIn = "EPAOStandardConfimOptIn";

@@ -1,7 +1,7 @@
 ﻿@inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Domain.Paging
-@using SFA.DAS.AssessorService.Web.Controllers.Apply;
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
 @model ApprovedStandardsWithVersionsViewModel
 
 @{
@@ -113,6 +113,8 @@
         </div>
     }
 
+    <a asp-route="@StandardController.AddStandardSearchRouteGet" class="govuk-button">Add standard</a>
+    
     @if (Model.ApprovedStandardsWithVersions.HasPreviousPage || Model.ApprovedStandardsWithVersions.HasNextPage)
     {
         <div class="govuk-grid-row">
