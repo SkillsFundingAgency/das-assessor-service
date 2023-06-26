@@ -407,7 +407,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             private readonly SqlConnection _sqlConnection;
 
             private RegisterQueryRepository _repository;
-            private IEnumerable<OrganisationsStandardsSummary> _result;
+            private IEnumerable<AssessmentOrganisationListSummary> _result;
 
             public GetAllOrganisationsWithActiveStandardsTestsFixture()
             {
@@ -417,7 +417,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public async Task<GetAllOrganisationsWithActiveStandardsTestsFixture> GetAllOrganisationsWithActiveStandards()
             {
-                _result = await _repository.GetAllOrganisationsWithActiveStandards();
+                _result = await _repository.GetAssessmentOrganisationsList();
                 return this;
             }
 
@@ -428,18 +428,18 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public void VerifyNotContain(string endPointAssessorOrganisationId)
             {
-                _result.Should().NotContain(o => o.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+                _result.Should().NotContain(o => o.Id == endPointAssessorOrganisationId);
             }
 
             public void VerifyContain(string endPointAssessorOrganisationId)
             {
-                _result.Should().Contain(o => o.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+                _result.Should().Contain(o => o.Id == endPointAssessorOrganisationId);
             }
 
             public void VerifyContain(string endPointAssessorOrganisationId, DateTime? earlistStandardEffectiveFromDate, DateTime? earliestDateStandardApprovedOnRegister)
             {
-                _result.Should().Contain(o => o.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
-                    && o.EarliestStandardEffectiveFromDate == earlistStandardEffectiveFromDate
+                _result.Should().Contain(o => o.Id == endPointAssessorOrganisationId
+                    && o.EarliestEffectiveFromDate == earlistStandardEffectiveFromDate
                     && o.EarliestDateStandardApprovedOnRegister == earliestDateStandardApprovedOnRegister);
             }
 

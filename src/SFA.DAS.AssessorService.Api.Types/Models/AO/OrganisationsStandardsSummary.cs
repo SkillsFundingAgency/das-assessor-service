@@ -2,12 +2,12 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
-    public class OrganisationsStandardsSummary
+    public class AssessmentOrganisationListSummary
     {
-        public string EndPointAssessorOrganisationId { get; set; }
-        public string EndPointAssessorName { get; set; }
-        public string EndPointAssessorUkprn { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public int Ukprn { get; set; }
         public DateTime EarliestDateStandardApprovedOnRegister { get; set; }
-        public DateTime EarliestStandardEffectiveFromDate { get; set; }
+        public DateTime EarliestEffectiveFromDate { get; set; }
     }
 }
