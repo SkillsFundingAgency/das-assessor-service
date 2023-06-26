@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -28,6 +29,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         protected Mock<IApplicationService> _mockApplicationService;
         protected Mock<IWebConfiguration> _mockConfig;
 
+        protected Guid SignInId = Guid.NewGuid();
+        protected Guid UserId = Guid.NewGuid();
+        protected string EpaOrgId = "EPA0001";
+
         [SetUp]
         public void Arrange()
         {
@@ -40,9 +45,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockApplicationService = new Mock<IApplicationService>();
             _mockConfig = new Mock<IWebConfiguration>();
 
-        _mockHttpContextAccessor
+            _mockHttpContextAccessor
                 .Setup(r => r.HttpContext)
-                .Returns(SetupHttpContextSubAuthorityClaim());
+                .Returns(SetupHttpContextSubAuthorityClaim(SignInId, EpaOrgId));
 
             _mockApiClient
              .Setup(r => r.GetApplication(It.IsAny<Guid>()))
@@ -98,8 +103,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
              });
 
             _mockOrgApiClient
-            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
-            .ReturnsAsync(new List<OrganisationStandardSummary>());
+                .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
+                .ReturnsAsync(new List<OrganisationStandardSummary>());
+
+            _mockContactsApiClient
+                .Setup(r => r.GetContactBySignInId(SignInId.ToString()))
+                .ReturnsAsync(new ContactResponse { Id = UserId, SignInId = SignInId });
 
             _mockApiClient
                 .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int?>()))
@@ -116,12 +125,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             };
         }
 
-
-        private HttpContext SetupHttpContextSubAuthorityClaim()
+        private static HttpContext SetupHttpContextSubAuthorityClaim(Guid signInId, string epaOrgId)
         {
             var fakeClaims = new List<Claim>()
             {
-                new Claim("sub", "")
+                new Claim("sub", signInId.ToString()),
+                new Claim("http://schemas.portal.com/epaoid", epaOrgId)
             };
 
             var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");
