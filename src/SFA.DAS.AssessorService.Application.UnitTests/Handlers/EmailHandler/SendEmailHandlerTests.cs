@@ -11,7 +11,7 @@ using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
-    public class WhenEmailIsSent
+    public class SendEmailHandlerTests
     {
         private Mock<INotificationsApi> _notificationApiMock;
         private SendEmailHandler _sendEmailHandler;

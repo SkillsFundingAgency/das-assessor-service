@@ -18,7 +18,7 @@ using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {
-    public class WhenSendOrganisationDetailsAmendedEmail
+    public class SendOrganisationDetailsAmendedEmailHandlerTests
     {
         private SendOrganisationDetailsAmendedEmailHandler _sut;
         private SendOrganisationDetailsAmendedEmailRequest _request;
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 
         private List<string> _emailRequestsSent = null;
 
-        public WhenSendOrganisationDetailsAmendedEmail()
+        public SendOrganisationDetailsAmendedEmailHandlerTests()
         {
             ChangeOrganisationDetailsContactsPrivilege = new ContactsPrivilege
             {

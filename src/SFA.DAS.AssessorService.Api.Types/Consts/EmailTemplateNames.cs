@@ -37,5 +37,10 @@
         /// Requires tokens: { secondaryEPAO, contactName, effectiveToDate }
         /// </summary>
         public const string MergeConfirmationForSecondaryEpao = "MergeConfirmationForSecondaryEpao";
+
+        /// <summary>
+        /// Requires tokens: { standardreference, standard, standardversioninfo}
+        /// </summary>
+        public const string EPAOStandardAdd = "EPAOStandardAdd";
     }
 }
