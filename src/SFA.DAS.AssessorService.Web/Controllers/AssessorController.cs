@@ -41,12 +41,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return await GetUserContact(signinId);
         }
 
-        protected string GetEpaOrgIdFromClaim()
-        {
-            var epaoid = _httpContextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
-            return epaoid;
-        }
-
         private async Task<ContactResponse> GetUserContact(string signinId)
         {
             return await _contactsApiClient.GetContactBySignInId(signinId);
