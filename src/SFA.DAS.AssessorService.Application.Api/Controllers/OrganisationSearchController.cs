@@ -49,29 +49,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult>(), 0, 1, 1);
             }
 
+            var results = new List<OrganisationSearchResult>();
             if (IsValidEpaOrganisationId(searchTerm))
             {
                 _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
-                var orgByEpaoSearchResult = await OrganisationSearchByEpao(searchTerm);
-                var orgByEpaoSearchResultPaged = orgByEpaoSearchResult.Skip(pageSize * (pageIndex - 1)).Take(pageSize);
-                return new PaginatedList<OrganisationSearchResult>(orgByEpaoSearchResultPaged.ToList(), orgByEpaoSearchResult.Count(), pageIndex, pageSize);
+                var resultFromEpaOrganisationId = await OrganisationSearchByEpao(searchTerm);
+                if (resultFromEpaOrganisationId != null) results.AddRange(resultFromEpaOrganisationId);
             }
-
-            // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
-            var results = new List<OrganisationSearchResult>();
-            if (IsValidUkprn(searchTerm, out var ukprn))
+            else
             {
-                _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
-                var resultFromUkprn = await OrganisationSearchByUkprn(ukprn);
-                if (resultFromUkprn != null) results.AddRange(resultFromUkprn);
-            }
+                // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
+                if (IsValidUkprn(searchTerm, out var ukprn))
+                {
+                    _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
+                    var resultFromUkprn = await OrganisationSearchByUkprn(ukprn);
+                    if (resultFromUkprn != null) results.AddRange(resultFromUkprn);
+                }
 
-            _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
-            var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
-            if (resultFromName != null) results.AddRange(resultFromName);
+                _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
+                var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
+                if (resultFromName != null) results.AddRange(resultFromName);
+            }
 
             var organisationSearchResultList = Dedupe(results);
-            organisationSearchResultList = organisationSearchResultList.OrderByDescending(x => x.OrganisationIsLive);
+            organisationSearchResultList = organisationSearchResultList
+                .Where(p => p.OrganisationIsLive == true)
+                .OrderByDescending(x => x.OrganisationIsLive);
 
             var organisationSearchResultListPaged = organisationSearchResultList.Skip(pageSize * (pageIndex - 1)).Take(pageSize);
             return new PaginatedList<OrganisationSearchResult>(organisationSearchResultListPaged.ToList(), organisationSearchResultList.Count(), pageIndex, pageSize);
