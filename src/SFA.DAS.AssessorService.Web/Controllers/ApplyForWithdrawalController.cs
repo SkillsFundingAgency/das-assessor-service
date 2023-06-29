@@ -44,12 +44,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var userId = await GetUserId();
-            var applications = await _applicationApiClient.GetWithdrawalApplications(userId);
-
-            return View(applications?.Count() == 0);
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [HttpGet("/your-withdrawal-notifications")]
