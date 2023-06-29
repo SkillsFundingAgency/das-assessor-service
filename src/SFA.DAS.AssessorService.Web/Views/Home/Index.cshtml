@@ -1,14 +1,17 @@
-﻿@model HomeIndexViewModel
+﻿@using SFA.DAS.AssessorService.Web.Helpers;
+@model HomeIndexViewModel
 @{
     ViewData["Title"] = "Apprenticeship assessment service";
     ViewBag.ZenDeskLabel = "ass-start-page";
     Layout = "_Layout";
+    Model.Banner = new Banner("~/Views/Banners/_NoAssessBannerPartial.cshtml");
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            <partial name=@Model.Banner.ViewPath />
             <h1 class="govuk-heading-xl">Apprenticeship assessment service</h1>
             <p class="govuk-body">Use this service to apply to become an end-point assessor. If your application is approved, you can use this service to:</p>
 
