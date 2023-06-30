@@ -6,7 +6,6 @@
     ViewData["Title"] = "Home";
     ViewBag.ZenDeskLabel = "ass-dashboard";    
     Layout = "_DashboardLayout";    
-    Model.Banner = new Banner("~/Views/Banners/_NoAssessBannerPartial.cshtml");
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -17,7 +16,7 @@
         </h1>
 
         <div class="govuk-grid-column-full">
-            <partial name="@Model.Banner.ViewPath" />
+            <partial name="@Model.BannerViewPath" />
             <div class="dashboard-boxes">
                 <div class="dashboard-box dashboard-box--green">
                     <div class="dashboard-box__content">
