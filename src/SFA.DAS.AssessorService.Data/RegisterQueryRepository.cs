@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Data
             return assessmentOrganisationSummaries;
         }
 
-        public async Task<IEnumerable<AssessmentOrganisationListSummary>> GetAssessmentOrganisationsList()
+        public async Task<IEnumerable<AssessmentOrganisationListSummary>> GetAssessmentOrganisationsList(int? ukprn)
         {
             var sql = @"SELECT
                             os.EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as Ukprn,
@@ -128,13 +128,15 @@ namespace SFA.DAS.AssessorService.Data
                         WHERE
                             o.[Status] = 'Live'
                             AND o.EndPointAssessorOrganisationId <> 'EPA0000'
+                            AND (o.EndPointAssessorUkprn = @ukprn OR @ukprn IS NULL)
                             AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
                             AND os.[Status] = 'Live'
                         GROUP BY 
                             os.EndPointAssessorOrganisationId, EndPointAssessorName, EndPointAssessorUkprn";
 
             var results = await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationListSummary>(
-                sql);
+                sql,
+                param: new { ukprn });
 
             return results;
         }

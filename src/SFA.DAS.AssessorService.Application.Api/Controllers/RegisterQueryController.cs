@@ -72,6 +72,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetAssessmentOrganisationsListRequest()));
         }
 
+        [HttpGet("assessment-organisations/list/{ukprn}", Name = "GetAssessmentOrganisationsListByUkprn")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrganisationSummary))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAssessmentOrganisationsListByUkprn(int ukprn)
+        {
+            _logger.LogInformation("Get Assessment Organisations List");
+            var results = await _mediator.Send(new GetAssessmentOrganisationsListRequest(ukprn));
+            return Ok(results.FirstOrDefault());
+        }
 
         [HttpGet("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaOrganisation))]

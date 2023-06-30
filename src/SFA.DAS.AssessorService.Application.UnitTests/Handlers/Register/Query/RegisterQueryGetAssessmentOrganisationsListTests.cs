@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                     _assessmentOrganisationSummary2
                 };
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsList())
+            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsList(null))
                 .Returns(Task.FromResult(_expectedOrganisationSummaries.AsEnumerable()));
 
             _sut = new GetAssessmentOrganisationsListHandler(RegisterQueryRepository.Object, Logger.Object);
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void Handle_GetAssessmentOrganisationsListIsCalled_WhenHandlerIsInvoked()
         {
             _sut.Handle(new GetAssessmentOrganisationsListRequest(), new CancellationToken()).Wait();
-            RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisationsList());
+            RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisationsList(null));
         }
 
         [Test]

@@ -417,7 +417,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public async Task<GetAllOrganisationsWithActiveStandardsTestsFixture> GetAllOrganisationsWithActiveStandards()
             {
-                _result = await _repository.GetAssessmentOrganisationsList();
+                _result = await _repository.GetAssessmentOrganisationsList(null);
                 return this;
             }
 
