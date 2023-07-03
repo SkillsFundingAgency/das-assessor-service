@@ -49,7 +49,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         string CheckUkprnForOrganisation(long? ukprn);
         string CheckContactCountForOrganisation(int? numberOfContacts);
-        string CheckStandardCountForOrganisation(int? numberOfStandards);
 
         string CheckCompanyNumberIsValid(string companyNumber);
         string CheckIfOrganisationCompanyNumberExists(string organisationIdToExclude, string companyNumber);
