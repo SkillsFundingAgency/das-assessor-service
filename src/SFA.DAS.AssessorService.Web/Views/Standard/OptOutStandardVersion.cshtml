@@ -1,24 +1,31 @@
-﻿@using SFA.DAS.AssessorService.Web.ViewModels
+﻿@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels
 @using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardOptInViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Standard.OptOutStandardVersionViewModel
 
 @{
-    ViewBag.Title = "Confirm you want to opt in to standard version";
+    ViewBag.Title = "Confirm you want to opt out of standard version";
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("ConfirmStandard", "Standard", new {id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Return to standard details</a>
+<a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@Model.StandardReference" asp-route-version="@Model.Version" class="govuk-back-link">Return to standard details</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
-                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to opt in:</span>
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to opt out:</span>
                 @Model.StandardTitle
             </h1>
 
             <p class="govuk-body-l">Reference: @Model.StandardReference</p>
+
+            <div class="govuk-inset-text" wfd-id="10">
+                Opting out of this version means you won't be able to record outcomes for it. You can still record outcomes for other standard versions.
+                <br><br>
+                If you opt out of all standard versions, you will no longer be able to record outcomes for that standard.
+            </div>
 
             <table class="govuk-table govuk-!-margin-bottom-7">
                 <caption class="govuk-table__caption govuk-table__caption--m"><p></p></caption>
@@ -46,11 +53,12 @@
                     </tr>
                 </tbody>
             </table>
-            <form asp-action="OptInPost" asp-controller="Standard" 
-                  asp-route-id="@Model.Id" 
-                  asp-route-standardReference="@Model.StandardReference" 
-                  asp-route-version="@Model.Version" method="post">
-                <button class="govuk-button" type="submit">Confirm and opt in</button>
+            <form asp-route="@StandardController.OptOutStandardVersionRoutePost" method="post">
+                <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
+                <input asp-for="Version" value="@Model.Version" type="hidden" />
+                <input asp-for="EffectiveFrom" value="@Model.EffectiveFrom" type="hidden" />
+                <input asp-for="EffectiveTo" value="@Model.EffectiveTo" type="hidden" />
+                <button class="govuk-button" type="submit">Confirm and opt out</button>
             </form>
         </div>
     </div>
