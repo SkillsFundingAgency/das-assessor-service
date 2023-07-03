@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Validation
                     result = _validationService.IsNotEmpty(request.Value);
                     break;
                 case "ukprn":
-                    result = _validationService.UkprnIsValid(request.Value);
+                    result = _validationService.UkprnIsNullOrEmptyOrValid(request.Value);
                     break;
                 case "uln":
                     result = _validationService.UlnIsValid(request.Value);
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Validation
                     result = _validationService.DateIsTodayOrInPast(request.Value);
                     break;
                 case "organisationid":
-                    result = _validationService.OrganisationIdIsValid(request.Value);
+                    result = _validationService.OrganisationIdIsNullOrEmptyOrValid(request.Value);
                     break;
                 case "companynumber":
                     result = _validationService.CompanyNumberIsValid(request.Value);

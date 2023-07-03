@@ -5,7 +5,9 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
@@ -351,18 +353,37 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string searchString)
         {
-            var sql =
-                "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
-                    + "FROM [Organisations] o "
-                    + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
-                    + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
-                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @searchString "
-                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @searchString "
-                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @searchString "
-                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') like @searchString "
-                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString ";
+            var sql = @"
+                SELECT 
+                    o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, 
+                    o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email
+                FROM [Organisations] o
+                    LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId
+                    LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
+                WHERE 
+                    REPLACE(o.EndPointAssessorName, ' ','') like @searchString
+                    OR REPLACE(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @searchString
+                    OR REPLACE(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @searchString
+                    OR REPLACE(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') like @searchString
+                    OR REPLACE(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString";
 
             return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
+        }
+
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsCharityNumbersOrCompanyNumbers(params string[] numbers)
+        {
+            var sql = @"
+                SELECT 
+                    o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, 
+                    o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email
+                FROM [Organisations] o
+                    LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId
+                    LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
+                WHERE 
+                    REPLACE(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') IN @Numbers
+                    OR REPLACE(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') IN @Numbers";
+
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { Numbers = numbers });
         }
 
         public async Task<EpaContact> GetContactByContactId(Guid contactId)

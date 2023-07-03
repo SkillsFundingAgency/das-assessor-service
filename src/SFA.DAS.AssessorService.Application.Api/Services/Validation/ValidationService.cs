@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using System;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -80,17 +81,38 @@ namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
             return !string.IsNullOrEmpty(stringToCheck?.Trim());
         }
 
-        public bool OrganisationIdIsValid(string organisationIdToCheck)
+        /// <summary>Organisations check if the identifier is null or empty or valid.</summary>
+        /// <param name="organisationIdToCheck">The organisation identifier to check.</param>
+        public bool OrganisationIdIsNullOrEmptyOrValid(string organisationIdToCheck)
         {
             if (string.IsNullOrEmpty(organisationIdToCheck?.Trim())) return true;
-            var regex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
-                return regex.Match(organisationIdToCheck).Success;
+
+            return OrganisationIdIsValid(organisationIdToCheck);
         }
 
-        public bool UkprnIsValid(string ukprnToCheck)
+        public bool OrganisationIdIsValid(string organisationIdToCheck)
+        {
+            if(organisationIdToCheck == null) return false;
+
+            var regex = new Regex(@"^[eE][pP][aA][0-9]{4,9}$");
+            return regex.Match(organisationIdToCheck).Success;
+        }
+
+        /// <summary>Ukprn check if it is null or empty or valid.</summary>
+        /// <param name="ukprnToCheck">The ukprn to check.</param>
+        public bool UkprnIsNullOrEmptyOrValid(string ukprnToCheck)
         {
             if (string.IsNullOrEmpty(ukprnToCheck?.Trim())) return true;
-            if (!int.TryParse(ukprnToCheck, out int ukprn))
+
+            return UkprnIsValid(ukprnToCheck, out _);
+        }
+
+        /// <summary>Check the ukprn is valid.</summary>
+        /// <param name="ukprnToCheck">The ukprn to check.</param>
+        /// <param name="ukprn">The ukprn.</param>
+        public bool UkprnIsValid(string ukprnToCheck, out int ukprn)
+        {
+            if (!int.TryParse(ukprnToCheck, out ukprn))
                 return false;
 
             return ukprn >= 10000000 && ukprn <= 99999999;

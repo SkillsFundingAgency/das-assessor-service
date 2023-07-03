@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
+                services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
@@ -247,7 +247,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
                     .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
-                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
+                config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>();
                 // End of SOAP Services
 
                 config.Populate(services);

@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models.AO
+﻿using System.Collections.Generic;
+
+namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class AssessmentOrganisationSummary
     {
@@ -11,5 +13,18 @@
         public string OrganisationType { get; set; }
         public string Status { get; set; }
         public string Email { get; set; }
+
+        public class EqualityComparer : IEqualityComparer<AssessmentOrganisationSummary>
+        {
+            public bool Equals(AssessmentOrganisationSummary x, AssessmentOrganisationSummary y)
+            {
+                return y != null && (x != null && x.Id == y.Id);
+            }
+
+            public int GetHashCode(AssessmentOrganisationSummary obj)
+            {
+                return obj.Id.GetHashCode();
+            }
+        }
     }
 }

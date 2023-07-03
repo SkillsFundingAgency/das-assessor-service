@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
     /// Charity Commission WSDL is located at: https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx?WSDL
     /// There is a Web-Friendly version located at: http://beta.charitycommission.gov.uk/charity-search/
     /// </summary>
-    public class CharityCommissionApiClient
+    public class CharityCommissionApiClient : ICharityCommissionApiClient
     {
         private readonly ISearchCharitiesV1SoapClient _client;
         private readonly ILogger<CharityCommissionApiClient> _logger;
