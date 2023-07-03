@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class LookupDataHelper
     {
         private readonly static DatabaseService _databaseService = new DatabaseService();
-
+        
         public async static void AddLookupData()
         {
             var content = await ReadFileAsync("LookupData\\OrganisationTypeInsertOrUpdate.sql");
@@ -28,3 +28,4 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
     }
 }
+

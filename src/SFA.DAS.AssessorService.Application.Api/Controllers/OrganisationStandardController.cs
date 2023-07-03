@@ -74,22 +74,67 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("organisationstandardversion", Name = "CreateOrganisationStandardVersion")]
+        /// <summary>
+        /// Opt in to of the organisation standard version given in the request
+        /// </summary>
+        /// <param name="request">The request containing details of the standard version and organisation</param>
+        /// <returns></returns>
+        [HttpPost("organisationstandardversion/opt-in", Name = "OptInOrganisationStandardVersion")]
         [ValidateBadRequest]
         [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateOrganisationStandardVersion(
+        public async Task<IActionResult> OptInOrganisationStandardVersion(
             [FromBody] OrganisationStandardVersionOptInRequest request)
         {
-            _logger.LogInformation("Received Create Organisation Standard Version Request");
+            try
+            {
+                _logger.LogInformation("Received Opt in Organisation Standard Version Request");
 
-            var version = await _mediator.Send(request);
+                var version = await _mediator.Send(request);
 
-            return CreatedAtRoute("CreateOrganisationStandardVersion",
-                new {id = version.StandardUId},
-                version);
+                return CreatedAtRoute("OptInOrganisationStandardVersion",
+                    new { id = version.StandardUId },
+                    version);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new EpaoStandardVersionResponse(ex.Message));
+            }
         }
 
+        /// <summary>
+        /// Opt out of the organisation standard version given in the request
+        /// </summary>
+        /// <param name="request">The request containing details of the standard version and organisation</param>
+        /// <returns></returns>
+        [HttpPost("organisationstandardversion/opt-out", Name = "OptOutOrganisationStandardVersion")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> OptOutOrganisationStandardVersion(
+            [FromBody] OrganisationStandardVersionOptOutRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Received Opt out Organisation Standard Version Request");
+
+                var version = await _mediator.Send(request);
+
+                return Ok(new EpaoStandardVersionResponse(version.Version));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new EpaoStandardVersionResponse(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Update the organisation standard version given in the request
+        /// </summary>
+        /// <param name="request">The request containing details of the standard version and organisation</param>
+        /// <returns></returns>
         [HttpPut("organisationstandardversion/update")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(EpaoStandardVersionResponse))]

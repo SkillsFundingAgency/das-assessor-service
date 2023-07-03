@@ -5,7 +5,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
@@ -456,28 +455,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
-            string standardReference, string version, string standardUId, bool optInFollowingWithdrawal, string comments)
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(string endPointAssessorOrganisationId,
+            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
         {
-            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            var optInRequest = new OrganisationStandardVersionOptInRequest
             {
-                ApplicationId = applicationId,
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                 StandardReference = standardReference,
                 Version = version,
-                StandardUId = standardUId,
-                EffectiveFrom = DateTime.Today,
-                EffectiveTo = null,
-                DateVersionApproved = null,
-                Comments = comments,
-                Status = OrganisationStatus.Live,
-                SubmittingContactId = contactId,
-                OptInFollowingWithdrawal = optInFollowingWithdrawal
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo,
+                ContactId = contactId,
+                OptInRequestedAt = DateTime.Now
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-in"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, optInRequest);
+            }
+        }
+
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptOut(string endPointAssessorOrganisationId,
+            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
+        {
+            var optOutRequest = new OrganisationStandardVersionOptOutRequest
+            {
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                StandardReference = standardReference,
+                Version = version,
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo,
+                ContactId = contactId,
+                OptOutRequestedAt = DateTime.Now
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-out"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
             }
         }
     }

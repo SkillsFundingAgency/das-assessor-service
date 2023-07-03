@@ -857,22 +857,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
-        [HttpGet("/application/{id}/opt-in/confirmation")]
-        [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> OptInConfirmation(Guid id)
-        {
-            var application = await _applicationApiClient.GetApplication(id);
-
-            var model = new OptInConfirmationViewModel()
-            {
-                StandardTitle = application?.ApplyData?.Apply?.StandardName,
-                Version = application?.ApplyData?.Apply?.Versions.FirstOrDefault(),
-                FeedbackUrl = _config.FeedbackUrl,
-            };
-
-            return View("~/Views/Application/OptInConfirmation.cshtml", model);
-        }
-
         private async Task<Page> GetDataFedOptions(Page page)
         {
             if (page != null)

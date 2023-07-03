@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -8,6 +9,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -50,28 +52,28 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .Returns(SetupHttpContextSubAuthorityClaim(SignInId, EpaOrgId));
 
             _mockApiClient
-             .Setup(r => r.GetApplication(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationResponse()
-             {
-                 ApplicationStatus = ApplicationStatus.InProgress,
-                 ApplyData = new ApplyData()
-                 {
-                     Sequences = new List<ApplySequence>()
-                     {
-                         new ApplySequence()
-                         {
-                             IsActive = true,
-                             SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,
-                             Status = ApplicationSequenceStatus.Draft
-                         }
+                .Setup(r => r.GetApplication(It.IsAny<Guid>()))
+                .ReturnsAsync(new ApplicationResponse()
+                {
+                    ApplicationStatus = ApplicationStatus.InProgress,
+                    ApplyData = new ApplyData()
+                    {
+                        Sequences = new List<ApplySequence>()
+                        {
+                            new ApplySequence()
+                            {
+                                IsActive = true,
+                                SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,
+                                Status = ApplicationSequenceStatus.Draft
+                            }
+                        }
                     }
-                 }
-             });
+                });
 
             _mockApiClient
                 .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
                 .ReturnsAsync(new List<ApplicationResponse>()
-                { 
+                {
                     new ApplicationResponse { StandardCode = 59, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
                     new ApplicationResponse { StandardCode = 131, StandardApplicationType = StandardApplicationTypes.StandardWithdrawal },
                     new ApplicationResponse { StandardCode = 354, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
@@ -82,25 +84,29 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new List<ApplicationResponse>());
 
             _mockQnaApiClient
-             .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationData()
-             {
-                 OrganisationReferenceId = "12345"
-             });
+                .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
+                .ReturnsAsync(new ApplicationData()
+                {
+                    OrganisationReferenceId = "12345"
+                });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
+                .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
+                .ReturnsAsync(new EpaOrganisation()
+                {
+                    OrganisationId = "12345"
+                });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
+                .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
+                .ReturnsAsync(new EpaOrganisation()
+                {
+                    OrganisationId = "12345"
+                });
+
+            _mockContactsApiClient
+                .Setup(r => r.GetContactBySignInId(SignInId.ToString()))
+                .ReturnsAsync(new ContactResponse { Id = UserId, SignInId = SignInId });
 
             _mockOrgApiClient
                 .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
@@ -118,12 +124,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .Setup(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(new List<ApplicationResponse>());
 
+            _mockConfig
+                .Setup(r => r.FeedbackUrl)
+                .Returns("http://feedback-url.com");
+
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
-               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)
+                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, 
+                _mockHttpContextAccessor.Object, _mockConfig.Object)
             {
                 TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
             };
         }
+
 
         private static HttpContext SetupHttpContextSubAuthorityClaim(Guid signInId, string epaOrgId)
         {
