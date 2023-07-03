@@ -12,7 +12,7 @@
     <h1 class="govuk-heading-xl">@viewTitle</h1>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form asp-controller="Organisation" asp-action="ChangeAddress">
+            <form asp-controller="Organisation" asp-action="ChangeAddress" class="app-prevent-button-disabling">
                 @Html.HiddenFor(m => m.AddressLine1)
                 @Html.HiddenFor(m => m.AddressLine2)
                 @Html.HiddenFor(m => m.AddressLine3)
