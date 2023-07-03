@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         {
             var sql =
                 "set identity_insert [OrganisationStandard] ON; INSERT INTO [dbo].[OrganisationStandard] (Id, [EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister]," +
-                "[Comments],[Status]) VALUES (@id, @endPointAssessorOrganisationId, @standardCode, @effectiveFrom, @effectiveTo, @dateStandardApprovedOnRegister, @comments, @status); set identity_insert [OrganisationStandard] OFF; ";
+                "[Comments],[Status],[StandardReference]) VALUES (@id, @endPointAssessorOrganisationId, @standardCode, @effectiveFrom, @effectiveTo, @dateStandardApprovedOnRegister, @comments, @status, @standardReference); set identity_insert [OrganisationStandard] OFF; ";
         
             DatabaseService.Execute(sql, organisationStandard);
         }
@@ -44,19 +44,18 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             DatabaseService.Execute(sql);
         }
 
-        public static void DeleteRecordByOrganisationIdStandardCode(string organisationId, int standardCode)
-        {
-            var idToDelete = SqlStringService.ConvertStringToSqlValueString(organisationId);
-            var sql = $@"DELETE from Organisations where [EndPointAssessorOrganisationId] = {idToDelete} and StandardCode = {standardCode}";
-            DatabaseService.Execute(sql);
-        }
-
         public static void DeleteRecords(List<int> ids)
         {
             foreach (var id in ids)
             {
                 DeleteRecord(id);
             }
+        }
+
+        public static void DeleteAllRecords()
+        {
+            var sql = $@"DELETE from OrganisationStandard";
+            DatabaseService.Execute(sql);
         }
     }
 }

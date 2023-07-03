@@ -183,7 +183,6 @@
     <Build Include="Tables\MergeOrganisationStandardVersion.sql" />
     <Build Include="Tables\MergeApply.sql" />
     <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
-    <None Include="PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql" />
     <Build Include="StoredProcedures\StaffReports_List_Approved_Standards.sql" />
     <Build Include="Tables\OfqualOrganisation.sql" />
     <Build Include="Tables\StagingOfqualOrganisation.sql" />

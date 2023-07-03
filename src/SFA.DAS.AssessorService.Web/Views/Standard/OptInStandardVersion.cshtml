@@ -1,0 +1,59 @@
+﻿@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AssessorService.Web.ViewModels.Standard.OptInStandardVersionViewModel
+
+@{
+    ViewBag.Title = "Confirm you want to opt in to standard version";
+    Layout = "_Layout";
+}
+
+<a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@Model.StandardReference" asp-route-version="@Model.Version" class="govuk-back-link">Return to standard details</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to opt in:</span>
+                @Model.StandardTitle
+            </h1>
+
+            <p class="govuk-body-l">Reference: @Model.StandardReference</p>
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <caption class="govuk-table__caption govuk-table__caption--m"><p></p></caption>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective from</th>
+                        <td class="govuk-table__cell">@Model.EffectiveFrom.ToSfaShortDateString()</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective to</th>
+                        <td class="govuk-table__cell">
+                            @if (@Model.EffectiveTo == null)
+                            {
+                                @Html.Raw("Expiry date not set")
+                            }
+                            else
+                            {
+                                @Model.EffectiveTo.ToSfaShortDateString()
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Version</th>
+                        <td class="govuk-table__cell">@Model.Version</td>
+                    </tr>
+                </tbody>
+            </table>
+            <form asp-route="@StandardController.OptInStandardVersionRoutePost" method="post">
+                <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
+                <input asp-for="Version" value="@Model.Version" type="hidden" />
+                <input asp-for="EffectiveFrom" value="@Model.EffectiveFrom" type="hidden" />
+                <input asp-for="EffectiveTo" value="@Model.EffectiveTo" type="hidden" />
+                <button class="govuk-button" type="submit">Confirm and opt in</button>
+            </form>
+        </div>
+    </div>
+</main>

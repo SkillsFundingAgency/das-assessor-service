@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             var standardQueryController =
                 new StandardQueryController(mediator.Object, controllerLoggerMock.Object);
 
-            _result = standardQueryController.GetEpaoRegisteredStandards("EPA0008", 1).Result;
+            _result = standardQueryController.GetEpaoRegisteredStandards("EPA0008").Result;
         }
 
 

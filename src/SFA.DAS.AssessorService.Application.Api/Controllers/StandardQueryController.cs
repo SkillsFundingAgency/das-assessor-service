@@ -30,13 +30,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get the standards which the given organisation is assessing.
+        /// </summary>
+        /// <param name="epaoId">The organisation for which standards are returned</param>
+        /// <param name="requireAtLeastOneVersion">When true the organisation must be assessing atleast one version of the standard</param>
+        /// <param name="pageIndex">The index of the page of results to return</param>
+        /// <param name="pageSize">The number of results to return in a single page</param>
+        /// <returns></returns>
         [HttpGet("{epaoId}", Name = "GetEpaoRegisteredStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = 1, int? pageSize = 10)
+        public async Task<IActionResult> GetEpaoRegisteredStandards(string epaoId, bool? requireAtLeastOneVersion = true, int? pageIndex = 1, int? pageSize = 10)
         {
             _logger.LogInformation($"Received request to retrieve Standards for Organisation {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoRegisteredStandardsRequest(epaoId, pageIndex.Value, pageSize.Value)));
+            return Ok(await _mediator.Send(new GetEpaoRegisteredStandardsRequest(epaoId, requireAtLeastOneVersion.Value, pageIndex.Value, pageSize.Value)));
         }
 
         [HttpGet("pipelines/{epaoId}", Name = "GetEpaoPipelineStandards")]
