@@ -450,14 +450,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
-        public string CheckStandardCountForOrganisation(int? numberOfStandards)
-        {
-            if (numberOfStandards == null || numberOfStandards == 0)
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardsAreNotPresent);
-
-            return string.Empty;
-        }
-
         public string CheckIfOrganisationCompanyNumberExists(string organisationIdToExclude, string companyNumber)
         {
             Task<bool> companyAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCompanyNumber(organisationIdToExclude, companyNumber);
@@ -714,14 +706,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             else
             {
                 var contacts = _registerQueryRepository.GetAssessmentOrganisationContacts(request.OrganisationId).Result;
-                var standards = _standardService.GetEpaoRegisteredStandards(request.OrganisationId).Result;
                 
                 RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
                 RunValidationCheckAndAppendAnyError("Address", CheckAddressDetailsForOrganisation(request.Address1, request.Address2, request.Address3, request.Address4), validationResult, ValidationStatusCode.BadRequest);
                 RunValidationCheckAndAppendAnyError("Postcode", CheckPostcodeIsPresentForOrganisation(request.Postcode), validationResult, ValidationStatusCode.BadRequest);
                 RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnForOrganisation(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
-                RunValidationCheckAndAppendAnyError("ContactsCount", CheckContactCountForOrganisation(contacts?.Count()), validationResult, ValidationStatusCode.BadRequest);
-                RunValidationCheckAndAppendAnyError("StandardsCount", CheckStandardCountForOrganisation(standards?.Count()), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("ContactsCount", CheckContactCountForOrganisation(contacts?.Count()), validationResult, ValidationStatusCode.BadRequest);                
             }
 
             return validationResult;
