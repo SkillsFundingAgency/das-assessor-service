@@ -3,5 +3,6 @@
     public class HomeIndexViewModel
     {
         public bool UseGovSignIn { get; set; }
+        public string BannerViewPath => Constants.Banners.NoLongerAssessBannerViewPath;
     }
 }
