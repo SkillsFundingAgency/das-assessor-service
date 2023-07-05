@@ -20,6 +20,5 @@
     under the PreDeploymentScripts folder for future reference.
 */
 
--- Drop invalid Index (remove this after deployment)
-DROP INDEX IF EXISTS [IXU_OfqualOrganisation_RecognitionNumber] ON [dbo].[OfqualStandard]
+
 
