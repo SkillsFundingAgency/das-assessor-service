@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +21,6 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -81,11 +81,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult AddStandardSearch(AddStandardSearchViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.StandardToFind });
             }
-            
+
             return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.StandardToFind });
         }
 
@@ -159,15 +159,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm", Name = AddStandardConfirmRouteGet)]
         public async Task<IActionResult> AddStandardConfirm(string search, string referenceNumber, [FromQuery] List<string> versions)
         {
-            if(string.IsNullOrEmpty(search))
+            if (string.IsNullOrEmpty(search))
                 throw new ArgumentException("Value cannot be null or empty", nameof(search));
 
-            if(string.IsNullOrEmpty(referenceNumber))
+            if (string.IsNullOrEmpty(referenceNumber))
                 throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
             if (!(versions?.Any() ?? false))
                 throw new ArgumentException("Value must contain elements", nameof(versions));
-            
+
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var model = new AddStandardConfirmViewModel
             {
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             await _orgApiClient.AddOrganisationStandard(request);
 
-            return RedirectToRoute(AddStandardConfirmationRouteGet, new {referenceNumber = model.StandardReference});
+            return RedirectToRoute(AddStandardConfirmationRouteGet, new { referenceNumber = model.StandardReference });
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
@@ -235,7 +235,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 SelectedStandard = allVersions.FirstOrDefault(),
                 AllVersions = allVersions.ToList(),
-                ApprovedVersions = approvedVersions.ToList(),
+                ApprovedVersions = approvedVersions.ToList()
             };
 
             return View(model);
@@ -507,6 +507,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("standard/opt-out/{referenceNumber}/{version}", Name = OptOutStandardVersionRouteGet)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> OptOutStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -527,7 +528,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 StandardTitle = standardVersion.Title,
                 Version = standardVersion.Version,
                 EffectiveFrom = standardVersion.VersionEarliestStartDate ?? DateTime.Today,
-                EffectiveTo = DateTime.Today
+                EffectiveTo = DateTime.Today,
             };
 
             return View(model);
@@ -535,6 +536,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpPost("standard/opt-out", Name = OptOutStandardVersionRoutePost)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
         {
             if (model == null)
@@ -546,10 +548,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (string.IsNullOrEmpty(model.Version))
                 throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
+            if (!ModelState.IsValid)
+            {
+                return RedirectToRoute(OptOutStandardVersionRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
+            }
+
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
 
             var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
+
             if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) == null)
             {
                 throw new NotFoundException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");
