@@ -88,7 +88,7 @@ BEGIN
     FROM (
     SELECT *
     ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IFateReferenceNumber] ORDER BY [OperationalStartDate]) Earliest
-    ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IFateReferenceNumber] ORDER BY [OperationalStartDate] DESC) Latest
+    ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IFateReferenceNumber] ORDER BY [OperationalStartDate] DESC,CASE WHEN [OperationalEndDate] IS NULL THEN 0 ELSE 1 END,[OperationalEndDate] DESC) Latest
     FROM [dbo].[StagingOfqualStandard]
     ) ab1
     GROUP BY [RecognitionNumber], [IFateReferenceNumber]
