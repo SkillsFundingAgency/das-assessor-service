@@ -162,7 +162,7 @@ BEGIN
     OFQUAL_Qualifications
     AS
     (
-    SELECT org.[Id] [OrganisationId], org.[EndPointAssessorOrganisationId], sos.[RecognitionNumber], [IFateReferenceNumber], [OperationalStartDate] 
+    SELECT org.[Id] [OrganisationId], org.[EndPointAssessorOrganisationId], sos.[RecognitionNumber], [IFateReferenceNumber], [OperationalStartDate], [OperationalEndDate]
     FROM [dbo].[OfqualStandard] sos
     JOIN [dbo].[Organisations] org on org.[RecognitionNumber] = sos.[RecognitionNumber]
     ),
@@ -195,7 +195,7 @@ BEGIN
         [EndPointAssessorOrganisationId]
         ,[Larscode] [StandardCode]
         ,[OperationalStartDate] [EffectiveFrom]
-        ,NULL [EffectiveTo]
+        ,[OperationalEndDate] [EffectiveTo]
         ,CONVERT(Date,GETUTCDATE()) [DateStandardApprovedOnRegister]
         ,'Added from OFQUAL qualifications list' [Comments]
         ,'Live' [Status]
