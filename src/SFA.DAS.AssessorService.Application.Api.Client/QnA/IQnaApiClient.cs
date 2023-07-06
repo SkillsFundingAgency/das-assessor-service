@@ -15,7 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         Task<ApplicationData> GetApplicationData(Guid applicationId);
         Task<Dictionary<string, object>> GetApplicationDataDictionary(Guid applicationId);
         Task<ApplicationData> UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
-        Task<Dictionary<string, object>> UpdateApplicationDataDictionary(Guid applicationId, Dictionary<string, object> applicationData);
         Task<Sequence> GetApplicationActiveSequence(Guid applicationId);
         Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId);
         Task<Sequence> GetSequence(Guid applicationId, Guid sequenceId);

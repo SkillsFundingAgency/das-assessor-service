@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.ViewModels
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.ApplyStandardConfirmViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardVersionViewModel
 
 @{
     ViewBag.Title = "Standard Results";
@@ -38,7 +38,7 @@
                                     <td class="govuk-table__cell" data-label="Name">@result.Title</td>
                                     <td class="govuk-table__cell" data-label="Reference">@result.IFateReferenceNumber</td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a href="/standard/@Model.Id/apply-standard/@result.IFateReferenceNumber/confirm" class="govuk-link">Apply for standard</a>
+                                        <a href="/standard/@Model.Id/confirm-standard/@result.IFateReferenceNumber" class="govuk-link">Apply for standard</a>
                                     </td>
                                 </tr>
                             }
