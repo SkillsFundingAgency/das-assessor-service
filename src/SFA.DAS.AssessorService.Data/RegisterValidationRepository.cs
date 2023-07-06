@@ -207,5 +207,23 @@ namespace SFA.DAS.AssessorService.Data
             
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email });
         }
+
+        public async Task<bool> EpaOrganisationExistsWithRecognitionNumber(string recognitionNumber)
+        {
+            const string sqlToCheckExists =
+                "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                "WHERE RecognitionNumber = @recognitionNumber";
+
+            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { recognitionNumber });
+        }
+
+        public async Task<bool> CheckRecognitionNumberExists(string recognitionNumber)
+        {
+            const string sqlToCheckExists =
+                "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OfqualOrganisation] " +
+                "WHERE RecognitionNumber = @recognitionNumber";
+
+            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { recognitionNumber });
+        }
     }
 }

@@ -28,5 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<bool> ContactDetailsAlreadyExist(string firstName, string lastName, string email, string phone,
             Guid? contactId);
+        Task<bool> EpaOrganisationExistsWithRecognitionNumber(string recognitionNumber);
+        Task<bool> CheckRecognitionNumberExists(string recognitionNumber);
     }
 }
