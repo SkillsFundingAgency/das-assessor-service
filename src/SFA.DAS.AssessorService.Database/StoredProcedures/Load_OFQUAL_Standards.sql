@@ -184,8 +184,7 @@ BEGIN
     SELECT DISTINCT og1.[RecognitionNumber], os1.StandardReference 
     FROM [dbo].[OrganisationStandard] os1 
     JOIN [dbo].[Organisations] og1 on os1.EndPointAssessorOrganisationId = og1.EndPointAssessorOrganisationId
-    WHERE og1.[Status] = 'Live'
-    AND og1.[RecognitionNumber] IS NOT NULL
+    WHERE og1.[RecognitionNumber] IS NOT NULL
     )
     -- These Standards can be added to OrganisationStandard
     INSERT INTO [dbo].[OrganisationStandard]
