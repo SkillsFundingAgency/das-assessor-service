@@ -26,12 +26,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
               });
 
             // Act
-            var model = new StandardVersionViewModel()
+            var model = new ApplyStandardConfirmViewModel()
             {
+                Id = Guid.NewGuid(),
                 IsConfirmed = true,
-                SelectedVersions = new List<string>() { "1.1" }
+                SelectedVersions = new List<string>() { "1.1" },
+                StandardReference = "ST0001"
+
             };
-            await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null);
+            await _sut.ConfirmStandard(model);
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",
@@ -50,12 +53,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
               });
 
             // Act
-            var model = new StandardVersionViewModel()
+            var model = new ApplyStandardConfirmViewModel()
             {
+                Id = Guid.NewGuid(),
                 IsConfirmed = false,
-                SelectedVersions = new List<string>() { "1.1" }
+                SelectedVersions = new List<string>() { "1.1" },
+                StandardReference = "ST0001"
             };
-            var result = (await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null)) as ViewResult;
+            var result = (await _sut.ConfirmStandard(model)) as ViewResult;
 
             // Assert
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
@@ -74,12 +79,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
               });
 
             // Act
-            var model = new StandardVersionViewModel()
+            var model = new ApplyStandardConfirmViewModel()
             {
+                Id = Guid.NewGuid(),
                 IsConfirmed = true,
-                SelectedVersions = new List<string>() { }
+                SelectedVersions = new List<string>() { },
+                StandardReference = "ST0001"
             };
-            var result = (await _sut.ConfirmStandard(model, Guid.NewGuid(), "ST0001", null)) as ViewResult;
+            var result = (await _sut.ConfirmStandard(model)) as ViewResult;
 
             // Assert
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);

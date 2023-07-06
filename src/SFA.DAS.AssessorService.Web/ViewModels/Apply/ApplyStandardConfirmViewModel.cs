@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {
-    public class StandardVersionViewModel
+    public class ApplyStandardConfirmViewModel
     {
         public Guid Id { get; set; }
 
@@ -22,10 +22,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string ApplicationStatus { get; set; }
 
-        public bool FromStandardsVersion { get; set; }
-
         public DateTime? EarliestVersionEffectiveFrom { get; set; }
     }
-
-
 }

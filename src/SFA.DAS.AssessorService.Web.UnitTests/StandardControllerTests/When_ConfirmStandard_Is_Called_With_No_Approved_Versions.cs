@@ -25,10 +25,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001", null)) as ViewResult;
+            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001")) as ViewResult;
 
             // Assert
-            var vm = results.Model as StandardVersionViewModel;
+            var vm = results.Model as ApplyStandardConfirmViewModel;
             Assert.AreEqual(2, vm.Results.Count);
             Assert.AreEqual("1.1", vm.SelectedStandard.Version);
             Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", results.ViewName);

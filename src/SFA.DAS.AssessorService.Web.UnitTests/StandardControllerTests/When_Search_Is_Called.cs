@@ -23,10 +23,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            var results = (await _sut.Search(new StandardVersionViewModel { StandardToFind = "Title" })) as ViewResult;
+            var results = (await _sut.Search(new ApplyStandardConfirmViewModel { StandardToFind = "Title" })) as ViewResult;
 
             // Assert
-            var vm = results.Model as StandardVersionViewModel;
+            var vm = results.Model as ApplyStandardConfirmViewModel;
             Assert.AreEqual(2, vm.Results.Count);
             Assert.AreEqual("ST0001", vm.Results[0].IFateReferenceNumber);
             Assert.AreEqual("ST0002", vm.Results[1].IFateReferenceNumber);

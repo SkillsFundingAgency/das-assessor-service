@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
-    [TestFixture]
+    /*[TestFixture]
     public class When_ConfirmStandard_Is_Called_With_Specific_Version_Which_Is_Already_Approved : StandardControllerTestBase
     {
         [Test]
@@ -34,5 +34,5 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var vm = results.Model as StandardVersionViewModel;
             vm.ApplicationStatus.Should().Be("Approved");
         }
-    }
+    }*/
 }
