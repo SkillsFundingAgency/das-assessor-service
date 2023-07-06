@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -19,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     [TestFixture]
     public class RegisterCreateOrganisationStandardHandlerTests
     {
+        private Mock<IMediator> _mediator;
         private Mock<IRegisterRepository> _registerRepository;
         private Mock<IOrganisationStandardRepository> _organisationStandardRepository;
         private CreateEpaOrganisationStandardHandler _createEpaOrganisationStandardHandler;
@@ -33,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [SetUp]
         public void Setup()
         {
+            _mediator = new Mock<IMediator>();
             _registerRepository = new Mock<IRegisterRepository>();
             _organisationStandardRepository = new Mock<IOrganisationStandardRepository>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
@@ -52,6 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 .Returns((string s) => s);
             
             _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(
+                _mediator.Object,
                 _registerRepository.Object, 
                 _organisationStandardRepository.Object, 
                 _validator.Object, 

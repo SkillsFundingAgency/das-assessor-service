@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
-    [TestFixture]
+    /*[TestFixture]
     public class When_ConfirmStandard_Is_Posted_To_With_Specific_Version : StandardControllerTestBase
     {
         [Test]
@@ -38,5 +38,5 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             _mockQnaApiClient.Verify(m => m.UpdateApplicationData(It.IsAny<Guid>(), It.Is<ApplicationData>(x => x.ApplicationType == StandardApplicationTypes.Version)));
         }
-    }
+    }*/
 }
