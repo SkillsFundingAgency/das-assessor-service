@@ -48,7 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.IntegrationTests", "SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.Data.IntegrationTests.csproj", "{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.DataTwo.UnitTests", "SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.DataTwo.UnitTests.csproj", "{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External", "SFA.DAS.AssessorService.Application.Api.External\SFA.DAS.AssessorService.Application.Api.External.csproj", "{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}"
 EndProject
