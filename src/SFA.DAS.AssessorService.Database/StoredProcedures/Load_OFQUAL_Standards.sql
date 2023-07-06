@@ -223,7 +223,6 @@ BEGIN
     SELECT [Id] OrganisationStandardId, [Comments]
     FROM [dbo].[OrganisationStandard] os1
     WHERE [Comments] = 'Added from OFQUAL qualifications list'
-    AND [DateStandardApprovedOnRegister] = CONVERT(date,GETUTCDATE())
     AND NOT EXISTS (SELECT null FROM [dbo].[OrganisationStandardDeliveryArea] WHERE [OrganisationStandardId] = os1.[Id])
     )
     -- add Delivery Areas 
@@ -246,7 +245,6 @@ BEGIN
     SELECT [Id] OrganisationStandardId, [StandardReference], [EffectiveFrom], [DateStandardApprovedOnRegister], [Comments]
     FROM [dbo].[OrganisationStandard] os1
     WHERE [Comments] = 'Added from OFQUAL qualifications list'
-    AND [DateStandardApprovedOnRegister] = CONVERT(date,GETUTCDATE())
     AND NOT EXISTS (SELECT null FROM [dbo].[OrganisationStandardVersion] WHERE [OrganisationStandardId] = os1.[Id])
     ),
     StandardVersions
@@ -259,7 +257,7 @@ BEGIN
         ,MAX(CASE WHEN EPAChanged = 1 THEN rownumber ELSE 0 END) OVER (PARTITION BY IfateReferenceNumber) LatestEPA
         ,SUM(CASE WHEN EPAChanged = 1 THEN 1 ElSE 0 END) OVER (PARTITION BY IfateReferenceNumber) EPAChanges
         FROM (
-        SELECT [IFateReferenceNumber], [Version], [StandardUId], [Larscode], [EPAChanged],
+        SELECT [IFateReferenceNumber], [Version], [StandardUId], [Larscode], [VersionEarliestStartDate], [EPAChanged],
             ROW_NUMBER() OVER (PARTITION BY [IFateReferenceNumber] ORDER BY [VersionMajor] DESC, [VersionMinor] DESC) rownumber 
         FROM [dbo].[Standards]
         WHERE [EqaProviderName] = 'Ofqual'
@@ -272,7 +270,9 @@ BEGIN
     -- add versions with Latest EPA Plan
     INSERT INTO [dbo].[OrganisationStandardVersion] 
     ([StandardUId],[Version],[OrganisationStandardId],[EffectiveFrom],[EffectiveTo],[DateVersionApproved],[Comments],[Status])
-    SELECT [StandardUId], [Version], [OrganisationStandardId], [EffectiveFrom], NULL [EffectiveTo], [DateStandardApprovedOnRegister] [DateVersionApproved], [Comments], 'Live' [Status]
+    SELECT [StandardUId], [Version], [OrganisationStandardId], 
+    (CASE WHEN [VersionEarliestStartDate] > [EffectiveFrom] THEN [VersionEarliestStartDate] ELSE [EffectiveFrom] END) [EffectiveFrom], 
+    NULL [EffectiveTo], [DateStandardApprovedOnRegister] [DateVersionApproved], [Comments], 'Live' [Status]
     FROM StandardVersions stv
     JOIN AddedOFQUALStandards ads on ads.[StandardReference] = stv.[IFateReferenceNumber]
     WHERE AddVersion = 1;
