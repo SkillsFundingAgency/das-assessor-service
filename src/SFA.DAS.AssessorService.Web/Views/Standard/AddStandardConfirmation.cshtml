@@ -1,0 +1,43 @@
+@using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Extensions
+@model SFA.DAS.AssessorService.Web.ViewModels.Standard.AddStandardConfirmationViewModel
+@{
+    ViewBag.Title = "Add standard confirmation";
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <div class="govuk-panel__body">
+                    You've added
+                </div>
+                <h1 class="govuk-panel__title">
+                    @Model.StandardTitle
+                </h1>
+                <div class="govuk-panel__body">
+                    @Model.StandardReference<br>@Model.ConfirmedVersionsText
+                </div>
+            </div>
+
+            <p class="govuk-body">We've sent you a confirmation email.</p>
+
+            <h3 class="govuk-heading-m">What happens next</h3>
+
+            <p class="govuk-body">
+                You're now able to assess and record outcomes for this standard.
+            </p>
+
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                You can <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">add other standards</a> or
+                <a asp-route="@DashboardController.DashboardIndexRouteGet" class="govuk-link--no-visited-state">return to your account</a>
+            </p>
+
+            <p class="govuk-body">
+                <a href="@Model.FeedbackUrl" target="_blank" class="govuk-link--no-visited-state">Tell us what you think about this service</a> (Survey takes 60 seconds)
+            </p>
+
+        </div>
+    </div>
+</main>

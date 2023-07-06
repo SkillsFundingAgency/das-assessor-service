@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
@@ -43,6 +44,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         public static void DeleteRecordByOrganisationStandardId(int orgStandardId)
         {
             var sql = $@"DELETE from OrganisationStandardVersion where OrganisationStandardId = {orgStandardId}";
+            DatabaseService.Execute(sql);
+        }
+        public static void DeleteAllRecords()
+        {
+            var sql = $@"DELETE from OrganisationStandardVersion";
             DatabaseService.Execute(sql);
         }
     }

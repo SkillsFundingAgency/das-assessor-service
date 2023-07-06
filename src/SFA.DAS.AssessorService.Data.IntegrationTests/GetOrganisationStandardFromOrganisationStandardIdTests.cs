@@ -125,7 +125,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 TypicalDuration = 12,
                 TrailblazerContact = "Contact name",
                 StandardPageUrl = "www.standard.com",
-                OverviewOfRole = "Explanation of apprenticeship job role"
+                OverviewOfRole = "Explanation of apprenticeship job role",
+                VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
             };
 
             var standardModel2 = new StandardModel
@@ -139,7 +140,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 TypicalDuration = 12,
                 TrailblazerContact = "Contact name",
                 StandardPageUrl = "www.standard.com",
-                OverviewOfRole = "Explanation of apprenticeship job role"
+                OverviewOfRole = "Explanation of apprenticeship job role",
+                VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
             };
 
             OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1 });

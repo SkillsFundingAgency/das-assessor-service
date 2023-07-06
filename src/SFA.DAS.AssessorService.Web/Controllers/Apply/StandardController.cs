@@ -1,20 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.QnA;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -27,6 +33,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IWebConfiguration _config;
 
+        #region Routes
+        public const string AddStandardSearchRouteGet = nameof(AddStandardSearchRouteGet);
+        public const string AddStandardSearchRoutePost = nameof(AddStandardSearchRoutePost);
+        public const string AddStandardSearchResultsRouteGet = nameof(AddStandardSearchResultsRouteGet);
+        public const string AddStandardChooseVersionsRouteGet = nameof(AddStandardChooseVersionsRouteGet);
+        public const string AddStandardChooseVersionsRoutePost = nameof(AddStandardChooseVersionsRoutePost);
+        public const string AddStandardConfirmRouteGet = nameof(AddStandardConfirmRouteGet);
+        public const string AddStandardConfirmRoutePost = nameof(AddStandardConfirmRoutePost);
+        public const string AddStandardConfirmationRouteGet = nameof(AddStandardConfirmationRouteGet);
+        public const string StandardDetailsRouteGet = nameof(StandardDetailsRouteGet);
+        public const string OptInStandardVersionRouteGet = nameof(OptInStandardVersionRouteGet);
+        public const string OptInStandardVersionRoutePost = nameof(OptInStandardVersionRoutePost);
+        public const string OptInStandardVersionConfirmationRouteGet = nameof(OptInStandardVersionConfirmationRouteGet);
+        public const string OptOutStandardVersionRouteGet = nameof(OptOutStandardVersionRouteGet);
+        public const string OptOutStandardVersionRoutePost = nameof(OptOutStandardVersionRoutePost);
+        public const string OptOutStandardVersionConfirmationRouteGet = nameof(OptOutStandardVersionConfirmationRouteGet);
+        #endregion
+
         public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
             IStandardVersionClient standardVersionApiClient, IApplicationService applicationService, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
@@ -36,6 +60,185 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _standardVersionApiClient = standardVersionApiClient;
             _applicationService = applicationService;
             _config = config;
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search?}", Name = AddStandardSearchRouteGet)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult AddStandardSearch(string search)
+        {
+            var standardViewModel = new AddStandardSearchViewModel()
+            {
+                StandardToFind = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(AddStandardSearchViewModel.StandardToFind), search)
+            };
+
+            return View(standardViewModel);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/add-standard", Name = AddStandardSearchRoutePost)]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult AddStandardSearch(AddStandardSearchViewModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.StandardToFind });
+            }
+            
+            return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.StandardToFind });
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search}/results", Name = AddStandardSearchResultsRouteGet)]
+        public async Task<IActionResult> AddStandardSearchResults(string search)
+        {
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            var allStandards = await _standardVersionApiClient.GetLatestStandardVersions();
+            var approvedStandards = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim());
+
+            var model = new AddStandardSearchViewModel
+            {
+                Approved = approvedStandards
+                    .GroupBy(standardVersion => standardVersion.IFateReferenceNumber)
+                    .Where(group => group.Any())
+                    .Select(group => group.FirstOrDefault())
+                    .ToList(),
+                Results = allStandards
+                    .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList(),
+                StandardToFind = search
+            };
+
+            return View(model);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search}/{referenceNumber}/choose-versions", Name = AddStandardChooseVersionsRouteGet)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public async Task<IActionResult> AddStandardChooseVersions(string search, string referenceNumber)
+        {
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var model = new AddStandardConfirmViewModel
+            {
+                Search = search,
+                StandardReference = referenceNumber,
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.ToList(),
+                IsConfirmed = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(AddStandardConfirmViewModel.IsConfirmed), false),
+                SelectedVersions = ModelState
+                    .GetAttemptedValueListWhenInvalid(nameof(AddStandardConfirmViewModel.SelectedVersions), new List<string>(), ','),
+            };
+
+            return View(model);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/add-standard/choose-versions", Name = AddStandardChooseVersionsRoutePost)]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult AddStandardChooseVersions(AddStandardConfirmViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToRoute(AddStandardChooseVersionsRouteGet, new { search = model.Search, referenceNumber = model.StandardReference });
+            }
+
+            return RedirectToRoute(AddStandardConfirmRouteGet, new { search = model.Search, referenceNumber = model.StandardReference, versions = model.SelectedVersions });
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm", Name = AddStandardConfirmRouteGet)]
+        public async Task<IActionResult> AddStandardConfirm(string search, string referenceNumber, [FromQuery] List<string> versions)
+        {
+            if(string.IsNullOrEmpty(search))
+                throw new ArgumentException("Value cannot be null or empty", nameof(search));
+
+            if(string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
+
+            if (!(versions?.Any() ?? false))
+                throw new ArgumentException("Value must contain elements", nameof(versions));
+            
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var model = new AddStandardConfirmViewModel
+            {
+                Search = search,
+                StandardReference = referenceNumber,
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.ToList(),
+                IsConfirmed = true,
+                SelectedVersions = versions
+            };
+
+            return View(model);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/add-standard/confirm", Name = AddStandardConfirmRoutePost)]
+        public async Task<IActionResult> AddStandardConfirm(AddStandardConfirmViewModel model)
+        {
+            var epaOrganisation = await _orgApiClient.GetEpaOrganisation(GetEpaOrgIdFromClaim());
+
+            var request = new OrganisationStandardAddRequest
+            {
+                OrganisationId = epaOrganisation.OrganisationId,
+                StandardVersions = model.SelectedVersions,
+                StandardReference = model.StandardReference,
+                ContactId = await GetUserId()
+            };
+
+            await _orgApiClient.AddOrganisationStandard(request);
+
+            return RedirectToRoute(AddStandardConfirmationRouteGet, new {referenceNumber = model.StandardReference});
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/add-standard/{referenceNumber}/confirmation", Name = AddStandardConfirmationRouteGet)]
+        public async Task<IActionResult> AddStandardConfirmation(string referenceNumber)
+        {
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentOutOfRangeException(nameof(referenceNumber));
+
+            var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
+            var model = new AddStandardConfirmationViewModel
+            {
+                Standard = standardVersions.FirstOrDefault(),
+                StandardVersions = standardVersions.Select(x => x.Version).ToList(),
+                FeedbackUrl = _config.FeedbackUrl,
+            };
+
+            return View(model);
+        }
+
+        [HttpGet("standard/standard-details/{referenceNumber}", Name = StandardDetailsRouteGet)]
+        public async Task<IActionResult> StandardDetails(string referenceNumber)
+        {
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("The value must not be null or empty", nameof(referenceNumber));
+
+            var allVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
+
+            if (!allVersions.Any())
+                throw new NotFoundException($"The standard reference {referenceNumber} does not have any versions");
+
+            var model = new StandardDetailsViewModel
+            {
+                SelectedStandard = allVersions.FirstOrDefault(),
+                AllVersions = allVersions.ToList(),
+                ApprovedVersions = approvedVersions.ToList(),
+            };
+
+            return View(model);
         }
 
         [HttpGet("Standard/{id}")]
@@ -99,10 +302,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                                         .OrderBy(s => s.Version);
             var earliestStandard = standardVersions.FirstOrDefault();
             var latestStandard = standardVersions.LastOrDefault();
-            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
-
-            var allPreviousWithdrawalsForStandard = await _applicationApiClient.GetAllWithdrawnApplicationsForStandard(application.OrganisationId, latestStandard.LarsCode);
-            var previousApplications = await _applicationApiClient.GetPreviousApplicationsForStandard(application.OrganisationId, standardReference);
 
             if (!string.IsNullOrWhiteSpace(version))
             {
@@ -118,14 +317,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
                 standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
-            }
-            else if (anyExistingVersions)
-            {
-                // existing approved versions for this standard
-                var model = new StandardVersionApplicationViewModel { Id = id, StandardReference = standardReference };
-                model.SelectedStandard = new StandardVersionApplication(latestStandard);
-                model.Results = ApplyVersionStatuses(standardVersions, allPreviousWithdrawalsForStandard, previousApplications).OrderByDescending(x => x.Version).ToList();
-                return View("~/Views/Application/Standard/StandardVersion.cshtml", model);
             }
             else
             {
@@ -228,61 +419,176 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
         }
 
-        [HttpGet("standard/{id}/opt-in/{standardReference}/{version}")]
-        [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> OptIn(Guid id, string standardReference, string version)
+        [HttpGet("standard/opt-in/{referenceNumber}/{version}", Name = OptInStandardVersionRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        public async Task<IActionResult> OptInStandardVersion(string referenceNumber, string version)
         {
-            var application = await _applicationApiClient.GetApplication(id);
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
-            if (!CanUpdateApplicationAsync(application))
+            if (string.IsNullOrEmpty(version))
+                throw new ArgumentException("Value cannot be null or empty", nameof(version));
+
+            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var standardVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+
+            if (standardVersion == null)
+                throw new NotFoundException($"The reference number {referenceNumber} version {version} cannot be found");
+
+            var model = new OptInStandardVersionViewModel()
             {
-                return RedirectToAction("Applications", "Application");
-            }
-
-            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            var stdVersion = standards.First(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
-
-            var model = new StandardOptInViewModel()
-            {
-                Id = id,
-                StandardReference = stdVersion.IFateReferenceNumber,
-                StandardTitle = stdVersion.Title,
-                Version = stdVersion.Version,
-                EffectiveFrom = stdVersion.VersionEarliestStartDate ?? DateTime.Today,
-                EffectiveTo = stdVersion.VersionLatestEndDate
+                StandardReference = standardVersion.IFateReferenceNumber,
+                StandardTitle = standardVersion.Title,
+                Version = standardVersion.Version,
+                EffectiveFrom = standardVersion.VersionEarliestStartDate ?? DateTime.Today,
+                EffectiveTo = standardVersion.VersionLatestEndDate
             };
 
-            return View("~/Views/Application/Standard/OptIn.cshtml", model);
+            return View(model);
         }
 
-        [HttpPost("standard/{id}/opt-in/{standardReference}/{version}")]
-        public async Task<IActionResult> OptInPost(Guid id, string standardReference, string version)
+        [HttpPost("standard/opt-in", Name = OptInStandardVersionRoutePost)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        public async Task<IActionResult> OptInStandardVersion(OptInStandardVersionViewModel model)
         {
-            var application = await _applicationApiClient.GetApplication(id);
-            var contact = await GetUserContact();
+            if (model == null)
+                throw new ArgumentException("Value cannot be null or empty", nameof(model));
 
-            if (!CanUpdateApplicationAsync(application))
-                return RedirectToAction("Applications", "Application");
+            if (string.IsNullOrEmpty(model.StandardReference))
+                throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
-            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
-            if (org == null)
-                return RedirectToAction("Applications", "Application");
+            if (string.IsNullOrEmpty(model.Version))
+                throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
-            IEnumerable<StandardVersion> standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(standardReference);
-            StandardVersion stdVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
-            if (stdVersion == null)
-                return RedirectToAction("Applications", "Application");
+            var contactId = await GetUserId();
+            var epaOrgId = GetEpaOrgIdFromClaim();
 
-            IEnumerable<AppliedStandardVersion> appliedVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference);
-            AppliedStandardVersion appliedVersion = appliedVersions.FirstOrDefault((x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase)));
-            if (appliedVersion == null || appliedVersion.ApprovedStatus == "Approved" || appliedVersion.ApprovedStatus == "Apply in progress" || appliedVersion.ApprovedStatus == "Feedback Added")
-                return RedirectToAction("Applications", "Application");
+            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
+            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) != null)
+            {
+                throw new AlreadyExistsException($"Unable to opt in to StandardReference {model.StandardReference} organisation {epaOrgId} already assesses this standard version");
+            }
 
-            DateTime? effectiveTo = appliedVersion.StdVersionEffectiveTo;
-            bool optInFollowingWithdrawal = effectiveTo.HasValue;
+            await _orgApiClient.OrganisationStandardVersionOptIn(
+                epaOrgId,
+                model.StandardReference,
+                model.Version,
+                model.EffectiveFrom,
+                model.EffectiveTo,
+                contactId);
 
-            await _orgApiClient.OrganisationStandardVersionOptIn(id, contact.Id, org.OrganisationId, standardReference, version, stdVersion?.StandardUId, optInFollowingWithdrawal, $"Opted in by EPAO by {contact.Username}");              
-            return RedirectToAction("OptInConfirmation", "Application", new { Id = id });
+            return RedirectToRoute(OptInStandardVersionConfirmationRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
+        }
+
+        [HttpGet("standard/opt-in/{referenceNumber}/{version}/confirmation", Name = OptInStandardVersionConfirmationRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        public async Task<IActionResult> OptInStandardVersionConfirmation(string referenceNumber, string version)
+        {
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
+
+            if (string.IsNullOrEmpty(version))
+                throw new ArgumentException("Value cannot be null or empty", nameof(version));
+
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            if (!standardVersions?.Any() ?? false)
+                throw new NotFoundException($"The standard reference {referenceNumber} cannot be found");
+
+            var model = new OptInStandardVersionConfirmationViewModel()
+            {
+                StandardTitle = standardVersions?.FirstOrDefault()?.Title,
+                StandardReference = referenceNumber,
+                Version = version,
+                FeedbackUrl = _config.FeedbackUrl,
+            };
+
+            return View(model);
+        }
+
+        [HttpGet("standard/opt-out/{referenceNumber}/{version}", Name = OptOutStandardVersionRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        public async Task<IActionResult> OptOutStandardVersion(string referenceNumber, string version)
+        {
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
+
+            if (string.IsNullOrEmpty(version))
+                throw new ArgumentException("Value cannot be null or empty", nameof(version));
+
+            var standards = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            var standardVersion = standards.FirstOrDefault(x => x.Version.Equals(version, StringComparison.InvariantCultureIgnoreCase));
+
+            if (standardVersion == null)
+                throw new NotFoundException($"The reference number {referenceNumber} version {version} cannot be found");
+
+            var model = new OptOutStandardVersionViewModel()
+            {
+                StandardReference = standardVersion.IFateReferenceNumber,
+                StandardTitle = standardVersion.Title,
+                Version = standardVersion.Version,
+                EffectiveFrom = standardVersion.VersionEarliestStartDate ?? DateTime.Today,
+                EffectiveTo = DateTime.Today
+            };
+
+            return View(model);
+        }
+
+        [HttpPost("standard/opt-out", Name = OptOutStandardVersionRoutePost)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
+        {
+            if (model == null)
+                throw new ArgumentException("Value cannot be null or empty", nameof(model));
+
+            if (string.IsNullOrEmpty(model.StandardReference))
+                throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
+
+            if (string.IsNullOrEmpty(model.Version))
+                throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
+
+            var contactId = await GetUserId();
+            var epaOrgId = GetEpaOrgIdFromClaim();
+
+            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
+            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) == null)
+            {
+                throw new NotFoundException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");
+            }
+
+            await _orgApiClient.OrganisationStandardVersionOptOut(
+                epaOrgId,
+                model.StandardReference,
+                model.Version,
+                model.EffectiveFrom,
+                model.EffectiveTo,
+                contactId);
+
+            return RedirectToRoute(OptOutStandardVersionConfirmationRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
+        }
+
+        [HttpGet("standard/opt-out/{referenceNumber}/{version}/confirmation", Name = OptOutStandardVersionConfirmationRouteGet)]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        public async Task<IActionResult> OptOutStandardVersionConfirmation(string referenceNumber, string version)
+        {
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
+
+            if (string.IsNullOrEmpty(version))
+                throw new ArgumentException("Value cannot be null or empty", nameof(version));
+
+            var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
+            if (!standardVersions?.Any() ?? false)
+                throw new NotFoundException($"The standard reference {referenceNumber} cannot be found");
+
+            var model = new OptOutStandardVersionConfirmationViewModel()
+            {
+                StandardTitle = standardVersions?.FirstOrDefault()?.Title,
+                StandardReference = referenceNumber,
+                Version = version,
+                FeedbackUrl = _config.FeedbackUrl,
+            };
+
+            return View(model);
         }
 
         private bool CanUpdateApplicationAsync(ApplicationResponse application)
@@ -332,126 +638,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             return string.Empty;
-        }
-
-
-        private bool ReApplyViaSevenQuestions(DateTime? previousWithdrawalDate, bool? prevApplyViaOptIn)
-        {
-            // If previously applied via opt in and previous withdrawal is older than 12 months then
-            // allow 7 question apply
-            if (previousWithdrawalDate < DateTime.UtcNow.AddMonths(-12) && prevApplyViaOptIn == true)
-            {
-                return false;
-            }
-         
-            return true;
-        }
-        
-
-        private IEnumerable<StandardVersionApplication> ApplyVersionStatuses(IEnumerable<AppliedStandardVersion> versions, 
-            List<ApplicationResponse> previousWithdrawals, List<ApplicationResponse> previousApplications)
-        {
-            bool approved = false;
-            bool changed = false;
-            var results = new List<StandardVersionApplication>();
-
-            foreach (var version in versions.OrderBy(s => s.Version))
-            {
-                var stdVersion = new StandardVersionApplication(version);
-
-                if (version.ApprovedStatus == ApprovedStatus.Approved)
-                {
-                    approved = true;
-                    changed = false;
-                    stdVersion.VersionStatus = VersionStatus.Approved;
-                }
-                else
-                {
-                    stdVersion.VersionStatus = MapUnapprovedVersionStatus(version, approved, changed);
-
-                    if (approved && version.EPAChanged)
-                        changed = true;
-                }
-
-                results.Add(stdVersion);
-            }
-
-            // now do it again in reverse order to handle any versions prior to the first approved version
-            var firstApproved = results.OrderBy(s => s.Version).FirstOrDefault(s => s.VersionStatus == VersionStatus.Approved);
-            if (firstApproved != null)
-            {
-                changed = firstApproved.EPAChanged;
-
-                foreach (var version in results
-                    .Where(s => s.VersionStatus == null)
-                    .OrderByDescending(s => s.Version))
-                {
-                    version.VersionStatus = changed ? VersionStatus.NewVersionChanged : VersionStatus.NewVersionNoChange;
-                    changed = version.EPAChanged || changed;
-                }
-            }
-
-            bool AppliedViaOptIn = false;
-            var withdrawals = previousWithdrawals.Where(x => x.StandardApplicationType == StandardApplicationTypes.VersionWithdrawal 
-                                                                                        && x.ApplicationStatus == ApplicationStatus.Approved);
-            if (previousApplications != null)
-                AppliedViaOptIn = previousApplications
-                    .Where(w => (w.ApplicationType != StandardApplicationTypes.StandardWithdrawal) &&
-                                (w.ApplicationType != StandardApplicationTypes.VersionWithdrawal) &&
-                                (w.ApplyViaOptIn == true)).Select(x => x.ApplyViaOptIn).FirstOrDefault();
- 
-
-            foreach (var withdrawal in withdrawals)
-            {
-                List<string> vers = withdrawal.ApplyData.Apply.Versions;
-
-                foreach (var res in results.Where(x => x.VersionStatus == VersionStatus.Withdrawn))
-                {
-                    var checkVer = vers.Where(x => x.Contains(res.Version)).FirstOrDefault();
-                    if (checkVer != null)
-                    {
-                        DateTime? previousWithdrawalDate = withdrawal.ApplyData.Sequences
-                                .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                                .Select(y => y.ApprovedDate).FirstOrDefault();
-
-                        if (ReApplyViaSevenQuestions(previousWithdrawalDate, AppliedViaOptIn))
-                        {
-                            res.VersionStatus = VersionStatus.NewVersionChanged;
-                            res.PreviouslyWithdrawn = true;
-                        }
-                        else
-                        {
-                            res.VersionStatus = VersionStatus.NewVersionNoChange;
-                            res.PreviouslyWithdrawn = true;
-                        }
-                    }
-
-                }
-            }
-
-            return results;
-        }
-
-
-        private string MapUnapprovedVersionStatus(AppliedStandardVersion version, bool approved, bool previouslyChanged)
-        {
-            string versionStatus = null;
-
-            if (version.ApprovedStatus == ApprovedStatus.ApplyInProgress)
-                versionStatus = VersionStatus.InProgress;
-            else if (version.ApprovedStatus == ApprovedStatus.Withdrawn)
-                versionStatus = VersionStatus.Withdrawn;
-            else if (version.ApprovedStatus == ApprovedStatus.FeedbackAdded)
-                versionStatus = VersionStatus.FeedbackAdded;
-            else if (version.ApprovedStatus == ApprovedStatus.NotYetApplied && approved)
-            {
-                if (version.EPAChanged || previouslyChanged)
-                    versionStatus = VersionStatus.NewVersionChanged;
-                else
-                    versionStatus = VersionStatus.NewVersionNoChange;
-            }
-
-            return versionStatus;
         }
     }
 }

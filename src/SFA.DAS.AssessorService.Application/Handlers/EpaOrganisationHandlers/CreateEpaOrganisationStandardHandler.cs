@@ -16,13 +16,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     public class CreateEpaOrganisationStandardHandler : IRequestHandler<CreateEpaOrganisationStandardRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
+        private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly ILogger<CreateEpaOrganisationStandardHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public CreateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<CreateEpaOrganisationStandardHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public CreateEpaOrganisationStandardHandler(
+            IRegisterRepository registerRepository, 
+            IOrganisationStandardRepository organisationStandardRepository,
+            IEpaOrganisationValidator validator, 
+            ILogger<CreateEpaOrganisationStandardHandler> logger, 
+            ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
+            _organisationStandardRepository = organisationStandardRepository;
             _logger = logger;
             _cleanser = cleanser;
             _validator = validator;
@@ -53,11 +60,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 }
 
                 throw new Exception(message);
-            } 
+            }
+
+            var applyFollowingWithdrawal = (await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(
+                request.OrganisationId, request.StandardReference) != null);
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
-           
-            if (request.ApplyFollowingWithdrawal)
+
+            if (applyFollowingWithdrawal) 
             {
                 return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas, true);
             }

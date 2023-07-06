@@ -1,12 +1,11 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,26 +14,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
     public class OrganisationStandardVersionOptInHandler : IRequestHandler<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>
     {
-        private readonly IOrganisationStandardRepository _repository;
-        private readonly IApplyRepository _applyRepository;
-        private readonly IStandardRepository _standardRepository;
+        private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
+        private readonly IStandardService _standardService;
         private readonly IMediator _mediator;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<OrganisationStandardVersionOptInHandler> _logger;
 
-        public OrganisationStandardVersionOptInHandler(IOrganisationStandardRepository repository, IApplyRepository applyRepository, IStandardRepository standardRepository,
-            IContactQueryRepository contactQueryRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator,
-            IUnitOfWork unitOfWork, ILogger<OrganisationStandardVersionOptInHandler> logger)
+        public OrganisationStandardVersionOptInHandler(IOrganisationStandardRepository organisationStandardRepository, 
+            IContactQueryRepository contactQueryRepository, IMediator mediator,
+            IStandardService standardService,
+            ILogger<OrganisationStandardVersionOptInHandler> logger)
         {
-            _repository = repository;
-            _applyRepository = applyRepository;
-            _standardRepository = standardRepository;
+            _organisationStandardRepository = organisationStandardRepository;
             _contactQueryRepository = contactQueryRepository;
-            _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
+            _standardService = standardService;
             _mediator = mediator;
-            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -42,82 +36,67 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             try
             {
-                // Remove out of unit of work due to crossover betwen EF, Dapper and UnitOfWorkTransaction Conflict
-                // It's also a Read so has no impact in that case.
-                var submittingContact = await _contactQueryRepository.GetContactById(request.SubmittingContactId);
+                var contact = await _contactQueryRepository.GetContactById(request.ContactId);
+                if (contact == null)
+                {
+                    throw new NotFoundException($"Cannot opt in to StandardReference {request.StandardReference} as ContactId {request.ContactId} cannot be found");
+                }
 
-                _unitOfWork.Begin();
+                var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
+                if (organisationStandard == null)
+                {
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
+                }
 
-                var orgStandard = await _repository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
+                var allVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
+                var optInVersion = allVersions.FirstOrDefault(x => x.Version.Equals(request.Version, StringComparison.InvariantCultureIgnoreCase));
+                if (optInVersion == null)
+                {
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
+                }
+
+                var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);
+                var newComment = $"Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}";
 
                 var entity = new Domain.Entities.OrganisationStandardVersion
                 {
-                    StandardUId = request.StandardUId,
+                    StandardUId = optInVersion.StandardUId,
                     Version = request.Version,
-                    OrganisationStandardId = orgStandard.Id,
+                    OrganisationStandardId = organisationStandard.Id,
                     EffectiveFrom = request.EffectiveFrom,
                     EffectiveTo = request.EffectiveTo,
-                    DateVersionApproved = request.DateVersionApproved,
-                    Comments = request.Comments,
-                    Status = request.Status
+                    DateVersionApproved = null,
+                    Comments = string.IsNullOrEmpty(existingVersion?.Comments)
+                        ? newComment
+                        : existingVersion.Comments + ";" + newComment,
+                    Status = OrganisationStatus.Live
                 };
 
-                var existingVersion = await _repository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(orgStandard.Id, request.Version);
-
-                if (request.OptInFollowingWithdrawal && existingVersion != null)
+                if (existingVersion != null)
                 {
-                    await _repository.UpdateOrganisationStandardVersion(entity);
-                }
-                else if (existingVersion != null)
-                {
-                    throw new InvalidOperationException("OrganisationStandardVersion already exists");
+                    await _organisationStandardRepository.UpdateOrganisationStandardVersion(entity);
                 }
                 else
                 { 
-                    await _repository.CreateOrganisationStandardVersion(entity);
+                    await _organisationStandardRepository.CreateOrganisationStandardVersion(entity);
                 }
 
-                var orgStandardVersion = (OrganisationStandardVersion)entity;
+                var organisationStandardVersion = (OrganisationStandardVersion)entity;
 
-                var application = await _applyRepository.GetApply(request.ApplicationId);
-                var standard = await _standardRepository.GetStandardVersionByStandardUId(request.StandardUId);
+                await _mediator.Send(new SendOptInStandardVersionEmailRequest
+                {
+                    ContactId = request.ContactId,
+                    StandardReference = request.StandardReference,
+                    Version = request.Version,
+                }, cancellationToken);
 
-                application.ApplicationStatus = ApplicationStatus.Approved;
-                application.ReviewStatus = ApplicationStatus.Approved;
-                application.StandardReference = request.StandardReference;
-                application.StandardCode = standard.LarsCode;
-                application.ApplyData.Apply.StandardCode = standard.LarsCode;
-                application.ApplyData.Apply.StandardReference = request.StandardReference;
-                application.ApplyData.Apply.StandardName = standard.Title;
-                application.ApplyData.Apply.Versions = new List<string>() { request.Version };
-                application.ApplyViaOptIn = true;
-
-                await _applyRepository.SubmitApplicationSequence(application);
-
-                await NotifyContact(submittingContact, application.ApplyData, cancellationToken);
-
-                _unitOfWork.Commit();
-
-                return orgStandardVersion;
+                return organisationStandardVersion;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to opt-in standard version {request.StandardReference} {request.Version} for Organisation {request.EndPointAssessorOrganisationId}");
-                _unitOfWork.Rollback();
+                _logger.LogError(ex, $"Failed to opt-in StandardReference {request.StandardReference} Version {request.Version} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId}");
                 throw;
             }
-        }
-
-        private async Task NotifyContact(Domain.Entities.Contact contactToNotify, ApplyData applyData, CancellationToken cancellationToken)
-        {
-            var email = contactToNotify.Email;
-            var contactname = contactToNotify.DisplayName;
-            var standard = applyData.Apply.StandardName;
-            var standardreference = applyData.Apply.StandardReference;
-            var version = applyData.Apply.Versions.First();
-
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardOptin);
-            await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, standard, standardreference, version }), cancellationToken);
         }
     }
 }
