@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 
@@ -7,9 +8,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 public class When_IndexIsCalled : ApplyForWithdrawalControllerTestsBase
 {
     [Test]
-    public void RedirectsToDashboard()
+    public async Task RedirectsToDashboard()
     {
-        var result = _sut.Index();
+        var result = await  _sut.Index();
 
         Assert.Multiple(() =>
         {
