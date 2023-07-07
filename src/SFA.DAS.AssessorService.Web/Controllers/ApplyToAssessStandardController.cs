@@ -1,14 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
@@ -19,11 +10,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [CheckSession]
     public class ApplyToAssessStandardController : Controller
     {
+        #region Routes
+        public const string ApplyToAssessStandardRouteGet = nameof(ApplyToAssessStandardRouteGet);
+        #endregion
+
         public ApplyToAssessStandardController()
         {
         }
 
-        [HttpGet]
+        [HttpGet(Name = ApplyToAssessStandardRouteGet)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public IActionResult Index()
         {

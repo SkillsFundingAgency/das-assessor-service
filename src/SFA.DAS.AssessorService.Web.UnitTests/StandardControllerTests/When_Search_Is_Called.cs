@@ -3,6 +3,8 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
     public class When_Search_Is_Called : StandardControllerTestBase
     {
         [Test]
-        public async Task Then_The_Results_Are_Returned()
+        public void Then_The_Results_Are_Returned()
         {
             // Arrange
             _mockStandardVersionApiClient
@@ -23,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            var results = (await _sut.Search(new ApplyStandardConfirmViewModel { StandardToFind = "Title" })) as ViewResult;
+            var results = _sut.ApplyStandardSearch(new ApplyStandardSearchViewModel { Id = Guid.NewGuid(), Search = "Title" }) as ViewResult;
 
             // Assert
             var vm = results.Model as ApplyStandardConfirmViewModel;

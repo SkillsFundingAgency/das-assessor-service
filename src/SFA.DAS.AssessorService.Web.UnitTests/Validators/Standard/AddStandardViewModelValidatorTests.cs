@@ -8,12 +8,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
     [TestFixture]
     public class AddStandardViewModelValidatorTests
     {
-        private AddStandardViewModelValidator _validator;
+        private AddStandardSearchViewModelValidator _validator;
 
         [SetUp]
         public void SetUp()
         {
-            _validator = new AddStandardViewModelValidator();
+            _validator = new AddStandardSearchViewModelValidator();
         }
 
         [Test]

@@ -206,7 +206,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     var org = await _orgApiClient.GetOrganisationByUserId(userId);
                     if (org.RoEPAOApproved)
                     {
-                        return RedirectToAction("Index", "Standard", new { Id });
+                        return RedirectToRoute(StandardController.ApplyStandardSearchRouteGet, new { Id });
                     }
 
                     return View("~/Views/Application/Stage2Intro.cshtml", application.Id);

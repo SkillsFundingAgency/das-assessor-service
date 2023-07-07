@@ -28,5 +28,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? StdVersionEffectiveTo { get; set; }
         public ApplyData ApplyData { get; set; }
         public string EqaProviderName { get; set; }
+        public string EqaProviderContactName { get; set; }
+        public string EqaProviderContactEmail { get; set; }
     }
 }

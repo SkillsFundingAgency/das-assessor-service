@@ -3,7 +3,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,13 +25,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                });
 
             // Act
-            var results = (await _sut.ConfirmStandard(Guid.NewGuid(), "ST0001")) as ViewResult;
+            var results = (await _sut.ApplyStandardConfirm(Guid.NewGuid(), "Tech", "ST0001")) as ViewResult;
 
             // Assert
             var vm = results.Model as ApplyStandardConfirmViewModel;
             Assert.AreEqual(2, vm.Results.Count);
             Assert.AreEqual("1.1", vm.SelectedStandard.Version);
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", results.ViewName);
+            Assert.AreEqual("~/Views/Standard/ApplyStandardConfirm.cshtml", results.ViewName);
         }
     }
 }

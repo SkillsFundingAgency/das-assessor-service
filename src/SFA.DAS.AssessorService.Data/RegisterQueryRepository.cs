@@ -285,7 +285,7 @@ namespace SFA.DAS.AssessorService.Data
                         so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
-                        va1.ApplyData, so1.EqaProviderName
+                        va1.ApplyData, so1.EqaProviderName, so1.EqaProviderContactName, so1.EqaProviderContactEmail
                         FROM standards so1 
                         LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
 						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 

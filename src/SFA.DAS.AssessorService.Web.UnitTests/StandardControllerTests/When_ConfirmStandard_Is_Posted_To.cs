@@ -3,7 +3,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,12 +29,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var model = new ApplyStandardConfirmViewModel()
             {
                 Id = Guid.NewGuid(),
+                Search = "Tech",
                 IsConfirmed = true,
                 SelectedVersions = new List<string>() { "1.1" },
                 StandardReference = "ST0001"
 
             };
-            await _sut.ConfirmStandard(model);
+            await _sut.ApplyStandardConfirm(model);
 
             // Assert
             _mockApiClient.Verify(m => m.UpdateStandardData(It.IsAny<Guid>(), 1, "ST0001", "Title 1",
@@ -56,14 +57,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var model = new ApplyStandardConfirmViewModel()
             {
                 Id = Guid.NewGuid(),
+                Search = "Tec",
                 IsConfirmed = false,
                 SelectedVersions = new List<string>() { "1.1" },
                 StandardReference = "ST0001"
             };
-            var result = (await _sut.ConfirmStandard(model)) as ViewResult;
+            var result = (await _sut.ApplyStandardConfirm(model)) as ViewResult;
 
             // Assert
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
+            Assert.AreEqual("~/Views/Application/Standard/ApplyStandardConfirm.cshtml", result.ViewName);
             Assert.IsTrue(_sut.ModelState["IsConfirmed"].Errors.Any(x => x.ErrorMessage == "Confirm you have read the assessment plan"));
         }
 
@@ -82,14 +84,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var model = new ApplyStandardConfirmViewModel()
             {
                 Id = Guid.NewGuid(),
+                Search = "Tech",
                 IsConfirmed = true,
                 SelectedVersions = new List<string>() { },
                 StandardReference = "ST0001"
             };
-            var result = (await _sut.ConfirmStandard(model)) as ViewResult;
+            var result = (await _sut.ApplyStandardConfirm(model)) as ViewResult;
 
             // Assert
-            Assert.AreEqual("~/Views/Application/Standard/ConfirmStandard.cshtml", result.ViewName);
+            Assert.AreEqual("~/Views/Application/Standard/ApplyStandardConfirm.cshtml", result.ViewName);
             Assert.IsTrue(_sut.ModelState["SelectedVersions"].Errors.Any(x => x.ErrorMessage == "You must select at least one version"));
         }
     }

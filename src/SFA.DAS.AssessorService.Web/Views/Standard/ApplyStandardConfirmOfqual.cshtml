@@ -1,0 +1,44 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@model ApplyStandardConfirmOfqualViewModel
+
+@{
+    ViewBag.Title = "Confirm Standard Ofqual";
+    Layout = "_Layout";
+}
+
+<a asp-route="@StandardController.ApplyStandardSearchResultsRouteGet" asp-route-id="@Model.Id" asp-route-search="@Model.Search" class="govuk-back-link">Return to search results</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                @Model.SelectedStandard?.Title
+            </h1>
+            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
+
+            <p class="govuk-body">
+                The regulator (EQA) for this standard is OfQual, you need to apply with Ofqual before you can assess this standard on the Apprenticeship service.
+            </p>
+
+            <p class="govuk-body">
+                Ofqual contact details:
+            </p>
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Contact Name</th>
+                        <td class="govuk-table__cell">@Model.SelectedStandard.EqaProviderContactName</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Contact email address</th>
+                        <td class="govuk-table__cell">@Model.SelectedStandard.EqaProviderContactEmail</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

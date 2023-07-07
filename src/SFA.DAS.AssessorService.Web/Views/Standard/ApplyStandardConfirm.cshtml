@@ -1,6 +1,7 @@
-﻿@using SFA.DAS.AssessorService.Web.ViewModels
-@using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.ApplyStandardConfirmViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@model ApplyStandardConfirmViewModel
 
 @{
     ViewBag.Title = "Confirm Standard";
@@ -8,7 +9,7 @@
     var multipleVersions = (Model.Results?.Count() ?? 0) > 1;
 }
 
-<a href="@Url.Action("Index", "Standard", new { Id = Model.Id })" class="govuk-back-link">Return to search</a>
+<a asp-route="@StandardController.ApplyStandardSearchResultsRouteGet" asp-route-id="@Model.Id" asp-route-search="@Model.Search" class="govuk-back-link">Return to search results</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -67,8 +68,9 @@
                 </tbody>
             </table>
 
-            <form asp-action="ConfirmStandard" asp-controller="Standard" asp-route-applicationId="@Model.Id">
+            <form asp-route="@StandardController.ApplyStandardConfirmRoutePost">
                 <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
+                <input asp-for="Search" value="@Model.Search" type="hidden" />
 
                 @if (!multipleVersions)
                 {

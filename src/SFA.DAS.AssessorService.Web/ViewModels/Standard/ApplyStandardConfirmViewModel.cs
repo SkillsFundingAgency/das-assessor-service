@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
+namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 {
     public class ApplyStandardConfirmViewModel
     {
         public Guid Id { get; set; }
 
-        public string StandardToFind { get; set; }
+        public string Search { get; set; }
 
         public string StandardReference { get; set; }
 
