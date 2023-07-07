@@ -12,6 +12,7 @@
 	OrganisationData [nvarchar](max) NULL,
 	[ApiEnabled] [bit] NOT NULL DEFAULT 0,
 	[ApiUser] [nvarchar](100) NULL,
+	[RecognitionNumber] VARCHAR(10) NULL,
 
  CONSTRAINT [PK_Organisations] PRIMARY KEY CLUSTERED 
 (
@@ -31,4 +32,7 @@ GO
 GO
 
 CREATE INDEX [IX_Organisations_EndPointAssessorUkprn] ON [Organisations] ([EndPointAssessorUkprn])
+GO
+
+CREATE INDEX [IX_Organisations_RecognitionNumber] ON [Organisations] ([RecognitionNumber])
 GO

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
     public class StandardModel : TestModel
@@ -22,5 +24,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public string Route { get; set; }
         public string TrailblazerContact { get; set; }
         public string StandardPageUrl { get; set; }
+        public DateTime VersionApprovedForDelivery { get; set; }
     }
 }

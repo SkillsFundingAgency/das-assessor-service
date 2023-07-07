@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using System.Collections.Generic;
 using System.Threading;
@@ -19,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     public class RegisterCreateOrganisationStandardHandlerTests
     {
         private Mock<IRegisterRepository> _registerRepository;
+        private Mock<IOrganisationStandardRepository> _organisationStandardRepository;
         private CreateEpaOrganisationStandardHandler _createEpaOrganisationStandardHandler;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<IEpaOrganisationValidator> _validator;
@@ -32,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterRepository>();
+            _organisationStandardRepository = new Mock<IOrganisationStandardRepository>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _validator = new Mock<IEpaOrganisationValidator>();
             _logger = new Mock<ILogger<CreateEpaOrganisationStandardHandler>>();
@@ -48,7 +51,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
-            _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object, _cleanserService.Object);
+            _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(
+                _registerRepository.Object, 
+                _organisationStandardRepository.Object, 
+                _validator.Object, 
+                _logger.Object, 
+                _cleanserService.Object);
         }
 
         [Test]

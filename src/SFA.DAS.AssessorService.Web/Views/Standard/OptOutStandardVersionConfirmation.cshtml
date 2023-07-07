@@ -1,0 +1,33 @@
+@using SFA.DAS.AssessorService.Web.Controllers
+@model SFA.DAS.AssessorService.Web.ViewModels.Standard.OptOutStandardVersionConfirmationViewModel
+@{
+    ViewBag.Title = "Opt out confirmed";
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <div class="govuk-panel__body">
+                    <h1 class="govuk-panel__title">
+                        You've opted out of version @Model.Version of @Model.StandardTitle (@Model.StandardReference)
+                    </h1>
+                </div>
+            </div>
+
+            <p class="govuk-body">We've sent you a confirmation email.</p>
+
+            <h3 class="govuk-heading-m">What happens next:</h3>
+
+            <p class="govuk-body">
+                You can no longer assess and record outcomes for version @Model.Version of @Model.StandardTitle (@Model.StandardReference) unless you opt back in.
+            </p>
+
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                You can opt back in at any time by going back to 
+                <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">your standards and versions</a>.
+            </p>
+        </div>
+    </div>
+</main>
