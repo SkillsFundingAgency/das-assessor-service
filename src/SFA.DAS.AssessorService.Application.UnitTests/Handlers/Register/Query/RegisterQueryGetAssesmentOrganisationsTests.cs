@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<ILogger<GetAssessmentOrganisationsHandler>> Logger;
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
 
-        private List<AssessmentOrganisationSummary> _expectedOrganisationSummaries;
+        private IEnumerable<AssessmentOrganisationSummary> _expectedOrganisationSummaries;
         private AssessmentOrganisationSummary _assessmentOrganisationSummary1;
         private AssessmentOrganisationSummary _assessmentOrganisationSummary2;
 
@@ -40,22 +40,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 };
 
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisations())
-                .Returns(Task.FromResult(_expectedOrganisationSummaries.AsEnumerable()));
+                .ReturnsAsync(_expectedOrganisationSummaries);
 
             _sut = new GetAssessmentOrganisationsHandler(RegisterQueryRepository.Object, Logger.Object);
         }
 
         [Test]
-        public void Handle_GetAssessmentOrganisationsIsCalled_WhenHandlerIsInvoked()
+        public async Task Handle_GetAssessmentOrganisationsIsCalled_WhenHandlerIsInvoked()
         {
-            _sut.Handle(new GetAssessmentOrganisationsRequest(), new CancellationToken()).Wait();
+            await _sut.Handle(new GetAssessmentOrganisationsRequest(), new CancellationToken());
             RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisations());
         }
 
         [Test]
-        public void Handle_ReturnExpectedListAssessmentOrganisationSummary_WhenHandlerIsInvoked()
+        public async Task Handle_ReturnExpectedListAssessmentOrganisationSummary_WhenHandlerIsInvoked()
         {
-            var organisations = _sut.Handle(new GetAssessmentOrganisationsRequest(), new CancellationToken()).Result;
+            var organisations = await _sut.Handle(new GetAssessmentOrganisationsRequest(), new CancellationToken());
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assessmentOrganisationSummary1);
             organisations.Should().Contain(_assessmentOrganisationSummary2);

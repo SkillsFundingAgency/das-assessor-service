@@ -1,4 +1,8 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Collections;
+using FluentAssertions.Execution;
+using FluentAssertions.Numeric;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
@@ -28,8 +32,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -45,8 +54,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)) // no standard version
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyNotContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsNotContain("EPA0002");
+                }
             }
         }
 
@@ -63,8 +77,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -81,8 +100,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -99,8 +123,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyNotContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsNotContain("EPA0002");
+                }
             }
         }
 
@@ -117,8 +146,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -135,8 +168,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Now.AddDays(1)))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -153,8 +191,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Now.AddDays(-1)))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyNotContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsNotContain("EPA0002");
+                }
             }
         }
 
@@ -172,8 +215,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.1", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -191,8 +239,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.1", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(2)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsContain("EPA0002");
+                }
             }
         }
 
@@ -210,8 +263,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.1", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001");
-                result.VerifyNotContain("EPA0002");
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001")
+                        .VerifyResultsNotContain("EPA0002");
+                }
             }
         }
 
@@ -228,7 +286,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -244,7 +307,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+                }
             }
         }
 
@@ -261,7 +329,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -278,7 +351,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -295,7 +373,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+                }
             }
         }
 
@@ -312,7 +395,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -329,7 +417,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -346,7 +439,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+                }
             }
         }
 
@@ -363,7 +461,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -380,7 +483,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom, DefaultDateStandardApprovedOnRegister); // the earlier standard is chosen
+                }
             }
         }
 
@@ -397,7 +505,39 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
-                result.VerifyContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain("EPA0001", DefaultEffectiveFrom.AddDays(5), DefaultDateStandardApprovedOnRegister.AddDays(5)); // the later standard is chosen
+                }
+            }
+        }
+
+        [TestCase(123456, "EPA0001")]
+        [TestCase(123456, "EPA0001")]
+        [TestCase(123456, "EPA0001")]
+        public async Task GetAllOrganisationsWithActiveStandards_IncludesOrganisationForSpecificUkprn_WhenOrganisationHasAtLeastOneStandardVersion(int ukprn, string expectedEndPointAssessorOrganisationId)
+        {
+            using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
+                .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
+                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
+                .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
+                .WithOrganisation("Organisation3", "EPA0003", 561234)
+                .WithOrganisationStandard(3, "EPA0003", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
+                .WithOrganisationStandardVersion("EPA0003", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
+            {
+                var result = await fixture.GetAllOrganisationsWithActiveStandards(ukprn);
+
+                using (new AssertionScope())
+                {
+                    result.VerifyNumberOfResults(1)
+                        .VerifyResultsContain(expectedEndPointAssessorOrganisationId);
+                }
             }
         }
 
@@ -407,7 +547,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             private readonly SqlConnection _sqlConnection;
 
             private RegisterQueryRepository _repository;
-            private IEnumerable<AssessmentOrganisationListSummary> _result;
+            public IEnumerable<AssessmentOrganisationListSummary> _results;
 
             public GetAllOrganisationsWithActiveStandardsTestsFixture()
             {
@@ -417,30 +557,40 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public async Task<GetAllOrganisationsWithActiveStandardsTestsFixture> GetAllOrganisationsWithActiveStandards()
             {
-                _result = await _repository.GetAssessmentOrganisationsList(null);
+                _results = await _repository.GetAssessmentOrganisationsList(null);
                 return this;
             }
 
-            public void Verify(int numberOfResults)
+            public async Task<GetAllOrganisationsWithActiveStandardsTestsFixture> GetAllOrganisationsWithActiveStandards(int ukprn)
             {
-                _result.Count().Should().Be(numberOfResults);
+                _results = await _repository.GetAssessmentOrganisationsList(ukprn);
+                return this;
             }
 
-            public void VerifyNotContain(string endPointAssessorOrganisationId)
+            public GetAllOrganisationsWithActiveStandardsTestsFixture VerifyNumberOfResults(int numberOfResults)
             {
-                _result.Should().NotContain(o => o.Id == endPointAssessorOrganisationId);
+                _results.Count().Should().Be(numberOfResults);
+                return this;
             }
 
-            public void VerifyContain(string endPointAssessorOrganisationId)
+            public GetAllOrganisationsWithActiveStandardsTestsFixture VerifyResultsNotContain(string endPointAssessorOrganisationId)
             {
-                _result.Should().Contain(o => o.Id == endPointAssessorOrganisationId);
+                _results.Should().NotContain(o => o.Id == endPointAssessorOrganisationId);
+                return this;
             }
 
-            public void VerifyContain(string endPointAssessorOrganisationId, DateTime? earlistStandardEffectiveFromDate, DateTime? earliestDateStandardApprovedOnRegister)
+            public GetAllOrganisationsWithActiveStandardsTestsFixture VerifyResultsContain(string endPointAssessorOrganisationId)
             {
-                _result.Should().Contain(o => o.Id == endPointAssessorOrganisationId
+                _results.Should().Contain(o => o.Id == endPointAssessorOrganisationId);
+                return this;
+            }
+
+            public GetAllOrganisationsWithActiveStandardsTestsFixture VerifyResultsContain(string endPointAssessorOrganisationId, DateTime? earlistStandardEffectiveFromDate, DateTime? earliestDateStandardApprovedOnRegister)
+            {
+                _results.Should().Contain(o => o.Id == endPointAssessorOrganisationId
                     && o.EarliestEffectiveFromDate == earlistStandardEffectiveFromDate
                     && o.EarliestDateStandardApprovedOnRegister == earliestDateStandardApprovedOnRegister);
+                return this;
             }
 
             public GetAllOrganisationsWithActiveStandardsTestsFixture WithOrganisation(string endPointAssessorName, string endPointAssessorOrganisationId, int ukprn)

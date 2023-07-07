@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 {
-    public class FixtureBase: IDisposable
+    public class FixtureBase : IDisposable
     {
-        private List<OrganisationModel> _organisations = new List<OrganisationModel>();
-        private List<StandardModel> _standards = new List<StandardModel>();
-        private List<OrganisationStandardModel> _organisationStandards = new List<OrganisationStandardModel>();
-        private List<OrganisationStandardVersionModel> _organisationStandardVersions = new List<OrganisationStandardVersionModel>();
+        private readonly List<OrganisationModel> _organisations = new List<OrganisationModel>();
+        private readonly List<StandardModel> _standards = new List<StandardModel>();
+        private readonly List<OrganisationStandardModel> _organisationStandards = new List<OrganisationStandardModel>();
+        private readonly List<OrganisationStandardVersionModel> _organisationStandardVersions = new List<OrganisationStandardVersionModel>();
 
         public FixtureBase() 
         {

@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private AssessmentOrganisationListSummary _assOrgSummary2;
 
         [SetUp]
-        public void Arrange()
+        public async Task Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
@@ -48,13 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                     new CancellationToken())).ReturnsAsync(_expectedAssessmentOrganisationSummaries);
             _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
 
-            _result = _sut.GetAssessmentOrganisationsList().Result;
-        }
-
-        [Test]
-        public void GetAssessmentOrganisationsList_ReturnExpectedActionResult_WhenCalled()
-        {
-            _result.Should().BeAssignableTo<IActionResult>();
+            _result = await _sut.GetAssessmentOrganisationsList();
         }
 
         [Test]

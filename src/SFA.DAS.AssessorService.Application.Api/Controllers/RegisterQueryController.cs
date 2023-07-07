@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisationsListByUkprn(int ukprn)
         {
-            _logger.LogInformation("Get Assessment Organisations List");
+            _logger.LogInformation($"Get Assessment Organisations List by UKPRN [{ukprn}]");
             var results = await _mediator.Send(new GetAssessmentOrganisationsListRequest(ukprn));
             return Ok(results.FirstOrDefault());
         }
