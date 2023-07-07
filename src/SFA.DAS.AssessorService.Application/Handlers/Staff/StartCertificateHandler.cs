@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Helpers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -24,10 +23,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
+        private readonly ICertificateNameCapitalisationService _certificateNameCapitalisationService;
         private readonly int PrivateFundingModelNumber = 99;
 
         public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IProvidersRepository providersRepository,
-            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
+            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService, ICertificateNameCapitalisationService certificateNameCapitalisationService)
         {
             _certificateRepository = certificateRepository;
             _learnerRepository = learnerRepository;
@@ -35,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _organisationQueryRepository = organisationQueryRepository;
             _logger = logger;
             _standardService = standardService;
+            _certificateNameCapitalisationService = certificateNameCapitalisationService;
         }
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
@@ -128,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             if ((learner.GivenNames.ToLower() == learner.GivenNames) || (learner.GivenNames.ToUpper() == learner.GivenNames))
             {
-                certData.LearnerGivenNames = learner.GivenNames.ProperCase();
+                certData.LearnerGivenNames = _certificateNameCapitalisationService.ProperCase(learner.GivenNames);
             }
             else
             {
@@ -137,7 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             if ((learner.FamilyName.ToLower() == learner.FamilyName) || (learner.FamilyName.ToUpper() == learner.FamilyName))
             {
-                certData.LearnerFamilyName = learner.FamilyName.ProperCase(true);
+                certData.LearnerFamilyName = _certificateNameCapitalisationService.ProperCase(learner.FamilyName, true);
             }
             else
             {

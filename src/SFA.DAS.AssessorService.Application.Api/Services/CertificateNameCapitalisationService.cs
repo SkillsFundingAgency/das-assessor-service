@@ -1,26 +1,27 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SFA.DAS.AssessorService.Application.Helpers
+namespace SFA.DAS.AssessorService.Application.Api.Services
 {
-    public static class CertificateNameCaseHelper
+    public class CertificateNameCapitalisationService : ICertificateNameCapitalisationService
     {
-        private static readonly Dictionary<string, string> MacMcFamilyNameExceptions = new Dictionary<string, string>();
-        private static readonly Dictionary<string, string> NonEnglishFamilyNameReplacements = new Dictionary<string, string>();
-        private static readonly string[] Conjunctions = new string[] { "Y", "E", "I" };
-        private static readonly Dictionary<char, char> AlternateCharacters = new Dictionary<char, char>() {
-                {'’', '\''},
-                {'‘','\'' },
-                {'`', '\''},
-                {'–', '-'},
-                {'\u00A0',' '},
-                {'\t',' '},
-                {'%', ' '}
-        };
+        private readonly Dictionary<string, string> MacMcFamilyNameExceptions = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> NonEnglishFamilyNameReplacements = new Dictionary<string, string>();
+        private readonly string[] Conjunctions = new string[] { "Y", "E", "I" };
+        private readonly Dictionary<char, char> AlternateCharacters = new Dictionary<char, char>() {
+                        {'’', '\''},
+                        {'‘','\'' },
+                        {'`', '\''},
+                        {'–', '-'},
+                        {'\u00A0',' '},
+                        {'\t',' '},
+                        {'%', ' '}
+                };
 
-        static CertificateNameCaseHelper()
+        public CertificateNameCapitalisationService()
         {
             MacMcFamilyNameExceptions.Add(@"\bMacEvicius", "Macevicius");
             MacMcFamilyNameExceptions.Add(@"\bMacHado", "Machado");
@@ -87,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         /// <param name="namePart">A part of name e.g. Given Name or Family Name</param>
         /// <param name="familyNamePart">Indicates whether special rules apply for a Family Name</param>
         /// <returns></returns>
-        public static string ProperCase(this string namePart, bool familyNamePart = false)
+        public string ProperCase(string namePart, bool familyNamePart = false)
         {
             if (string.IsNullOrEmpty(namePart))
                 return namePart;
@@ -115,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         /// Cleans all magic characters
         /// </summary>
         /// <returns></returns>
-        public static void CleanseStringForSpecialCharacters(ref string inputString)
+        public void CleanseStringForSpecialCharacters(ref string inputString)
         {
             if (string.IsNullOrEmpty(inputString)) return;
             inputString = inputString.Trim();
@@ -137,7 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         /// </summary>
         /// <param name="inputString"></param>
         /// <returns></returns>
-        private static char[] SpecialCharactersInString(string inputString)
+        public char[] SpecialCharactersInString(string inputString)
         {
             return AlternateCharacters.Where(kvp => inputString.Contains(kvp.Key)).Select(kvp => kvp.Key).ToArray();
         }
@@ -146,11 +147,12 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         /// Capitalize first letters.
         /// </summary>
         /// <param name="source"></param>
-        private static void Capitalize(ref string source)
+        public static void Capitalize(ref string source)
         {
             source = source.ToLower();
 
-            source = Regex.Replace(source, @"(?:(^M|^m)(c)|(\b))([a-z])", delegate (Match m) {
+            source = Regex.Replace(source, @"(?:(^M|^m)(c)|(\b))([a-z])", delegate (Match m)
+            {
                 return String.Concat(m.Groups[1].Value.ToUpper(), m.Groups[2].Value, m.Groups[3].Value, m.Groups[4].Value.ToUpper());
             });
         }
@@ -159,7 +161,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         /// Fix Spanish conjunctions.
         /// </summary>
         /// <param name="source"></param>
-        private static void FixConjunction(ref string source)
+        public void FixConjunction(ref string source)
         {
             foreach (var conjunction in Conjunctions)
             {
@@ -174,7 +176,7 @@ namespace SFA.DAS.AssessorService.Application.Helpers
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        private static void UpdateMac(ref string source)
+        public void UpdateMac(ref string source)
         {
             // default to capital letter following 'c' as in "MacDonald"
             foreach (Match match in Regex.Matches(source, @"\b(Ma?c)([A-Za-z]{1})([A-Za-z]+)"))
