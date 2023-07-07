@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");
 
-            if (!returnView && viewModel.GetType() == typeof(CertificateNamesViewModel)) { SetNamePropertyAndReturnView(viewModel as CertificateNamesViewModel); }
+            if (!returnView) { SetNamePropertyAndReturnView(viewModel as CertificateNamesViewModel); }
 
             return View(view, viewModel);
         }

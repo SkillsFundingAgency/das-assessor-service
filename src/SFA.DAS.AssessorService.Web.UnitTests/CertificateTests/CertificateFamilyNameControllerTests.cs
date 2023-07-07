@@ -19,6 +19,7 @@ using FluentValidation;
 using System.Collections.Generic;
 using FluentValidation.Results;
 using ValidationResult = FluentValidation.Results.ValidationResult;
+using FluentAssertions.Execution;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
@@ -69,8 +70,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var result = await _controller.FamilyName() as ViewResult;
 
-            result.ViewName.Should().Be("~/Views/Certificate/FamilyName.cshtml");
-            result.Model.Should().BeOfType<CertificateNamesViewModel>();
+            using (new AssertionScope("The view is loaded successfully"))
+            {
+                result.ViewName.Should().Be("~/Views/Certificate/FamilyName.cshtml");
+                result.Model.Should().BeOfType<CertificateNamesViewModel>();
+            }
+
         }
 
         [Test]
@@ -78,9 +83,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             var result = await _controller.FamilyName() as RedirectToActionResult;
 
-            result.ControllerName.Should().Be("Search");
-            result.ActionName.Should().Be("Index");
+            using (new AssertionScope("User is redirected to search"))
+            {
+                result.ControllerName.Should().Be("Search");
+                result.ActionName.Should().Be("Index");
+            }
         }
+
 
         [Test, MoqAutoData]
         public async Task WhenPostingFamilyNameView_AndInputIsValid_ThenRedirectsToCheckPage(CertificateNamesViewModel mockViewModel)
@@ -88,9 +97,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _validator.Setup(s => s.Validate(It.IsAny<CertificateNamesViewModel>())).Returns(new ValidationResult());
 
             var result = await _controller.FamilyName(mockViewModel) as RedirectToActionResult;
+            using (new AssertionScope("User is redirected to check page"))
+            {
+                result.ControllerName.Should().Be("CertificateCheck");
+                result.ActionName.Should().Be("Check");
+            }
 
-            result.ControllerName.Should().Be("CertificateCheck");
-            result.ActionName.Should().Be("Check");
         }
 
         [Test, MoqAutoData]
@@ -102,8 +114,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var result = await _controller.FamilyName(mockViewModel) as ViewResult;
 
-            result.ViewName.Should().Be("/Views/Certificate/FamilyName.cshtml");
-            result.ViewData.ModelState.ErrorCount.Should().BeGreaterThanOrEqualTo(1);
+            using (new AssertionScope("Page refreshes with validation errors"))
+            {
+                result.ViewName.Should().Be("/Views/Certificate/FamilyName.cshtml");
+                result.ViewData.ModelState.ErrorCount.Should().BeGreaterThanOrEqualTo(1);
+            }
+
         }
 
     }

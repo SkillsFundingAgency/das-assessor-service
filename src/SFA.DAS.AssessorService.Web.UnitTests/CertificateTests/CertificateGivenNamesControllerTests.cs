@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using FluentValidation;
 using FluentValidation.Results;
 using System.Collections.Generic;
+using FluentAssertions.Execution;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
@@ -68,8 +69,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var result = await _controller.GivenNames() as ViewResult;
 
-            result.ViewName.Should().Be("~/Views/Certificate/GivenNames.cshtml");
-            result.Model.Should().BeOfType<CertificateNamesViewModel>();
+            using (new AssertionScope("View loads successfully"))
+            {
+                result.ViewName.Should().Be("~/Views/Certificate/GivenNames.cshtml");
+                result.Model.Should().BeOfType<CertificateNamesViewModel>();
+            }
+
         }
 
         [Test]
@@ -77,8 +82,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         {
             var result = await _controller.GivenNames() as RedirectToActionResult;
 
-            result.ControllerName.Should().Be("Search");
-            result.ActionName.Should().Be("Index");
+            using (new AssertionScope("User is redirected to search"))
+            {
+                result.ControllerName.Should().Be("Search");
+                result.ActionName.Should().Be("Index");
+            }
+
         }
 
         [Test, MoqAutoData]
@@ -88,8 +97,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var result = await _controller.GivenNames(mockViewModel) as RedirectToActionResult;
 
-            result.ControllerName.Should().Be("CertificateCheck");
-            result.ActionName.Should().Be("Check");
+            using (new AssertionScope("User is redirected to check page"))
+            {
+                result.ControllerName.Should().Be("CertificateCheck");
+                result.ActionName.Should().Be("Check");
+            }
+
         }
 
         [Test, MoqAutoData]
@@ -101,8 +114,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
             var result = await _controller.GivenNames(mockViewModel) as ViewResult;
 
-            result.ViewName.Should().Be("~/Views/Certificate/GivenNames.cshtml");
-            result.ViewData.ModelState.ErrorCount.Should().BeGreaterThanOrEqualTo(1);
+            using (new AssertionScope("Page refreshes with errors"))
+            {
+                result.ViewName.Should().Be("~/Views/Certificate/GivenNames.cshtml");
+                result.ViewData.ModelState.ErrorCount.Should().BeGreaterThanOrEqualTo(1);
+            }
+
         }
     }
 }

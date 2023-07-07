@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// Cleans all magic characters
         /// </summary>
         /// <returns></returns>
-        public void CleanseStringForSpecialCharacters(ref string inputString)
+        private void CleanseStringForSpecialCharacters(ref string inputString)
         {
             if (string.IsNullOrEmpty(inputString)) return;
             inputString = inputString.Trim();
@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// </summary>
         /// <param name="inputString"></param>
         /// <returns></returns>
-        public char[] SpecialCharactersInString(string inputString)
+        private char[] SpecialCharactersInString(string inputString)
         {
             return AlternateCharacters.Where(kvp => inputString.Contains(kvp.Key)).Select(kvp => kvp.Key).ToArray();
         }
@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// Capitalize first letters.
         /// </summary>
         /// <param name="source"></param>
-        public static void Capitalize(ref string source)
+        private static void Capitalize(ref string source)
         {
             source = source.ToLower();
 
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// Fix Spanish conjunctions.
         /// </summary>
         /// <param name="source"></param>
-        public void FixConjunction(ref string source)
+        private void FixConjunction(ref string source)
         {
             foreach (var conjunction in Conjunctions)
             {
@@ -176,7 +176,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public void UpdateMac(ref string source)
+        private void UpdateMac(ref string source)
         {
             // default to capital letter following 'c' as in "MacDonald"
             foreach (Match match in Regex.Matches(source, @"\b(Ma?c)([A-Za-z]{1})([A-Za-z]+)"))
