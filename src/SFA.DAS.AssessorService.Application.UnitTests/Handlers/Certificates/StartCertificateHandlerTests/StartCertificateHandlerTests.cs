@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
-using SFA.DAS.AssessorService.Application.Helpers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -27,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         private Mock<IProvidersRepository> _mockProvidersRepository;
         private Mock<IOrganisationQueryRepository> _mockOrganisationQueryRepository;
         private Mock<IStandardService> _mockStandardService;
+        private Mock<ICertificateNameCapitalisationService> _mockCertificateNameCapitalisationService;
         private StartCertificateHandler _sut;
 
         [SetUp]
@@ -38,9 +38,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockProvidersRepository = new Mock<IProvidersRepository>();
             _mockOrganisationQueryRepository = new Mock<IOrganisationQueryRepository>();
             _mockStandardService = new Mock<IStandardService>();
+            _mockCertificateNameCapitalisationService = new Mock<ICertificateNameCapitalisationService>();
 
             _sut = new StartCertificateHandler(_mockCertificateRepository.Object, _mockLearnerRepository.Object, _mockProvidersRepository.Object,
-                _mockOrganisationQueryRepository.Object, _mockLogger.Object, _mockStandardService.Object);
+                _mockOrganisationQueryRepository.Object, _mockLogger.Object, _mockStandardService.Object, _mockCertificateNameCapitalisationService.Object);
         }
 
         [Test, RecursiveMoqAutoData]
@@ -361,13 +362,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             // Act
             var response = await _sut.Handle(request, new CancellationToken());
-            var certData = JsonConvert.DeserializeObject<CertificateData>(createdCertificate.CertificateData);
 
             // Assertions
             Assert.Multiple(() =>
             {
-                Assert.IsTrue(learnerRecord.GivenNames.ProperCase() == certData.LearnerGivenNames);
-                Assert.IsTrue(learnerRecord.FamilyName.ProperCase() == certData.LearnerFamilyName);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Once);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Once);
             });
         }
 
@@ -404,8 +404,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Assertions
             Assert.Multiple(() =>
             {
-                Assert.IsTrue(learnerRecord.GivenNames.ProperCase() == certData.LearnerGivenNames);
-                Assert.IsTrue(learnerRecord.FamilyName.ProperCase() == certData.LearnerFamilyName);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Once);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Once);
             });
         }
 
@@ -441,8 +441,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Assertions
             Assert.Multiple(() =>
             {
-                Assert.IsTrue(learnerRecord.GivenNames == certData.LearnerGivenNames);
-                Assert.IsTrue(learnerRecord.FamilyName == certData.LearnerFamilyName);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Never);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Never);
             });
         }
     }
