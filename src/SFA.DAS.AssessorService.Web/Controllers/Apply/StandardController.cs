@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -16,13 +15,10 @@ using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
-using StructureMap.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -32,7 +28,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IStandardVersionClient _standardVersionApiClient;
-        private readonly IApplicationService _applicationService;
         private readonly IWebConfiguration _config;
 
         #region Routes
@@ -60,13 +55,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         #endregion
 
         public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
-            IStandardVersionClient standardVersionApiClient, IApplicationService applicationService, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
+            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
         {
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
             _standardVersionApiClient = standardVersionApiClient;
-            _applicationService = applicationService;
             _config = config;
         }
 

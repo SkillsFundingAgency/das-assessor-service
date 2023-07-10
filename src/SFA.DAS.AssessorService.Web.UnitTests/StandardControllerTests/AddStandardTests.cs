@@ -37,13 +37,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.AddStandardSearch(search);
 
             // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<ViewResult>(result);
 
-            var viewResult = result as ViewResult;
-            Assert.IsInstanceOf<AddStandardSearchViewModel>(viewResult.Model);
+                var viewResult = result as ViewResult;
+                Assert.IsInstanceOf<AddStandardSearchViewModel>(viewResult.Model);
 
-            var model = viewResult.Model as AddStandardSearchViewModel;
-            Assert.AreEqual(search, model.Search);
+                var model = viewResult.Model as AddStandardSearchViewModel;
+                Assert.AreEqual(search, model.Search);
+            });
         }
 
         [Test]
@@ -60,10 +63,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.AddStandardSearch(new AddStandardSearchViewModel());
 
             // Assert
-            Assert.IsInstanceOf<RedirectToRouteResult>(result);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
-            var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.AreEqual(StandardController.AddStandardSearchRouteGet, redirectToRouteResult.RouteName);
+                var redirectToRouteResult = result as RedirectToRouteResult;
+                Assert.AreEqual(StandardController.AddStandardSearchRouteGet, redirectToRouteResult.RouteName);
+            });
         }
 
         [Test]
@@ -78,10 +84,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.AddStandardSearch(new AddStandardSearchViewModel());
 
             // Assert
-            Assert.IsInstanceOf<RedirectToRouteResult>(result);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
-            var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.AreEqual(StandardController.AddStandardSearchResultsRouteGet, redirectToRouteResult.RouteName);
+                var redirectToRouteResult = result as RedirectToRouteResult;
+                Assert.AreEqual(StandardController.AddStandardSearchResultsRouteGet, redirectToRouteResult.RouteName);
+            });
         }
 
         [Test]
@@ -106,15 +115,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.AddStandardSearchResults(search);
 
             // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<ViewResult>(result);
 
-            var viewResult = result as ViewResult;
-            Assert.IsInstanceOf<AddStandardSearchViewModel>(viewResult.Model);
+                var viewResult = result as ViewResult;
+                Assert.IsInstanceOf<AddStandardSearchViewModel>(viewResult.Model);
 
-            var model = viewResult.Model as AddStandardSearchViewModel;
-            Assert.AreEqual(search, model.Search);
-            Assert.AreEqual(approvedStandards.Count, model.Approved.Count);
-            Assert.AreEqual(allStandards.Count, model.Results.Count);
+                var model = viewResult.Model as AddStandardSearchViewModel;
+                Assert.AreEqual(search, model.Search);
+                Assert.AreEqual(approvedStandards.Count, model.Approved.Count);
+                Assert.AreEqual(allStandards.Count, model.Results.Count);
+            });
         }
 
         [TestCase(null)]
@@ -154,17 +166,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.AddStandardChooseVersions(search, referenceNumber);
 
             // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsInstanceOf<AddStandardConfirmViewModel>(viewResult.Model);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<ViewResult>(result);
+                var viewResult = result as ViewResult;
+                Assert.IsInstanceOf<AddStandardConfirmViewModel>(viewResult.Model);
 
-            var model = viewResult.Model as AddStandardConfirmViewModel;
-            Assert.AreEqual(search, model.Search);
-            Assert.AreEqual(referenceNumber, model.StandardReference);
-            Assert.AreEqual(standardVersions.Count, model.StandardVersions.Count);
-            Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
-            Assert.AreEqual(selectedVersions.Split(',').ToList(), model.SelectedVersions);
-            Assert.AreEqual(bool.Parse(isConfirmed), model.IsConfirmed);
+                var model = viewResult.Model as AddStandardConfirmViewModel;
+                Assert.AreEqual(search, model.Search);
+                Assert.AreEqual(referenceNumber, model.StandardReference);
+                Assert.AreEqual(standardVersions.Count, model.StandardVersions.Count);
+                Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
+                Assert.AreEqual(selectedVersions.Split(',').ToList(), model.SelectedVersions);
+                Assert.AreEqual(bool.Parse(isConfirmed), model.IsConfirmed);
+            });
         }
 
         [Test]
@@ -188,17 +203,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.AddStandardChooseVersions(search, referenceNumber);
 
             // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsInstanceOf<AddStandardConfirmViewModel>(viewResult.Model);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<ViewResult>(result);
+                var viewResult = result as ViewResult;
+                Assert.IsInstanceOf<AddStandardConfirmViewModel>(viewResult.Model);
 
-            var model = viewResult.Model as AddStandardConfirmViewModel;
-            Assert.AreEqual(search, model.Search);
-            Assert.AreEqual(referenceNumber, model.StandardReference);
-            Assert.AreEqual(standardVersions.Count, model.StandardVersions.Count);
-            Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
-            Assert.AreEqual(new List<string>(), model.SelectedVersions);
-            Assert.AreEqual(false, model.IsConfirmed);
+                var model = viewResult.Model as AddStandardConfirmViewModel;
+                Assert.AreEqual(search, model.Search);
+                Assert.AreEqual(referenceNumber, model.StandardReference);
+                Assert.AreEqual(standardVersions.Count, model.StandardVersions.Count);
+                Assert.AreEqual(standardVersions.FirstOrDefault(), model.Standard);
+                Assert.AreEqual(new List<string>(), model.SelectedVersions);
+                Assert.AreEqual(false, model.IsConfirmed);
+            });
         }
 
         [TestCase(null, null)]
@@ -224,10 +242,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.AddStandardChooseVersions(new AddStandardConfirmViewModel());
 
             // Assert
-            Assert.IsInstanceOf<RedirectToRouteResult>(result);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
-            var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.AreEqual(StandardController.AddStandardChooseVersionsRouteGet, redirectToRouteResult.RouteName);
+                var redirectToRouteResult = result as RedirectToRouteResult;
+                Assert.AreEqual(StandardController.AddStandardChooseVersionsRouteGet, redirectToRouteResult.RouteName);
+            });
         }
 
         [Test]
@@ -242,10 +263,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.AddStandardChooseVersions(new AddStandardConfirmViewModel());
 
             // Assert
-            Assert.IsInstanceOf<RedirectToRouteResult>(result);
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<RedirectToRouteResult>(result);
 
-            var redirectToRouteResult = result as RedirectToRouteResult;
-            Assert.AreEqual(StandardController.AddStandardConfirmRouteGet, redirectToRouteResult.RouteName);
+                var redirectToRouteResult = result as RedirectToRouteResult;
+                Assert.AreEqual(StandardController.AddStandardConfirmRouteGet, redirectToRouteResult.RouteName);
+            });
         }
 
         [TestCase(null, null, "1.0")]
@@ -302,14 +326,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.AddStandardConfirm("Tech", "ST0001", new List<string> { "1.0" });
 
             // Assert
-            var viewResult = result as ViewResult;
-            Assert.IsNotNull(viewResult);
+            Assert.Multiple(() =>
+            {
+                var viewResult = result as ViewResult;
+                Assert.IsNotNull(viewResult);
 
-            var model = viewResult.Model as AddStandardConfirmViewModel;
-            Assert.IsNotNull(model);
-            Assert.AreEqual("Tech", model.Search);
-            Assert.AreEqual("ST0001", model.StandardReference);
-            Assert.AreEqual(standardVersions.First(), model.Standard);
+                var model = viewResult.Model as AddStandardConfirmViewModel;
+                Assert.IsNotNull(model);
+                Assert.AreEqual("Tech", model.Search);
+                Assert.AreEqual("ST0001", model.StandardReference);
+                Assert.AreEqual(standardVersions.First(), model.Standard);
+            });
         }
 
         [Test]
@@ -345,11 +372,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             await _sut.AddStandardConfirm(model);
 
             // Assert
-            _mockOrgApiClient.Verify(x => x.AddOrganisationStandard(It.Is<OrganisationStandardAddRequest>(request =>
+            Assert.Multiple(() =>
+            {
+                _mockOrgApiClient.Verify(x => x.AddOrganisationStandard(It.Is<OrganisationStandardAddRequest>(request =>
                 request.OrganisationId == org.OrganisationId &&
                 request.StandardReference == model.StandardReference &&
                 request.StandardVersions.SequenceEqual(model.SelectedVersions) &&
                 request.ContactId == UserId)), Times.Once);
+            });
         }
 
         [TestCase(null)]
@@ -373,15 +403,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.AddStandardConfirmation(referenceNumber);
 
             // Assert
-            Assert.IsInstanceOf<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            
-            Assert.IsInstanceOf<AddStandardConfirmationViewModel>(viewResult.Model);
-            var model = viewResult.Model as AddStandardConfirmationViewModel;
+            Assert.Multiple(() =>
+            {
+                Assert.IsInstanceOf<ViewResult>(result);
+                var viewResult = result as ViewResult;
 
-            Assert.AreEqual(standardVersions.First().Title, model.StandardTitle);
-            Assert.AreEqual(standardVersions.Select(x => x.Version).ToList(), model.StandardVersions);
-            Assert.AreEqual("http://feedbackurl", model.FeedbackUrl);
+                Assert.IsInstanceOf<AddStandardConfirmationViewModel>(viewResult.Model);
+                var model = viewResult.Model as AddStandardConfirmationViewModel;
+
+                Assert.AreEqual(standardVersions.First().Title, model.StandardTitle);
+                Assert.AreEqual(standardVersions.Select(x => x.Version).ToList(), model.StandardVersions);
+                Assert.AreEqual("http://feedbackurl", model.FeedbackUrl);
+            });
         }
     }
 }
