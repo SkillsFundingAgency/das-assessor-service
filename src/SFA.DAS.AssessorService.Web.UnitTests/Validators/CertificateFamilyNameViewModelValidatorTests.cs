@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
 
         [SetUp]
-        public async Task Arrange()
+        public void Arrange()
         {
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
             _validator = new CertificateFamilyNameViewModelValidator(_mockCertificateApiClient.Object);
