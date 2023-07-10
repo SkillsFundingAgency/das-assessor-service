@@ -77,8 +77,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             var standardViewModel = new AddStandardSearchViewModel()
             {
-                StandardToFind = ModelState
-                    .GetAttemptedValueWhenInvalid(nameof(AddStandardSearchViewModel.StandardToFind), search)
+                Search = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(AddStandardSearchViewModel.Search), search)
             };
 
             return View(standardViewModel);
@@ -91,10 +91,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             if(!ModelState.IsValid)
             {
-                return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.StandardToFind });
+                return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.Search });
             }
             
-            return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.StandardToFind });
+            return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.Search });
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 Results = allStandards
                     .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
                     .ToList(),
-                StandardToFind = search
+                Search = search
             };
 
             return View(model);
@@ -257,9 +257,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (id == Guid.Empty)
                 throw new ArgumentException($"Value of {nameof(id)} cannot be empty");
 
-            if (string.IsNullOrEmpty(search))
-                throw new ArgumentException($"Value of {nameof(search)} cannot be null or empty");
-
             var viewModel = new ApplyStandardSearchViewModel
             {
                 Id = id,
@@ -280,10 +277,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             if (model.Id == Guid.Empty)
                 throw new ArgumentException($"Value of {nameof(model.Id)} cannot be empty");
-
-            if (string.IsNullOrEmpty(model.Search))
-                throw new ArgumentException($"Value of {nameof(model.Search)} cannot be null or empty");
-
 
             if (!ModelState.IsValid)
             {

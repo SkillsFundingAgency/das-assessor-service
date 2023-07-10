@@ -38,6 +38,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
+        #region routes
+        public const string StandardApplicationsRouteGet = nameof(StandardApplicationsRouteGet);
+        #endregion
+
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
             : base(applicationApiClient, contactsApiClient, httpContextAccessor)
@@ -106,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpGet("/Application/StandardApplications")]
+        [HttpGet("/Application/StandardApplications", Name = StandardApplicationsRouteGet)]
         public async Task<IActionResult> StandardApplications()
         {
             var userId = await GetUserId();

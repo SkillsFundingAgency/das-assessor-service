@@ -19,41 +19,41 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [Test]
         public void Validate_StandardToFindIsEmpty_ShouldHaveError()
         {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = string.Empty };
+            var viewModel = new AddStandardSearchViewModel { Search = string.Empty };
 
             var result = _validator.TestValidate(viewModel);
 
-            result.ShouldHaveValidationErrorFor(vm => vm.StandardToFind);
+            result.ShouldHaveValidationErrorFor(vm => vm.Search);
         }
 
         [Test]
         public void Validate_StandardToFindIsLessThan3Characters_ShouldHaveError()
         {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = "ab" };
+            var viewModel = new AddStandardSearchViewModel { Search = "ab" };
 
             var result = _validator.TestValidate(viewModel);
 
-            result.ShouldHaveValidationErrorFor(vm => vm.StandardToFind);
+            result.ShouldHaveValidationErrorFor(vm => vm.Search);
         }
 
         [Test]
         public void Validate_StandardToFindIs3Characters_ShouldNotHaveError()
         {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = "abc" };
+            var viewModel = new AddStandardSearchViewModel { Search = "abc" };
 
             var result = _validator.TestValidate(viewModel);
 
-            result.ShouldNotHaveValidationErrorFor(vm => vm.StandardToFind);
+            result.ShouldNotHaveValidationErrorFor(vm => vm.Search);
         }
 
         [Test]
         public void Validate_StandardToFindIsMoreThan3Characters_ShouldNotHaveError()
         {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = "abcd" };
+            var viewModel = new AddStandardSearchViewModel { Search = "abcd" };
 
             var result = _validator.TestValidate(viewModel);
 
-            result.ShouldNotHaveValidationErrorFor(vm => vm.StandardToFind);
+            result.ShouldNotHaveValidationErrorFor(vm => vm.Search);
         }
     }
 

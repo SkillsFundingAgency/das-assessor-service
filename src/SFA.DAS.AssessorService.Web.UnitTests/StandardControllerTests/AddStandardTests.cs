@@ -29,8 +29,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             // Arrange
             var search = "Te";
             var modelState = new ModelStateDictionary();
-            modelState.AddModelError(nameof(AddStandardSearchViewModel.StandardToFind), "Error");
-            modelState.SetModelValue(nameof(AddStandardSearchViewModel.StandardToFind), search, search);
+            modelState.AddModelError(nameof(AddStandardSearchViewModel.Search), "Error");
+            modelState.SetModelValue(nameof(AddStandardSearchViewModel.Search), search, search);
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             Assert.IsInstanceOf<AddStandardSearchViewModel>(viewResult.Model);
 
             var model = viewResult.Model as AddStandardSearchViewModel;
-            Assert.AreEqual(search, model.StandardToFind);
+            Assert.AreEqual(search, model.Search);
         }
 
         [Test]
@@ -52,8 +52,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             // Arrange
             var search = "Te";
             var modelState = new ModelStateDictionary();
-            modelState.AddModelError(nameof(AddStandardSearchViewModel.StandardToFind), "Error");
-            modelState.SetModelValue(nameof(AddStandardSearchViewModel.StandardToFind), search, search);
+            modelState.AddModelError(nameof(AddStandardSearchViewModel.Search), "Error");
+            modelState.SetModelValue(nameof(AddStandardSearchViewModel.Search), search, search);
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         {
             // Arrange
             var modelState = new ModelStateDictionary();
-            modelState.ClearValidationState(nameof(AddStandardSearchViewModel.StandardToFind));
+            modelState.ClearValidationState(nameof(AddStandardSearchViewModel.Search));
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             Assert.IsInstanceOf<AddStandardSearchViewModel>(viewResult.Model);
 
             var model = viewResult.Model as AddStandardSearchViewModel;
-            Assert.AreEqual(search, model.StandardToFind);
+            Assert.AreEqual(search, model.Search);
             Assert.AreEqual(approvedStandards.Count, model.Approved.Count);
             Assert.AreEqual(allStandards.Count, model.Results.Count);
         }
@@ -235,7 +235,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         {
             // Arrange
             var modelState = new ModelStateDictionary();
-            modelState.ClearValidationState(nameof(AddStandardSearchViewModel.StandardToFind));
+            modelState.ClearValidationState(nameof(AddStandardSearchViewModel.Search));
             _sut.ViewData.ModelState.Merge(modelState);
 
             // Act

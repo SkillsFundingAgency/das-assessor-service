@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 
-<a asp-route="@ApplyToAssessStandardController.ApplyToAssessStandardRouteGet" class="govuk-back-link">Back</a>
+<a asp-route="@ApplicationController.StandardApplicationsRouteGet" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -31,16 +31,16 @@
                 <div class="govuk-form-group">
                     <div class="govuk-form-group" sfa-validation-for="Search" sfa-validationerror-class="govuk-form-group--error">
                         <h1 class="govuk-label-wrapper">
-                            <label class="govuk-label govuk-label--xl" for="StandardToFind">
+                            <label class="govuk-label govuk-label--xl" for="Search">
                                 What standard are you applying for?
                             </label>
                         </h1>
                         <span id="standard-hint" class="govuk-hint">
                             Enter 3 or more characters to search.<br />For example, financial adviser
                         </span>
-                        <sfa-validationerror-detail sfa-validation-for="StandardToFind" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <sfa-validationerror-detail sfa-validation-for="Search" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                         <input class="govuk-input govuk-input--width-20 ui-autocomplete-input"
-                               name="StandardToFind"
+                               name="Search"
                                sfa-validation-for="Search"
                                sfa-validationerror-class="govuk-input--error"
                                asp-for="Search"

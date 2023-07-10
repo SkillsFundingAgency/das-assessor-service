@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
         }
 
-        [HttpGet(Name = ApplyToAssessStandardRouteGet)]
+        [HttpGet("ApplyToAssessStandard", Name = ApplyToAssessStandardRouteGet)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public IActionResult Index()
         {

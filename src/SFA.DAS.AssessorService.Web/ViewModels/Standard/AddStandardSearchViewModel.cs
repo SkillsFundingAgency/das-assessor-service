@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 {
     public class AddStandardSearchViewModel
     {
-        public string StandardToFind { get; set; }
+        public string Search { get; set; }
 
         public List<StandardVersion> Results { get; set; }
 
