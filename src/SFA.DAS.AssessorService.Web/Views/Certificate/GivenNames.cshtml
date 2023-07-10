@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.ViewModels.Certificate
-@model CertificateNamesViewModel
+@model CertificateGivenNamesViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's first name";
@@ -16,8 +16,6 @@
 
                     <input type="hidden" name="Id" value="@Model.Id" />
                     <input type="hidden" name="FamilyName" value="@Model.FamilyName" />
-                    <input type="hidden" name="GivenNames" value="@Model.GivenNames" />
-                    <input type="hidden" name="InputFamilyName" value="@Model.FamilyName" />
 
                     @if (!ViewData.ModelState.IsValid)
                     {
@@ -27,7 +25,7 @@
                             </h2>
                             <div class="govuk-error-summary__body">
                                 <ul class="govuk-list govuk-error-summary__list">
-                                    <li><a href="#InputGivenNames" sfa-validation-for="InputGivenNames"></a></li>
+                                    <li><a href="#GivenNames" sfa-validation-for="GivenNames"></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -43,8 +41,8 @@
                             What is the apprentice's first name?
                         </label>
                         <span class="govuk-visually-hidden">Error:</span>
-                        <span class="govuk-error-message" asp-validation-for="InputGivenNames"></span>
-                        <input class="govuk-input" id="InputGivenNames" asp-for="InputGivenNames" type="text" spellcheck="false" autocomplete="given-name" sfa-validation-for="InputGivenNames" sfa-validationerror-class="govuk-input--error" />
+                        <span class="govuk-error-message" asp-validation-for="GivenNames"></span>
+                        <input class="govuk-input" id="GivenNames" asp-for="GivenNames" type="text" spellcheck="false" autocomplete="given-name" sfa-validation-for="GivenNames" sfa-validationerror-class="govuk-input--error" />
                     </div>
 
                     <button type="submit" class="govuk-button" data-module="govuk-button">

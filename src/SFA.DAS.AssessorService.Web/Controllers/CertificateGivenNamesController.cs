@@ -1,10 +1,10 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using System.Threading.Tasks;
 
@@ -13,9 +13,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/givennames")]
     public class CertificateGivenNamesController : CertificateBaseController
     {
-        private readonly IValidator<CertificateNamesViewModel> _certificateNameChangeValidator;
+        private readonly CertificateGivenNamesViewModelValidator _certificateNameChangeValidator;
 
-        public CertificateGivenNamesController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService, IValidator<CertificateNamesViewModel> certificateNameChangeValidator) : base(logger, contextAccessor, certificateApiClient, sessionService)
+        public CertificateGivenNamesController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService, CertificateGivenNamesViewModelValidator certificateNameChangeValidator) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _certificateNameChangeValidator = certificateNameChangeValidator;
         }
@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GivenNames()
         {
-            return await LoadViewModel<CertificateNamesViewModel>("~/Views/Certificate/GivenNames.cshtml", false);
+            return await LoadViewModel<CertificateGivenNamesViewModel>("~/Views/Certificate/GivenNames.cshtml");
         }
 
         [HttpPost]
-        public async Task<IActionResult> GivenNames(CertificateNamesViewModel viewModel)
+        public async Task<IActionResult> GivenNames(CertificateGivenNamesViewModel viewModel)
         {
-            var validationResult = _certificateNameChangeValidator.Validate(viewModel);
+            var validationResult = await _certificateNameChangeValidator.Validate(viewModel);
 
             if (!validationResult.IsValid)
             {
@@ -39,8 +39,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 return View("~/Views/Certificate/GivenNames.cshtml", viewModel);
             }
-
-            viewModel.GivenNames = viewModel.InputGivenNames;
 
             return await SaveViewModel(viewModel,
                 returnToIfModelNotValid: "~/Views/Certificate/GivenNames.cshtml",

@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             CertificateApiClient = certificateApiClient;
             SessionService = sessionService;
         }
-        protected async Task<IActionResult> LoadViewModel<T>(string view, bool returnView = true) where T : CertificateBaseViewModel, new()
+        protected async Task<IActionResult> LoadViewModel<T>(string view) where T : CertificateBaseViewModel, new()
         {
             var username = GetUsernameFromClaim();
 
@@ -55,15 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");
 
-            if (!returnView) { SetNamePropertyAndReturnView(viewModel as CertificateNamesViewModel); }
-
             return View(view, viewModel);
-        }
-
-        protected void SetNamePropertyAndReturnView(CertificateNamesViewModel viewModel)
-        {
-            viewModel.InputGivenNames = viewModel.GivenNames;
-            viewModel.InputFamilyName = viewModel.FamilyName;
         }
 
         protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : CertificateBaseViewModel
