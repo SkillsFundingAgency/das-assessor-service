@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
             var originalFamilyName = certData.LearnerFamilyName;
             var validationResult = new ValidationResult();
 
-            if (viewModel.FamilyName == string.Empty || viewModel.FamilyName == null)
+            if (string.IsNullOrEmpty(viewModel.FamilyName))
             {
                 validationResult.Errors.Add(new ValidationFailure("FamilyName", "Enter the apprentice's last name"));
             }

@@ -441,7 +441,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Assertions
             Assert.Multiple(() =>
             {
-                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Never);
+                _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, It.IsAny<bool>()), Times.Never);
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Never);
             });
         }

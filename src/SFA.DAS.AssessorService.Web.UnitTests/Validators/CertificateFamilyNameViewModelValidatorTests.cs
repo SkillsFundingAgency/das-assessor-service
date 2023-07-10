@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         [Test, RecursiveMoqAutoData]
         public async Task WhenFamilyNameFieldIsNotEqualToPreviousFamilyNameValue_ThenReturnsInvalid(string invalidFamilyName, CertificateBaseViewModel _baseViewModel)
         {
-            var _viewModel = SetupInvalidViewModel(invalidFamilyName, _baseViewModel);
+            var _viewModel = SetupInvalidViewModel("NotOriginalFamilyNameValue", _baseViewModel);
 
             var result = await _validator.Validate(_viewModel);
 

@@ -3,6 +3,5 @@
     public interface ICertificateNameCapitalisationService
     {
         string ProperCase(string namePart, bool familyNamePart = false);
-
     }
 }

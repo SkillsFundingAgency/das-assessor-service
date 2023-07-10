@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using FluentValidation.TestHelper;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -53,9 +52,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         }
 
         [Test, RecursiveMoqAutoData]
-        public async Task WhenGivenNamesFieldIsNotEqualToPreviousGivenNamesValue_ThenReturnsInvalid(string invalidGivenNames, CertificateBaseViewModel _baseViewModel)
+        public async Task WhenGivenNamesFieldIsNotEqualToPreviousGivenNamesValue_ThenReturnsInvalid(CertificateBaseViewModel _baseViewModel)
         {
-            var _viewModel = SetupInvalidViewModel(invalidGivenNames, _baseViewModel);
+            var _viewModel = SetupInvalidViewModel("NotOriginalGivenNamesValue", _baseViewModel);
 
             var result = await _validator.Validate(_viewModel);
 

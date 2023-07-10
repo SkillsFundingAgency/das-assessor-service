@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
             var originalGivenNames = certData.LearnerGivenNames;
             var validationResult = new ValidationResult();
 
-            if (viewModel.GivenNames == string.Empty || viewModel.GivenNames == null)
+            if (string.IsNullOrEmpty(viewModel.GivenNames))
             {
                 validationResult.Errors.Add(new ValidationFailure("GivenNames", "Enter the apprentice's first name"));
             }
