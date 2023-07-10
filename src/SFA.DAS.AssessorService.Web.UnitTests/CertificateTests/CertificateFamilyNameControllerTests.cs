@@ -15,11 +15,8 @@ using System;
 using SFA.DAS.AssessorService.Domain.Entities;
 using FluentAssertions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using FluentValidation;
-using System.Collections.Generic;
-using FluentValidation.Results;
-using ValidationResult = FluentValidation.Results.ValidationResult;
 using FluentAssertions.Execution;
+using SFA.DAS.AssessorService.Web.Validators;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
@@ -30,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private Mock<IHttpContextAccessor> _mockContextAccessor;
         private Mock<ISessionService> _mockSessionService;
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
-        private Mock<IValidator<CertificateNamesViewModel>> _validator;
+        private Mock<CertificateFamilyNameViewModelValidator> _validator;
 
         private const int Ukprn = 123456;
         private const string Username = "TestProviderUsername";
@@ -44,13 +41,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
             _mockSessionService = new Mock<ISessionService>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
-            _validator = new Mock<IValidator<CertificateNamesViewModel>>();
+            _validator = new Mock<CertificateFamilyNameViewModelValidator>(_mockCertificateApiClient.Object);
 
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")).Returns(new Claim("", Ukprn.ToString()));
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Returns(new Claim("", Username));
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")).Returns(new Claim("", EpaoId));
             _mockContextAccessor.Setup(s => s.HttpContext.Request.Query).Returns(Mock.Of<IQueryCollection>());
-            var certData = new CertificateData();
+            var certData = new CertificateData() { LearnerFamilyName = "FamilyName" };
             var certDataString = JsonConvert.SerializeObject(certData);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
@@ -73,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             using (new AssertionScope("The view is loaded successfully"))
             {
                 result.ViewName.Should().Be("~/Views/Certificate/FamilyName.cshtml");
-                result.Model.Should().BeOfType<CertificateNamesViewModel>();
+                result.Model.Should().BeOfType<CertificateFamilyNameViewModel>();
             }
 
         }
@@ -92,11 +89,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
 
         [Test, MoqAutoData]
-        public async Task WhenPostingFamilyNameView_AndInputIsValid_ThenRedirectsToCheckPage(CertificateNamesViewModel mockViewModel)
+        public async Task WhenPostingFamilyNameView_AndInputIsValid_ThenRedirectsToCheckPage(CertificateFamilyNameViewModel mockViewModel)
         {
-            _validator.Setup(s => s.Validate(It.IsAny<CertificateNamesViewModel>())).Returns(new ValidationResult());
+            mockViewModel = PrepareValidViewModel(mockViewModel);
 
             var result = await _controller.FamilyName(mockViewModel) as RedirectToActionResult;
+
             using (new AssertionScope("User is redirected to check page"))
             {
                 result.ControllerName.Should().Be("CertificateCheck");
@@ -105,12 +103,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
         }
 
-        [Test, MoqAutoData]
-        public async Task WhenPostingFamilyNameView_AndInputIsNotValid_ThenRefreshesWithErrors(CertificateNamesViewModel mockViewModel)
+        [Test]
+        [MoqInlineAutoData("")]
+        [MoqInlineAutoData("FamilyNames")]
+        public async Task WhenPostingFamilyNameView_AndInputIsNotValid_ThenRefreshesWithErrors(string inputFamilyName, CertificateFamilyNameViewModel mockViewModel)
         {
-            _validator.Setup(s => s.Validate(It.IsAny<CertificateNamesViewModel>())).Returns(new ValidationResult(new List<ValidationFailure> {
-                new ValidationFailure("Error", "Error message")
-            }));
+            mockViewModel.FamilyName = inputFamilyName;
 
             var result = await _controller.FamilyName(mockViewModel) as ViewResult;
 
@@ -120,6 +118,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
                 result.ViewData.ModelState.ErrorCount.Should().BeGreaterThanOrEqualTo(1);
             }
 
+        }
+
+        private CertificateFamilyNameViewModel PrepareValidViewModel(CertificateFamilyNameViewModel viewModel)
+        {
+            var certData = _mockCertificateApiClient.Object.GetCertificate(viewModel.Id).Result.CertificateData;
+            viewModel.FamilyName = JsonConvert.DeserializeObject<CertificateData>(certData).LearnerFamilyName;
+            return viewModel;
         }
 
     }
