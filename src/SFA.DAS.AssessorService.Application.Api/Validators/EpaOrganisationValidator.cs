@@ -510,17 +510,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckRecognitionNumberExists(string recognitionNumber)
         {
-            Task<bool> recognitionNumberAlreadyRegistered = _registerRepository.CheckRecognitionNumberExists(recognitionNumber);
-            if (recognitionNumberAlreadyRegistered.Result)
+            Task<bool> recognitionNumberExists = _registerRepository.CheckRecognitionNumberExists(recognitionNumber.ToLower());
+            if (!recognitionNumberExists.Result)
             {
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.RecognitionNumberNotFound);
             }
             return string.Empty;
         }
 
-        public string CheckRecognitionNumberInUse(string recognitionNumber)
+        public string CheckRecognitionNumberInUse(string recognitionNumber, string organisationId)
         {
-            Task<bool> recognitionNumberAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithRecognitionNumber(recognitionNumber);
+            Task<bool> recognitionNumberAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithRecognitionNumber(recognitionNumber.ToLower(), organisationId.ToLower());
             if (recognitionNumberAlreadyRegistered.Result)
             {
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.RecognitionNumberAlreadyInUse);
@@ -542,7 +542,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.CharityNumber), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberExists(request.RecognitionNumber), validationResult, ValidationStatusCode.AlreadyExists);
-            RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberInUse(request.RecognitionNumber), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberInUse(request.RecognitionNumber, request.EndPointAssessmentOrgId), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }
@@ -721,7 +721,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsedForOtherOrganisations(request.Name, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberExists(request.RecognitionNumber), validationResult, ValidationStatusCode.AlreadyExists);
-            RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberInUse(request.RecognitionNumber), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberInUse(request.RecognitionNumber, request.OrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
 
             if (!doLiveValidation)
             {
