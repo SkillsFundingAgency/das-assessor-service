@@ -510,6 +510,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckRecognitionNumberExists(string recognitionNumber)
         {
+            if (string.IsNullOrEmpty(recognitionNumber)) { return string.Empty; }
             Task<bool> recognitionNumberExists = _registerRepository.CheckRecognitionNumberExists(recognitionNumber.ToLower());
             if (!recognitionNumberExists.Result)
             {
@@ -520,6 +521,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckRecognitionNumberInUse(string recognitionNumber, string organisationId)
         {
+            if (string.IsNullOrEmpty(recognitionNumber)) { return string.Empty; }
             Task<bool> recognitionNumberAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithRecognitionNumber(recognitionNumber.ToLower(), organisationId.ToLower());
             if (recognitionNumberAlreadyRegistered.Result)
             {
