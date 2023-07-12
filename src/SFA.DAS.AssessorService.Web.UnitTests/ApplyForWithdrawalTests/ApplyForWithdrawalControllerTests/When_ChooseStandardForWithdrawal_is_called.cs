@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 using System;
 using System.Collections.Generic;
@@ -46,15 +47,22 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             _mockStandardsApiClient.Setup(m => m.GetEpaoRegisteredStandards(It.IsAny<string>(), 1, 10))
                     .ReturnsAsync(new Domain.Paging.PaginatedList<GetEpaoRegisteredStandardsResponse>(registeredStandards, 2, 1, 3));
-                
+
             // Act
-            var result = await _sut.ChooseStandardForWithdrawal(1) as ViewResult;
+            var result = await _sut.ChooseStandardForWithdrawal(1) as RedirectToActionResult;
+
+            // Temporary asserts until withdrawal functionality is restored
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
+                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
+            });
 
             // Assert
-            var model = result.Model as ChooseStandardForWithdrawalViewModel;
-            model.Standards.Items.Should().HaveCount(2);
-            model.Standards.Items[0].ApplicationId.Should().Be(applicationId);
-            model.Standards.Items[1].ApplicationId.Should().BeNull();
+            // var model = result.Model as ChooseStandardForWithdrawalViewModel;
+            // model.Standards.Items.Should().HaveCount(2);
+            // model.Standards.Items[0].ApplicationId.Should().Be(applicationId);
+            // model.Standards.Items[1].ApplicationId.Should().BeNull();
         }
     }
 }
