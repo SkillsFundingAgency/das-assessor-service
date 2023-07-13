@@ -24,10 +24,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             // Act
             var result = _sut.WholeStandardOrVersion("ST0001", model) as RedirectToActionResult;
 
+            // Temporary asserts until withdrawal functionality is restored
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
+                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
+            });
+
             // Assert
-            result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.CheckWithdrawalRequest));
-            result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
-            result.RouteValues.GetValueOrDefault("iFateReferenceNumber").Should().Be("ST0001");
+            // result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.CheckWithdrawalRequest));
+            // result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+            // result.RouteValues.GetValueOrDefault("iFateReferenceNumber").Should().Be("ST0001");
         }
 
         [Test]
@@ -42,10 +49,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             // Act
             var result = _sut.WholeStandardOrVersion("ST0001", model) as RedirectToActionResult;
 
+            // Temporary asserts until withdrawal functionality is restored
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
+                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
+            });
+
             // Assert
-            result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.ReviewStandardVersions));
-            result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
-            result.RouteValues.GetValueOrDefault("iFateReferenceNumber").Should().Be("ST0001");
+            // result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.ReviewStandardVersions));
+            // result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+            // result.RouteValues.GetValueOrDefault("iFateReferenceNumber").Should().Be("ST0001");
         }
 
         [Test]
@@ -58,11 +72,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             };
 
             // Act
-            var result = _sut.WholeStandardOrVersion("ST0001", model) as ViewResult;
+            var result = _sut.WholeStandardOrVersion("ST0001", model) as RedirectToActionResult;
+
+            // Temporary asserts until withdrawal functionality is restored
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
+                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
+            });
 
             // Assert
-            _sut.ModelState.IsValid.Should().BeFalse();
-            _sut.ModelState["WithdrawalType"].Errors.Should().Contain(x => x.ErrorMessage == "Select whole standard or version(s)");
+            // _sut.ModelState.IsValid.Should().BeFalse();
+            // _sut.ModelState["WithdrawalType"].Errors.Should().Contain(x => x.ErrorMessage == "Select whole standard or version(s)");
         }
     }
 }
