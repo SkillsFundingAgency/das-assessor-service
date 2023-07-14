@@ -251,21 +251,24 @@ BEGIN
     -- the latest version(s) for each Standard where the EQA Provider is "ofqual" that use the latest EPA Plan
     AS (
     SELECT (CASE WHEN EPAChanges = 0 OR rownumber <= LatestEPA THEN 1 ELSE 0 END) AddVersion, * 
-    FROM
-    (
-        SELECT *  
-        ,MAX(CASE WHEN EPAChanged = 1 THEN rownumber ELSE 0 END) OVER (PARTITION BY IfateReferenceNumber) LatestEPA
-        ,SUM(CASE WHEN EPAChanged = 1 THEN 1 ElSE 0 END) OVER (PARTITION BY IfateReferenceNumber) EPAChanges
-        FROM (
-        SELECT [IFateReferenceNumber], [Version], [StandardUId], [Larscode], [VersionEarliestStartDate], [EPAChanged],
-            ROW_NUMBER() OVER (PARTITION BY [IFateReferenceNumber] ORDER BY [VersionMajor] DESC, [VersionMinor] DESC) rownumber 
-        FROM [dbo].[Standards]
-        WHERE [EqaProviderName] = 'Ofqual'
-        AND [Status] IN ('Approved for Delivery', 'Retired')
-        AND [VersionApprovedForDelivery] IS NOT NULL
-        ) ab1 
-    ) ab2
-    WHERE 1=1 OR rownumber <= LatestEPA
+        FROM
+        (
+            SELECT *  
+                ,MIN(CASE WHEN EPAChanged = 1 THEN rownumber ELSE 999 END) OVER (PARTITION BY IfateReferenceNumber) LatestEPA
+                ,SUM(CASE WHEN EPAChanged = 1 THEN 1 ElSE 0 END) OVER (PARTITION BY IfateReferenceNumber) EPAChanges
+            FROM 
+            (
+                SELECT 
+                    [IFateReferenceNumber], [Version], [StandardUId], [Larscode], [VersionEarliestStartDate], [EPAChanged]
+                    ,ROW_NUMBER() OVER (PARTITION BY [IFateReferenceNumber] ORDER BY [VersionMajor] DESC, [VersionMinor] DESC) rownumber 
+                FROM 
+                    [dbo].[Standards]
+                WHERE 
+                    [EqaProviderName] = 'Ofqual'
+                    AND [Status] IN ('Approved for Delivery', 'Retired')
+                    AND [VersionApprovedForDelivery] IS NOT NULL
+            ) ab1 
+        ) ab2
     )
     -- add versions with Latest EPA Plan
     INSERT INTO [dbo].[OrganisationStandardVersion] 
