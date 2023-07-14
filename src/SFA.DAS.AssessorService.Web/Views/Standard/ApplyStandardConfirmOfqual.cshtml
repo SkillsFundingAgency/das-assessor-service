@@ -20,25 +20,25 @@
             <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
 
             <p class="govuk-body">
-                The regulator (EQA) for this standard is OfQual, you need to apply with Ofqual before you can assess this standard on the Apprenticeship service.
-            </p>
-
-            <p class="govuk-body">
-                Ofqual contact details:
+                This standard is regulated by Ofqual. To record an outcome against this standard on our service you will need to have been approved by Ofqual and added to their list.
             </p>
 
             <table class="govuk-table govuk-!-margin-bottom-7">
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="row">Contact Name</th>
+                        <th class="govuk-table__header" scope="row">Contact name:</th>
                         <td class="govuk-table__cell">@Model.SelectedStandard.EqaProviderContactName</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="row">Contact email address</th>
+                        <th class="govuk-table__header" scope="row">Email:</th>
                         <td class="govuk-table__cell">@Model.SelectedStandard.EqaProviderContactEmail</td>
                     </tr>
                 </tbody>
             </table>
+
+            <p class="govuk-body">
+                Once you've been approved by Ofqual and added to their list, it can take up to 7 working days for the standard to show in your apprenticeship service account.
+            </p>
         </div>
     </div>
 </main>
