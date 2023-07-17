@@ -7,10 +7,9 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
     {
         public ApplyStandardSearchViewModelValidator()
         {
-            const string searchMessage = "Enter 3 or more characters to search";
             RuleFor(vm => vm.Search)
-                .NotEmpty().WithMessage(searchMessage)
-                .MinimumLength(3).WithMessage(searchMessage);
+                .Must((vm, search) => !string.IsNullOrWhiteSpace(search) && search.Trim().Length >= 3)
+                .WithMessage("Enter 3 or more characters to search");
         }
     }
 }

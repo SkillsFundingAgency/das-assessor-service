@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
         public AddStandardConfirmViewModelValidator()
         {
             RuleFor(vm => vm.IsConfirmed)
-                .NotEmpty()
+                .NotEqual(false)
                 .WithMessage("Confirm you have read the assessment plan");
 
             RuleFor(vm => vm.SelectedVersions)
