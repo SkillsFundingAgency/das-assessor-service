@@ -45,7 +45,7 @@ BEGIN
         apar.[EndPointAssessorName] != ad1.[EndPointAssessorName] OR
         apar.[EndPointAssessorUkprn] != ad1.[EndPointAssessorUkprn] OR
         apar.[EarliestDateStandardApprovedOnRegister] != ad1.[EarliestDateStandardApprovedOnRegister] OR
-        apar.[EarliestEffectiveFromDate]! = ad1.[EarliestEffectiveFromDate] )
+        apar.[EarliestEffectiveFromDate] != ad1.[EarliestEffectiveFromDate] )
     THEN 
         UPDATE SET 
         apar.[EndPointAssessorName] = ad1.[EndPointAssessorName],
