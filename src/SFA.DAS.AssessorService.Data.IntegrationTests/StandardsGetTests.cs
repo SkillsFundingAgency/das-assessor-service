@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
                     EPAChanged = false,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
                     EPAChanged = false,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                  new StandardModel
                 {
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
                     EPAChanged = false,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
                     EPAChanged = false,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
                     EPAChanged = false,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
             };
         }

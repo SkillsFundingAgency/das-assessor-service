@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TrailblazerContact = "Contact name",
                     StandardPageUrl = "www.standard.com",
                     OverviewOfRole = "Explanation of apprenticeship job role",
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
             };
         }
