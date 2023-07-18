@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                  new StandardModel
                 {
@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    VersionApprovedForDelivery = DateTime.Today.AddDays(-50)
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
             };
         }
