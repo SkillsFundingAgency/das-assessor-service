@@ -5,8 +5,10 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -139,6 +141,13 @@ namespace SFA.DAS.AssessorService.Data
                 param: new { ukprn });
 
             return results;
+        }
+
+        public async Task<IEnumerable<AssessmentOrganisationListSummary>> GetAparSummary()
+        {
+            var sql = "SELECT * FROM [APARSummary]";
+
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationListSummary>(sql);
         }
 
         public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
@@ -452,6 +461,22 @@ namespace SFA.DAS.AssessorService.Data
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @name ";
 
             return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(sql, new { name });
+        }
+
+        public async Task<int?> AparSummaryUpdate()
+        {
+            var result = await _unitOfWork.Connection.QueryAsync<int>(
+                "APAR_Summary",
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            return result.First();
+        }
+
+        public async Task<DateTime> AparSummaryLastUpdated()
+        {
+            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<DateTime>(
+                "select * from [APARSummaryUpdated]");
         }
     }
 }

@@ -8,6 +8,7 @@ using NUnit.Framework.Internal;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Handlers.ao;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
 {
 
     [TestFixture]
-    public class GetAssessmentOrganisationsListTests
+    public class GetAparSummaryTests
     {
         private static RegisterQueryController _sut;
         private static Mock<IMediator> _mediator;
@@ -45,34 +46,34 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             };
 
             _mediator.Setup(m =>
-                m.Send(It.IsAny<GetAssessmentOrganisationsListRequest>(),
+                m.Send(It.IsAny<GetAparSummaryRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedAssessmentOrganisationSummaries);
             _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
 
-            _result = await _sut.GetAssessmentOrganisationsList();
+            _result = await _sut.GetAparSummary();
         }
 
         [Test]
-        public void GetAssessmentOrganisationsList_MediatorShouldSendGetAssessmentOrganisationsListRequest_WhenCalled()
+        public void GetAparSummary_MediatorShouldSendGetAparSummaryRequest_WhenCalled()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<GetAssessmentOrganisationsListRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<GetAparSummaryRequest>(), new CancellationToken()));
         }
 
 
         [Test]
-        public void GetAssessmentOrganisationsList_ShouldReturnOk_WhenCalled()
+        public void GetAparSummary_ShouldReturnOk_WhenCalled()
         {
             _result.Should().BeOfType<OkObjectResult>();
         }
 
         [Test]
-        public void GetAssessmentOrganisationsList_ResultsAreOfTypeListAssessmentOrganisationListSummary_WhenCalled()
+        public void GetAparSummary_ResultsAreOfTypeListAssessmentOrganisationListSummary_WhenCalled()
         {
             ((OkObjectResult)_result).Value.Should().BeOfType<List<AssessmentOrganisationListSummary>>();
         }
 
         [Test]
-        public void GetAssessmentOrganisationsList_ResultsMatchExpectedListAssessmentOrganisationListSummary_WhenCalled()
+        public void GetAparSummary_ResultsMatchExpectedListAssessmentOrganisationListSummary_WhenCalled()
         {
             var organisations = ((OkObjectResult)_result).Value as List<AssessmentOrganisationListSummary>;
             organisations.Count.Should().Be(2);
