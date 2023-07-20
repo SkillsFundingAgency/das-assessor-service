@@ -519,10 +519,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
-        public string CheckRecognitionNumberInUse(string recognitionNumber, string organisationId)
+        public string CheckRecognitionNumberInUse(string recognitionNumber, string organisationId = "")
         {
             if (string.IsNullOrEmpty(recognitionNumber)) { return string.Empty; }
-            Task<bool> recognitionNumberAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithRecognitionNumber(recognitionNumber.ToLower(), organisationId.ToLower());
+            Task<bool> recognitionNumberAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithRecognitionNumber(recognitionNumber.ToLower(), organisationId);
             if (recognitionNumberAlreadyRegistered.Result)
             {
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.RecognitionNumberAlreadyInUse);
