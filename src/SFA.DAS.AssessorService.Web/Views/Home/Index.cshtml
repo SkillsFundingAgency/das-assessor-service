@@ -7,48 +7,75 @@
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-
+    <partial name=@Model.BannerViewPath />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <partial name=@Model.BannerViewPath />
             <h1 class="govuk-heading-xl">Apprenticeship assessment service</h1>
-            <p class="govuk-body">Use this service if you're an end-point assessor and want to assess apprenticeships. You need to be part of an organisation approved by a regulator like Ofqual.</p>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">Use this service if you're an end-point assessor and want to assess apprenticeships. You need to be part of an organisation on our Apprenticeship provider and assessment register (APAR).</p>
                 
             <p class="govuk-body">You can use this service to:</p>
 
             <ul class="govuk-list govuk-list--bullet">
                 <li>view the standards and versions you are assessing</li>
                 <li>see upcoming assessments in your pipeline</li>
-                <li>record assessments and apply for certificates</li>
+                <li>record assessments and request certificates</li>
+                <li>apply for new standards or versions</li>
             </ul>
-            @if (!Model.UseGovSignIn)
-            {
-                <p class="govuk-body">You can <a class="govuk-link" asp-action="CreateAnAccount" asp-controller="Account">create a new account</a> if you're part of an end-point assessment organisation already registered with the service. You'll be able to select the organisation you belong to when you create your account.</p>
-            }
-            else
-            {
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        <p class="govuk-body">
-                            To use this service, you’ll need a GOV.UK One Login linked to an email address you use for work. If you don’t have a GOV.UK One Login, you can create one using this service.
-                        </p>
-                    </div>
-                </div>
-            }
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <hr/>
+            <h4 class="govuk-heading-s govuk-!-font-size-14">Related content</h4>
+            <p class="govuk-body-s"><a class="govuk-link" href="#" rel="noreferrer noopener" target="_blank">How to join Apprenticeship providers and assessors register (APAR) as an end-point assessment organisation<span class="govuk-visually-hidden">(opens in new tab)</span></a></p>
+            <p class="govuk-body-s"><a class="govuk-link" href="#" rel="noreferrer noopener" target="_blank">Conditions of acceptance for being on APAR<span class="govuk-visually-hidden">(opens in new tab)</span></a></p>
         </div>
     </div>
-
-    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-8">
-                <a asp-action="SignIn" asp-controller="Account" role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-bottom-0" data-module="govuk-button">
-                    Start now
-                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-                    </svg>
-                </a>
+                <p class="govuk-body">
+                    <a asp-action="SignIn" asp-controller="Account" role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-bottom-0" data-module="govuk-button">
+                        Start now
+                        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                        </svg>
+                    </a>
+                    @if (!Model.UseGovSignIn)
+                    {
+                        <span class="das-inline-button-link das-inline-button-link--start">
+                            <span class="govuk-body">or <a class="govuk-link" asp-action="CreateAnAccount" asp-controller="Account">create an account</a></span>
+                        </span>
+                    }
+                </p>
             </div>
+        </div>
+    </div>
+    @if(Model.UseGovSignIn)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">
+                    To use this service, you’ll need a GOV.UK One Login linked to an email address you use for work. If you don’t have a GOV.UK One Login, you can create one using this service.
+                </p>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">Before you start</h2>
+            <p class="govuk-body">To use this service you need to be on the Apprenticeship provider and assessment register (APAR).</p>
+
+            <h3 class="govuk-heading-s">If you are already registered on APAR</h3>
+            <p class="govuk-body"><a class="govuk-link" asp-action="CreateAnAccount" asp-controller="Account">Create an account</a> and select the organisation you belong to.</p>
+
+            <h3 class="govuk-heading-s">To register on APAR</h3>
+            <p class="govuk-body">If you've recently been approved by a regulator like Ofqual and want to join APAR, contact our helpdesk.</p>
+
+            <p class="govuk-body">Email: <a class="govuk-link" href=mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></p>
+            <p class="govuk-body">Telephone: 08000 150 600</p>
         </div>
     </div>
 </main>
