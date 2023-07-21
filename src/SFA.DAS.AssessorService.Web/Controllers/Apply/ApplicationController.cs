@@ -109,8 +109,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("/Application/StandardApplications")]
         public async Task<IActionResult> StandardApplications()
         {
-            return RedirectToAction("Index", "Dashboard");
-
             var userId = await GetUserId();
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             var existingApplications = (await _applicationApiClient.GetStandardApplications(userId))?
