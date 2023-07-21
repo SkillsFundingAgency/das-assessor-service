@@ -27,8 +27,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Dashboard");
-
             return View();
         }
 
@@ -37,8 +35,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public IActionResult GoToApplyToAssessStandard()
         {
-            return RedirectToAction("Index", "Dashboard");
-
             return Redirect($"/Application");
         }
     }
