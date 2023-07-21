@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -94,6 +95,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 var result = connection.Query<T>(sql);
                 connection.Close();
                 return result;
+            }
+        }
+
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, T model) where T : TestModel
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                return await connection.QueryFirstOrDefaultAsync<T>(sql, param: model);
             }
         }
 
