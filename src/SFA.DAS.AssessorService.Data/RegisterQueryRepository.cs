@@ -297,10 +297,10 @@ namespace SFA.DAS.AssessorService.Data
                         SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
                         SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
                         CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version VARCHAR(10) '$')
-                        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
-                        WHERE 1=1
-                          AND sequence.NotRequired = 0
-                          AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
+                                CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+                            WHERE 1=1
+                            AND sequence.NotRequired = 0
+                            AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
                         ) ab1
                         JOIN Organisations og1 on og1.id = ab1.OrganisationId
                         WHERE ab1.standardreference IS NOT NULL
@@ -324,7 +324,7 @@ namespace SFA.DAS.AssessorService.Data
                         so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
-                        va1.ApplyData
+                        va1.ApplyData, so1.EqaProviderName, so1.EqaProviderContactName, so1.EqaProviderContactEmail
                         FROM standards so1 
                         LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
 						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 

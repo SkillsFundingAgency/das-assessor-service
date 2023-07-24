@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
+namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 {
-    public class StandardVersionViewModel
+    public class ApplyStandardConfirmViewModel
     {
         public Guid Id { get; set; }
 
-        public string StandardToFind { get; set; }
+        public string Search { get; set; }
 
         public string StandardReference { get; set; }
 
@@ -22,10 +22,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 
         public string ApplicationStatus { get; set; }
 
-        public bool FromStandardsVersion { get; set; }
-
         public DateTime? EarliestVersionEffectiveFrom { get; set; }
     }
-
-
 }
