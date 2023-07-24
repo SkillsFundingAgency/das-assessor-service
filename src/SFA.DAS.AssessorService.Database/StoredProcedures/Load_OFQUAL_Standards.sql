@@ -205,7 +205,7 @@ BEGIN
     FROM OFQUAL_Qualifications ofq
     JOIN OFQUAL_Standards ofs ON ofs.[IFateReferenceNumber] = ofq.[IFateReferenceNumber]
     JOIN Organisation_Contacts ocs ON ocs.[OrganisationId] = ofq.OrganisationId
-    LEFT JOIN All_EPAO_Standards aes on aes.[RecognitionNumber] = ofq.[RecognitionNumber]
+    LEFT JOIN All_EPAO_Standards aes ON aes.[RecognitionNumber] = ofq.[RecognitionNumber] AND aes.[StandardReference] = ofq.[IFateReferenceNumber]
     WHERE aes.StandardReference IS NULL;
 
     -- return the number of Standards by EPAO added
