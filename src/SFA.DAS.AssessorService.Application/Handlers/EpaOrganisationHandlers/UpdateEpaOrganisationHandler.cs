@@ -71,7 +71,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
             request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
             request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
-            request.RecognitionNumber = _cleanser.CleanseStringForSpecialCharacters(request.RecognitionNumber);
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(UpdateEpaOrganisationRequest request, EpaOrganisation existingOrganisation)
