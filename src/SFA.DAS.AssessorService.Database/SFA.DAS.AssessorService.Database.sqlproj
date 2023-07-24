@@ -191,6 +191,7 @@
     <Build Include="StoredProcedures\APAR_Summary.sql" />
     <Build Include="Tables\APARSummary.sql" />
     <Build Include="Tables\APARSummaryUpdated.sql" />
+    <Build Include="StoredProcedures\Load_OFQUAL_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
