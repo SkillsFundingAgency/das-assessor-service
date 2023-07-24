@@ -136,7 +136,8 @@ UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6117'  WHERE EndPointAs
 UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6112'  WHERE EndPointAssessorOrganisationId = 'EPA0715' AND [RecognitionNumber] IS NULL;
 -- Additions 18/07/23
 UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6064'  WHERE EndPointAssessorOrganisationId = 'EPA0235' AND [RecognitionNumber] IS NULL;
-
+-- Additions 24/07/23
+UPDATE [dbo].[organisations] SET [RecognitionNumber] ='RN6058'  WHERE EndPointAssessorOrganisationId = 'EPA0369' AND [RecognitionNumber] IS NULL;
 
 
 
