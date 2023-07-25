@@ -19,7 +19,6 @@
 	[OfqualRecognisedTo] [datetime] null,
 	[CreatedAt] [datetime] not null DEFAULT GETUTCDATE(),
 	[UpdatedAt] [datetime] null,
-	[DeletedAt] [datetime] null,
  CONSTRAINT [PK_OfqualOrganisation] PRIMARY KEY CLUSTERED ( [Id] ASC )    
 )
 GO

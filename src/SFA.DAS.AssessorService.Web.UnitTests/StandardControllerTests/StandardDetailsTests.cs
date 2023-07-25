@@ -69,14 +69,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.StandardDetails("ST0001");
 
             // Assert
-            Assert.That(result, Is.TypeOf<ViewResult>());
-            var viewResult = result as ViewResult;
-            Assert.That(viewResult.Model, Is.TypeOf<StandardDetailsViewModel>());
-            var model = viewResult.Model as StandardDetailsViewModel;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<ViewResult>());
+                var viewResult = result as ViewResult;
+                Assert.That(viewResult.Model, Is.TypeOf<StandardDetailsViewModel>());
+                var model = viewResult.Model as StandardDetailsViewModel;
 
-            Assert.AreEqual(_allVersions.FirstOrDefault(), model.SelectedStandard);
-            Assert.AreEqual(_allVersions, model.AllVersions);
-            Assert.AreEqual(_approvedVersions, model.ApprovedVersions);
+                Assert.AreEqual(_allVersions.FirstOrDefault(), model.SelectedStandard);
+                Assert.AreEqual(_allVersions, model.AllVersions);
+                Assert.AreEqual(_approvedVersions, model.ApprovedVersions);
+            });
         }
 
         [TestCase(null)]

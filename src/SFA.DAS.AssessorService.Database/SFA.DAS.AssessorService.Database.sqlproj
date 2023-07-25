@@ -188,6 +188,7 @@
     <Build Include="Tables\StagingOfqualOrganisation.sql" />
     <Build Include="Tables\OfqualStandard.sql" />
     <Build Include="Tables\StagingOfqualStandard.sql" />
+    <Build Include="StoredProcedures\Load_OFQUAL_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
