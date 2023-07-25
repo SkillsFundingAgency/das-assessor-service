@@ -8,13 +8,13 @@
     Layout = "_Layout";
 }
 
-<a asp-route="@StandardController.AddStandardSearchRouteGet" asp-route-search="@Model.StandardToFind" class="govuk-back-link">Return to search</a>
+<a asp-route="@StandardController.AddStandardSearchRouteGet" asp-route-search="@Model.Search" class="govuk-back-link">Return to search</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">
-                Search results for @Model.StandardToFind
+                Search results for @Model.Search
                 <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
             </h1>
         </div>
@@ -47,7 +47,7 @@
                                         }
                                         else
                                         {
-                                            <a asp-route="@StandardController.AddStandardChooseVersionsRouteGet" asp-route-search="@Model.StandardToFind" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Add standard</a>
+                                            <a asp-route="@StandardController.AddStandardChooseVersionsRouteGet" asp-route-search="@Model.Search" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Add standard</a>
                                         }
                                     </td>
                                 </tr>
