@@ -1,29 +1,21 @@
-﻿@using SFA.DAS.AssessorService.Web.ViewModels
-@using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.ViewModels.Apply.StandardVersionViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@model ApplyStandardConfirmViewModel
 
 @{
     ViewBag.Title = "Confirm Standard";
     Layout = "_Layout";
-    bool showConfirmedError = TempData["ShowConfirmedError"] as bool? ?? false;
-    bool showVersionError = TempData["ShowVersionError"] as bool? ?? false;
-    var standardCode = Model.StandardReference;
-    var multipleVersions = Model.Results != null && Model.Results.Count() > 1;
+    var multipleVersions = (Model.Results?.Count() ?? 0) > 1;
 }
 
-@if (Model.FromStandardsVersion)
-{
-    <a href="@Url.Action("ConfirmStandard", "Standard", new { id = Model.Id, standardReference = Model.StandardReference})" class="govuk-back-link">Back to standard details</a>
-}
-else
-{
-    <a href="@Url.Action("Index", "Standard", new { Id = Model.Id })" class="govuk-back-link">Return to search</a>
-}
+<a asp-route="@StandardController.ApplyStandardSearchResultsRouteGet" asp-route-id="@Model.Id" asp-route-search="@Model.Search" class="govuk-back-link">Return to search results</a>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @if (!ViewData.ModelState.IsValid || showConfirmedError || showVersionError)
+            @if (!ViewData.ModelState.IsValid)
             {
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -31,14 +23,8 @@ else
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
-                            @if (showConfirmedError)
-                            {
-                                <li><a href="#IsConfirmed"><span asp-validation-for="IsConfirmed"></span></a></li>
-                            }
-                            @if (showVersionError)
-                            {
-                                <li><a href="#SelectedVersions"><span asp-validation-for="SelectedVersions"></span></a></li>
-                            }
+                            <li><a sfa-validation-for="SelectedVersions"></a></li>
+                            <li><a sfa-validation-for="IsConfirmed"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -82,23 +68,30 @@ else
                 </tbody>
             </table>
 
-            <form asp-action="ConfirmStandard" asp-controller="Standard" asp-route-applicationId="@Model.Id">
-                <input asp-for="StandardReference" value="@standardCode" type="hidden" />
+            <form asp-route="@StandardController.ApplyStandardConfirmRoutePost">
+                <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
+                <input asp-for="Search" value="@Model.Search" type="hidden" />
 
-                @if (multipleVersions)
+                @if (!multipleVersions)
                 {
-                    <div class="govuk-form-group @(showVersionError ? "govuk-form-group--error" : "")">
+                    <input asp-for="SelectedVersions" value="@Model.SelectedStandard?.Version" type="hidden" />
+                }
+                else
+                {
+                    <div class="govuk-form-group" sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-form-group--error">
                         <fieldset class="govuk-fieldset" id="SelectedVersions">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
-                            @if (showVersionError)
-                            {
-                                <span id="search-string-error" class="govuk-error-message" asp-validation-for="SelectedVersions"></span>
-                            }
+                            <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                             <div class="govuk-checkboxes govuk-checkboxes--small">
                                 @foreach (var version in Model.Results)
                                 {
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@version.Version" value="@version.Version" name="SelectedVersions" type="checkbox">
+                                        <input class="govuk-checkboxes__input"
+                                               id="@version.Version"
+                                               value="@version.Version"
+                                               name="SelectedVersions"
+                                               type="checkbox"
+                                               checked="@Model.SelectedVersions?.Contains(version.Version)">
                                         <label class="govuk-label govuk-checkboxes__label" for="@version.Version">
                                             Version @version.Version
                                         </label>
@@ -113,22 +106,21 @@ else
 
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
-                    <div class="govuk-form-group @(showConfirmedError ? "govuk-form-group--error" : "")">
-
-                        @if (showConfirmedError)
-                        {
-                            <span id="search-string-error" class="govuk-error-message">Confirm you have read the assessment plan</span>
-                        }
-
-                        <div class="govuk-checkboxes">
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" asp-for="@Model.IsConfirmed" name="IsConfirmed" type="checkbox">
-                                <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
-                                    By continuing, you confirm you have read and understood the relevant assessment plan(s) for <a href="@Model.SelectedStandard?.StandardPageUrl" target="_blank" class="govuk-link">this standard.</a>
-                                </label>
-                            </div>
+                    <div class="govuk-form-group" sfa-validation-for="IsConfirmed" sfa-validationerror-class="govuk-form-group--error">
+                        <sfa-validationerror-detail sfa-validation-for="IsConfirmed" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input"
+                               name="IsConfirmed"
+                               asp-for="@Model.IsConfirmed"
+                               sfa-validation-for="IsConfirmed"
+                               sfa-validationerror-class="govuk-input--error"
+                               type="checkbox">
+                            <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
+                                By continuing, you confirm you have read and understood the relevant assessment plan(s) for <a href="@Model.SelectedStandard?.StandardPageUrl" target="_blank" class="govuk-link">this standard</a>.
+                            </label>
                         </div>
                     </div>
+
                     <button type="submit" class="govuk-button">Confirm and continue</button>
                 }
                 else
@@ -156,6 +148,4 @@ else
             </form>
         </div>
     </div>
-
-
 </main>

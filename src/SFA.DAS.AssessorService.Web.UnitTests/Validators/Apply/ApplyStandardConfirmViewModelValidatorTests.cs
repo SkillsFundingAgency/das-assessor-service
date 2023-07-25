@@ -4,23 +4,23 @@ using SFA.DAS.AssessorService.Web.Validators.Standard;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
+namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Apply
 {
     [TestFixture]
-    public class AddStandardConfirmViewModelValidatorTests
+    public class ApplyStandardConfirmViewModelValidatorTests
     {
-        private AddStandardConfirmViewModelValidator _validator;
+        private ApplyStandardConfirmViewModelValidator _validator;
 
         [SetUp]
         public void SetUp()
         {
-            _validator = new AddStandardConfirmViewModelValidator();
+            _validator = new ApplyStandardConfirmViewModelValidator();
         }
 
         [Test]
         public void Validate_IsConfirmedIsNotChecked_ShouldHaveError()
         {
-            var viewModel = new AddStandardConfirmViewModel { IsConfirmed = false };
+            var viewModel = new ApplyStandardConfirmViewModel { IsConfirmed = false };
 
             var result = _validator.TestValidate(viewModel);
 
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [Test]
         public void Validate_IsConfirmedIsChecked_ShouldNotHaveError()
         {
-            var viewModel = new AddStandardConfirmViewModel { IsConfirmed = true };
+            var viewModel = new ApplyStandardConfirmViewModel { IsConfirmed = true };
 
             var result = _validator.TestValidate(viewModel);
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [Test]
         public void Validate_StandardVersionsAreNotSelected_ShouldHaveError()
         {
-            var viewModel = new AddStandardConfirmViewModel { SelectedVersions = new List<string>() };
+            var viewModel = new ApplyStandardConfirmViewModel { SelectedVersions = new List<string>() };
 
             var result = _validator.TestValidate(viewModel);
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [Test]
         public void Validate_StandardVersionsAreSelected_ShouldNotHaveError()
         {
-            var viewModel = new AddStandardConfirmViewModel { SelectedVersions = new List<string> { "1.0" } };
+            var viewModel = new ApplyStandardConfirmViewModel { SelectedVersions = new List<string> { "1.0" } };
 
             var result = _validator.TestValidate(viewModel);
 
