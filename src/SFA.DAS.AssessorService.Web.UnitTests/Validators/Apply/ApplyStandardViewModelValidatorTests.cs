@@ -3,17 +3,17 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Validators.Standard;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
+namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Apply
 {
     [TestFixture]
-    public class AddStandardViewModelValidatorTests
+    public class ApplyStandardViewModelValidatorTests
     {
-        private AddStandardSearchViewModelValidator _validator;
+        private ApplyStandardSearchViewModelValidator _validator;
 
         [SetUp]
         public void SetUp()
         {
-            _validator = new AddStandardSearchViewModelValidator();
+            _validator = new ApplyStandardSearchViewModelValidator();
         }
 
         [TestCase("")]
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [TestCase("    ")]
         public void Validate_Search_ShouldHaveError(string search)
         {
-            var viewModel = new AddStandardSearchViewModel { Search = search };
+            var viewModel = new ApplyStandardSearchViewModel { Search = search };
 
             var result = _validator.TestValidate(viewModel);
 
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [TestCase(" abc")]
         public void Validate_Search_ShouldNotHaveError(string search)
         {
-            var viewModel = new AddStandardSearchViewModel { Search = search };
+            var viewModel = new ApplyStandardSearchViewModel { Search = search };
 
             var result = _validator.TestValidate(viewModel);
 

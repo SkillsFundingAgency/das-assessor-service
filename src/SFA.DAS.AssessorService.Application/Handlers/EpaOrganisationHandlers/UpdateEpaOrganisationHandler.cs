@@ -111,6 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationTypeId = request.OrganisationTypeId,
                 Ukprn = request.Ukprn,
                 Status = status,
+                RecognitionNumber = request.RecognitionNumber ?? existingOrganisation?.RecognitionNumber,
                 OrganisationData = new OrganisationData
                 {
                     Address1 = request.Address1,
