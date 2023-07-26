@@ -22,7 +22,7 @@ CREATE TABLE #Privileges(
 	[Enabled] [bit] NOT NULL,
 ) 
 
-INSERT #Privileges VALUES (N'0bb7b80d-c090-4520-980b-25b0ca9b9d96', N'Apply for a Standard', 0, N'This area allows you to apply for a Standard.', N'{"Rights":["apply for a Standard"]}', N'ApplyForStandard', 1)
+INSERT #Privileges VALUES (N'0bb7b80d-c090-4520-980b-25b0ca9b9d96', N'Manage standards', 0, N'This area allows you to manage the standards and versions you assess.', N'{"Rights":["apply for a standard", "opt-in to standard version", "opt-out of standard version"]}', N'ApplyForStandard', 1)
 INSERT #Privileges VALUES (N'ae68553e-999f-46f9-9f36-857099007948', N'Change organisation details', 0, N'This area allows you to change organisation details', N'{"Rights":["change contact details on the Register", "manage API key"]}', N'ChangeOrganisationDetails', 1)
 INSERT #Privileges VALUES (N'1a2ab8ef-9759-40d0-b48e-8bdd29fe3866', N'Record grades and issue certificates', 0, N'This area allows you to record assessment grades and produce certificates.', N'{"Rights":["record assessment grades and produce certificates"]}', N'RecordGrades', 1)
 INSERT #Privileges VALUES (N'2213af32-7e36-41ed-9d90-d9fbd1a60d41', N'Completed assessments', 0, N'This area shows all previously recorded assessments.', N'{"Rights":["view all previously recorded assessments"]}', N'ViewCompletedAssessments', 1)

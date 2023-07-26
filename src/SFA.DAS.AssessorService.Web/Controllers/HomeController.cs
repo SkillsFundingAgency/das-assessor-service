@@ -100,6 +100,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
+        public IActionResult Accessibility()
+        {
+            return View();
+        }
+
         [Authorize]
         [CheckSession]
         public IActionResult InvitePending()
