@@ -58,20 +58,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Authorize]
         public async Task<IActionResult> NotActivated()
         {
-            GetEpaoRegisteredStandardsResponse standard;
-
-            try
-            {
-                var epaoId = _sessionService.Get("EndPointAssessorOrganisationId");
-                var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1, 10);
-                standard = standards.Items.FirstOrDefault(s => !string.IsNullOrEmpty(s.StandardName));
-            }
-            catch (Exception ex) when (ex is EntityNotFoundException || ex is NullReferenceException)
-            {
-                standard = null;
-            }
-
-            return View(standard);
+            return View();
         }
 
         [Authorize]
