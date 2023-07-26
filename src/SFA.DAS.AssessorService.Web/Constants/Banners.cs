@@ -2,5 +2,5 @@
 
 public static class Banners
 {
-    public const string NoLongerAssessBannerViewPath = "~/Views/Banners/_NoAssessBannerPartial.cshtml";
+    public const string APARNotifyBannerViewPath = "~/Views/Banners/_APARNotifyBannerPartial.cshtml";
 }

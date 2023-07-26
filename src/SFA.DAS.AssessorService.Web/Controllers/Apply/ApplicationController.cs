@@ -207,18 +207,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (string.IsNullOrWhiteSpace(standardName))
                 {
-                    var org = await _orgApiClient.GetOrganisationByUserId(userId);
-                    if (org.RoEPAOApproved)
-                    {
-                        return RedirectToRoute(StandardController.ApplyStandardSearchRouteGet, new { Id });
-                    }
-
-                    return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
+                    return RedirectToRoute(StandardController.ApplyStandardSearchRouteGet, new { Id });
                 }
-                else if (!string.IsNullOrWhiteSpace(standardName))
-                {
-                    return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
-                }
+                
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
             }
             else if(IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
