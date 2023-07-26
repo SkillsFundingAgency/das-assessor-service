@@ -1,5 +1,6 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Helpers;
 @model SFA.DAS.AssessorService.Web.ViewModels.Standard.StandardDetailsViewModel
 
 @{
@@ -12,26 +13,15 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
+            
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
                 <span class="govuk-caption-l govuk-!-margin-bottom-2">Standard details</span>
                 @Model.SelectedStandard?.Title
             </h1>
 
             <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
-            <p class="govuk-body">For more information visit <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="@Model.SelectedStandard?.StandardPageUrl">the IfATE page for this standard (opens in a new tab or window)</a>.</p>
-            <div class="govuk-inset-text" wfd-id="10">
-                <strong>Opting in and out of a standard version</strong>
-                <p>
-                    You can opt in to a standard version if you want to record outcomes against it.
-                </p>
-                <p>
-                    You can opt out of any standard versions that you no longer want to record outcomes for. You can opt back in at any time.
-                </p>
-                <p>
-                    To record outcomes for a standard, you must be opted in to at least one standard version
-                </p>
-            </div>
+            <p class="govuk-body">For more information visit <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="@Model.SelectedStandard?.StandardPageUrl">the iFATE page for this standard (opens in a new tab or window)</a>.</p>
+            <partial name="~/Views/Standard/_OptOutInsetPartial.cshtml" />
 
             <table class="govuk-table govuk-!-margin-bottom-7">
                 <caption class="govuk-table__caption govuk-table__caption--m"><p></p></caption>
@@ -45,13 +35,20 @@
                 <tbody class="govuk-table__body">
                     @foreach (var version in Model.AllVersions)
                     {
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">@version.Version</th>
-                        <td class="govuk-table__cell">@Model.GetStatusText(version)</td>
-                        <td class="govuk-table__cell">
-                            <a asp-route="@Model.GetActionRoute(version)" asp-route-referenceNumber="@Model.SelectedStandard.IFateReferenceNumber"  asp-route-version="@version.Version">@Model.GetActionText(version)</a>
-                        </td>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">@version.Version</th>
+                            <td class="govuk-table__cell">@Model.GetStatusText(version)</td>
+                            @if (Model.CannotOptOut(version))
+                            {
+                                <td class="govuk-table__cell">@Model.ContactToOptOutText</td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell">
+                                    <a asp-route="@Model.GetActionRoute(version)" asp-route-referenceNumber="@Model.SelectedStandard.IFateReferenceNumber" asp-route-version="@version.Version">@Model.GetActionText(version)</a>
+                                </td>
+                            }
+                        </tr>
                     }
                 </tbody>
             </table>

@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
-     [TestFixture]
+    [TestFixture]
     public class OptOutStandardTests : StandardControllerTestBase
     {
         private List<StandardVersion> _approvedVersions;
@@ -118,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task OptOutStandardVersion_ReturnsRedirectResult_WhenPostCalledWithValidModel()
+        public async Task OptOutStandardVersion_RedirectsTo_OptOutStandardVersionConfirmationRouteGet_WhenPostCalledWithValidModel()
         {
             // Arrange
             var model = new OptOutStandardVersionViewModel
@@ -132,7 +133,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             // Act
             var result = await _sut.OptOutStandardVersion(model);
 
-            // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
@@ -141,6 +141,26 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionConfirmationRouteGet));
                 Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
                 Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
+            });
+        }
+
+        [Test, MoqAutoData]
+        public async Task OptOutStandardVersion_Post_RedirectsTo_OptOutStandardVersionRouteGet_WhenModelIsInvalid(
+            OptOutStandardVersionViewModel viewModel)
+        {
+            _sut.ModelState.AddModelError("some error name", "some error message");
+
+            var result = await _sut.OptOutStandardVersion(viewModel);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
+
+                var redirectResult = result as RedirectToRouteResult;
+
+                Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionRouteGet));
+                Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(viewModel.StandardReference));
+                Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(viewModel.Version));
             });
         }
 
@@ -239,8 +259,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             public string Version { get; set; }
             public string ExpectedTitle { get; set; }
             public string ExpectedVersion { get; set; }
-            public DateTime ExpectedVersionEarliestStartDate { get; set;}
-            public DateTime ExpectedVersionLatestEndDate { get; set;}
+            public DateTime ExpectedVersionEarliestStartDate { get; set; }
+            public DateTime ExpectedVersionLatestEndDate { get; set; }
         }
 
         private static readonly TestDataOptOutStandardVersion[] TestDataForOptOutStandardVersion =
