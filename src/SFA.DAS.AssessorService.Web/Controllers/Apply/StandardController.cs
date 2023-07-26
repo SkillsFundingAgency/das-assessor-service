@@ -67,6 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search?}", Name = AddStandardSearchRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [NonAction]
         public IActionResult AddStandardSearch(string search)
         {
             var standardViewModel = new AddStandardSearchViewModel()
@@ -81,6 +82,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard", Name = AddStandardSearchRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [NonAction]
         public IActionResult AddStandardSearch(AddStandardSearchViewModel model)
         {
             if(!ModelState.IsValid)
@@ -93,6 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search}/results", Name = AddStandardSearchResultsRouteGet)]
+        [NonAction]
         public async Task<IActionResult> AddStandardSearchResults(string search)
         {
             if (string.IsNullOrEmpty(search))
@@ -120,6 +123,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search}/{referenceNumber}/choose-versions", Name = AddStandardChooseVersionsRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [NonAction]
         public async Task<IActionResult> AddStandardChooseVersions(string search, string referenceNumber)
         {
             if (string.IsNullOrEmpty(search))
@@ -147,6 +151,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard/choose-versions", Name = AddStandardChooseVersionsRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [NonAction]
         public IActionResult AddStandardChooseVersions(AddStandardConfirmViewModel model)
         {
             if (!ModelState.IsValid)
@@ -159,6 +164,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm", Name = AddStandardConfirmRouteGet)]
+        [NonAction]
         public async Task<IActionResult> AddStandardConfirm(string search, string referenceNumber, [FromQuery] List<string> versions)
         {
             if(string.IsNullOrEmpty(search))
@@ -186,6 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard/confirm", Name = AddStandardConfirmRoutePost)]
+        [NonAction]
         public async Task<IActionResult> AddStandardConfirm(AddStandardConfirmViewModel model)
         {
             var epaOrganisation = await _orgApiClient.GetEpaOrganisation(GetEpaOrgIdFromClaim());
@@ -205,6 +212,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{referenceNumber}/confirmation", Name = AddStandardConfirmationRouteGet)]
+        [NonAction]
         public async Task<IActionResult> AddStandardConfirmation(string referenceNumber)
         {
             if (string.IsNullOrEmpty(referenceNumber))
