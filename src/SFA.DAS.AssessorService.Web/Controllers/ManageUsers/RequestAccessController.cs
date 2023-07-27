@@ -1,12 +1,12 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
@@ -25,9 +25,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
         {
             await _contactsApiClient.RequestForPrivilege(vm.ContactId, vm.PrivilegeId);
 
-            return vm.UserHasUserManagement 
-                ? RedirectToAction(vm.ReturnAction, vm.ReturnController) 
-                : RedirectToAction("RequestSent", new {privilegeId = vm.PrivilegeId});
+            if(vm.UserHasUserManagement)
+            {
+                if(!string.IsNullOrEmpty(vm.ReturnRouteName))
+                {
+                    return RedirectToRoute(vm.ReturnRouteName, vm.ReturnRouteValues);
+                }
+
+                return RedirectToAction(vm.ReturnAction, vm.ReturnController, vm.ReturnRouteValues);
+            }
+
+            return RedirectToAction("RequestSent", new { privilegeId = vm.PrivilegeId });
         }
 
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Dashboard})]
