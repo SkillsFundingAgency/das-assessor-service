@@ -52,7 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
                 Address2 = "SecondLine",
                 Address3 = "ThirdLine",
                 Address4 = "FourthLine",
-                Postcode = "CV1 2AT"
+                Postcode = "CV1 2AT",
+                RecognitionNumber = "RN123"
             };
         }
 
@@ -78,6 +79,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
                 .ReturnsAsync(false);
 
             _registerRepositoryMock.Setup(x => x.OrganisationTypeExists(_request.OrganisationTypeId.Value))
+                .ReturnsAsync(true);
+
+            _registerRepositoryMock.Setup(x => x.EpaOrganisationExistsWithRecognitionNumber(_request.RecognitionNumber.ToLower(), _request.OrganisationId.ToLower()))
+                .ReturnsAsync(false);
+
+            _registerRepositoryMock.Setup(x => x.CheckRecognitionNumberExists(_request.RecognitionNumber.ToLower()))
                 .ReturnsAsync(true);
 
             _cleanserServiceMock.Setup(x => x.CleanseStringForSpecialCharacters(_request.Address1)).Returns(_request.Address1);

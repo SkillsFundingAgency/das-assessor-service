@@ -15,36 +15,42 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     "([StandardUId]" +
                     ", [IFateReferenceNumber]" +
                     ", [LarsCode]" +
-                    ", [Version]" +
                     ", [Title]" +
+                    ", [Version]" +
                     ", [Level]" +
                     ", [Status]" +
                     ", [TypicalDuration]" +
                     ", [MaxFunding]" +
                     ", [IsActive]" +
+                    ", [EffectiveFrom]" +
+                    ", [EffectiveTo]" +
                     ", [ProposedTypicalDuration]" +
                     ", [ProposedMaxFunding]" +
                     ", [EPAChanged]" +
                     ", [TrailblazerContact]" +
                     ", [StandardPageUrl]" +
-                    ", [OverviewOfRole])" +
+                    ", [OverviewOfRole]" +
+                    ", [VersionApprovedForDelivery])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
                     ", @larsCode" +
-                    ", @version" +
                     ", @title" +
+                    ", @version" +
                     ", @level" +
                     ", @status" +
                     ", @typicalDuration" +
                     ", @maxFunding" +
                     ", @isActive" +
+                    ", @effectiveFrom" +
+                    ", @effectiveTo" +
                     ", @proposedTypicalDuration" +
                     ", @proposedMaxFunding" +
                     ", @epaChanged" +
                     ", @trailblazerContact" +
                     ", @standardPageUrl" +
-                    ", @overviewOfRole)";
+                    ", @overviewOfRole" +
+                    ", @versionApprovedForDelivery)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }
