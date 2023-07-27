@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 using System;
 using System.Collections.Generic;
@@ -47,15 +48,22 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                     });
                 
             // Act
-            var result = await _sut.ReviewStandardVersions("ST0001") as ViewResult;
+            var result = await _sut.ReviewStandardVersions("ST0001") as RedirectToActionResult;
+
+            // Temporary asserts until withdrawal functionality is restored
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
+                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
+            });
 
             // Assert
-            var model = result.Model as ReviewStandardVersionsViewModel;
-            model.Versions.Should().HaveCount(3);
-            model.Versions[0].Version.Should().Be("1.2");
-            model.Versions[0].AbleToWithdraw.Should().BeTrue();
-            model.Versions[1].AbleToWithdraw.Should().BeFalse();
-            model.Versions[2].AbleToWithdraw.Should().BeFalse();
+            // var model = result.Model as ReviewStandardVersionsViewModel;
+            // model.Versions.Should().HaveCount(3);
+            // model.Versions[0].Version.Should().Be("1.2");
+            // model.Versions[0].AbleToWithdraw.Should().BeTrue();
+            // model.Versions[1].AbleToWithdraw.Should().BeFalse();
+            // model.Versions[2].AbleToWithdraw.Should().BeFalse();
         }
     }
 }
