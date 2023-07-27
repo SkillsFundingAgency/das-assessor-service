@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class AparSummaryUpdateRequest : IRequest<int>
+    public class GetAparSummaryUpdateRequest : IRequest<int?>
     {
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class AparSummaryLastUpdatedRequest : IRequest<DateTime>
+    public class GetAparSummaryLastUpdatedRequest : IRequest<DateTime>
     {
     }
 }

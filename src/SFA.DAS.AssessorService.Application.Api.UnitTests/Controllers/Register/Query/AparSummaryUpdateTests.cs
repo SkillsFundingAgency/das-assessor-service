@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _logger = new Mock<ILogger<RegisterQueryController>>();
             _expectedLastUpdated = DateTime.UtcNow;
 
-            _mediator.Setup(m => m.Send(It.IsAny<AparSummaryLastUpdatedRequest>(), new CancellationToken()))
+            _mediator.Setup(m => m.Send(It.IsAny<GetAparSummaryLastUpdatedRequest>(), new CancellationToken()))
                 .ReturnsAsync(_expectedLastUpdated);
 
             _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void GetAparSummary_MediatorShouldSendGetAparSummaryRequest_WhenCalled()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<AparSummaryLastUpdatedRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<GetAparSummaryLastUpdatedRequest>(), new CancellationToken()));
         }
 
 
