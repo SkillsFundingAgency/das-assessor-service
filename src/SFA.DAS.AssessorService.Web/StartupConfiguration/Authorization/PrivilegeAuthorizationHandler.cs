@@ -61,11 +61,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                         if (controllerActionDescriptor != null)
                         {
+                            var routeData = httpContext.GetRouteData();
+
                             var deniedContext = new PrivilegeAuthorizationDeniedContext
                             {
                                 PrivilegeId = privilegeRequested.Id,
                                 Controller = controllerActionDescriptor.ControllerName,
-                                Action = controllerActionDescriptor.ActionName
+                                Action = controllerActionDescriptor.ActionName,
+                                RouteName = controllerActionDescriptor.AttributeRouteInfo?.Name,
+                                RouteValues = routeData.Values
                             };
 
                             _tempDataProvider.SaveTempData(_httpContextAccessor.HttpContext, 

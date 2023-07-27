@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[EPAO_Registered_Standards]
 	 @EPAOID AS NVARCHAR(12),
+	 @RequireAtLeastOneVersion AS INT,
 	 @Skip int,
 	 @Take int
 AS
@@ -12,32 +13,16 @@ AS
 	SELECT IFateReferenceNumber, Title, Version, Level, LarsCode, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY [dbo].[ExpandedVersion](Version) DESC) rownumber FROM Standards
 	WHERE VersionApprovedForDelivery IS NOT NULL
 	) sv1 WHERE rownumber = 1
-),
-AppliedVersions AS
-(
-	SELECT StandardReference, MAX([dbo].[ExpandedVersion](v1.Version)) AS MaxVersion
-	FROM Apply ap1
-	CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH (version VARCHAR(10) '$') v1
-	CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
-	JOIN Organisations og1 on og1.Id = ap1.OrganisationId
-	WHERE 1=1
-	  AND sequence.NotRequired = 0
-	  AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
-	  AND ap1.StandardReference IS NOT NULL
-	  AND ap1.ApplicationStatus NOT IN('Approved', 'Declined')
-	  AND ap1.DeletedAt IS NULL
-	  AND og1.EndPointAssessorOrganisationId = @EPAOID
-	GROUP BY StandardReference
 )
 SELECT 
 	lv.Larscode as StandardCode,
 	lv.Title as [StandardName],
 	lv.[Level],
 	lv.IFateReferenceNumber as ReferenceNumber,
-	IIF(lv.MaxVersion > osv.MaxVersion AND (av.MaxVersion IS NULL OR lv.MaxVersion > av.MaxVersion), 1, 0) AS NewVersionAvailable,
-	osv.NumberOfVersions  AS NumberOfVersions 
+	IIF(lv.MaxVersion > ISNULL(osv.MaxVersion, 0), 1, 0) AS NewVersionAvailable,
+	ISNULL(osv.NumberOfVersions, 0)  AS NumberOfVersions 
 FROM OrganisationStandard os 
-	INNER JOIN (
+	LEFT JOIN (
 		SELECT OrganisationStandardId,  MAX( [dbo].[ExpandedVersion]([Version]) ) AS MaxVersion, Count(*) AS NumberOfVersions 
 		FROM OrganisationStandardVersion 
 		WHERE EffectiveTo is null OR EffectiveTo > GETDATE()
@@ -45,9 +30,9 @@ FROM OrganisationStandard os
 	) AS osv ON osv.OrganisationStandardId = os.Id
 	INNER JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
 	INNER JOIN LatestVersions lv on lv.IFateReferenceNumber = os.StandardReference
-	LEFT OUTER JOIN AppliedVersions av on av.StandardReference = os.StandardReference
 	WHERE os.Status = 'Live' 
 	AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
+	AND (@RequireAtLeastOneVersion = 0 OR ISNULL(osv.NumberOfVersions, 0) > 0)
 	ORDER BY lv.Title
 	OFFSET @Skip ROWS 
 	FETCH NEXT @Take ROWS ONLY
