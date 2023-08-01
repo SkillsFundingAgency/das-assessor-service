@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var sql =
                 "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
-                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser, O.RecognitionNumber " +
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.Id = @id";
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var sql =
                 "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
-                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser, O.RecognitionNumber " +
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.EndPointAssessorOrganisationId = @organisationId";
@@ -100,6 +100,45 @@ namespace SFA.DAS.AssessorService.Data
                         "and ot.Status = 'Live'");
 
             return assessmentOrganisationSummaries;
+        }
+
+        public async Task<IEnumerable<AssessmentOrganisationListSummary>> GetAssessmentOrganisationsList(int? ukprn)
+        {
+            var sql = @"SELECT
+                            os.EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as Ukprn,
+                            MIN(os.DateStandardApprovedOnRegister) EarliestDateStandardApprovedOnRegister,
+                            MIN(os.EffectiveFrom) EarliestEffectiveFromDate
+                        FROM
+                        OrganisationStandard os
+                        INNER JOIN 
+                        (
+                            SELECT OrganisationStandardId, StandardUId 
+                            FROM OrganisationStandardVersion 
+                            WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) 
+                            AND [Status] = 'Live' 
+                        ) [ActiveStandardVersions] ON [ActiveStandardVersions].OrganisationStandardId = os.Id
+                        INNER JOIN Organisations o ON os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+                        INNER JOIN 
+                        (
+                            SELECT StandardUId
+                            FROM Standards 
+                            WHERE Larscode != 0 
+                            AND (EffectiveTo is null OR EffectiveTo > GETDATE())
+                        ) [ActiveStandards] ON [ActiveStandards].StandardUid = [ActiveStandardVersions].StandardUId
+                        WHERE
+                            o.[Status] = 'Live'
+                            AND o.EndPointAssessorOrganisationId <> 'EPA0000'
+                            AND (o.EndPointAssessorUkprn = @ukprn OR @ukprn IS NULL)
+                            AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())
+                            AND os.[Status] = 'Live'
+                        GROUP BY 
+                            os.EndPointAssessorOrganisationId, EndPointAssessorName, EndPointAssessorUkprn";
+
+            var results = await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationListSummary>(
+                sql,
+                param: new { ukprn });
+
+            return results;
         }
 
         public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
@@ -258,10 +297,10 @@ namespace SFA.DAS.AssessorService.Data
                         SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
                         SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
                         CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version VARCHAR(10) '$')
-                        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
-                        WHERE 1=1
-                          AND sequence.NotRequired = 0
-                          AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
+                                CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+                            WHERE 1=1
+                            AND sequence.NotRequired = 0
+                            AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
                         ) ab1
                         JOIN Organisations og1 on og1.id = ab1.OrganisationId
                         WHERE ab1.standardreference IS NOT NULL
@@ -285,7 +324,7 @@ namespace SFA.DAS.AssessorService.Data
                         so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
-                        va1.ApplyData
+                        va1.ApplyData, so1.EqaProviderName, so1.EqaProviderContactName, so1.EqaProviderContactEmail
                         FROM standards so1 
                         LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
 						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 

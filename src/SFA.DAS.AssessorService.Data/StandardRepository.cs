@@ -4,8 +4,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -383,6 +381,12 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
             string endPointAssessorOrganisationId, int pageSize, int pageIndex)
         {
+            return await GetEpaoRegisteredStandards(endPointAssessorOrganisationId, true, pageSize, pageIndex);
+        }
+
+        public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
+            string endPointAssessorOrganisationId, bool requireAtLeastOneVersion, int pageSize, int pageIndex)
+        {
             var epoRegisteredStandardsResult = new EpoRegisteredStandardsResult
             {
                 PageOfResults = new List<EPORegisteredStandards>(),
@@ -395,6 +399,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 param: new
                 {
                     EPAOId = endPointAssessorOrganisationId,
+                    RequireAtLeastOneVersion = requireAtLeastOneVersion,
                     Skip = skip,
                     Take = pageSize
                 },

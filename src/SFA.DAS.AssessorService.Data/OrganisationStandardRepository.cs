@@ -30,10 +30,18 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                @"INSERT INTO OrganisationStandardVersion 
-                    (StandardUId, Version ,OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status)
+                @"INSERT INTO OrganisationStandardVersion (StandardUId, Version ,OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status)
                   VALUES (@StandardUId, @Version ,@OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, @Status)",
-                param: new { version.StandardUId, version.Version, version.OrganisationStandardId, version.EffectiveFrom, version.EffectiveTo, version.DateVersionApproved, version.Comments, version.Status },
+                param: new { 
+                    version.StandardUId, 
+                    version.Version, 
+                    version.OrganisationStandardId, 
+                    version.EffectiveFrom, 
+                    version.EffectiveTo, 
+                    version.DateVersionApproved, 
+                    version.Comments, 
+                    version.Status 
+                },
                 transaction: _unitOfWork.Transaction);
 
             return version;
@@ -54,30 +62,32 @@ namespace SFA.DAS.AssessorService.Data
             return results.FirstOrDefault();
         }
 
-        public async Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion orgStandardVersion)
+        public async Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion organisationStandardVersion)
         {
             var sql = @"UPDATE [OrganisationStandardVersion] 
                         SET
                             [EffectiveFrom] = @effectiveFrom,
                             [EffectiveTo] = @effectiveTo,
                             [DateVersionApproved] = @dateVersionApproved,
+                            [Comments] = @comments,
                             [Status] = @status
                         WHERE
-                            [OrganisationStandardId] = @orgStandardId AND [Version] = @version";
+                            [OrganisationStandardId] = @organisationStandardId AND [Version] = @version";
 
             await _unitOfWork.Connection.ExecuteAsync(
                 sql,
-                param: new { 
-                        effectiveFrom = orgStandardVersion.EffectiveFrom,
-                        effectiveTo = orgStandardVersion.EffectiveTo,
-                        dateVersionApproved = orgStandardVersion.DateVersionApproved,
-                        Status = orgStandardVersion.Status,
-                        orgStandardId = orgStandardVersion.OrganisationStandardId,
-                        version = orgStandardVersion.Version
-                    },
+                param: new {
+                        version = organisationStandardVersion.Version,
+                        organisationStandardId = organisationStandardVersion.OrganisationStandardId,
+                        effectiveFrom = organisationStandardVersion.EffectiveFrom,
+                        effectiveTo = organisationStandardVersion.EffectiveTo,
+                        dateVersionApproved = organisationStandardVersion.DateVersionApproved,
+                        comments = organisationStandardVersion.Comments,
+                        status = organisationStandardVersion.Status
+                },
                 transaction: _unitOfWork.Transaction);
 
-            return orgStandardVersion;
+            return organisationStandardVersion;
         }
 
         public async Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)

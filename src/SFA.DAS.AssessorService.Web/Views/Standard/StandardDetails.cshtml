@@ -1,0 +1,57 @@
+﻿@using SFA.DAS.AssessorService.Domain.Consts
+@using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Helpers;
+@model SFA.DAS.AssessorService.Web.ViewModels.Standard.StandardDetailsViewModel
+
+@{
+    ViewBag.Title = "Standard details";
+    Layout = "_Layout";
+}
+
+<a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-back-link">Return to approved standards and versions</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                <span class="govuk-caption-l govuk-!-margin-bottom-2">Standard details</span>
+                @Model.SelectedStandard?.Title
+            </h1>
+
+            <p class="govuk-body-l">Reference: @Model.SelectedStandard?.IFateReferenceNumber</p>
+            <p class="govuk-body">For more information visit <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="@Model.SelectedStandard?.StandardPageUrl">the IfATE page for this standard (opens in a new tab or window)</a>.</p>
+            <partial name="~/Views/Standard/_OptOutInsetPartial.cshtml" />
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <caption class="govuk-table__caption govuk-table__caption--m"><p></p></caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Version</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Status</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var version in Model.AllVersions)
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">@version.Version</th>
+                            <td class="govuk-table__cell">@Model.GetStatusText(version)</td>
+                            @if (Model.CannotOptOut(version))
+                            {
+                                <td class="govuk-table__cell">@Model.ContactToOptOutText</td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell">
+                                    <a asp-route="@Model.GetActionRoute(version)" asp-route-referenceNumber="@Model.SelectedStandard.IFateReferenceNumber" asp-route-version="@version.Version">@Model.GetActionText(version)</a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
