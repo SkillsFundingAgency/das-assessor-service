@@ -2,41 +2,23 @@
 {
     public interface IWebConfiguration
     {
-        string Environment { get; set; }
-
-        ApiAuthentication ApiAuthentication { get; set; }
-        AzureApiAuthentication AzureApiAuthentication { get; set; }
         ClientApiAuthentication AssessorApiAuthentication { get; set; }
-        NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
-        string SqlConnectionString { get; set; }
-        string SessionRedisConnectionString { get; set; }
+        AzureApiAuthentication AzureApiAuthentication { get; set; }
         ClientApiAuthentication QnaApiAuthentication { get; set; }
-        string ServiceLink { get; set; }
-        LoginServiceConfig LoginService { get; set; }
         
+        LoginServiceConfig LoginService { get; set; }
+
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
-        ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
-
-        CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
-        CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
-
-        string ReferenceFormat { get; set; }
         string FeedbackUrl { get; set; }
-        int PipelineCutoff { get; set; }
-
-        #region For External API Sandbox
-        string SandboxSqlConnectionString { get; set; }
-        ApiAuthentication SandboxApiAuthentication { get; set; }
-        ClientApiAuthentication SandboxClientApiAuthentication { get; set; }
-        #endregion
+        string ReferenceFormat { get; set; }
+        string ServiceLink { get; set; }
+        string SessionRedisConnectionString { get; set; }
 
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
         string ZenDeskCobrowsingSnippetKey { get; set; }
         
-        OuterApiConfiguration OuterApi { get; set; }
-
         /// <summary>
         /// Property to hold the value of GovSignIn enabled/disabled.
         /// </summary>

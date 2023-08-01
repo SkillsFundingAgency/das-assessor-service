@@ -11,18 +11,20 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public string ReferenceNumber { get; set; }
 
-        // These are preamble answers
+        // Preamble 
         public string OrganisationReferenceId { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationType { get; set; }
         public string ApplicationType { get; set; }
 
-
         // These are preamble answers, but are currently unused and stored instead in ApplyData.Apply
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
-        
+
+        // This is a preamble answer
+        public string Eqap { get; set; }
+
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactGivenName { get; set; }

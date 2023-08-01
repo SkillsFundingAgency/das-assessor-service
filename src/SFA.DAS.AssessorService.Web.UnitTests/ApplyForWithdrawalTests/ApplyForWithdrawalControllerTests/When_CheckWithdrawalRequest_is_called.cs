@@ -44,9 +44,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             // Act
             var result = await _sut.CheckWithdrawalRequest("ST0001", "1.1", null) as ViewResult;
 
+            // Temporary assert until withdrawal functionality is reinstated
+            Assert.That(result, Is.Null);
+
             // Assert
-            var model = result.Model as CheckWithdrawalRequestViewModel;
-            model.InProgressVersionWithdrawals.Should().BeFalse();
+            // var model = result.Model as CheckWithdrawalRequestViewModel;
+            // model.InProgressVersionWithdrawals.Should().BeFalse();
         }
 
         [Test]
@@ -79,9 +82,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             // Act
             var result = await _sut.CheckWithdrawalRequest("ST0001", null, null) as ViewResult;
 
+            // Temporary assert until withdrawal functionality is reinstated
+            Assert.That(result, Is.Null);
+
             // Assert
-            var model = result.Model as CheckWithdrawalRequestViewModel;
-            model.InProgressVersionWithdrawals.Should().BeTrue();
+            // var model = result.Model as CheckWithdrawalRequestViewModel;
+            // model.InProgressVersionWithdrawals.Should().BeTrue();
         }
 
         [Test]
@@ -104,9 +110,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             // Act
             var result = await _sut.CheckWithdrawalRequest("ST0001", null, null) as ViewResult;
 
+            // Temporary assert until withdrawal functionality is reinstated
+            Assert.That(result, Is.Null);
+
             // Assert
-            var model = result.Model as CheckWithdrawalRequestViewModel;
-            model.InProgressVersionWithdrawals.Should().BeFalse();
+            // var model = result.Model as CheckWithdrawalRequestViewModel;
+            // model.InProgressVersionWithdrawals.Should().BeFalse();
         }
     }
 }

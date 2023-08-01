@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Domain.Paging;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Paging;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -13,17 +17,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     using AssessorService.Api.Types.Models;
     using SFA.DAS.AssessorService.Api.Types.CharityCommission;
     using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+    using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
     using SFA.DAS.AssessorService.Domain.Consts;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(string baseUri, ITokenService tokenService,
-            ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
-        {
-        }
-
-        public OrganisationsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public OrganisationsApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
+            : base(httpClient, tokenService, logger)
         {
         }
 
@@ -259,6 +260,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<EpaoStandardResponse> AddOrganisationStandard(OrganisationStandardAddRequest organisationStandardAddRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/organisationstandard"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardAddRequest, EpaoStandardResponse>(request,
+                    organisationStandardAddRequest);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
@@ -445,28 +455,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
-            string standardReference, string version, string standardUId, bool optInFollowingWithdrawal, string comments)
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(string endPointAssessorOrganisationId,
+            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
         {
-            var createVersionRequest = new OrganisationStandardVersionOptInRequest
+            var optInRequest = new OrganisationStandardVersionOptInRequest
             {
-                ApplicationId = applicationId,
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                 StandardReference = standardReference,
                 Version = version,
-                StandardUId = standardUId,
-                EffectiveFrom = DateTime.Today,
-                EffectiveTo = null,
-                DateVersionApproved = null,
-                Comments = comments,
-                Status = OrganisationStatus.Live,
-                SubmittingContactId = contactId,
-                OptInFollowingWithdrawal = optInFollowingWithdrawal
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo,
+                ContactId = contactId,
+                OptInRequestedAt = DateTime.Now
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-in"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, createVersionRequest);
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, optInRequest);
+            }
+        }
+
+        public async Task<OrganisationStandardVersion> OrganisationStandardVersionOptOut(string endPointAssessorOrganisationId,
+            string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId)
+        {
+            var optOutRequest = new OrganisationStandardVersionOptOutRequest
+            {
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                StandardReference = standardReference,
+                Version = version,
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo,
+                ContactId = contactId,
+                OptOutRequestedAt = DateTime.Now
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-out"))
+            {
+                return await PostPutRequestWithResponse<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
             }
         }
     }

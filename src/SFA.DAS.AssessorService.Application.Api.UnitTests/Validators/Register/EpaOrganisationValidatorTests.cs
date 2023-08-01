@@ -106,6 +106,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed,
                     "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.RecognitionNumberAlreadyInUse])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.RecognitionNumberAlreadyInUse,
+                "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.RecognitionNumberNotFound])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.RecognitionNumberNotFound,
+                "fail"));
         }
 
         [TestCase("EPA000", true)]
@@ -550,19 +556,45 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             var request = new CreateEpaOrganisationRequest
             {
-                Name = "test", Ukprn = 12345678, OrganisationTypeId = 9
+                Name = "test",
+                Ukprn = 12345678,
+                OrganisationTypeId = 9
             };
-            
+
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(false));
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
                 .Returns(Task.FromResult(true));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
-            
+
             Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
             Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()));
-            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
-            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Ukprn"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1, result.Errors.Count(x => x.Field == "Ukprn"));
+        }
+
+        [TestCase(false, "")]
+        [TestCase(true, "fail; ")]
+        public void CheckRecognitionNumberInUseReturnsAnErrorMessage(bool exists, string messageReturned)
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationExistsWithRecognitionNumber(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(exists));
+            var result =
+                _validator.CheckRecognitionNumberInUse("RN", "orgName");
+
+            Assert.AreEqual(result, messageReturned);
+            _registerRepository.Verify(r => r.EpaOrganisationExistsWithRecognitionNumber(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [TestCase(false, "fail; ")]
+        [TestCase(true, "")]
+        public void CheckRecognitionNumberExistsReturnsAnErrorMessage(bool exists, string messageReturned)
+        {
+            _registerRepository.Setup(r => r.CheckRecognitionNumberExists(It.IsAny<string>()))
+                .Returns(Task.FromResult(exists));
+            var result = _validator.CheckRecognitionNumberExists("RN");
+            Assert.AreEqual(result, messageReturned);
+            _registerRepository.Verify(r => r.CheckRecognitionNumberExists(It.IsAny<string>()), Times.Once);
         }
     }
 }

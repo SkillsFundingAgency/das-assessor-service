@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -17,12 +24,6 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -36,6 +37,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
+
+        #region routes
+        public const string StandardApplicationsRouteGet = nameof(StandardApplicationsRouteGet);
+        #endregion
 
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
@@ -105,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpGet("/Application/StandardApplications")]
+        [HttpGet("/Application/StandardApplications", Name = StandardApplicationsRouteGet)]
         public async Task<IActionResult> StandardApplications()
         {
             var userId = await GetUserId();
@@ -202,18 +207,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (string.IsNullOrWhiteSpace(standardName))
                 {
-                    var org = await _orgApiClient.GetOrganisationByUserId(userId);
-                    if (org.RoEPAOApproved)
-                    {
-                        return RedirectToAction("Index", "Standard", new { Id });
-                    }
-
-                    return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
+                    return RedirectToRoute(StandardController.ApplyStandardSearchRouteGet, new { Id });
                 }
-                else if (!string.IsNullOrWhiteSpace(standardName))
-                {
-                    return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
-                }
+                
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
             }
             else if(IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
@@ -451,7 +448,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                         return RedirectToAction("Applications");
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -564,7 +561,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
-                throw ex;
+                throw;
             }
         }
 
@@ -682,7 +679,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 _logger.LogError(ex, ex.Message);
 
-                throw ex;
+                throw;
             }
         }
 
@@ -854,22 +851,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var sequenceVm = new SequenceViewModel(sequence, application.Id, BuildPageContext(application, sequence), allowCancel, sections, applyData.Sections, null);
 
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-        }
-
-        [HttpGet("/application/{id}/opt-in/confirmation")]
-        [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> OptInConfirmation(Guid id)
-        {
-            var application = await _applicationApiClient.GetApplication(id);
-
-            var model = new OptInConfirmationViewModel()
-            {
-                StandardTitle = application?.ApplyData?.Apply?.StandardName,
-                Version = application?.ApplyData?.Apply?.Versions.FirstOrDefault(),
-                FeedbackUrl = _config.FeedbackUrl,
-            };
-
-            return View("~/Views/Application/OptInConfirmation.cshtml", model);
         }
 
         private async Task<Page> GetDataFedOptions(Page page)

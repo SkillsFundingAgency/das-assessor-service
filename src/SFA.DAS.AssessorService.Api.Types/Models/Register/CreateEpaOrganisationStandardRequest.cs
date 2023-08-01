@@ -18,6 +18,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public List<int> DeliveryAreas { get; set; }
         public string DeliveryAreasComments { get; set; }
         public string StandardApplicationType { get; set; }
-        public bool ApplyFollowingWithdrawal { get; set; }
     }
 }

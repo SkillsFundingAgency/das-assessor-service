@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +14,9 @@ using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult SignOut()
+        public new IActionResult SignOut()
         {
             ResetCookies();
 
@@ -173,6 +173,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     UserHasUserManagement = usersPrivileges.Any(up => up.Privilege.Key == Privileges.ManageUsers),
                     ReturnController = deniedContext.Controller,
                     ReturnAction = deniedContext.Action,
+                    ReturnRouteName = deniedContext.RouteName,
+                    ReturnRouteValues = deniedContext.RouteValues.ToDictionary(item => item.Key, item => item.Value?.ToString()),
                     IsUsersOrganisationLive = organisation?.Status == OrganisationStatus.Live
                 });
             }

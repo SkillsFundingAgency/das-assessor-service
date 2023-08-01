@@ -35,7 +35,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var viewModel = new CertificateVersionNotApprovedViewModel()
             {
                 AttemptedVersion = standardVersion.Version,
-                BackToCheckPage = redirectToCheck.Value
+                BackToCheckPage = redirectToCheck.Value,
+                StandardName = standardVersion.Title,
+                IFateReferenceNumber = standardVersion.IFateReferenceNumber
             };
            
             return View("~/Views/Certificate/VersionNotApproved.cshtml", viewModel);
