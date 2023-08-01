@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -9,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -42,10 +42,32 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return (await _connection.QueryAsync(report.StoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
         }
 
-
         public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
         {
-            return (await _connection.QueryAsync(storedProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
+            var reports = _assessorDbContext.StaffReports.ToList();
+
+            var worksheetDetails = reports
+                .Where(report => report.ReportType == "Download")
+                .SelectMany(report =>
+                {
+                    try
+                    {
+                        var reportDetails = JsonConvert.DeserializeObject<ReportDetails>(report.ReportDetails);
+                        return reportDetails?.Worksheets ?? new List<WorksheetDetails>();
+                    }
+                    catch (JsonReaderException)
+                    {
+                        return new List<WorksheetDetails>();
+                    }
+                })
+                .FirstOrDefault(worksheet => worksheet.StoredProcedure == storedProcedure);
+
+                if (worksheetDetails == null)
+                {
+                    throw new NotFoundException($"No matching report found for stored procedure '{storedProcedure}'");
+                }
+
+            return (await _connection.QueryAsync(worksheetDetails.StoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
         }
 
         Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId)

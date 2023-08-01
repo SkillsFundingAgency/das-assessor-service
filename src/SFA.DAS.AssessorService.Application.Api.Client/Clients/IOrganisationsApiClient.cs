@@ -2,6 +2,7 @@ using SFA.DAS.AssessorService.Api.Types.CharityCommission;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Paging;
@@ -34,6 +35,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 
+        Task<EpaoStandardResponse> AddOrganisationStandard(OrganisationStandardAddRequest organisationStandardAddRequest);
+
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
 
@@ -51,7 +54,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<OrganisationType>> GetOrganisationTypes();
 
         Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest);
-        Task<OrganisationResponse> GetOrganisationByName(string name);
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
         Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
         Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string endPointAssessorOrganisationId, string standardReference);
@@ -64,7 +66,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel);
         Task<EpaOrganisation> GetEpaOrganisationById(string Id);
 
-        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
-           string standardReference, string version, string standardUId, bool optInFollowingWithdrawal, string comments);
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptIn(string endPointAssessorOrganisationId,
+           string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId);
+
+        Task<OrganisationStandardVersion> OrganisationStandardVersionOptOut(string endPointAssessorOrganisationId,
+           string standardReference, string version, DateTime? effectiveFrom, DateTime? effectiveTo, Guid contactId);
     }
 }

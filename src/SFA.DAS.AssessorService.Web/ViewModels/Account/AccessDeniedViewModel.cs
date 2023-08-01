@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Account
 {
@@ -11,6 +12,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Account
         public bool UserHasUserManagement { get; set; }
         public string ReturnController { get; set; }
         public string ReturnAction { get; set; }
+        public string ReturnRouteName { get; set; }
+        public Dictionary<string, string> ReturnRouteValues { get; set; }
         public bool IsUsersOrganisationLive { get; set; }
     }
 }

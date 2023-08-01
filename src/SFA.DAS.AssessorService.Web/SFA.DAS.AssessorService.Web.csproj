@@ -8,10 +8,12 @@
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.13" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
+    <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
     <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.296" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
@@ -32,5 +34,13 @@
         <Aliases>signed</Aliases>
       </ReferencePath>
     </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <!-- File with mtime of last successful npm install -->
+    <NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
+  </PropertyGroup>
+  <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
+    <Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
   </Target>
 </Project>

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -7,6 +8,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,14 +17,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class CreateEpaOrganisationStandardHandler : IRequestHandler<CreateEpaOrganisationStandardRequest, string>
     {
+        private readonly IMediator _mediator;
         private readonly IRegisterRepository _registerRepository;
+        private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly ILogger<CreateEpaOrganisationStandardHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public CreateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<CreateEpaOrganisationStandardHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public CreateEpaOrganisationStandardHandler(
+            IMediator mediator,
+            IRegisterRepository registerRepository, 
+            IOrganisationStandardRepository organisationStandardRepository,
+            IEpaOrganisationValidator validator, 
+            ILogger<CreateEpaOrganisationStandardHandler> logger, 
+            ISpecialCharacterCleanserService cleanser)
         {
+            _mediator = mediator;
             _registerRepository = registerRepository;
+            _organisationStandardRepository = organisationStandardRepository;
             _logger = logger;
             _cleanser = cleanser;
             _validator = validator;
@@ -53,17 +65,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 }
 
                 throw new Exception(message);
-            } 
+            }
+
+            var applyFollowingWithdrawal = (await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(
+                request.OrganisationId, request.StandardReference) != null);
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
-           
-            if (request.ApplyFollowingWithdrawal)
+            var deliveryAreas = !(request.DeliveryAreas?.Any() ?? false) ? await GetDeliveryAreas() : request.DeliveryAreas;
+
+            if (applyFollowingWithdrawal) 
             {
-                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, request.DeliveryAreas, true);
+                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, deliveryAreas, true);
             }
             else
             {
-                return await _registerRepository.CreateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
+                return await _registerRepository.CreateEpaOrganisationStandard(organisationStandard, deliveryAreas);
             }
         }
 
@@ -94,6 +110,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments}
             };
             return organisationStandard;
+        }
+
+        private async Task<List<int>> GetDeliveryAreas()
+        {
+            var areas = await _mediator.Send(new GetDeliveryAreasRequest());
+            return areas.Select(a => a.Id).ToList();
         }
     }
 }

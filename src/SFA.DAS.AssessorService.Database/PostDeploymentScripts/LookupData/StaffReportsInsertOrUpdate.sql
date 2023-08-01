@@ -57,7 +57,13 @@ INSERT #StaffReports VALUES (N'37770d79-1733-43f9-90d5-88f0609dd7e2', N'Register
 	  "StoredProcedure":"EPAO_Register_list_of_standards"
 	  }
 	]}')
-INSERT #StaffReports VALUES (N'6ecd397a-f7d7-4a13-bb4f-8f8a74bbeace', N'EPAO, standard and grade', N'StaffReports_ByEpaoAndStandardAndGrade', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 6, N'ViewOnScreen', NULL)
+INSERT #StaffReports VALUES (N'6ecd397a-f7d7-4a13-bb4f-8f8a74bbeace', N'EPAO, standard and grade', N'', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 6, N'Download', N'{"Name":"EPAO, standard and grade","Worksheets": [
+	  {
+	  "worksheet":"EPAO, standard and grade",
+	  "order": 1,
+	  "StoredProcedure":"StaffReports_ByEpaoAndStandardAndGrade"
+	  }
+	]}')
 INSERT #StaffReports VALUES (N'3e230675-d61d-4ef0-a678-a254f77c58b7', N'Register List of Organisations', N'', CAST(N'2018-11-30T09:42:37.5633333' AS DateTime2), NULL, NULL, 13, N'Download', N'{"Name":"Register List Of Organisations","Worksheets": [
 	  {
 	  "worksheet":"Register List of Organisations",

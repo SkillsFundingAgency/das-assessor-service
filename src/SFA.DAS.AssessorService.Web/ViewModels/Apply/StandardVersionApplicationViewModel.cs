@@ -1,6 +1,6 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Apply
 {

@@ -18,14 +18,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Standards.GetEp
     public class When_called
     {
         private GetEpaoPipelineStandardsHandler _sut;
-        private Mock<IWebConfiguration> _mockConfig;
+        private Mock<IApiConfiguration> _mockConfig;
         private Mock<IStandardRepository> _mockRepository;
         private Mock<ILogger<GetEpaoPipelineStandardsHandler>> _mockLogger;
 
         [SetUp]
         public void Arrange()
         {
-            _mockConfig = new Mock<IWebConfiguration>();
+            _mockConfig = new Mock<IApiConfiguration>();
             _mockRepository = new Mock<IStandardRepository>();
             _mockLogger = new Mock<ILogger<GetEpaoPipelineStandardsHandler>>();
 
