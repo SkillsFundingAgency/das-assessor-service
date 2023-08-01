@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Helpers;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -27,6 +28,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var contact = await GetUserContact();
             return contact?.Id ?? Guid.Empty;
+        }
+
+        protected string GetEpaOrgIdFromClaim()
+        {
+            return EpaOrgIdFinder.GetFromClaim(_httpContextAccessor);
         }
 
         protected async Task<ContactResponse> GetUserContact()

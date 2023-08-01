@@ -3,6 +3,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -77,9 +78,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     TrailblazerContact = "Contact name",
                     StandardPageUrl = "www.standard.com",
-                    OverviewOfRole = "Explanation of apprenticeship job role"
+                    OverviewOfRole = "Explanation of apprenticeship job role",
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
-            };          
+            };
         }
     }
 }

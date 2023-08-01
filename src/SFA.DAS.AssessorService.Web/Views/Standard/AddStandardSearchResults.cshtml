@@ -1,0 +1,72 @@
+﻿@using SFA.DAS.AssessorService.Web.Controllers.Apply;
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@using SFA.DAS.AssessorService.Web.Extensions
+@model AddStandardSearchViewModel
+
+@{
+    ViewBag.Title = "Add standard search results";
+    Layout = "_Layout";
+}
+
+<a asp-route="@StandardController.AddStandardSearchRouteGet" asp-route-search="@Model.Search" class="govuk-back-link">Return to search</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Search results for @Model.Search
+                <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
+            </h1>
+        </div>
+    </div>
+
+    @if (@Model.Results.Count > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-form-group">
+                    <table class="govuk-table">
+                        <caption class="govuk-visually-hidden">Search results</caption>
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Name</th>
+                                <th class="govuk-table__header" scope="col">Reference</th>
+                                <th class="govuk-table__header" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var result in Model.Results.OrderBy(x => x.Title))
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Name">@result.Title</td>
+                                    <td class="govuk-table__cell" data-label="Reference">@result.IFateReferenceNumber</td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                                        @if (Model.IsApprovedForStandard(result))
+                                        {
+                                            <span>Approved</span>
+                                        }
+                                        else
+                                        {
+                                            <a asp-route="@StandardController.AddStandardChooseVersionsRouteGet" asp-route-search="@Model.Search" asp-route-referenceNumber="@result.IFateReferenceNumber" class="govuk-link">Add standard</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group">
+                    <p class="govuk-body">There are no matching results.</p>
+                </div>
+            </div>
+        </div>
+    }
+
+</main>
