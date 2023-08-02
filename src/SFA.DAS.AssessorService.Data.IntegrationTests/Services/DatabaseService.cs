@@ -98,11 +98,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             }
         }
 
-        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, T model) where T : TestModel
+        public async Task<T> QueryFirstOrDefaultAsync<T, M>(string sql, M model) where T : TestModel
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
                 return await connection.QueryFirstOrDefaultAsync<T>(sql, param: model);
+            }
+        }
+
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql)
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                return await connection.QueryFirstOrDefaultAsync<T>(sql);
             }
         }
 
@@ -119,14 +127,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             }
         }
 
-        public void Execute(string sql, TestModel model)
+        public void Execute<T>(string sql, T model)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 connection.Execute(sql, model);
-                connection.Close();
             }
         }
 

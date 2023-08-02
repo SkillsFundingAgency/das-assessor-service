@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [CreatedAt]" +
                     ", [DisplayName]" +
                     ", [Email]" +
-                    ", [EndpointAssessmentOrganisationId]" +
+                    ", [EndPointAssessorOrganisationId]" +
                     ", [OrganisationId]" +
                     ", [Status]" +
                     ", [Username]) " +
@@ -27,8 +27,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @createdAt" +
                     ", @displayName" +
                     ", @email" +
-                    ", @endpointAssessmentOrganisationId" +
+                    ", @endPointAssessorOrganisationId" +
                     ", @organisationId" +
+                    ", @status" +
                     ", @username)";
 
             DatabaseService.Execute(sqlToInsert, contact);
@@ -42,7 +43,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             }
         }
 
-        public static ContactModel Create(Guid? id, DateTime createdAt, string displayName, string email, string endpointAssessmentOrganisationId, 
+        public static ContactModel Create(Guid? id, DateTime createdAt, string displayName, string email, string endPointAssessorOrganisationId, 
             Guid organisationId, string status, string username)
         {
             return new ContactModel
@@ -51,11 +52,29 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 CreatedAt = createdAt,
                 DisplayName = displayName,
                 Email = email,
-                EndPointAssessorOrganisationId = endpointAssessmentOrganisationId,
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                 OrganisationId = organisationId,
                 Status = status,
                 Username = username
             };
+        }
+
+        public static async Task<ContactModel> GetByEmail(string contactEmailAddress)
+        {
+            var sqlToQuery =
+                "SELECT " +
+                    "[Id]" +
+                    ", [CreatedAt]" +
+                    ", [DisplayName]" +
+                    ", [Email]" +
+                    ", [EndPointAssessorOrganisationId]" +
+                    ", [OrganisationId]" +
+                    ", [Status]" +
+                    ", [Username] " +
+                "FROM [Contacts] " +
+                "WHERE Email = @email";
+
+            return await DatabaseService.QueryFirstOrDefaultAsync<ContactModel, dynamic>(sqlToQuery, new { Email = contactEmailAddress });
         }
 
         public static async Task<ContactModel> QuerySingleOrDefaultAsync(ContactModel contact)
@@ -66,7 +85,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [CreatedAt]" +
                     ", [DisplayName]" +
                     ", [Email]" +
-                    ", [EndpointAssessmentOrganisationId]" +
+                    ", [EndPointAssessorOrganisationId]" +
                     ", [OrganisationId]" +
                     ", [Status]" +
                     ", [Username] " +
@@ -75,12 +94,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     "AND CreatedAt = @createdAt " +
                     "AND DisplayName = @displayName " +
                     "AND Email = @email" +
-                    "AND EndpointAssessmentOrganisationId = @endpointAssessmentOrganisationId" +
+                    "AND EndPointAssessorOrganisationId = @endPointAssessorOrganisationId" +
                     "AND OrganisationId = @organisationId" +
                     "AND Status = @status" +
                     "AND Username = @username";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync(sqlToQuery, contact);
+            return await DatabaseService.QueryFirstOrDefaultAsync<ContactModel, ContactModel>(sqlToQuery, contact);
         }
 
         public static void DeleteAllRecords()

@@ -263,10 +263,10 @@ BEGIN
             WHERE 
                 da.[Status] = 'Live';
 
-        -------------------------------------------------------------------------------
-        -- STEP 3.3
-        -- Add versions for recently added standards
-        -------------------------------------------------------------------------------
+            -------------------------------------------------------------------------------
+            -- STEP 3.3
+            -- Add versions for recently added standards
+            -------------------------------------------------------------------------------
 
             WITH AddedOfqualStandardsWithNoStandardVersions_CTE
             -- the Ofqual standards added recently, with no standard versions

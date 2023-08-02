@@ -1,5 +1,4 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using System;
 using System.Collections.Generic;
@@ -24,6 +23,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [DateStandardApprovedOnRegister]" +
                     ", [Comments]" +
                     ", [Status]" +
+                    ", [ContactId]" +
                     ", [StandardReference]) " +
                 "VALUES " +
                     "(@id" +
@@ -34,14 +34,22 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @dateStandardApprovedOnRegister" +
                     ", @comments" +
                     ", @status" +
+                    ", @contactId" +
                     ", @standardReference); " +
                 "SET IDENTITY_INSERT [OrganisationStandard] OFF;";
         
             DatabaseService.Execute(sql, organisationStandard);
         }
 
+        public static async Task<OrganisationStandardModel> Create(int? id, string endpointAssessorOrganisatoinId, int standardCode, DateTime effectiveFrom, DateTime? effectiveTo,
+            DateTime dateStandardApprovedOnRegister, string comments, string contactEmailAddress, string status, string standardReference)
+        {
+            var contactModel = await ContactsHandler.GetByEmail(contactEmailAddress);
+            return Create(id, endpointAssessorOrganisatoinId, standardCode, effectiveFrom, effectiveTo, dateStandardApprovedOnRegister, comments, contactModel?.Id, status, standardReference);
+        }
+
         public static OrganisationStandardModel Create(int? id, string endpointAssessorOrganisatoinId, int standardCode, DateTime effectiveFrom, DateTime? effectiveTo, 
-            DateTime dateStandardApprovedOnRegister, string comments, string status, string standardReference)
+            DateTime dateStandardApprovedOnRegister, string comments, Guid? contactId, string status, string standardReference)
         {
             return new OrganisationStandardModel
             {
@@ -53,6 +61,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 DateStandardApprovedOnRegister = dateStandardApprovedOnRegister,
                 Comments = comments,
                 Status = status,
+                ContactId = contactId,
                 StandardReference = standardReference
             };
         }
@@ -77,6 +86,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [DateStandardApprovedOnRegister]" +
                     ", [Comments]" +
                     ", [Status]" +
+                    ", [ContactId]" +
                     ", [StandardReference] " +
                 "FROM [OrganisationStandard] " +
                 $"WHERE (Id = @id OR @id IS NULL) " + // when @id is null then Id is not predicated
@@ -88,9 +98,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     $"AND {NullQueryParam(organisationStandard, p => p.DateStandardApprovedOnRegister)} " +
                     $"AND {NullQueryParam(organisationStandard, p => p.Comments)} " +
                     $"AND {NullQueryParam(organisationStandard, p => p.Status)} " +
+                    $"AND {NullQueryParam(organisationStandard, p => p.ContactId)} " +
                     $"AND {NullQueryParam(organisationStandard, p => p.StandardReference)}";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync(sqlToQuery, organisationStandard);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardModel, OrganisationStandardModel>(sqlToQuery, organisationStandard);
+        }
+
+        public static async Task<int> QueryCountAllAsync()
+        {
+            var sqlToQuery =
+                "SELECT COUNT(1)" +
+                "FROM [OrganisationStandard]";
+
+            return await DatabaseService.QueryFirstOrDefaultAsync<int>(sqlToQuery);
         }
 
         public static void DeleteRecord(int id)

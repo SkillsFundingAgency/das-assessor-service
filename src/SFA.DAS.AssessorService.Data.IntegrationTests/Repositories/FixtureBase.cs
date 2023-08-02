@@ -71,27 +71,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
-        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, string eqaProviderName = "")
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged = false, string eqaProviderName = "")
         {
-            var standard = new StandardModel
-            {
-                StandardUId = $"{referenceNumber}_{version}",
-                IFateReferenceNumber = referenceNumber,
-                LarsCode = larsCode,
-                Title = title,
-                Version = version,
-                Level = 4,
-                Status = "Approved for delivery",
-                EffectiveFrom = DateTime.Now.AddDays(-50),
-                EffectiveTo = effectiveTo,
-                TypicalDuration = 12,
-                VersionApprovedForDelivery = DateTime.Now.AddDays(-50),
-                TrailblazerContact = "TrailblazerContact",
-                StandardPageUrl = "www.standard.com",
-                EqaProviderName = eqaProviderName,
-                OverviewOfRole = "OverviewOfRole",
-            };
-
+            var standard = StandardsHandler.Create(
+                title, 
+                referenceNumber, 
+                larsCode, 
+                version, 
+                effectiveTo, 
+                epaChanged, 
+                eqaProviderName);
+            
             _standards.Add(standard);
             StandardsHandler.InsertRecord(standard);
 
@@ -247,10 +237,58 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public async Task<T> VerifyOfqualOrganisationExists(OfqualOrganisationModel ofqualOrganisation)
+        {
+            var result = await OfqualOrganisationHandler.QueryFirstOrDefaultAsync(ofqualOrganisation);
+            result.Should().NotBeNull();
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOfqualStandardExists(OfqualStandardModel ofqualStandard)
+        {
+            var result = await OfqualStandardHandler.QueryFirstOrDefaultAsync(ofqualStandard);
+            result.Should().NotBeNull();
+
+            return this as T;
+        }
+
         public async Task<T> VerifyOrganisationStandardExists(OrganisationStandardModel organisationStandard)
         {
             var result = await OrganisationStandardHandler.QueryFirstOrDefaultAsync(organisationStandard);
             result.Should().NotBeNull();
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOrganisationStandardNotExists(OrganisationStandardModel organisationStandard)
+        {
+            var result = await OrganisationStandardHandler.QueryFirstOrDefaultAsync(organisationStandard);
+            result.Should().BeNull();
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOrganisationStandardRowCount(int count)
+        {
+            var result = await OrganisationStandardHandler.QueryCountAllAsync();
+            result.Should().Be(count);
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOrganisationStandardVersionExists(OrganisationStandardVersionModel organisationStandardVersion)
+        {
+            var result = await OrganisationStandardVersionHandler.QueryFirstOrDefaultAsync(organisationStandardVersion);
+            result.Should().NotBeNull();
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOrganisationStandardVersionRowCount(int count)
+        {
+            var result = await OrganisationStandardVersionHandler.QueryCountAllAsync();
+            result.Should().Be(count);
 
             return this as T;
         }
@@ -266,6 +304,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             OfqualStandardHandler.DeleteAllRecords();
             OrganisationStandardVersionHandler.DeleteAllRecords();
             OrganisationStandardHandler.DeleteAllRecords();
+            ContactsHandler.DeleteAllRecords();
             OrganisationHandler.DeleteAllRecords();
             StandardsHandler.DeleteAllRecords();
             StagingOfqualOrganisationHandler.DeleteAllRecords();

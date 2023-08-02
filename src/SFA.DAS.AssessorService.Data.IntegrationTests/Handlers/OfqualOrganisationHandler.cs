@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     "AND CreatedAt = @createdAt " +
                    $"AND {NullQueryParam(ofqualOrganisation, p => p.UpdatedAt)} ";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync(sqlToQuery, ofqualOrganisation);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OfqualOrganisationModel, OfqualOrganisationModel>(sqlToQuery, ofqualOrganisation);
         }
 
         public static void DeleteAllRecords()
