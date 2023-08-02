@@ -7,7 +7,7 @@ using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
+namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRepositoryTests
 {
     public class LoadOfqalStandardsTests : TestBase
     {

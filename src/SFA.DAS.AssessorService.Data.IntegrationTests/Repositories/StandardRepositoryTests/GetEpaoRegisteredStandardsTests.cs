@@ -6,14 +6,14 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
+namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRepositoryTests
 {
-    public class StandardRepositoryTests : TestBase
+    public class GetEpaoRegisteredStandardsTests : TestBase
     {
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersions_WhenRequireAtLeastOneVersionIsDefault()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersions_WhenRequireAtLeastOneVersionIsTrue()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithOrWithoutVersions_WhenRequireAtLeastOneVersionIsFalse()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsNotRemoved_WhenRequireAtLeastOneVersionIsDefault()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
@@ -81,7 +81,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsNotRemoved_WhenRequireAtLeastOneVersionIsTrue()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsNotRemoved_WhenRequireAtLeastOneVersionIsFalse()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
@@ -115,11 +115,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersionsWithVersionsOptedIn_WhenRequireAtLeastOneVersionIsDefault()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
-                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null) 
+                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
                 .WithStandard("Roofer", "ST0002", 102, "1.0", null)
@@ -133,11 +133,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersionsWithVersionsOptedIn_WhenRequireAtLeastOneVersionIsTrue()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
-                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null) 
+                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
                 .WithStandard("Roofer", "ST0002", 102, "1.0", null)
@@ -151,11 +151,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersionsOptedInOrOut_WhenRequireAtLeastOneVersionIsFalse()
         {
-            using (var fixture = new StandardRepositoryTestsFixture()
+            using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
                 .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
                 .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
-                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null) 
+                .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
                 .WithStandard("Roofer", "ST0002", 102, "1.0", null)
@@ -166,7 +166,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             }
         }
 
-        private class StandardRepositoryTestsFixture: FixtureBase<StandardRepositoryTestsFixture>, IDisposable
+        private class GetEpaoRegisteredStandardsTestsFixture : FixtureBase<GetEpaoRegisteredStandardsTestsFixture>, IDisposable
         {
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
@@ -174,7 +174,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             private StandardRepository _repository;
             private EpoRegisteredStandardsResult _result;
 
-            public StandardRepositoryTestsFixture()
+            public GetEpaoRegisteredStandardsTestsFixture()
             {
                 _sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
                 _repository = new StandardRepository(new UnitOfWork(_sqlConnection));
@@ -183,13 +183,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
                 DeleteAllRecords();
             }
 
-            public async Task<StandardRepositoryTestsFixture> GetEpaoRegisteredStandards(string endpointAssessmentOrganisationId)
+            public async Task<GetEpaoRegisteredStandardsTestsFixture> GetEpaoRegisteredStandards(string endpointAssessmentOrganisationId)
             {
                 _result = await _repository.GetEpaoRegisteredStandards(endpointAssessmentOrganisationId, 10, 1);
                 return this;
             }
 
-            public async Task<StandardRepositoryTestsFixture> GetEpaoRegisteredStandards(string endpointAssessmentOrganisationId, bool requireAtLeastOneVersion)
+            public async Task<GetEpaoRegisteredStandardsTestsFixture> GetEpaoRegisteredStandards(string endpointAssessmentOrganisationId, bool requireAtLeastOneVersion)
             {
                 _result = await _repository.GetEpaoRegisteredStandards(endpointAssessmentOrganisationId, requireAtLeastOneVersion, 10, 1);
                 return this;
