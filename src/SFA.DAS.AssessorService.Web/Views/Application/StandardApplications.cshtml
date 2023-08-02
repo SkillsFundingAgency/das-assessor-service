@@ -1,8 +1,13 @@
 @using SFA.DAS.AssessorService.Web.ViewModels.Apply
+@using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
 @model ApplicationResponseViewModel
 @{
     ViewBag.Title = "Applications";
+    Layout = "_DashboardLayout";
 }
+
+<a asp-route="@ApplyToAssessStandardController.ApplyToAssessStandardRouteGet" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 

@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
-     [TestFixture]
+    [TestFixture]
     public class OptOutStandardTests : StandardControllerTestBase
     {
         private List<StandardVersion> _approvedVersions;
@@ -78,17 +79,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.OptOutStandardVersion(testData.ReferenceNumber, testData.Version);
 
             // Assert
-            Assert.That(result, Is.TypeOf<ViewResult>());
-            var viewResult = result as ViewResult;
-            Assert.That(viewResult.Model, Is.TypeOf<OptOutStandardVersionViewModel>());
-            var model = viewResult.Model as OptOutStandardVersionViewModel;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<ViewResult>());
+                var viewResult = result as ViewResult;
+                Assert.That(viewResult.Model, Is.TypeOf<OptOutStandardVersionViewModel>());
+                var model = viewResult.Model as OptOutStandardVersionViewModel;
 
-            // Assert all fields are populated correctly
-            Assert.AreEqual(testData.ReferenceNumber, model.StandardReference);
-            Assert.AreEqual(testData.ExpectedTitle, model.StandardTitle);
-            Assert.AreEqual(testData.ExpectedVersion, model.Version);
-            Assert.AreEqual(testData.ExpectedVersionEarliestStartDate, model.EffectiveFrom);
-            Assert.AreEqual(testData.ExpectedVersionLatestEndDate, model.EffectiveTo);
+                // Assert all fields are populated correctly
+                Assert.AreEqual(testData.ReferenceNumber, model.StandardReference);
+                Assert.AreEqual(testData.ExpectedTitle, model.StandardTitle);
+                Assert.AreEqual(testData.ExpectedVersion, model.Version);
+                Assert.AreEqual(testData.ExpectedVersionEarliestStartDate, model.EffectiveFrom);
+                Assert.AreEqual(testData.ExpectedVersionLatestEndDate, model.EffectiveTo);
+            });
         }
 
         [TestCase(null)]
@@ -115,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task OptOutStandardVersion_ReturnsRedirectResult_WhenPostCalledWithValidModel()
+        public async Task OptOutStandardVersion_RedirectsTo_OptOutStandardVersionConfirmationRouteGet_WhenPostCalledWithValidModel()
         {
             // Arrange
             var model = new OptOutStandardVersionViewModel
@@ -126,14 +130,38 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 EffectiveTo = DateTime.Today.AddDays(5)
             };
 
+            // Act
             var result = await _sut.OptOutStandardVersion(model);
 
-            Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
-            
-            var redirectResult = result as RedirectToRouteResult;
-            Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionConfirmationRouteGet));
-            Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
-            Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
+
+                var redirectResult = result as RedirectToRouteResult;
+                Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionConfirmationRouteGet));
+                Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
+                Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
+            });
+        }
+
+        [Test, MoqAutoData]
+        public async Task OptOutStandardVersion_Post_RedirectsTo_OptOutStandardVersionRouteGet_WhenModelIsInvalid(
+            OptOutStandardVersionViewModel viewModel)
+        {
+            _sut.ModelState.AddModelError("some error name", "some error message");
+
+            var result = await _sut.OptOutStandardVersion(viewModel);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
+
+                var redirectResult = result as RedirectToRouteResult;
+
+                Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionRouteGet));
+                Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(viewModel.StandardReference));
+                Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(viewModel.Version));
+            });
         }
 
         [Test]
@@ -188,15 +216,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.OptOutStandardVersionConfirmation("ST0001", "1.0");
 
             // Assert
-            Assert.That(result, Is.TypeOf<ViewResult>());
-            var viewResult = result as ViewResult;
-            Assert.That(viewResult.Model, Is.TypeOf<OptOutStandardVersionConfirmationViewModel>());
-            var model = viewResult.Model as OptOutStandardVersionConfirmationViewModel;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<ViewResult>());
+                var viewResult = result as ViewResult;
+                Assert.That(viewResult.Model, Is.TypeOf<OptOutStandardVersionConfirmationViewModel>());
+                var model = viewResult.Model as OptOutStandardVersionConfirmationViewModel;
 
-            Assert.AreEqual("Standard Title One", model.StandardTitle);
-            Assert.AreEqual("ST0001", model.StandardReference);
-            Assert.AreEqual("1.0", model.Version);
-            Assert.AreEqual("http://feedback-url.com", model.FeedbackUrl);
+                Assert.AreEqual("Standard Title One", model.StandardTitle);
+                Assert.AreEqual("ST0001", model.StandardReference);
+                Assert.AreEqual("1.0", model.Version);
+                Assert.AreEqual("http://feedback-url.com", model.FeedbackUrl);
+            });
         }
 
         [TestCase(null)]
@@ -228,8 +259,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             public string Version { get; set; }
             public string ExpectedTitle { get; set; }
             public string ExpectedVersion { get; set; }
-            public DateTime ExpectedVersionEarliestStartDate { get; set;}
-            public DateTime ExpectedVersionLatestEndDate { get; set;}
+            public DateTime ExpectedVersionEarliestStartDate { get; set; }
+            public DateTime ExpectedVersionLatestEndDate { get; set; }
         }
 
         private static readonly TestDataOptOutStandardVersion[] TestDataForOptOutStandardVersion =

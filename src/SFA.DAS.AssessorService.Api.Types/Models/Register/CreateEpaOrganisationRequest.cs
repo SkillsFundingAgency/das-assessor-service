@@ -36,5 +36,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public FHADetails FHADetails { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }
