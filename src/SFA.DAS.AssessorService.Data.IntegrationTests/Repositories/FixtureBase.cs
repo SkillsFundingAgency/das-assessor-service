@@ -293,6 +293,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public async Task<T> VerifyOrganisationStandardDeliveryAreaRowCount(int count)
+        {
+            var result = await OrganisationStandardDeliveryAreaHandler.QueryCountAllAsync();
+            result.Should().Be(count);
+
+            return this as T;
+        }
+
         public void Dispose()
         {
             DeleteAllRecords();
@@ -302,6 +310,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         {
             OfqualOrganisationHandler.DeleteAllRecords();
             OfqualStandardHandler.DeleteAllRecords();
+            OrganisationStandardDeliveryAreaHandler.DeleteAllRecords();
             OrganisationStandardVersionHandler.DeleteAllRecords();
             OrganisationStandardHandler.DeleteAllRecords();
             ContactsHandler.DeleteAllRecords();

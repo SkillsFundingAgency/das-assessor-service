@@ -394,6 +394,29 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             }
         }
 
+        [TestCase("RN0001", "2021-06-01", "2022-08-01", "ST0001")]
+        public async Task LoadOfqualStandards_AddOrganisationStandardDeliveryArea_WhenStagingContainsAddedData(
+            string recognitionNumber, DateTime operationalStartDate, DateTime? operationalEndDate, string ifateReferenceNumber)
+        {
+            var currentDateTime = DateTime.Now;
+
+            using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("One", "ST0001", 101, "1.0", null, false, "Ofqual")
+                .WithOrganisation("OrganisationOne", "EPA0001", 12345678, recognitionNumber)
+                .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
+                .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
+                    "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
+                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1))
+                .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
+            {
+                var results = await fixture.LoadOfqualStandards(currentDateTime);
+
+                results.VerifyUpdated(1);
+                await results.VerifyOrganisationStandardRowCount(1);
+                await results.VerifyOrganisationStandardDeliveryAreaRowCount(9);
+            }
+        }
+
         private class LoadOfqualStandardsTestsFixture : FixtureBase<LoadOfqualStandardsTestsFixture>, IDisposable
         {
             private readonly DatabaseService _databaseService = new DatabaseService();

@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public IConfiguration Configuration { get; }
         public TestWebConfiguration WebConfiguration;
 
-        public void SetupDatabase()
+        public async Task SetupDatabase()
         {
             DropDatabase();
 
@@ -54,13 +54,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 {
                     Connection = connection,
                     CommandText =
-                        $@"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
+                        @"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); " + 
+                            " ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
                 };
                 var reader = comm.ExecuteReader();
                 reader.Close();
             }
 
-            LookupDataHelper.AddLookupData();
+            await LookupDataHelper.AddLookupData();
         }
 
         public void Execute(string sql)

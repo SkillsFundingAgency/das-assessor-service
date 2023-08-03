@@ -14,7 +14,6 @@ CREATE TABLE #EMailTemplates(
     [TemplateName] [nvarchar](100) NOT NULL,
     [TemplateId] [nvarchar](100) NOT NULL
 ) 
-GO
 
 INSERT INTO #EmailTemplates VALUES('075C643E-BEEF-4BB3-A279-3FB24C144755', 'EPAOPermissionsAmended', 'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1')
 INSERT INTO #EmailTemplates VALUES('EB20EE3C-516E-4E44-97EA-3FD8F70039EF', 'ApplyEPAOResponse', '84174eab-f3c1-4274-8670-2fb5b21cbd77')
