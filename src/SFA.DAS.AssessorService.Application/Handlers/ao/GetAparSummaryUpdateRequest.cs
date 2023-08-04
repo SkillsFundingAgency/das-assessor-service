@@ -1,13 +1,8 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetAparSummaryUpdateRequest : IRequest<int?>
+    public class UpdateAparSummaryRequest : IRequest<int?>
     {
     }
 }

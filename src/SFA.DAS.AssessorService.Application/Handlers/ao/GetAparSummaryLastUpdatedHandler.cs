@@ -3,9 +3,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,9 +21,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
         public async Task<DateTime> Handle(GetAparSummaryLastUpdatedRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Handling Get Last APAR Summary Update");
+            _logger.LogInformation("Handling GetAparSummaryLastUpdatedRequest request");
 
-            return await _registerQueryRepository.AparSummaryLastUpdated();
+            return await _registerQueryRepository.GetAparSummaryLastUpdated();
         }
     }
 }

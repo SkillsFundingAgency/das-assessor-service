@@ -23,9 +23,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private Mock<ILogger<SearchAssessmentOrganisationHandler>> _logger;
         private Mock<IEpaOrganisationSearchValidator> _searchValidator;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
-        private List<AssessmentOrganisationSummary> _expectedOrganisationListOfDetails;
-        private AssessmentOrganisationSummary _assessmentOrganisationDetails1;
-        private AssessmentOrganisationSummary _assessmentOrganisationDetails2;
+        private List<AparSummary> _expectedOrganisationListOfDetails;
+        private AparSummary _assessmentOrganisationDetails1;
+        private AparSummary _assessmentOrganisationDetails2;
 
         [SetUp]
         public void Setup()
@@ -35,10 +35,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _logger = new Mock<ILogger<SearchAssessmentOrganisationHandler>>();
 
-            _assessmentOrganisationDetails1 = new AssessmentOrganisationSummary { Id = "EPA9999", Name = "Name 100", Ukprn = 777777 };
-            _assessmentOrganisationDetails2 = new AssessmentOrganisationSummary { Id = "EPA8888", Name = "Name 10" };
+            _assessmentOrganisationDetails1 = new AparSummary { Id = "EPA9999", Name = "Name 100", Ukprn = 777777 };
+            _assessmentOrganisationDetails2 = new AparSummary { Id = "EPA8888", Name = "Name 10" };
 
-            _expectedOrganisationListOfDetails = new List<AssessmentOrganisationSummary>
+            _expectedOrganisationListOfDetails = new List<AparSummary>
             {
                 _assessmentOrganisationDetails1,
                 _assessmentOrganisationDetails2
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
+                .Returns(Task.FromResult(new List<AparSummary>().AsEnumerable()));
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByUkprn(searchstring))
                 .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
             var organisations = _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken()).Result;
@@ -112,9 +112,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(false);
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
+                .Returns(Task.FromResult(new List<AparSummary>().AsEnumerable()));
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByUkprn(searchstring))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
+                .Returns(Task.FromResult(new List<AparSummary>().AsEnumerable()));
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(searchstring))
                 .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
             var organisations = _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken()).Result;

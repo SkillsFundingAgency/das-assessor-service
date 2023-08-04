@@ -20,20 +20,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<ILogger<GetAssessmentOrganisationsHandler>> Logger;
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
 
-        private IEnumerable<AssessmentOrganisationSummary> _expectedOrganisationSummaries;
-        private AssessmentOrganisationSummary _assessmentOrganisationSummary1;
-        private AssessmentOrganisationSummary _assessmentOrganisationSummary2;
+        private IEnumerable<AparSummary> _expectedOrganisationSummaries;
+        private AparSummary _assessmentOrganisationSummary1;
+        private AparSummary _assessmentOrganisationSummary2;
 
         [SetUp]
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _assessmentOrganisationSummary1 = new AssessmentOrganisationSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
-            _assessmentOrganisationSummary2 = new AssessmentOrganisationSummary { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
+            _assessmentOrganisationSummary1 = new AparSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
+            _assessmentOrganisationSummary2 = new AparSummary { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
 
             Logger = new Mock<ILogger<GetAssessmentOrganisationsHandler>>();
 
-            _expectedOrganisationSummaries = new List<AssessmentOrganisationSummary>
+            _expectedOrganisationSummaries = new List<AparSummary>
                 {
                     _assessmentOrganisationSummary1,
                     _assessmentOrganisationSummary2

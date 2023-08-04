@@ -15,22 +15,22 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<string> EpaOrganisationIdCurrentMaximum();
         Task<int> EpaContactUsernameHighestCounter();
-        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
+        Task<IEnumerable<AparSummary>> GetAssessmentOrganisations();
         Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId);
         
         Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId);
         Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId);
         Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId);
-        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn);
-        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId);
+        Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByUkprn(string ukprn);
+        Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId);
 
-        Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email);
-        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string organisationName);
+        Task<AparSummary> GetAssessmentOrganisationByContactEmail(string email);
+        Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string organisationName);
         Task<IEnumerable<OrganisationStandardSummary>> GetAllOrganisationStandardByOrganisationId(string organisationId);
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId);
 
-        Task<IEnumerable<AssessmentOrganisationListSummary>> GetAssessmentOrganisationsList(int? ukprn);
-        Task<IEnumerable<AssessmentOrganisationListSummary>> GetAparSummary();
+        Task<IEnumerable<AparSummaryItem>> GetAssessmentOrganisationsList(int? ukprn);
+        Task<IEnumerable<AparSummaryItem>> GetAparSummary();
 
         Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference);
 
@@ -42,6 +42,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<string> GetEpaOrgIdByEndPointAssessmentName(string name);
 
         Task<int?> AparSummaryUpdate();
-        Task<DateTime> AparSummaryLastUpdated();
+        Task<DateTime> GetAparSummaryLastUpdated();
     }
 }

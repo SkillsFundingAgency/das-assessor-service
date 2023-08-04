@@ -2,16 +2,12 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAparSummaryUpdateRequestHandler : IRequestHandler<GetAparSummaryUpdateRequest, int?>
+    public class GetAparSummaryUpdateRequestHandler : IRequestHandler<UpdateAparSummaryRequest, int?>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetAparSummaryUpdateRequestHandler> _logger;
@@ -22,9 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger = logger;
         }
 
-        public async Task<int?> Handle(GetAparSummaryUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<int?> Handle(UpdateAparSummaryRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Handling Updating APAR Summary");
+            _logger.LogInformation("Handling UpdateAparSummaryRequest request");
 
             return await _registerQueryRepository.AparSummaryUpdate();
         }

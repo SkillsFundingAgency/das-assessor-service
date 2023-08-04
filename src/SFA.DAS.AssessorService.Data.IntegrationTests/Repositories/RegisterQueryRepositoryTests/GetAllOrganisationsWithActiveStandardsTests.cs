@@ -547,7 +547,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             private readonly SqlConnection _sqlConnection;
 
             private RegisterQueryRepository _repository;
-            public IEnumerable<AssessmentOrganisationListSummary> _results;
+            public IEnumerable<AparSummaryItem> _results;
 
             public GetAllOrganisationsWithActiveStandardsTestsFixture()
             {

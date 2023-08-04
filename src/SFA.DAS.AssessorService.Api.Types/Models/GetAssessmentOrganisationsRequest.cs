@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetAssessmentOrganisationsRequest: IRequest<List<AssessmentOrganisationSummary>>
+    public class GetAssessmentOrganisationsRequest: IRequest<List<AparSummary>>
     {
     }
 }

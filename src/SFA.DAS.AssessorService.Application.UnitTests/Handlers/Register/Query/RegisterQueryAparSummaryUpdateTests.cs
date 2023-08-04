@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [Test]
         public void AparSummaryUpdateRepoIsCalledWhenHandlerIsInvoked()
         {
-            AparSummaryUpdateHandler.Handle(new GetAparSummaryUpdateRequest(), CancellationToken.None).Wait();
+            AparSummaryUpdateHandler.Handle(new UpdateAparSummaryRequest(), CancellationToken.None).Wait();
             RegisterQueryRepository.Verify(x => x.AparSummaryUpdate());
         }
     }

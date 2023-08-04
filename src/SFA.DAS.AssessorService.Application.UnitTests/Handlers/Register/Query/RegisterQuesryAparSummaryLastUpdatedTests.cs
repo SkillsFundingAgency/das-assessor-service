@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             Logger = new Mock<ILogger<GetAparSummaryLastUpdatedHandler>>();
 
-            RegisterQueryRepository.Setup(x => x.AparSummaryLastUpdated()).ReturnsAsync(DateTime.UtcNow);
+            RegisterQueryRepository.Setup(x => x.GetAparSummaryLastUpdated()).ReturnsAsync(DateTime.UtcNow);
 
             AparSummaryLastUpdatedHandler = new GetAparSummaryLastUpdatedHandler(RegisterQueryRepository.Object, Logger.Object);
         }
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void AparSummaryUpdateRepoIsCalledWhenHandlerIsInvoked()
         {
             AparSummaryLastUpdatedHandler.Handle(new GetAparSummaryLastUpdatedRequest(), CancellationToken.None).Wait();
-            RegisterQueryRepository.Verify(x => x.AparSummaryLastUpdated());
+            RegisterQueryRepository.Verify(x => x.GetAparSummaryLastUpdated());
         }
     }
 }

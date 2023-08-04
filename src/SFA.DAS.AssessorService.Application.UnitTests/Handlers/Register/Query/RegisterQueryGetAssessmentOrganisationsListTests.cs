@@ -20,27 +20,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<ILogger<GetAssessmentOrganisationsListHandler>> Logger;
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
 
-        private IEnumerable<AssessmentOrganisationListSummary> _expectedOrganisationSummaries;
-        private IEnumerable<AssessmentOrganisationListSummary> _expectedOrganisationSummariesForUkprn;
-        private AssessmentOrganisationListSummary _assessmentOrganisationSummary1;
-        private AssessmentOrganisationListSummary _assessmentOrganisationSummary2;
+        private IEnumerable<AparSummaryItem> _expectedOrganisationSummaries;
+        private IEnumerable<AparSummaryItem> _expectedOrganisationSummariesForUkprn;
+        private AparSummaryItem _assessmentOrganisationSummary1;
+        private AparSummaryItem _assessmentOrganisationSummary2;
 
         [SetUp]
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _assessmentOrganisationSummary1 = new AssessmentOrganisationListSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
-            _assessmentOrganisationSummary2 = new AssessmentOrganisationListSummary { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
+            _assessmentOrganisationSummary1 = new AparSummaryItem { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
+            _assessmentOrganisationSummary2 = new AparSummaryItem { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
 
             Logger = new Mock<ILogger<GetAssessmentOrganisationsListHandler>>();
 
-            _expectedOrganisationSummaries = new List<AssessmentOrganisationListSummary>
+            _expectedOrganisationSummaries = new List<AparSummaryItem>
                 {
                     _assessmentOrganisationSummary1,
                     _assessmentOrganisationSummary2
                 };
 
-            _expectedOrganisationSummariesForUkprn = new List<AssessmentOrganisationListSummary>
+            _expectedOrganisationSummariesForUkprn = new List<AparSummaryItem>
                 {
                     _assessmentOrganisationSummary1,
                 };
@@ -57,14 +57,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [Test]
         public void Handle_GetAssessmentOrganisationsListIsCalledForNonSpecificUkprn_WhenHandlerIsInvoked()
         {
-            _sut.Handle(new GetAssessmentOrganisationsListRequest(), new CancellationToken()).Wait();
+            _sut.Handle(new GetAparSummaryByUkprnRequest(), new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisationsList(null));
         }
 
         [Test]
         public void Handle_ReturnExpectedListAssessmentOrganisationListSummaryForNonSpecificUkprn_WhenHandlerIsInvoked()
         {
-            var organisations = _sut.Handle(new GetAssessmentOrganisationsListRequest(), new CancellationToken()).Result;
+            var organisations = _sut.Handle(new GetAparSummaryByUkprnRequest(), new CancellationToken()).Result;
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assessmentOrganisationSummary1);
             organisations.Should().Contain(_assessmentOrganisationSummary2);
@@ -73,14 +73,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [Test]
         public void Handle_GetAssessmentOrganisationsListIsCalledForSpecificUkprn_WhenHandlerIsInvoked()
         {
-            _sut.Handle(new GetAssessmentOrganisationsListRequest(1111111), new CancellationToken()).Wait();
+            _sut.Handle(new GetAparSummaryByUkprnRequest(1111111), new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisationsList(1111111));
         }
 
         [Test]
         public void Handle_ReturnExpectedListAssessmentOrganisationListSummaryForSpecificUkprn_WhenHandlerIsInvoked()
         {
-            var organisations = _sut.Handle(new GetAssessmentOrganisationsListRequest(1111111), new CancellationToken()).Result;
+            var organisations = _sut.Handle(new GetAparSummaryByUkprnRequest(1111111), new CancellationToken()).Result;
             organisations.Count.Should().Be(1);
             organisations.Should().Contain(_assessmentOrganisationSummary1);
         }

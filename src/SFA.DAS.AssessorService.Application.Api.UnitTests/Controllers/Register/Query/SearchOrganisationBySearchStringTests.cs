@@ -22,9 +22,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static object _result;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
-        private List<AssessmentOrganisationSummary> _expectedAssessmentOrganisationSetOfDetails;
-        private AssessmentOrganisationSummary _assOrgDetails1;
-        private AssessmentOrganisationSummary _assOrgDetails2;
+        private List<AparSummary> _expectedAssessmentOrganisationSetOfDetails;
+        private AparSummary _assOrgDetails1;
+        private AparSummary _assOrgDetails2;
         private string searchString = "Test";
 
 
@@ -34,9 +34,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             // needs more details
-            _assOrgDetails1 = new AssessmentOrganisationSummary { Id = "Id1", Name = "Test 9", Ukprn = 9999999 };
-            _assOrgDetails2 = new AssessmentOrganisationSummary  {Id = "Id2", Name = "Test 2", Ukprn = 8888888 };
-            _expectedAssessmentOrganisationSetOfDetails = new List<AssessmentOrganisationSummary>
+            _assOrgDetails1 = new AparSummary { Id = "Id1", Name = "Test 9", Ukprn = 9999999 };
+            _assOrgDetails2 = new AparSummary  {Id = "Id2", Name = "Test 2", Ukprn = 8888888 };
+            _expectedAssessmentOrganisationSetOfDetails = new List<AparSummary>
             {
                 _assOrgDetails1,
                 _assOrgDetails2
@@ -68,12 +68,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsAreOfTypeListAssessmentOrganisationDetails()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<List<AssessmentOrganisationSummary>>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<List<AparSummary>>();
         }
         [Test]
         public void ResultsMatchExpectedListOfAssessmentOrganisationDetails()
         {
-            var organisations = ((OkObjectResult)_result).Value as List<AssessmentOrganisationSummary>;
+            var organisations = ((OkObjectResult)_result).Value as List<AparSummary>;
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assOrgDetails1);
             organisations.Should().Contain(_assOrgDetails2);

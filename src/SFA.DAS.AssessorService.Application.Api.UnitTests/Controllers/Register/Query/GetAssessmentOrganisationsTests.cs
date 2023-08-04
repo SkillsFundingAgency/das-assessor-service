@@ -22,19 +22,19 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<ILogger<RegisterQueryController>> _logger;
         private static object _result;
         
-        private List<AssessmentOrganisationSummary> _expectedAssessmentOrganisationSummaries;
-        private AssessmentOrganisationSummary _assOrgSummary1;
-        private AssessmentOrganisationSummary _assOrgSummary2;
+        private List<AparSummary> _expectedAssessmentOrganisationSummaries;
+        private AparSummary _assOrgSummary1;
+        private AparSummary _assOrgSummary2;
 
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _assOrgSummary1 = new AssessmentOrganisationSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
-            _assOrgSummary2 = new AssessmentOrganisationSummary { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
+            _assOrgSummary1 = new AparSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
+            _assOrgSummary2 = new AparSummary { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
 
-            _expectedAssessmentOrganisationSummaries = new List<AssessmentOrganisationSummary>
+            _expectedAssessmentOrganisationSummaries = new List<AparSummary>
             {
                 _assOrgSummary1,
                 _assOrgSummary2
@@ -70,13 +70,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void GetAssessmentOrganisations_ResultsAreOfTypeListAssessmentOrganisationSummary_WhenCalled()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<List<AssessmentOrganisationSummary>>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<List<AparSummary>>();
         }
 
         [Test]
         public void GetAssessmentOrganisations_ResultsMatchExpectedListOfAssessmentOrganisationSummary_WhenCalled()
         {
-            var organisations = ((OkObjectResult)_result).Value as List<AssessmentOrganisationSummary>;
+            var organisations = ((OkObjectResult)_result).Value as List<AparSummary>;
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assOrgSummary1);
             organisations.Should().Contain(_assOrgSummary2);

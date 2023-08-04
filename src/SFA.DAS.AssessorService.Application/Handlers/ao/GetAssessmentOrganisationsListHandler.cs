@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAssessmentOrganisationsListHandler : IRequestHandler<GetAssessmentOrganisationsListRequest, List<AssessmentOrganisationListSummary>>
+    public class GetAssessmentOrganisationsListHandler : IRequestHandler<GetAparSummaryByUkprnRequest, List<AparSummaryItem>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetAssessmentOrganisationsListHandler> _logger;
@@ -21,9 +21,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger = logger;
         }
 
-        public async Task<List<AssessmentOrganisationListSummary>> Handle(GetAssessmentOrganisationsListRequest request, CancellationToken cancellationToken)
+        public async Task<List<AparSummaryItem>> Handle(GetAparSummaryByUkprnRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Handling AssessmentOrganisationsList Request");
+            _logger.LogInformation("Handling GetAparSummaryByUkprn Request");
             var result = await _registerQueryRepository.GetAssessmentOrganisationsList(request.Ukprn);
             return result.ToList();
         }
