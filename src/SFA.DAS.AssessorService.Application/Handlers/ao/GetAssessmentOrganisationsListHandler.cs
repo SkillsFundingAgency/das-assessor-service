@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         public async Task<List<AparSummaryItem>> Handle(GetAparSummaryByUkprnRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling GetAparSummaryByUkprn Request");
-            var result = await _registerQueryRepository.GetAssessmentOrganisationsList(request.Ukprn);
+            var result = await _registerQueryRepository.GetAparSummaryByUkprn(request.Ukprn);
             return result.ToList();
         }
     }

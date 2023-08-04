@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<OrganisationStandardSummary>> GetAllOrganisationStandardByOrganisationId(string organisationId);
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId);
 
-        Task<IEnumerable<AparSummaryItem>> GetAssessmentOrganisationsList(int? ukprn);
+        Task<IEnumerable<AparSummaryItem>> GetAparSummaryByUkprn(int ukprn);
         Task<IEnumerable<AparSummaryItem>> GetAparSummary();
 
         Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference);

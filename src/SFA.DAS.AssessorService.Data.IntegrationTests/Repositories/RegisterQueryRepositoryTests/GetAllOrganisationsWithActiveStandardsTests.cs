@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
-using FluentAssertions.Collections;
 using FluentAssertions.Execution;
-using FluentAssertions.Numeric;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -557,13 +555,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public async Task<GetAllOrganisationsWithActiveStandardsTestsFixture> GetAllOrganisationsWithActiveStandards()
             {
-                _results = await _repository.GetAssessmentOrganisationsList(null);
+                _results = await _repository.GetAparSummaryByUkprn(new int());
                 return this;
             }
 
             public async Task<GetAllOrganisationsWithActiveStandardsTestsFixture> GetAllOrganisationsWithActiveStandards(int ukprn)
             {
-                _results = await _repository.GetAssessmentOrganisationsList(ukprn);
+                _results = await _repository.GetAparSummaryByUkprn(ukprn);
                 return this;
             }
 

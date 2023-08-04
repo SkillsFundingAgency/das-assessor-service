@@ -7,9 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -20,36 +18,36 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<ILogger<GetAssessmentOrganisationsListHandler>> Logger;
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
 
-        private IEnumerable<AparSummaryItem> _expectedOrganisationSummaries;
-        private IEnumerable<AparSummaryItem> _expectedOrganisationSummariesForUkprn;
-        private AparSummaryItem _assessmentOrganisationSummary1;
-        private AparSummaryItem _assessmentOrganisationSummary2;
+        private IEnumerable<AparSummaryItem> _expectedAparSummary;
+        private IEnumerable<AparSummaryItem> _expectedAparSummaryForUkprn;
+        private AparSummaryItem _aparSummary1;
+        private AparSummaryItem _aparSummary2;
 
         [SetUp]
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _assessmentOrganisationSummary1 = new AparSummaryItem { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
-            _assessmentOrganisationSummary2 = new AparSummaryItem { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
+            _aparSummary1 = new AparSummaryItem { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111 };
+            _aparSummary2 = new AparSummaryItem { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222 };
 
             Logger = new Mock<ILogger<GetAssessmentOrganisationsListHandler>>();
 
-            _expectedOrganisationSummaries = new List<AparSummaryItem>
+            _expectedAparSummary = new List<AparSummaryItem>
                 {
-                    _assessmentOrganisationSummary1,
-                    _assessmentOrganisationSummary2
+                    _aparSummary1,
+                    _aparSummary2
                 };
 
-            _expectedOrganisationSummariesForUkprn = new List<AparSummaryItem>
+            _expectedAparSummaryForUkprn = new List<AparSummaryItem>
                 {
-                    _assessmentOrganisationSummary1,
+                    _aparSummary1
                 };
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsList(null))
-                .ReturnsAsync(_expectedOrganisationSummaries);
+            RegisterQueryRepository.Setup(r => r.GetAparSummaryByUkprn(new int()))
+                .ReturnsAsync(_expectedAparSummary);
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsList(1111111))
-                .ReturnsAsync(_expectedOrganisationSummariesForUkprn);
+            RegisterQueryRepository.Setup(r => r.GetAparSummaryByUkprn(1111111))
+                .ReturnsAsync(_expectedAparSummaryForUkprn);
 
             _sut = new GetAssessmentOrganisationsListHandler(RegisterQueryRepository.Object, Logger.Object);
         }
@@ -58,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void Handle_GetAssessmentOrganisationsListIsCalledForNonSpecificUkprn_WhenHandlerIsInvoked()
         {
             _sut.Handle(new GetAparSummaryByUkprnRequest(), new CancellationToken()).Wait();
-            RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisationsList(null));
+            RegisterQueryRepository.Verify(r => r.GetAparSummaryByUkprn(new int()));
         }
 
         [Test]
@@ -66,15 +64,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             var organisations = _sut.Handle(new GetAparSummaryByUkprnRequest(), new CancellationToken()).Result;
             organisations.Count.Should().Be(2);
-            organisations.Should().Contain(_assessmentOrganisationSummary1);
-            organisations.Should().Contain(_assessmentOrganisationSummary2);
+            organisations.Should().Contain(_aparSummary1);
+            organisations.Should().Contain(_aparSummary2);
         }
 
         [Test]
         public void Handle_GetAssessmentOrganisationsListIsCalledForSpecificUkprn_WhenHandlerIsInvoked()
         {
             _sut.Handle(new GetAparSummaryByUkprnRequest(1111111), new CancellationToken()).Wait();
-            RegisterQueryRepository.Verify(r => r.GetAssessmentOrganisationsList(1111111));
+            RegisterQueryRepository.Verify(r => r.GetAparSummaryByUkprn(1111111));
         }
 
         [Test]
@@ -82,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             var organisations = _sut.Handle(new GetAparSummaryByUkprnRequest(1111111), new CancellationToken()).Result;
             organisations.Count.Should().Be(1);
-            organisations.Should().Contain(_assessmentOrganisationSummary1);
+            organisations.Should().Contain(_aparSummary1);
         }
     }
 }

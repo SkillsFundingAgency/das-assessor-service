@@ -6,13 +6,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class GetAparSummaryByUkprnRequest : IRequest<List<AparSummaryItem>>
     {
-        public int? Ukprn { get; }
+        public int Ukprn { get; }
 
         public GetAparSummaryByUkprnRequest()
         {
         }
 
-        public GetAparSummaryByUkprnRequest(int? ukprn)
+        public GetAparSummaryByUkprnRequest(int ukprn)
         {
             Ukprn = ukprn;
         }
