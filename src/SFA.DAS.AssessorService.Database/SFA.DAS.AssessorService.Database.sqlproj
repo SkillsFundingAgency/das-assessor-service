@@ -188,7 +188,7 @@
     <Build Include="Tables\StagingOfqualOrganisation.sql" />
     <Build Include="Tables\OfqualStandard.sql" />
     <Build Include="Tables\StagingOfqualStandard.sql" />
-    <Build Include="StoredProcedures\APAR_Summary.sql" />
+    <Build Include="StoredProcedures\UpdateAparSummary.sql" />
     <Build Include="Tables\APARSummary.sql" />
     <Build Include="Tables\APARSummaryUpdated.sql" />
   </ItemGroup>
