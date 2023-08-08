@@ -50,7 +50,26 @@ BEGIN
             MERGE INTO [dbo].[OfqualOrganisation] tar
             USING 
             (
-                SELECT soo.*, @dateTimeUtc [LastUpdated]
+                -- providing a default min date for OfqualRecognisedFrom when no value is present in the staging table
+                -- this is temporary workaround for non-nullable columns which will be investigated separately
+                SELECT
+                   soo.[RecognitionNumber]
+                  ,[Name]
+                  ,[LegalName]
+                  ,[Acronym]
+                  ,[Email]
+                  ,[Website]
+                  ,[HeadOfficeAddressLine1]
+                  ,[HeadOfficeAddressLine2]
+                  ,[HeadOfficeAddressTown]
+                  ,[HeadOfficeAddressCounty]
+                  ,[HeadOfficeAddressPostcode]
+                  ,[HeadOfficeAddressCountry]
+                  ,[HeadOfficeAddressTelephone]
+                  ,[OfqualStatus]
+                  ,ISNULL([OfqualRecognisedFrom], '1900-01-01 00:00:00.000') OfqualRecognisedFrom
+                  ,[OfqualRecognisedTo]
+                  ,@dateTimeUtc [LastUpdated]
                 FROM [dbo].[StagingOfqualOrganisation] soo
                 JOIN OfqualOrganisationsChanged_CTE ofoc on ofoc.[RecognitionNumber] = soo.[RecognitionNumber]
             ) upd 
