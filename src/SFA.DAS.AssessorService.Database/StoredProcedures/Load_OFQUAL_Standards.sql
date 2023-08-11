@@ -250,7 +250,8 @@ BEGIN
             FROM OfqualStandards_CTE os
                 JOIN LatestStandardsWithOfqualEqap_CTE lswoe ON lswoe.[IfateReferenceNumber] = os.[IfateReferenceNumber]
                 JOIN OrganisationFirstLiveContacts_CTE oflc ON oflc.[OrganisationId] = os.OrganisationId
-                LEFT JOIN CurrentOfqualStandards_CTE cofs on cofs.[RecognitionNumber] = os.[RecognitionNumber]
+                LEFT JOIN CurrentOfqualStandards_CTE cofs on cofs.[RecognitionNumber] = os.[RecognitionNumber] 
+                    AND cofs.[StandardReference] = os.[IFateReferenceNumber]
             WHERE 
                 cofs.StandardReference IS NULL;
 
