@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAparSummaryRequest : IRequest<List<AparSummaryItem>>
+    public class GetAparSummaryRequest : IRequest<List<AparSummary>>
     {
     }
 }

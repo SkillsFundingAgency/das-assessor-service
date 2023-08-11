@@ -24,7 +24,7 @@ BEGIN
       (
         SELECT StandardUId
         FROM Standards 
-        WHERE Larscode != 0 
+        WHERE LarsCode != 0 
         AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE())
       ) [ActiveStandards] ON [ActiveStandards].StandardUid = [ActiveStandardVersions].StandardUId
       WHERE

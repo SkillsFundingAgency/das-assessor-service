@@ -24,29 +24,29 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<ILogger<RegisterQueryController>> _logger;
         private static object _result;
 
-        private List<AparSummaryItem> _expectedAssessmentOrganisationSummaries;
-        private AparSummaryItem _assOrgSummary1;
-        private AparSummaryItem _assOrgSummary2;
+        private List<AparSummary> _expectedAparSummaries;
+        private AparSummary _aparSummary1;
+        private AparSummary _aparSummary2;
 
         [SetUp]
         public async Task Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _assOrgSummary1 = new AparSummaryItem { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111, 
+            _aparSummary1 = new AparSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111, 
                 EarliestDateStandardApprovedOnRegister = DateTime.Today, EarliestEffectiveFromDate = DateTime.Today.AddDays(-1) };
-            _assOrgSummary2 = new AparSummaryItem { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222, 
+            _aparSummary2 = new AparSummary { Id = "EPA0002", Name = "Name 2", Ukprn = 2222222, 
                 EarliestDateStandardApprovedOnRegister = DateTime.Today, EarliestEffectiveFromDate = DateTime.Today.AddMonths(-1) };
 
-            _expectedAssessmentOrganisationSummaries = new List<AparSummaryItem>
+            _expectedAparSummaries = new List<AparSummary>
             {
-                _assOrgSummary1,
-                _assOrgSummary2
+                _aparSummary1,
+                _aparSummary2
             };
 
             _mediator.Setup(m =>
                 m.Send(It.IsAny<GetAparSummaryRequest>(),
-                    new CancellationToken())).ReturnsAsync(_expectedAssessmentOrganisationSummaries);
+                    new CancellationToken())).ReturnsAsync(_expectedAparSummaries);
             _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
 
             _result = await _sut.GetAparSummary();
@@ -66,18 +66,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void GetAparSummary_ResultsAreOfTypeListAssessmentOrganisationListSummary_WhenCalled()
+        public void GetAparSummary_ResultsAreOfTypeListAparSummary_WhenCalled()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<List<AparSummaryItem>>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<List<AparSummary>>();
         }
 
         [Test]
-        public void GetAparSummary_ResultsMatchExpectedListAssessmentOrganisationListSummary_WhenCalled()
+        public void GetAparSummary_ResultsMatchExpectedListAparSummary_WhenCalled()
         {
-            var organisations = ((OkObjectResult)_result).Value as List<AparSummaryItem>;
+            var organisations = ((OkObjectResult)_result).Value as List<AparSummary>;
             organisations.Count.Should().Be(2);
-            organisations.Should().Contain(_assOrgSummary1);
-            organisations.Should().Contain(_assOrgSummary2);
+            organisations.Should().Contain(_aparSummary1);
+            organisations.Should().Contain(_aparSummary2);
         }
     }
 }

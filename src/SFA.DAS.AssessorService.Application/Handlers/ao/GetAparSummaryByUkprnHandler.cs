@@ -10,21 +10,21 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAssessmentOrganisationsListHandler : IRequestHandler<GetAparSummaryByUkprnRequest, List<AparSummaryItem>>
+    public class GetAparSummaryByUkprnHandler : IRequestHandler<GetAparSummaryByUkprnRequest, List<AparSummary>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
-        private readonly ILogger<GetAssessmentOrganisationsListHandler> _logger;
+        private readonly ILogger<GetAparSummaryByUkprnHandler> _logger;
 
-        public GetAssessmentOrganisationsListHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAssessmentOrganisationsListHandler> logger)
+        public GetAparSummaryByUkprnHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAparSummaryByUkprnHandler> logger)
         {
             _registerQueryRepository = registerQueryRepository;
             _logger = logger;
         }
 
-        public async Task<List<AparSummaryItem>> Handle(GetAparSummaryByUkprnRequest request, CancellationToken cancellationToken)
+        public async Task<List<AparSummary>> Handle(GetAparSummaryByUkprnRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling GetAparSummaryByUkprn Request");
-            var result = await _registerQueryRepository.GetAparSummaryByUkprn(request.Ukprn);
+            var result = await _registerQueryRepository.GetAparSummary(request.Ukprn);
             return result.ToList();
         }
     }

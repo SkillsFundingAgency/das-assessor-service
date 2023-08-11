@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void GetAparSummary_MediatorShouldSendGetAparSummaryRequest_WhenCalled()
+        public void GetAparSummary_MediatorShouldSendGetAparSummaryLastUpdatedRequest_WhenCalled()
         {
             _mediator.Verify(m => m.Send(It.IsAny<GetAparSummaryLastUpdatedRequest>(), new CancellationToken()));
         }
@@ -49,13 +49,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void GetAparSummary_ResultsAreOfTypeListAssessmentOrganisationListSummary_WhenCalled()
+        public void GetAparSummary_ResultsAreOfTypeDateTime_WhenCalled()
         {
             ((OkObjectResult)_result).Value.Should().BeOfType<DateTime>();
         }
 
         [Test]
-        public void GetAparSummary_ResultsMatchExpectedListAssessmentOrganisationListSummary_WhenCalled()
+        public void GetAparSummary_ResultsMatchExpectedDateTime_WhenCalled()
         {
             var organisations = ((OkObjectResult)_result).Value as DateTime?;
             organisations.Should().Be(_expectedLastUpdated);

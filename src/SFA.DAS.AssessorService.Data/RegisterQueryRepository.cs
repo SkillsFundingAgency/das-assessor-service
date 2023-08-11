@@ -103,19 +103,25 @@ namespace SFA.DAS.AssessorService.Data
             return assessmentOrganisationSummaries;
         }
 
-        public async Task<IEnumerable<AparSummaryItem>> GetAparSummaryByUkprn(int ukprn)
+        public async Task<IEnumerable<AparSummary>> GetAparSummary(int? ukprn = null)
         {
-            var sql = "SELECT A.EndPointAssessorOrganisationId, A.EndPointAssessorName, A.EndPointAssessorUkprn, A.EarliestDateStandardApprovedOnRegister, A.EarliestEffectiveFromDate FROM [dbo].[APARSummary] A WHERE A.EndPointAssessorUkprn = @ukprn";
+            var sql =
+                "SELECT " +
+                    "a.EndPointAssessorOrganisationId as Id, " +
+                    "a.EndPointAssessorName as Name, " +
+                    "a.EndPointAssessorUkprn as Ukprn, " +
+                    "a.EarliestDateStandardApprovedOnRegister, " +
+                    "a.EarliestEffectiveFromDate " +
+                "FROM [dbo].[APARSummary] a ";
 
-            return await _unitOfWork.Connection.QueryAsync<AparSummaryItem>(sql);
+            if (ukprn != null)
+            {
+                sql += "WHERE a.EndPointAssessorUkprn = @ukprn";
+            }
+
+            return await _unitOfWork.Connection.QueryAsync<AparSummary>(sql, new { ukprn });
         }
 
-        public async Task<IEnumerable<AparSummaryItem>> GetAparSummary()
-        {
-            var sql = "SELECT A.EndPointAssessorOrganisationId, A.EndPointAssessorName, A.EndPointAssessorUkprn, A.EarliestDateStandardApprovedOnRegister, A.EarliestEffectiveFromDate FROM [dbo].[APARSummary] A";
-
-            return await _unitOfWork.Connection.QueryAsync<AparSummaryItem>(sql);
-        }
 
         public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
         {
@@ -442,8 +448,12 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<DateTime> GetAparSummaryLastUpdated()
         {
-            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<DateTime>(
-                "SELECT A.LastUpdated FROM [dbo].[APARSummaryUpdated] A");
+            var sql =
+                "SELECT " +
+                    "a.LastUpdated " +
+                "FROM [dbo].[APARSummaryUpdated] a";
+
+            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<DateTime>(sql);
         }
     }
 }

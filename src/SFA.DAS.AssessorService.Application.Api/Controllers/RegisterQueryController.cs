@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/apar-summary", Name = "GetAPARSummary")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AparSummaryItem>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AparSummary>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAparSummary()
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/apar-summary/{ukprn}", Name = "GetAparSummaryByUkprn")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AparSummaryItem))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AparSummary))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAparSummaryByUkprn(int ukprn)
