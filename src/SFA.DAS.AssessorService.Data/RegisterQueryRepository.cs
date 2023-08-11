@@ -83,10 +83,10 @@ namespace SFA.DAS.AssessorService.Data
             return maxCounter ?? 100;
         }
 
-        public async Task<IEnumerable<AparSummary>> GetAssessmentOrganisations()
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations()
         {
             var assessmentOrganisationSummaries =
-                await _unitOfWork.Connection.QueryAsync<AparSummary>(
+                await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(
                     "select EndPointAssessorOrganisationId as Id, " +
                         "EndPointAssessorName as Name, " +
                         "EndPointAssessorUkprn as ukprn, " +
@@ -322,11 +322,11 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.QueryAsync<OrganisationStandardPeriod>(sql, new { organisationId, standardId });
         }
 
-        public async Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByUkprn(string ukprn)
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn)
         {
             if (!int.TryParse(ukprn.Replace(" ", ""), out int ukprnNumeric))
             {
-                return new List<AparSummary>();
+                return new List<AssessmentOrganisationSummary>();
             }
 
             var sql =
@@ -336,10 +336,10 @@ namespace SFA.DAS.AssessorService.Data
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE o.EndPointAssessorUkprn = @ukprnNumeric";
 
-            return await _unitOfWork.Connection.QueryAsync<AparSummary>(sql, new { ukprnNumeric });
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { ukprnNumeric });
         }
 
-        public async Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId)
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId)
         {
             var sql =
                   "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
@@ -348,10 +348,10 @@ namespace SFA.DAS.AssessorService.Data
                 + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                 + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
 
-            return await _unitOfWork.Connection.QueryAsync<AparSummary>(sql, new { organisationId = $"{organisationId.Replace(" ", "")}" });
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { organisationId = $"{organisationId.Replace(" ", "")}" });
         }
 
-        public async Task<AparSummary> GetAssessmentOrganisationByContactEmail(string email)
+        public async Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email)
         {
             var sql =
                 "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, pc.Email as Email "
@@ -361,10 +361,10 @@ namespace SFA.DAS.AssessorService.Data
                     + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
 
-            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<AparSummary>(sql, new { email });
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email });
         }
 
-        public async Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string searchString)
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string searchString)
         {
             var sql =
                 "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, o.Status, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
@@ -377,7 +377,7 @@ namespace SFA.DAS.AssessorService.Data
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') like @searchString "
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString ";
 
-            return await _unitOfWork.Connection.QueryAsync<AparSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
+            return await _unitOfWork.Connection.QueryAsync<AssessmentOrganisationSummary>(sql, new { searchString = $"%{searchString.Replace(" ", "")}%" });
         }
 
         public async Task<EpaContact> GetContactByContactId(Guid contactId)

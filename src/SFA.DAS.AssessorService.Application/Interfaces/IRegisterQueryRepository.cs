@@ -15,17 +15,17 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<string> EpaOrganisationIdCurrentMaximum();
         Task<int> EpaContactUsernameHighestCounter();
-        Task<IEnumerable<AparSummary>> GetAssessmentOrganisations();
+        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
         Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId);
         
         Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId);
         Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId);
         Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId);
-        Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByUkprn(string ukprn);
-        Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId);
+        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn);
+        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId);
 
-        Task<AparSummary> GetAssessmentOrganisationByContactEmail(string email);
-        Task<IEnumerable<AparSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string organisationName);
+        Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email);
+        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string organisationName);
         Task<IEnumerable<OrganisationStandardSummary>> GetAllOrganisationStandardByOrganisationId(string organisationId);
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId);
 

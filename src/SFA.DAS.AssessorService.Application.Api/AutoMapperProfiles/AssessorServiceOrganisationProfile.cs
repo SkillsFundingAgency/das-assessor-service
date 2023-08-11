@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
     {
         public AssessorServiceOrganisationProfile()
         {
-            CreateMap<AssessorService.Api.Types.Models.AO.AparSummary, OrganisationSearchResult>()
+            CreateMap<AssessorService.Api.Types.Models.AO.AssessmentOrganisationSummary, OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoEPAO")
                 .BeforeMap((source, dest) => dest.RoEPAOApproved = true)
                 .BeforeMap((source, dest) => dest.EasApiOrganisationType = null)

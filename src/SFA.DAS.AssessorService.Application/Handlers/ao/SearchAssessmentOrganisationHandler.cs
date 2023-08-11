@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class SearchAssessmentOrganisationHandler : IRequestHandler<SearchAssessmentOrganisationsRequest, List<AparSummary>>
+    public class SearchAssessmentOrganisationHandler : IRequestHandler<SearchAssessmentOrganisationsRequest, List<AssessmentOrganisationSummary>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<SearchAssessmentOrganisationHandler> _logger;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _cleanser = cleanser;
         }
 
-        public async Task<List<AparSummary>> Handle(SearchAssessmentOrganisationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<AssessmentOrganisationSummary>> Handle(SearchAssessmentOrganisationsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
             
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
                 return resultFromEpaCode.ToList();
             }
 
-            IEnumerable<AparSummary> resultFromUkprn = null;
+            IEnumerable<AssessmentOrganisationSummary> resultFromUkprn = null;
             if (_validator.IsValidUkprn(searchstring))
             {
                 _logger.LogInformation($@"Searching AssessmentOrganisations based on ukprn: [{searchstring}]");         
@@ -64,14 +64,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
     }
 
-    internal class AssessmentOrganisationSummaryEqualityComparer : IEqualityComparer<AparSummary>
+    internal class AssessmentOrganisationSummaryEqualityComparer : IEqualityComparer<AssessmentOrganisationSummary>
     {
-        public bool Equals(AparSummary x, AparSummary y)
+        public bool Equals(AssessmentOrganisationSummary x, AssessmentOrganisationSummary y)
         {
             return y != null && (x != null && x.Id == y.Id);
         }
 
-        public int GetHashCode(AparSummary obj)
+        public int GetHashCode(AssessmentOrganisationSummary obj)
         {
             return obj.Id.GetHashCode();
         }

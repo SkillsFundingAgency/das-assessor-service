@@ -225,7 +225,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     _logger.LogInformation($@"Search Assessment Organisations for [{searchTerm}]");
                     var apiResponse = await _mediator.Send(new SearchAssessmentOrganisationsRequest { SearchTerm = searchTerm });
                     var organisationSearchResults =
-                        Mapper.Map<IEnumerable<AparSummary>, IEnumerable<OrganisationSearchResult>>(apiResponse);
+                        Mapper.Map<IEnumerable<AssessmentOrganisationSummary>, IEnumerable<OrganisationSearchResult>>(apiResponse);
                     if (organisationSearchResults != null) results.AddRange(organisationSearchResults);
                 }
                 catch (Exception ex)

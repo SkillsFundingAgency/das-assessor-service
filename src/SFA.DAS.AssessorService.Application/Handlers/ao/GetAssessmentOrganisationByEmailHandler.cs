@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAssessmentOrganisationByEmailHandler : IRequestHandler<GetAssessmentOrganisationByEmailRequest, AparSummary>
+    public class GetAssessmentOrganisationByEmailHandler : IRequestHandler<GetAssessmentOrganisationByEmailRequest, AssessmentOrganisationSummary>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetAssessmentOrganisationByEmailRequest> _logger;
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _cleanser = cleanser;
         }
 
-        public async Task<AparSummary> Handle(GetAssessmentOrganisationByEmailRequest request, CancellationToken cancellationToken)
+        public async Task<AssessmentOrganisationSummary> Handle(GetAssessmentOrganisationByEmailRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
 
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             if (_validator.CheckIfEmailIsPresentAndInSuitableFormat(email) != string.Empty)
             {
                 _logger.LogInformation($@"Getting AssessmentOrganisation based on contact email with invalid email address format: [{email}]");
-                return (AparSummary) null;
+                return (AssessmentOrganisationSummary) null;
             }
 
             _logger.LogInformation($@"Getting AssessmentOrganisation based on contact email: [{email}]");

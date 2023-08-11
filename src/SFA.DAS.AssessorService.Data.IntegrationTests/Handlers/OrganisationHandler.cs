@@ -46,9 +46,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             return (bool) DatabaseService.ExecuteScalar(sqlToCheckExists);
         }
 
-        public static AparSummary GetOrganisationSummaryByOrgId(string orgId)
+        public static AssessmentOrganisationSummary GetOrganisationSummaryByOrgId(string orgId)
         {
-             var organisation = DatabaseService.Get<AparSummary>($@"select EndpointAssessorName as Name, EndPointAssessorOrganisationId as Id, EndPointAssessorUkprn as ukprn from Organisations where endpointassessororganisationid = '{orgId}'");
+             var organisation = DatabaseService.Get<AssessmentOrganisationSummary>($@"select EndpointAssessorName as Name, EndPointAssessorOrganisationId as Id, EndPointAssessorUkprn as ukprn from Organisations where endpointassessororganisationid = '{orgId}'");
             return organisation;
         }
 
