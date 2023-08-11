@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
-    public class RegisterQuesryAparSummaryLastUpdatedTests
+    public class RegisterQueryGetAparSummaryLastUpdatedTests
     {
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected GetAparSummaryLastUpdatedHandler AparSummaryLastUpdatedHandler;

@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAparSummaryByUkprn(int ukprn)
         {
             _logger.LogInformation($"Get Apar Summary by UKPRN [{ukprn}]");
-            var results = await _mediator.Send(new GetAparSummaryByUkprnRequest(ukprn));
+            var results = await _mediator.Send(new GetAparSummaryRequest(ukprn));
             return Ok(results.FirstOrDefault());
         }
 

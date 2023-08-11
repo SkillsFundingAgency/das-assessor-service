@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<string> GetEpaOrgIdByEndPointAssessmentName(string name);
 
-        Task<int?> AparSummaryUpdate();
+        Task<int?> UpdateAparSummary();
         Task<DateTime> GetAparSummaryLastUpdated();
     }
 }

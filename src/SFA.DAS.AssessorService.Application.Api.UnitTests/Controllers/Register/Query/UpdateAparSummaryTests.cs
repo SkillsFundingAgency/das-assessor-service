@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
-    public class AparSummaryUpdateTests
+    public class UpdateAparSummaryTests
     {
         private static RegisterQueryController _sut;
         private static Mock<IMediator> _mediator;

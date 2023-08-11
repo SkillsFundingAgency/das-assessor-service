@@ -436,7 +436,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(sql, new { name });
         }
 
-        public async Task<int?> AparSummaryUpdate()
+        public async Task<int?> UpdateAparSummary()
         {
             var result = await _unitOfWork.Connection.QueryAsync<int>(
                 "UpdateAparSummary",
