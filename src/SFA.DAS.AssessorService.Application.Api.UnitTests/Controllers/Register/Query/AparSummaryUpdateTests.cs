@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
-    public class UpdateAparSummaryTests
+    public class AparSummaryUpdateTests
     {
         private static RegisterQueryController _sut;
         private static Mock<IMediator> _mediator;
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
 
             _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
 
-            _result = await _sut.AparSummaryLastUpdated();
+            _result = await _sut.GetAparSummaryLastUpdated();
         }
 
         [Test]

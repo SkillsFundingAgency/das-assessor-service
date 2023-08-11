@@ -246,7 +246,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Updating APAR Summary");
 
-            return Ok(await _mediator.Send(new UpdateAparSummaryRequest()));
+            return Ok(await _mediator.Send(new AparSummaryUpdateRequest()));
         }
 
         [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]

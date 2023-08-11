@@ -555,14 +555,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public async Task<GetAparSummaryTestsFixture> GetAparSummary()
             {
-                await _repository.UpdateAparSummary();
+                await _repository.AparSummaryUpdate();
                 _results = await _repository.GetAparSummary();
                 return this;
             }
 
             public async Task<GetAparSummaryTestsFixture> GetAparSummary(int ukprn)
             {
-                await _repository.UpdateAparSummary();
+                await _repository.AparSummaryUpdate();
                 _results = await _repository.GetAparSummary(ukprn);
                 return this;
             }

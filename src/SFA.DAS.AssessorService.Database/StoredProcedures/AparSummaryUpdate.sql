@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[UpdateAparSummary]
+﻿CREATE PROCEDURE [dbo].[AparSummaryUpdate]
 AS
 BEGIN
     DECLARE
