@@ -15,27 +15,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
     public class RegisterQueryUpdateAparSummaryTests
     {
-        protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
-        protected UpdateAparSummaryHandler AparSummaryUpdateHandler;
-        protected Mock<ILogger<UpdateAparSummaryHandler>> Logger;
+        protected Mock<IRegisterQueryRepository> _registerQueryRepository;
+        protected UpdateAparSummaryHandler _updateAparSummaryHandler;
+        protected Mock<ILogger<UpdateAparSummaryHandler>> _logger;
 
         [SetUp]
         public void Setup()
         {
-            RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
+            _registerQueryRepository = new Mock<IRegisterQueryRepository>();
 
-            Logger = new Mock<ILogger<UpdateAparSummaryHandler>>();
+            _logger = new Mock<ILogger<UpdateAparSummaryHandler>>();
 
-            RegisterQueryRepository.Setup(x => x.UpdateAparSummary()).ReturnsAsync(1);
+            _registerQueryRepository.Setup(x => x.UpdateAparSummary()).ReturnsAsync(1);
 
-            AparSummaryUpdateHandler = new UpdateAparSummaryHandler(RegisterQueryRepository.Object, Logger.Object);
+            _updateAparSummaryHandler = new UpdateAparSummaryHandler(_registerQueryRepository.Object, _logger.Object);
         }
 
         [Test]
         public void AparSummaryUpdateRepoIsCalledWhenHandlerIsInvoked()
         {
-            AparSummaryUpdateHandler.Handle(new UpdateAparSummaryRequest(), CancellationToken.None).Wait();
-            RegisterQueryRepository.Verify(x => x.UpdateAparSummary());
+            _updateAparSummaryHandler.Handle(new UpdateAparSummaryRequest(), CancellationToken.None).Wait();
+            _registerQueryRepository.Verify(x => x.UpdateAparSummary());
         }
     }
 }

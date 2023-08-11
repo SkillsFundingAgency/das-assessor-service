@@ -249,11 +249,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new UpdateAparSummaryRequest()));
         }
 
-        [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "APARSummaryLastUpdated")]
+        [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<DateTime>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> AparSummaryLastUpdated()
+        public async Task<IActionResult> GetAparSummaryLastUpdated()
         {
             _logger.LogInformation("Getting APAR Summary Last Updated Date");
 
