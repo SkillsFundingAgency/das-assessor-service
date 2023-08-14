@@ -23,10 +23,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
+        private readonly ICertificateNameCapitalisationService _certificateNameCapitalisationService;
         private readonly int PrivateFundingModelNumber = 99;
 
         public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IProvidersRepository providersRepository,
-            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
+            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService, ICertificateNameCapitalisationService certificateNameCapitalisationService)
         {
             _certificateRepository = certificateRepository;
             _learnerRepository = learnerRepository;
@@ -34,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _organisationQueryRepository = organisationQueryRepository;
             _logger = logger;
             _standardService = standardService;
+            _certificateNameCapitalisationService = certificateNameCapitalisationService;
         }
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
@@ -125,14 +127,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger.LogDebug($"Populating certificate data with provider UkPrn:{learner.UkPrn}");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
-            certData.LearnerGivenNames = learner.GivenNames;
-            certData.LearnerFamilyName = learner.FamilyName;
+            if ((learner.GivenNames.ToLower() == learner.GivenNames) || (learner.GivenNames.ToUpper() == learner.GivenNames))
+            {
+                certData.LearnerGivenNames = _certificateNameCapitalisationService.ProperCase(learner.GivenNames);
+            }
+            else
+            {
+                certData.LearnerGivenNames = learner.GivenNames;
+            }
+
+            if ((learner.FamilyName.ToLower() == learner.FamilyName) || (learner.FamilyName.ToUpper() == learner.FamilyName))
+            {
+                certData.LearnerFamilyName = _certificateNameCapitalisationService.ProperCase(learner.FamilyName, true);
+            }
+            else
+            {
+                certData.LearnerFamilyName = learner.FamilyName;
+            }
 
             certData.EmployerAccountId = learner.EmployerAccountId;
             certData.EmployerName = learner.EmployerName;
 
             certData.LearningStartDate = learner.LearnStartDate;
-            certData.FullName = $"{learner.GivenNames} {learner.FamilyName}";
+            certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
             certData.ProviderName = provider.Name;
 
             certificate.ProviderUkPrn = learner.UkPrn;
