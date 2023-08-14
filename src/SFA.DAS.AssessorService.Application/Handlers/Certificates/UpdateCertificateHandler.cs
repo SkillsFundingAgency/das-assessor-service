@@ -100,10 +100,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         }
 
         private async Task<Certificate> Update(UpdateCertificateRequest request)
-        { 
+        {
             var logs = await _certificateRepository.GetCertificateLogsFor(request.Certificate.Id);
             var latestLogEntry = logs.OrderByDescending(l => l.EventTime).FirstOrDefault();
-            
+
             if (latestLogEntry != null && latestLogEntry.Action == request.Action && latestLogEntry.CertificateData == request.Certificate.CertificateData && string.IsNullOrWhiteSpace(request.ReasonForChange))
             {
                 return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog:false);
@@ -124,6 +124,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 // when sending to the apprentice use the apprentice name for the contact
                 updatedData.ContactName = updatedData.FullName;
             }
+
+            if (updatedData.ContactName != null) { updatedData.ContactName = updatedData.ContactName.ToUpper(); }
 
             return updatedData;
         }
