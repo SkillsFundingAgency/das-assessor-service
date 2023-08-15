@@ -239,7 +239,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(results.Select(s => (StandardVersion)s).ToList());
         }
 
-        [HttpGet("assessment-organisations/apar-summary-update", Name = "APARSummaryUpdate")]
+        [HttpPost("assessment-organisations/apar-summary-update", Name = "APARSummaryUpdate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int?))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> AparSummaryUpdate()
