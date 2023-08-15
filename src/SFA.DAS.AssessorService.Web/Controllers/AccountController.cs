@@ -16,7 +16,9 @@ using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -31,10 +33,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly CreateAccountValidator _createAccountValidator;
+        private readonly UpdateAccountValidator _updateAccountValidator;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
             ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient)
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient,  UpdateAccountValidator updateAccountValidator)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
@@ -44,6 +47,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
             _organisationsApiClient = organisationsApiClient;
+            _updateAccountValidator = updateAccountValidator;
         }
 
         [HttpGet]
@@ -194,6 +198,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult UpdateAnAccount()
+        {
+            return View(new AccountViewModel());
+        }
+        
         [HttpGet]
         public IActionResult CreateAnAccount()
         {
@@ -213,12 +224,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var inviteSuccess =
-                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email));
+                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email, null));
 
             _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
             return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateAnAccount(AccountViewModel accountViewModel)
+        {
+            await _updateAccountValidator.ValidateAsync(accountViewModel);
+
+            if (!ModelState.IsValid)
+            {
+                return View(accountViewModel);
+            }
+
+            var email = User.Identities.FirstOrDefault()?.FindFirst(ClaimTypes.Email)?.Value;
+            var govIdentifier = User.Identities.FirstOrDefault()?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            var inviteSuccess =
+                await _contactsApiClient.InviteUser(new CreateContactRequest(accountViewModel.GivenName, accountViewModel.FamilyName, email,null,email, govIdentifier));
+
+            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(new CreateAccountViewModel
+            {
+                Email = email,
+                FamilyName = accountViewModel.FamilyName,
+                GivenName = accountViewModel.GivenName
+            }));
+            return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
+        }
+        
         [HttpGet]
         public IActionResult InviteSent()
         {
