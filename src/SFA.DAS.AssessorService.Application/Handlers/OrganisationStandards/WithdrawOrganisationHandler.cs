@@ -13,14 +13,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
     public class WithdrawOrganisationHandler : IRequestHandler<WithdrawOrganisationRequest>
     {
         private readonly IEpaOrganisationValidator _validator;
-        private readonly IOrganisationStandardRepository _orgStandardRepository;
+        private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly IApplyRepository _applyRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public WithdrawOrganisationHandler(IEpaOrganisationValidator validator, IOrganisationStandardRepository orgStandardRepository, IApplyRepository applyRepository, IUnitOfWork unitOfWork)
+        public WithdrawOrganisationHandler(IEpaOrganisationValidator validator, IOrganisationStandardRepository organisationStandardRepository, IApplyRepository applyRepository, IUnitOfWork unitOfWork)
         {
             _validator = validator;
-            _orgStandardRepository = orgStandardRepository;
+            _organisationStandardRepository = organisationStandardRepository;
             _applyRepository = applyRepository;
             _unitOfWork = unitOfWork;
         }
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
             {
                 _unitOfWork.Begin();
 
-                await _orgStandardRepository.WithdrawalOrganisation(request.EndPointAssessorOrganisationId, request.WithdrawalDate);
+                await _organisationStandardRepository.WithdrawOrganisation(request.EndPointAssessorOrganisationId, request.WithdrawalDate);
 
                 await _applyRepository.DeclineAllApplicationsForOrgansiation(request.ApplicationId, request.EndPointAssessorOrganisationId, request.UpdatedBy);
 

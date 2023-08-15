@@ -46,8 +46,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> Index()
         {
-            return RedirectToAction("Index", "Dashboard");
-
             var userId = await GetUserId();
             var applications = await _applicationApiClient.GetWithdrawalApplications(userId);
 
@@ -57,8 +55,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("/your-withdrawal-notifications")]
         public async Task<IActionResult> WithdrawalApplications()
         {
-            return RedirectToAction("Index", "Dashboard");
-
             var userId = await GetUserId();
             var applications = await _applicationApiClient.GetWithdrawalApplications(userId);
             return View(applications);
@@ -69,8 +65,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal()
         {
-            return RedirectToAction("Index", "Dashboard");
-
             return View();
         }
 
@@ -79,8 +73,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal(TypeOfWithdrawalViewModel viewModel)
         {
-            return RedirectToAction("Index", "Dashboard");
-
             if (string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
             {
                 ModelState.AddModelError(nameof(viewModel.TypeOfWithdrawal), "Select standard or register");
@@ -109,8 +101,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ChooseStandardForWithdrawal(int? pageIndex)
         {
-            return RedirectToAction("Index", "Dashboard");
-
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetEpaOrganisationById(contact.OrganisationId?.ToString());
 
@@ -132,7 +122,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     StandardName = x.StandardName,
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
-                    NumberOfVersions = x.NumberOfVersions,
+
+                    // find a previous withdrawal application for the same reference number, if there is
+                    // one then this is used to redirect the user to the previous withdrawal for the same
+                    // standard this will prevent a withdrawal from the same standard twice i.e. it will
+                    // prevent the withdrawal from a reapply for the same standard which most likely was
+                    // not the intention see QF-1608
                     ApplicationId = applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
                                                                     a.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
                                                                     a.ApplyData.Apply.Versions == null)?.Id
@@ -142,156 +137,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(viewModel);
         }
 
-        [HttpGet("WholeStandardOrVersion/{iFateReferenceNumber}", Name = "WholeStandardOrVersion")]
+        [HttpGet("CheckWithdrawalRequest/{iFateReferenceNumber?}", Name = "CheckWithdrawalRequest")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public IActionResult WholeStandardOrVersion(string iFateReferenceNumber)
+        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, [FromQuery] string backAction)
         {
-            return RedirectToAction("Index", "Dashboard");
-
-            return View();
-        }
-
-        [HttpPost("WholeStandardOrVersion/{iFateReferenceNumber}")]
-        [ModelStatePersist(ModelStatePersist.Store)]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public IActionResult WholeStandardOrVersion(string iFateReferenceNumber, WholeStandardOrVersionViewModel model)
-        {
-            return RedirectToAction("Index", "Dashboard");
-
-            if (string.IsNullOrWhiteSpace(model.WithdrawalType))
-                ModelState.AddModelError(nameof(model.WithdrawalType), "Select whole standard or version(s)");
-
-            if (ModelState.IsValid)
-            {
-                if (model.WithdrawalType == WithdrawalType.WholeStandard)
-                    return RedirectToAction(
-                        nameof(CheckWithdrawalRequest),
-                        nameof(ApplyForWithdrawalController).RemoveController(),
-                        new { iFateReferenceNumber = iFateReferenceNumber, backAction = nameof(WholeStandardOrVersion) });
-                else
-                    return RedirectToAction(
-                        nameof(ReviewStandardVersions), 
-                        nameof(ApplyForWithdrawalController).RemoveController(),
-                        new { iFateReferenceNumber = iFateReferenceNumber });
-            }
-            else
-                return View(model);
-        }
-
-        [HttpGet("ReviewStandardVersions/{iFateReferenceNumber}", Name = "ReviewStandardVersions")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> ReviewStandardVersions(string iFateReferenceNumber)
-        {
-            return RedirectToAction("Index", "Dashboard");
-
-            var contact = await GetUserContact();
-            var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-            var applications = await GetWithdrawalApplications(contact.Id, iFateReferenceNumber);
-
-            var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
-            var standard = versions.First();
-
-            return View(new ReviewStandardVersionsViewModel()
-            {
-                IFateReferenceNumber = iFateReferenceNumber,
-                Level = standard.Level,
-                StandardName = standard.Title,
-                Versions = versions.Select(x => new ReviewStandardVersion()
-                                        {
-                                            Version = x.Version,
-                                            AbleToWithdraw = !applications.Any(a => a.ApplyData.Apply.Versions != null &&
-                                                                                    a.ApplyData.Apply.Versions.Contains(x.Version))
-                                        })
-                                        .OrderByDescending(x => x.Version)
-                                        .ToList()
-            });
-        }
-
-        [HttpGet("ChooseStandardVersionForWithdrawal/{iFateReferenceNumber}", Name = "ChooseStandardVersionForWithdrawal")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> ChooseStandardVersionForWithdrawal(string iFateReferenceNumber)
-        {
-            return RedirectToAction("Index", "Dashboard");
-
-            var contact = await GetUserContact();
-            var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-            var applications = await GetWithdrawalApplications(contact.Id, iFateReferenceNumber);
-
-            var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
-            var standard = versions.First();
-
-            var viewModel = new ChooseStandardVersionForWithdrawalViewModel()
-            {
-                IFateReferenceNumber = iFateReferenceNumber,
-                Level = standard.Level,
-                StandardName = standard.Title,
-                Versions = versions.Where(v => !applications.Any(a => a.ApplyData.Apply.Versions != null && a.ApplyData.Apply.Versions.Contains(v.Version)))
-                                    .OrderByDescending(x => x.Version)
-                                    .ToList(),
-            };
-
-            return View(viewModel);
-        }
-
-        [HttpPost("ChooseStandardVersionForWithdrawal/{iFateReferenceNumber}")]
-        [ModelStatePersist(ModelStatePersist.Store)]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> ChooseStandardVersionForWithdrawal(string iFateReferenceNumber, ChooseStandardVersionForWithdrawalViewModel model)
-        {
-            return RedirectToAction("Index", "Dashboard");
-
-            var contact = await GetUserContact();
-            var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-            var applications = await GetWithdrawalApplications(contact.Id, iFateReferenceNumber);
-
-            var versions = (await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber))
-                            .Where(v => !applications.Any(a => a.ApplyData.Apply.Versions != null && a.ApplyData.Apply.Versions.Contains(v.Version)))
-                            .OrderByDescending(x => x.Version)
-                            .ToList();
-
-            var standard = versions.First();
-
-            if (model.SelectedVersions == null || !model.SelectedVersions.Any())
-                ModelState.AddModelError(nameof(model.SelectedVersions), "Select at least one version");
-
-            if (!ModelState.IsValid)
-            {
-                model.IFateReferenceNumber = iFateReferenceNumber;
-                model.Level = standard.Level;
-                model.StandardName = standard.Title;
-                model.Versions = versions;
-                return View(model);
-            }
-            else if (model.SelectedVersions.Count == versions.Count)
-            {
-                return RedirectToAction(
-                nameof(CheckWithdrawalRequest),
-                nameof(ApplyForWithdrawalController).RemoveController(),
-                new { iFateReferenceNumber = iFateReferenceNumber, backAction = nameof(ChooseStandardVersionForWithdrawal) });
-            }
-            else
-            {
-                var selectedVersions = model.SelectedVersions
-                    .OrderBy(x => decimal.Parse(x));
-
-                return RedirectToAction(
-                nameof(CheckWithdrawalRequest),
-                nameof(ApplyForWithdrawalController).RemoveController(),
-                new { iFateReferenceNumber = iFateReferenceNumber, versionsToWithdrawal = string.Join(",", selectedVersions), backAction = nameof(ChooseStandardVersionForWithdrawal) });
-            }
-        }
-
-        [HttpGet("CheckWithdrawalRequest/{iFateReferenceNumber?}/{versionsToWithdrawal?}", Name = "CheckWithdrawalRequest")]
-        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery] string backAction)
-        {
-            return RedirectToAction("Index", "Dashboard");
-
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
@@ -308,27 +158,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
                 var standard = versions.First();
 
-                var applications = await GetInProgressWithdrawalVersionApplications(contact.Id, iFateReferenceNumber);
-
                 return View(new CheckWithdrawalRequestViewModel()
                 {
                     IFateReferenceNumber = iFateReferenceNumber,
                     Level = standard.Level,
                     StandardName = standard.Title,
-                    Versions = versionsToWithdrawal,
-                    InProgressVersionWithdrawals = string.IsNullOrWhiteSpace(versionsToWithdrawal) && applications.Any(),
                     BackAction = backAction
                 });
             }
         }
 
-        [HttpPost("CheckWithdrawalRequest/{iFateReferenceNumber?}/{versionsToWithdrawal?}")]
+        [HttpPost("CheckWithdrawalRequest/{iFateReferenceNumber?}")]
         [ModelStatePersist(ModelStatePersist.Store)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery] string backAction, CheckWithdrawalRequestViewModel model)
+        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, [FromQuery] string backAction, CheckWithdrawalRequestViewModel model)
         {
-            return RedirectToAction("Index", "Dashboard");
-
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
             var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
@@ -362,25 +206,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(versionsToWithdrawal))
-                {
-                    var applications = await GetInProgressWithdrawalVersionApplications(contact.Id, iFateReferenceNumber);
-                    if (applications.Any())
-                    {
-                        await _applicationApiClient.DeleteApplications(new DeleteApplicationsRequest()
-                        {
-                            ApplicationIds = applications.Select(x => x.Id),
-                            DeletingContactId = null
-                        });
-                    }
-                }
-
                 var id = await CreateWithdrawalApplication(contact, organisation,
                             standard.LarsCode,
                             iFateReferenceNumber,
-                            standard.Title,
-                            string.IsNullOrWhiteSpace(versionsToWithdrawal) ? StandardOrVersion.Standard : StandardOrVersion.Version,
-                            versionsToWithdrawal?.Split(","));
+                            standard.Title);
 
                 return RedirectToAction(
                         nameof(ApplicationController.Sequence),
@@ -389,19 +218,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
-        private async Task<Guid> CreateWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation, int larsCode, string iFateReferenceNumber, string standardTitle, string standardOrVersion, IEnumerable<string> versions)
+        private async Task<Guid> CreateWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation, int larsCode, string iFateReferenceNumber, string standardTitle)
         {
             var createApplicationRequest = await _applicationService.BuildStandardWithdrawalRequest(
                    contact,
                    organisation,
                    larsCode,
-                   _config.ReferenceFormat,
-                   standardOrVersion);
+                   _config.ReferenceFormat);
 
             var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-
-            var standardApplicationType = versions != null && versions.Any() ? StandardApplicationTypes.VersionWithdrawal : StandardApplicationTypes.StandardWithdrawal;
-            await _applicationApiClient.UpdateStandardData(id, larsCode, iFateReferenceNumber, standardTitle, versions?.ToList(), standardApplicationType);
+            await _applicationApiClient.UpdateStandardData(id, larsCode, iFateReferenceNumber, standardTitle, null, StandardApplicationTypes.StandardWithdrawal);
 
             return id;
         }
@@ -416,13 +242,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return await _applicationApiClient.CreateApplication(createApplicationRequest);
         }
 
-        private async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId, string iFateReferenceNumber = null)
+        private async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId)
         {
             return (await _applicationApiClient.GetWithdrawalApplications(contactId))
                     .Where(x => x.IsStandardWithdrawalApplication &&
-                                (iFateReferenceNumber == null || 
-                                    (!string.IsNullOrWhiteSpace(x.StandardReference) &&
-                                        x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase))) &&
                                 (x.ApplicationStatus == ApplicationStatus.InProgress ||
                                     x.ApplicationStatus == ApplicationStatus.Submitted ||
                                     x.ApplicationStatus == ApplicationStatus.FeedbackAdded ||
@@ -430,20 +253,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                                     x.ApplicationStatus == ApplicationStatus.Approved))
                     .ToList();
 
-        }
-
-        private async Task<List<ApplicationResponse>> GetInProgressWithdrawalVersionApplications(Guid contactId, string iFateReferenceNumber)
-        {
-            return (await GetWithdrawalApplications(contactId))
-                    .Where(x => x.IsStandardWithdrawalApplication &&
-                                !string.IsNullOrWhiteSpace(x.StandardReference) &&
-                                x.StandardReference.Equals(iFateReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
-                                (x.ApplicationStatus == ApplicationStatus.InProgress ||
-                                    x.ApplicationStatus == ApplicationStatus.Submitted ||
-                                    x.ApplicationStatus == ApplicationStatus.FeedbackAdded ||
-                                    x.ApplicationStatus == ApplicationStatus.Resubmitted) &&
-                                x.ApplyData.Apply.Versions != null)
-                    .ToList();
         }
     }
 }

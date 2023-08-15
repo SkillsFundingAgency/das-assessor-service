@@ -17,16 +17,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             // Act
             var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.StandardWithdrawal }) as RedirectToActionResult;
 
-            // Temporary asserts until withdrawal functionality is restored
+            // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
+                Assert.That(result.ActionName, Is.EqualTo(nameof(ApplyForWithdrawalController.ChooseStandardForWithdrawal)));
+                Assert.That(result.ControllerName, Is.EqualTo(nameof(ApplyForWithdrawalController).RemoveController()));
             });
-
-            // Assert
-            // result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.ChooseStandardForWithdrawal));
-            // result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
         }
     }
 }

@@ -1,4 +1,5 @@
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -20,47 +21,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
     [TestFixture]
     public class When_CheckWithdrawalRequest_is_posted_to : ApplyForWithdrawalControllerTestsBase
     {
-        [Test]
-        public async Task And_Yes_Is_Selected_For_Versions_Then_Application_Is_Created()
-        {
-            // Arrange
-            _mockStandardVersionApiClient.Setup(m => m.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), "ST0001"))
-                    .ReturnsAsync(new List<StandardVersion>()
-                    {
-                        new StandardVersion() { Version = "1.0" },
-                        new StandardVersion() { Version = "1.1" },
-                        new StandardVersion() { Version = "1.2" }
-                    });
-
-            var applicationId = Guid.NewGuid();
-            _mockApplicationApiClient
-                .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
-                .ReturnsAsync(applicationId);
-
-            var model = new CheckWithdrawalRequestViewModel()
-            {
-                Continue = "yes"
-            };
-
-            // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", "1.1,1.2", null, model) as RedirectToActionResult;
-
-            // Temporary asserts until withdrawal functionality is restored
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
-            });
-
-            // Assert
-            // result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-            // result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
-            // result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
-            // 
-            // _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(), 
-            //     It.Is<List<string>>(x => x.Contains("1.1") && x.Contains("1.2")), StandardApplicationTypes.VersionWithdrawal));
-        }
-
         [Test]
         public async Task And_Yes_Is_Selected_For_Standard_Then_Application_Is_Created()
         {
@@ -87,91 +47,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", null, null, model) as RedirectToActionResult;
-
-            // Temporary asserts until withdrawal functionality is restored
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
-            });
+            var result = await _sut.CheckWithdrawalRequest("ST0001", null, model) as RedirectToActionResult;
 
             // Assert
-            // result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-            // result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
-            // result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
-            // 
-            // _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(),
-            //    null, StandardApplicationTypes.StandardWithdrawal));
-        }
-
-        [Test]
-        public async Task And_Yes_Is_Selected_For_Standard_And_InProgress_Applications_Then_Version_Applications_Are_Deleted()
-        {
-            var applicationId = Guid.NewGuid();
-            var existingApplicationId1 = Guid.NewGuid();
-            var existingApplicationId2 = Guid.NewGuid();
-
-            // Arrange
-            _mockApplicationApiClient.Setup(m => m.GetWithdrawalApplications(It.IsAny<Guid>()))
-               .ReturnsAsync(new List<ApplicationResponse>()
-                {
-                    new ApplicationResponse()
-                    {
-                        Id = existingApplicationId1,
-                        ApplicationStatus = ApplicationStatus.InProgress,
-                        ApplicationType = ApplicationTypes.StandardWithdrawal,
-                        StandardReference = "ST0001",
-                        ApplyData = new ApplyData()
-                        {
-                            Apply = new ApplyTypes.Apply() { StandardReference = "ST0001", Versions = new List<string> { "1.0" } }
-                        }
-                    },
-                    new ApplicationResponse()
-                    {
-                        Id = existingApplicationId2,
-                        ApplicationStatus = ApplicationStatus.InProgress,
-                        ApplicationType = ApplicationTypes.StandardWithdrawal,
-                        StandardReference = "ST0001",
-                        ApplyData = new ApplyData()
-                        {
-                            Apply = new ApplyTypes.Apply() { StandardReference = "ST0001", Versions = new List<string> { "1.1" } }
-                        }
-                    }
-                });
-
-            _mockStandardVersionApiClient.Setup(m => m.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), "ST0001"))
-                    .ReturnsAsync(new List<StandardVersion>()
-                    {
-                        new StandardVersion() { Version = "1.0" },
-                        new StandardVersion() { Version = "1.1" },
-                        new StandardVersion() { Version = "1.2" }
-                    });
-
-            
-            _mockApplicationApiClient
-                .Setup(r => r.CreateApplication(It.IsAny<CreateApplicationRequest>()))
-                .ReturnsAsync(applicationId);
-
-            var model = new CheckWithdrawalRequestViewModel()
+            using (new AssertionScope())
             {
-                Continue = "yes"
-            };
+                result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
+                result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+                result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
 
-            // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", null, null, model) as RedirectToActionResult;
-
-            // Temporary asserts until withdrawal functionality is restored
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
-            });
-
-            // Assert
-            // _mockApplicationApiClient.Verify(m => m.DeleteApplications(
-            //     It.Is<DeleteApplicationsRequest>(x => x.ApplicationIds.Any(a => a == existingApplicationId1) &&
-            //                                             x.ApplicationIds.Any(a => a == existingApplicationId2))));
+                _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(),
+                   null, StandardApplicationTypes.StandardWithdrawal));
+            }
         }
 
         [Test]
@@ -189,19 +76,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest(null, null, null, model) as RedirectToActionResult;
-
-            // Temporary asserts until withdrawal functionality is restored
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
-            });
+            var result = await _sut.CheckWithdrawalRequest(null, null, model) as RedirectToActionResult;
 
             // Assert
-            // result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-            // result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
-            // result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
+            using (new AssertionScope())
+            {
+                result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
+                result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+                result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
+            }
         }
 
         [Test]
@@ -222,18 +105,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", "1.1,1.2", null, model) as RedirectToActionResult;
-
-            // Temporary asserts until withdrawal functionality is restored
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
-            });
+            var result = await _sut.CheckWithdrawalRequest("ST0001", null, model) as RedirectToActionResult;
 
             // Assert
-            // result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.WithdrawalApplications));
-            // result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+            using (new AssertionScope())
+            {
+                result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.WithdrawalApplications));
+                result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+            }
         }
 
         [Test]
@@ -254,18 +133,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", "1.1,1.2", null, model) as RedirectToActionResult;
-
-            // Temporary asserts until withdrawal functionality is restored
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.ActionName, Is.EqualTo(nameof(DashboardController.Index)));
-                Assert.That(result.ControllerName, Is.EqualTo(nameof(DashboardController).Replace("Controller", "")));
-            });
+            var result = await _sut.CheckWithdrawalRequest("ST0001", null, model) as RedirectToActionResult;
 
             // Assert
-            // _sut.ModelState.IsValid.Should().BeFalse();
-            // _sut.ModelState["Continue"].Errors.Should().Contain(x => x.ErrorMessage == "Select Yes or No");
+            using (new AssertionScope())
+            {
+                _sut.ModelState.IsValid.Should().BeFalse();
+                _sut.ModelState["Continue"].Errors.Should().Contain(x => x.ErrorMessage == "Select Yes or No");
+            }
         }
     }
 }

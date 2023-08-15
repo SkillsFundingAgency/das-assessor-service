@@ -31,24 +31,10 @@ else
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Check withdrawal request</h1>
 
-            @if (Model.InProgressVersionWithdrawals)
-            {
-                <div class="govuk-inset-text">
-                    A withdrawal request is already in progress for a version of this standard.
-                    If you continue with this new withdrawal request then the previous request will be deleted and replaced with this one.
-                </div>
-            }
-
             @if (Model.OrganisationName != null)
             {
                 <p class="govuk-body">
                     You are about to start a withdrawal request for @Model.OrganisationName
-                </p>
-            }
-            else if (Model.Versions != null)
-            {
-                <p class="govuk-body">
-                    You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber, Version @Model.Versions
                 </p>
             }
             else
