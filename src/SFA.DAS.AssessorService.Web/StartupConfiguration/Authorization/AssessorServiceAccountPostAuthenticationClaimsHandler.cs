@@ -73,17 +73,19 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         var organisation =
                             await _organisationsApiClient.GetEpaOrganisationById(user.OrganisationId?.ToString());
 
-                        claims.Add(new Claim("http://schemas.portal.com/ukprn",
-                            organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
+                        if (organisation != null)
+                        {
+                            claims.Add(new Claim("http://schemas.portal.com/ukprn",
+                                organisation.Ukprn == null ? "" : organisation.Ukprn.ToString()));
 
-                        var orgName = organisation.OrganisationData?.LegalName ??
-                                      organisation.OrganisationData?.TradingName ??
-                                      organisation.Name;
+                            var orgName = organisation.OrganisationData?.LegalName ??
+                                          organisation.OrganisationData?.TradingName ??
+                                          organisation.Name;
                         
-                        _sessionService.Set("OrganisationName", orgName);
+                            _sessionService.Set("OrganisationName", orgName);
 
-                        claims.Add(new Claim("http://schemas.portal.com/epaoid",
-                            organisation?.OrganisationId));
+                            claims.Add(new Claim("http://schemas.portal.com/epaoid", organisation.OrganisationId));    
+                        }
                     }
 
                     claims.Add(new Claim("display_name", user?.DisplayName));
