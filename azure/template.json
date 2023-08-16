@@ -124,7 +124,8 @@
         "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
-        "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]"
+        "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
+        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Apply.GovSignIn"
     },
     "resources": [
         {
@@ -360,6 +361,18 @@
                                 {
                                     "name": "EnvironmentName",
                                     "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('configNames')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
+                                },
+                                {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
                                 },
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
