@@ -51,5 +51,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task RequestForPrivilege(Guid contactId, Guid privilegeId);
         Task ApproveContact(Guid contactId);
         Task RejectContact(Guid contactId);
+        Task<ContactResponse> GetContactByEmail(string emailAddress);
     }
 }

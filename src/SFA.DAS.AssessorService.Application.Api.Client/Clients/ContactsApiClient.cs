@@ -237,5 +237,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await PostPutRequest(request, new RejectContactRequest {ContactId = contactId});
             }
         }
+
+        public async Task<ContactResponse> GetContactByEmail(string emailAddress)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/email/{WebUtility.UrlEncode(emailAddress)}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
     }
 }
