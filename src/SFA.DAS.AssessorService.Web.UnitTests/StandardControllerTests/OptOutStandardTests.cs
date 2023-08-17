@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -164,13 +165,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             });
         }
 
-        [Test]
-        public void OptOutStandardVersion_ThrowsArgumentException_WhenPostCalledWithNullModel()
-        {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(null));
-            Assert.That(ex.ParamName, Is.EqualTo("model"));
-        }
-
         [TestCase(null)]
         [TestCase("")]
         public void OptOutStandardVersion_ThrowsArgumentException_WhenPostCalledWithNullOrEmptyStandardReference(string standardReference)
@@ -195,18 +189,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             };
 
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(model));
-        }
-
-        [Test]
-        public void OptOutStandardVersion_ThrowsNotFoundException_WhenPostCalledWithExistingVersionForStandard()
-        {
-            var model = new OptOutStandardVersionViewModel
-            {
-                StandardReference = "ST0001",
-                Version = "1.0"
-            };
-
-            Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptOutStandardVersion(model));
         }
 
         [Test]

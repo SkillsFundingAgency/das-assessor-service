@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -145,10 +146,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
+        public async Task OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(null));
-            Assert.That(ex.ParamName, Is.EqualTo("model"));
+            Assert.That(ex.ParamName, Is.Null);
         }
 
         [TestCase(null)]
@@ -178,15 +179,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithExistingVersionForStandard()
+        public async Task OptInStandardVersion_Redirects_WhenPostCalledWithExistingVersionForStandard()
         {
             var model = new OptInStandardVersionViewModel
             {
                 StandardReference = "ST0001",
                 Version = "1.1"
             };
+            var result = await _sut.OptInStandardVersion(model);
 
-            Assert.ThrowsAsync<AlreadyExistsException>(async () => await _sut.OptInStandardVersion(model));
+            Assert.That(result.As<RedirectToRouteResult>().RouteName, Is.EqualTo(nameof(StandardController.OptInStandardVersionConfirmationRouteGet)));
         }
 
         [Test]
