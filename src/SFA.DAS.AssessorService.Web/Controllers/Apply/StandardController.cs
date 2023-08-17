@@ -10,7 +10,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.QnA;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
@@ -89,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.Search });
             }
-            
+
             return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.Search });
         }
 
@@ -488,6 +487,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("standard/opt-in/{referenceNumber}/{version}", Name = OptInStandardVersionRouteGet)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> OptInStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -516,25 +516,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpPost("standard/opt-in", Name = OptInStandardVersionRoutePost)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> OptInStandardVersion(OptInStandardVersionViewModel model)
         {
-            if (model == null)
-                throw new ArgumentException("Value cannot be null or empty", nameof(model));
-
-            if (string.IsNullOrEmpty(model.StandardReference))
+            if (string.IsNullOrEmpty(model?.StandardReference))
                 throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
-            if (string.IsNullOrEmpty(model.Version))
+            if (string.IsNullOrEmpty(model?.Version))
                 throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
-            var contactId = await GetUserId();
-            var epaOrgId = GetEpaOrgIdFromClaim();
-
-            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
-            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) != null)
+            if (!ModelState.IsValid)
             {
-                throw new AlreadyExistsException($"Unable to opt in to StandardReference {model.StandardReference} organisation {epaOrgId} already assesses this standard version");
+                return RedirectToRoute(OptInStandardVersionRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
             }
+
+            var epaOrgId = GetEpaOrgIdFromClaim();
+            var contactId = await GetUserId();
 
             await _orgApiClient.OrganisationStandardVersionOptIn(
                 epaOrgId,
@@ -606,13 +603,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
         {
-            if (model == null)
-                throw new ArgumentException("Value cannot be null or empty", nameof(model));
-
-            if (string.IsNullOrEmpty(model.StandardReference))
+            if (string.IsNullOrEmpty(model?.StandardReference))
                 throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
-            if (string.IsNullOrEmpty(model.Version))
+            if (string.IsNullOrEmpty(model?.Version))
                 throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
             if (!ModelState.IsValid)
@@ -622,13 +616,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
-
-            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
-
-            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) == null)
-            {
-                throw new NotFoundException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");
-            }
 
             await _orgApiClient.OrganisationStandardVersionOptOut(
                 epaOrgId,
