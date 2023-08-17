@@ -208,6 +208,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public IActionResult CreateAnAccount()
         {
+            if (_config.UseGovSignIn)
+            {
+                return RedirectToAction("UpdateAnAccount");
+            }
             var vm = new CreateAccountViewModel();
             return View(vm);
         }
@@ -215,7 +219,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAnAccount(CreateAccountViewModel vm)
         {
-
+            if (_config.UseGovSignIn)
+            {
+                RedirectToAction("Error", "Home");
+            }
+            
             _createAccountValidator.Validate(vm);
 
             if (!ModelState.IsValid)
