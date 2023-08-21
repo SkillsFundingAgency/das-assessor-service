@@ -12,6 +12,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 
         public List<StandardVersion> ApprovedVersions { get; set; }
 
+        public string BackRouteName { get; set; }
+
         public string ContactToOptOutText => "Contact the support team to opt out";
 
         public string GetStatusText(StandardVersion standardVersion)

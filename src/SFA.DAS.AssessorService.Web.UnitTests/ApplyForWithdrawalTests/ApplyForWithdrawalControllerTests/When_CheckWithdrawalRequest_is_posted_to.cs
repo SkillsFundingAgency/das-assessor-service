@@ -1,6 +1,7 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
@@ -11,6 +12,7 @@ using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
+using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,17 +45,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             var model = new CheckWithdrawalRequestViewModel()
             {
+                IfateReferenceNumber = "ST0001",
                 Continue = "yes"
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", null, model) as RedirectToActionResult;
+            var result = await _sut.CheckWithdrawalRequest(model) as RedirectToRouteResult;
 
             // Assert
             using (new AssertionScope())
             {
-                result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-                result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+                result.Should().NotBeNull();
+                result.RouteName.Should().Be(ApplicationController.SequenceRouteGet);
                 result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
 
                 _mockApplicationApiClient.Verify(m => m.UpdateStandardData(applicationId, It.IsAny<int>(), "ST0001", It.IsAny<string>(),
@@ -72,17 +75,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             var model = new CheckWithdrawalRequestViewModel()
             {
+                IfateReferenceNumber = null,
                 Continue = "yes"
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest(null, null, model) as RedirectToActionResult;
+            var result = await _sut.CheckWithdrawalRequest(model) as RedirectToRouteResult;
 
             // Assert
             using (new AssertionScope())
             {
-                result.ActionName.Should().Be(nameof(ApplicationController.Sequence));
-                result.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+                result.Should().NotBeNull();
+                result.RouteName.Should().Be(ApplicationController.SequenceRouteGet);
                 result.RouteValues.GetValueOrDefault("Id").Should().Be(applicationId);
             }
         }
@@ -101,24 +105,29 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             var model = new CheckWithdrawalRequestViewModel()
             {
+                IfateReferenceNumber = "ST0001",
                 Continue = "No"
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", null, model) as RedirectToActionResult;
+            var result = await _sut.CheckWithdrawalRequest(model) as RedirectToRouteResult;
 
             // Assert
             using (new AssertionScope())
             {
-                result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.WithdrawalApplications));
-                result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+                result.Should().NotBeNull();
+                result.RouteName.Should().Be(ApplyForWithdrawalController.WithdrawalApplicationsRouteGet);
             }
         }
 
         [Test]
-        public async Task And_Nothing_Is_Selected_Then_Error_Is_Returned()
+        public async Task And_Model_IsInvalid_Then_RedirectToCheckWithdrawalRequest()
         {
             // Arrange
+            var modelState = new ModelStateDictionary();
+            modelState.AddModelError(nameof(CheckWithdrawalRequestViewModel.Continue), "Error");
+            _sut.ViewData.ModelState.Merge(modelState);
+
             _mockStandardVersionApiClient.Setup(m => m.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), "ST0001"))
                    .ReturnsAsync(new List<StandardVersion>()
                    {
@@ -129,17 +138,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
 
             var model = new CheckWithdrawalRequestViewModel()
             {
+                IfateReferenceNumber = "ST0001",
                 Continue = null
             };
 
             // Act
-            var result = await _sut.CheckWithdrawalRequest("ST0001", null, model) as RedirectToActionResult;
+            var result = await _sut.CheckWithdrawalRequest(model) as RedirectToRouteResult;
 
             // Assert
             using (new AssertionScope())
             {
-                _sut.ModelState.IsValid.Should().BeFalse();
-                _sut.ModelState["Continue"].Errors.Should().Contain(x => x.ErrorMessage == "Select Yes or No");
+                result.Should().NotBeNull();
+                result.RouteName.Should().Be(ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet);
+                result.RouteValues.Should().Contain(new KeyValuePair<string, object>("ifateReferenceNumber", model.IfateReferenceNumber));
             }
         }
     }

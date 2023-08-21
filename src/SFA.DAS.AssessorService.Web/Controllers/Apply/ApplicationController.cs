@@ -38,8 +38,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
-        #region routes
+        #region Routes
         public const string StandardApplicationsRouteGet = nameof(StandardApplicationsRouteGet);
+        public const string SequenceRouteGet = nameof(SequenceRouteGet);
         #endregion
 
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
@@ -224,7 +225,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
+        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}", Name = SequenceRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Sequence(Guid Id, int sequenceNo)
         {
@@ -808,10 +809,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName,
-                Versions = application?.ApplyData?.Apply?.Versions
+                Versions = application?.ApplyData?.Apply?.Versions,
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -822,9 +821,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 

@@ -1,16 +1,18 @@
-@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.CheckWithdrawalRequestViewModel;
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.Controllers
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.CheckWithdrawalRequestViewModel
 @{
     ViewData["Title"] = "Check withdrawal request";
     Layout = "_DashboardLayout";
 }
 
-@if (Model.BackAction == "ChooseStandardForWithdrawal")
+@if (string.IsNullOrWhiteSpace(@Model.IfateReferenceNumber))
 {
-    <a asp-action="@Model.BackAction" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+    <a asp-route="@ApplyForWithdrawalController.TypeofWithdrawalRouteGet" class="govuk-back-link">Back</a>
 }
 else
 {
-    <a asp-action="@Model.BackAction" asp-controller="ApplyForWithdrawal" asp-route-iFateReferenceNumber="@Model.IFateReferenceNumber" class="govuk-back-link">Back</a>
+    <a asp-route="@ApplyForWithdrawalController.ChooseStandardForWithdrawalRouteGet" asp-route-iFateReferenceNumber="@Model.IfateReferenceNumber" class="govuk-back-link">Back</a>
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -31,7 +33,7 @@ else
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Check withdrawal request</h1>
 
-            @if (Model.OrganisationName != null)
+            @if (string.IsNullOrWhiteSpace(@Model.IfateReferenceNumber))
             {
                 <p class="govuk-body">
                     You are about to start a withdrawal request for @Model.OrganisationName
@@ -40,11 +42,14 @@ else
             else
             {
                 <p class="govuk-body">
-                    You are about to start a withdrawal request for @Model.StandardName (Level @Model.Level), @Model.IFateReferenceNumber
+                    You are about to start a withdrawal request for @Model.StandardName (@Model.IfateReferenceNumber). If you continue with this request you'll be withdrawing from all versions of this standard.
+                </p>
+                <p class="govuk-body">
+                    If you do not want to withdraw from all the versions of this standard, go back to the <a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@Model.IfateReferenceNumber" asp-route-backRouteName="@ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet" class="govuk-link">standard details</a> page.
                 </p>
             }
 
-            <form asp-action="CheckWithdrawalRequest" asp-controller="ApplyForWithdrawal" asp-route-backAction="@Model.BackAction" method="post">
+            <form asp-route="@ApplyForWithdrawalController.CheckWithdrawalRequestRoutePost" method="post">
                 <div class="govuk-form-group" sfa-validation-for="Continue" sfa-validationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <sfa-validationerror-detail sfa-validation-for="Continue" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
@@ -69,7 +74,7 @@ else
                     </fieldset>
                 </div>
                 <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
-                    Continue
+                    Confirm and continue
                 </button>
             </form>
         </div>

@@ -30,6 +30,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IStandardVersionClient _standardVersionApiClient;
         private readonly IWebConfiguration _config;
 
+        #region Routes
+        public const string WithdrawalApplicationsRouteGet = nameof(WithdrawalApplicationsRouteGet);
+        public const string TypeofWithdrawalRouteGet = nameof(TypeofWithdrawalRouteGet);
+        public const string TypeofWithdrawalRoutePost = nameof(TypeofWithdrawalRoutePost);
+        public const string ChooseStandardForWithdrawalRouteGet = nameof(ChooseStandardForWithdrawalRouteGet);
+        public const string CheckWithdrawalRequestRouteGet = nameof(CheckWithdrawalRequestRouteGet);
+        public const string CheckWithdrawalRequestRoutePost = nameof(CheckWithdrawalRequestRoutePost);
+        #endregion
+
         public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, 
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, 
             IStandardsApiClient standardsApiClient, IStandardVersionClient standardVersionApiClient, IWebConfiguration config)
@@ -52,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(applications?.Count() == 0);
         }
 
-        [HttpGet("/your-withdrawal-notifications")]
+        [HttpGet("withdrawal/requests", Name = WithdrawalApplicationsRouteGet)]
         public async Task<IActionResult> WithdrawalApplications()
         {
             var userId = await GetUserId();
@@ -60,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(applications);
         }
 
-        [HttpGet]
+        [HttpGet("withdrawal/type", Name = TypeofWithdrawalRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal()
@@ -68,35 +77,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("withdrawal/type", Name = TypeofWithdrawalRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal(TypeOfWithdrawalViewModel viewModel)
         {
-            if (string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
+            if(!ModelState.IsValid)
             {
-                ModelState.AddModelError(nameof(viewModel.TypeOfWithdrawal), "Select standard or register");
+                return RedirectToRoute(TypeofWithdrawalRouteGet);
             }
             
-            if (ModelState.IsValid)
+            if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
             {
-                if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
-                {
-                    return RedirectToAction(
-                       nameof(CheckWithdrawalRequest),
-                       nameof(ApplyForWithdrawalController).RemoveController(),
-                       new { backAction = nameof(TypeOfWithdrawal) });
-                }
-                else if (viewModel.TypeOfWithdrawal == ApplicationTypes.StandardWithdrawal)
-                {
-                    return RedirectToAction(nameof(ChooseStandardForWithdrawal), nameof(ApplyForWithdrawalController).RemoveController());
-                }
+                return RedirectToRoute(CheckWithdrawalRequestRouteGet, new { backRouteName = TypeofWithdrawalRouteGet });
+            }
+            else if (viewModel.TypeOfWithdrawal == ApplicationTypes.StandardWithdrawal)
+            {
+                return RedirectToRoute(ChooseStandardForWithdrawalRouteGet);
             }
 
-            return RedirectToAction(nameof(TypeOfWithdrawal), nameof(ApplyForWithdrawalController).RemoveController());
+            return RedirectToRoute(DashboardController.DashboardIndexRouteGet);
         }
 
-        [HttpGet]
+        [HttpGet("withdrawal/choose-standard", Name = ChooseStandardForWithdrawalRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ChooseStandardForWithdrawal(int? pageIndex)
@@ -104,19 +107,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetEpaOrganisationById(contact.OrganisationId?.ToString());
 
-            var modelStateSelectedStandardForWithdrawal =
-                int.TryParse(
-                    ModelState[nameof(ChooseStandardForWithdrawalViewModel.SelectedStandardForWithdrawal)]?.AttemptedValue,
-                    out int result)
-                ? result
-                : (int?)null;
-
             var applications = await GetWithdrawalApplications(contact.Id);
             var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 10);
 
             var viewModel = new ChooseStandardForWithdrawalViewModel()
             {
-                SelectedStandardForWithdrawal = ModelState.IsValid ? null : modelStateSelectedStandardForWithdrawal,
                 Standards = standards.Convert(x => new RegisteredStandardsViewModel()
                 {
                     StandardName = x.StandardName,
@@ -137,88 +132,73 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(viewModel);
         }
 
-        [HttpGet("CheckWithdrawalRequest/{iFateReferenceNumber?}", Name = "CheckWithdrawalRequest")]
+        [HttpGet("withdrawal/check/{ifateReferenceNumber?}", Name = CheckWithdrawalRequestRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, [FromQuery] string backAction)
+        public async Task<IActionResult> CheckWithdrawalRequest(string ifateReferenceNumber)
         {
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
-            if (string.IsNullOrWhiteSpace(iFateReferenceNumber))
+            if (string.IsNullOrWhiteSpace(ifateReferenceNumber))
             {
                 return View(new CheckWithdrawalRequestViewModel()
                 {
-                    OrganisationName = organisation.EndPointAssessorName,
-                    BackAction = backAction
+                    OrganisationName = organisation.EndPointAssessorName
                 });
             }
             else
             {
-                var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
-                var standard = versions.First();
+                var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, ifateReferenceNumber);
+                var standard = standardVersions.First();
 
                 return View(new CheckWithdrawalRequestViewModel()
                 {
-                    IFateReferenceNumber = iFateReferenceNumber,
+                    IfateReferenceNumber = ifateReferenceNumber,
                     Level = standard.Level,
-                    StandardName = standard.Title,
-                    BackAction = backAction
+                    StandardName = standard.Title
                 });
             }
         }
 
-        [HttpPost("CheckWithdrawalRequest/{iFateReferenceNumber?}")]
+        [HttpPost("withdrawal/check/{iFateReferenceNumber?}", Name = CheckWithdrawalRequestRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
-        public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, [FromQuery] string backAction, CheckWithdrawalRequestViewModel model)
+        public async Task<IActionResult> CheckWithdrawalRequest(CheckWithdrawalRequestViewModel model)
         {
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-            var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);
-            var standard = versions.FirstOrDefault();
-
-            if (string.IsNullOrWhiteSpace(model.Continue))
-                ModelState.AddModelError(nameof(model.Continue), "Select Yes or No");
+            var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, model.IfateReferenceNumber);
+            var standard = standardVersions.FirstOrDefault();
 
             if (!ModelState.IsValid)
             {
-                model.IFateReferenceNumber = iFateReferenceNumber;
-                model.Level = standard?.Level ?? default;
-                model.StandardName = standard?.Title;
-                model.BackAction = backAction;
-                return View(model);
+                return RedirectToRoute(CheckWithdrawalRequestRouteGet, new { ifateReferenceNumber = model.IfateReferenceNumber });
             }
 
             if (model.Continue.Equals("no", StringComparison.InvariantCultureIgnoreCase))
-                return RedirectToAction(
-                        nameof(WithdrawalApplications),
-                        nameof(ApplyForWithdrawalController).RemoveController());
+                return RedirectToRoute(WithdrawalApplicationsRouteGet);
 
-            if (string.IsNullOrWhiteSpace(iFateReferenceNumber))
+            if (string.IsNullOrWhiteSpace(model.IfateReferenceNumber))
             {
                 var id = await CreateOrganisationWithdrawalApplication(contact, organisation);
 
-                return RedirectToAction(
-                    nameof(ApplicationController.Sequence),
-                    nameof(ApplicationController).RemoveController(),
+                return RedirectToRoute(ApplicationController.SequenceRouteGet,
                     new { Id = id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
             else
             {
-                var id = await CreateWithdrawalApplication(contact, organisation,
+                var id = await CreateStandardWithdrawalApplication(contact, organisation,
                             standard.LarsCode,
-                            iFateReferenceNumber,
+                            model.IfateReferenceNumber,
                             standard.Title);
 
-                return RedirectToAction(
-                        nameof(ApplicationController.Sequence),
-                        nameof(ApplicationController).RemoveController(),
+                return RedirectToRoute(ApplicationController.SequenceRouteGet,
                         new { Id = id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
         }
 
-        private async Task<Guid> CreateWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation, int larsCode, string iFateReferenceNumber, string standardTitle)
+        private async Task<Guid> CreateStandardWithdrawalApplication(ContactResponse contact, OrganisationResponse organisation, int larsCode, string iFateReferenceNumber, string standardTitle)
         {
             var createApplicationRequest = await _applicationService.BuildStandardWithdrawalRequest(
                    contact,
