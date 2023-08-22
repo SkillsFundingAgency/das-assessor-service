@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
 
 namespace SFA.DAS.AssessorService.Web.Validators.Standard
@@ -8,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
         public TypeOfWithdrawalViewModelValidator()
         {
             RuleFor(vm => vm.TypeOfWithdrawal)
-                .NotEmpty()
+                .Must(value => !string.IsNullOrEmpty(value) && (value == ApplicationTypes.StandardWithdrawal || value == ApplicationTypes.OrganisationWithdrawal))
                 .WithMessage("Select standard or register");
         }
     }

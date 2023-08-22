@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
         public CheckWithdrawalRequestViewModelValidator()
         {
             RuleFor(vm => vm.Continue)
-                .NotEmpty()
+                .Must(value => !string.IsNullOrEmpty(value) && (value.ToLower() == "yes" || value.ToLower() == "no"))
                 .WithMessage("Select Yes or No");
         }
     }
