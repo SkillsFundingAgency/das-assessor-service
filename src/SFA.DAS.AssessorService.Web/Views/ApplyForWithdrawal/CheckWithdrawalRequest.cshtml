@@ -45,7 +45,7 @@ else
                     You are about to start a withdrawal request for @Model.StandardName (@Model.IfateReferenceNumber). If you continue with this request you'll be withdrawing from all versions of this standard.
                 </p>
                 <p class="govuk-body">
-                    If you do not want to withdraw from all the versions of this standard, go back to the <a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@Model.IfateReferenceNumber" asp-route-backRouteName="@ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet" class="govuk-link">standard details</a> page.
+                    If you do not want to withdraw from all the versions of this standard, go to <a asp-route="@StandardController.StandardDetailsRouteGet" asp-route-referenceNumber="@Model.IfateReferenceNumber" asp-route-backRouteName="@ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet" class="govuk-link">standard details</a>.
                 </p>
             }
 
