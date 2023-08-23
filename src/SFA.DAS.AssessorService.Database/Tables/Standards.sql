@@ -6,6 +6,7 @@
 	[Title] VARCHAR(1000) NOT NULL,
 	[Version] VARCHAR(20) NULL,
 	[Level] INT NOT NULL,
+	[CoronationEmblem] BIT NOT NULL DEFAULT 0,
 	[Status] VARCHAR(100) NOT NULL,
 	[TypicalDuration] INT NOT NULL,
 	[MaxFunding] INT NOT NULL,

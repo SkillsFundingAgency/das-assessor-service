@@ -613,6 +613,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("Title");
             dataTable.Columns.Add("Version");
             dataTable.Columns.Add("Level");
+            dataTable.Columns.Add("CoronationEmblem");
             dataTable.Columns.Add("Status");
             dataTable.Columns.Add("TypicalDuration");
             dataTable.Columns.Add("MaxFunding");
@@ -640,7 +641,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
 
             foreach (var standard in standards)
             {
-                dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level,
+                dataTable.Rows.Add(standard.StandardUId, standard.IfateReferenceNumber, standard.LarsCode, standard.Title, standard.Version, standard.Level, standard.CoronationEmblem,
                     standard.Status, standard.TypicalDuration, standard.MaxFunding, standard.IsActive, standard.LastDateStarts, standard.EffectiveFrom, standard.EffectiveTo,
                     standard.VersionEarliestStartDate, standard.VersionLatestStartDate, standard.VersionLatestEndDate, standard.VersionApprovedForDelivery,
                     standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, 
