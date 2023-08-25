@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    internal class CertificateDataCleanser
+    internal class CertificateDataSendToUpdater
     {
         internal static CertificateData HandleSendToUpdate(Certificate currentCertificate, CertificateData currentData, CertificateData updatedData)
         {

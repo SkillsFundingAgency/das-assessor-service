@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.StandardLevel = SelectedStandardVersion.Level;
             certData.StandardPublicationDate = SelectedStandardVersion.EffectiveFrom;
             certData.Version = SelectedStandardVersion.Version;
+            certData.CoronationEmblem = SelectedStandardVersion.CoronationEmblem;
 
             if (SelectedStandardOptions != null && SelectedStandardOptions.OnlyOneOption())
             {

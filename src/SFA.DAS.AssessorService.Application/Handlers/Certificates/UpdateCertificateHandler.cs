@@ -18,12 +18,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class UpdateCertificateHandler : IRequestHandler<UpdateCertificateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
+        private readonly IStandardRepository _standardRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<UpdateCertificateHandler> _logger;
 
-        public UpdateCertificateHandler(ICertificateRepository certificateRepository, IMediator mediator, ILogger<UpdateCertificateHandler> logger)
+        public UpdateCertificateHandler(ICertificateRepository certificateRepository, IStandardRepository standardRepository, IMediator mediator, ILogger<UpdateCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
+            _standardRepository = standardRepository;
             _mediator = mediator;
             _logger = logger;
         }
@@ -54,7 +56,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Updated with reference of {request.Certificate.CertificateReference}");
             }
 
-            updatedData = CertificateDataCleanser.HandleSendToUpdate(currentCertificate, currentData, updatedData);
+            updatedData = CertificateDataSendToUpdater.HandleSendToUpdate(currentCertificate, currentData, updatedData);
+
+            updatedData.CoronationEmblem = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(updatedData.StandardReference, updatedData.Version);
+            updatedData.StandardName = await _standardRepository.GetTitleForStandardReferenceAndVersion(updatedData.StandardReference, updatedData.Version);
 
             request.Certificate.CertificateData = JsonConvert.SerializeObject(updatedData);
 

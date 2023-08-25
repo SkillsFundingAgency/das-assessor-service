@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
             var currentCertificateData = GetCertificateDataContainingAddress(CertificateSendTo.None);
             var updatedCertificateData = GetCertificateDataContainingAddress(CertificateSendTo.Employer);
 
-            var result = CertificateDataCleanser.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
+            var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
             Assert.Multiple(() =>
             {
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
             var currentCertificateData = GetCertificateDataContainingAddress(currentSendTo);
             var updatedCertificateData = GetCertificateDataContainingAddress(updatedSendTo);
 
-            var result = CertificateDataCleanser.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
+            var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
             Assert.Multiple(() =>
             {
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
             var currentCertificateData = GetCertificateDataContainingAddress(currentSendTo);
             var updatedCertificateData = GetCertificateDataContainingAddress(updatedSendTo);
 
-            var result = CertificateDataCleanser.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
+            var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
             Assert.Multiple(() =>
             {
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
             var currentCertificateData = GetCertificateDataContainingAddress(currentSendTo);
             var updatedCertificateData = GetCertificateDataContainingAddress(CertificateSendTo.Apprentice);
 
-            var result = CertificateDataCleanser.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
+            var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
             Assert.That(result.ContactName, Is.EqualTo(result.FullName.ToUpper()));
         }
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
             var currentData = new CertificateData() { Version = "1.0", CourseOption = "SomeOption" };
             var newData = new CertificateData() { Version = "1.1", CourseOption = "SomeOption" };
 
-            CertificateDataCleanser.HandleSendToUpdate(new Certificate(), currentData, newData);
+            CertificateDataSendToUpdater.HandleSendToUpdate(new Certificate(), currentData, newData);
 
             Assert.That(newData.CourseOption, Is.Null);
         }
