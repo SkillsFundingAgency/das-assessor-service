@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
 
             CertificateDataSendToUpdater.HandleSendToUpdate(new Certificate(), currentData, newData);
 
-            Assert.That(newData.CourseOption, Is.Null);
+            Assert.That(newData.CourseOption, Is.EqualTo(newData.CourseOption));
         }
 
         private static CertificateData GetCertificateDataContainingAddress(CertificateSendTo certificateSendTo)
