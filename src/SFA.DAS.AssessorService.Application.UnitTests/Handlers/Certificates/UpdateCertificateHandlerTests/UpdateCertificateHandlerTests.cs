@@ -107,6 +107,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 _certificateRepository = new Mock<ICertificateRepository>();
                 _mediator = new Mock<IMediator>();
+                _standardRepository = new Mock<IStandardRepository>();
                 _sut = new UpdateCertificateHandler(_certificateRepository.Object, _standardRepository.Object, _mediator.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
             }
 

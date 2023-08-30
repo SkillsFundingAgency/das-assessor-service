@@ -58,8 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             updatedData = CertificateDataSendToUpdater.HandleSendToUpdate(currentCertificate, currentData, updatedData);
 
-            updatedData.CoronationEmblem = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(updatedData.StandardReference, updatedData.Version);
-            updatedData.StandardName = await _standardRepository.GetTitleForStandardReferenceAndVersion(updatedData.StandardReference, updatedData.Version);
+            updatedData = await CertificateDataVersionChangeUpdater.UpdateCoronationEmblemAndStandardIfNeeded(currentData, updatedData, _standardRepository);
 
             request.Certificate.CertificateData = JsonConvert.SerializeObject(updatedData);
 

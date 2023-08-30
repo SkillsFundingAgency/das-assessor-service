@@ -33,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="connectionStrings.local.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="connectionStrings.Local.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
