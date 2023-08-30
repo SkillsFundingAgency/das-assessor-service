@@ -13,7 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     {
         internal static async Task<CertificateData> UpdateCoronationEmblemAndStandardIfNeeded(CertificateData currentData, CertificateData updatedData, IStandardRepository standardRepository)
         {
-            Guard.NotNullOrWhiteSpace(updatedData.StandardReference);
+            Guard.NotNullOrWhiteSpace(updatedData.StandardReference, nameof(updatedData.StandardReference));
+            Guard.NotNullOrWhiteSpace(updatedData.Version, nameof(updatedData.Version));
 
             if (updatedData.Version != currentData.Version) 
             {
