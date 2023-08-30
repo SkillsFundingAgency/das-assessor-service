@@ -16,8 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
 
         public Delivered Delivered { get; set; }
 
-        public bool CoronationEmblem { get; set; }
-
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
         {
