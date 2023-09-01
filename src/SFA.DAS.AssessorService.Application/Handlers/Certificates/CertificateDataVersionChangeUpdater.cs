@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Validation;
@@ -14,7 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         internal static async Task<CertificateData> UpdateCoronationEmblemAndStandardIfNeeded(CertificateData currentData, CertificateData updatedData, IStandardRepository standardRepository)
         {
             Guard.NotNullOrWhiteSpace(updatedData.StandardReference, nameof(updatedData.StandardReference));
-            Guard.NotNullOrWhiteSpace(updatedData.Version, nameof(updatedData.Version));
 
             if (updatedData.Version != currentData.Version) 
             {
