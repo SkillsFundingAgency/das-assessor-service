@@ -153,7 +153,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certData.LearningStartDate = learner.LearnStartDate;
             certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
             certData.ProviderName = provider.Name;
-            certData.CoronationEmblem = await _standardRepository.GetCoronationEmblemByStandardUId(learner.StandardUId);
+            certData.CoronationEmblem = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(learner.StandardReference, learner.Version);
 
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;

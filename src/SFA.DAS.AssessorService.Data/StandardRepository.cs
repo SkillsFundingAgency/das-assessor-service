@@ -675,26 +675,12 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                        FROM [Standards] 
                        WHERE [IFateReferenceNumber] = @standardReference AND Version = @version";
 
-            var results = await _unitOfWork.Connection.QueryAsync<bool>(
+            var result = await _unitOfWork.Connection.QuerySingleAsync<bool>(
                 sql,
                 param: new { standardReference, version },
                 transaction: _unitOfWork.Transaction);
 
-            return results.Single();
-        }
-
-        public async Task<bool> GetCoronationEmblemByStandardUId(string standardUId)
-        {
-            var sql = @"SELECT [CoronationEmblem]
-                       FROM [Standards] 
-                       WHERE [StandardUId] = @standardUId";
-
-            var results = await _unitOfWork.Connection.QueryAsync<bool>(
-                sql,
-                param: new { standardUId },
-                transaction: _unitOfWork.Transaction);
-
-            return results.Single();
+            return result;
         }
 
         public async Task<string> GetTitleForStandardReferenceAndVersion(string standardReference, string version)
