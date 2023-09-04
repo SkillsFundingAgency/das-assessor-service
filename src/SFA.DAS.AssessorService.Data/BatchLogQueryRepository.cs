@@ -152,6 +152,7 @@ namespace SFA.DAS.AssessorService.Data
                         LearnerFamilyName = certificateData.LearnerFamilyName,
                         StandardName = certificateData.StandardName,
                         StandardLevel = certificateData.StandardLevel,
+                        CoronationEmblem = certificateData.CoronationEmblem,
                         ContactName = certificateData.ContactName,
                         ContactOrganisation = certificateData.ContactOrganisation,
                         ContactAddLine1 = certificateData.ContactAddLine1,

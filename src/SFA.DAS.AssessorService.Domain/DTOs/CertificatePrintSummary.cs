@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
         public string LearnerFamilyName { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
+        public bool CoronationEmblem { get; set; }
         public string ContactName { get; set; }
         public string ContactOrganisation { get; set; }
         public string ContactAddLine1 { get; set; }

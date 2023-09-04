@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(dest => dest.ContactAddLine3, opt => opt.MapFrom(source => source.PostalContact.AddressLine3))
                 .ForMember(dest => dest.ContactAddLine4, opt => opt.MapFrom(source => source.PostalContact.City))
                 .ForMember(dest => dest.ContactPostCode, opt => opt.MapFrom(source => source.PostalContact.PostCode))
+                .ForMember(dest => dest.CoronationEmblem, opt => opt.MapFrom(source => source.CoronationEmblem))
                 .ForAllOtherMembers(dest => dest.Ignore());
 
             // Response from Int API
@@ -51,6 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(dest => dest.PostalContact.Department, opt => opt.MapFrom(source => source.Department))
                 .ForPath(dest => dest.PostalContact.Organisation, opt => opt.MapFrom(source => source.ContactOrganisation))
                 .ForPath(dest => dest.PostalContact.PostCode, opt => opt.MapFrom(source => source.ContactPostCode))
+                .ForPath(dest => dest.CoronationEmblem, opt => opt.MapFrom(source => source.CoronationEmblem))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
