@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public IConfiguration Configuration { get; }
         public TestWebConfiguration WebConfiguration;
 
-        public void SetupDatabase()
+        public async Task SetupDatabase()
         {
             DropDatabase();
 
@@ -53,13 +54,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 {
                     Connection = connection,
                     CommandText =
-                        $@"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
+                        @"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); " + 
+                            " ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
                 };
                 var reader = comm.ExecuteReader();
                 reader.Close();
             }
 
-            LookupDataHelper.AddLookupData();
+            await LookupDataHelper.AddLookupData();
         }
 
         public void Execute(string sql)
@@ -97,6 +99,22 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             }
         }
 
+        public async Task<T> QueryFirstOrDefaultAsync<T, M>(string sql, M model) where T : TestModel
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                return await connection.QueryFirstOrDefaultAsync<T>(sql, param: model);
+            }
+        }
+
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql)
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                return await connection.QueryFirstOrDefaultAsync<T>(sql);
+            }
+        }
+
         public object ExecuteScalar(string sql)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
@@ -110,14 +128,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             }
         }
 
-        public void Execute(string sql, TestModel model)
+        public void Execute<T>(string sql, T model)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 connection.Execute(sql, model);
-                connection.Close();
             }
         }
 
