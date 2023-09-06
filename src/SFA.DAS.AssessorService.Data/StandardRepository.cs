@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -377,6 +378,23 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                 commandType: CommandType.StoredProcedure);
 
             return @params.Get<int>("Count");
+        }
+
+        public async Task<int> LoadOfqualStandards(DateTime dateTimeUtc)
+        {
+            var @params = new DynamicParameters();
+            @params.Add("dateTimeUtc", dateTimeUtc);
+            @params.Add("inserted", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                "Load_Ofqual_Standards",
+                param: @params,
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            int result = @params.Get<int>("inserted");
+
+            return result;
         }
 
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(

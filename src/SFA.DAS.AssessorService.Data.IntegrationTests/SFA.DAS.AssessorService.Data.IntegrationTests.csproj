@@ -42,11 +42,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="LookupData\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Include="..\SFA.DAS.AssessorService.Database\PostDeploymentScripts\LookupData\DeliveryAreaInsertOrUpdate.sql" Link="LookupData\DeliveryAreaInsertOrUpdate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\SFA.DAS.AssessorService.Database\PostDeploymentScripts\LookupData\EmailTemplatesInsertOrUpdate.sql" Link="LookupData\EmailTemplatesInsertOrUpdate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="..\SFA.DAS.AssessorService.Database\PostDeploymentScripts\LookupData\OrganisationTypeInsertOrUpdate.sql" Link="LookupData\OrganisationTypeInsertOrUpdate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\SFA.DAS.AssessorService.Database\PostDeploymentScripts\LookupData\PostCodeRegionInsertOrUpdate.sql" Link="LookupData\PostCodeRegionInsertOrUpdate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\SFA.DAS.AssessorService.Database\PostDeploymentScripts\LookupData\PrivilegesInsertOrUpdate.sql" Link="LookupData\PrivilegesInsertOrUpdate.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\SFA.DAS.AssessorService.Database\PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" Link="LookupData\StaffReportsInsertOrUpdate.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
