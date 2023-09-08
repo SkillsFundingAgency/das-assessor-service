@@ -4,7 +4,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class TokenService 
+    public class TokenService
         : IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
     {
         private readonly IClientApiAuthentication _configuration;
