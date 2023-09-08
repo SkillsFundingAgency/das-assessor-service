@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
         }
 
         /// <summary>
-        /// Gets the lastest withdrawal date for the given standard by the given organisation.
+        /// Gets the latest withdrawal date for the given standard by the given organisation.
         /// </summary>
         /// <remarks>
         /// This does not include where the standard is withdrawn because the organisation has withdrawn

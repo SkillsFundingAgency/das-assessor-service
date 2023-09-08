@@ -232,8 +232,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("standard/standard-details/{referenceNumber}", Name = StandardDetailsRouteGet)]
         public async Task<IActionResult> StandardDetails(string referenceNumber, [FromQuery] string backRouteName)
         {
-            if (string.IsNullOrEmpty(referenceNumber))
-                throw new ArgumentException("The value must not be null or empty", nameof(referenceNumber));
+            if (string.IsNullOrWhiteSpace(referenceNumber))
+                throw new ArgumentException("The value must not be null empty or whitespace", nameof(referenceNumber));
 
             var allVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);

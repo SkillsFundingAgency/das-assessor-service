@@ -168,8 +168,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-            var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, model.IfateReferenceNumber);
-            var standard = standardVersions.FirstOrDefault();
 
             if (!ModelState.IsValid)
             {
@@ -188,6 +186,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             else
             {
+                var standardVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, model.IfateReferenceNumber);
+                var standard = standardVersions.First();
+
                 var id = await CreateStandardWithdrawalApplication(contact, organisation,
                             standard.LarsCode,
                             model.IfateReferenceNumber,

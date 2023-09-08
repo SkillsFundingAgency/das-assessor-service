@@ -9,7 +9,9 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
         public TypeOfWithdrawalViewModelValidator()
         {
             RuleFor(vm => vm.TypeOfWithdrawal)
-                .Must(value => !string.IsNullOrEmpty(value) && (value == ApplicationTypes.StandardWithdrawal || value == ApplicationTypes.OrganisationWithdrawal))
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .Must(t => t == ApplicationTypes.StandardWithdrawal || t == ApplicationTypes.OrganisationWithdrawal)
                 .WithMessage("Select standard or register");
         }
     }

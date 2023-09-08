@@ -37,7 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
                 {
                     throw new BadRequestException(message);
                 }
-                throw new BadRequestException();
+                
+                throw new ValidationException(message);
             }
 
             try

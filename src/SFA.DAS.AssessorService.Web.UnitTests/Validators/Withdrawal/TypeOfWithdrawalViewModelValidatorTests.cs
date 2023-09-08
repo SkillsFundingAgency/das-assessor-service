@@ -18,19 +18,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Withdrawal
 
         [TestCase("")]
         [TestCase(null)]
-        public void Validate_ContinueIsNotChoosen_ShouldHaveError(string selection)
-        {
-            var viewModel = new TypeOfWithdrawalViewModel { TypeOfWithdrawal = selection };
-
-            var result = _validator.TestValidate(viewModel);
-
-            result.ShouldHaveValidationErrorFor(vm => vm.TypeOfWithdrawal);
-        }
-
         [TestCase("Some")]
         [TestCase("Other")]
         [TestCase("Things")]
-        public void Validate_ContinueIsInvalid_ShouldHaveError(string selection)
+        public void Validate_ContinueIsNotChoosenOrIsInvalid_ShouldHaveError(string selection)
         {
             var viewModel = new TypeOfWithdrawalViewModel { TypeOfWithdrawal = selection };
 

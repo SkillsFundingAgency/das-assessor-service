@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{organisationId}/application/latest-withdrawal-date/{standardCode}"))
             {
-                return await RequestAndDeserialiseAsync<DateTime?>(request, $"Could not retrieve lastest withdrawal date of standard {standardCode} for Organisation {organisationId}");
+                return await RequestAndDeserialiseAsync<DateTime?>(request, $"Could not retrieve latest withdrawal date of standard {standardCode} for Organisation {organisationId}");
             }
 
         }

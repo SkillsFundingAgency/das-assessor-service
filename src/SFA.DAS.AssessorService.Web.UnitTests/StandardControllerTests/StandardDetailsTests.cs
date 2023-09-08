@@ -84,7 +84,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public void StandardDetails_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyReference_(string referenceNumber)
+        [TestCase(" ")]
+        public void StandardDetails_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyOrWhitespaceReference_(string referenceNumber)
         {
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.StandardDetails(referenceNumber, string.Empty));
