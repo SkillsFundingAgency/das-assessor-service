@@ -40,6 +40,8 @@
         public const string OrganisationStandardIdIsRequired = "OrganisationStandardIdIsRequired";
         public const string UpdatedByIsMissing = "Updated By Is Missing";
         public const string ApplicationIdIsMissing = "Application Id is Missing";
+        public const string RecognitionNumberAlreadyInUse = "The Ofqual Recognition Number you have entered is already assigned to another organisation";
+        public const string RecognitionNumberNotFound = "The Ofqual Recognition Number you have entered does not match Ofqual records";
 
         public const string OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom";
         

@@ -8,53 +8,40 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
     [TestFixture]
     public class AddStandardViewModelValidatorTests
     {
-        private AddStandardViewModelValidator _validator;
+        private AddStandardSearchViewModelValidator _validator;
 
         [SetUp]
         public void SetUp()
         {
-            _validator = new AddStandardViewModelValidator();
+            _validator = new AddStandardSearchViewModelValidator();
         }
 
-        [Test]
-        public void Validate_StandardToFindIsEmpty_ShouldHaveError()
+        [TestCase("")]
+        [TestCase("a")]
+        [TestCase("ab")]
+        [TestCase(" ab")]
+        [TestCase("ab ")]
+        [TestCase("   ")]
+        [TestCase("    ")]
+        public void Validate_Search_ShouldHaveError(string search)
         {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = string.Empty };
+            var viewModel = new AddStandardSearchViewModel { Search = search };
 
             var result = _validator.TestValidate(viewModel);
 
-            result.ShouldHaveValidationErrorFor(vm => vm.StandardToFind);
+            result.ShouldHaveValidationErrorFor(vm => vm.Search);
         }
 
-        [Test]
-        public void Validate_StandardToFindIsLessThan3Characters_ShouldHaveError()
+        [TestCase("abcd")]
+        [TestCase("abc ")]
+        [TestCase(" abc")]
+        public void Validate_Search_ShouldNotHaveError(string search)
         {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = "ab" };
+            var viewModel = new AddStandardSearchViewModel { Search = search };
 
             var result = _validator.TestValidate(viewModel);
 
-            result.ShouldHaveValidationErrorFor(vm => vm.StandardToFind);
-        }
-
-        [Test]
-        public void Validate_StandardToFindIs3Characters_ShouldNotHaveError()
-        {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = "abc" };
-
-            var result = _validator.TestValidate(viewModel);
-
-            result.ShouldNotHaveValidationErrorFor(vm => vm.StandardToFind);
-        }
-
-        [Test]
-        public void Validate_StandardToFindIsMoreThan3Characters_ShouldNotHaveError()
-        {
-            var viewModel = new AddStandardSearchViewModel { StandardToFind = "abcd" };
-
-            var result = _validator.TestValidate(viewModel);
-
-            result.ShouldNotHaveValidationErrorFor(vm => vm.StandardToFind);
+            result.ShouldNotHaveValidationErrorFor(vm => vm.Search);
         }
     }
-
 }

@@ -1,8 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Validators.Standard;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
 using System.Collections.Generic;

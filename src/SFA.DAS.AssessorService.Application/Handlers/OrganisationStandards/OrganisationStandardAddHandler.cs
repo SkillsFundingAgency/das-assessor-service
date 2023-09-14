@@ -4,7 +4,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
                 OrganisationId = request.OrganisationId,
                 StandardVersions = request.StandardVersions,
                 StandardReference = request.StandardReference,
-                DeliveryAreas = await GetDeliveryAreas(),
+                DeliveryAreas = null,
                 StandardApplicationType = string.Empty,
                 EffectiveTo = null,
                 DateStandardApprovedOnRegister = DateTime.Now.Date,
@@ -58,12 +57,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
             }, cancellationToken);
 
             return result;
-        }
-
-        private async Task<List<int>> GetDeliveryAreas()
-        {
-            var areas = await _mediator.Send(new GetDeliveryAreasRequest());
-            return areas.Select(a => a.Id).ToList();
         }
     }
 }
