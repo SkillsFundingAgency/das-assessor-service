@@ -539,7 +539,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             }
         }
 
-        private class GetAparSummaryTestsFixture : FixtureBase
+        private class GetAparSummaryTestsFixture : FixtureBase<GetAparSummaryTestsFixture>, IDisposable
         {
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
@@ -590,32 +590,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 _results.Should().Contain(o => o.Id == endPointAssessorOrganisationId
                     && o.EarliestEffectiveFromDate == earlistStandardEffectiveFromDate
                     && o.EarliestDateStandardApprovedOnRegister == earliestDateStandardApprovedOnRegister);
-                return this;
-            }
-
-            public GetAparSummaryTestsFixture WithOrganisation(string endPointAssessorName, string endPointAssessorOrganisationId, int ukprn)
-            {
-                AddOrganisation(endPointAssessorName, endPointAssessorOrganisationId, ukprn);
-                return this;
-            }
-
-            public GetAparSummaryTestsFixture WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo)
-            {
-                AddStandard(title, referenceNumber, larsCode, version, effectiveTo);
-                return this;
-            }
-
-            public GetAparSummaryTestsFixture WithOrganisationStandard(int id, string endPointAssessorOrganisationId, int larsCode, string standardReference, 
-                DateTime? effectiveFrom, DateTime? effectiveTo, DateTime? dateStandardApprovedOnRegister)
-            {
-                AddOrganisationStandard(id, endPointAssessorOrganisationId, larsCode, standardReference, effectiveFrom, effectiveTo, dateStandardApprovedOnRegister);
-                return this;
-            }
-
-            public GetAparSummaryTestsFixture WithOrganisationStandardVersion(string endPointAssessorOrganisationId, int larsCode, string standardReference, string version, 
-                DateTime? effectiveFrom, DateTime? effectiveTo)
-            {
-                AddOrganisationStandardVersion(endPointAssessorOrganisationId, larsCode, standardReference, version, effectiveFrom, effectiveTo);
                 return this;
             }
         }
