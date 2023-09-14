@@ -1,0 +1,57 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.Certificate
+@model CertificateGivenNamesViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's first name";
+    Layout = "_DashboardLayout";
+}
+
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+        <a class="govuk-back-link" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                <form class="apprentice-name-form" method="post" asp-controller="CertificateGivenNames" asp-action="GivenNames">
+
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="FamilyName" value="@Model.FamilyName" />
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                                There is a problem
+                            </h2>
+                            <div class="govuk-error-summary__body">
+                                <ul class="govuk-list govuk-error-summary__list">
+                                    <li><a href="#GivenNames" sfa-validation-for="GivenNames"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
+                    <h1 class="govuk-heading-xl">Apprentice's first name</h1>
+                    <p class="govuk-body">You can edit the apprentice's first or given name if the letter case is incorrect. <br />For example you can change 'ben' to 'Ben' so that it begins with a capital letter.</p>
+                    <p class="govuk-body">You cannot change the spelling or add more names. You'll need to contact the training provider to do this.</p>
+                    <p class="govuk-body">Once you've saved the changes, that's how the apprentice's name will appear on their printed certificate.</p>
+
+                    <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                        <label class="govuk-label govuk-label--m" for="InputGivenNames">
+                            What is the apprentice's first name?
+                        </label>
+                        <span class="govuk-visually-hidden">Error:</span>
+                        <span class="govuk-error-message" asp-validation-for="GivenNames"></span>
+                        <input class="govuk-input" id="GivenNames" asp-for="GivenNames" type="text" spellcheck="false" autocomplete="given-name" sfa-validation-for="GivenNames" sfa-validationerror-class="govuk-input--error" />
+                    </div>
+
+                    <button type="submit" class="govuk-button" data-module="govuk-button">
+                        Save and continue
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+

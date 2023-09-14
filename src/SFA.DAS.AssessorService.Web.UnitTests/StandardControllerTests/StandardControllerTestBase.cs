@@ -28,7 +28,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         protected Mock<IContactsApiClient> _mockContactsApiClient;
         protected Mock<IStandardVersionClient> _mockStandardVersionApiClient;
         protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
-        protected Mock<IApplicationService> _mockApplicationService;
         protected Mock<IWebConfiguration> _mockConfig;
 
         protected Guid SignInId = Guid.NewGuid();
@@ -44,7 +43,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockContactsApiClient = new Mock<IContactsApiClient>();
             _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockApplicationService = new Mock<IApplicationService>();
             _mockConfig = new Mock<IWebConfiguration>();
 
             _mockHttpContextAccessor
@@ -129,8 +127,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .Returns("http://feedback-url.com");
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
-                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, 
-                _mockHttpContextAccessor.Object, _mockConfig.Object)
+                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)
             {
                 TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
             };

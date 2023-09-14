@@ -43,8 +43,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _organisationTypeIdBefore = 5;
             _organisationTypeIdAfter = 6;
             _updatedAt = DateTime.Today.Date.AddHours(9);
-            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeIdBefore, Status = "new", Type = "organisation type 1" });
-            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeIdAfter, Status = "new", Type = "organisation type 2" });
             _nameUpdated = "name 2";
             _createdAt = DateTime.Today.Date.AddHours(8);
 

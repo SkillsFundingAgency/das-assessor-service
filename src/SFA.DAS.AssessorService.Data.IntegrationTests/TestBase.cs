@@ -1,14 +1,16 @@
 ﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
     public class TestBase
     {
         [OneTimeSetUp]
-        public void Setup()
+        public async Task Setup()
         {
-            new DatabaseService().SetupDatabase();
+            var databaseService = new DatabaseService();
+            await databaseService.SetupDatabase();
         }
 
         [OneTimeTearDown]

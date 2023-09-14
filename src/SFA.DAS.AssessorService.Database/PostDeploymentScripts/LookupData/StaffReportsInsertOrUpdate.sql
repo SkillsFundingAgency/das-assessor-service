@@ -20,7 +20,6 @@ CREATE TABLE #StaffReports(
 	[ReportType] [nvarchar](20) NULL,
 	[ReportDetails] [nvarchar](max) NULL
 ) 
-GO
 
 INSERT #StaffReports VALUES (N'54b434be-606b-49b2-afef-1f14c85c48b5', N'Provider and grade', N'StaffReports_ByProviderAndGrade', CAST(N'2018-10-24T13:51:17.8500000' AS DateTime2), NULL, NULL, 8, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'440e1959-20f6-44da-9543-32768057c56d', N'Provider', N'StaffReports_ByProvider', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 7, N'ViewOnScreen', NULL)

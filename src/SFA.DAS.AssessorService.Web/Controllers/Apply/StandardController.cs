@@ -1,7 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -15,12 +18,7 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
-using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -30,10 +28,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IStandardVersionClient _standardVersionApiClient;
-        private readonly IApplicationService _applicationService;
         private readonly IWebConfiguration _config;
 
         #region Routes
+        public const string ApplyStandardSearchRouteGet = nameof(ApplyStandardSearchRouteGet);
+        public const string ApplyStandardSearchRoutePost = nameof(ApplyStandardSearchRoutePost);
+        public const string ApplyStandardSearchResultsRouteGet = nameof(ApplyStandardSearchResultsRouteGet);
+        public const string ApplyStandardConfirmOfqualRouteGet = nameof(ApplyStandardConfirmOfqualRouteGet);
+        public const string ApplyStandardConfirmRouteGet = nameof(ApplyStandardConfirmRouteGet);
+        public const string ApplyStandardConfirmRoutePost = nameof(ApplyStandardConfirmRoutePost);
         public const string AddStandardSearchRouteGet = nameof(AddStandardSearchRouteGet);
         public const string AddStandardSearchRoutePost = nameof(AddStandardSearchRoutePost);
         public const string AddStandardSearchResultsRouteGet = nameof(AddStandardSearchResultsRouteGet);
@@ -52,25 +55,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         #endregion
 
         public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
-            IStandardVersionClient standardVersionApiClient, IApplicationService applicationService, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
+            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
         {
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
             _standardVersionApiClient = standardVersionApiClient;
-            _applicationService = applicationService;
             _config = config;
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search?}", Name = AddStandardSearchRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [NonAction]
         public IActionResult AddStandardSearch(string search)
         {
             var standardViewModel = new AddStandardSearchViewModel()
             {
-                StandardToFind = ModelState
-                    .GetAttemptedValueWhenInvalid(nameof(AddStandardSearchViewModel.StandardToFind), search)
+                Search = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(AddStandardSearchViewModel.Search), search)
             };
 
             return View(standardViewModel);
@@ -79,18 +82,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard", Name = AddStandardSearchRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [NonAction]
         public IActionResult AddStandardSearch(AddStandardSearchViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.StandardToFind });
+                return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.Search });
             }
             
-            return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.StandardToFind });
+            return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.Search });
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search}/results", Name = AddStandardSearchResultsRouteGet)]
+        [NonAction]
         public async Task<IActionResult> AddStandardSearchResults(string search)
         {
             if (string.IsNullOrEmpty(search))
@@ -109,7 +114,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 Results = allStandards
                     .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
                     .ToList(),
-                StandardToFind = search
+                Search = search
             };
 
             return View(model);
@@ -118,6 +123,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search}/{referenceNumber}/choose-versions", Name = AddStandardChooseVersionsRouteGet)]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [NonAction]
         public async Task<IActionResult> AddStandardChooseVersions(string search, string referenceNumber)
         {
             if (string.IsNullOrEmpty(search))
@@ -145,6 +151,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard/choose-versions", Name = AddStandardChooseVersionsRoutePost)]
         [ModelStatePersist(ModelStatePersist.Store)]
+        [NonAction]
         public IActionResult AddStandardChooseVersions(AddStandardConfirmViewModel model)
         {
             if (!ModelState.IsValid)
@@ -157,17 +164,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{search}/{referenceNumber}/confirm", Name = AddStandardConfirmRouteGet)]
+        [NonAction]
         public async Task<IActionResult> AddStandardConfirm(string search, string referenceNumber, [FromQuery] List<string> versions)
         {
-            if(string.IsNullOrEmpty(search))
+            if (string.IsNullOrEmpty(search))
                 throw new ArgumentException("Value cannot be null or empty", nameof(search));
 
-            if(string.IsNullOrEmpty(referenceNumber))
+            if (string.IsNullOrEmpty(referenceNumber))
                 throw new ArgumentException("Value cannot be null or empty", nameof(referenceNumber));
 
             if (!(versions?.Any() ?? false))
                 throw new ArgumentException("Value must contain elements", nameof(versions));
-            
+
             var standardVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var model = new AddStandardConfirmViewModel
             {
@@ -184,6 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpPost("standard/add-standard/confirm", Name = AddStandardConfirmRoutePost)]
+        [NonAction]
         public async Task<IActionResult> AddStandardConfirm(AddStandardConfirmViewModel model)
         {
             var epaOrganisation = await _orgApiClient.GetEpaOrganisation(GetEpaOrgIdFromClaim());
@@ -198,11 +207,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             await _orgApiClient.AddOrganisationStandard(request);
 
-            return RedirectToRoute(AddStandardConfirmationRouteGet, new {referenceNumber = model.StandardReference});
+            return RedirectToRoute(AddStandardConfirmationRouteGet, new { referenceNumber = model.StandardReference });
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/add-standard/{referenceNumber}/confirmation", Name = AddStandardConfirmationRouteGet)]
+        [NonAction]
         public async Task<IActionResult> AddStandardConfirmation(string referenceNumber)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -235,110 +245,98 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 SelectedStandard = allVersions.FirstOrDefault(),
                 AllVersions = allVersions.ToList(),
-                ApprovedVersions = approvedVersions.ToList(),
+                ApprovedVersions = approvedVersions.ToList()
             };
 
             return View(model);
         }
 
-        [HttpGet("Standard/{id}")]
-        public IActionResult Index(Guid id)
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/{id}/apply-standard/{search?}", Name = ApplyStandardSearchRouteGet)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult ApplyStandardSearch(Guid id, string search)
         {
-            var standardViewModel = new StandardVersionViewModel { Id = id };
-            return View("~/Views/Application/Standard/FindStandard.cshtml", standardViewModel);
+            if (id == Guid.Empty)
+                throw new ArgumentException($"Value of {nameof(id)} cannot be empty");
+
+            var viewModel = new ApplyStandardSearchViewModel
+            {
+                Id = id,
+                Search = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(ApplyStandardSearchViewModel.Search), search)
+            };
+
+            return View(viewModel);
         }
 
-        [HttpPost("Standard/{id}")]
-        public async Task<IActionResult> Search(StandardVersionViewModel model)
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/{id}/apply-standard", Name = ApplyStandardSearchRoutePost)]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult ApplyStandardSearch(ApplyStandardSearchViewModel model)
         {
-            if (string.IsNullOrEmpty(model.StandardToFind) || model.StandardToFind.Length <= 2)
+            if (model == null)
+                throw new ArgumentException("Value cannot be null or empty", nameof(model));
+
+            if (model.Id == Guid.Empty)
+                throw new ArgumentException($"Value of {nameof(model.Id)} cannot be empty");
+
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(nameof(model.StandardToFind), "Enter a valid search string (more than 2 characters)");
-                TempData["ShowErrors"] = true;
-                return RedirectToAction(nameof(Index), new { model.Id });
+                return RedirectToRoute(ApplyStandardSearchRouteGet, new { id = model.Id, search = model.Search });
             }
 
+            return RedirectToRoute(ApplyStandardSearchResultsRouteGet, new { id = model.Id, search = model.Search });
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/{id}/apply-standard/{search}/results", Name = ApplyStandardSearchResultsRouteGet)]
+        public Task<IActionResult> ApplyStandardSearchResults(Guid id, string search)
+        {
+            if (id == Guid.Empty)
+                throw new ArgumentException($"Value of {nameof(id)} cannot be empty");
+
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException($"Value of {nameof(search)} cannot be null or empty");
+
+            return ApplyStandardSearchResultsInnerAsync(id, search);
+        }
+
+        private async Task<IActionResult> ApplyStandardSearchResultsInnerAsync(Guid id, string search)
+        {
             var standards = await _standardVersionApiClient.GetLatestStandardVersions();
-            model.Results = standards
-                .Where(s => s.Title.Contains(model.StandardToFind, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
+            var results = standards
+                    .Where(s => s.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
-        }
-
-        [HttpGet("standard/view-standard/{standardReference}")]
-        public async Task<IActionResult> ViewStandard(string standardReference)
-        {
-            var contact = await GetUserContact();
-            var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
-
-            var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
-                .Where(p => p.ApplicationStatus != ApplicationStatus.Declined);
-
-            var existingEmptyApplication = existingApplications.FirstOrDefault(x => x.StandardCode == null);
-            if (existingEmptyApplication != null)
-                return RedirectToAction("ConfirmStandard", new { Id = existingEmptyApplication.Id, StandardReference = standardReference });
-            else
+            var viewModel = new ApplyStandardSearchViewModel
             {
-                var createApplicationRequest = await _applicationService.BuildInitialRequest(contact, org, _config.ReferenceFormat);
-                var id = await _applicationApiClient.CreateApplication(createApplicationRequest);
-                return RedirectToAction("ConfirmStandard", new { Id = id, StandardReference = standardReference });
-            }
+                Id = id,
+                Search = search,
+                Results = results
+            };
+
+            return View(viewModel);
         }
 
-        [HttpGet("standard/{id}/confirm-standard/{standardReference}")]
-        [HttpGet("standard/{id}/confirm-standard/{standardReference}/{version}")]
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/{id}/apply-standard/{search}/{referenceNumber}/confirm-ofqual", Name = ApplyStandardConfirmOfqualRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> ConfirmStandard(Guid id, string standardReference, string version)
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public Task<IActionResult> ApplyStandardConfirmOfqual(Guid id, string search, string referenceNumber)
         {
-            var application = await _applicationApiClient.GetApplication(id);
-            if (!CanUpdateApplicationAsync(application))
-            {
-                return RedirectToAction("Applications", "Application");
-            }
+            if (id == Guid.Empty)
+                throw new ArgumentException($"Value of {nameof(id)} cannot be empty");
 
-            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
-            var standardVersions = (await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference))
-                                        .OrderBy(s => s.Version);
-            var earliestStandard = standardVersions.FirstOrDefault();
-            var latestStandard = standardVersions.LastOrDefault();
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException($"Value of {nameof(search)} cannot be null or empty");
 
-            if (!string.IsNullOrWhiteSpace(version))
-            {
-                // specific version selected (from standversion view)
-                var standardViewModel = new StandardVersionViewModel
-                {
-                    Id = id,
-                    StandardReference = standardReference,
-                    FromStandardsVersion = true
-                };
-                standardViewModel.SelectedStandard = (StandardVersion)standardVersions.FirstOrDefault(x => x.Version == version);
-                standardViewModel.EarliestVersionEffectiveFrom = standardViewModel.SelectedStandard.VersionEarliestStartDate;
-                standardViewModel.Results = new List<StandardVersion>() { standardViewModel.SelectedStandard };
-                standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { version });
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
-            }
-            else
-            {
-                // no existing approved versions for this standard
-                var standardViewModel = new StandardVersionViewModel
-                {
-                    Id = id,
-                    StandardReference = standardReference,
-                    FromStandardsVersion = false
-                };
-                standardViewModel.Results = standardVersions.Select(s => (StandardVersion)s).ToList();
-                standardViewModel.SelectedStandard = (StandardVersion)latestStandard;
-                standardViewModel.EarliestVersionEffectiveFrom = earliestStandard.VersionEarliestStartDate;
-                if (standardVersions.Count() == 1)
-                    standardViewModel.ApplicationStatus = await ApplicationStandardStatus(application, standardReference, new List<string>() { standardVersions.First().Version });
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
-            }
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException($"Value of {nameof(referenceNumber)} cannot be null or empty");
+
+            return ApplyStandardConfirmOfqualInnerAsync(id, search, referenceNumber);
         }
 
-        [HttpPost("standard/{id}/confirm-standard/{standardReference}")]
-        [HttpPost("standard/{id}/confirm-standard/{standardReference}/{version}")]
-        public async Task<IActionResult> ConfirmStandard(StandardVersionViewModel model, Guid id, string standardReference, string version)
+        private async Task<IActionResult> ApplyStandardConfirmOfqualInnerAsync(Guid id, string search, string referenceNumber)
         {
             var application = await _applicationApiClient.GetApplication(id);
             if (!CanUpdateApplicationAsync(application))
@@ -347,76 +345,144 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
-            var standardVersions = (await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, standardReference))
-                                        .OrderBy(s => s.Version);
+            var standardVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, referenceNumber);
 
-            bool anyExistingVersions = standardVersions.Any(x => x.ApprovedStatus == ApprovedStatus.Approved || x.ApplicationStatus == ApplicationStatus.Submitted);
-
-            AppliedStandardVersion selectedStandard = null;
-            string applicationStatus = null;
-            List<string> versions = null;
-
-            if (string.IsNullOrWhiteSpace(version))
+            if (!standardVersions?.Any() ?? true)
             {
-                selectedStandard = standardVersions.LastOrDefault();
-                versions = model.SelectedVersions ?? new List<string> { selectedStandard.Version };
-                if (model.SelectedVersions != null)
-                    applicationStatus = await ApplicationStandardStatus(application, standardReference, model.SelectedVersions);
-            }
-            else
-            {
-                selectedStandard = standardVersions.FirstOrDefault(x => x.Version == version);
-                versions = new List<string> { selectedStandard.Version };
+                return NotFound($"The standard '{referenceNumber}' was not found");
             }
 
-            // check that the confirm checkbox has been selected
-            if (!model.IsConfirmed)
+            var latestStandard = standardVersions.OrderBy(s => s.Version).Last();
+
+            var viewModel = new ApplyStandardConfirmOfqualViewModel
             {
-                ModelState.AddModelError(nameof(model.IsConfirmed), "Confirm you have read the assessment plan");
-                TempData["ShowConfirmedError"] = true;
+                Id = id,
+                Search = search,
+                SelectedStandard = latestStandard
+            };
+
+            return View(viewModel);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/{id}/apply-standard/{search}/{referenceNumber}/confirm", Name = ApplyStandardConfirmRouteGet)]
+        [ApplicationAuthorize(routeId: "Id")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public Task<IActionResult> ApplyStandardConfirm(Guid id, string search, string referenceNumber)
+        {
+            if (id == Guid.Empty)
+                throw new ArgumentException($"Value of {nameof(id)} cannot be empty");
+
+            if (string.IsNullOrEmpty(search))
+                throw new ArgumentException($"Value of {nameof(search)} cannot be null or empty");
+
+            if (string.IsNullOrEmpty(referenceNumber))
+                throw new ArgumentException($"Value of {nameof(referenceNumber)} cannot be null or empty");
+
+            return ApplyStandardConfirmInnerAsync(id, search, referenceNumber);
+        }
+
+        private async Task<IActionResult> ApplyStandardConfirmInnerAsync(Guid id, string search, string referenceNumber)
+        {
+            var application = await _applicationApiClient.GetApplication(id);
+            if (!CanUpdateApplicationAsync(application))
+            {
+                return RedirectToAction("Applications", "Application");
             }
 
-            // check that a version has been selected
-            if (string.IsNullOrWhiteSpace(version) &&
-                standardVersions.Count() > 1 &&
-                (model.SelectedVersions == null || !model.SelectedVersions.Any()))
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var standardVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, referenceNumber);
+
+            if (!standardVersions?.Any() ?? true)
             {
-                ModelState.AddModelError(nameof(model.SelectedVersions), "You must select at least one version");
-                TempData["ShowVersionError"] = true;
+                return NotFound($"The standard '{referenceNumber}' was not found");
             }
 
-            if (!ModelState.IsValid || !string.IsNullOrWhiteSpace(applicationStatus))
-            {
-                model.Results = string.IsNullOrWhiteSpace(version) ? standardVersions.Select(s => (StandardVersion)s).ToList() :
-                                    new List<StandardVersion>() { selectedStandard };
-                model.SelectedStandard = (StandardVersion)selectedStandard;
-                model.ApplicationStatus = applicationStatus;
-                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
-            }
-            else if (anyExistingVersions)
-            {
-                await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Version);
+            var earliestStandard = standardVersions.OrderBy(s => s.Version).First();
+            var latestStandard = standardVersions.OrderBy(s => s.Version).Last();
 
-                // update QnA application data to include the version Application Type but remove the Organisation Type
-                // as the QnA service does not include AND operations for NotRequiredConditions. The presence of
-                // Organisation Type would remove some pages which should be shown in a standard version application
-                // when the NotRequiredConditions are combined with an OR operation. The application data can be
-                // updated here because a version application is always an additional standard and the update is being
-                // done prior to displaying the application and collecting the answers to tagged questions
-                var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
-                applicationData.ApplicationType = StandardApplicationTypes.Version;
-                applicationData.OrganisationType = null;
-                await _qnaApiClient.UpdateApplicationData(application.ApplicationId, applicationData);
-            }
-            else
+            if (standardVersions?.Any(x => x.ApprovedStatus == ApprovedStatus.Approved) ?? false)
             {
-                // the QnA application data must not be updated here as this could be a full stage 2 standard application
-                // where the tagged questions in stage 1 are required to approve the application, updating the application
-                // data would overwrite the tagged questions
-                await _applicationApiClient.UpdateStandardData(id, selectedStandard.LarsCode, selectedStandard.IFateReferenceNumber, selectedStandard.Title, versions, StandardApplicationTypes.Full);
+                return RedirectToRoute(StandardDetailsRouteGet, new { referenceNumber });
+            }
+            else if (latestStandard.EqaProviderName == "Ofqual")
+            {
+                return RedirectToRoute(ApplyStandardConfirmOfqualRouteGet, new { id, search, referenceNumber });
             }
 
-            return RedirectToAction("SequenceSignPost", "Application", new { Id = id });
+            var viewModel = new ApplyStandardConfirmViewModel
+            {
+                Id = id,
+                Search = search,
+                StandardReference = referenceNumber,
+                Results = standardVersions.Select(s => (StandardVersion)s).ToList(),
+                SelectedStandard = (StandardVersion)latestStandard,
+                EarliestVersionEffectiveFrom = earliestStandard.VersionEarliestStartDate,
+                ApplicationStatus = await ApplicationStandardStatus(application, referenceNumber, new List<string>() { standardVersions.First().Version }),
+                IsConfirmed = ModelState
+                    .GetAttemptedValueWhenInvalid(nameof(AddStandardConfirmViewModel.IsConfirmed), false),
+                SelectedVersions = ModelState
+                    .GetAttemptedValueListWhenInvalid(nameof(AddStandardConfirmViewModel.SelectedVersions), new List<string>(), ',')
+            };
+
+            return View(viewModel);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpPost("standard/{id}/apply-standard/{search}/{referenceNumber}/confirm", Name = ApplyStandardConfirmRoutePost)]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public Task<IActionResult> ApplyStandardConfirm(ApplyStandardConfirmViewModel model)
+        {
+            if (model == null)
+                throw new ArgumentException("Value cannot be null or empty", nameof(model));
+
+            if (model.Id == Guid.Empty)
+                throw new ArgumentException($"Value of {nameof(model.Id)} cannot be empty");
+
+            if (string.IsNullOrEmpty(model.Search))
+                throw new ArgumentException($"Value of {nameof(model.Search)} cannot be null or empty");
+
+            if (string.IsNullOrEmpty(model.StandardReference))
+                throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
+
+            return ApplyStandardConfirmInnerAsync(model);
+        }
+
+        private async Task<IActionResult> ApplyStandardConfirmInnerAsync(ApplyStandardConfirmViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToRoute(ApplyStandardConfirmRouteGet, new { id = model.Id, search = model.Search, referenceNumber = model.StandardReference });
+            }
+
+            var application = await _applicationApiClient.GetApplication(model.Id);
+            if (!CanUpdateApplicationAsync(application))
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+
+            var org = await _orgApiClient.GetEpaOrganisation(application.OrganisationId.ToString());
+            var standardVersions = await _orgApiClient.GetAppliedStandardVersionsForEPAO(org?.OrganisationId, model.StandardReference);
+
+            if (!standardVersions?.Any() ?? true)
+            {
+                return NotFound($"The standard '{model.StandardReference}' was not found");
+            }
+
+            var latestStandard = standardVersions.OrderBy(s => s.Version).Last();
+
+            // the application data is being updated to include the EqaProviderName from the selected standard,
+            // this is required for the configuration of the questions via the NotRequired attributes and
+            // is done using a dynamic dictionary to preserve any answers to tagged questions which may exist
+            // in a multi-sequence application (e.g. the Stage1 + Stage2 organisation application)
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
+            applicationData[nameof(ApplicationData.Eqap)] = latestStandard.EqaProviderName;
+            await _qnaApiClient.UpdateApplicationDataDictionary(application.ApplicationId, applicationData);
+
+            await _applicationApiClient.UpdateStandardData(model.Id, latestStandard.LarsCode, latestStandard.IFateReferenceNumber,
+                latestStandard.Title, model.SelectedVersions, StandardApplicationTypes.Full);
+
+            return RedirectToAction("SequenceSignPost", "Application", new { model.Id });
         }
 
         [HttpGet("standard/opt-in/{referenceNumber}/{version}", Name = OptInStandardVersionRouteGet)]
@@ -507,6 +573,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("standard/opt-out/{referenceNumber}/{version}", Name = OptOutStandardVersionRouteGet)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> OptOutStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -527,7 +594,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 StandardTitle = standardVersion.Title,
                 Version = standardVersion.Version,
                 EffectiveFrom = standardVersion.VersionEarliestStartDate ?? DateTime.Today,
-                EffectiveTo = DateTime.Today
+                EffectiveTo = DateTime.Today,
             };
 
             return View(model);
@@ -535,6 +602,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpPost("standard/opt-out", Name = OptOutStandardVersionRoutePost)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
         {
             if (model == null)
@@ -546,10 +614,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (string.IsNullOrEmpty(model.Version))
                 throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
+            if (!ModelState.IsValid)
+            {
+                return RedirectToRoute(OptOutStandardVersionRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
+            }
+
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
 
             var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
+
             if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) == null)
             {
                 throw new NotFoundException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");

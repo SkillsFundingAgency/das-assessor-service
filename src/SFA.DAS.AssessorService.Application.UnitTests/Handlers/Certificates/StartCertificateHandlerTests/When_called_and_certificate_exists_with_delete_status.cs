@@ -70,12 +70,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var standardService = new Mock<IStandardService>();
             standardService.Setup(s => s.GetStandardVersionsByLarsCode(30)).ReturnsAsync(new[] { new Standard { Title = "Standard Title" } });
 
+            var certificateNameCapitalisationService = new Mock<ICertificateNameCapitalisationService>();
+
             var mockProvidersRepository = new Mock<IProvidersRepository>();
             mockProvidersRepository.Setup(m => m.GetProvider(12345678)).ReturnsAsync(new Provider() { Ukprn = 12345678, Name = "Test Provider Name" });
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
                 learnerRepository.Object, mockProvidersRepository.Object,
-                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
+                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object, certificateNameCapitalisationService.Object);
 
             _returnedCertificate = _startCertificateHandler
                 .Handle(
