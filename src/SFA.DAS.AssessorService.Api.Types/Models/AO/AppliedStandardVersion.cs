@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string IFateReferenceNumber { get; set; }
         public string Version { get; set; }
         public int Level { get; set; }
+        public bool CoronationEmblem { get; set; }
         public int LarsCode { get; set; }
         public string Status { get; set; }
         public string ApplicationStatus { get; set; }

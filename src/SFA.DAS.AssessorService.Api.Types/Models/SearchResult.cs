@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public List<StandardVersion> Versions { get; set; }
         public string Standard { get; set; }
         public int Level { get; set; }
+        public bool CoronationEmblem { get; set; }
         public int? FundingModel { get; set; }
         public int UkPrn { get; set; }
         public string Version { get; set; }
