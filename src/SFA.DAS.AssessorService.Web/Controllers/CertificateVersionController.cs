@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Version(bool? redirectToCheck = false)
+        public async Task<IActionResult> Version(bool? redirectToCheck = false) 
         {
             var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
