@@ -47,7 +47,7 @@ else
                             <td class="govuk-table__cell">@Model.GetStatusText(version)</td>
                             @if (Model.CannotOptOut(version))
                             {
-                                <td class="govuk-table__cell">@Model.ContactToOptOutText</td>
+                                <td class="govuk-table__cell">@Model.WithdrawFromStandardText</td>
                             }
                             else
                             {
