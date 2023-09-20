@@ -21,18 +21,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly ILearnerRepository _learnerRepository;
         private readonly IProvidersRepository _providersRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly IStandardRepository _standardRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
         private readonly ICertificateNameCapitalisationService _certificateNameCapitalisationService;
         private readonly int PrivateFundingModelNumber = 99;
 
         public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IProvidersRepository providersRepository,
-            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService, ICertificateNameCapitalisationService certificateNameCapitalisationService)
+            IOrganisationQueryRepository organisationQueryRepository, IStandardRepository standardRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService, ICertificateNameCapitalisationService certificateNameCapitalisationService)
         {
             _certificateRepository = certificateRepository;
             _learnerRepository = learnerRepository;
             _providersRepository = providersRepository;
             _organisationQueryRepository = organisationQueryRepository;
+            _standardRepository = standardRepository;
             _logger = logger;
             _standardService = standardService;
             _certificateNameCapitalisationService = certificateNameCapitalisationService;
@@ -151,6 +153,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certData.LearningStartDate = learner.LearnStartDate;
             certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
             certData.ProviderName = provider.Name;
+            certData.CoronationEmblem = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(learner.StandardReference, learner.Version);
 
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;

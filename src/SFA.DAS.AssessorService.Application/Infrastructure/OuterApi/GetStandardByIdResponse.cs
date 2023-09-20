@@ -24,6 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
         [JsonProperty("level")]
         public int Level { get; set; }
 
+        [JsonProperty("coronationEmblem")]
+        public bool CoronationEmblem { get; set; }
+
         [JsonProperty("version")]
         public string Version { get; set; }
 
