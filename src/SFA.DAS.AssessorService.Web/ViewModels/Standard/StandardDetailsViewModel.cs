@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Standard
 
         public string BackRouteName { get; set; }
 
-        public string ContactToOptOutText => "Contact the support team to opt out";
+        public string WithdrawFromStandardText => "Withdraw from the standard";
 
         public string GetStatusText(StandardVersion standardVersion)
         {
