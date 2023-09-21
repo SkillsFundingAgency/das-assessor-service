@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string IFateReferenceNumber { get; set; }
         public int LarsCode { get; set; }
         public int Level { get; set; }
+        public bool CoronationEmblem { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? LastDateStarts { get; set; }
@@ -33,6 +34,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 IFateReferenceNumber = standard.IfateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
+                CoronationEmblem = standard.CoronationEmblem,
                 EffectiveFrom = standard.EffectiveFrom,
                 EffectiveTo = standard.EffectiveTo,
                 LastDateStarts = standard.LastDateStarts,
@@ -54,6 +56,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 IFateReferenceNumber = standard.IFateReferenceNumber,
                 LarsCode = standard.LarsCode,
                 Level = standard.Level,
+                CoronationEmblem = standard.CoronationEmblem,
                 EffectiveFrom = standard.LarsEffectiveFrom,
                 EffectiveTo = standard.LarsEffectiveTo,
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,

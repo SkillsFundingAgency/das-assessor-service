@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 IfateReferenceNumber = source.IfateReferenceNumber,
                 LarsCode = source.LarsCode,
                 Title = source.Title,
+                CoronationEmblem = source.CoronationEmblem,
                 Version = source.Version,
                 Level = source.Level,
                 Status = source.Status,

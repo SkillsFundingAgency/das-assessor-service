@@ -24,10 +24,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
@@ -47,10 +47,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)) // no standard version
             {
                 var result = await fixture.GetAllOrganisationsWithActiveStandards();
@@ -69,10 +69,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
@@ -92,10 +92,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Now.AddDays(1), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, DateTime.Now.AddDays(1), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
@@ -115,10 +115,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Now.AddDays(1), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, DateTime.Now.AddDays(-1), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
@@ -138,10 +138,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
@@ -160,10 +160,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Now.AddDays(1))
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Now.AddDays(1)))
             {
@@ -183,10 +183,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Now.AddDays(-1)))
             {
@@ -207,10 +207,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard1", "ST0001", 101, "1.1", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.1", DefaultEffectiveFrom, null))
             {
@@ -231,10 +231,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard1", "ST0001", 101, "1.1", DateTime.Today.AddDays(1))
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.1", DefaultEffectiveFrom, null))
             {
@@ -255,10 +255,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard1", "ST0001", 101, "1.1", DateTime.Today.AddDays(-1))
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.1", DefaultEffectiveFrom, null))
             {
@@ -279,7 +279,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -301,7 +301,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister) // no standard version
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", DefaultEffectiveFrom, null))
@@ -322,7 +322,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -344,7 +344,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Today.AddDays(10))
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -366,7 +366,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Today.AddDays(-10))
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -388,7 +388,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -410,7 +410,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Today.AddDays(10), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -432,7 +432,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Today.AddDays(-10), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -454,7 +454,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -476,7 +476,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", DateTime.Today.AddDays(10))
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -498,7 +498,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", DateTime.Today.AddDays(-10))
                 .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -521,13 +521,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         {
             using (var fixture = new GetAllOrganisationsWithActiveStandardsTestsFixture()
                 .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithOrganisation("Organisation1", "EPA0001", 123456)
+                .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation2", "EPA0002", 612345)
+                .WithOrganisation("Organisation2", "EPA0002", 612345, null)
                 .WithOrganisationStandard(2, "EPA0002", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0002", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
-                .WithOrganisation("Organisation3", "EPA0003", 561234)
+                .WithOrganisation("Organisation3", "EPA0003", 561234, null)
                 .WithOrganisationStandard(3, "EPA0003", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0003", 101, "ST0001", "1.0", DefaultEffectiveFrom, null))
             {
@@ -541,7 +541,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             }
         }
 
-        private class GetAllOrganisationsWithActiveStandardsTestsFixture : FixtureBase
+        private class GetAllOrganisationsWithActiveStandardsTestsFixture : FixtureBase<GetAllOrganisationsWithActiveStandardsTestsFixture>, IDisposable
         {
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
@@ -590,32 +590,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
                 _results.Should().Contain(o => o.Id == endPointAssessorOrganisationId
                     && o.EarliestEffectiveFromDate == earlistStandardEffectiveFromDate
                     && o.EarliestDateStandardApprovedOnRegister == earliestDateStandardApprovedOnRegister);
-                return this;
-            }
-
-            public GetAllOrganisationsWithActiveStandardsTestsFixture WithOrganisation(string endPointAssessorName, string endPointAssessorOrganisationId, int ukprn)
-            {
-                AddOrganisation(endPointAssessorName, endPointAssessorOrganisationId, ukprn);
-                return this;
-            }
-
-            public GetAllOrganisationsWithActiveStandardsTestsFixture WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo)
-            {
-                AddStandard(title, referenceNumber, larsCode, version, effectiveTo);
-                return this;
-            }
-
-            public GetAllOrganisationsWithActiveStandardsTestsFixture WithOrganisationStandard(int id, string endPointAssessorOrganisationId, int larsCode, string standardReference, 
-                DateTime? effectiveFrom, DateTime? effectiveTo, DateTime? dateStandardApprovedOnRegister)
-            {
-                AddOrganisationStandard(id, endPointAssessorOrganisationId, larsCode, standardReference, effectiveFrom, effectiveTo, dateStandardApprovedOnRegister);
-                return this;
-            }
-
-            public GetAllOrganisationsWithActiveStandardsTestsFixture WithOrganisationStandardVersion(string endPointAssessorOrganisationId, int larsCode, string standardReference, string version, 
-                DateTime? effectiveFrom, DateTime? effectiveTo)
-            {
-                AddOrganisationStandardVersion(endPointAssessorOrganisationId, larsCode, standardReference, version, effectiveFrom, effectiveTo);
                 return this;
             }
         }

@@ -1,4 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,12 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.Testing.AutoFixture;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards
@@ -45,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             var model = controllerResult.Value as IEnumerable<StandardVersion>;
 
-            var expectedResponse = standards.Select(ConvertFromStandard);
+            var expectedResponse = standards.Select(s => (StandardVersion)s);
 
             model.Should().BeEquivalentTo(expectedResponse);
         }
@@ -61,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             var model = controllerResult.Value as IEnumerable<StandardVersion>;
 
-            var expectedResponse = standards.Select(ConvertFromStandard);
+            var expectedResponse = standards.Select(s => (StandardVersion)s);
             model.Should().BeEquivalentTo(expectedResponse);
         }
 
@@ -76,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             var model = controllerResult.Value as StandardVersion;
 
-            var expectedResponse = ConvertFromStandard(standard);
+            StandardVersion expectedResponse = standard;
             model.Should().BeEquivalentTo(expectedResponse);
         }
 
@@ -187,27 +186,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             var model = controllerResult.Value as List<StandardVersion>;
 
             model.Should().BeEquivalentTo(versions);
-        }
-
-        private StandardVersion ConvertFromStandard(Standard standard)
-        {
-            return new StandardVersion
-            {
-                StandardUId = standard.StandardUId,
-                Title = standard.Title,
-                Version = standard.Version,
-                IFateReferenceNumber = standard.IfateReferenceNumber,
-                LarsCode = standard.LarsCode,
-                Level = standard.Level,
-                EffectiveFrom = standard.EffectiveFrom,
-                EffectiveTo = standard.EffectiveTo,
-                LastDateStarts = standard.LastDateStarts,
-                VersionEarliestStartDate = standard.VersionEarliestStartDate,
-                VersionLatestStartDate = standard.VersionLatestStartDate,
-                VersionLatestEndDate = standard.VersionLatestEndDate,
-                EPAChanged = standard.EPAChanged,
-                StandardPageUrl = standard.StandardPageUrl
-            };
         }
     }
 }
