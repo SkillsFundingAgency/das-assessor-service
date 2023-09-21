@@ -13,7 +13,7 @@
     @if (User.Identity.IsAuthenticated)
     {
         var currentPage = SessionService.Get("CurrentPage");
-        <nav class="app-navigation">
+        <nav class="app-navigation" aria-labelledby="Application navigation menu">
             <ul class="app-navigation__list">
                 <li @(currentPage == Pages.Dashboard ? "class=app-navigation--current-page" : "")>
                     <a id="Home" asp-controller="Dashboard" asp-action="Index">Home</a>

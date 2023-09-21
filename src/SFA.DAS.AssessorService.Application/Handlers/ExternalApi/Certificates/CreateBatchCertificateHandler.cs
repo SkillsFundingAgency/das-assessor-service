@@ -62,6 +62,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _standardService.GetStandardVersionById(request.StandardUId);
 
+            var coronationEmblem = await _standardService.GetCoronationEmblemForStandardReferenceAndVersion(request.StandardReference, request.CertificateData.Version);
+
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
@@ -70,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            var certData = CombineCertificateData(request.CertificateData, learner, standard, provider, options, certificate);
+            var certData = CombineCertificateData(request.CertificateData, coronationEmblem, learner, standard, provider, options, certificate);
 
             if (certificate == null)
             {
@@ -112,7 +114,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             return await _providersRepository.GetProvider(ukprn);
         }
 
-        private CertificateData CombineCertificateData(CertificateData data, Domain.Entities.Learner learner, Standard standard, Provider provider, StandardOptions options, Certificate certificate)
+        private CertificateData CombineCertificateData(CertificateData data, bool coronationEmblem, Domain.Entities.Learner learner, Standard standard, Provider provider, StandardOptions options, Certificate certificate)
         {
             var epaDetails = new EpaDetails();
             if (certificate != null)
@@ -163,6 +165,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 CourseOption = CertificateHelpers.NormalizeCourseOption(options, data.CourseOption),
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(data.OverallGrade),
                 Version = data.Version,
+                CoronationEmblem = coronationEmblem,
 
                 EpaDetails = epaDetails
             };

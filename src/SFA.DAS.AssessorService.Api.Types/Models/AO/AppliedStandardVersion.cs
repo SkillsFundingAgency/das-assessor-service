@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string IFateReferenceNumber { get; set; }
         public string Version { get; set; }
         public int Level { get; set; }
+        public bool CoronationEmblem { get; set; }
         public int LarsCode { get; set; }
         public string Status { get; set; }
         public string ApplicationStatus { get; set; }
@@ -27,5 +28,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? StdVersionEffectiveFrom { get; set; }
         public DateTime? StdVersionEffectiveTo { get; set; }
         public ApplyData ApplyData { get; set; }
+        public string EqaProviderName { get; set; }
+        public string EqaProviderContactName { get; set; }
+        public string EqaProviderContactEmail { get; set; }
     }
 }
