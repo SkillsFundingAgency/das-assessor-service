@@ -96,6 +96,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         public class TheFixture
         {
             private Mock<ICertificateRepository> _certificateRepository;
+            private Mock<IStandardRepository> _standardRepository;
             private Mock<IMediator> _mediator;
             private UpdateCertificateHandler _sut;
 
@@ -106,7 +107,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 _certificateRepository = new Mock<ICertificateRepository>();
                 _mediator = new Mock<IMediator>();
-                _sut = new UpdateCertificateHandler(_certificateRepository.Object, _mediator.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
+                _standardRepository = new Mock<IStandardRepository>();
+                _sut = new UpdateCertificateHandler(_certificateRepository.Object, _standardRepository.Object, _mediator.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
             }
 
             public TheFixture WithCertificate(Guid id, string certficateReference, string status, string grade, DateTime? achievementDate)

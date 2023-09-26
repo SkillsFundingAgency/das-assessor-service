@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
                 learnerRepository.Object, mockProvidersRepository.Object,
-                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object, certificateNameCapitalisationService.Object);
+                organisationQueryRepository.Object, new Mock<IStandardRepository>().Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object, certificateNameCapitalisationService.Object);
 
             _returnedCertificate = _startCertificateHandler
                 .Handle(
