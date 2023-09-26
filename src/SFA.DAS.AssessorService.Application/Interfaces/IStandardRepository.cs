@@ -53,6 +53,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
         Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber);
+        Task<bool> GetCoronationEmblemForStandardReferenceAndVersion(string standardReference, string version);
+        Task<string> GetTitleForStandardReferenceAndVersion(string standardReference, string version);
     }
 
     public class EpoRegisteredStandardsResult

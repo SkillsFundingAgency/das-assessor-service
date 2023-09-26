@@ -29,7 +29,8 @@
 	[EqaProviderName] VARCHAR(500) NULL,
 	[EqaProviderContactName] VARCHAR(500) NULL,
 	[EqaProviderContactEmail] VARCHAR(500) NULL,
-	[OverviewOfRole] VARCHAR(500)
+	[OverviewOfRole] VARCHAR(500),
+	[CoronationEmblem] BIT NOT NULL DEFAULT 0,
 )
 GO
 

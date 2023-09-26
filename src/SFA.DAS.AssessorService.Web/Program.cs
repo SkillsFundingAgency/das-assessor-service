@@ -40,7 +40,6 @@ namespace SFA.DAS.AssessorService.Web
                         services.AddApplicationInsightsTelemetry();
                     })
                 .UseStartup<Startup>()
-                .UseUrls("https://localhost:5015")
                 .UseNLog();
         }
     }
