@@ -657,6 +657,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             dataTable.Columns.Add("EqaProviderContactEmail]");
             dataTable.Columns.Add("OverviewOfRole]");
             dataTable.Columns.Add("CoronationEmblem");
+            dataTable.Columns.Add("EpaoMustBeApprovedByRegulatorBody");
 
             foreach (var standard in standards)
             {
@@ -666,7 +667,7 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
                     standard.ProposedTypicalDuration, standard.ProposedMaxFunding, standard.EPAChanged, standard.StandardPageUrl, standard.TrailBlazerContact, standard.Route, 
                     standard.VersionMajor, standard.VersionMinor,
                     standard.IntegratedDegree, standard.EqaProviderName, standard.EqaProviderContactName, standard.EqaProviderContactEmail, standard.OverviewOfRole, 
-                    standard.CoronationEmblem);
+                    standard.CoronationEmblem, standard.EpaoMustBeApprovedByRegulatorBody);
             }
 
             return dataTable;
