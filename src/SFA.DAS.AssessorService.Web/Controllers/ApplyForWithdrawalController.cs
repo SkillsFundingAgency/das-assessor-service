@@ -126,9 +126,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ApplicationId = applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
                                                                 a.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
                                                                 a.ApplyData.Apply.Versions == null &&
-                                                                (a.ApplicationStatus != ApplicationStatus.Declined &&
-                                                                 a.ApplicationStatus != ApplicationStatus.Approved &&
-                                                                 a.ApplicationStatus != ApplicationStatus.Deleted))?.Id,
+                                                                a.ApplicationStatus != ApplicationStatus.Declined &&
+                                                                a.ApplicationStatus != ApplicationStatus.Approved &&
+                                                                a.ApplicationStatus != ApplicationStatus.Deleted)?.Id,
                 })
             };
 
