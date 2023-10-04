@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
-    public class AssessmentOrganisationListSummary
+    public class AparSummary
     {
         public string Id { get; set; }
         public string Name { get; set; }

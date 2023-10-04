@@ -188,6 +188,9 @@
     <Build Include="Tables\StagingOfqualOrganisation.sql" />
     <Build Include="Tables\OfqualStandard.sql" />
     <Build Include="Tables\StagingOfqualStandard.sql" />
+    <Build Include="StoredProcedures\AparSummaryUpdate.sql" />
+    <Build Include="Tables\APARSummary.sql" />
+    <Build Include="Tables\APARSummaryUpdated.sql" />
     <Build Include="StoredProcedures\Load_Ofqual_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
