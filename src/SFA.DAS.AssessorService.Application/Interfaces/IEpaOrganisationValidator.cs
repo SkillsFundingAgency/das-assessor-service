@@ -65,6 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         ValidationResponse ValidatorUpdateEpaOrganisationStandardRequest(UpdateEpaOrganisationStandardRequest request);
         Task<ValidationResponse> ValidatorUpdateOrganisationStandardVersionRequest(UpdateOrganisationStandardVersionRequest request);
         ValidationResponse ValidatorWithdrawOrganisationRequest(WithdrawOrganisationRequest request);
+        ValidationResponse ValidatorWithdrawStandardRequest(WithdrawStandardRequest request);
         ValidationResponse ValidatorSearchStandardsRequest(SearchStandardsValidationRequest request);
 
     }

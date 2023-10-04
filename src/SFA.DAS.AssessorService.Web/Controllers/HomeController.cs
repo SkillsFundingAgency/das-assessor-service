@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> NotActivated()
+        public IActionResult NotActivated()
         {
             return View();
         }

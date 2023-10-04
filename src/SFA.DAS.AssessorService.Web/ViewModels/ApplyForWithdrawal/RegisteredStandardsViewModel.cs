@@ -8,6 +8,5 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal
         public int Level { get; set; }
         public string ReferenceNumber { get; set; }
         public Guid? ApplicationId { get; set; }
-        public int NumberOfVersions { get; set; }
     }
 }
