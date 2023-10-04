@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
+using SFA.DAS.AssessorService.Application.Handlers.ao;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -62,24 +63,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetAssessmentOrganisationsRequest()));
         }
 
-        [HttpGet("assessment-organisations/list", Name = "GetAssessmentOrganisationsList")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
+        [HttpGet("assessment-organisations/apar-summary", Name = "GetAPARSummary")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AparSummary>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAssessmentOrganisationsList()
+        public async Task<IActionResult> GetAparSummary()
         {
-            _logger.LogInformation("Get Assessment Organisations List");
-            return Ok(await _mediator.Send(new GetAssessmentOrganisationsListRequest()));
+            _logger.LogInformation("Get APAR Summary");
+            return Ok(await _mediator.Send(new GetAparSummaryRequest()));
         }
 
-        [HttpGet("assessment-organisations/list/{ukprn}", Name = "GetAssessmentOrganisationsListByUkprn")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrganisationSummary))]
+        [HttpGet("assessment-organisations/apar-summary/{ukprn}", Name = "GetAparSummaryByUkprn")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AparSummary))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAssessmentOrganisationsListByUkprn(int ukprn)
+        public async Task<IActionResult> GetAparSummaryByUkprn(int ukprn)
         {
-            _logger.LogInformation($"Get Assessment Organisations List by UKPRN [{ukprn}]");
-            var results = await _mediator.Send(new GetAssessmentOrganisationsListRequest(ukprn));
+            _logger.LogInformation($"Get Apar Summary by UKPRN [{ukprn}]");
+            var results = await _mediator.Send(new GetAparSummaryRequest(ukprn));
             return Ok(results.FirstOrDefault());
         }
 
@@ -236,6 +237,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var results = await _mediator.Send(new SearchStandardsRequest { SearchTerm = searchstring });
 
             return Ok(results.Select(s => (StandardVersion)s).ToList());
+        }
+
+        [HttpPost("assessment-organisations/apar-summary-update", Name = "APARSummaryUpdate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int?))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> AparSummaryUpdate()
+        {
+            _logger.LogInformation("Updating APAR Summary");
+
+            return Ok(await _mediator.Send(new AparSummaryUpdateRequest()));
+        }
+
+        [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<DateTime>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAparSummaryLastUpdated()
+        {
+            _logger.LogInformation("Getting APAR Summary Last Updated Date");
+
+            return Ok(await _mediator.Send(new GetAparSummaryLastUpdatedRequest()));
         }
     }
 }
