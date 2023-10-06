@@ -23,6 +23,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         private readonly List<StagingOfqualStandardModel> _stagingOfqualStandards = new List<StagingOfqualStandardModel>();
         private readonly List<OfqualStandardModel> _ofqualStandards = new List<OfqualStandardModel>();
 
+        private readonly List<StagingOfsOrganisationModel> _stagingOfsOrganisations = new List<StagingOfsOrganisationModel>();
+        private readonly List<OfsOrganisationModel> _ofsOrganisations = new List<OfsOrganisationModel>();
+
         public FixtureBase()
         {
             // this is to workaround the other tests which are not clearing up after themselves properly
@@ -253,6 +256,54 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public T WithOfsOrganisation(
+            Guid id, int ukprn, DateTime createdAt)
+        {
+            var ofsOrganisation = new OfsOrganisationModel
+            {
+                Id = id,
+                Ukprn = ukprn,
+                CreatedAt = createdAt
+            };
+
+            _ofsOrganisations.Add(ofsOrganisation);
+            OfsOrganisationHandler.InsertRecord(ofsOrganisation);
+
+            return this as T;
+        }
+
+        public T WithStagingOfsOrganisation(
+            int ukprn, string registrationStatus, string highestLevelOfDegreeAwardingPowers)
+        {
+            var stagingOfsOrganisation = new StagingOfsOrganisationModel
+            {
+                Ukprn = ukprn,
+                RegistrationStatus = registrationStatus,
+                HighestLevelOfDegreeAwardingPowers = highestLevelOfDegreeAwardingPowers
+            };
+
+            _stagingOfsOrganisations.Add(stagingOfsOrganisation);
+            StagingOfsOrganisationHandler.InsertRecord(stagingOfsOrganisation);
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOfsOrganisationRowCount(int count)
+        {
+            var result = await OfsOrganisationHandler.QueryCountAllAsync();
+            result.Should().Be(count);
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyOfsOrganisationExists(OfsOrganisationModel ofsOrganisation)
+        {
+            var result = await OfsOrganisationHandler.QueryFirstOrDefaultAsync(ofsOrganisation);
+            result.Should().NotBeNull();
+
+            return this as T;
+        }
+
         public async Task<T> VerifyOrganisationStandardExists(OrganisationStandardModel organisationStandard)
         {
             var result = await OrganisationStandardHandler.QueryFirstOrDefaultAsync(organisationStandard);
@@ -310,6 +361,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         {
             OfqualOrganisationHandler.DeleteAllRecords();
             OfqualStandardHandler.DeleteAllRecords();
+            OfsOrganisationHandler.DeleteAllRecords();
             OrganisationStandardDeliveryAreaHandler.DeleteAllRecords();
             OrganisationStandardVersionHandler.DeleteAllRecords();
             OrganisationStandardHandler.DeleteAllRecords();
@@ -318,6 +370,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             StandardsHandler.DeleteAllRecords();
             StagingOfqualOrganisationHandler.DeleteAllRecords();
             StagingOfqualStandardHandler.DeleteAllRecords();
+            StagingOfsOrganisationHandler.DeleteAllRecords();
         }
     }
 }

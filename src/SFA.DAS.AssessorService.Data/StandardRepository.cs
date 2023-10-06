@@ -397,6 +397,23 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
             return result;
         }
 
+        public async Task<int> LoadOfsStandards(DateTime dateTimeUtc)
+        {
+            var @params = new DynamicParameters();
+            @params.Add("dateTimeUtc", dateTimeUtc);
+            @params.Add("inserted", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                "Load_Ofs_Standards",
+                param: @params,
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
+
+            int result = @params.Get<int>("inserted");
+
+            return result;
+        }
+
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(
             string endPointAssessorOrganisationId, int pageSize, int pageIndex)
         {

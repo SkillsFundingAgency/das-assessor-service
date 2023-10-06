@@ -25,7 +25,7 @@ BEGIN
                         [dbo].[StagingOfsOrganisation]
                     WHERE
                         [RegistrationStatus] = 'Registered'
-                        AND [HighestLevelOfDegreeAwardingPowers] <> 'Not applicable'
+                        AND ([HighestLevelOfDegreeAwardingPowers] <> 'Not applicable' OR [HighestLevelOfDegreeAwardingPowers] IS NULL)
                     EXCEPT
                     SELECT 
                         [Ukprn]
