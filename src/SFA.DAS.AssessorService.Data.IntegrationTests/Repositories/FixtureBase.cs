@@ -11,7 +11,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 {
     public class FixtureBase<T> where T : class, IDisposable
     {
+        private readonly List<IlrModel> _ilrs = new List<IlrModel>();
         private readonly List<OrganisationModel> _organisations = new List<OrganisationModel>();
+        private readonly List<ProviderModel> _providers = new List<ProviderModel>();
         private readonly List<ContactModel> _contacts = new List<ContactModel>();
         private readonly List<StandardModel> _standards = new List<StandardModel>();
         private readonly List<OrganisationStandardModel> _organisationStandards = new List<OrganisationStandardModel>();
@@ -74,7 +76,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
-        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged = false, string eqaProviderName = "")
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged = false, string eqaProviderName = "", bool epaoMustBeApprovedByRegulatorBody = false)
         {
             var standard = StandardsHandler.Create(
                 title, 
@@ -83,7 +85,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
                 version, 
                 effectiveTo, 
                 epaChanged, 
-                eqaProviderName);
+                eqaProviderName,
+                epaoMustBeApprovedByRegulatorBody);
             
             _standards.Add(standard);
             StandardsHandler.InsertRecord(standard);
@@ -256,6 +259,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public T WithIlr(
+            Guid id, long uln, int ukprn, int stdCode, int completionStatus, string source = null, DateTime? createdOn = null)
+        {
+            var ilr = IlrHandler.Create(id, uln, ukprn, stdCode, completionStatus, source, createdOn);
+            _ilrs.Add(ilr);
+            IlrHandler.InsertRecord(ilr);
+
+            return this as T;
+        }
+
         public T WithOfsOrganisation(
             Guid id, int ukprn, DateTime createdAt)
         {
@@ -268,6 +281,22 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
             _ofsOrganisations.Add(ofsOrganisation);
             OfsOrganisationHandler.InsertRecord(ofsOrganisation);
+
+            return this as T;
+        }
+
+        public T WithProvider(
+            int ukprn, string name = "", DateTime? updatedOn = null)
+        {
+            var provider = new ProviderModel
+            {
+                Ukprn = ukprn,
+                Name = name,
+                UpdatedOn = updatedOn ?? DateTime.UtcNow
+            };
+
+            _providers.Add(provider);
+            ProviderHandler.InsertRecord(provider);
 
             return this as T;
         }
@@ -359,6 +388,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
         protected static void DeleteAllRecords()
         {
+            IlrHandler.DeleteAllRecords();
             OfqualOrganisationHandler.DeleteAllRecords();
             OfqualStandardHandler.DeleteAllRecords();
             OfsOrganisationHandler.DeleteAllRecords();
@@ -367,6 +397,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             OrganisationStandardHandler.DeleteAllRecords();
             ContactsHandler.DeleteAllRecords();
             OrganisationHandler.DeleteAllRecords();
+            ProviderHandler.DeleteAllRecords();
             StandardsHandler.DeleteAllRecords();
             StagingOfqualOrganisationHandler.DeleteAllRecords();
             StagingOfqualStandardHandler.DeleteAllRecords();
