@@ -4,15 +4,15 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetAssessmentOrganisationsListRequest : IRequest<List<AssessmentOrganisationListSummary>>
+    public class GetAparSummaryRequest : IRequest<List<AparSummary>>
     {
         public int? Ukprn { get; }
 
-        public GetAssessmentOrganisationsListRequest()
+        public GetAparSummaryRequest()
         {
         }
 
-        public GetAssessmentOrganisationsListRequest(int? ukprn)
+        public GetAparSummaryRequest(int? ukprn)
         {
             Ukprn = ukprn;
         }

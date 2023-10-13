@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public async Task StandardDetails_ReturnsViewWithModel_WhenGetCalledWithValidReference()
         {
             // Act
-            var result = await _sut.StandardDetails("ST0001");
+            var result = await _sut.StandardDetails("ST0001", string.Empty);
 
             // Assert
             Assert.Multiple(() =>
@@ -84,10 +84,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
         [TestCase(null)]
         [TestCase("")]
-        public void StandardDetails_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyReference_(string referenceNumber)
+        [TestCase(" ")]
+        public void StandardDetails_ThrowsArgumentException_WhenGetCalledWithNullOrEmptyOrWhitespaceReference_(string referenceNumber)
         {
             // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.StandardDetails(referenceNumber));
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.StandardDetails(referenceNumber, string.Empty));
             Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
         }
 
@@ -95,7 +96,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public void StandardDetails_ReturnsBadRequest_WhenGetCalledWithNonExistentReference()
         {
             // Act & Assert
-            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.StandardDetails("ST0003"));
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.StandardDetails("ST0003", string.Empty));
         }
     }
 }

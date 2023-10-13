@@ -73,7 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-        [HttpPost("organisationstandardversion", Name = "CreateOrganisationStandardVersion")]
         /// <summary>
         /// Opt in to of the organisation standard version given in the request
         /// </summary>
@@ -155,6 +154,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 return BadRequest(new EpaoStandardVersionResponse(ex.Message));
             }
+        }
+
+        [HttpPost("organisationstandard/withdraw", Name = "WithdrawStandard")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> WithdrawStandard(
+           [FromBody] WithdrawStandardRequest request)
+        {
+            _logger.LogInformation($"Received Withdraw Standard Request from {request.EndPointAssessorOrganisationId} for {request.StandardCode} on {request.WithdrawalDate}");
+
+            await _mediator.Send(request);
+
+            return NoContent();
         }
     }
 }
