@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId);
         Task<Organisation> GetOrganisationByContactId(Guid contactId);
         Task<bool> CheckIfOrganisationHasContactsWithSigninId(string endPointAssessorOrganisationId, Guid contactId);
+        Task<bool> IsOfsOrganisation(int ukprn);
 
         Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard);
 

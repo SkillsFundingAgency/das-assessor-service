@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -16,6 +17,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
@@ -35,6 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public const string ApplyStandardSearchRoutePost = nameof(ApplyStandardSearchRoutePost);
         public const string ApplyStandardSearchResultsRouteGet = nameof(ApplyStandardSearchResultsRouteGet);
         public const string ApplyStandardConfirmOfqualRouteGet = nameof(ApplyStandardConfirmOfqualRouteGet);
+        public const string ApplyStandardOfsShutterPageRouteGet = nameof(ApplyStandardOfsShutterPageRouteGet);
         public const string ApplyStandardConfirmRouteGet = nameof(ApplyStandardConfirmRouteGet);
         public const string ApplyStandardConfirmRoutePost = nameof(ApplyStandardConfirmRoutePost);
         public const string AddStandardSearchRouteGet = nameof(AddStandardSearchRouteGet);
@@ -54,8 +57,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public const string OptOutStandardVersionConfirmationRouteGet = nameof(OptOutStandardVersionConfirmationRouteGet);
         #endregion
 
-        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
-            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient,
+            IContactsApiClient contactsApiClient, IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
         {
             _orgApiClient = orgApiClient;
@@ -89,7 +92,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.Search });
             }
-            
+
             return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.Search });
         }
 
@@ -366,6 +369,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/{id}/confirm-ofs", Name = ApplyStandardOfsShutterPageRouteGet)]
+        [ApplicationAuthorize(routeId: "Id")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult ApplyStandardOfsShutterPage(Guid id, string search, bool showNeedToRegisterPage, bool showNeedToSubmitIlrPage)
+        {
+            var viewModel = new ApplyStandardOfsShutterPageViewModel
+            {
+                Id = id,
+                Search = search,
+                ShowNeedToRegisterPage = showNeedToRegisterPage,
+                ShowNeedToSubmitIlrPage = showNeedToSubmitIlrPage
+            };
+
+            return View(viewModel);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/{id}/apply-standard/{search}/{referenceNumber}/confirm", Name = ApplyStandardConfirmRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
@@ -409,6 +429,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             else if (latestStandard.EqaProviderName == "Ofqual")
             {
                 return RedirectToRoute(ApplyStandardConfirmOfqualRouteGet, new { id, search, referenceNumber });
+            }
+            else if (latestStandard.EqaProviderName == "Office for Students")
+            {
+                var shutterPageSelector = new OfsShutterPageSelector(_orgApiClient);
+                var shutterPagesToShow = await shutterPageSelector.GetFromOrganisationAndStandard(org, latestStandard);
+                if (shutterPagesToShow.ShowNeedToRegisterPage || shutterPagesToShow.ShowNeedToSubmitIlrPage)
+                {
+                    return RedirectToRoute(ApplyStandardOfsShutterPageRouteGet, new { id, search, shutterPagesToShow.ShowNeedToRegisterPage, shutterPagesToShow.ShowNeedToSubmitIlrPage });
+                }
             }
 
             var viewModel = new ApplyStandardConfirmViewModel
