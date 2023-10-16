@@ -1,11 +1,12 @@
-@using SFA.DAS.AssessorService.Domain.Consts;
-@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.TypeOfWithdrawalViewModel;
+@using SFA.DAS.AssessorService.Domain.Consts
+@using SFA.DAS.AssessorService.Web.Controllers
+@model SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal.TypeOfWithdrawalViewModel
 @{
     ViewData["Title"] = "What are you withdrawing from?";
     Layout = "_DashboardLayout";
 }
 
-<a asp-action="Index" asp-controller="ApplyForWithdrawal" class="govuk-back-link">Back</a>
+<a asp-route="@ApplyForWithdrawalController.WithdrawalApplicationsRouteGet" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (!ViewData.ModelState.IsValid)
@@ -35,35 +36,35 @@
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input"
-                                       id="withdrawal-type-standard"
+                                       id="TypeOfWithdrawal"
                                        name="TypeOfWithdrawal"
                                        type="radio"
                                        value="@ApplicationTypes.StandardWithdrawal"
                                        asp-for="TypeOfWithdrawal"
                                        sfa-validation-for="TypeOfWithdrawal"
                                        sfa-validationerror-class="govuk-input--error">
-                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-standard">
-                                    Assessing a specific standard or version(s) of that standard
+                                <label class="govuk-label govuk-radios__label" for="TypeOfWithdrawal">
+                                    Assessing a specific standard
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input"
-                                       id="withdrawal-type-register"
+                                       id="TypeOfWithdrawal-organisation"
                                        name="TypeOfWithdrawal"
                                        type="radio"
                                        value="@ApplicationTypes.OrganisationWithdrawal"
                                        asp-for="TypeOfWithdrawal"
                                        sfa-validation-for="TypeOfWithdrawal"
                                        sfa-validationerror-class="govuk-input--error">
-                                <label class="govuk-label govuk-radios__label" for="withdrawal-type-register">
-                                    The register of end-point assessment organisations
+                                <label class="govuk-label govuk-radios__label" for="TypeOfWithdrawal-organisation">
+                                    The apprenticeship provider and assessment register
                                 </label>
                             </div>
                         </div>
                     </fieldset>
                 </div>
                 <button class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
-                    Save and continue
+                    Confirm and continue
                 </button>
             </form>
         </div>

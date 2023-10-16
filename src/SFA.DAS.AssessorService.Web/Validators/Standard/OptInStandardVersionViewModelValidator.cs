@@ -18,13 +18,12 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
                 .NotEmpty()
                 .Must((vm, _) =>
                 {
-
-                    return vm != null && standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaoOrgId, vm.StandardReference)
-                                                                 .GetAwaiter()
-                                                                 .GetResult()
-                                                                 .FirstOrDefault(p => p.Version.Equals(vm.Version, StringComparison.InvariantCultureIgnoreCase)) == null;
+                    var result = standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaoOrgId, vm.StandardReference)
+                                                   .GetAwaiter()
+                                                   .GetResult();
+                   return result.FirstOrDefault(p => p.Version.Equals(vm.Version, StringComparison.InvariantCultureIgnoreCase)) == null;
                 })
-                .WithMessage(vm => $"You cannot opt out of {vm.StandardReference}, {vm.Version} as you have already opted out.");
+                .WithMessage(vm => $"You cannot opt in to {vm.StandardTitle}, {vm.StandardReference} as you have already opted in.");
         }
     }
 }

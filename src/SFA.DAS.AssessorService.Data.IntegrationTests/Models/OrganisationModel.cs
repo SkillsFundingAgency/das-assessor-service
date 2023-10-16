@@ -15,5 +15,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public DateTime? UpdatedAt { get;set; }
         public int? OrganisationTypeId { get; set; }
         public string OrganisationData { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }

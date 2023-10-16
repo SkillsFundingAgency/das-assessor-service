@@ -152,13 +152,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _sut.ModelState.AddModelError("some error name", "some error message");
 
             var result = await _sut.OptOutStandardVersion(viewModel);
+            var redirectResult = result as RedirectToRouteResult;
 
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
-
-                var redirectResult = result as RedirectToRouteResult;
-
                 Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionRouteGet));
                 Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(viewModel.StandardReference));
                 Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(viewModel.Version));

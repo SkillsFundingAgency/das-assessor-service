@@ -67,15 +67,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new Exception(message);
             }
 
-            var applyFollowingWithdrawal = (await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(
+            var standardExists = (await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(
                 request.OrganisationId, request.StandardReference) != null);
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
             var deliveryAreas = !(request.DeliveryAreas?.Any() ?? false) ? await GetDeliveryAreas() : request.DeliveryAreas;
 
-            if (applyFollowingWithdrawal) 
+            if (standardExists) 
             {
-                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, deliveryAreas, true);
+                return await _registerRepository.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(organisationStandard, deliveryAreas);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationStandardRequest request)
         {
-            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());           
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());
             request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
             request.ContactId = request.ContactId?.Trim();
         }

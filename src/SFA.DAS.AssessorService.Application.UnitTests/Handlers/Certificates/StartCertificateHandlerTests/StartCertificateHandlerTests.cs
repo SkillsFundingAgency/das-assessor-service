@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         private Mock<ILearnerRepository> _mockLearnerRepository;
         private Mock<IProvidersRepository> _mockProvidersRepository;
         private Mock<IOrganisationQueryRepository> _mockOrganisationQueryRepository;
+        private Mock<IStandardRepository> _mockStandardRepository;
         private Mock<IStandardService> _mockStandardService;
         private Mock<ICertificateNameCapitalisationService> _mockCertificateNameCapitalisationService;
         private StartCertificateHandler _sut;
@@ -37,11 +38,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockProvidersRepository = new Mock<IProvidersRepository>();
             _mockOrganisationQueryRepository = new Mock<IOrganisationQueryRepository>();
+            _mockStandardRepository = new Mock<IStandardRepository>();
             _mockStandardService = new Mock<IStandardService>();
             _mockCertificateNameCapitalisationService = new Mock<ICertificateNameCapitalisationService>();
 
             _sut = new StartCertificateHandler(_mockCertificateRepository.Object, _mockLearnerRepository.Object, _mockProvidersRepository.Object,
-                _mockOrganisationQueryRepository.Object, _mockLogger.Object, _mockStandardService.Object, _mockCertificateNameCapitalisationService.Object);
+                _mockOrganisationQueryRepository.Object, _mockStandardRepository.Object, _mockLogger.Object, _mockStandardService.Object, _mockCertificateNameCapitalisationService.Object);
         }
 
         [Test, RecursiveMoqAutoData]
