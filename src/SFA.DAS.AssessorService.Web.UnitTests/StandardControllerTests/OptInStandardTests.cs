@@ -186,7 +186,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 StandardReference = "ST0001",
                 Version = "1.1"
             };
-            var result = await _sut.OptInStandardVersion(model);
 
             _sut.ModelState.AddModelError("some error", "some message");
 
