@@ -1,0 +1,44 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@model ApplyStandardOfsShutterPageViewModel
+
+@{
+    ViewBag.Title = "OfS Shutter Page";
+    Layout = "_Layout";
+}
+
+<a asp-route="@StandardController.ApplyStandardSearchResultsRouteGet" asp-route-id="@Model.Id" asp-route-search="@Model.Search" class="govuk-back-link">Return to search results</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            @if (Model.ShowNeedToRegisterPage)
+            {
+                <p class="govuk-heading-l">
+                    You aren't registered with the Office for Students
+                </p>
+                <p class="govuk-body">
+                    You need to register with the Office for Students (OfS) to assess this standard. You will also need to submit at least one Individualised Learner Record (ILR) for this standard.
+                </p>
+                <p class="govuk-body">
+                    Once you've met this criteria, you can apply to add this standard to your OfS apprenticeship service account.
+                </p>
+            }
+            else if (Model.ShowNeedToSubmitIlrPage)
+            {
+                <p class="govuk-heading-l">
+                    You haven't submitted an Individualised Learner Record
+                </p>
+                <p class="govuk-body">
+                    You need to submit at least one Individualised Learner Record (ILR) to assess this standard.
+                </p>
+                <p class="govuk-body">
+                    After you've submitted an ILR for this standard, you can apply to add this standard to your OfS apprenticeship service account.
+                </p>
+            }
+
+        </div>
+    </div>
+</main>
