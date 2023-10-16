@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -18,17 +19,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/standard-version/")]
     [ValidateBadRequest]
-    public class StandardVersionController : Controller
+    public class StandardVersionController : BaseController
     {
+        private readonly IMediator _mediator;
         private readonly ILogger<StandardVersionController> _logger;
         private readonly IStandardService _standardService;
-        private readonly IMediator _mediator;
 
-        public StandardVersionController(ILogger<StandardVersionController> logger, IStandardService standardService, IMediator mediator)
+        public StandardVersionController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<StandardVersionController> logger, IStandardService standardService)
+            : base(taskQueue, logger)
         {
+            _mediator = mediator;
             _logger = logger;
             _standardService = standardService;
-            _mediator = mediator;
         }
 
         [HttpGet("standards", Name = "GetAllStandardVersions")]
@@ -167,14 +169,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("update-standards", Name = "update-standards/GatherAndStoreStandards")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GatherAndStoreStandards([FromBody] ImportStandardsRequest request)
+        public IActionResult GatherAndStoreStandards()
         {
-            return Ok(await _mediator.Send(request));
+            return QueueBackgroundRequest(new ImportStandardsRequest(), "gather and store standards");
         }
-
     }
 }

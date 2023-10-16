@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.TaskQueue
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var (request, requestName) = await _taskQueue.DequeueAsync(stoppingToken);
+                var (request, requestName, responseMessage) = await _taskQueue.DequeueAsync(stoppingToken);
 
                 // cannot use the default per-HTTP scope as it will be cleared when the request finishes
                 // this would introduce a race condition, create a new DI scope instead
@@ -42,8 +42,17 @@ namespace SFA.DAS.AssessorService.Application.Api.TaskQueue
 
                         Func<CancellationToken, Task> workItem = async token =>
                         {
-                            await scopedMediator.Send(request);
-                            scopedLogger.LogInformation($"Request to {requestName} completed successfully");
+                            var response = await scopedMediator.Send(request);
+                            string message = $"Request to {requestName} completed successfully";
+
+                            if (string.IsNullOrEmpty(responseMessage))
+                            {
+                                scopedLogger.LogInformation(message);
+                            }
+                            else
+                            {
+                                scopedLogger.LogInformation(message + ", " + string.Format(responseMessage, response));
+                            }
                         };
 
                         await workItem(stoppingToken);

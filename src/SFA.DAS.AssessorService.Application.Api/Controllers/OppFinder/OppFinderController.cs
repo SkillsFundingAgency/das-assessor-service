@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,24 +7,25 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.Http;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/oppfinder")]
     [ValidateBadRequest]
-    public class OppFinderController : Controller
+    public class OppFinderController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly IBackgroundTaskQueue _taskQueue;
         private readonly ILogger<OppFinderController> _logger;
 
         public OppFinderController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<OppFinderController> logger)
+            : base(taskQueue, logger)
         {
             _mediator = mediator;
-            _taskQueue = taskQueue;
             _logger = logger;
         }
 
@@ -58,25 +56,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("update-standard-summary", Name = "UpdateStandardSummary")]
         [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public IActionResult UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
+        public IActionResult UpdateStandardSummary()
         {
-            const string requestName = "update standard summary";
-
-            try
-            {
-                _logger.LogInformation($"Received request to {requestName}");
-
-                _taskQueue.QueueBackgroundRequest(request, requestName);
-
-                _logger.LogInformation($"Queued request to {requestName}");
-
-                return Accepted();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Request to {requestName} failed");
-                return StatusCode(500);
-            }
+            return QueueBackgroundRequest(new UpdateStandardSummaryRequest(), "update standard summary");
         }
     }
 }

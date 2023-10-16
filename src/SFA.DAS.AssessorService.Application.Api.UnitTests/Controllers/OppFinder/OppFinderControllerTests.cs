@@ -31,26 +31,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.OppFinde
         [Test, AutoData]
         public void When_PostToUpdateStandardSummary_Then_BackgroundTaskIsQueued()
         {
-            // Arrange
-            var request = new UpdateStandardSummaryRequest();
-
             // Act
-            var controllerResult = _sut.UpdateStandardSummary(request) as ObjectResult;
+            var controllerResult = _sut.UpdateStandardSummary() as ObjectResult;
 
             // Assert
             _mockBackgroundTaskQueue.Verify(m => m.QueueBackgroundRequest(
-                request, "update standard summary"), 
+                It.IsAny<UpdateStandardSummaryRequest>(), "update standard summary", ""), 
                 Times.Once);
         }
 
         [Test]
         public void When_UpdateStandardSummaryHasNoErrors_Then_ReturnsAccepted()
         {
-            // Arrange
-            var request = new UpdateStandardSummaryRequest();
-
             // Act
-            var controllerResult = _sut.UpdateStandardSummary(request) as ObjectResult;
+            var controllerResult = _sut.UpdateStandardSummary() as ObjectResult;
 
             // Assert
 

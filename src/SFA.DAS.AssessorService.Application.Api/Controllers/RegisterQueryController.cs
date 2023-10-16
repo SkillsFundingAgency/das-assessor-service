@@ -15,19 +15,20 @@ using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.Organisatio
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/ao")]
     [ValidateBadRequest]
-    public class RegisterQueryController : Controller
+    public class RegisterQueryController : BaseController
     {
         private readonly ILogger<RegisterQueryController> _logger;
         private readonly IMediator _mediator;
 
-        public RegisterQueryController(IMediator mediator, ILogger<RegisterQueryController> logger
-        )
+        public RegisterQueryController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<RegisterQueryController> logger)
+            : base(taskQueue, logger)
         {
             _mediator = mediator;
             _logger = logger;
@@ -240,13 +241,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("assessment-organisations/apar-summary-update", Name = "APARSummaryUpdate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int?))]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(int?))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> AparSummaryUpdate()
+        public IActionResult AparSummaryUpdate()
         {
-            _logger.LogInformation("Updating APAR Summary");
-
-            return Ok(await _mediator.Send(new AparSummaryUpdateRequest()));
+            return QueueBackgroundRequest(new AparSummaryUpdateRequest(), "update APAR summary", "there were {0} changes made to APAR for EPAOs");
         }
 
         [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]

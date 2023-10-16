@@ -17,18 +17,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/approvals/")]
     [ValidateBadRequest]
-    public class ApprovalsController : Controller
+    public class ApprovalsController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly IBackgroundTaskQueue _taskQueue;
         private readonly ILogger<ApprovalsController> _logger;
 
         public ApprovalsController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<ApprovalsController> logger)
+            : base(taskQueue, logger)
         {
             _mediator = mediator;
-            _taskQueue = taskQueue;
             _logger = logger;
-            
         }
 
         [HttpPost("update-approvals", Name = "update-approvals/GatherAndStoreApprovals")]
@@ -36,24 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public IActionResult GatherAndStoreApprovals()
         {
-            const string requestName = "gather and store approvals";
-
-            try
-            {
-                _logger.LogInformation($"Received request to {requestName}");
-
-                var request = new ImportApprovalsRequest();
-                _taskQueue.QueueBackgroundRequest(request, requestName);
-
-                _logger.LogInformation($"Queued request to {requestName}");
-
-                return Accepted();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Request to {requestName} failed");
-                return StatusCode(500);
-            }
+            return QueueBackgroundRequest(new ImportApprovalsRequest(), "gather and store approvals");
         }
 
         [HttpGet("learner", Name = "learner/GetLearner")]

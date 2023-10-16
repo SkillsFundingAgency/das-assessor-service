@@ -39,7 +39,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
             var controllerResult = _sut.GatherAndStoreApprovals() as ObjectResult;
 
             // Assert
-            _mockBackgroundTaskQueue.Verify(m => m.QueueBackgroundRequest(It.IsAny<ImportApprovalsRequest>(), "gather and store approvals"), Times.Once);
+            _mockBackgroundTaskQueue.Verify(m => m.QueueBackgroundRequest(
+                It.IsAny<ImportApprovalsRequest>(), "gather and store approvals", string.Empty), Times.Once);
         }
 
         [Test]
