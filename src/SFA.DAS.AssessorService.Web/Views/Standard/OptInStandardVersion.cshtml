@@ -60,6 +60,7 @@
                 </tbody>
             </table>
             <form asp-route="@StandardController.OptInStandardVersionRoutePost" method="post">
+                <input asp-for="StandardTitle" value="@Model.StandardTitle" type="hidden" />
                 <input asp-for="StandardReference" value="@Model.StandardReference" type="hidden" />
                 <input asp-for="Version" value="@Model.Version" type="hidden" />
                 <input asp-for="EffectiveFrom" value="@Model.EffectiveFrom" type="hidden" />
