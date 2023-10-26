@@ -86,6 +86,9 @@ namespace SFA.DAS.AssessorService.Application.Infrastructure.OuterApi
 
         [JsonProperty("epaChanged")]
         public bool EPAChanged { get; set; }
+
+        [JsonProperty("epaoMustBeApprovedByRegulatorBody")]
+        public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
     }
 
     public class StandardDates

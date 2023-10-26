@@ -35,5 +35,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string EqaProviderContactName { get; set; }
         public string EqaProviderContactEmail { get; set; }
         public string OverviewOfRole { get; set; }
+        public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
     }
 }

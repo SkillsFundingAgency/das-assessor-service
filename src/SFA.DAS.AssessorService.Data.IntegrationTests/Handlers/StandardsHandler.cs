@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
     {
         private static readonly DatabaseService DatabaseService = new DatabaseService();
 
-        public static StandardModel Create(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged, string eqaProviderName)
+        public static StandardModel Create(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
             ConvertVersionStringToInts(version, out int major, out int minor);
          
@@ -33,6 +33,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 StandardPageUrl = "www.standard.com",
                 EqaProviderName = eqaProviderName,
                 OverviewOfRole = "OverviewOfRole",
+                EpaoMustBeApprovedByRegulatorBody = epaoMustBeApprovedByRegulatorBody
             };
         }
 
@@ -61,7 +62,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [VersionMinor]" +
                     ", [EqaProviderName]" +
                     ", [OverviewOfRole]" +
-                    ", [VersionApprovedForDelivery])" +
+                    ", [VersionApprovedForDelivery]" +
+                    ", [EpaoMustBeApprovedByRegulatorBody])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
@@ -84,7 +86,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @versionMinor" +
                     ", @eqaProviderName" +
                     ", @overviewOfRole" +
-                    ", @versionApprovedForDelivery)";
+                    ", @versionApprovedForDelivery" +
+                    ", @epaoMustBeApprovedByRegulatorBody)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }
