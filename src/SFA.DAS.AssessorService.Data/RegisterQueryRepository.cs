@@ -303,7 +303,7 @@ namespace SFA.DAS.AssessorService.Data
                         va1.ApplyId AS ApplicationId,
                         va1.ApplicationStatus,
                         so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, so1.VersionLatestEndDate, 
-                        so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
+                        so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode, so1.EpaoMustBeApprovedByRegulatorBody,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
                         va1.ApplyData, so1.EqaProviderName, so1.EqaProviderContactName, so1.EqaProviderContactEmail

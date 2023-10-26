@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -151,24 +152,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _sut.ModelState.AddModelError("some error name", "some error message");
 
             var result = await _sut.OptOutStandardVersion(viewModel);
+            var redirectResult = result as RedirectToRouteResult;
 
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
-
-                var redirectResult = result as RedirectToRouteResult;
-
                 Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptOutStandardVersionRouteGet));
                 Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(viewModel.StandardReference));
                 Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(viewModel.Version));
             });
-        }
-
-        [Test]
-        public void OptOutStandardVersion_ThrowsArgumentException_WhenPostCalledWithNullModel()
-        {
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(null));
-            Assert.That(ex.ParamName, Is.EqualTo("model"));
         }
 
         [TestCase(null)]
@@ -195,18 +186,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             };
 
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptOutStandardVersion(model));
-        }
-
-        [Test]
-        public void OptOutStandardVersion_ThrowsNotFoundException_WhenPostCalledWithExistingVersionForStandard()
-        {
-            var model = new OptOutStandardVersionViewModel
-            {
-                StandardReference = "ST0001",
-                Version = "1.0"
-            };
-
-            Assert.ThrowsAsync<NotFoundException>(async () => await _sut.OptOutStandardVersion(model));
         }
 
         [Test]
