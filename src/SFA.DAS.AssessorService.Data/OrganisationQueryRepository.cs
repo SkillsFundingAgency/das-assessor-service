@@ -81,6 +81,11 @@ namespace SFA.DAS.AssessorService.Data
              return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
         }
 
+        public async Task<bool> IsOfsOrganisation(int ukprn)
+        {
+            return await _assessorDbContext.OfsOrganisation.AnyAsync(o => o.Ukprn == ukprn);
+        }
+
         public async Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
         {
             var organisations = await _assessorDbContext

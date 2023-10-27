@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
-     [TestFixture]
+    [TestFixture]
     public class OptInStandardTests : StandardControllerTestBase
     {
         private List<StandardVersion> _approvedVersions;
@@ -145,10 +146,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
+        public async Task OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(null));
-            Assert.That(ex.ParamName, Is.EqualTo("model"));
+            Assert.That(ex.ParamName, Is.Null);
         }
 
         [TestCase(null)]
@@ -178,7 +179,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithExistingVersionForStandard()
+        public async Task OptInStandardVersion_Redirects_To_OptInStandardVersionRouteGet_WhenModelStateIsInvalid()
         {
             var model = new OptInStandardVersionViewModel
             {
@@ -186,7 +187,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 Version = "1.1"
             };
 
-            Assert.ThrowsAsync<AlreadyExistsException>(async () => await _sut.OptInStandardVersion(model));
+            _sut.ModelState.AddModelError("some error", "some message");
+
+            var result = await _sut.OptInStandardVersion(model);
+            var redirectResult = result as RedirectToRouteResult;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(redirectResult.RouteName, Is.EqualTo(nameof(StandardController.OptInStandardVersionRouteGet)));
+                Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
+                Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
+            });
         }
 
         [Test]
@@ -238,8 +249,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             public string Version { get; set; }
             public string ExpectedTitle { get; set; }
             public string ExpectedVersion { get; set; }
-            public DateTime ExpectedVersionEarliestStartDate { get; set;}
-            public DateTime ExpectedVersionLatestEndDate { get; set;}
+            public DateTime ExpectedVersionEarliestStartDate { get; set; }
+            public DateTime ExpectedVersionLatestEndDate { get; set; }
         }
 
         private static readonly TestDataOptInStandardVersion[] TestDataForOptInStandardVersion =
