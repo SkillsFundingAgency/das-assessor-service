@@ -83,9 +83,11 @@ There are several unit test projects in the solution built using C#, NUnit, Moq,
 * `SFA.DAS.AssessorService.Web.UnitTests`
 
 #### Integration Tests
-There are two integration test projects: 
+There are two integration test projects at the time of writing: 
 * `SFA.DAS.AssessorService.Application.Api.IntegrationTests`
 * `SFA.DAS.AssessorService.Data.IntegrationTests`
+
+Under each integration test project is a `connectionStrings.Template.json` file. Follow the instructions inside this file to enable integration tests for each project. Otherwise, the integration tests will fail to run.
 
 Specflow is currently used for integration testing the internal API. It is configured to run using the NUnit Test runner. 
 Hence, it requires:
