@@ -31,6 +31,7 @@
 	[EqaProviderContactEmail] VARCHAR(500) NULL,
 	[OverviewOfRole] VARCHAR(500),
 	[CoronationEmblem] BIT NOT NULL DEFAULT 0,
+	[EpaoMustBeApprovedByRegulatorBody] BIT NOT NULL Default 0,
 )
 GO
 

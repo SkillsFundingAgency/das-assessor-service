@@ -175,7 +175,11 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task<IEnumerable<int>> UkprnsInExtractNotInProviders()
         {
-            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT ax1.Ukprn FROM ApprovalsExtract ax1 LEFT JOIN Providers pr1 ON pr1.ukprn = ax1.ukprn WHERE pr1.ukprn IS NULL");
+            var ukprns = 
+                await _unitOfWork.Connection
+                    .QueryAsync<int>(
+                    "SELECT DISTINCT ax1.Ukprn FROM ApprovalsExtract ax1 LEFT JOIN Providers pr1 ON pr1.ukprn = ax1.ukprn WHERE pr1.ukprn IS NULL",
+                    commandTimeout: 120);
             return ukprns;
         }
 

@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas, bool applyFollowingWithdrawal=false)
+            List<int> deliveryAreas)
         {
             var osdaId = (await _unitOfWork.Connection.QueryAsync<string>(
                 "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Data
                     new { osdaId });
 
 
-            if (null != orgStandard.StandardVersions && applyFollowingWithdrawal)
+            if (null != orgStandard.StandardVersions)
             {
                 foreach (var version in orgStandard.StandardVersions)
                 {
