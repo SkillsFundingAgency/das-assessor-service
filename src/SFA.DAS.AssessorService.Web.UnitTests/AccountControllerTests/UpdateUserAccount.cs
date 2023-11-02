@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             
             _controller = new AccountController(Mock.Of<ILogger<AccountController>>(), Mock.Of<ILoginOrchestrator>(),
                 Mock.Of<ISessionService>(), new WebConfiguration(), _contactsApiClient.Object,
-                Mock.Of<IHttpContextAccessor>(), Mock.Of<CreateAccountValidator>(), Mock.Of<IOrganisationsApiClient>(), _validator.Object);
+                Mock.Of<IHttpContextAccessor>(), Mock.Of<CreateAccountValidator>(), Mock.Of<IOrganisationsApiClient>(), _validator.Object, null);
             _controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext()

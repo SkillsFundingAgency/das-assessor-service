@@ -25,6 +25,7 @@ using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Utils;
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web
             );
 
             _config = config.Build();
-            Configuration = _config.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
+            Configuration = _config.Get<WebConfiguration>();
         }
 
         private IWebConfiguration Configuration { get; set; }
@@ -87,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web
                 
                 if (Configuration.UseGovSignIn)
                 {
-                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler));   
+                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/signed-out","/service/account-details",EnvironmentHelper.GetDomain(_config["ResourceEnvironmentName"]));   
                 }
                 else
                 {

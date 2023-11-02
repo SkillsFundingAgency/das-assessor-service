@@ -1,0 +1,16 @@
+@using System.Security.Claims
+@model AccountStubViewModel
+<div class="govuk-grid-row"  id="estimate-start-transfer">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
+            You've signed in
+        </h1>
+
+            <p>Id: @Model.Id</p>
+            <p>Email: @Model.Email</p>
+        <p>
+            <a href="@Model.ReturnUrl" class="govuk-button">Continue</a>
+        </p>
+        
+    </div>
+</div>
