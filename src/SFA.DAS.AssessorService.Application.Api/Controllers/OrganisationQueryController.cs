@@ -133,5 +133,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             
             return Ok(await _mediator.Send(new GetEarliestWithdrawalDateRequest(id, standardId)));
         }
+
+        [HttpGet("is-ofs/{ukprn}", Name = "CheckIfOfsOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> CheckIfOfsOrganisation(int ukprn)
+        {
+            _logger.LogInformation($"Received request to check whether organisation with UKPRN {ukprn} is an Office for Students organisation.");
+            return Ok(await _mediator.Send(new CheckIfOfsOrganisationRequest(ukprn)));
+        }
     }
 }

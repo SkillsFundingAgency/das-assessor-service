@@ -84,7 +84,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<StandardOptions>(request, $"Could not find the standard options for {standardId}");
             }
         }
-
     }
 
     public interface IStandardVersionClient
