@@ -111,6 +111,9 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "stubAuth": {
+            "type": "string"
         }
     },
     "variables": {
@@ -381,6 +384,10 @@
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
                                     "value": "200"
+                                },
+                                {
+                                    "name": "StubAuth",
+                                    "value": "[parameters('stubAuth')]"
                                 }
                             ]
                         }
