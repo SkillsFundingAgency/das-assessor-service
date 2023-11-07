@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
                 services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
-                
+                services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
                 if (Configuration.UseGovSignIn)
                 {
                     services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/signed-out","/service/account-details",EnvironmentHelper.GetDomain(_config["ResourceEnvironmentName"]));   

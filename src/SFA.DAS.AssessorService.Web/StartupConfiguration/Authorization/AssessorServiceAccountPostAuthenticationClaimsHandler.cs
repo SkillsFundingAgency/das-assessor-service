@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         ? await _contactsApiClient.GetContactBySignInId(signInId)
                         : await _contactsApiClient.GetContactByEmail(email);
                 }
-                catch (EntityNotFoundException)
+                catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
                 {
                     _logger.LogInformation("Failed to retrieve user.");
                 }
