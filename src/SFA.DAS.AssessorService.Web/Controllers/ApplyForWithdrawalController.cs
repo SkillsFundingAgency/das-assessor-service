@@ -110,6 +110,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 10);
             var applicationFinder = new ApplicationFinder(_applicationApiClient);
+            var applicationIdDictionary = new Dictionary<string, Guid?>();
+
+            foreach (var standard in standards.Items)
+            {
+                var applicationId = (await applicationFinder.GetWithdrawalApplicationInProgressForContact(contact.Id, standard.ReferenceNumber))?.Id;
+                applicationIdDictionary.Add(standard.ReferenceNumber, applicationId);
+            }
+
             var viewModel = new ChooseStandardForWithdrawalViewModel()
             {
                 Standards = standards.Convert(x => new RegisteredStandardsViewModel()
@@ -117,9 +125,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     StandardName = x.StandardName,
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
-                    ApplicationId = applicationFinder.GetWithdrawalApplicationInProgressForContact(contact.Id, x.ReferenceNumber)
-                                                     .GetAwaiter()
-                                                     .GetResult().Id,
+                    ApplicationId = applicationIdDictionary[x.ReferenceNumber],
                 })
             };
 
