@@ -17,15 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Helpers
             _applicationApiClient = applicationApiClient;
         }
 
-        public async Task<ApplicationResponse> GetWithdrawalApplicationInProgressForContact(Guid contactId, string referenceNumber)
-        {
-            var applications = await GetWithdrawalApplications(contactId);
-            return applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
-                                               a.StandardReference.Equals(referenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
-                                               a.ApplyData.Apply.Versions == null);
-        }
-
-        private async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId)
+        public async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId)
         {
             return (await _applicationApiClient.GetWithdrawalApplications(contactId))
                     .Where(x => x.IsStandardWithdrawalApplication)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -29,7 +30,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
                          .ReturnsAsync(applicationResponses);
 
             var sut = new ApplicationFinder(mockApiClient.Object);
-            var result = await sut.GetWithdrawalApplicationInProgressForContact(contactId, "ST9999");
+            var applications = await sut.GetWithdrawalApplications(contactId);
+
+            var result = applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
+                                               a.StandardReference.Equals("ST9999", StringComparison.InvariantCultureIgnoreCase) &&
+                                               a.ApplyData.Apply.Versions == null);
 
             Assert.That(result.StandardReference, Is.EqualTo("ST9999"));
             Assert.That(result.ApplicationStatus, Is.EqualTo(applicationStatus));

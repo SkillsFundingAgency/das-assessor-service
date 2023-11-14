@@ -40,8 +40,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public const string CheckWithdrawalRequestRoutePost = nameof(CheckWithdrawalRequestRoutePost);
         #endregion
 
-        public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, 
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, 
+        public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient,
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor,
             IStandardsApiClient standardsApiClient, IStandardVersionClient standardVersionApiClient, IWebConfiguration config)
             : base (applicationApiClient, contactsApiClient, httpContextAccessor)
         {
@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToRoute(TypeofWithdrawalRouteGet);
             }
-            
+
             if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
             {
                 return RedirectToRoute(CheckWithdrawalRequestRouteGet, new { backRouteName = TypeofWithdrawalRouteGet });
@@ -110,13 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 10);
             var applicationFinder = new ApplicationFinder(_applicationApiClient);
-            var applicationIdDictionary = new Dictionary<string, Guid?>();
-
-            foreach (var standard in standards.Items)
-            {
-                var applicationId = (await applicationFinder.GetWithdrawalApplicationInProgressForContact(contact.Id, standard.ReferenceNumber))?.Id;
-                applicationIdDictionary.Add(standard.ReferenceNumber, applicationId);
-            }
+            var applications = await applicationFinder.GetWithdrawalApplications(contact.Id);
 
             var viewModel = new ChooseStandardForWithdrawalViewModel()
             {
@@ -125,7 +119,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     StandardName = x.StandardName,
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
-                    ApplicationId = applicationIdDictionary[x.ReferenceNumber],
+                    ApplicationId = applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
+                                               a.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
+                                               a.ApplyData.Apply.Versions == null)?.Id
                 })
             };
 
