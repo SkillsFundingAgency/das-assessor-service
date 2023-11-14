@@ -100,7 +100,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                           .Excluding(x => x.EqaProviderContactName)
                           .Excluding(x => x.EqaProviderContactEmail)
                           .Excluding(x => x.OverviewOfRole)
-                          .Excluding(x => x.CoronationEmblem);
+                          .Excluding(x => x.CoronationEmblem)
+                          .Excluding(x => x.EpaoMustBeApprovedByRegulatorBody);
         }
     }
 }

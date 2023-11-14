@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public IEnumerable<string> Options { get; set; }
         public bool EPAChanged { get; set; }
         public string StandardPageUrl { get; set; }
+        public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
 
         public static implicit operator StandardVersion(Standard standard)
         {
@@ -42,7 +43,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 VersionLatestStartDate = standard.VersionLatestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
-                StandardPageUrl = standard.StandardPageUrl
+                StandardPageUrl = standard.StandardPageUrl,
+                EpaoMustBeApprovedByRegulatorBody = standard.EpaoMustBeApprovedByRegulatorBody
             };
         }
 
@@ -62,7 +64,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
                 VersionEarliestStartDate = standard.VersionEarliestStartDate,
                 VersionLatestEndDate = standard.VersionLatestEndDate,
                 EPAChanged = standard.EPAChanged,
-                StandardPageUrl = standard.StandardPageUrl
+                StandardPageUrl = standard.StandardPageUrl,
+                EpaoMustBeApprovedByRegulatorBody = standard.EpaoMustBeApprovedByRegulatorBody
             };
         }
     }

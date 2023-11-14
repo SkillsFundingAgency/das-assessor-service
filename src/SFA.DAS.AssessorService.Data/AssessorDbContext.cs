@@ -33,6 +33,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
         public virtual DbSet<OrganisationStandardVersion> OrganisationStandardVersion { get; set; }
         public virtual DbSet<OrganisationStandardDeliveryArea> OrganisationStandardDeliveryAreas { get; set; }
+        public virtual DbSet<OfsOrganisation> OfsOrganisation { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
