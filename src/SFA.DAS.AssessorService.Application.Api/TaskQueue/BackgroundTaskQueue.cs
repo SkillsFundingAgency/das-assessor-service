@@ -6,13 +6,6 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Application.Api.TaskQueue
 {
-    public interface IBackgroundTaskQueue
-    {
-        void QueueBackgroundRequest(IBaseRequest request, string requestName, string responseMessage);
-
-        Task<(IBaseRequest request, string RequestName, string ResponseMessage)> DequeueAsync(CancellationToken cancellationToken);
-    }
-
     public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
         private ConcurrentQueue<(IBaseRequest Request, string RequestName, string ResponseMessage)> _requests = new ConcurrentQueue<(IBaseRequest, string, string)>();
