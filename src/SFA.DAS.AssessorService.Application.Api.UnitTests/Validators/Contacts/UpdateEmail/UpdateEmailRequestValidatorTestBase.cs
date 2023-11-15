@@ -8,9 +8,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
 {
     public class UpdateEmailRequestValidatorTestBase
     {
-        protected static UpdateEmailRequestValidator UpdateEmailRequestValidator;
-        protected static Mock<IContactQueryRepository> ContactQueryRepositoryMock;
-        protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
+        private protected static UpdateEmailRequestValidator UpdateEmailRequestValidator;
+        private protected static Mock<IContactQueryRepository> ContactQueryRepositoryMock;
+        private protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         public static void Setup()
         {

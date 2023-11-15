@@ -9,6 +9,9 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
+    /// <summary>
+    /// Implements FluentValidation rules when handling UpdateEmailRequest.
+    /// </summary>
     public class UpdateEmailRequestValidator : AbstractValidator<UpdateEmailRequest>
     {
         public UpdateEmailRequestValidator(
@@ -16,9 +19,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             IContactQueryRepository contactQueryRepository
         )
         {
+            var emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+
             RuleFor(contact => contact.Email)
                 .Custom((email, context) =>
                 {
+                    
                     if (string.IsNullOrEmpty(email))
                         return;
 
@@ -28,9 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                             nameof(UpdateEmailRequest.Email).ToCamelCase(), 120));
                     }
 
-                    var regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-                    var match = regex.Match(email);
-                    if (!match.Success)
+                    if (!emailRegex.Match(email).Success)
                     {
                         context.AddFailure(string.Format(localiser[ResourceMessageName.MustBeValidEmailAddress]
                             .Value));
@@ -49,9 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                             nameof(UpdateEmailRequest.Email).ToCamelCase(), 120));
                     }
 
-                    var regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-                    var match = regex.Match(email);
-                    if (!match.Success)
+                    if (!emailRegex.Match(email).Success)
                     {
                         context.AddFailure(string.Format(localiser[ResourceMessageName.MustBeValidEmailAddress]
                             .Value));
