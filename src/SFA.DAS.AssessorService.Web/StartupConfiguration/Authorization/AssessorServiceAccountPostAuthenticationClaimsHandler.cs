@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -8,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.Services;
 
@@ -19,13 +21,20 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ISessionService _sessionService;
+        private readonly IWebConfiguration _webConfiguration;
 
-        public AssessorServiceAccountPostAuthenticationClaimsHandler(ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler> logger, IContactsApiClient contactsApiClient, IOrganisationsApiClient organisationsApiClient, ISessionService sessionService)
+        public AssessorServiceAccountPostAuthenticationClaimsHandler(
+            ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler> logger,
+            IContactsApiClient contactsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
+            ISessionService sessionService,
+            IWebConfiguration webConfiguration)
         {
             _logger = logger;
             _contactsApiClient = contactsApiClient;
             _organisationsApiClient = organisationsApiClient;
             _sessionService = sessionService;
+            _webConfiguration = webConfiguration;
         }
         
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
@@ -54,6 +63,20 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     // Redirect to access denied page. 
                     tokenValidatedContext.Response.Redirect("/Home/AccessDenied");
                     tokenValidatedContext.HandleResponse();
+                }
+
+                if (_webConfiguration.UseGovSignIn 
+                    && user != null 
+                    && !string.Equals(user.Email, email, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    // update the email address if the Gov Uk Sign In comes with different email address. 
+                    await _contactsApiClient.UpdateEmail(new UpdateEmailRequest
+                    {
+                        Email = user.Email,
+                        NewEmail = email,
+                        UserName = user.Username
+                    });
+                    user.Email = email;
                 }
 
                 if (user != null)

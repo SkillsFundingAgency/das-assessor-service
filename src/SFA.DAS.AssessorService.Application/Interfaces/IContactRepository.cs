@@ -32,5 +32,12 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId);
         Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId);
         Task SetInvitationAccepted(ContactInvitation contactInvitation);
+
+        /// <summary>
+        /// Contract responsible for updating the contact email address.
+        /// </summary>
+        /// <param name="request">typeof(UpdateEmailRequest).</param>
+        /// <returns>Task.</returns>
+        Task UpdateEmail(UpdateEmailRequest request);
     }
 }

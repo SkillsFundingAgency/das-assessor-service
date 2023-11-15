@@ -1,0 +1,50 @@
+﻿using FizzWare.NBuilder;
+using FluentAssertions;
+using FluentValidation.Results;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.UpdateEmail
+{
+    public class WhenUpdateEmailRequestValidatorFailsOnInvalidFieldLengths : UpdateEmailRequestValidatorTestBase
+    {
+        private static ValidationResult _validationResult;
+
+        [SetUp]
+        public void Arrange()
+        {
+            Setup();
+
+            var contactRequest = Builder<UpdateEmailRequest>
+                .CreateNew()
+                .With(q => q.UserName = q.UserName.PadLeft(40, 'x'))
+                .With(q => q.Email = q.Email.PadLeft(140, 'x'))
+                .With(q => q.NewEmail = q.NewEmail.PadLeft(140, 'x'))
+                .Build();
+
+            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
+                .Returns(Task.FromResult(false));
+
+            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+
+
+            _validationResult = UpdateEmailRequestValidator.Validate(contactRequest);
+        }
+
+        [Test]
+        public void ThenItShouldFail()
+        {
+            _validationResult.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void ThenErrorMessageShouldContainInvalidUserNameLength()
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "MaximumLengthValidator");
+            errors.Should().NotBeNull();
+        }
+    }
+}

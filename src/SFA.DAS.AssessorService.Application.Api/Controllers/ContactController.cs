@@ -190,5 +190,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             await _mediator.Send(request, CancellationToken.None);
             return Ok();
         }
+
+        [HttpPut(Name = "updateEmail")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailRequest updateEmailRequest)
+        {
+            _logger.LogInformation("Received Update Email Request");
+
+            await _mediator.Send(updateEmailRequest);
+
+            return NoContent();
+        }
     }
 }

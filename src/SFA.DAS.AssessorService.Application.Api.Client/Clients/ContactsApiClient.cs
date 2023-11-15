@@ -245,5 +245,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
+
+        public async Task UpdateEmail(UpdateEmailRequest updateEmailRequest)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateEmail");
+            await PostPutRequest(request, updateEmailRequest);
+        }
     }
 }
