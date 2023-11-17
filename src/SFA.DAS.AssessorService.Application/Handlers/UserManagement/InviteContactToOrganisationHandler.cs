@@ -3,9 +3,12 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
@@ -14,18 +17,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IContactRepository _contactRepository;
         private readonly IMediator _mediator;
-        private readonly ISignInService _signInService;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly IApiConfiguration _apiConfiguration;
+        private readonly IEmailApiClient _emailApiClient;
 
         public InviteContactToOrganisationHandler(IContactQueryRepository contactQueryRepository,
             IContactRepository contactRepository,
-            IMediator mediator, ISignInService signInService, IOrganisationQueryRepository organisationQueryRepository)
+            IMediator mediator,
+            IOrganisationQueryRepository organisationQueryRepository,
+            IApiConfiguration apiConfiguration,
+            IEmailApiClient emailApiClient)
         {
             _contactQueryRepository = contactQueryRepository;
             _contactRepository = contactRepository;
             _mediator = mediator;
-            _signInService = signInService;
             _organisationQueryRepository = organisationQueryRepository;
+            _apiConfiguration = apiConfiguration;
+            _emailApiClient = emailApiClient;
         }
 
         public async Task<InviteContactToOrganisationResponse> Handle(InviteContactToOrganisationRequest request, CancellationToken cancellationToken)
@@ -43,16 +51,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
 
             var organisation = await _organisationQueryRepository.Get(request.OrganisationId);
-            
+
             var newContact = await CreateNewContact(request, organisation);
 
-            var inviter = await _contactQueryRepository.GetContactById(request.InvitedByContactId);
-                
-            await _signInService.InviteUserToOrganisation(request.Email, request.GivenName, request.FamilyName, newContact.Id, organisation.EndPointAssessorName, inviter.DisplayName);
+            // send invite email to the user with service link.
+            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(request.Email, new EmailTemplateSummary
+            {
+                TemplateId = _apiConfiguration.EmailTemplatesConfig.LoginSignupInvite,
+                TemplateName = nameof(_apiConfiguration.EmailTemplatesConfig.LoginSignupInvite)
+            }, new
+            {
+                name = $"{request.GivenName}",
+                organisation = organisation.EndPointAssessorName,
+                invitation_link = _apiConfiguration.ServiceLink
+            }));
 
             await _contactRepository.AddContactInvitation(request.InvitedByContactId, newContact.Id, organisation.Id);
-            
-            return new InviteContactToOrganisationResponse {Success = true, ContactId = newContact.Id};
+
+            return new InviteContactToOrganisationResponse { Success = true, ContactId = newContact.Id };
         }
 
         private async Task<Contact> CreateNewContact(InviteContactToOrganisationRequest request, Organisation organisation)
@@ -67,13 +83,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 Status = ContactStatus.Pending,
                 SignInType = "ASLogin",
                 Title = "",
-                Username = request.Email, 
+                Username = request.Email,
                 EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
             };
 
             var contact = await _contactRepository.CreateNewContact(newContact);
-            
-           
+
+
             await _mediator.Send(new SetContactPrivilegesRequest
             {
                 AmendingContactId = request.InvitedByContactId,
