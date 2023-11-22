@@ -88,7 +88,9 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
                 if (Configuration.UseGovSignIn)
                 {
-                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout","/service/account-details",EnvironmentHelper.GetDomain(_config["ResourceEnvironmentName"]));   
+                    var cookieDomain = EnvironmentHelper.GetDomain(_config["ResourceEnvironmentName"]);
+                    var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/account-details";
+                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout","/service/account-details",cookieDomain, loginRedirect);   
                 }
                 else
                 {
