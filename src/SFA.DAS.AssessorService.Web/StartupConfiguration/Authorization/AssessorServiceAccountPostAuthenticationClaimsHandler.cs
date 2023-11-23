@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,6 +35,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             var claims = new List<Claim>();                
             var signInId = tokenValidatedContext.Principal.FindFirst("sub")?.Value;
             var email = tokenValidatedContext.Principal.FindFirst(ClaimTypes.Email)?.Value;
+            var govLoginId = tokenValidatedContext.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             ContactResponse user = null;
             if (!string.IsNullOrEmpty(signInId) || !string.IsNullOrEmpty(email))
@@ -62,6 +64,11 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
                     {
                         primaryIdentity.AddClaim(new Claim(ClaimTypes.Name, user.DisplayName));
+                        if (!claims.Exists(c => c.Type == ClaimTypes.Name))
+                        {
+                            claims.Add(new Claim(ClaimTypes.Name, user.DisplayName));    
+                        }
+                        
                     }
 
                     claims.Add(new Claim("UserId", user?.Id.ToString()));
@@ -90,9 +97,21 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     claims.Add(new Claim("display_name", user?.DisplayName));
                     claims.Add(new Claim("email", user?.Email));
-                    if (string.IsNullOrEmpty(signInId))
+                    if (user.SignInId == null && !string.IsNullOrEmpty(govLoginId))
                     {
-                        claims.Add(new Claim("sub", user?.Id.ToString()));
+
+                        var response = await _contactsApiClient.UpdateFromGovLogin(new UpdateContactGovLoginRequest
+                        {
+                            GovIdentifier = govLoginId,
+                            SignInId = Guid.NewGuid(),
+                            ContactId = user.Id
+                        });
+                        
+                        claims.Add(new Claim("sub", response.SignInId.ToString()));
+                    }
+                    else
+                    {
+                        claims.Add(new Claim("sub", user.SignInId.ToString()));
                     }
                 }
             }
