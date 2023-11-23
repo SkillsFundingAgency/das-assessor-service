@@ -32,16 +32,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
             if (result.OverviewResult == null)
                 return null;
-
+            string eqaProviderContactEmail = result.OverviewResult?.EqaProviderContactEmail;
+            string eqaProviderContactName = result.OverviewResult?.EqaProviderContactName;
             string eqaProvider;
 
-            if (!string.IsNullOrEmpty(result.OverviewResult?.EqaProviderContactEmail) && await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactEmail }))
+            if (!string.IsNullOrEmpty(eqaProviderContactEmail) && await _mediator.Send(new ValidationRequest { Type = "email", Value = eqaProviderContactEmail }))
             {
-                eqaProvider = result.OverviewResult?.EqaProviderContactEmail;
+                eqaProvider = eqaProviderContactEmail;
             }
-            else if (!string.IsNullOrEmpty(result.OverviewResult?.EqaProviderContactName) && await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactName }))
+            else if (!string.IsNullOrEmpty(eqaProviderContactName) && await _mediator.Send(new ValidationRequest { Type = "email", Value = eqaProviderContactName }))
             {
-                eqaProvider = result.OverviewResult?.EqaProviderContactName;
+                eqaProvider = eqaProviderContactName;
             }
             else
             {
