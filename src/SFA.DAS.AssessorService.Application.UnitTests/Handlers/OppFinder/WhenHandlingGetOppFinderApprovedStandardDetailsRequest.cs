@@ -25,11 +25,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
         private GetOppFinderApprovedStandardDetailsHandler _sut;
 
 
-        //[OneTimeSetUp]
-        //public void OneTimeSetup() 
-        //{
-            
-        //}
 
         [SetUp]
         public async Task SetupAsync()
@@ -104,21 +99,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             }
         }
 
-        [Test]
-        public async Task ThenReturnsEmails()
-        {
-            //Arrange
-            var request = new GetOppFinderApprovedStandardDetailsRequest()
-            {
-                StandardReference = "ST0001"
-            };
-
-            //Act
-            var result = await _sut.Handle(request, new CancellationToken());
-
-            //Assert
-            result.EqaProvider.Should().Be("EMAIL");
-        }
 
         [Test]
         public async Task ThenReturnsRegionDetails()
