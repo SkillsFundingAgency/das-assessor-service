@@ -229,7 +229,10 @@ namespace SFA.DAS.AssessorService.Data
             if (!string.IsNullOrEmpty(govIdentifier))
             {
                 contactEntity.GovUkIdentifier = govIdentifier;
-                contactEntity.SignInType = "GovLogin";    
+                if (string.IsNullOrEmpty(contactEntity.SignInType))
+                {
+                    contactEntity.SignInType = "GovLogin";    
+                }
             }
 
             // Workaround for Mocking

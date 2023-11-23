@@ -3,14 +3,16 @@
     ViewData["Title"] = "Signed out";
 }
 
-<div class="govuk-grid-row"  id="estimate-start-transfer">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">
-            You've signed out
-        </h1>
+<main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                You've signed out
+            </h1>
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+            <a href="@Model.ServiceLink" class="govuk-button">Continue</a>    
+        </div>
+        
     </div>
-    <div class="govuk-grid-column-two-thirds">
-        <a href="@Model.ServiceLink" class="govuk-button">Continue</a>    
-    </div>
-    
-</div>
+</main>
