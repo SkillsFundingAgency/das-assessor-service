@@ -147,6 +147,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
         [TestCase("eqaProviderContactName@email.com", "", "eqaProviderContactName@email.com", "OFQUAL", "eqaProviderContactName@email.com")]
         [TestCase("", "", "", "OFQUAL", "OFQUAL")]
         [TestCase("eqaProviderContactName", "", "eqaProviderContactName", "OFQUAL", "OFQUAL")]
+        [TestCase("eqaProviderContactEmail", "eqaProviderContactEmail", "", "OFQUAL", "OFQUAL")]
         public async Task ThenReturnsEqaProvider(string validationRequestEmail, string eqaProviderContactEmail, string eqaProviderContactName, string eqaProviderName, string eqaProvider)
         {
             //Arrange
