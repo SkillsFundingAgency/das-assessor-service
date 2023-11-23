@@ -220,18 +220,23 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateSignInId(Guid contactId, Guid? signInId, string govIdentifier)
+        public async Task<Contact> UpdateSignInId(Guid contactId, Guid? signInId, string govIdentifier)
         {
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
             contactEntity.SignInId = signInId;
-            contactEntity.GovUkIdentifier = govIdentifier;
+            if (!string.IsNullOrEmpty(govIdentifier))
+            {
+                contactEntity.GovUkIdentifier = govIdentifier;
+                contactEntity.SignInType = "GovLogin";    
+            }
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
 
             await _assessorDbContext.SaveChangesAsync();
+            return contactEntity;
         }
 
         public async Task<Contact> GetContact(string email)

@@ -62,6 +62,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
             }
         }
+        
+        public async Task<ContactResponse> UpdateFromGovLogin(UpdateContactGovLoginRequest updateContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/govlogin"))
+            {
+                return await PostPutRequestWithResponse<UpdateContactGovLoginRequest, ContactResponse>(request, updateContactRequest);
+            }
+        }
 
         public async Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
         {
