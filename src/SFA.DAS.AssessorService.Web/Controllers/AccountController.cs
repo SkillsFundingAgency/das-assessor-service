@@ -313,5 +313,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangeSignInDetails()
+        {
+            var model = new ChangeSignInDetailsViewModel(_configuration["ResourceEnvironmentName"]);
+            return View(model);
+        }
     }
 }
