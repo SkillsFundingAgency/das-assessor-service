@@ -42,13 +42,21 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             {
                 try
                 {
-                    user = !string.IsNullOrEmpty(signInId) 
-                        ? await _contactsApiClient.GetContactBySignInId(signInId)
-                        : await _contactsApiClient.GetContactByEmail(email);
+                    user = await _contactsApiClient.GetContactBySignInId(signInId);
                 }
                 catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
                 {
-                    _logger.LogInformation("Failed to retrieve user.");
+                    _logger.LogInformation("Failed to retrieve user be Sign In Id.");
+                }
+
+                
+                try
+                {
+                    user ??= await _contactsApiClient.GetContactByEmail(email);
+                }
+                catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+                {
+                    _logger.LogInformation("Failed to retrieve user by email.");
                 }
 
                 if (user?.Status == ContactStatus.Deleted)
@@ -97,16 +105,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     claims.Add(new Claim("display_name", user?.DisplayName));
                     claims.Add(new Claim("email", user?.Email));
+                    var userSignInId = user.SignInId ?? (string.IsNullOrEmpty(signInId) ? Guid.NewGuid() : Guid.Parse(signInId));
+                    var response = await _contactsApiClient.UpdateFromGovLogin(new UpdateContactGovLoginRequest
+                    {
+                        GovIdentifier = govLoginId,
+                        SignInId = userSignInId,
+                        ContactId = user.Id
+                    });
                     if (user.SignInId == null && !string.IsNullOrEmpty(govLoginId))
                     {
-
-                        var response = await _contactsApiClient.UpdateFromGovLogin(new UpdateContactGovLoginRequest
-                        {
-                            GovIdentifier = govLoginId,
-                            SignInId = Guid.NewGuid(),
-                            ContactId = user.Id
-                        });
-                        
                         claims.Add(new Claim("sub", response.SignInId.ToString()));
                     }
                     else
