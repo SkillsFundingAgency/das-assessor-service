@@ -29,5 +29,6 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public int PipelineCutoff { get; set; }
         [JsonRequired] public string ServiceLink { get; set; }
         [JsonRequired] public EmailTemplatesConfig EmailTemplatesConfig { get; set; }
+        public bool UseGovSignIn { get; set; }
     }
 }

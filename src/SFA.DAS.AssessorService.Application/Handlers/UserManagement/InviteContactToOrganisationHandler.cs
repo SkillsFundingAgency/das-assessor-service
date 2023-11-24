@@ -55,16 +55,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             var newContact = await CreateNewContact(request, organisation);
 
             // send invite email to the user with service link.
-            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(request.Email, new EmailTemplateSummary
+            if (_apiConfiguration.UseGovSignIn)
             {
-                TemplateId = _apiConfiguration.EmailTemplatesConfig.LoginSignupInvite,
-                TemplateName = nameof(_apiConfiguration.EmailTemplatesConfig.LoginSignupInvite)
-            }, new
-            {
-                name = $"{request.GivenName}",
-                organisation = organisation.EndPointAssessorName,
-                invitation_link = _apiConfiguration.ServiceLink
-            }));
+                await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(request.Email, new EmailTemplateSummary
+                {
+                    TemplateId = _apiConfiguration.EmailTemplatesConfig.LoginSignupInvite,
+                    TemplateName = nameof(_apiConfiguration.EmailTemplatesConfig.LoginSignupInvite)
+                }, new
+                {
+                    name = $"{request.GivenName}",
+                    organisation = organisation.EndPointAssessorName,
+                    invitation_link = _apiConfiguration.ServiceLink
+                }));    
+            }
 
             await _contactRepository.AddContactInvitation(request.InvitedByContactId, newContact.Id, organisation.Id);
 

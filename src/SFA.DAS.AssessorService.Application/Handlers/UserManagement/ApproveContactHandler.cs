@@ -40,6 +40,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             await _contactRepository.UpdateContactWithOrganisationData(new UpdateContactWithOrgAndStausRequest(message.ContactId.ToString(),
                 organisation.Id.ToString(), organisation.EndPointAssessorOrganisationId, ContactStatus.Live));
             
+            
+            if (!_config.UseGovSignIn)
+            {
+                return Unit.Value;
+            }
             // send approve confirmation email to the user with service link.
             await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contact.Email, new EmailTemplateSummary
             {
