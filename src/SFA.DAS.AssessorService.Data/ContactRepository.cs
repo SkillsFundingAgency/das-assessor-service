@@ -259,5 +259,19 @@ namespace SFA.DAS.AssessorService.Data
 
             await _assessorDbContext.SaveChangesAsync();
         }
+
+        public async Task UpdateEmail(UpdateEmailRequest request)
+        {
+            var contactEntity = (await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == request.UserName) 
+                                 ?? await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == request.Email))
+                                 ?? throw new NotFoundException();
+            
+            contactEntity.Email = request.NewEmail;
+
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(contactEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
+        }
     }
 }
