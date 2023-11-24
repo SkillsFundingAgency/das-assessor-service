@@ -15,10 +15,12 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -34,10 +36,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly CreateAccountValidator _createAccountValidator;
         private readonly UpdateAccountValidator _updateAccountValidator;
+        private readonly IConfiguration _configuration;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
             ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient,  UpdateAccountValidator updateAccountValidator)
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient,  UpdateAccountValidator updateAccountValidator, IConfiguration configuration)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
@@ -48,6 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _createAccountValidator = createAccountValidator;
             _organisationsApiClient = organisationsApiClient;
             _updateAccountValidator = updateAccountValidator;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -55,9 +59,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _logger.LogInformation("Start of Sign In");
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
+            
+            _ = bool.TryParse(_configuration["StubAuth"], out var stubAuth);
+            var authenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme;
+            if (stubAuth)
+            {
+                authenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme;
+            }
+
+            
             return Challenge(
                 new AuthenticationProperties {RedirectUri = redirectUrl},
-                OpenIdConnectDefaults.AuthenticationScheme);
+                authenticationSchemes);
         }
 
         [HttpGet]
@@ -101,18 +114,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public new IActionResult SignOut()
+        public new async Task<IActionResult> SignOut()
         {
             ResetCookies();
 
-            if(!User.Identity.IsAuthenticated)
-            {
-                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
+            var idToken = await HttpContext.GetTokenAsync("id_token");
 
+            var authenticationProperties = new AuthenticationProperties();
+            authenticationProperties.Parameters.Clear();
+            authenticationProperties.Parameters.Add("id_token",idToken);
+
+            var schemes = new List<string>
+            {
+                CookieAuthenticationDefaults.AuthenticationScheme
+            };
+            _ = bool.TryParse(_configuration["StubAuth"], out var stubAuth);
+            if (!stubAuth)
+            {
+                schemes.Add(OpenIdConnectDefaults.AuthenticationScheme);
+            }
+        
             return SignOut(
-                CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
+                authenticationProperties, 
+                schemes.ToArray());
         }
 
         [HttpGet]

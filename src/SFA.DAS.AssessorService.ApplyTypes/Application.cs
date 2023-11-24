@@ -31,7 +31,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         
         public int? PipelinesCount { get; set; }
         public DateTime EarliestDateOfWithdrawal { get; set; }
-        public string StandardOrVersion { get; set; }
+        
+        public DateTime ConfirmedWithdrawalDate { get; set; }
 
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }

@@ -111,6 +111,9 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "stubAuth": {
+            "type": "string"
         }
     },
     "variables": {
@@ -125,7 +128,7 @@
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
-        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Apply.GovSignIn"
+        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
     },
     "resources": [
         {
@@ -381,6 +384,10 @@
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
                                     "value": "200"
+                                },
+                                {
+                                    "name": "StubAuth",
+                                    "value": "[parameters('stubAuth')]"
                                 }
                             ]
                         }

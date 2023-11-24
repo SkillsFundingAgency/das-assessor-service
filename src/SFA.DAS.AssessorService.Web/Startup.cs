@@ -25,6 +25,7 @@ using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Utils;
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web
             );
 
             _config = config.Build();
-            Configuration = _config.GetSection(nameof(WebConfiguration)).Get<WebConfiguration>();
+            Configuration = _config.Get<WebConfiguration>();
         }
 
         private IWebConfiguration Configuration { get; set; }
@@ -84,10 +85,12 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
                 services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
-                
+                services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
                 if (Configuration.UseGovSignIn)
                 {
-                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler));   
+                    var cookieDomain = EnvironmentHelper.GetDomain(_config["ResourceEnvironmentName"]);
+                    var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/account-details";
+                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout","/service/account-details",cookieDomain, loginRedirect);   
                 }
                 else
                 {

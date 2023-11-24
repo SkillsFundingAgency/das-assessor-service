@@ -24,12 +24,11 @@
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="col">Type</th>
                         <th class="govuk-table__header" scope="col">Name</th>
-                        <th class="govuk-table__header" scope="col">Status</th>
+                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
                         <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-
                     @foreach (var application in Model)
                     {
                         <tr>
@@ -58,7 +57,7 @@
                                     }
                                 }
                             </td>
-                            <td class="govuk-table__cell">@application.ApplicationStatus.FormatStatus()</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus.FormatStatus()</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">
                                 @if (application.ApplyData.RequiredSequences.Contains(ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
                                 {

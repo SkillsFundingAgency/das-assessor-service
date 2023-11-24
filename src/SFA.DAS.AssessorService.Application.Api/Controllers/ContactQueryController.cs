@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         
-        [HttpGet("email/{email}", Name = "SearchContactByUserName")]
+        [HttpGet("email/{email}", Name = "SearchContactByEmail")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

@@ -30,5 +30,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public int VersionMinor { get; set; }
         public string EqaProviderName { get; set; }
         public string OverviewOfRole { get; set; }
+        public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
     }
 }
