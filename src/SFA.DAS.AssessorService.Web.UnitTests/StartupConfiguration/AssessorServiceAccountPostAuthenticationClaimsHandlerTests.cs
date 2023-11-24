@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
             actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
             actual.First(c => c.Type.Equals("email")).Value.Should().Be(newEmailAddress);
-            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactResponse.Id.ToString());
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactResponse.SignInId.ToString());
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId);
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
 
