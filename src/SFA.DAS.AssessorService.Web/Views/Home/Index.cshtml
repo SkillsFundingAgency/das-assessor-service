@@ -26,9 +26,12 @@
                 <li>record assessments and request certificates</li>
                 <li>apply for new standards or versions</li>
             </ul>
-            <p class="govuk-body">
-                You’ll need a GOV.UK One Login to set up or access an account. You can create one in the service using a work email address.
-            </p>
+            @if (Model.UseGovSignIn)
+            {
+                <p class="govuk-body">
+                    You’ll need a GOV.UK One Login to set up or access an account. You can create one in the service using a work email address.
+                </p>
+            }
         </div>
         <div class="govuk-grid-column-one-third">
             <hr/>
@@ -55,16 +58,6 @@
             </div>
         </div>
     </div>
-    @if(Model.UseGovSignIn)
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">
-                    To use this service, you’ll need a GOV.UK One Login linked to an email address you use for work. If you don’t have a GOV.UK One Login, you can create one using this service.
-                </p>
-            </div>
-        </div>
-    }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">Before you start</h2>
