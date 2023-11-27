@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Web
                 if (Configuration.UseGovSignIn)
                 {
                     var cookieDomain = EnvironmentHelper.GetDomain(_config["ResourceEnvironmentName"]);
-                    var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/account-details";
+                    var loginRedirect = string.IsNullOrEmpty(cookieDomain)? "" : $"https://{cookieDomain}/service/account-details";
                     services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout","/service/account-details",cookieDomain, loginRedirect);   
                 }
                 else
