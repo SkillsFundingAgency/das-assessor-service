@@ -12,6 +12,7 @@ using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
 {
@@ -19,24 +20,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
     {
         [Test, MoqAutoData]
         public async Task Then_ApproveConfirmation_Email_Sent_For_Gov_Login_Enabled(
+            string email,
             [Frozen] Mock<IContactQueryRepository> contactQueryRepository,
             [Frozen] Mock<IContactRepository> contactRepository,
             [Frozen] Mock<IOrganisationQueryRepository> organisationQueryRepository,
-            [Frozen] Mock<IEmailApiClient> emailApiClient,
             [Frozen] Mock<IApiConfiguration> apiConfiguration,
+            [Frozen] Mock<IMediator> mediator,
             EmailTemplatesConfig emailTemplatesConfig,
             ApproveContactRequest request,
             ApproveContactHandler sut)
         {
             //Arrange
-            var contact = new Contact { Id = Guid.NewGuid(), OrganisationId = Guid.NewGuid() };
+            var contact = new Contact { Id = Guid.NewGuid(), OrganisationId = Guid.NewGuid(), Email = email};
 
             contactQueryRepository.Setup(s => s.GetContactById(request.ContactId)).ReturnsAsync(contact);
             organisationQueryRepository.Setup(s => s.Get(contact.OrganisationId.Value)).ReturnsAsync(new Organisation());
-
             contactRepository.Setup(x => x.UpdateContactWithOrganisationData(It.IsAny<UpdateContactWithOrgAndStausRequest>())).ReturnsAsync(contact);
-            emailApiClient.Setup(x => x.SendEmailWithTemplate(It.IsAny<SendEmailRequest>()))
-                .Returns(Task.CompletedTask);
             
             apiConfiguration.Setup(x => x.EmailTemplatesConfig).Returns(emailTemplatesConfig);
             apiConfiguration.Setup(x => x.ServiceLink).Returns(It.IsAny<string>());
@@ -46,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             await sut.Handle(request, new CancellationToken());
 
             //Assert
-            emailApiClient.Verify(x => x.SendEmailWithTemplate(It.IsAny<SendEmailRequest>()), Times.Once);
+            mediator.Verify(x => x.Send(It.Is<SendEmailRequest>(c=>c.Email.Equals(contact.Email)), It.IsAny<CancellationToken>()), Times.Once);
         }
         
         [Test, MoqAutoData]
@@ -54,8 +53,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             [Frozen] Mock<IContactQueryRepository> contactQueryRepository,
             [Frozen] Mock<IContactRepository> contactRepository,
             [Frozen] Mock<IOrganisationQueryRepository> organisationQueryRepository,
-            [Frozen] Mock<IEmailApiClient> emailApiClient,
             [Frozen] Mock<IApiConfiguration> apiConfiguration,
+            [Frozen] Mock<IMediator> mediator,
             EmailTemplatesConfig emailTemplatesConfig,
             ApproveContactRequest request,
             ApproveContactHandler sut)
@@ -67,8 +66,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             organisationQueryRepository.Setup(s => s.Get(contact.OrganisationId.Value)).ReturnsAsync(new Organisation());
 
             contactRepository.Setup(x => x.UpdateContactWithOrganisationData(It.IsAny<UpdateContactWithOrgAndStausRequest>())).ReturnsAsync(contact);
-            emailApiClient.Setup(x => x.SendEmailWithTemplate(It.IsAny<SendEmailRequest>()))
-                .Returns(Task.CompletedTask);
             
             apiConfiguration.Setup(x => x.EmailTemplatesConfig).Returns(emailTemplatesConfig);
             apiConfiguration.Setup(x => x.ServiceLink).Returns(It.IsAny<string>());
@@ -78,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             await sut.Handle(request, new CancellationToken());
 
             //Assert
-            emailApiClient.Verify(x => x.SendEmailWithTemplate(It.IsAny<SendEmailRequest>()), Times.Never);
+            mediator.Verify(x => x.Send(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

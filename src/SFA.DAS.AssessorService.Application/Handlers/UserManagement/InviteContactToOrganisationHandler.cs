@@ -19,21 +19,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IMediator _mediator;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IApiConfiguration _apiConfiguration;
-        private readonly IEmailApiClient _emailApiClient;
 
         public InviteContactToOrganisationHandler(IContactQueryRepository contactQueryRepository,
             IContactRepository contactRepository,
             IMediator mediator,
             IOrganisationQueryRepository organisationQueryRepository,
-            IApiConfiguration apiConfiguration,
-            IEmailApiClient emailApiClient)
+            IApiConfiguration apiConfiguration)
         {
             _contactQueryRepository = contactQueryRepository;
             _contactRepository = contactRepository;
             _mediator = mediator;
             _organisationQueryRepository = organisationQueryRepository;
             _apiConfiguration = apiConfiguration;
-            _emailApiClient = emailApiClient;
         }
 
         public async Task<InviteContactToOrganisationResponse> Handle(InviteContactToOrganisationRequest request, CancellationToken cancellationToken)
@@ -57,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             // send invite email to the user with service link.
             if (_apiConfiguration.UseGovSignIn)
             {
-                await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(request.Email, new EmailTemplateSummary
+                await _mediator.Send(new SendEmailRequest(request.Email, new EmailTemplateSummary
                 {
                     TemplateId = _apiConfiguration.EmailTemplatesConfig.LoginSignupInvite,
                     TemplateName = nameof(_apiConfiguration.EmailTemplatesConfig.LoginSignupInvite)
@@ -66,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                     name = $"{request.GivenName}",
                     organisation = organisation.EndPointAssessorName,
                     invitation_link = _apiConfiguration.ServiceLink
-                }));    
+                }), cancellationToken);    
             }
 
             await _contactRepository.AddContactInvitation(request.InvitedByContactId, newContact.Id, organisation.Id);

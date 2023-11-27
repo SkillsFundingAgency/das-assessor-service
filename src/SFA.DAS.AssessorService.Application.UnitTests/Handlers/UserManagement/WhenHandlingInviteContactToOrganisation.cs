@@ -13,6 +13,7 @@ using SFA.DAS.Testing.AutoFixture;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
 {
@@ -42,17 +43,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
 
         [Test, MoqAutoData]
         public async Task Then_Returns_InviteContactToOrganisationResponse(
+            string email,
             [Frozen] Mock<IContactQueryRepository> contactQueryRepository,
             [Frozen] Mock<IContactRepository> contactRepository,
             [Frozen] Mock<IOrganisationQueryRepository> organisationQueryRepository,
-            [Frozen] Mock<IEmailApiClient> emailApiClient,
+            [Frozen] Mock<IMediator> mediator,
             [Frozen] Mock<IApiConfiguration> apiConfiguration,
             EmailTemplatesConfig emailTemplatesConfig,
             InviteContactToOrganisationRequest request,
             InviteContactToOrganisationHandler sut)
         {
             //Arrange
-            var contact = new Contact { Id = Guid.NewGuid() };
+            var contact = new Contact { Id = Guid.NewGuid(), Email = email};
             contactQueryRepository.Setup(s => s.GetContactFromEmailAddress(request.Email)).ReturnsAsync((Contact)null);
             organisationQueryRepository.Setup(s => s.Get(request.OrganisationId)).ReturnsAsync(new Organisation());
             contactRepository.Setup(x => x.CreateNewContact(It.IsAny<Contact>())).ReturnsAsync(contact);
@@ -68,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             result.ContactId.Should().Be(contact.Id);
             result.Success.Should().BeTrue();
 
-            emailApiClient.Verify(x => x.SendEmailWithTemplate(It.IsAny<SendEmailRequest>()), Times.Once);
+            mediator.Verify(x => x.Send(It.Is<SendEmailRequest>(c=>c.Email.Equals(request.Email)), It.IsAny<CancellationToken>()), Times.Once);
         }
         
         [Test, MoqAutoData]
@@ -76,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             [Frozen] Mock<IContactQueryRepository> contactQueryRepository,
             [Frozen] Mock<IContactRepository> contactRepository,
             [Frozen] Mock<IOrganisationQueryRepository> organisationQueryRepository,
-            [Frozen] Mock<IEmailApiClient> emailApiClient,
+            [Frozen] Mock<IMediator> mediator,
             [Frozen] Mock<IApiConfiguration> apiConfiguration,
             EmailTemplatesConfig emailTemplatesConfig,
             InviteContactToOrganisationRequest request,
@@ -99,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             result.ContactId.Should().Be(contact.Id);
             result.Success.Should().BeTrue();
 
-            emailApiClient.Verify(x => x.SendEmailWithTemplate(It.IsAny<SendEmailRequest>()), Times.Never);
+            mediator.Verify(x => x.Send(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

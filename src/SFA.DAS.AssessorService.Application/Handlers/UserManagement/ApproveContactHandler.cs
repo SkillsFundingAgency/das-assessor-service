@@ -17,19 +17,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IApiConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
-        private readonly IEmailApiClient _emailApiClient;
+        private readonly IMediator _mediator;
 
         public ApproveContactHandler(IContactRepository contactRepository,
             IContactQueryRepository contactQueryRepository,
             IApiConfiguration config,
             IOrganisationQueryRepository organisationQueryRepository,
-            IEmailApiClient emailApiClient)
+            IMediator mediator)
         {
             _contactRepository = contactRepository;
             _contactQueryRepository = contactQueryRepository;
             _config = config;
             _organisationQueryRepository = organisationQueryRepository;
-            _emailApiClient = emailApiClient;
+            _mediator = mediator;
         }
 
         public async Task<Unit> Handle(ApproveContactRequest message, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 return Unit.Value;
             }
             // send approve confirmation email to the user with service link.
-            await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contact.Email, new EmailTemplateSummary
+            await _mediator.Send(new SendEmailRequest(contact.Email, new EmailTemplateSummary
             {
                 TemplateId = _config.EmailTemplatesConfig.UserApproveConfirm,
                 TemplateName = nameof(_config.EmailTemplatesConfig.UserApproveConfirm)
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 name = $"{contact.DisplayName}",
                 organisation = organisation.EndPointAssessorName,
                 link = _config.ServiceLink
-            }));
+            }), cancellationToken);
 
             return Unit.Value;
         }
