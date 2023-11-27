@@ -250,6 +250,18 @@
                                 {
                                     "name": "EnvironmentName",
                                     "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('configNames')]"
+                                },
+                                {
+                                    "name": "StubAuth",
+                                    "value": "[parameters('stubAuth')]"
                                 }
                             ]
                         }
@@ -366,10 +378,6 @@
                                     "value": "[toUpper(parameters('environmentName'))]"
                                 },
                                 {
-                                    "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
-                                },
-                                {
                                     "name": "Version",
                                     "value": "1.0"
                                 },
@@ -384,10 +392,6 @@
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
                                     "value": "200"
-                                },
-                                {
-                                    "name": "StubAuth",
-                                    "value": "[parameters('stubAuth')]"
                                 }
                             ]
                         }
