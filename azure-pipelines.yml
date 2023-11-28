@@ -69,6 +69,7 @@ stages:
       ServiceConnection: SFA-DAS-DevTest-ARM
       LegacyApimServiceConnection: NAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_TEST
   dependsOn: Build
