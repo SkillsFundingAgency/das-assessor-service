@@ -204,7 +204,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
 
-        [HttpPut(Name = "UpdateEmail")]
+        [HttpPut("updateEmail",Name = "UpdateEmail")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
