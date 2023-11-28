@@ -262,11 +262,15 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task UpdateEmail(UpdateEmailRequest request)
         {
-            var contactEntity = (await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == request.UserName) 
-                                 ?? await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == request.Email))
-                                 ?? throw new NotFoundException();
+            var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.GovUkIdentifier == request.GovUkIdentifier);
+
+            if (contactEntity == null || contactEntity.Email == request.NewEmail)
+            {
+                return;
+            }
             
             contactEntity.Email = request.NewEmail;
+            contactEntity.Username = request.NewEmail;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);

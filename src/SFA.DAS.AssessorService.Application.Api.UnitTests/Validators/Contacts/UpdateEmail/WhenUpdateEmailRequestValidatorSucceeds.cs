@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.UpdateEmail
 {
@@ -20,12 +21,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
 
             _updateEmailRequest = Builder<UpdateEmailRequest>
                 .CreateNew()
-                .With(q => q.Email = "xxxx@someemail.com")
                 .With(q => q.NewEmail = "yyyy@someemail.com")
+                .With(q => q.GovUkIdentifier = "identifier")
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
-                .Returns(Task.FromResult(true));
+            ContactQueryRepositoryMock.Setup(q => q.GetContactFromGovIdentifier(Moq.It.IsAny<string>()))
+                .Returns(Task.FromResult(new Contact()));
 
             _validationResult = UpdateEmailRequestValidator.Validate(_updateEmailRequest);
         }
@@ -53,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
         [Test]
         public void ErrorMessageShouldNotContainUserName()
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "GovUkIdentifier" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().BeNull();
         }
     }
