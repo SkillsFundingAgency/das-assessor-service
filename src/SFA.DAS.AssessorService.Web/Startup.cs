@@ -193,10 +193,18 @@ namespace SFA.DAS.AssessorService.Web
                     .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);
 
-                config.For<IQnATokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
-                
+                //config.For<IQnATokenService>().Use<TokenService>()
+                //    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
+                //    .Ctor<string>().Is(_config["EnvironmentName"]);
+
+                services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
+               new TokenService(Configuration.QnaApiAuthentication));
+
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                });
+
                 config.For<IRoatpTokenService>().Use<TokenService>()
                     .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);

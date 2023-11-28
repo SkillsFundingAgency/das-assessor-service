@@ -4,7 +4,7 @@
     {
         ClientApiAuthentication AssessorApiAuthentication { get; set; }
         AzureApiAuthentication AzureApiAuthentication { get; set; }
-        ClientApiAuthentication QnaApiAuthentication { get; set; }
+        ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
         
         LoginServiceConfig LoginService { get; set; }
 
