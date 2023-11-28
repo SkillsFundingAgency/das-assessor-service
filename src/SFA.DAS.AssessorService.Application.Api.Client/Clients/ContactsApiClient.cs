@@ -45,6 +45,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
+        public async Task<ContactResponse> GetContactByGovIdentifier(string govIdentifier)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/govidentifier/{WebUtility.UrlEncode(govIdentifier)}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
 
         public async Task<ContactResponse> GetById(Guid id)
         {

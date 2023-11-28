@@ -145,6 +145,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
+        [HttpGet("govidentifier/{govIdentifier}", Name = "SearchContactByGovIdentifier")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound)]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SearchContactByGovIdentifier(string govIdentifier)
+        {
+            var contact = await _contactQueryRepository.GetContactFromGovIdentifier(govIdentifier);
+            if (contact == null)
+                throw new ResourceNotFoundException();
+            return Ok(Mapper.Map<ContactResponse>(contact));
+        }
         
         [HttpGet("user/{id}", Name = "GetContactById")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
