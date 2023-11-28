@@ -56,7 +56,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     _logger.LogInformation("Failed to retrieve user be Sign In Id.");
                 }
-
                 
                 try
                 {
@@ -65,6 +64,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
                 {
                     _logger.LogInformation("Failed to retrieve user by email.");
+                }
+                
+                try
+                {
+                    user ??= await _contactsApiClient.GetContactByGovIdentifier(govLoginId);
+                }
+                catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+                {
+                    _logger.LogInformation("Failed to retrieve user by gov login.");
                 }
 
                 if (user?.Status == ContactStatus.Deleted)
@@ -81,9 +89,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     // update the email address if the Gov Uk Sign In comes with different email address. 
                     await _contactsApiClient.UpdateEmail(new UpdateEmailRequest
                     {
-                        Email = user.Email,
                         NewEmail = email,
-                        UserName = user.Username
+                        GovUkIdentifier = user.GovUkIdentifier
                     });
                     user.Email = email;
                 }

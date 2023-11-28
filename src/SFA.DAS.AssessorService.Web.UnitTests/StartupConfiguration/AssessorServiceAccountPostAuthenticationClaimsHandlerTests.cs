@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
 {
@@ -97,27 +98,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
         }
 
-        [Test, AutoData]
+        [Test, MoqAutoData]
         public async Task Then_The_Claims_Are_Populated_For_Gov_User_When_GovSignIn_Email_Changes
         (
             string nameIdentifier,
             string emailAddress,
             string newEmailAddress,
             ContactResponse contactResponse,
-            EpaOrganisation epaOrganisation)
+            EpaOrganisation epaOrganisation,
+            [Frozen] Mock<IContactsApiClient> contactsApiClient,
+            [Frozen] Mock<IOrganisationsApiClient> organisationApiClient,
+            [Frozen] Mock<ISessionService> sessionService,
+            [Frozen] Mock<IWebConfiguration> webConfiguration,
+            AssessorServiceAccountPostAuthenticationClaimsHandler handler)
         {
             contactResponse.Email = emailAddress;
-            var contactsApiClient = new Mock<IContactsApiClient>();
-            var organisationApiClient = new Mock<IOrganisationsApiClient>();
-            var sessionService = new Mock<ISessionService>();
-            var webConfiguration = new Mock<IWebConfiguration>();
-            var handler =
-                new AssessorServiceAccountPostAuthenticationClaimsHandler(
-                    Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
-                    organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
-
             var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, newEmailAddress, "");
-            contactsApiClient.Setup(x => x.GetContactByEmail(newEmailAddress)).ReturnsAsync(contactResponse);
+            contactsApiClient.Setup(x => x.GetContactBySignInId(null)).ThrowsAsync(new EntityNotFoundException());
+            contactsApiClient.Setup(x => x.GetContactByEmail(newEmailAddress)).ThrowsAsync(new EntityNotFoundException());
+            contactsApiClient.Setup(x => x.GetContactByGovIdentifier(nameIdentifier)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
             webConfiguration.Setup(x => x.UseGovSignIn).Returns(true);
@@ -132,11 +131,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId);
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
 
-            contactsApiClient.Verify(x =>x.UpdateEmail(It.IsAny<UpdateEmailRequest>()), Times.Once);
+            contactsApiClient.Verify(x =>x.UpdateEmail(It.Is<UpdateEmailRequest>(c=>
+                c.NewEmail.Equals(newEmailAddress)
+                && c.GovUkIdentifier.Equals(contactResponse.GovUkIdentifier)
+                )), Times.Once);
         }
-
-
-        
         
         [Test, AutoData]
         public async Task Then_The_Claims_Are_Populated_For_Gov_User_And_Sign_In_Id_Not_Updated_If_Returning_Gov_User(
