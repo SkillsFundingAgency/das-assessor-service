@@ -1,7 +1,6 @@
 parameters:  
   Environment:
   ServiceConnection:
-  LegacyApimServiceConnection: ${{ parameters.ServiceConnection }}
   OverrideBlockOnPossibleDataLoss: false
 
 jobs:
