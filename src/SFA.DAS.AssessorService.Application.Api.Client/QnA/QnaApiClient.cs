@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
-                return await RequestAndDeserialiseAsync<ApplicationData>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<ApplicationData>(request,
                     $"Could not find the application");
             }
         }
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
-                return await RequestAndDeserialiseAsync<Dictionary<string, object>>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Dictionary<string, object>>(request,
                     $"Could not find the application");
             }
         }
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/current"))
             {
-                return await RequestAndDeserialiseAsync<Sequence>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Sequence>(request,
                     $"Could not find the sequence");
             }
         }
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceId}"))
             {
-                return await RequestAndDeserialiseAsync<Sequence>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Sequence>(request,
                     $"Could not find the sequence");
             }
         }
@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceNo}"))
             {
-                return await RequestAndDeserialiseAsync<Sequence>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Sequence>(request,
                     $"Could not find the sequence");
             }
         }
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceId}/sections"))
             {
-                return await RequestAndDeserialiseAsync<List<Section>>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<List<Section>>(request,
                     $"Could not find the sections");
             }
         }
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}"))
             {
-                return await RequestAndDeserialiseAsync<Section>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Section>(request,
                     $"Could not find the section");
             }
         }
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}"))
             {
-                return await RequestAndDeserialiseAsync<Section>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Section>(request,
                     $"Could not find the section");
             }
         }
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}"))
             {
-                return await RequestAndDeserialiseAsync<Page>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Page>(request,
                     $"Could not find the page");
             }
         }
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}"))
             {
-                return await RequestAndDeserialiseAsync<Page>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<Page>(request,
                     $"Could not find the page");
             }
         }
@@ -141,7 +141,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<SkipPageResponse>(request, settings);
+                return await PostPutRequestWithResponseAsync<SkipPageResponse>(request, settings);
             }
         }
 
@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple/{answerId}"))
             {
-                return await Delete<Page>(request);
+                return await DeleteAsync<Page>(request);
             }
         }
 
@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<ResetPageAnswersResponse>(request, settings);
+                return await PostPutRequestWithResponseAsync<ResetPageAnswersResponse>(request, settings);
             }
         }
 
@@ -196,7 +196,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
                 }
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<SetPageAnswersResponse>(request, formDataContent, settings);
+                return await PostPutRequestWithResponseAsync<SetPageAnswersResponse>(request, formDataContent, settings);
             }
         }
 
@@ -204,7 +204,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))
             {
-                return await RequestToDownloadFile(request,
+                return await RequestToDownloadFileAsync(request,
                     $"Could not download file {fileName}");
             }
         }
@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))
             {
-                await Delete(request);
+                await DeleteAsync(request);
             }
         }
 
@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences"))
             {
-                return await RequestAndDeserialiseAsync<List<Sequence>>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<List<Sequence>>(request,
                     $"Could not find all sequences");
             }
         }
@@ -230,7 +230,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sequence/{sequenceId}/feedback/completed"))
             {
-                return await RequestAndDeserialiseAsync<bool>(request,
+                return await RequestAndDeserialiseAsyncWithAsyncToken<bool>(request,
                      $"Could not find the sections");
             }
         }

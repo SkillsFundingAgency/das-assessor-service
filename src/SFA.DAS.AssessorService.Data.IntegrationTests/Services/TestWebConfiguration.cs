@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SqlConnectionString { get; set; }
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication QnaApiAuthentication { get; set; }
+        public ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
         public string ServiceLink { get; set; }
         public LoginServiceConfig LoginService { get; set; }
         public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

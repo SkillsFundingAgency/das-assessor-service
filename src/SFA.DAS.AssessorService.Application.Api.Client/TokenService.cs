@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class TokenService
-        : IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
+    public class TokenService: IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
     {
         private readonly IClientApiAuthentication _configuration;
         private readonly IManagedIdentityApiAuthentication _apiAuthentication;
