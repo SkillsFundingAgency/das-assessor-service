@@ -128,12 +128,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             if (applyData.Sequences != null)
             {
-                var sequence = applyData.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired);
-
-                if (sequence != null)
+                foreach (var sequence in applyData.Sequences.Where(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && !seq.NotRequired))
                 {
-                    var section = sequence.Sections.FirstOrDefault(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired);
-                    if (section != null) { return section?.Status; }
+                    // NOTE: Get Status for a required Section 3 - Financial
+                    if (sequence.Sections != null)
+                    {
+                        foreach (var section in sequence.Sections.Where(sec => sec.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && !sec.NotRequired))
+                        {
+                            return section.Status;
+                        }
+                    }
                 }
             }
             return null;
