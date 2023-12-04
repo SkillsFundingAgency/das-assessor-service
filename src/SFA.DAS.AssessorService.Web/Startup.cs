@@ -239,7 +239,7 @@ namespace SFA.DAS.AssessorService.Web
                 //    .Ctor<string>().Is(_config["EnvironmentName"]);
 
                 services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-               new TokenService(Configuration.QnaApiAuthentication, new Logger<TokenService>(new LoggerFactory())));
+               new TokenService(new ManagedIdentityApiAuthentication() { ApiBaseAddress = "https://at-qna-api.apprenticeships.education.gov.uk/", Identifier = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-qna-as-ar" }, new Logger<TokenService>(new LoggerFactory())));
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
                 {
