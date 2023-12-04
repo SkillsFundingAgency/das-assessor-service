@@ -111,6 +111,9 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "stubAuth": {
+            "type": "string"
         }
     },
     "variables": {
@@ -124,7 +127,8 @@
         "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
-        "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]"
+        "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
+        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
     },
     "resources": [
         {
@@ -246,6 +250,18 @@
                                 {
                                     "name": "EnvironmentName",
                                     "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('configNames')]"
+                                },
+                                {
+                                    "name": "StubAuth",
+                                    "value": "[parameters('stubAuth')]"
                                 }
                             ]
                         }
@@ -360,6 +376,14 @@
                                 {
                                     "name": "EnvironmentName",
                                     "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
+                                },
+                                {
+                                    "name": "ResourceEnvironmentName",
+                                    "value": "[parameters('resourceEnvironmentName')]"
                                 },
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_PATH",

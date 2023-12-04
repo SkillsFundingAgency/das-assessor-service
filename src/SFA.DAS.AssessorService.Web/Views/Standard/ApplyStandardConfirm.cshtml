@@ -83,8 +83,8 @@
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Select all that apply</legend>
                             <sfa-validationerror-detail sfa-validation-for="SelectedVersions" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
                             <div class="govuk-checkboxes govuk-checkboxes--small">
-                                @foreach (var version in Model.Results)
-                                {
+                                @foreach (var version in Model.DistinctResults)
+                                { 
                                     <div class="govuk-checkboxes__item">
                                         <input class="govuk-checkboxes__input"
                                                id="@version.Version"

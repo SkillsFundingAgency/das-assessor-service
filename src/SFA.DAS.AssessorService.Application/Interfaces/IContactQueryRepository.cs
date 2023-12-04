@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Contact>> GetContactsForEpao(string endPointAssessorOrganisationId);
         Task<Contact> GetContact(string userName);
         Task<Contact> GetContactFromEmailAddress(string email);
+        Task<Contact> GetContactFromGovIdentifier(string govIdentifier);
         Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId, bool? withUser = null);
         Task<IEnumerable<Contact>> GetAllContactsIncludePrivileges(string endPointAssessorOrganisationId, bool? withUser = null);
 

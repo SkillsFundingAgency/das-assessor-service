@@ -8,7 +8,14 @@
     Layout = "_Layout";
 }
 
-<a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-back-link">Return to approved standards and versions</a>
+@if(Model.BackRouteName == ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet)
+{
+    <a asp-route="@ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet" asp-route-ifateReferenceNumber="@Model.SelectedStandard.IFateReferenceNumber" class="govuk-back-link">Return to standard withdrawal check</a>
+}
+else
+{
+    <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-back-link">Return to approved standards and versions</a>
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -40,7 +47,7 @@
                             <td class="govuk-table__cell">@Model.GetStatusText(version)</td>
                             @if (Model.CannotOptOut(version))
                             {
-                                <td class="govuk-table__cell">@Model.ContactToOptOutText</td>
+                                <td class="govuk-table__cell">@Model.WithdrawFromStandardText</td>
                             }
                             else
                             {

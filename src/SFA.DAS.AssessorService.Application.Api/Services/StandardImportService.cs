@@ -57,7 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 EqaProviderName = source.EqaProvider?.Name,
                 EqaProviderContactName = source.EqaProvider?.ContactName,
                 EqaProviderContactEmail = source.EqaProvider?.ContactEmail,
-                OverviewOfRole = source.OverviewOfRole
+                OverviewOfRole = source.OverviewOfRole,
+                EpaoMustBeApprovedByRegulatorBody = source.EpaoMustBeApprovedByRegulatorBody,
             };
 
             await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));

@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         {
         }
 
-        public CreateContactRequest(string givenName, string familyName, string email, string epaOrg, string userName)
+        public CreateContactRequest(string givenName, string familyName, string email, string epaOrg, string userName, string govIdentifier)
         {
             GivenName = givenName;
             FamilyName = familyName;
@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             EndPointAssessorOrganisationId = epaOrg;
             Username = userName;
             DisplayName = $"{givenName} {familyName}";
+            GovIdentifier = govIdentifier;
         }
        
 
@@ -28,5 +29,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Email { get; set; }
         public string FamilyName { get; set; }
         public string GivenName { get; set; }
+        public string GovIdentifier { get; set; }
     }
 }

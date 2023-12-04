@@ -3,6 +3,7 @@ parameters:
   ServiceConnection:
   LegacyApimServiceConnection: NAS Pre-Prod (ARM)
   OverrideBlockOnPossibleDataLoss: false
+  AppRoleAssignmentsServiceConnection:
 
 jobs:
 - deployment: DeployResources
@@ -77,6 +78,18 @@ jobs:
               QnaApiAuthenticationClientSecret: $(QnaApiAuthenticationClientSecret)
               QnaApiAuthenticationClientSecret_Api: $(QnaApiAuthenticationClientSecret_Api)
               QnaApiAuthenticationClientSecret_Web: $(QnaApiAuthenticationClientSecret_Web)
+        - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
+            ResourceName: $(UiAppServiceName)
+            Tenant: $(Tenant)
+            IsMultiRepoCheckout: true
+        - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
+            ResourceName: $(apiAppServiceName)
+            Tenant: $(Tenant)
+            IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
           parameters:
             AzureSubscription: ${{ parameters.ServiceConnection }}
