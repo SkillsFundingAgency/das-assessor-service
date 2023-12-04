@@ -34,6 +34,8 @@ using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Services;
 using StackExchange.Redis;
 using StructureMap;
+using NLog;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -214,7 +216,7 @@ namespace SFA.DAS.AssessorService.Web
         private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
             var container = new Container();
-
+            var tokenLogger = services.BuildServiceProvider().GetService<ILogger<TokenService>>();
             container.Configure(config =>
             {
                 config.Scan(_ =>
@@ -234,12 +236,13 @@ namespace SFA.DAS.AssessorService.Web
                     .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);
 
-                //config.For<IQnATokenService>().Use<TokenService>()
-                //    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
-                //    .Ctor<string>().Is(_config["EnvironmentName"]);
+            //config.For<IQnATokenService>().Use<TokenService>()
+            //    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
+            //    .Ctor<string>().Is(_config["EnvironmentName"]);
+            
 
                 services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-               new TokenService(new ManagedIdentityApiAuthentication() { ApiBaseAddress = "https://at-qna-api.apprenticeships.education.gov.uk/", Identifier = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-qna-as-ar" }, new Logger<TokenService>(new LoggerFactory())));
+               new TokenService(new ManagedIdentityApiAuthentication() { ApiBaseAddress = "https://at-qna-api.apprenticeships.education.gov.uk/", Identifier = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-qna-as-ar" }, tokenLogger));
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
                 {

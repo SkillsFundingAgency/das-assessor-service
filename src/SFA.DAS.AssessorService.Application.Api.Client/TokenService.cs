@@ -53,30 +53,39 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
         public async Task<string> GetTokenAsync()
         {
-            Uri uri = new Uri(_apiAuthentication.ApiBaseAddress);
-            if (uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "::1")
-                return string.Empty;
-
-            if (_apiAuthentication is IClientApiAuthentication clientApiAuthentication)
+            try
             {
-                var authority = $"{clientApiAuthentication.Instance}/{clientApiAuthentication.TenantId}";
-                var clientCredential = new ClientCredential(clientApiAuthentication.ClientId, clientApiAuthentication.ClientSecret);
-                var context = new AuthenticationContext(authority, true);
-                var result = await context.AcquireTokenAsync(clientApiAuthentication.Identifier, clientCredential);
+                Uri uri = new Uri(_apiAuthentication.ApiBaseAddress);
+                if (uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "::1")
+                    return string.Empty;
 
-                return result.AccessToken;
+                if (_apiAuthentication is IClientApiAuthentication clientApiAuthentication)
+                {
+                    var authority = $"{clientApiAuthentication.Instance}/{clientApiAuthentication.TenantId}";
+                    var clientCredential = new ClientCredential(clientApiAuthentication.ClientId, clientApiAuthentication.ClientSecret);
+                    var context = new AuthenticationContext(authority, true);
+                    var result = await context.AcquireTokenAsync(clientApiAuthentication.Identifier, clientCredential);
+
+                    return result.AccessToken;
+                }
+                else if (_apiAuthentication is IManagedIdentityApiAuthentication managedIdentityApiAuthenication)
+                {
+                    _logger.LogInformation($"About to get token at {DateTime.UtcNow}");
+                    var defaultAzureCredential = new DefaultAzureCredential();
+                    var result = await defaultAzureCredential.GetTokenAsync(
+                        new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
+
+                    _logger.LogInformation($"Received token at {DateTime.UtcNow}");
+
+                    return result.Token;
+                }
             }
-            else if (_apiAuthentication is IManagedIdentityApiAuthentication managedIdentityApiAuthenication)
+            catch (Exception ex)
             {
-                _logger.LogInformation($"About to get token at {DateTime.UtcNow}");
-                var defaultAzureCredential = new DefaultAzureCredential();
-                var result = await defaultAzureCredential.GetTokenAsync(
-                    new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
 
-                _logger.LogInformation($"Received token at {DateTime.UtcNow}");
-
-                return result.Token;
+                _logger.LogInformation($"Exception token at {DateTime.UtcNow}  ex: {ex.Message}");
             }
+            
 
             return string.Empty;
         }
