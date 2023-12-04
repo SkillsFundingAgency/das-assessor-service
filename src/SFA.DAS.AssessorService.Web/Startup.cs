@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Web
                 //    .Ctor<string>().Is(_config["EnvironmentName"]);
 
                 services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-               new TokenService(Configuration.QnaApiAuthentication, new Logger<TokenService>(new LoggerFactory())));
+               new TokenService(Configuration.QnaApiAuthentication));
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
                 {

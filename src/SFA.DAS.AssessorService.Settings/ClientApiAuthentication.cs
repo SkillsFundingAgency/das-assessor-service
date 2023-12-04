@@ -4,6 +4,7 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class ClientApiAuthentication : IClientApiAuthentication
     {
+        [JsonRequired] public string Instance { get; set; }
         [JsonRequired] public string ClientId { get; set; }
 
         [JsonRequired] public string ClientSecret { get; set; }
@@ -13,9 +14,6 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string TenantId { get; set; }
 
         [JsonRequired] public string ApiBaseAddress { get; set; }
-
-        public string Instance { get; set; }
-
-        public string Identifier { get; set; }
+        [JsonRequired] public string Identifier { get; set; }
     }
 }
