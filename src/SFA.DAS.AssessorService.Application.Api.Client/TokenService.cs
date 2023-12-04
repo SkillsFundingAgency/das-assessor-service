@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                 _logger.LogInformation($"About to get token at {DateTime.UtcNow}");
                 var defaultAzureCredential = new DefaultAzureCredential();
                 var result = await defaultAzureCredential.GetTokenAsync(
-                    new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
+                    new TokenRequestContext(scopes: new string[] { "https://citizenazuresfabisgov.onmicrosoft.com/das-at-qna-as-ar" + "/.default" }) { });
 
                 _logger.LogInformation($"Received token at {DateTime.UtcNow}");
 
