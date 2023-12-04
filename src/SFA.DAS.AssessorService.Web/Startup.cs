@@ -73,16 +73,16 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
                 services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.Configure<MvcViewOptions>(options =>
-            {
-                // Disable hidden checkboxes
-                options.HtmlHelperOptions.CheckBoxHiddenInputRenderMode = CheckBoxHiddenInputRenderMode.None;
-            });
+                services.Configure<MvcViewOptions>(options =>
+                {
+                    // Disable hidden checkboxes
+                    options.HtmlHelperOptions.CheckBoxHiddenInputRenderMode = CheckBoxHiddenInputRenderMode.None;
+                });
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
-                .AddControllersAsServices()
-                .AddSessionStateTempDataProvider()
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
+                services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+                    .AddControllersAsServices()
+                    .AddSessionStateTempDataProvider()
+                    .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
                 services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
                 services.AddValidatorsFromAssemblyContaining<Startup>();
@@ -151,17 +151,17 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
 
                 services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
-                    {
-                        cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
-                        cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
+                {
+                    cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIoc(services);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during Startup Configure Services");
                 throw;
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Web
                 //    .Ctor<string>().Is(_config["EnvironmentName"]);
 
                 services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-               new TokenService(Configuration.QnaApiAuthentication));
+               new TokenService(Configuration.QnaApiAuthentication, new Logger<TokenService>(new LoggerFactory())));
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
                 {
@@ -227,7 +227,7 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
-                
+
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
@@ -263,7 +263,7 @@ namespace SFA.DAS.AssessorService.Web
                 .UseHealthChecks("/health")
                 .UseRouting()
                 .UseAuthorization()
-                .UseEndpoints(endpoints => 
+                .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllerRoute(
                         name: "default",
