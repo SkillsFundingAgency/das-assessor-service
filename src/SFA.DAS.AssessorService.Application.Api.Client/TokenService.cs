@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Azure.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Settings;
 using System;
@@ -7,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class TokenService: IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
+    public class TokenService : IAssessorTokenService, IQnATokenService, IRoatpTokenService, IReferenceDataTokenService
     {
         private readonly IClientApiAuthentication _configuration;
         private readonly IManagedIdentityApiAuthentication _apiAuthentication;
+        private readonly ILogger<TokenService> _logger;
         private readonly string _environmentName;
 
         public TokenService(IClientApiAuthentication apiAuthentication)
@@ -18,9 +20,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             _apiAuthentication = apiAuthentication;
         }
 
-        public TokenService(IManagedIdentityApiAuthentication apiAuthentication)
+        public TokenService(IManagedIdentityApiAuthentication apiAuthentication, ILogger<TokenService> logger)
         {
             _apiAuthentication = apiAuthentication;
+            _logger = logger;
         }
 
         public TokenService(IClientApiAuthentication configuration, string environmentName)
@@ -65,9 +68,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             }
             else if (_apiAuthentication is IManagedIdentityApiAuthentication managedIdentityApiAuthenication)
             {
+                _logger.LogInformation($"About to get token at {DateTime.UtcNow}");
                 var defaultAzureCredential = new DefaultAzureCredential();
                 var result = await defaultAzureCredential.GetTokenAsync(
                     new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
+
+                _logger.LogInformation($"Received token at {DateTime.UtcNow}");
 
                 return result.Token;
             }
