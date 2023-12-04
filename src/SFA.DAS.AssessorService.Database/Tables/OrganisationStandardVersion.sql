@@ -7,7 +7,7 @@ CREATE TABLE [OrganisationStandardVersion]
 	[EffectiveFrom] DATETIME NULL,
 	[EffectiveTo] DATETIME NULL,
 	[DateVersionApproved] [DateTime] NULL,
-	[Comments] [NVARCHAR] (500) NULL,
+	[Comments] [nvarchar](max) NULL,
 	[Status] [nvarchar](10) NOT NULL,
 	) 
 GO

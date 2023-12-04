@@ -24,6 +24,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IDashboardApiClient _dashboardApiClient;
         private readonly ILogger<DashboardController> _logger;
 
+        #region Routes
+        public const string DashboardIndexRouteGet = nameof(DashboardIndexRouteGet);
+        #endregion
+
         public DashboardController(
             IHttpContextAccessor contextAccessor,
             IContactsApiClient contactsApiClient,
@@ -39,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("Dashboard")]
+        [Route("Dashboard", Name = DashboardIndexRouteGet)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> Index()
         {

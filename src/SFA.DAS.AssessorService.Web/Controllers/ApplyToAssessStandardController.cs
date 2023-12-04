@@ -10,11 +10,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [CheckSession]
     public class ApplyToAssessStandardController : Controller
     {
+        #region Routes
+        public const string ApplyToAssessStandardRouteGet = nameof(ApplyToAssessStandardRouteGet);
+        #endregion
+
         public ApplyToAssessStandardController()
         {
         }
 
-        [HttpGet]
+        [HttpGet("ApplyToAssessStandard", Name = ApplyToAssessStandardRouteGet)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public IActionResult Index()
         {

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> Handle(GetEpaoRegisteredStandardsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Retrieving Epao registered standards");
-            var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, request.PageSize, request.PageIndex);
+            var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, request.RequireAtLeastOneVersion, request.PageSize, request.PageIndex);
 
             var epaoRegisteredStandardsResult = result.PageOfResults.Select(o =>
                 new GetEpaoRegisteredStandardsResponse

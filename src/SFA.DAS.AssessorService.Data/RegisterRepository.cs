@@ -29,9 +29,9 @@ namespace SFA.DAS.AssessorService.Data
             var orgData = JsonConvert.SerializeObject(org.OrganisationData);
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
-                    "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
-                    new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
+                    "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData],[RecognitionNumber]) " +
+                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData, @recognitionNumber)",
+                    new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData, org.RecognitionNumber}
                 );
 
             return org.OrganisationId;
@@ -43,8 +43,9 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
-                    "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
+                    "[OrganisationData] = @orgData, Status = @status, RecognitionNumber = @recognitionNumber " +
+                    "WHERE [EndPointAssessorOrganisationId] = @organisationId",
+                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId, org.RecognitionNumber});
 
             _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
 

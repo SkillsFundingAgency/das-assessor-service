@@ -80,6 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
             request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
             request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
+            request.RecognitionNumber = _cleanser.CleanseStringForSpecialCharacters(request.RecognitionNumber);
             
             request.OrganisationReferenceType =
                 _cleanser.CleanseStringForSpecialCharacters(request.OrganisationReferenceType);
@@ -105,6 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Ukprn = request.Ukprn,
                 Status = string.IsNullOrEmpty(request.Status) ? "New" : request.Status,
                 Id = Guid.NewGuid(),
+                RecognitionNumber = request.RecognitionNumber,
                 OrganisationData = new OrganisationData
                 {
                     Address1 = request.Address1,

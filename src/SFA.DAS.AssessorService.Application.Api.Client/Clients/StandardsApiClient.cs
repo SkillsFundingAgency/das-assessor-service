@@ -16,13 +16,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = null, int? pageSize = null)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/{epaoId}?pageIndex={pageIndex}&pageSize={pageSize}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/{epaoId}?requireAtLeastOneVersion=true&pageIndex={pageIndex}&pageSize={pageSize}"))
             {
                 return await RequestAndDeserialiseAsync<PaginatedList<GetEpaoRegisteredStandardsResponse>>(request,
                     $"Could not find the organisation {epaoId}");
             }
         }
-        
+
+        public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId, bool requireAtLeastOneVersion, int? pageIndex, int? pageSize)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/{epaoId}?requireAtLeastOneVersion={requireAtLeastOneVersion}&pageIndex={pageIndex}&pageSize={pageSize}"))
+            {
+                return await RequestAndDeserialiseAsync<PaginatedList<GetEpaoRegisteredStandardsResponse>>(request,
+                    $"Could not find the organisation {epaoId}");
+            }
+        }
+
         public async Task<PaginatedList<EpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, string standardFilterId, string providerFilterId, string epaDateFilterId, string orderBy, string orderDirection, int pageSize, int? pageIndex = null)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/pipelines/{epaoId}?standardFilterId={standardFilterId}&providerFilterId={providerFilterId}&epaDateFilterId={epaDateFilterId}&pageSize={pageSize}&pageIndex={pageIndex}&orderBy={orderBy}&orderDirection={orderDirection}"))

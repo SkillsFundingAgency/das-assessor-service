@@ -39,7 +39,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             _organisationIdCreated = "EPA0987";
             _organisationTypeId = 5;
-            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
             _id = Guid.NewGuid();
 
             _organisation = new OrganisationModel

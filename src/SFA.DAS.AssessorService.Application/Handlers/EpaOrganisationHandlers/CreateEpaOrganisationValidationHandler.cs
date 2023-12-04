@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Ukprn = request.Ukprn,
                 OrganisationTypeId = request.OrganisationTypeId,
                 CompanyNumber = request.CompanyNumber,
-                CharityNumber = request.CharityNumber
+                CharityNumber = request.CharityNumber,
+                RecognitionNumber = request.RecognitionNumber
             } );
 
             return await Task.FromResult(result);

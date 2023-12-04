@@ -4,5 +4,7 @@
     {
         public string AttemptedVersion { get; set; }
         public bool BackToCheckPage { get; set; }
+        public string StandardName { get; set; }
+        public string IFateReferenceNumber { get; set; }
     }
 }

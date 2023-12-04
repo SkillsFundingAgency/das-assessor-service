@@ -32,6 +32,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Route("/")]
         public IActionResult Index()
         {
+            // store the UseGovSignIn property value in the Session so that it could be used in the layout.
+            _sessionService.Set(nameof(WebConfiguration.UseGovSignIn), _webConfiguration.UseGovSignIn);
+
             return View(new HomeIndexViewModel { UseGovSignIn = _webConfiguration.UseGovSignIn });
         }
 
@@ -54,20 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Authorize]
         public async Task<IActionResult> NotActivated()
         {
-            GetEpaoRegisteredStandardsResponse standard;
-
-            try
-            {
-                var epaoId = _sessionService.Get("EndPointAssessorOrganisationId");
-                var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1, 10);
-                standard = standards.Items.FirstOrDefault(s => !string.IsNullOrEmpty(s.StandardName));
-            }
-            catch (Exception ex) when (ex is EntityNotFoundException || ex is NullReferenceException)
-            {
-                standard = null;
-            }
-
-            return View(standard);
+            return View();
         }
 
         [Authorize]
@@ -92,6 +82,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Accessibility()
         {
             return View();
         }

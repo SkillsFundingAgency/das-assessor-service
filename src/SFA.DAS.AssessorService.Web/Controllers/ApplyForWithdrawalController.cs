@@ -46,6 +46,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> Index()
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var userId = await GetUserId();
             var applications = await _applicationApiClient.GetWithdrawalApplications(userId);
 
@@ -55,6 +57,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("/your-withdrawal-notifications")]
         public async Task<IActionResult> WithdrawalApplications()
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var userId = await GetUserId();
             var applications = await _applicationApiClient.GetWithdrawalApplications(userId);
             return View(applications);
@@ -65,6 +69,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal()
         {
+            return RedirectToAction("Index", "Dashboard");
+
             return View();
         }
 
@@ -73,7 +79,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult TypeOfWithdrawal(TypeOfWithdrawalViewModel viewModel)
         {
-            if(string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
+            return RedirectToAction("Index", "Dashboard");
+
+            if (string.IsNullOrEmpty(viewModel.TypeOfWithdrawal))
             {
                 ModelState.AddModelError(nameof(viewModel.TypeOfWithdrawal), "Select standard or register");
             }
@@ -101,6 +109,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ChooseStandardForWithdrawal(int? pageIndex)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetEpaOrganisationById(contact.OrganisationId?.ToString());
 
@@ -137,6 +147,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult WholeStandardOrVersion(string iFateReferenceNumber)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             return View();
         }
 
@@ -145,6 +157,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public IActionResult WholeStandardOrVersion(string iFateReferenceNumber, WholeStandardOrVersionViewModel model)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             if (string.IsNullOrWhiteSpace(model.WithdrawalType))
                 ModelState.AddModelError(nameof(model.WithdrawalType), "Select whole standard or version(s)");
 
@@ -170,6 +184,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ReviewStandardVersions(string iFateReferenceNumber)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
             var applications = await GetWithdrawalApplications(contact.Id, iFateReferenceNumber);
@@ -198,6 +214,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ChooseStandardVersionForWithdrawal(string iFateReferenceNumber)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
@@ -224,6 +242,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ChooseStandardVersionForWithdrawal(string iFateReferenceNumber, ChooseStandardVersionForWithdrawalViewModel model)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
             var applications = await GetWithdrawalApplications(contact.Id, iFateReferenceNumber);
@@ -270,6 +290,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery] string backAction)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
@@ -305,6 +327,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> CheckWithdrawalRequest(string iFateReferenceNumber, string versionsToWithdrawal, [FromQuery] string backAction, CheckWithdrawalRequestViewModel model)
         {
+            return RedirectToAction("Index", "Dashboard");
+
             var contact = await GetUserContact();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
             var versions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(organisation.EndPointAssessorOrganisationId, iFateReferenceNumber);

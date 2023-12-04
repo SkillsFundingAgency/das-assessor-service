@@ -5,6 +5,7 @@
         public long Uln { get; set; }
         public int StandardCode { get; set; }
         public int ProviderUkPrn { get; set; }     
+        public bool CoronationEmblem { get; set; }
 
         public string EndPointAssessorOrganisationId { get; set; }
         public string EndPointAssessorOrganisationName { get; set; }

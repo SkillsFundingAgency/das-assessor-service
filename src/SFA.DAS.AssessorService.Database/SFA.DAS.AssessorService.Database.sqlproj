@@ -183,8 +183,12 @@
     <Build Include="Tables\MergeOrganisationStandardVersion.sql" />
     <Build Include="Tables\MergeApply.sql" />
     <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
-    <None Include="PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql" />
     <Build Include="StoredProcedures\StaffReports_List_Approved_Standards.sql" />
+    <Build Include="Tables\OfqualOrganisation.sql" />
+    <Build Include="Tables\StagingOfqualOrganisation.sql" />
+    <Build Include="Tables\OfqualStandard.sql" />
+    <Build Include="Tables\StagingOfqualStandard.sql" />
+    <Build Include="StoredProcedures\Load_Ofqual_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -208,6 +212,7 @@
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
+    <None Include="PostDeploymentScripts\QF-1366-MapOFQUALRNtoEPAOrgId.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

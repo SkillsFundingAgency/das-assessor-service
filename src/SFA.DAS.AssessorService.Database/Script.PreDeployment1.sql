@@ -19,3 +19,8 @@
     When a script has been deployed to PROD it can be disabled by removing the reference below and optionally retained
     under the PreDeploymentScripts folder for future reference.
 */
+
+-- Explicitly remove this view which was dropped in 2019
+IF EXISTS(SELECT 1 FROM [sys].[views] WHERE name='ApplicationSummary' AND type='v')
+DROP VIEW [dbo].[ApplicationSummary]
+GO
