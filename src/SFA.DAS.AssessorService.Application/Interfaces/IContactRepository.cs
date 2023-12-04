@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> UpdateContactWithOrganisationData(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);
 
-        Task UpdateSignInId(Guid contactId, Guid? signInId);
+        Task<Contact> UpdateSignInId(Guid contactId, Guid? signInId, string govIdentifier);
         Task<Contact> GetContact(string email);
         Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges);
         bool CheckIfAnyPrivelegesSet(Guid contactId);
@@ -32,5 +32,12 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId);
         Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId);
         Task SetInvitationAccepted(ContactInvitation contactInvitation);
+
+        /// <summary>
+        /// Contract responsible for updating the contact email address.
+        /// </summary>
+        /// <param name="request">typeof(UpdateEmailRequest).</param>
+        /// <returns>Task.</returns>
+        Task UpdateEmail(UpdateEmailRequest request);
     }
 }
