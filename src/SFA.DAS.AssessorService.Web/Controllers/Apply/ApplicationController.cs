@@ -38,8 +38,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
-        #region routes
+        #region Routes
         public const string StandardApplicationsRouteGet = nameof(StandardApplicationsRouteGet);
+        public const string SequenceRouteGet = nameof(SequenceRouteGet);
         #endregion
 
         public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
@@ -224,7 +225,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
+        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}", Name = SequenceRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Sequence(Guid Id, int sequenceNo)
         {
@@ -454,9 +455,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
             ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
-
-            // the standard name preamble answer is currently stored in the application, instead of the application data
-            ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
 
             if (viewModel.AllowMultipleAnswers)
             {
@@ -808,10 +806,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName,
-                Versions = application?.ApplyData?.Apply?.Versions
+                Versions = application?.ApplyData?.Apply?.Versions,
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -822,9 +818,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -1143,38 +1137,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return answers;
         }
 
-        private static void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
-        {
-            if (pageVmQuestions == null) return;
-
-            var placeholderString = "StandardName";
-            var isPlaceholderPresent = false;
-
-            foreach (var question in pageVmQuestions)
-
-                if (question.Label.Contains($"[{placeholderString}]") ||
-                   question.Hint.Contains($"[{placeholderString}]") ||
-                    question.QuestionBodyText.Contains($"[{placeholderString}]") ||
-                    question.ShortLabel.Contains($"[{placeholderString}]")
-                   )
-                    isPlaceholderPresent = true;
-
-            if (!isPlaceholderPresent) return;
-
-            var standardName = application?.ApplyData?.Apply?.StandardName;
-
-            if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
-
-            foreach (var question in pageVmQuestions)
-            {
-                question.Label = question.Label?.Replace($"[{placeholderString}]", standardName);
-                question.Hint = question.Hint?.Replace($"[{placeholderString}]", standardName);
-                question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
-                question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
-            }
-        }
-
-        private void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
+        private static void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
         {
             if (questions == null) return;
 

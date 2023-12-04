@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -74,27 +71,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ApplicationResponse>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode)
+        public async Task<DateTime?> GetLatestWithdrawalDateForStandard(Guid organisationId, int? standardCode)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/withdrawn/{standardCode}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{organisationId}/application/latest-withdrawal-date/{standardCode}"))
             {
-                return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve previous applications");
+                return await RequestAndDeserialiseAsync<DateTime?>(request, $"Could not retrieve latest withdrawal date of standard {standardCode} for Organisation {organisationId}");
             }
-        }
 
-        public async Task<List<ApplicationResponse>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference)
-        {
-            try
-            {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/applications/{orgId}/application/previous/{standardReference}"))
-                {
-                    return await RequestAndDeserialiseAsync<List<ApplicationResponse>>(request, $"Could not retrieve previous applications");
-                }
-            }
-            catch
-            {
-                return new List<ApplicationResponse>();
-            }
         }
 
         public async Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest)

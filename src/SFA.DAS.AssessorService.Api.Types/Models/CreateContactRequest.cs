@@ -8,7 +8,7 @@
         {
         }
 
-        public CreateContactRequest(string givenName, string familyName, string email, string epaOrg, string userName)
+        public CreateContactRequest(string givenName, string familyName, string email, string epaOrg, string userName, string govIdentifier)
         {
             GivenName = givenName;
             FamilyName = familyName;
@@ -16,6 +16,7 @@
             EndPointAssessorOrganisationId = epaOrg;
             Username = userName;
             DisplayName = $"{givenName} {familyName}";
+            GovIdentifier = govIdentifier;
         }
        
 
@@ -26,5 +27,6 @@
         public string Email { get; set; }
         public string FamilyName { get; set; }
         public string GivenName { get; set; }
+        public string GovIdentifier { get; set; }
     }
 }

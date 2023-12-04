@@ -20,5 +20,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public Guid Id { get; set; }
 
         public string PhoneNumber { get; set; }
+        
+        public string GovUkIdentifier { get; set; }
     }
 }

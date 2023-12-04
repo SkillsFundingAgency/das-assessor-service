@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             var result = await _handler.Handle(request, new CancellationToken());
 
-            _orgStandardRepository.Verify(r => r.WithdrawalOrganisation("EPA0123", withdrawDate));
+            _orgStandardRepository.Verify(r => r.WithdrawOrganisation("EPA0123", withdrawDate));
             _unitOfWork.Verify(r => r.Commit());
         }
 
@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             Assert.ThrowsAsync<BadRequestException>(() => _handler.Handle(request, new CancellationToken()));
 
-            _orgStandardRepository.Verify(r => r.WithdrawalOrganisation(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+            _orgStandardRepository.Verify(r => r.WithdrawOrganisation(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
         }
     }
 }

@@ -78,6 +78,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return NoContent();
         }
+        
+        [HttpPut("govlogin", Name = "UpdateGovLogin")]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<Contact>> UpdateGovLoginContactDetails([FromBody] UpdateContactGovLoginRequest updateContactStatusRequest)
+        {
+            _logger.LogInformation("Received Update Gov Login Contact Request");
+
+            var result = await _mediator.Send(updateContactStatusRequest);
+
+            return Ok(result.Contact);
+        }
 
         [HttpDelete(Name = "Delete")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
@@ -189,6 +202,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             await _mediator.Send(request, CancellationToken.None);
             return Ok();
+        }
+
+        [HttpPut("updateEmail",Name = "UpdateEmail")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailRequest updateEmailRequest)
+        {
+            _logger.LogInformation("Received Update Email Request");
+
+            await _mediator.Send(updateEmailRequest);
+
+            return NoContent();
         }
     }
 }

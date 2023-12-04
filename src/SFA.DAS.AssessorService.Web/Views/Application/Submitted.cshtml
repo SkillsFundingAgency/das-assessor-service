@@ -29,7 +29,13 @@
 
                         @if (Model.IsOrganisationWithdrawalApplication)
                         {
-                            <p class="govuk-panel__body"> You have requested to withdraw from the register of end-point assessment organisations.</p>
+                            <p class="govuk-panel__body">You have requested to withdraw from the apprenticeship provider assessment register.</p>
+                        }
+                        else if(Model.IsStandardWithdrawalApplication)
+                        {
+                            <p class="govuk-panel__body">
+                                You have requested to withdraw from assessing @Model.StandardName (@Model.StandardReference).
+                            </p>
                         }
 
                         <div class="govuk-panel__body">

@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
                 .Returns(Task.FromResult((contact)));
 
             var contactRequest = new CreateContactRequest(Moq.It.IsAny<string>(), Moq.It.IsAny<string>(),
-                Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>());
+                Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>());
             _result = ContactController.CreateContact(contactRequest).Result;
         }
 
