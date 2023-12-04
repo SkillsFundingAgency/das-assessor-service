@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 {
@@ -69,15 +67,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 });
 
             _mockApiClient
-                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<ApplicationResponse>()
-                {
-                    new ApplicationResponse { StandardCode = 59, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
-                    new ApplicationResponse { StandardCode = 131, StandardApplicationType = StandardApplicationTypes.StandardWithdrawal },
-                    new ApplicationResponse { StandardCode = 354, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
-                });
-
-            _mockApiClient
                 .Setup(r => r.GetStandardApplications(It.IsAny<Guid>()))
                 .ReturnsAsync(new List<ApplicationResponse>());
 
@@ -113,14 +102,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockContactsApiClient
                 .Setup(r => r.GetContactBySignInId(SignInId.ToString()))
                 .ReturnsAsync(new ContactResponse { Id = UserId, SignInId = SignInId });
-
-            _mockApiClient
-                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int?>()))
-                .ReturnsAsync(new List<ApplicationResponse>());
-
-            _mockApiClient
-                .Setup(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()))
-                .ReturnsAsync(new List<ApplicationResponse>());
 
             _mockConfig
                 .Setup(r => r.FeedbackUrl)

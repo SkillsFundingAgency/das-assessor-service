@@ -494,5 +494,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
             }
         }
+
+        public async Task<bool> IsOfsOrganisation(EpaOrganisation organisation)
+        {
+            long ukprn = organisation.Ukprn.Value;
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/is-ofs/{ukprn}"))
+            {
+                return await RequestAndDeserialiseAsync<bool>(request, $"Could not determine whether organisation with UKPRN {ukprn} is an OfS organisation.");
+            }
+        }
     }
 }

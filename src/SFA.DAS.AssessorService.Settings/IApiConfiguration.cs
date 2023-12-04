@@ -25,5 +25,7 @@
 
         int PipelineCutoff { get; set; }
         string ServiceLink { get; set; }
+        EmailTemplatesConfig EmailTemplatesConfig { get; set; }
+        bool UseGovSignIn { get; set; }
     }
 }
