@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Data
             return organisationStandardVersion;
         }
 
-        public async Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
+        public async Task WithdrawOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
         {
             var sql = @"UPDATE osv
 	                    SET
@@ -110,8 +110,37 @@ namespace SFA.DAS.AssessorService.Data
                 sql,
                 param: new
                 {
-                    endPointAssessorOrganisationId = endPointAssessorOrganisationId,
-                    withdrawalDate = withdrawalDate
+                    endPointAssessorOrganisationId,
+                    withdrawalDate
+                },
+                transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task WithdrawStandard(string endPointAssessorOrganisationId, int standardCode, DateTime withdrawalDate)
+        {
+            var sql = @"UPDATE osv
+	                    SET
+		                    [EffectiveTo] = @withdrawalDate
+	                    FROM [OrganisationStandardVersion] osv 
+		                    INNER JOIN [OrganisationStandard] os ON os.[Id] = osv.[OrganisationStandardId]
+	                    WHERE os.[EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+                            AND os.[StandardCode] = @standardCode
+		                    AND (osv.[EffectiveTo] IS NULL OR osv.[EffectiveTo] > @withdrawalDate);
+
+                        UPDATE [OrganisationStandard]
+	                    SET
+		                    [EffectiveTo] = @withdrawalDate
+	                    WHERE [EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+                            AND [StandardCode] = @standardCode
+		                    AND ([EffectiveTo] IS NULL OR [EffectiveTo] > @withdrawalDate)";
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                sql,
+                param: new
+                {
+                    endPointAssessorOrganisationId,
+                    standardCode,
+                    withdrawalDate
                 },
                 transaction: _unitOfWork.Transaction);
         }

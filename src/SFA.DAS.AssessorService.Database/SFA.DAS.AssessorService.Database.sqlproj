@@ -188,7 +188,13 @@
     <Build Include="Tables\StagingOfqualOrganisation.sql" />
     <Build Include="Tables\OfqualStandard.sql" />
     <Build Include="Tables\StagingOfqualStandard.sql" />
+    <Build Include="StoredProcedures\AparSummaryUpdate.sql" />
+    <Build Include="Tables\APARSummary.sql" />
+    <Build Include="Tables\APARSummaryUpdated.sql" />
     <Build Include="StoredProcedures\Load_Ofqual_Standards.sql" />
+    <Build Include="Tables\StagingOfsOrganisation.sql" />
+    <Build Include="Tables\OfsOrganisation.sql" />
+    <Build Include="StoredProcedures\Load_Ofs_Standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

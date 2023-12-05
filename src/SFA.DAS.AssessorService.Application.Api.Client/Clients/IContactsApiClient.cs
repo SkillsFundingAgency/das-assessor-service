@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        
+        Task<ContactResponse> UpdateFromGovLogin(UpdateContactGovLoginRequest updateRequest); 
 
         Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 
@@ -51,5 +51,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task RequestForPrivilege(Guid contactId, Guid privilegeId);
         Task ApproveContact(Guid contactId);
         Task RejectContact(Guid contactId);
+        Task<ContactResponse> GetContactByEmail(string emailAddress);
+        Task<ContactResponse> GetContactByGovIdentifier(string govIdentifier);
+        Task UpdateEmail(UpdateEmailRequest updateEmailRequest);
     }
 }

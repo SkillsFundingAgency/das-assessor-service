@@ -9,6 +9,6 @@ public class WhenCallingBannerViewPath
     public void ThenBannerViewPathConstantIsReturned()
     {
         var sut = new HomeIndexViewModel();
-        Assert.That(sut.BannerViewPath, Is.EqualTo(Constants.Banners.APARNotifyBannerViewPath));
+        Assert.That(sut.BannerViewPath, Is.EqualTo(Constants.Banners.GovNotifyBannerViewPath));
     }
 }
