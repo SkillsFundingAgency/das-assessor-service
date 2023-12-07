@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateSig
 
             await UpdateContactStatusToLive(existingContact);
             
-            await _contactRepository.UpdateSignInId(existingContact.Id, request.SignInId);
+            await _contactRepository.UpdateSignInId(existingContact.Id, request.SignInId, null);
             return Unit.Value;
         }
         private async Task UpdateContactStatusToLive(Contact existingContact)

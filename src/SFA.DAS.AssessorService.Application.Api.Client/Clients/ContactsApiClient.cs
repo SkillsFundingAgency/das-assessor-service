@@ -45,6 +45,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
+        public async Task<ContactResponse> GetContactByGovIdentifier(string govIdentifier)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/govidentifier/{WebUtility.UrlEncode(govIdentifier)}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
 
         public async Task<ContactResponse> GetById(Guid id)
         {
@@ -60,6 +67,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
             {
                 return await PostPutRequestWithResponse<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
+            }
+        }
+        
+        public async Task<ContactResponse> UpdateFromGovLogin(UpdateContactGovLoginRequest updateContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/govlogin"))
+            {
+                return await PostPutRequestWithResponse<UpdateContactGovLoginRequest, ContactResponse>(request, updateContactRequest);
             }
         }
 
@@ -236,6 +251,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 await PostPutRequest(request, new RejectContactRequest {ContactId = contactId});
             }
+        }
+
+        public async Task<ContactResponse> GetContactByEmail(string emailAddress)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/email/{WebUtility.UrlEncode(emailAddress)}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
+
+        public async Task UpdateEmail(UpdateEmailRequest updateEmailRequest)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateEmail");
+            await PostPutRequest(request, updateEmailRequest);
         }
     }
 }

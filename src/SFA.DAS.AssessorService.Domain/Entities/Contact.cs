@@ -27,6 +27,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string FamilyName { get; set; }
 
         public IList<ContactsPrivilege> ContactsPrivileges { get; set; }
-
+        public string GovUkIdentifier { get; set; }
     }
 }
