@@ -99,8 +99,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task<ContactResponse> GetUserAndUpdateEmail()
         {
             var signinId = _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            ContactResponse contact = null;
+            try
+            {
+                contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
+            }
+            catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+            {
+                _logger.LogInformation("Failed to retrieve user be Sign In Id.");
+            }
             
-            var contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
             if (_configuration.UseGovSignIn && contact != null)
             {
                 var govIdentifier = _contextAccessor.HttpContext.User.Claims
