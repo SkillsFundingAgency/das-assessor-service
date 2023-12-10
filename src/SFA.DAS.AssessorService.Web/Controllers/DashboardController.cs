@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var signinId = _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
             
             var contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
-            if (_configuration.UseGovSignIn)
+            if (_configuration.UseGovSignIn && contact != null)
             {
                 var govIdentifier = _contextAccessor.HttpContext.User.Claims
                     .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
