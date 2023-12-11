@@ -70,9 +70,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                 }
                 else if (_apiAuthentication is IManagedIdentityApiAuthentication managedIdentityApiAuthenication)
                 {
-                    _logger.LogInformation($"About to get token at {DateTime.UtcNow}");
-                    var defaultAzureCredential = new DefaultAzureCredential( new DefaultAzureCredentialOptions() { IsUnsafeSupportLoggingEnabled = true });
-                    _logger.LogInformation($"managedIdentityApiAuthenication.Identifier {managedIdentityApiAuthenication.Identifier} at {DateTime.UtcNow}");
+   
+                    var defaultAzureCredential = new DefaultAzureCredential( new DefaultAzureCredentialOptions());
+
+                    _logger.LogInformation($"Getting token at {DateTime.UtcNow}");
+
                     var result = await defaultAzureCredential.GetTokenAsync(
                         new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
 
@@ -84,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             catch (Exception ex)
             {
 
-                _logger.LogInformation($"Exception token at {DateTime.UtcNow}  ex: {ex.Message}");
+                _logger.LogError($"Exception getting token at {DateTime.UtcNow}  ex: {ex.Message}");
             }
             
 

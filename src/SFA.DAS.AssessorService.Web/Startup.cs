@@ -90,20 +90,20 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
                 if (Configuration.UseGovSignIn)
                 {
-                    var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"]) 
+                    var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
                                   || _config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
-                    var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://","", StringComparison.CurrentCultureIgnoreCase);
+                    var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
                     var loginRedirect = isLocal ? "" : $"{Configuration.ServiceLink}/service/account-details";
-                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout","/service/account-details",cookieDomain, loginRedirect);   
+                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout", "/service/account-details", cookieDomain, loginRedirect);
                 }
                 else
                 {
-                    services.AddAndConfigureAuthentication(Configuration, _env);    
+                    services.AddAndConfigureAuthentication(Configuration, _env);
                 }
 
                 services.AddAuthorization();
 
-                
+
                 services.Configure<RequestLocalizationOptions>(options =>
                 {
                     options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -216,7 +216,7 @@ namespace SFA.DAS.AssessorService.Web
         private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
             var container = new Container();
-            var tokenLogger = services.BuildServiceProvider().GetService<ILogger<TokenService>>();
+
             container.Configure(config =>
             {
                 config.Scan(_ =>
@@ -236,13 +236,8 @@ namespace SFA.DAS.AssessorService.Web
                     .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);
 
-            //config.For<IQnATokenService>().Use<TokenService>()
-            //    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
-            //    .Ctor<string>().Is(_config["EnvironmentName"]);
-            
-
                 services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-               new TokenService(new ManagedIdentityApiAuthentication() { ApiBaseAddress = "https://at-qna-api.apprenticeships.education.gov.uk/", Identifier = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-qna-as-ar" }, tokenLogger));
+                new TokenService(Configuration.QnaApiAuthentication, serviceProvider.GetService<ILogger<TokenService>>()));
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
                 {
@@ -315,5 +310,6 @@ namespace SFA.DAS.AssessorService.Web
                         defaults: new { controller = "Home", action = "Index" });
                 });
         }
+
     }
 }
