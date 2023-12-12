@@ -7,10 +7,12 @@ using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.ManageUsers
 {
-    [Authorize]
+    [Authorize(Policy = nameof(PolicyNames.IsAuthenticated))]
     public class RequestAccessController : Controller
     {
         private readonly IContactsApiClient _contactsApiClient;
