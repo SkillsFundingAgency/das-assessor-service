@@ -149,6 +149,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     {
                         claims.Add(new Claim("sub", user.SignInId.ToString()));
                     }
+
+                    if (user.Status == "Pending")
+                    {
+                        await _contactsApiClient.Callback(new SignInCallback
+                        {
+                            Sub = user.SignInId.ToString(),
+                            SourceId = user.Id.ToString(),
+                            GovIdentifier = govLoginId
+                        });
+                    }
                 }
             }
 
