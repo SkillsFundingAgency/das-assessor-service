@@ -239,10 +239,6 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
                 new TokenService(Configuration.QnaApiAuthentication, serviceProvider.GetService<ILogger<TokenService>>()));
 
-                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
-                {
-                    config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl);
-                });
 
                 config.For<IRoatpTokenService>().Use<TokenService>()
                     .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
