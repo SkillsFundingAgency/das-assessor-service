@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public interface IManagedIdentityApiAuthentication
     {
-        string Identifier { get; set; }
-        string ApiBaseAddress { get; set; }
+        string IdentifierUri { get; set; }
+        string ApiBaseUrl { get; set; }
     }
 }

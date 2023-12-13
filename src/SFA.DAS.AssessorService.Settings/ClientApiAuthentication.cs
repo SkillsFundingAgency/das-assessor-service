@@ -12,10 +12,11 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string TenantId { get; set; }
 
-        [JsonRequired] public string ApiBaseAddress { get; set; }
+        public string ApiBaseUrl { get; set; }
 
         public string Instance { get; set; }
 
-        public string Identifier { get; set; }
+        public string IdentifierUri { get; set; }
+        public string ApiBaseAddress { get; set; }
     }
 }

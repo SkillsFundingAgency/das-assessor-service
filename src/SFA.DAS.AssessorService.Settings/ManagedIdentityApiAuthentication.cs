@@ -9,8 +9,8 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class ManagedIdentityApiAuthentication : IManagedIdentityApiAuthentication
     {
-        [JsonRequired] public string Identifier { get; set; }
+         public string IdentifierUri { get; set; }
 
-        [JsonRequired] public string ApiBaseAddress { get; set; }
+         public string ApiBaseUrl { get; set; }
     }
 }

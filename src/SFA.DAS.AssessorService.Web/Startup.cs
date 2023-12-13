@@ -191,7 +191,7 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
                 services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
 
-                services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl); });
 
                 services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
                 {
@@ -241,7 +241,7 @@ namespace SFA.DAS.AssessorService.Web
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnaApiClient", config =>
                 {
-                    config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                    config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl);
                 });
 
                 config.For<IRoatpTokenService>().Use<TokenService>()

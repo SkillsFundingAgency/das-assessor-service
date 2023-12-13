@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
         {
             try
             {
-                Uri uri = new Uri(_apiAuthentication.ApiBaseAddress);
+                Uri uri = new Uri(_apiAuthentication.ApiBaseUrl);
                 if (uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "::1")
                     return string.Empty;
 
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                     var authority = $"{clientApiAuthentication.Instance}/{clientApiAuthentication.TenantId}";
                     var clientCredential = new ClientCredential(clientApiAuthentication.ClientId, clientApiAuthentication.ClientSecret);
                     var context = new AuthenticationContext(authority, true);
-                    var result = await context.AcquireTokenAsync(clientApiAuthentication.Identifier, clientCredential);
+                    var result = await context.AcquireTokenAsync(clientApiAuthentication.IdentifierUri, clientCredential);
 
                     return result.AccessToken;
                 }
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                     _logger.LogInformation($"Getting token at {DateTime.UtcNow}");
 
                     var result = await defaultAzureCredential.GetTokenAsync(
-                        new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.Identifier + "/.default" }) { });
+                        new TokenRequestContext(scopes: new string[] { managedIdentityApiAuthenication.IdentifierUri + "/.default" }) { });
 
                     _logger.LogInformation($"Received token at {DateTime.UtcNow}");
 

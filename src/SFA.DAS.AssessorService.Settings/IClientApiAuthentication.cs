@@ -7,6 +7,6 @@
         string ClientSecret { get; set; }
         string ResourceId { get; set; }
         string TenantId { get; set; }
-        // string ApiBaseAddress { get; set; }
+        string ApiBaseAddress { get; set; }
     }
 }
