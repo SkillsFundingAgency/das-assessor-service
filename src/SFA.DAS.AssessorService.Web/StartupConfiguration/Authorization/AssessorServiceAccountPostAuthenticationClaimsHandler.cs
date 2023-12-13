@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 }
                 catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
                 {
-                    _logger.LogInformation("Failed to retrieve user be Sign In Id.");
+                    _logger.LogInformation("Failed to retrieve user by Sign In Id.");
                 }
                 
                 try

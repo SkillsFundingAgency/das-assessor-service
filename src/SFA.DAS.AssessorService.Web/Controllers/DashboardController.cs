@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
             {
-                _logger.LogInformation("Failed to retrieve user be Sign In Id.");
+                _logger.LogInformation("Failed to retrieve user by Sign In Id.");
             }
             
             if (_configuration.UseGovSignIn && contact != null)
