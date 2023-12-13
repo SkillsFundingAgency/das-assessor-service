@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
         {
             await CreateContactHandler.Handle(new CreateContactRequest{FamilyName = "Smith", Email = "user@email.com", GivenName = "Dave"}, CancellationToken.None);
             
-            ContactRepository.Verify(r => r.UpdateSignInId(_existingContactUserId, _existingLoginUserId), Times.Never);
+            ContactRepository.Verify(r => r.UpdateSignInId(_existingContactUserId, _existingLoginUserId, null), Times.Never);
         }
     }
 }

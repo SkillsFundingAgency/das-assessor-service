@@ -27,6 +27,10 @@ using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using SFA.DAS.AssessorService.Web.Utils;
+using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Services;
 using StackExchange.Redis;
 using StructureMap;
 
@@ -34,33 +38,76 @@ namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
     {
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Web";
-        private const string VERSION = "1.0";
-
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
 
-        public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment env)
         {
-            _config = config;
             _logger = logger;
             _env = env;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory());
+
+#if DEBUG
+            if (!configuration.IsDev())
+            {
+                config.AddJsonFile("appsettings.json", false)
+                    .AddJsonFile("appsettings.Development.json", true);
+            }
+#endif
+
+            config.AddEnvironmentVariables();
+            config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
+            );
+
+            _config = config.Build();
+            Configuration = _config.Get<WebConfiguration>();
         }
 
         private IWebConfiguration Configuration { get; set; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService.GetConfigWeb(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
             IServiceProvider serviceProvider;
             try
             {
                 services.AddApplicationInsightsTelemetry();
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-                services.AddAndConfigureAuthentication(Configuration, _logger, _env);
+
+                services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
+                services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
+                if (Configuration.UseGovSignIn)
+                {
+                    var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"]) 
+                                  || _config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+                    var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://","", StringComparison.CurrentCultureIgnoreCase);
+                    var loginRedirect = isLocal ? "" : $"{Configuration.ServiceLink}/service/account-details";
+                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout","/service/account-details",cookieDomain, loginRedirect);   
+                }
+                else
+                {
+                    services.AddAndConfigureAuthentication(Configuration, _env);    
+                }
+
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(
+                        PolicyNames.IsAuthenticated, policy =>
+                        {
+                            policy.RequireAuthenticatedUser();
+                        });
+                });
+
+                
                 services.Configure<RequestLocalizationOptions>(options =>
                 {
                     options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
