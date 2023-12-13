@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
-                return await RequestAndDeserialiseAsyncWithAsyncToken<ApplicationData>(request,
+                return await RequestAndDeserialiseAsync<ApplicationData>(request,
                     $"Could not find the application");
             }
         }
