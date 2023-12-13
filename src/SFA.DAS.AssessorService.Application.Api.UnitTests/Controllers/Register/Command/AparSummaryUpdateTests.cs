@@ -9,6 +9,7 @@ using NUnit.Framework.Internal;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using System;
 using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
@@ -41,7 +42,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             // Assert
             _backgroundTaskQueue.Verify(m => m.QueueBackgroundRequest(
                 It.IsAny<AparSummaryUpdateRequest>(),
-                "update APAR summary", "there were {0} changes made to APAR for EPAOs"),
+                "update APAR summary", 
+                It.IsAny<Action<object, TimeSpan, ILogger<TaskQueueHostedService>>>()),
                 Times.Once);
         }
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
@@ -58,7 +59,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public IActionResult UpdateStandardSummary()
         {
-            return QueueBackgroundRequest(new UpdateStandardSummaryRequest(), "update standard summary");
+            var requestName = "update standard summary";
+            return QueueBackgroundRequest(new UpdateStandardSummaryRequest(), requestName, (response, duration, log) =>
+            {
+                log.LogInformation($"Completed request to {requestName} in {duration.ToReadableString()}");
+            });
         }
     }
 }

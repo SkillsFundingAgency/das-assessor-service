@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
@@ -25,7 +26,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public IActionResult RebuildExternalApiSandbox()
         {
-            return QueueBackgroundRequest(new RebuildExternalApiSandboxRequest(), "rebuild external api sandbox");
+            var requestName = "rebuild external api sandbox";
+            return QueueBackgroundRequest(new RebuildExternalApiSandboxRequest(), requestName, (response, duration, log) =>
+            {
+                log.LogInformation($"Completed request to {requestName} in {duration.ToReadableString()}");
+            });
         }
     }
 }

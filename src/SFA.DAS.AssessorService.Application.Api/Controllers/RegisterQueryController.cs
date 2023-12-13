@@ -1,21 +1,21 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Linq;
-using SFA.DAS.AssessorService.Application.Handlers.ao;
-using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -245,7 +245,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public IActionResult AparSummaryUpdate()
         {
-            return QueueBackgroundRequest(new AparSummaryUpdateRequest(), "update APAR summary", "there were {0} changes made to APAR for EPAOs");
+            var requestName = "update APAR summary";
+            return QueueBackgroundRequest(new AparSummaryUpdateRequest(), requestName, (response, duration, log) =>
+            {
+                var result = response;
+                log.LogInformation($"Completed request to {requestName}, there were {result} changes made to APAR for EPAOs in {duration.ToReadableString()}");
+            });
         }
 
         [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]

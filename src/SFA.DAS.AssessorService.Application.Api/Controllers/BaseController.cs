@@ -18,13 +18,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
 
-        protected IActionResult QueueBackgroundRequest(IBaseRequest request, string requestName, string responseMessage = "")
+        protected IActionResult QueueBackgroundRequest(IBaseRequest request, string requestName, Action<object, TimeSpan, ILogger<TaskQueueHostedService>> response)
         {
             try
             {
                 _logger.LogInformation($"Received request to {requestName}");
 
-                _taskQueue.QueueBackgroundRequest(request, requestName, responseMessage);
+                _taskQueue.QueueBackgroundRequest(request, requestName, response);
 
                 _logger.LogInformation($"Queued request to {requestName}");
 

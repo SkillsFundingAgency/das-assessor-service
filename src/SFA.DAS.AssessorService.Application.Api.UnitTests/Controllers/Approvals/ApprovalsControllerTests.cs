@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Learner;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Handlers.Approvals;
+using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,7 +41,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Approval
 
             // Assert
             _mockBackgroundTaskQueue.Verify(m => m.QueueBackgroundRequest(
-                It.IsAny<ImportApprovalsRequest>(), "gather and store approvals", string.Empty), Times.Once);
+                It.IsAny<ImportApprovalsRequest>(), 
+                "gather and store approvals", 
+                It.IsAny<Action<object, TimeSpan, ILogger<TaskQueueHostedService>>>()), 
+                Times.Once);
         }
 
         [Test]

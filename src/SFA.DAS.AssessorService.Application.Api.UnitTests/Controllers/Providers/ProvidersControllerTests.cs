@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using System;
 using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Providers
@@ -34,7 +35,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Provider
             // Assert
             _backgroundTaskQueue.Verify(m => m.QueueBackgroundRequest(
                 It.Is<UpdateProvidersCacheRequest>(p => p.UpdateType == ProvidersCacheUpdateType.RefreshExistingProviders), 
-                "refresh providers cache", string.Empty), 
+                "refresh providers cache", 
+                It.IsAny<Action<object, TimeSpan, ILogger<TaskQueueHostedService>>>()), 
                 Times.Once);
         }
 
