@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 }
                 catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
                 {
-                    _logger.LogInformation("Failed to retrieve user be Sign In Id.");
+                    _logger.LogInformation("Failed to retrieve user by Sign In Id.");
                 }
                 
                 try
@@ -148,6 +148,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     else
                     {
                         claims.Add(new Claim("sub", user.SignInId.ToString()));
+                    }
+
+                    if (user.Status == "Pending")
+                    {
+                        await _contactsApiClient.Callback(new SignInCallback
+                        {
+                            Sub = user.SignInId.ToString(),
+                            SourceId = user.Id.ToString(),
+                            GovIdentifier = govLoginId
+                        });
                     }
                 }
             }

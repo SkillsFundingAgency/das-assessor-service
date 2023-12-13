@@ -7,11 +7,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         public Guid SignInId { get; }
         public Guid ContactId { get; }
+        public string GovIdentifier { get; }
 
-        public UpdateSignInIdRequest(Guid signInId, Guid contactId)
+        public UpdateSignInIdRequest(Guid signInId, Guid contactId, string govIdentifier = null)
         {
             SignInId = signInId;
             ContactId = contactId;
+            GovIdentifier = govIdentifier;
         }
     }
 }
