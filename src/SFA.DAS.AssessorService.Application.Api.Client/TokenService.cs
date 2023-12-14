@@ -20,17 +20,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             _apiAuthentication = apiAuthentication;
         }
 
+        public TokenService(IClientApiAuthentication configuration, string environmentName)
+        {
+            _configuration = configuration as IClientApiAuthentication;
+            _environmentName = environmentName;
+        }
         public TokenService(IManagedIdentityApiAuthentication apiAuthentication, ILogger<TokenService> logger)
         {
             _apiAuthentication = apiAuthentication;
             _logger = logger;
         }
 
-        public TokenService(IClientApiAuthentication configuration, string environmentName)
-        {
-            _configuration = configuration;
-            _environmentName = environmentName;
-        }
 
         public string GetToken()
         {
