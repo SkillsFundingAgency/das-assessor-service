@@ -25,7 +25,6 @@ using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
-using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Utils;
@@ -101,7 +100,14 @@ namespace SFA.DAS.AssessorService.Web
                     services.AddAndConfigureAuthentication(Configuration, _env);
                 }
 
-                services.AddAuthorization();
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(
+                        PolicyNames.IsAuthenticated, policy =>
+                        {
+                            policy.RequireAuthenticatedUser();
+                        });
+                });
 
 
                 services.Configure<RequestLocalizationOptions>(options =>
