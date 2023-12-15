@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateUsers"))
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await TokenService.GetTokenAsync());
                 request.Headers.Add("Accept", "application/json");
                 request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
 

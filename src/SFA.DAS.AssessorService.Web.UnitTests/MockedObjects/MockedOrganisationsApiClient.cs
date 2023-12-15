@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -66,8 +67,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 
             var tokenServiceMock = new Mock<IAssessorTokenService>();
             tokenServiceMock
-                .Setup(m => m.GetToken())
-                .Returns(string.Empty);
+                .Setup(m => m.GetTokenAsync())
+                .Returns(Task.FromResult(string.Empty));
 
             var apiBaseLogger = new Mock<ILogger<ApiClientBase>>();
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Settings;
 using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
@@ -16,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             _environmentName = environmentName;
         }
 
-        public string GetToken()
+        public async Task<string> GetTokenAsync()
         {
             Uri uri = new Uri(_configuration.ApiBaseAddress);
             if (uri.Host == "localhost" || uri.Host == "127.0.0.1" || uri.Host == "::1")
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);
             var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).GetAwaiter().GetResult();
+            var result = await context.AcquireTokenAsync(resourceId, clientCredential);
 
             return result?.AccessToken;
         }

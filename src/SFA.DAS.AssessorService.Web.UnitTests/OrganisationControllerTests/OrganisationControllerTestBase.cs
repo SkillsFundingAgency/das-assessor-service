@@ -20,6 +20,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 using OrganisationData = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationData;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -94,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             Logger = new Mock<ILogger<OrganisationController>>();
             SessionService = new Mock<ISessionService>();
             TokenService = new Mock<ITokenService>();
-            TokenService.Setup(s => s.GetToken()).Returns("jwt");
+            TokenService.Setup(s => s.GetTokenAsync()).Returns(Task.FromResult("jwt"));
 
             OrganisationApiClient = new Mock<IOrganisationsApiClient>();
             OrganisationApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });

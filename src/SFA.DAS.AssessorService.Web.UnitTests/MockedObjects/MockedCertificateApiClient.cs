@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Hosting;
@@ -21,8 +22,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             
             var tokenServiceMock = new Mock<IAssessorTokenService>();
             tokenServiceMock
-                .Setup(m => m.GetToken())
-                .Returns(string.Empty);
+                .Setup(m => m.GetTokenAsync())
+                .Returns(Task.FromResult(string.Empty));
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
