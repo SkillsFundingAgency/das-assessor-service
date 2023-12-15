@@ -87,6 +87,9 @@ namespace SFA.DAS.AssessorService.Web
 
                 services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
                 services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
+                services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
+                new TokenService(Configuration.QnaApiAuthentication, serviceProvider.GetService<ILogger<TokenService>>()));
+
                 if (Configuration.UseGovSignIn)
                 {
                     var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
@@ -241,10 +244,6 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IAssessorTokenService>().Use<TokenService>()
                     .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
                     .Ctor<string>().Is(_config["EnvironmentName"]);
-
-                services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-                new TokenService(Configuration.QnaApiAuthentication, serviceProvider.GetService<ILogger<TokenService>>()));
-
 
                 config.For<IRoatpTokenService>().Use<TokenService>()
                     .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
