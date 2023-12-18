@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnAApiClient", config => 
                     { 
-                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); 
+                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl); 
                     });
 
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
