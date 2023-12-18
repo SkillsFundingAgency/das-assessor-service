@@ -241,15 +241,15 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IAssessorTokenService>().Use<TokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.AssessorApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IQnATokenService>().Use<TokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IRoatpTokenService>().Use<TokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>();

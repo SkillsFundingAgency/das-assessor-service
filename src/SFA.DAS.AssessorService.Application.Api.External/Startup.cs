@@ -163,7 +163,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     config.For<ITokenService>().Use<TokenService>()
                         .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication)
-                        .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                        .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                     config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
                 }
@@ -171,7 +171,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     config.For<ITokenService>().Use<TokenService>()
                         .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.AssessorApiAuthentication)
-                        .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                        .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                     config.For<IApiClient>().Use<ApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
                 }

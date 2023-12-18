@@ -230,15 +230,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<IQnATokenService>().Use<TokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IReferenceDataTokenService>().Use<TokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IRoatpTokenService>().Use<TokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
