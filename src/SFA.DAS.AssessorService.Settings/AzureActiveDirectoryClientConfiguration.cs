@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Settings
 {
-    public class ClientApiAuthentication : IClientApiAuthentication
+    public class AzureActiveDirectoryClientConfiguration : IAzureActiveDirectoryClientConfiguration
     {
         [JsonRequired] public string ClientId { get; set; }
 
@@ -12,11 +12,6 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string TenantId { get; set; }
 
-        public string ApiBaseUrl { get; set; }
-
-        public string Instance { get; set; }
-
-        public string IdentifierUri { get; set; }
         public string ApiBaseAddress { get; set; }
     }
 }

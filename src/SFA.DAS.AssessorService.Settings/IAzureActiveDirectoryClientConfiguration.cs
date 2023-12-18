@@ -1,8 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Settings
 {
-    public interface IClientApiAuthentication :IManagedIdentityApiAuthentication
+    public interface IAzureActiveDirectoryClientConfiguration : IClientConfiguration
     {
-        string Instance { get; set; }
         string ClientId { get; set; }
         string ClientSecret { get; set; }
         string ResourceId { get; set; }

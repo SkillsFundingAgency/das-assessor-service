@@ -4,13 +4,13 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class WebConfiguration: IWebConfiguration
     {
-        [JsonRequired] public ClientApiAuthentication AssessorApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
         [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
-        [JsonRequired] public ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
+        [JsonRequired] public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
 
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
 
         [JsonRequired] public string FeedbackUrl { get; set; }
         [JsonRequired] public string ReferenceFormat { get; set; }

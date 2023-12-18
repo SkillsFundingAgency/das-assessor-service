@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/learnerdetails/import"))
             {
-                return await PostPutRequestWithResponse<ImportLearnerDetailRequest, ImportLearnerDetailResponse>(request,
+                return await PostPutRequestWithResponseAsync<ImportLearnerDetailRequest, ImportLearnerDetailResponse>(request,
                     importLearnerDetailRequest);
             }
         }

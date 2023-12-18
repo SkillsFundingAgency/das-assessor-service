@@ -87,9 +87,7 @@ namespace SFA.DAS.AssessorService.Web
 
                 services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
                 services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
-                services.AddTransient<IQnATokenService, TokenService>(serviceProvider =>
-                new TokenService(Configuration.QnaApiAuthentication, serviceProvider.GetService<ILogger<TokenService>>()));
-
+                
                 if (Configuration.UseGovSignIn)
                 {
                     var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
@@ -242,12 +240,16 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
 
                 config.For<IAssessorTokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.AssessorApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
+
+                config.For<IQnATokenService>().Use<TokenService>()
+                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
 
                 config.For<IRoatpTokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is(container.GetInstance<ILogger<TokenService>>());
 
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>();

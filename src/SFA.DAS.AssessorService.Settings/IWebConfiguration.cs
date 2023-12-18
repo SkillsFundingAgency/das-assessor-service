@@ -2,13 +2,13 @@
 {
     public interface IWebConfiguration
     {
-        ClientApiAuthentication AssessorApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
         AzureApiAuthentication AzureApiAuthentication { get; set; }
-        ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
+        ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
         
         LoginServiceConfig LoginService { get; set; }
 
-        ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
 
         string FeedbackUrl { get; set; }
         string ReferenceFormat { get; set; }

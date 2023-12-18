@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/login"))
             {
-                return await PostPutRequestWithResponse<LoginRequest, LoginResponse>(request, searchQuery);
+                return await PostPutRequestWithResponseAsync<LoginRequest, LoginResponse>(request, searchQuery);
             }
         }
     }

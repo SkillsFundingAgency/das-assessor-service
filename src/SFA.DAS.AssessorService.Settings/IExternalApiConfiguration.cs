@@ -2,8 +2,8 @@
 {
     public interface IExternalApiConfiguration
     {
-        ClientApiAuthentication AssessorApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
 
-        ClientApiAuthentication SandboxAssessorApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration SandboxAssessorApiAuthentication { get; set; }
     }
 }

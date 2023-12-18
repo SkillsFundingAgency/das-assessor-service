@@ -17,12 +17,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var clientApiAuthenticationMock = new Mock<IClientApiAuthentication>();
+            var clientApiAuthenticationMock = new Mock<IAzureActiveDirectoryClientConfiguration>();
             
             var tokenServiceMock = new Mock<IAssessorTokenService>();
             tokenServiceMock
-                .Setup(m => m.GetToken())
-                .Returns(string.Empty);
+                .Setup(m => m.GetTokenAsync())
+                .ReturnsAsync(string.Empty);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
