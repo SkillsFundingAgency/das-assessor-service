@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
@@ -10,18 +6,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Helpers;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
@@ -33,8 +31,10 @@ using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Services;
 using StackExchange.Redis;
 using StructureMap;
-using NLog;
-using System.Security.Claims;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -237,19 +237,20 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
                 config.For<IWebConfiguration>().Use(Configuration);
 
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
+                config.For<IAzureTokenService>().Use<AzureTokenService>()
+                    .Ctor<IAzureApiClientConfiguration>().Is(Configuration.AzureApiAuthentication);
 
-                config.For<IAssessorTokenService>().Use<TokenService>()
+                config.For<IAssessorTokenService>().Use<AssessorTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.AssessorApiAuthentication)
                     .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
-                config.For<IQnATokenService>().Use<TokenService>()
+                config.For<IQnaTokenService>().Use<QnaTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
                     .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
-                config.For<IRoatpTokenService>().Use<TokenService>()
+                config.For<IRoatpTokenService>().Use<RoatpTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();  // does this actually need to be setup or will a default be supplied automatically??
 
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>();
@@ -270,7 +271,8 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
-                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
+                config.For<IAzureApiClient>().Use<AzureApiClient>()
+                    .Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();

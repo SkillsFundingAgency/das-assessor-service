@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Settings
+﻿using SFA.DAS.AssessorService.Api.Common.Settings;
+
+namespace SFA.DAS.AssessorService.Settings
 {
     public interface IExternalApiConfiguration
     {

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Api.Common.Exceptions;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -104,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
             }
-            catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+            catch (EntityNotFoundException)
             {
                 _logger.LogInformation("Failed to retrieve user by Sign In Id.");
             }

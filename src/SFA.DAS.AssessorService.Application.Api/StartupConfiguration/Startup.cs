@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,20 +13,29 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
-using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
@@ -228,15 +231,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                config.For<IQnATokenService>().Use<TokenService>()
+                config.For<IQnaTokenService>().Use<QnaTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
                     .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
-                config.For<IReferenceDataTokenService>().Use<TokenService>()
+                config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication)
                     .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
-                config.For<IRoatpTokenService>().Use<TokenService>()
+                config.For<IRoatpTokenService>().Use<RoatpTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
                     .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
@@ -244,11 +247,18 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
-                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+                // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
                     .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
-                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
-                // End of SOAP Services
+                
+                config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
+                    .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
+
+                config.For<ICompaniesHouseApiClient>().Use<CompaniesHouseApiClient>()
+                    .Ctor<ICompaniesHouseApiClientConfiguration>().Is(Configuration.CompaniesHouseApiAuthentication);
+
+                config.For<IOuterApiClient>().Use<OuterApiClient>()
+                    .Ctor<IOuterApiClientConfiguration>().Is(Configuration.OuterApi);
 
                 config.Populate(services);
             });

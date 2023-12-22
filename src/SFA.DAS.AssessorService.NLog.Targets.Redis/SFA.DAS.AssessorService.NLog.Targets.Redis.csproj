@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="NLog" Version="5.1.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <PropertyGroup>
     <PackageId>SFA.DAS.NLog.Targets.Redis</PackageId>
