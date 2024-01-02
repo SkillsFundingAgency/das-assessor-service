@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.ApplyTypes
+namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class FinancialGrade
     {

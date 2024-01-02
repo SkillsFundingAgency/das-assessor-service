@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.ApplyTypes.CharityCommission
+namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class CharityCommissionSummary
     {

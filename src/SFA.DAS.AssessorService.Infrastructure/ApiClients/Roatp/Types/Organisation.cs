@@ -1,5 +1,6 @@
-﻿
-namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
+﻿using SFA.DAS.AssessorService.Api.Types.Models;
+
+namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types
 {
     using System;
 

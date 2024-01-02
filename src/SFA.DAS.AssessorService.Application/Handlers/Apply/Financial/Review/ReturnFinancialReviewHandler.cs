@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,21 +30,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
             return Unit.Value;
         }
 
-        private async Task UpdateOrganisationWithUpdatedGrade(Guid applicationId, FinancialGrade grade)
+        private async Task UpdateOrganisationWithUpdatedGrade(Guid applicationId, Domain.Entities.FinancialGrade grade)
         {
             var application = await _applyRepository.GetApply(applicationId);
             var org = await _organisationQueryRepository.Get(application.OrganisationId);
 
             if (org != null)
             {
-                org.OrganisationData.FHADetails = new FHADetails()
+                org.OrganisationData.FHADetails = new Domain.Entities.FHADetails()
                 {
                     FinancialDueDate = grade.FinancialDueDate,
-                    FinancialExempt = grade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt
+                    FinancialExempt = grade.SelectedGrade == Domain.Entities.FinancialApplicationSelectedGrade.Exempt
                 };
 
                 if (org.OrganisationData.FinancialGrades == null)
-                    org.OrganisationData.FinancialGrades = new List<FinancialGrade>();
+                    org.OrganisationData.FinancialGrades = new List<Domain.Entities.FinancialGrade>();
 
                 if (org.OrganisationData.FinancialGrades.Any(x => x.ApplicationReference == grade.ApplicationReference))
                 {

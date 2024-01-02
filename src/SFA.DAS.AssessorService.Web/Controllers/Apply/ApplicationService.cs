@@ -110,10 +110,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 OrganisationId = organisationId,
                 ApplicationReferenceFormat = referenceFormat,
                 CreatingContactId = contactId,
-                ApplySequences = sequences.Select(sequence => new ApplySequence
+                ApplySequences = sequences.Select(sequence => new Domain.Entities.ApplySequence
                 {
                     SequenceId = sequence.Id,
-                    Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new ApplySection
+                    Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new Domain.Entities.ApplySection
                     {
                         SectionId = x.Id,
                         SectionNo = x.SectionNo,

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
+﻿namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types
 {
     public class OrganisationData
     {

@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoATPApproved = request.RoATPApproved,
                     RoEPAOApproved = request.RoEPAOApproved,
                     EndPointAssessmentOrgId = request.EndPointAssessmentOrgId,
-                    FinancialGrades = new List<ApplyTypes.FinancialGrade>(),
+                    FinancialGrades = new List<Domain.Entities.FinancialGrade>(),
                     FHADetails = new FHADetails
                     {
                         FinancialDueDate = request.FinancialDueDate,

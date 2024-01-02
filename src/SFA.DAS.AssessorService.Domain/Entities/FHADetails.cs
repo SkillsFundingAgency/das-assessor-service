@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.ApplyTypes
+namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class FHADetails
     {

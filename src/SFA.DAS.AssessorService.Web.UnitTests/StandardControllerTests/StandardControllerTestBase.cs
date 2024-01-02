@@ -52,11 +52,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new ApplicationResponse()
                 {
                     ApplicationStatus = ApplicationStatus.InProgress,
-                    ApplyData = new ApplyData()
+                    ApplyData = new Domain.Entities.ApplyData()
                     {
-                        Sequences = new List<ApplySequence>()
+                        Sequences = new List<Domain.Entities.ApplySequence>()
                         {
-                            new ApplySequence()
+                            new Domain.Entities.ApplySequence()
                             {
                                 IsActive = true,
                                 SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,

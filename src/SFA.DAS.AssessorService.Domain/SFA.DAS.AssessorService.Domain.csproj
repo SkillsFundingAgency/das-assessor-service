@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="DTOs\Register\" />
   </ItemGroup>
 

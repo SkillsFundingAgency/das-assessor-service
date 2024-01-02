@@ -25,4 +25,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Roatp\" />
+  </ItemGroup>
+
 </Project>

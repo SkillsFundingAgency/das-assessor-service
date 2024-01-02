@@ -281,28 +281,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationValidationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationWebsiteLinkRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationWebsiteLinkRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateFinancialsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateFinancialsRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\CreateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\CreateOrganisationRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateCharityNumberCheckRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateCharityNumberCheckRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateCheckResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateCheckResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateCompanyNumberCheckRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateCompanyNumberCheckRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateUKPRNCheckRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\DuplicateUKPRNCheckRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\Organisation.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\Organisation.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationData.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationData.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationSearchResults.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationSearchResults.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationStatus.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationStatus.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\OrganisationType.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\ProviderType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\ProviderType.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\RemovedReason.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\RemovedReason.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationCharityNumberRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationCharityNumberRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationCompanyNumberRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationCompanyNumberRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationFinancialTrackRecordRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationFinancialTrackRecordRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationLegalNameRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationLegalNameRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationParentCompanyGuaranteeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationParentCompanyGuaranteeRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationProviderTypeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationProviderTypeRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationStatusRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationTradingNameRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationTradingNameRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationTypeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationTypeRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationUkprnRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Roatp\UpdateOrganisationUkprnRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" />
@@ -396,13 +374,9 @@
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationStatus.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationStatus.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationSummaryItem.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationSummaryItem.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplyTypeBase.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplyTypeBase.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\CharityCommission\CharityCommissionSummary.cs" Link="SFA.DAS.AssessorService.ApplyTypes\CharityCommission\CharityCommissionSummary.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\CompaniesHouse\CompaniesHouseSummary.cs" Link="SFA.DAS.AssessorService.ApplyTypes\CompaniesHouse\CompaniesHouseSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\Contact.cs" Link="SFA.DAS.AssessorService.ApplyTypes\Contact.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\CreateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.ApplyTypes\CreateOrganisationRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\FHADetails.cs" Link="SFA.DAS.AssessorService.ApplyTypes\FHADetails.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\FinancialApplicationSummaryItem.cs" Link="SFA.DAS.AssessorService.ApplyTypes\FinancialApplicationSummaryItem.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\FinancialGrade.cs" Link="SFA.DAS.AssessorService.ApplyTypes\FinancialGrade.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\FinancialReviewStatus.cs" Link="SFA.DAS.AssessorService.ApplyTypes\FinancialReviewStatus.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\Organisation.cs" Link="SFA.DAS.AssessorService.ApplyTypes\Organisation.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\OrganisationDetails.cs" Link="SFA.DAS.AssessorService.ApplyTypes\OrganisationDetails.cs" />
@@ -450,6 +424,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateAddress.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateAddress.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateBatchLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateBatchLog.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateLog.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CharityCommissionSummary.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CharityCommissionSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CompaniesHouseSummary.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CompaniesHouseSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Contact.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Contact.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ContactInvitation.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ContactInvitation.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ContactLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ContactLog.cs" />
@@ -460,6 +436,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandard.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandardFilter.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandardFilter.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EPORegisteredStandards.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EPORegisteredStandards.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FHADetails.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FHADetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FinancialGrade.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FinancialGrade.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Ilr.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Ilr.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Learner.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Learner.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeApply.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeApply.cs" />
@@ -538,9 +516,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\IReferenceDataApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\IReferenceDataApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataTokenService.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataTokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\IRoatpApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\IRoatpApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\RoatpApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\RoatpApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\RoatpTokenService.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\RoatpTokenService.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\Charity.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\Charity.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\LatestFiling.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\LatestFiling.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\RegistrationHistory.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\RegistrationHistory.cs" />
@@ -577,14 +552,11 @@
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\UKRLP\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Validation\" />
-    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Roatp\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandards\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ProviderRegister\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Register\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\" />
-    <Folder Include="SFA.DAS.AssessorService.ApplyTypes\CharityCommission\" />
-    <Folder Include="SFA.DAS.AssessorService.ApplyTypes\CompaniesHouse\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\Const\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\DTOs\Staff\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\" />
@@ -600,7 +572,6 @@
     <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\" />
     <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\" />
     <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\Roatp\" />
     <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\" />
     <Folder Include="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\" />
   </ItemGroup>

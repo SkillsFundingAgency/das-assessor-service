@@ -860,7 +860,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                         // NOTE: For now it seems the only DataFed type is delivery areas and someone has coded it that way in the api client
                         var deliveryAreas = await _applicationApiClient.GetQuestionDataFedOptions();
-                        var questionOptions = deliveryAreas.Select(da => new Option() { Label = da.Area, Value = da.Area }).ToList();
+                        var questionOptions = deliveryAreas.Select(da => new QnA.Api.Types.Page.Option() { Label = da.Area, Value = da.Area }).ToList();
 
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
@@ -1161,7 +1161,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
+        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<Domain.Entities.ApplySection> applySections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
 
@@ -1225,7 +1225,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return canUpdate;
         }
 
-        public bool IsSequenceActive(ApplyData applyData, int sequenceNo)
+        public bool IsSequenceActive(Domain.Entities.ApplyData applyData, int sequenceNo)
         {
             // a sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
             return applyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;

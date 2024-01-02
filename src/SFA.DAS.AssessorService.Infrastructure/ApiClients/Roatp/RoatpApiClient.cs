@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,14 +28,14 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
         {
             _logger.LogInformation($"Searching RoATP. Search Term: {searchTerm}");
-            var apiResponse = await Get<AssessorService.Api.Types.Models.Roatp.OrganisationSearchResults>($"/api/v1/search?searchTerm={searchTerm}");
+            var apiResponse = await Get<OrganisationSearchResults>($"/api/v1/search?searchTerm={searchTerm}");
 
             if (exactMatch && apiResponse?.SearchResults != null)
             {
                 apiResponse.SearchResults = apiResponse.SearchResults.Where(r => r.LegalName.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
 
-            return Mapper.Map<IEnumerable<SFA.DAS.AssessorService.Api.Types.Models.Roatp.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+            return Mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
         }
 
         public async Task<OrganisationSearchResult> GetOrganisationByUkprn(long ukprn)
@@ -85,7 +86,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         {
             _logger.LogInformation($"Searching RoATP. UKPRN: {ukprn}");
             var apiResponse =
-                await Get<AssessorService.Api.Types.Models.Roatp.OrganisationSearchResults>(
+                await Get<OrganisationSearchResults>(
                     $"/api/v1/search?searchTerm={ukprn}");
 
             if (apiResponse?.SearchResults != null)
@@ -96,7 +97,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
 
             var organisationSearchResults =
                 Mapper
-                    .Map<IEnumerable<SFA.DAS.AssessorService.Api.Types.Models.Roatp.Organisation>,
+                    .Map<IEnumerable<Organisation>,
                         IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
             return organisationSearchResults;
         }
