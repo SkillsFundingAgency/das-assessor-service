@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, AzureApiClientConfiguration azureApiClientConfiguration, 
+        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IAzureApiClientConfiguration azureApiClientConfiguration, 
             IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) 
             : base(baseUri, tokenService, logger)
         {

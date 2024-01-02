@@ -231,21 +231,18 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
+                // This configuration for ILogger<ApiClientBase> is required to create a IQnaApiClient from the Api project, it is unknown why as StructureMap
+                // can create all other types of ILogger<T> and the Web project does not require ILogger<ApiClientBase> to be configured
+                config.For<ILogger<ApiClientBase>>().Use<Logger<ApiClientBase>>();
+
                 config.For<IQnaTokenService>().Use<QnaTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication);
 
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
                 config.For<IRoatpTokenService>().Use<RoatpTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
-
-                config.For<IQnaApiClient>().Use<QnaApiClient>();
-                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
+                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
 
                 // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()

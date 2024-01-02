@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+
+    <Description>Assessor service shared codebase</Description>
+    <Authors>ESFA</Authors>
+    <Company>ESFA</Company>
+    <PackageLicense>https://github.com/SkillsFundingAgency/das-assessor-service/master/LICENSE</PackageLicense>
+    <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>$(SolutionDir)..\..\NugetPackages</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

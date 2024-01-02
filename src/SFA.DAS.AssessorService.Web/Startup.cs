@@ -237,39 +237,19 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
                 config.For<IWebConfiguration>().Use(Configuration);
 
+                config.For<IAzureApiClientConfiguration>().Use(Configuration.AzureApiAuthentication);
+
                 config.For<IAzureTokenService>().Use<AzureTokenService>()
                     .Ctor<IAzureApiClientConfiguration>().Is(Configuration.AzureApiAuthentication);
 
                 config.For<IAssessorTokenService>().Use<AssessorTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.AssessorApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    .Ctor<IClientConfiguration>().Is(Configuration.AssessorApiAuthentication);
 
                 config.For<IQnaTokenService>().Use<QnaTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication);
 
                 config.For<IRoatpTokenService>().Use<RoatpTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();  // does this actually need to be setup or will a default be supplied automatically??
-
-                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
-                config.For<IStandardsApiClient>().Use<StandardsApiClient>();
-                config.For<IOppFinderApiClient>().Use<OppFinderApiClient>();
-                config.For<IDashboardApiClient>().Use<DashboardApiClient>();
-                config.For<IContactsApiClient>().Use<ContactsApiClient>();
-                config.For<ISearchApiClient>().Use<SearchApiClient>();
-                config.For<IEmailApiClient>().Use<EmailApiClient>();
-                config.For<IValidationApiClient>().Use<ValidationApiClient>();
-                config.For<ICertificateApiClient>().Use<CertificateApiClient>();
-                config.For<ILoginApiClient>().Use<LoginApiClient>();
-                config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
-                config.For<ILearnerDetailsApiClient>().Use<LearnerDetailApiClient>();
-                config.For<IApprovalsLearnerApiClient>().Use<ApprovalsLearnerApiClient>();
-                config.For<ILocationsApiClient>().Use<LocationsApiClient>();
-                config.For<IStandardVersionClient>().Use<StandardVersionClient>();
-
-                config.For<IQnaApiClient>().Use<QnaApiClient>();
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
+                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
 
                 config.For<IAzureApiClient>().Use<AzureApiClient>()
                     .Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
