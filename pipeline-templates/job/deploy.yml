@@ -1,7 +1,7 @@
 parameters:  
   Environment:
   ServiceConnection:
-  LegacyApimServiceConnection: NAS Pre-Prod (ARM)
+  LegacyApimServiceConnection: NAS-PreProd-ARM (FCS)
   OverrideBlockOnPossibleDataLoss: false
   AppRoleAssignmentsServiceConnection:
 
