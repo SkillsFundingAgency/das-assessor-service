@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
 {
-    // [Authorize(Roles = "AssessorServiceInternalAPI")]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     public class WithdrawalDateValidationController : Controller
     {
         private readonly IQnaApiClient _qnaApiClient;
