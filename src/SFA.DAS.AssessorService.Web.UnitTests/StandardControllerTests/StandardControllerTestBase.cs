@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         protected Mock<IOrganisationsApiClient> _mockOrgApiClient;
         protected Mock<IQnaApiClient> _mockQnaApiClient;
         protected Mock<IContactsApiClient> _mockContactsApiClient;
-        protected Mock<IStandardVersionClient> _mockStandardVersionApiClient;
+        protected Mock<IStandardVersionApiClient> _mockStandardVersionApiClient;
         protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         protected Mock<IWebConfiguration> _mockConfig;
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockOrgApiClient = new Mock<IOrganisationsApiClient>();
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockContactsApiClient = new Mock<IContactsApiClient>();
-            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
+            _mockStandardVersionApiClient = new Mock<IStandardVersionApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockConfig = new Mock<IWebConfiguration>();
 
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new List<ApplicationResponse>());
 
             _mockQnaApiClient
-                .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
+                .Setup(r => r.GetApplicationData<ApplicationData>(It.IsAny<Guid>()))
                 .ReturnsAsync(new ApplicationData()
                 {
                     OrganisationReferenceId = "12345"

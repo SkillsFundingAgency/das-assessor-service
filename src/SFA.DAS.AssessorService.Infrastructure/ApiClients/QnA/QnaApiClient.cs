@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
@@ -29,11 +28,11 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA
             }
         }
 
-        public async Task<ApplicationData> GetApplicationData(Guid applicationId)
+        public async Task<T> GetApplicationData<T>(Guid applicationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
-                return await RequestAndDeserialiseAsync<ApplicationData>(request,
+                return await RequestAndDeserialiseAsync<T>(request,
                     $"Could not find the application");
             }
         }
@@ -47,11 +46,19 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA
             }
         }
 
-        public async Task<ApplicationData> UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
+        public async Task<CreateSnapshotResponse> SnapshotApplication(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/snapshot"))
+            {
+                return await RequestAndDeserialiseAsync<CreateSnapshotResponse>(request, $"Could not snapshot the requested application");
+            }
+        }
+
+        public async Task<T> UpdateApplicationData<T>(Guid applicationId, T applicationData)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))
             {
-                return await PostPutRequestWithResponseAsync<ApplicationData, ApplicationData>(request, applicationData);
+                return await PostPutRequestWithResponseAsync<T, T>(request, applicationData);
             }
         }
 
@@ -72,6 +79,15 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA
             }
         }
 
+        public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData/{questionTag}"))
+            {
+                return await RequestAndDeserialiseAsync<string>(request,
+                    $"Could not find the question tag");
+            }
+        }
+
         public async Task<Sequence> GetSequence(Guid applicationId, Guid sequenceId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceId}"))
@@ -89,7 +105,6 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA
                     $"Could not find the sequence");
             }
         }
-
 
         public async Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId)
         {
@@ -224,6 +239,31 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA
             {
                 return await RequestAndDeserialiseAsync<List<Sequence>>(request,
                     $"Could not find all sequences");
+            }
+        }
+
+        public async Task<List<Section>> GetAllApplicationSections(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections"))
+            {
+                return await RequestAndDeserialiseAsync<List<Section>>(request,
+                    $"Could not find all sections");
+            }
+        }
+
+        public async Task<Page> UpdateFeedback(Guid applicationId, Guid sectionId, string pageId, Feedback feedback)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/feedback"))
+            {
+                return await PostPutRequestWithResponseAsync<Feedback, Page>(request, feedback);
+            }
+        }
+
+        public async Task<Page> DeleteFeedback(Guid applicationId, Guid sectionId, string pageId, Guid feedbackId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/feedback/{feedbackId}"))
+            {
+                return await RequestAndDeserialiseAsync<Page>(request);
             }
         }
 

@@ -12,12 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
-
-
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
         public OrganisationsApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
@@ -57,6 +57,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/{organisationId}"))
             {
                 return await RequestAndDeserialiseAsync<Organisation>(request, $"Could not find the organisation {organisationId}");
+            }
+        }
+
+        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/organisations/organisation/{organisationId}/contacts"))
+            {
+                return await RequestAndDeserialiseAsync<List<Contact>>(request, $"Could not find the organisation {organisationId} contacts");
             }
         }
 
@@ -103,6 +111,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task WithdrawOrganisation(WithdrawOrganisationRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/withdraw"))
+            {
+                await PostPutRequestAsync(httpRequest, request);
+            }
+        }
+
         public async Task<EpaOrganisationResponse> CreateEpaOrganisation(CreateEpaOrganisationRequest epaoOrganisationModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/"))
@@ -112,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber)
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber, string recognitionNumber)
         {
             var validationRequest = new CreateEpaOrganisationValidationRequest
             {
@@ -120,7 +136,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 Ukprn = ukprn,
                 OrganisationTypeId = organisationTypeId,
                 CompanyNumber = companyNumber,
-                CharityNumber = charityNumber
+                CharityNumber = charityNumber,
+                RecognitionNumber = recognitionNumber
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-new/"))
@@ -130,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber)
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber, string recognitionNumber)
         {
             var validationRequest = new UpdateEpaOrganisationValidationRequest
             {
@@ -146,7 +163,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 Status = status,
                 ActionChoice = actionChoice,
                 CompanyNumber = companyNumber,
-                CharityNumber = charityNumber
+                CharityNumber = charityNumber,
+                RecognitionNumber = recognitionNumber
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-existing/"))
@@ -189,15 +207,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationContactValidationRequest, ValidationResponse>(request,
                     validationRequest);
-            }
-        }
-
-        public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest associateEpaOrganisationWithEpaContactRequest)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/contacts/associate-organisation"))
-            {
-                return await PostPutRequestWithResponseAsync<AssociateEpaOrganisationWithEpaContactRequest, bool>(request,
-                    associateEpaOrganisationWithEpaContactRequest);
             }
         }
 
@@ -266,6 +275,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task WithdrawStandard(WithdrawStandardRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/v1/organisationstandard/withdraw"))
+            {
+                await PostPutRequestAsync(httpRequest, request);
+            }
+        }
+
         public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
@@ -286,12 +303,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardCode, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int organisationStandardId, int standardCode, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus)
         {
             var validationRequest = new UpdateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
+                OrganisationStandardId = organisationStandardId,
                 StandardCode = standardCode,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
@@ -305,6 +323,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-existing/"))
             {
                 return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                    validationRequest);
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandardVersion(int organisationStandardId, string version, DateTime? effectiveFrom, DateTime? effectiveTo)
+        {
+            var validationRequest = new UpdateEpaOrganisationStandardVersionValidationRequest
+            {
+                OrganisationStandardId = organisationStandardId,
+                OrganisationStandardVersion = version,
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/version/validate-existing/"))
+            {
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationStandardVersionValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -489,6 +524,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-out"))
             {
                 return await PostPutRequestWithResponseAsync<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
+            }
+        }
+
+        public async Task<string> UpdateEpaOrganisationStandardVersion(UpdateOrganisationStandardVersionRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/organisationstandardversion/update"))
+            {
+                var result = await PostPutRequestWithResponseAsync<UpdateOrganisationStandardVersionRequest, EpaoStandardVersionResponse>(httpRequest, request);
+                return result.Details;
             }
         }
 

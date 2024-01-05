@@ -2,9 +2,9 @@
 using MediatR;
 using System;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models
+namespace SFA.DAS.AssessorService.Api.Types.Models.Register
 {
-    public class UpdateOrganisationStandardVersionValidationRequest : IRequest<ValidationResponse>
+    public class UpdateEpaOrganisationStandardVersionValidationRequest : IRequest<ValidationResponse>
     {
         public int OrganisationStandardId { get; set; }
         public string OrganisationStandardVersion { get; set; }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
             try
             {
                 var application = await _mediator.Send(new GetApplicationRequest(id));
-                var appData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+                var appData = await _qnaApiClient.GetApplicationData<ApplicationData>(application.ApplicationId);
 
                 if ((appData.PipelinesCount ?? 0) != 0)
                 {

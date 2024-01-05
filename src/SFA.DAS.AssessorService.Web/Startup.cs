@@ -182,22 +182,23 @@ namespace SFA.DAS.AssessorService.Web
                     };
                 });
 
-                services.AddHttpClient<IOrganisationsApiClient, OrganisationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IStandardsApiClient, StandardsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IOppFinderApiClient, OppFinderApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IDashboardApiClient, DashboardApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IContactsApiClient, ContactsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<ISearchApiClient, SearchApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IEmailApiClient, EmailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IValidationApiClient, ValidationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<ICertificateApiClient, CertificateApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<ILoginApiClient, LoginApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
                 services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<ILearnerDetailsApiClient, LearnerDetailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
                 services.AddHttpClient<IApprovalsLearnerApiClient, ApprovalsLearnerApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ICertificateApiClient, CertificateApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IContactsApiClient, ContactsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IDashboardApiClient, DashboardApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IEmailApiClient, EmailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ILearnerDetailsApiClient, LearnerDetailApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
                 services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-                services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
-
+                services.AddHttpClient<ILoginApiClient, LoginApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IOppFinderApiClient, OppFinderApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IOrganisationsApiClient, OrganisationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IRegisterApiClient, RegisterApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<ISearchApiClient, SearchApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IStandardsApiClient, StandardsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IStandardVersionApiClient, StandardVersionApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IValidationApiClient, ValidationApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
+                
                 services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl); });
 
                 services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
@@ -205,7 +206,7 @@ namespace SFA.DAS.AssessorService.Web
                     cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
                     cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
                 })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHealthChecks();
 

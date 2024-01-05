@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     {
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IStandardVersionClient _standardVersionApiClient;
+        private readonly IStandardVersionApiClient _standardVersionApiClient;
         private readonly IWebConfiguration _config;
 
         #region Routes
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         #endregion
 
         public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient,
-            IContactsApiClient contactsApiClient, IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
+            IContactsApiClient contactsApiClient, IStandardVersionApiClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
         {
             _orgApiClient = orgApiClient;

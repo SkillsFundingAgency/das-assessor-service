@@ -62,9 +62,9 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationInUkrlp(int ukprn)
         {
             _logger.LogInformation($"Searching UKRLP. Ukprn: {ukprn}");
-            var apiResponse = await Get<AssessorService.Api.Types.Models.UKRLP.UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
+            var apiResponse = await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
 
-            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.UKRLP.ProviderDetails>, IEnumerable<OrganisationSearchResult>>(apiResponse?.Results);
+            return Mapper.Map<IEnumerable<ProviderDetails>, IEnumerable<OrganisationSearchResult>>(apiResponse?.Results);
         }
 
         private async Task<T> Get<T>(string uri)

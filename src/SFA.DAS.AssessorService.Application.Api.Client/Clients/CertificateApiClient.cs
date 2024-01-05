@@ -68,5 +68,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await PostPutRequestAsync(httpRequest, deleteCertificateRequest);
             }
         }
+
+        public async Task<Certificate> UpdateCertificateRequestReprint(UpdateCertificateRequestReprintCommand command)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/request-reprint"))
+            {
+                return await PostPutRequestWithResponseAsync<UpdateCertificateRequestReprintCommand, Certificate>(httpRequest, command);
+            }
+        }
+
+        public async Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/update-with-amend-reason"))
+            {
+                await PostPutRequestAsync(httpRequest, command);
+            }
+        }
+
+        public async Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/update-with-reprint-reason"))
+            {
+                await PostPutRequestAsync(httpRequest, command);
+            }
+        }
     }
 }

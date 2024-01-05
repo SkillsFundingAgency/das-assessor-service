@@ -2,6 +2,11 @@
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -78,7 +83,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<DateTime?>(request, $"Could not retrieve latest withdrawal date of standard {standardCode} for Organisation {organisationId}");
             }
-
         }
 
         public async Task<Guid> CreateApplication(CreateApplicationRequest createApplicationRequest)
@@ -133,13 +137,140 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<DeliveryArea>> GetQuestionDataFedOptions()
+        #region Application
+
+        public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"api/ao/delivery-areas"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Review/ApplicationReviewStatusCounts"))
             {
-                return await RequestAndDeserialiseAsync<List<DeliveryArea>>(request, $"Could not retrieve applications");
+                return await RequestAndDeserialiseAsync<ApplicationReviewStatusCounts>(request, "Count not retrieve application review status counts");
             }
         }
 
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/Review/OrganisationApplications"))
+            {
+                return await PostPutRequestWithResponseAsync<OrganisationApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(request, organisationApplicationsRequest);
+            }
+        }
+
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/Review/StandardApplications"))
+            {
+                return await PostPutRequestWithResponseAsync<StandardApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(request, standardApplicationsRequest);
+            }
+        }
+
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetWithdrawalApplications(WithdrawalApplicationsRequest withdrawalApplicationsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/Review/WithdrawalApplications"))
+            {
+                return await PostPutRequestWithResponseAsync<WithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(request, withdrawalApplicationsRequest);
+            }
+        }
+
+        public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/StartReview"))
+            {
+                await PostPutRequestAsync(request, new { reviewer });
+            }
+        }
+
+        public async Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/Evaluate"))
+            {
+                await PostPutRequestAsync(request, new { isSectionComplete, evaluatedBy });
+            }
+        }
+
+        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return"))
+            {
+                await PostPutRequestAsync(request, new { returnType, returnedBy });
+            }
+        }
+
+        #endregion
+
+        #region Financial
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Financial/OpenApplications"))
+            {
+                return await RequestAndDeserialiseAsync<List<FinancialApplicationSummaryItem>>(request, "Count not retrieve open financial applications");
+            }
+        }
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Financial/FeedbackAddedApplications"))
+            {
+                return await RequestAndDeserialiseAsync<List<FinancialApplicationSummaryItem>>(request, "Count not retrieve feedback added financial applications");
+            }
+        }
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Financial/ClosedApplications"))
+            {
+                return await RequestAndDeserialiseAsync<List<FinancialApplicationSummaryItem>>(request, "Count not retrieve closed financial applications");
+            }
+        }
+
+        public async Task StartFinancialReview(Guid applicationId, string reviewer)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/Financial/{applicationId}/StartReview"))
+            {
+                await PostPutRequestAsync(request, new { reviewer });
+            }
+        }
+
+        public async Task ReturnFinancialReview(Guid applicationId, Domain.Entities.FinancialGrade grade)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/Financial/{applicationId}/Return"))
+            {
+                await PostPutRequestAsync(request, grade);
+            }
+        }
+
+        #endregion
+
+        #region Feedback
+
+        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback"))
+            {
+                await PostPutRequestAsync(request, feedback);
+            }
+        }
+
+        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteFeedback"))
+            {
+                await PostPutRequestAsync(request, feedbackId);
+            }
+        }
+
+        #endregion
+
+        #region Answer Injection Service
+
+        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "api/ao/assessment-organisations/update-financials"))
+            {
+                await PostPutRequestAsync(request, updateFinancialsRequest);
+            }
+        }
+        
+        #endregion
     }
 }

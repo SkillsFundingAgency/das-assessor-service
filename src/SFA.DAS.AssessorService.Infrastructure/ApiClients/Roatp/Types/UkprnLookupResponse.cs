@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.UKRLP
+namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types
 {
     public class UkprnLookupResponse
     {

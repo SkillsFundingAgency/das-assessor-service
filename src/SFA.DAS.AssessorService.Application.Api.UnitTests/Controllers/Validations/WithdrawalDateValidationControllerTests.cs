@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
         public async Task WhenDateIsAfterEarliestDateOfWithdrawal_ThenPasses()
         {
             // Arrange
-            _qnaApiClient.Setup(r => r.GetApplicationData(_applicationId))
+            _qnaApiClient.Setup(r => r.GetApplicationData<ApplicationData>(_applicationId))
                 .ReturnsAsync(new ApplicationData()
                 {
                     PipelinesCount = 1,
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
         public async Task WhenDateIsOnEarliestDateOfWithdrawal_ThenPasses()
         {
             // Arrange
-            _qnaApiClient.Setup(r => r.GetApplicationData(_applicationId))
+            _qnaApiClient.Setup(r => r.GetApplicationData<ApplicationData>(_applicationId))
                 .ReturnsAsync(new ApplicationData()
                 {
                     PipelinesCount = 1,
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
         public async Task WhenDateIsBeforeEarliestDateOfWithdrawal_ThenFails()
         {
             // Arrange
-            _qnaApiClient.Setup(r => r.GetApplicationData(_applicationId))
+            _qnaApiClient.Setup(r => r.GetApplicationData<ApplicationData>(_applicationId))
                 .ReturnsAsync(new ApplicationData()
                 {
                     PipelinesCount = 1,
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
         public async Task WhenDateIsBeforeEarliestDateOfWithdrawalAndPipelinesCountIsZero_ThenPasses()
         {
             // Arrange
-            _qnaApiClient.Setup(r => r.GetApplicationData(_applicationId))
+            _qnaApiClient.Setup(r => r.GetApplicationData<ApplicationData>(_applicationId))
                 .ReturnsAsync(new ApplicationData()
                 {
                     PipelinesCount = 0,
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Validati
         public async Task WhenDateIsInvalid_ThenFails()
         {
             // Arrange
-            _qnaApiClient.Setup(r => r.GetApplicationData(_applicationId))
+            _qnaApiClient.Setup(r => r.GetApplicationData<ApplicationData>(_applicationId))
                 .ReturnsAsync(new ApplicationData()
                 {
                     PipelinesCount = 1,

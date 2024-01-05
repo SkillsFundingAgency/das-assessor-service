@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
-        private readonly IStandardVersionClient _standardVersionApiClient;
+        private readonly IStandardVersionApiClient _standardVersionApiClient;
         private readonly IWebConfiguration _config;
 
         #region Routes
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, 
             IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, 
-            IStandardsApiClient standardsApiClient, IStandardVersionClient standardVersionApiClient, IWebConfiguration config)
+            IStandardsApiClient standardsApiClient, IStandardVersionApiClient standardVersionApiClient, IWebConfiguration config)
             : base (applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _applicationService = applicationService;

@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Schedule
         }
 
         [TestCase(LastRunStatus.Failed)]
-        [TestCase(LastRunStatus.Restarted)]
+        [TestCase(LastRunStatus.Restarting)]
         [TestCase(LastRunStatus.Started)]
         public async Task ThenShouldUpdateLastRunStatus(LastRunStatus lastRunStatus)
         {

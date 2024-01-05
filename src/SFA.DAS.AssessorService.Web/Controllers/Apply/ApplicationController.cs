@@ -34,6 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IRegisterApiClient _registerApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
@@ -43,14 +44,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public const string SequenceRouteGet = nameof(SequenceRouteGet);
         #endregion
 
-        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient,
+            IRegisterApiClient registerApiClient, IWebConfiguration config, IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
             : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _apiValidationService = apiValidationService;
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
+            _registerApiClient = registerApiClient;
             _contextAccessor = httpContextAccessor;
             _config = config;
             _logger = logger;
@@ -858,8 +860,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         // Get data from API using question.Input.DataEndpoint
                         // var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
 
-                        // NOTE: For now it seems the only DataFed type is delivery areas and someone has coded it that way in the api client
-                        var deliveryAreas = await _applicationApiClient.GetQuestionDataFedOptions();
+                        // NOTE: For now it seems the only DataFed type is delivery areas
+                        var deliveryAreas = await _registerApiClient.GetDeliveryAreas();
                         var questionOptions = deliveryAreas.Select(da => new QnA.Api.Types.Page.Option() { Label = da.Area, Value = da.Area }).ToList();
 
                         question.Input.Options = questionOptions;

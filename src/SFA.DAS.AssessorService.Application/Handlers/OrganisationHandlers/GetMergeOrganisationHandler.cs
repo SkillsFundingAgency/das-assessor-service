@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class GetMergeOrganisationRequestHandler : IRequestHandler<GetMergeOrganisationRequest, MergeLogEntry>
+    public class GetMergeOrganisationHandler : IRequestHandler<GetMergeOrganisationRequest, MergeLogEntry>
     {
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
-        public GetMergeOrganisationRequestHandler(IOrganisationQueryRepository organisationQueryRepository)
+        public GetMergeOrganisationHandler(IOrganisationQueryRepository organisationQueryRepository)
         {
             _organisationQueryRepository = organisationQueryRepository;
         }

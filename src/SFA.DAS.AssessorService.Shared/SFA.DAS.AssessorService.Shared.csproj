@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -35,8 +35,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Trustee.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Trustee.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Commands\CreateOrganisationContactCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Commands\CreateOrganisationContactCommand.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Commands\CreateOrganisationStandardCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Commands\CreateOrganisationStandardCommand.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Accounts.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Accounts.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Address.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Company.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Company.cs" />
@@ -278,6 +276,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardVersionValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardVersionValidationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationValidationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationWebsiteLinkRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationWebsiteLinkRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateFinancialsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateFinancialsRequest.cs" />
@@ -305,8 +304,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersion.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersion.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionApplication.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionApplication.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionOption.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionOption.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UKRLP\ProviderDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UKRLP\ProviderDetails.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UKRLP\UkprnLookupResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UKRLP\UkprnLookupResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactGovLoginRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactGovLoginRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" />
@@ -314,7 +311,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionValidationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" />
@@ -348,20 +344,33 @@
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IMergeOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IMergeOrganisationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IOppFinderApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IOppFinderApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IOrganisationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IScheduleApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IScheduleApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ISearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ISearchApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffReportsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffReportsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffSearchApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardVersionApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardVersionApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IValidationApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LocationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LoginApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\MergeOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\MergeOrganisationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\OppFinderApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\OppFinderApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\OrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\OrganisationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterImportApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterImportApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ScheduleApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ScheduleApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\SearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\SearchApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffReportsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffReportsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffSearchApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardsApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ValidationApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" />
@@ -488,38 +497,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Validation\EmailRegexValidator.cs" Link="SFA.DAS.AssessorService.Domain\Validation\EmailRegexValidator.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Validation\FluentValidationExtensions.cs" Link="SFA.DAS.AssessorService.Domain\Validation\FluentValidationExtensions.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Validation\Guard.cs" Link="SFA.DAS.AssessorService.Domain\Validation\Guard.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\AzureApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\AzureApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\AzureApiClientBase.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\AzureApiClientBase.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\AzureTokenService.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\AzureTokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\IAzureApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\IAzureApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\IAzureTokenService.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\IAzureTokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\CharityCommission\CharityCommissionApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\CharityCommission\CharityCommissionApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\CharityCommission\ICharityCommissionApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\CharityCommission\ICharityCommissionApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\CompaniesHouse\CompaniesHouseApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\CompaniesHouse\CompaniesHouseApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\CompaniesHouse\ICompaniesHouseApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\CompaniesHouse\ICompaniesHouseApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\ApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\ApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetActiveStandardsRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetActiveStandardsRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAddressesRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAddressesRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAddressesResponse.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAddressesResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAllLearnersRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAllLearnersRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAllLearnersResponse.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetAllLearnersResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetDraftStandardsRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetDraftStandardsRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardByIdRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardByIdRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardByIdResponse.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardByIdResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardsExportListResponse.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardsExportListResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardsListResponse.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardsListResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardsRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\GetStandardsRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\IGetApiRequest.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\IGetApiRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\IQnaApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\IQnaApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\QnaApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\QnaApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\QnaTokenService.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\QnaTokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\IReferenceDataApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\IReferenceDataApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataApiClient.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataTokenService.cs" Link="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\ReferenceDataTokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\Charity.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\Charity.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\LatestFiling.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\LatestFiling.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\RegistrationHistory.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\RegistrationHistory.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Reference.cs" Link="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Reference.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -549,7 +526,6 @@
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Setting\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Staff\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Standards\" />
-    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\UKRLP\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Validation\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandards\" />
@@ -567,13 +543,6 @@
     <Folder Include="SFA.DAS.AssessorService.Domain\JsonData\Printing\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\Validation\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\Paging\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\CharityCommission\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\CompaniesHouse\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\OuterApi\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\QnA\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\ReferenceData\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\ApiClients\Azure\" />
-    <Folder Include="SFA.DAS.AssessorService.Infrastructure\Connected Services\CharityCommissionService\Entities\" />
   </ItemGroup>
 
   <ItemGroup>
