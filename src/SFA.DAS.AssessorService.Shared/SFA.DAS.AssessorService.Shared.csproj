@@ -10,7 +10,16 @@
     <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir)..\..\NugetPackages</PackageOutputPath>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" Link="SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" />
@@ -356,7 +365,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardVersionApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardVersionApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IValidationApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LocationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LoginApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\MergeOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\MergeOrganisationsApiClient.cs" />

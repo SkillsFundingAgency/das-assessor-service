@@ -88,6 +88,10 @@ namespace SFA.DAS.AssessorService.Api.Common
                 var json = await result.Content.ReadAsStringAsync();
                 return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
             }
+            else if(result.StatusCode == HttpStatusCode.NoContent)
+            {
+                return default;
+            }
             else if (result.StatusCode == HttpStatusCode.NotFound)
             {
                 if (!mapNotFoundToNull)
@@ -106,7 +110,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             else 
                 RaiseResponseError(clonedRequest, result);
 
-            return default(T);
+            return default;
         }
 
         protected async Task<U> PostPutRequestWithResponseAsync<T, U>(HttpRequestMessage requestMessage, T model, JsonSerializerSettings setting = null)
