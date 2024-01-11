@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
@@ -39,8 +40,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public const string CheckWithdrawalRequestRoutePost = nameof(CheckWithdrawalRequestRoutePost);
         #endregion
 
-        public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient, 
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, 
+        public ApplyForWithdrawalController(IApplicationService applicationService, IOrganisationsApiClient orgApiClient,
+            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor,
             IStandardsApiClient standardsApiClient, IStandardVersionClient standardVersionApiClient, IWebConfiguration config)
             : base (applicationApiClient, contactsApiClient, httpContextAccessor)
         {
@@ -86,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToRoute(TypeofWithdrawalRouteGet);
             }
-            
+
             if (viewModel.TypeOfWithdrawal == ApplicationTypes.OrganisationWithdrawal)
             {
                 return RedirectToRoute(CheckWithdrawalRequestRouteGet, new { backRouteName = TypeofWithdrawalRouteGet });
@@ -107,8 +108,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var contact = await GetUserContact();
             var org = await _orgApiClient.GetEpaOrganisationById(contact.OrganisationId?.ToString());
 
-            var applications = await GetWithdrawalApplications(contact.Id);
             var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 10);
+            var applicationFinder = new ApplicationFinder(_applicationApiClient);
+            var applications = await applicationFinder.GetWithdrawalApplications(contact.Id);
 
             var viewModel = new ChooseStandardForWithdrawalViewModel()
             {
@@ -117,15 +119,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     StandardName = x.StandardName,
                     Level = x.Level,
                     ReferenceNumber = x.ReferenceNumber,
-
-                    // find a previous withdrawal application for the same reference number, if there is
-                    // one then this is used to redirect the user to the previous withdrawal for the same
-                    // standard this will prevent a withdrawal from the same standard twice i.e. it will
-                    // prevent the withdrawal from a reapply for the same standard which most likely was
-                    // not the intention see QF-1608
                     ApplicationId = applications.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.StandardReference) &&
-                                                                    a.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
-                                                                    a.ApplyData.Apply.Versions == null)?.Id
+                                               a.StandardReference.Equals(x.ReferenceNumber, StringComparison.InvariantCultureIgnoreCase) &&
+                                               a.ApplyData.Apply.Versions == null)?.Id
                 })
             };
 
@@ -221,19 +217,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         _config.ReferenceFormat);
 
             return await _applicationApiClient.CreateApplication(createApplicationRequest);
-        }
-
-        private async Task<List<ApplicationResponse>> GetWithdrawalApplications(Guid contactId)
-        {
-            return (await _applicationApiClient.GetWithdrawalApplications(contactId))
-                    .Where(x => x.IsStandardWithdrawalApplication &&
-                                (x.ApplicationStatus == ApplicationStatus.InProgress ||
-                                    x.ApplicationStatus == ApplicationStatus.Submitted ||
-                                    x.ApplicationStatus == ApplicationStatus.FeedbackAdded ||
-                                    x.ApplicationStatus == ApplicationStatus.Resubmitted ||
-                                    x.ApplicationStatus == ApplicationStatus.Approved))
-                    .ToList();
-
         }
     }
 }
