@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/createApplication"))
             {
-                return await PostPutRequestWithResponse<CreateApplicationRequest, Guid>(request, createApplicationRequest);
+                return await PostPutRequestWithResponseAsync<CreateApplicationRequest, Guid>(request, createApplicationRequest);
             }
         }
 
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/deleteApplications"))
             {
-                await PostPutRequest<DeleteApplicationsRequest>(request, deleteApplicationsRequest);
+                await PostPutRequestAsync<DeleteApplicationsRequest>(request, deleteApplicationsRequest);
             }
         }
 
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/submitApplicationSequence"))
             {
-                return await PostPutRequestWithResponse<SubmitApplicationSequenceRequest, bool>(request, submitApplicationRequest);
+                return await PostPutRequestWithResponseAsync<SubmitApplicationSequenceRequest, bool>(request, submitApplicationRequest);
             }
         }
 
@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/updateStandardData"))
             {
-                return await PostPutRequestWithResponse<UpdateStandardDataRequest, bool>(request, new UpdateStandardDataRequest
+                return await PostPutRequestWithResponseAsync<UpdateStandardDataRequest, bool>(request, new UpdateStandardDataRequest
                 {
                     Id = Id,
                     StandardCode = standardCode,
@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/applications/resetApplicationToStage1"))
             {
-                return await PostPutRequestWithResponse<ResetApplicationToStage1Request, bool>(request, new ResetApplicationToStage1Request
+                return await PostPutRequestWithResponseAsync<ResetApplicationToStage1Request, bool>(request, new ResetApplicationToStage1Request
                 {
                     Id = id
                 });

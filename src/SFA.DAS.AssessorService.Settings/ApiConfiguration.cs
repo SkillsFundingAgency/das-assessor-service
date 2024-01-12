@@ -12,12 +12,12 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration QnaApiAuthentication { get; set; }
 
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
-        [JsonRequired] public ClientApiAuthentication ReferenceDataApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
         [JsonRequired] public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         [JsonRequired] public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
