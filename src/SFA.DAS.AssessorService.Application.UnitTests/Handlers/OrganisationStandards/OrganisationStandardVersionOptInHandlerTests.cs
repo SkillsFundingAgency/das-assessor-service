@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 OrganisationStandardId = organisationStandard.Id,
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
-                DateVersionApproved = null,
+                DateVersionApproved = request.OptInRequestedAt,
                 Comments = $"Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}",
                 Status = OrganisationStatus.Live
             };
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 OrganisationStandardId = organisationStandard.Id,
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
-                DateVersionApproved = null,
+                DateVersionApproved = request.OptInRequestedAt,
                 Comments = $"{organisationStandardVersion.Comments};Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}",
                 Status = OrganisationStatus.Live
             };

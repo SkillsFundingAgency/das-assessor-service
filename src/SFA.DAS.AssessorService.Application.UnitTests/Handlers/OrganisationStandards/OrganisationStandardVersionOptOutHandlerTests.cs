@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
                 OrganisationStandardId = organisationStandard.Id,
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
-                DateVersionApproved = null,
+                DateVersionApproved = request.OptOutRequestedAt,
                 Comments = $"{organisationStandardVersion.Comments};Opted out by EPAO {contact.Email} at {request.OptOutRequestedAt}",
                 Status = OrganisationStatus.Live
             };
