@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/filter"))
             {
-                return await PostPutRequestWithResponse<GetOppFinderFilterStandardsRequest, GetOppFinderFilterStandardsResponse>(request,
+                return await PostPutRequestWithResponseAsync<GetOppFinderFilterStandardsRequest, GetOppFinderFilterStandardsResponse>(request,
                     filterStandardsRequest);
             }
         }
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/approved"))
             {
-                return await PostPutRequestWithResponse<GetOppFinderApprovedStandardsRequest, GetOppFinderApprovedStandardsResponse>(request,
+                return await PostPutRequestWithResponseAsync<GetOppFinderApprovedStandardsRequest, GetOppFinderApprovedStandardsResponse>(request,
                     approvedStandardsRequest);
             }
         }
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/nonapproved"))
             {                    
-                return await PostPutRequestWithResponse<GetOppFinderNonApprovedStandardsRequest, GetOppFinderNonApprovedStandardsResponse>(request,
+                return await PostPutRequestWithResponseAsync<GetOppFinderNonApprovedStandardsRequest, GetOppFinderNonApprovedStandardsResponse>(request,
                     nonApprovedStandradsRequest);
             }
         }
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/approved-details"))
             {
-                return await PostPutRequestWithResponse<GetOppFinderApprovedStandardDetailsRequest, GetOppFinderApprovedStandardDetailsResponse>(request,
+                return await PostPutRequestWithResponseAsync<GetOppFinderApprovedStandardDetailsRequest, GetOppFinderApprovedStandardDetailsResponse>(request,
                     approvedStandardDetailsRequest);
             }
         }
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/nonapproved-details"))
             {
-                return await PostPutRequestWithResponse<GetOppFinderNonApprovedStandardDetailsRequest, GetOppFinderNonApprovedStandardDetailsResponse>(request,
+                return await PostPutRequestWithResponseAsync<GetOppFinderNonApprovedStandardDetailsRequest, GetOppFinderNonApprovedStandardDetailsResponse>(request,
                     nonApprovedStandardDetailsRequest);
             }
         }
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/oppfinder/expression-of-interest"))
             {
-                return await PostPutRequestWithResponse<OppFinderExpressionOfInterestRequest, bool>(request,
+                return await PostPutRequestWithResponseAsync<OppFinderExpressionOfInterestRequest, bool>(request,
                     oppFinderExpressionOfInterestRequest);
             }
         }
