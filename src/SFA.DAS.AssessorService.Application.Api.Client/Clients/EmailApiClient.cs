@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/emailTemplates/"))
             {
                 _logger.LogInformation("Sending Email");
-                 await PostPutRequest(request,sendEmailRequest);
+                 await PostPutRequestAsync(request,sendEmailRequest);
             }
         }
     }

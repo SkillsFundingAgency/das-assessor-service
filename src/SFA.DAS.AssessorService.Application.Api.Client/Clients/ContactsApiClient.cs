@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
             {
-                return await PostPutRequestWithResponse<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
             }
         }
         
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/govlogin"))
             {
-                return await PostPutRequestWithResponse<UpdateContactGovLoginRequest, ContactResponse>(request, updateContactRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactGovLoginRequest, ContactResponse>(request, updateContactRequest);
             }
         }
 
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/status"))
             {
-                return await PostPutRequestWithResponse<UpdateContactStatusRequest, ContactResponse>(request, updateContactStatusRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactStatusRequest, ContactResponse>(request, updateContactStatusRequest);
             }
         }
 
@@ -107,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll"))
             {
-                var response = await PostPutRequestWithResponse<GetAllContactsRequest, List<ContactResponse>>(request,
+                var response = await PostPutRequestWithResponseAsync<GetAllContactsRequest, List<ContactResponse>>(request,
                         new GetAllContactsRequest(epaoId, withUser));
 
                 return response;
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll/includePrivileges"))
             {
-                var response = await PostPutRequestWithResponse<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>(request,
+                var response = await PostPutRequestWithResponseAsync<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>(request,
                         new GetAllContactsIncludePrivilegesRequest(epaoId, withUser));
 
                 return response;
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateContactWithOrgAndStatus"))
             {
-                return await PostPutRequestWithResponse<UpdateContactWithOrgAndStausRequest, ContactResponse>(request, updateContactWithOrgAndStausRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactWithOrgAndStausRequest, ContactResponse>(request, updateContactWithOrgAndStausRequest);
             }
         }
 
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts"))
             {
                 var response =
-                    await PostPutRequestWithResponse<CreateContactRequest, ContactBoolResponse>(request,
+                    await PostPutRequestWithResponseAsync<CreateContactRequest, ContactBoolResponse>(request,
                         createContactRequest);
 
                 return response;
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {
-                await PostPutRequest(request, callback);
+                await PostPutRequestAsync(request, callback);
             }
         }
 
@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateUsers"))
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await TokenService.GetTokenAsync());
                 request.Headers.Add("Accept", "application/json");
                 request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
 
@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
             {
-                await PostPutRequest(request, signinIdWrapper);
+                await PostPutRequestAsync(request, signinIdWrapper);
             }
         }
 
@@ -188,7 +188,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/createNewContactWithGivenId"))
             {
                 var response =
-                     await PostPutRequestWithResponse<Contact,ContactResponse>(request,contact);
+                     await PostPutRequestWithResponseAsync<Contact,ContactResponse>(request,contact);
 
                 return response;
             }
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/associateDefaultRolesAndPrivileges"))
             {
-                 await PostPutRequest(request, contact);
+                 await PostPutRequestAsync(request, contact);
                 
             }
         }
@@ -207,7 +207,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/setContactPrivileges"))
             {
-                return await PostPutRequestWithResponse<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
+                return await PostPutRequestWithResponseAsync<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
             }
         }
 
@@ -217,7 +217,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/removeContactFromOrganisation"))
             {
-                return await PostPutRequestWithResponse<RemoveContactFromOrganisationRequest,RemoveContactFromOrganisationResponse>(request, removeContactRequest);
+                return await PostPutRequestWithResponseAsync<RemoveContactFromOrganisationRequest,RemoveContactFromOrganisationResponse>(request, removeContactRequest);
             }
         }
 
@@ -225,7 +225,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/inviteContactToOrganisation"))
             {
-                return await PostPutRequestWithResponse<InviteContactToOrganisationRequest,InviteContactToOrganisationResponse>(request, invitationRequest);
+                return await PostPutRequestWithResponseAsync<InviteContactToOrganisationRequest,InviteContactToOrganisationResponse>(request, invitationRequest);
             }
         }
 
@@ -233,7 +233,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/requestForPrivilege"))
             {
-                await PostPutRequest(request, new RequestForPrivilegeRequest {ContactId = contactId, PrivilegeId = privilegeId});
+                await PostPutRequestAsync(request, new RequestForPrivilegeRequest {ContactId = contactId, PrivilegeId = privilegeId});
             }
         }
 
@@ -241,7 +241,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/approve"))
             {
-                await PostPutRequest(request, new ApproveContactRequest {ContactId = contactId});
+                await PostPutRequestAsync(request, new ApproveContactRequest {ContactId = contactId});
             }
         }
         
@@ -249,7 +249,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/reject"))
             {
-                await PostPutRequest(request, new RejectContactRequest {ContactId = contactId});
+                await PostPutRequestAsync(request, new RejectContactRequest {ContactId = contactId});
             }
         }
 
@@ -264,7 +264,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         public async Task UpdateEmail(UpdateEmailRequest updateEmailRequest)
         {
             using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateEmail");
-            await PostPutRequest(request, updateEmailRequest);
+            await PostPutRequestAsync(request, updateEmailRequest);
         }
     }
 }

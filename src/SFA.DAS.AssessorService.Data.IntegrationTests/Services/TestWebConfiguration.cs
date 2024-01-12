@@ -9,16 +9,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string Environment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication ApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AzureApiAuthentication AzureApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string SqlConnectionString { get; set; }
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication QnaApiAuthentication { get; set; }
+        public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
         public string ServiceLink { get; set; }
         public LoginServiceConfig LoginService { get; set; }
-        public ClientApiAuthentication RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication ReferenceDataApiAuthentication { get; set; }
+        public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
         public string ReferenceFormat { get; set; }
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         #region For External API Sandbox
         public string SandboxSqlConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication SandboxApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ClientApiAuthentication SandboxAssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public AzureActiveDirectoryClientConfiguration SandboxAssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         public string ZenDeskSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
