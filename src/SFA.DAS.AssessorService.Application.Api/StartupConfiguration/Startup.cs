@@ -181,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
                     {
-                        config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                        config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseUrl); //  "https://at-providers-api.apprenticeships.education.gov.uk"
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
