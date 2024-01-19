@@ -67,7 +67,7 @@ stages:
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
-      LegacyApimServiceConnection: NAS-DevTest-ARM
+      ApimServiceConnection: NAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
       AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
