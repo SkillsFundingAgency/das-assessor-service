@@ -179,12 +179,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseUrl); //  "https://at-providers-api.apprenticeships.education.gov.uk"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+                services.AddTransient<IRoatpApiClient>(x =>
+                new RoatpApiClient(
+                    new ManagedIdentityHttpClientFactory(Configuration.RoatpApiAuthentication).CreateHttpClient(),
+                    x.GetService<ILogger<RoatpApiClient>>()));
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
                 
@@ -241,8 +240,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                config.For<IRoatpTokenService>().Use<RoatpTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
+                //config.For<IRoatpTokenService>().Use<RoatpTokenService>()
+                //    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
 
                 // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
