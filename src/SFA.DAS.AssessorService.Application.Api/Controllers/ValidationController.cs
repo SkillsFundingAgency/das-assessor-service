@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    [Authorize(Roles = "AssessorServiceInternalAPI")]
+    //[Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/validation/")]
     [ValidateBadRequest]
     public class ValidationController : Controller
