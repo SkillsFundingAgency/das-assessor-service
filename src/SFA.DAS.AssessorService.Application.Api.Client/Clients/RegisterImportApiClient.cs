@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/register-import/"))
             {
-                await PostPutRequest(request);
+                await PostPutRequestAsync(request);
             }
         }
     }

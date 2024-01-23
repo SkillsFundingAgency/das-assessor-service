@@ -21,12 +21,6 @@ namespace SFA.DAS.AssessorService.Settings
             return config;
         }
 
-        public static async Task<IWebConfiguration> GetConfigWeb(string environment, string storageConnectionString, string version, string serviceName)
-        {
-            var config = await GetConfig <WebConfiguration>(environment, storageConnectionString, version, serviceName);
-            return config;
-        }
-
         private static async Task<T> GetConfig<T>(string environment, string storageConnectionString, string version, string serviceName)
         {
             if (environment == null) throw new ArgumentNullException(nameof(environment));

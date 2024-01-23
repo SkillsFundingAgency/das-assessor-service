@@ -6,8 +6,8 @@ namespace SFA.DAS.AssessorService.Settings
         : IExternalApiConfiguration
 
     {
-        [JsonRequired] public ClientApiAuthentication AssessorApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication SandboxAssessorApiAuthentication { get; set; }
+        [JsonRequired] public AzureActiveDirectoryClientConfiguration SandboxAssessorApiAuthentication { get; set; }
     }
 }

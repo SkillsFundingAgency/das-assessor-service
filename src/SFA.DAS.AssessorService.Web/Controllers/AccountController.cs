@@ -15,8 +15,12 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -31,10 +35,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly CreateAccountValidator _createAccountValidator;
+        private readonly UpdateAccountValidator _updateAccountValidator;
+        private readonly IConfiguration _configuration;
 
         public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
             ISessionService sessionService, IWebConfiguration config, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient)
+            IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator, IOrganisationsApiClient organisationsApiClient,  UpdateAccountValidator updateAccountValidator, IConfiguration configuration)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
@@ -44,6 +50,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
             _organisationsApiClient = organisationsApiClient;
+            _updateAccountValidator = updateAccountValidator;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -51,9 +59,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _logger.LogInformation("Start of Sign In");
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
+            
+            _ = bool.TryParse(_configuration["StubAuth"], out var stubAuth);
+            var authenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme;
+            if (stubAuth)
+            {
+                authenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme;
+            }
+
+            
             return Challenge(
                 new AuthenticationProperties {RedirectUri = redirectUrl},
-                OpenIdConnectDefaults.AuthenticationScheme);
+                authenticationSchemes);
         }
 
         [HttpGet]
@@ -97,18 +114,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public new IActionResult SignOut()
+        public new async Task<IActionResult> SignOut()
         {
             ResetCookies();
 
-            if(!User.Identity.IsAuthenticated)
-            {
-                // If they are no longer authenticated then the cookie has expired. Don't try to signout.
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
+            var idToken = await HttpContext.GetTokenAsync("id_token");
 
+            var authenticationProperties = new AuthenticationProperties();
+            authenticationProperties.Parameters.Clear();
+            authenticationProperties.Parameters.Add("id_token",idToken);
+
+            var schemes = new List<string>
+            {
+                CookieAuthenticationDefaults.AuthenticationScheme
+            };
+            _ = bool.TryParse(_configuration["StubAuth"], out var stubAuth);
+            if (!stubAuth)
+            {
+                schemes.Add(OpenIdConnectDefaults.AuthenticationScheme);
+            }
+        
             return SignOut(
-                CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
+                authenticationProperties, 
+                schemes.ToArray());
         }
 
         [HttpGet]
@@ -194,9 +222,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult UpdateAnAccount()
+        {
+            return View(new AccountViewModel());
+        }
+        
         [HttpGet]
         public IActionResult CreateAnAccount()
         {
+            if (_config.UseGovSignIn)
+            {
+                return RedirectToAction("UpdateAnAccount");
+            }
             var vm = new CreateAccountViewModel();
             return View(vm);
         }
@@ -204,7 +243,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAnAccount(CreateAccountViewModel vm)
         {
-
+            if (_config.UseGovSignIn)
+            {
+                RedirectToAction("Error", "Home");
+            }
+            
             _createAccountValidator.Validate(vm);
 
             if (!ModelState.IsValid)
@@ -213,12 +256,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             var inviteSuccess =
-                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email));
+                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email, null));
 
             _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
             return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateAnAccount(AccountViewModel accountViewModel)
+        {
+            await _updateAccountValidator.ValidateAsync(accountViewModel);
+
+            if (!ModelState.IsValid)
+            {
+                return View(accountViewModel);
+            }
+
+            var email = User.Identities.FirstOrDefault()?.FindFirst(ClaimTypes.Email)?.Value;
+            var govIdentifier = User.Identities.FirstOrDefault()?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            var inviteSuccess =
+                await _contactsApiClient.InviteUser(new CreateContactRequest(accountViewModel.GivenName, accountViewModel.FamilyName, email,null,email, govIdentifier));
+
+            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(new CreateAccountViewModel
+            {
+                Email = email,
+                FamilyName = accountViewModel.FamilyName,
+                GivenName = accountViewModel.GivenName
+            }));
+            return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
+        }
+        
         [HttpGet]
         public IActionResult InviteSent()
         {
@@ -243,5 +313,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangeSignInDetails()
+        {
+            var model = new ChangeSignInDetailsViewModel(_configuration["ResourceEnvironmentName"]);
+            return View(model);
+        }
     }
 }

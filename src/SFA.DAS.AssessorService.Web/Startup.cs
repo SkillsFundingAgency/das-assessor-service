@@ -27,40 +27,90 @@ using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using SFA.DAS.AssessorService.Web.Utils;
+using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Services;
 using StackExchange.Redis;
 using StructureMap;
+using NLog;
+using System.Security.Claims;
 
 namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
     {
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Web";
-        private const string VERSION = "1.0";
-
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
 
-        public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment env)
         {
-            _config = config;
             _logger = logger;
             _env = env;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory());
+
+#if DEBUG
+            if (!configuration.IsDev())
+            {
+                config.AddJsonFile("appsettings.json", false)
+                    .AddJsonFile("appsettings.Development.json", true);
+            }
+#endif
+
+            config.AddEnvironmentVariables();
+            config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
+            );
+
+            _config = config.Build();
+            Configuration = _config.Get<WebConfiguration>();
         }
 
         private IWebConfiguration Configuration { get; set; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService.GetConfigWeb(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
             IServiceProvider serviceProvider;
             try
             {
                 services.AddApplicationInsightsTelemetry();
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-                services.AddAndConfigureAuthentication(Configuration, _logger, _env);
+
+                services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
+                services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
+                
+                if (Configuration.UseGovSignIn)
+                {
+                    var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
+                                  || _config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+                    var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
+                    var loginRedirect = isLocal ? "" : $"{Configuration.ServiceLink}/service/account-details";
+                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout", "/service/account-details", cookieDomain, loginRedirect);
+                }
+                else
+                {
+                    services.AddAndConfigureAuthentication(Configuration, _env);
+                }
+
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(
+                        PolicyNames.IsAuthenticated, policy =>
+                        {
+                            policy.RequireAuthenticatedUser();
+                        });
+                });
+
+
                 services.Configure<RequestLocalizationOptions>(options =>
                 {
                     options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -73,16 +123,16 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddSingleton<IAuthorizationHandler, ApplicationAuthorizationHandler>();
                 services.AddSingleton<IAuthorizationHandler, PrivilegeAuthorizationHandler>();
 
-            services.Configure<MvcViewOptions>(options =>
-            {
-                // Disable hidden checkboxes
-                options.HtmlHelperOptions.CheckBoxHiddenInputRenderMode = CheckBoxHiddenInputRenderMode.None;
-            });
+                services.Configure<MvcViewOptions>(options =>
+                {
+                    // Disable hidden checkboxes
+                    options.HtmlHelperOptions.CheckBoxHiddenInputRenderMode = CheckBoxHiddenInputRenderMode.None;
+                });
 
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
-                .AddControllersAsServices()
-                .AddSessionStateTempDataProvider()
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
+                services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+                    .AddControllersAsServices()
+                    .AddSessionStateTempDataProvider()
+                    .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
                 services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
                 services.AddValidatorsFromAssemblyContaining<Startup>();
@@ -148,20 +198,20 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddHttpClient<ILocationsApiClient, LocationsApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
                 services.AddHttpClient<IStandardVersionClient, StandardVersionClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.AssessorApiAuthentication.ApiBaseAddress); });
 
-                services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); });
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>(cfg => { cfg.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl); });
 
                 services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(cfg =>
-                    {
-                        cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
-                        cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
+                {
+                    cfg.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
+                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIoc(services);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during Startup Configure Services");
                 throw;
@@ -190,16 +240,16 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
 
                 config.For<IAssessorTokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.AssessorApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.AssessorApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IQnATokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
-                
+                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+
                 config.For<IRoatpTokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>();
@@ -219,7 +269,7 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
-                
+
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
@@ -255,7 +305,7 @@ namespace SFA.DAS.AssessorService.Web
                 .UseHealthChecks("/health")
                 .UseRouting()
                 .UseAuthorization()
-                .UseEndpoints(endpoints => 
+                .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllerRoute(
                         name: "default",
@@ -263,5 +313,6 @@ namespace SFA.DAS.AssessorService.Web
                         defaults: new { controller = "Home", action = "Index" });
                 });
         }
+
     }
 }

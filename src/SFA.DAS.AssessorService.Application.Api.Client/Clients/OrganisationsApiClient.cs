@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
-                return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request,
+                return await PostPutRequestWithResponseAsync<CreateOrganisationRequest, OrganisationResponse>(request,
                     createOrganisationRequest);
             }
         }
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
             {
-                await PostPutRequest(request, updateOrganisationRequest);
+                await PostPutRequestAsync(request, updateOrganisationRequest);
             }
         }
 
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/organisations/"))
             {
-                await Delete(request);
+                await DeleteAsync(request);
             }
         }
 
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/"))
             {
-                return await PostPutRequestWithResponse<CreateEpaOrganisationRequest, EpaOrganisationResponse>(request,
+                return await PostPutRequestWithResponseAsync<CreateEpaOrganisationRequest, EpaOrganisationResponse>(request,
                     epaoOrganisationModel);
             }
         }
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-new/"))
             {
-                return await PostPutRequestWithResponse<CreateEpaOrganisationValidationRequest, ValidationResponse>(request,
+                return await PostPutRequestWithResponseAsync<CreateEpaOrganisationValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-existing/"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationValidationRequest, ValidationResponse>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -172,7 +172,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/contacts/validate-new/"))
             {
-                return await PostPutRequestWithResponse<CreateEpaContactValidationRequest, ValidationResponse>(request,
+                return await PostPutRequestWithResponseAsync<CreateEpaContactValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -190,7 +190,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/ao/assessment-organisations/contacts/validate-existing/"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationContactValidationRequest, ValidationResponse>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationContactValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -199,7 +199,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/contacts/associate-organisation"))
             {
-                return await PostPutRequestWithResponse<AssociateEpaOrganisationWithEpaContactRequest, bool>(request,
+                return await PostPutRequestWithResponseAsync<AssociateEpaOrganisationWithEpaContactRequest, bool>(request,
                     associateEpaOrganisationWithEpaContactRequest);
             }
         }
@@ -208,7 +208,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-primary-contact"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>(request,
                     updateEpaOrganisationPrimaryContactRequest);
             }
         }
@@ -217,7 +217,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-phone-number"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationPhoneNumberRequest, List<ContactResponse>>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationPhoneNumberRequest, List<ContactResponse>>(request,
                     updateEpaOrganisationPhoneNumberRequest);
             }
         }
@@ -226,7 +226,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-address"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>(request,
                     updateEpaOrganisationAddressRequest);
             }
         }
@@ -235,7 +235,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-email"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>(request,
                     updateEpaOrganisationEmailRequest);
             }
         }
@@ -244,7 +244,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"api/ao/assessment-organisations/update-website-link"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationWebsiteLinkRequest, List<ContactResponse>>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationWebsiteLinkRequest, List<ContactResponse>>(request,
                     updateEpaOrganisationWebsiteLinkRequest);
             }
         }
@@ -264,7 +264,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/organisationstandard"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardAddRequest, EpaoStandardResponse>(request,
+                return await PostPutRequestWithResponseAsync<OrganisationStandardAddRequest, EpaoStandardResponse>(request,
                     organisationStandardAddRequest);
             }
         }
@@ -284,7 +284,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-new/"))
             {
-                return await PostPutRequestWithResponse<CreateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                return await PostPutRequestWithResponseAsync<CreateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -307,7 +307,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-existing/"))
             {
-                return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                return await PostPutRequestWithResponseAsync<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
@@ -336,7 +336,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/ao/assessment-organisations/"))
             {
-                await PostPutRequest(request, updateEpaOrganisationRequest);
+                await PostPutRequestAsync(request, updateEpaOrganisationRequest);
             }
         }
 
@@ -355,7 +355,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Put,
                 $"/api/v1/organisations/NotifyUserManagementUsers"))
             {
-                await PostPutRequest(request, notifyUserManagementUsersRequest);
+                await PostPutRequestAsync(request, notifyUserManagementUsersRequest);
             }
         }
 
@@ -471,7 +471,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-in"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, optInRequest);
+                return await PostPutRequestWithResponseAsync<OrganisationStandardVersionOptInRequest, OrganisationStandardVersion>(request, optInRequest);
             }
         }
 
@@ -491,7 +491,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisationstandardversion/opt-out"))
             {
-                return await PostPutRequestWithResponse<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
+                return await PostPutRequestWithResponseAsync<OrganisationStandardVersionOptOutRequest, OrganisationStandardVersion>(request, optOutRequest);
             }
         }
 
