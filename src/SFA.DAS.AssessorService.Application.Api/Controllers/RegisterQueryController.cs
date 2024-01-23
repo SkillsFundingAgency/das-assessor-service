@@ -1,33 +1,34 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Linq;
-using SFA.DAS.AssessorService.Application.Handlers.ao;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/ao")]
     [ValidateBadRequest]
-    public class RegisterQueryController : Controller
+    public class RegisterQueryController : BaseController
     {
         private readonly ILogger<RegisterQueryController> _logger;
         private readonly IMediator _mediator;
 
-        public RegisterQueryController(IMediator mediator, ILogger<RegisterQueryController> logger
-        )
+        public RegisterQueryController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<RegisterQueryController> logger)
+            : base(taskQueue, logger)
         {
             _mediator = mediator;
             _logger = logger;
@@ -240,13 +241,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("assessment-organisations/apar-summary-update", Name = "APARSummaryUpdate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int?))]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(int?))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> AparSummaryUpdate()
+        public IActionResult AparSummaryUpdate()
         {
-            _logger.LogInformation("Updating APAR Summary");
-
-            return Ok(await _mediator.Send(new AparSummaryUpdateRequest()));
+            var requestName = "update APAR summary";
+            return QueueBackgroundRequest(new AparSummaryUpdateRequest(), requestName, (response, duration, log) =>
+            {
+                var result = response;
+                log.LogInformation($"Completed request to {requestName}, there were {result} changes made to APAR for EPAOs in {duration.ToReadableString()}");
+            });
         }
 
         [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]

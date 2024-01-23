@@ -4,25 +4,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Api.Controllers;
-using System.Threading.Tasks;
-using System;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
-    public class AparSummaryUpdateTests
+    public class GetAparSummaryLastUpdatedTests
     {
-        private static RegisterQueryController _sut;
+        private Mock<IBackgroundTaskQueue> _mockBackgroundTaskQueue;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
+        private static RegisterQueryController _sut;
         private static object _result;
         private static DateTime _expectedLastUpdated;
 
         [SetUp]
         public async Task Arrange()
         {
+            _mockBackgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             _expectedLastUpdated = DateTime.UtcNow;
@@ -30,32 +33,32 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Setup(m => m.Send(It.IsAny<GetAparSummaryLastUpdatedRequest>(), new CancellationToken()))
                 .ReturnsAsync(_expectedLastUpdated);
 
-            _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
+            _sut = new RegisterQueryController(_mediator.Object, _mockBackgroundTaskQueue.Object, _logger.Object);
 
             _result = await _sut.GetAparSummaryLastUpdated();
         }
 
         [Test]
-        public void GetAparSummary_MediatorShouldSendGetAparSummaryLastUpdatedRequest_WhenCalled()
+        public void GetAparSummaryLastUpdated_MediatorShouldSendGetAparSummaryLastUpdatedRequest_WhenCalled()
         {
             _mediator.Verify(m => m.Send(It.IsAny<GetAparSummaryLastUpdatedRequest>(), new CancellationToken()));
         }
 
 
         [Test]
-        public void GetAparSummary_ShouldReturnOk_WhenCalled()
+        public void GetAparSummaryLastUpdated_ShouldReturnOk_WhenCalled()
         {
             _result.Should().BeOfType<OkObjectResult>();
         }
 
         [Test]
-        public void GetAparSummary_ResultsAreOfTypeDateTime_WhenCalled()
+        public void GetAparSummaryLastUpdatedy_ResultsAreOfTypeDateTime_WhenCalled()
         {
             ((OkObjectResult)_result).Value.Should().BeOfType<DateTime>();
         }
 
         [Test]
-        public void GetAparSummary_ResultsMatchExpectedDateTime_WhenCalled()
+        public void GetAparSummaryLastUpdated_ResultsMatchExpectedDateTime_WhenCalled()
         {
             var organisations = ((OkObjectResult)_result).Value as DateTime?;
             organisations.Should().Be(_expectedLastUpdated);

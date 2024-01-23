@@ -25,6 +25,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.Application.Api.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Settings;
@@ -184,7 +185,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
-                
+
+                services.AddHostedService<TaskQueueHostedService>();
+
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
@@ -243,6 +246,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
+
+                config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
