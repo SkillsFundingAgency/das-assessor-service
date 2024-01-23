@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Client
+﻿using System.Threading.Tasks;
+
+namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public interface ITokenService
     {
-        string GetToken();
+        Task<string> GetTokenAsync();
     }
 
     public interface IAssessorTokenService : ITokenService { }

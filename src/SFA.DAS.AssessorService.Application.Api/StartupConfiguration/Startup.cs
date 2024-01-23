@@ -229,16 +229,16 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
                 config.For<IQnATokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.QnaApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IReferenceDataTokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.ReferenceDataApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IRoatpTokenService>().Use<TokenService>()
-                    .Ctor<IClientApiAuthentication>().Is(Configuration.RoatpApiAuthentication)
-                    .Ctor<string>().Is(_config["EnvironmentName"]);
+                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication)
+                    .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
 
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();

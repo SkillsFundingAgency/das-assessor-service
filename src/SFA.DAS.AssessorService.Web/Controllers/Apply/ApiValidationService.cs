@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.BaseAddress = apiBaseUri;
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
                 
                     _logger.LogInformation("Auth set");
                     

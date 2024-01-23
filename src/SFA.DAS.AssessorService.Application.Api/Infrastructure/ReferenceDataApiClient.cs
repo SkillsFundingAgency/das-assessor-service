@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Infrastructure
 
         private async Task<T> Get<T>(string uri)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
 
             using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
             {

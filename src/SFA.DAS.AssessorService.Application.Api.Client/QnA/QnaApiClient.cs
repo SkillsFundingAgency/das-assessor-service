@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/start"))
             {
-               return await PostPutRequestWithResponse<StartApplicationRequest,StartApplicationResponse>(request, startAppRequest);
+               return await PostPutRequestWithResponseAsync<StartApplicationRequest,StartApplicationResponse>(request, startAppRequest);
             }
         }
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))
             {
-                return await PostPutRequestWithResponse<ApplicationData, ApplicationData>(request, applicationData);
+                return await PostPutRequestWithResponseAsync<ApplicationData, ApplicationData>(request, applicationData);
             }
         }
 
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))
             {
-                return await PostPutRequestWithResponse<Dictionary<string, object>, Dictionary<string, object>>(request, applicationData);
+                return await PostPutRequestWithResponseAsync<Dictionary<string, object>, Dictionary<string, object>>(request, applicationData);
             }
         }
 
@@ -141,7 +141,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<SkipPageResponse>(request, settings);
+                return await PostPutRequestWithResponseAsync<SkipPageResponse>(request, settings);
             }
         }
 
@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new AddResultConverter());
-                return await PostPutRequestWithResponse<List<Answer>, AddPageAnswerResponse> (request, answer, settings);
+                return await PostPutRequestWithResponseAsync<List<Answer>, AddPageAnswerResponse> (request, answer, settings);
             }
         }
 
@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple/{answerId}"))
             {
-                return await Delete<Page>(request);
+                return await DeleteAsync<Page>(request);
             }
         }
 
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer,settings);
+                return await PostPutRequestWithResponseAsync<List<Answer>, SetPageAnswersResponse>(request, answer,settings);
             }
         }
 
@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<ResetPageAnswersResponse>(request, settings);
+                return await PostPutRequestWithResponseAsync<ResetPageAnswersResponse>(request, settings);
             }
         }
 
@@ -196,7 +196,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
                 }
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<SetPageAnswersResponse>(request, formDataContent, settings);
+                return await PostPutRequestWithResponseAsync<SetPageAnswersResponse>(request, formDataContent, settings);
             }
         }
 
@@ -204,7 +204,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))
             {
-                return await RequestToDownloadFile(request,
+                return await RequestToDownloadFileAsync(request,
                     $"Could not download file {fileName}");
             }
         }
@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.QnA
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))
             {
-                await Delete(request);
+                await DeleteAsync(request);
             }
         }
 

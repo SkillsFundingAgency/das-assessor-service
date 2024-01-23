@@ -67,7 +67,7 @@ stages:
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
-      LegacyApimServiceConnection: NAS-DevTest-ARM
+      ApimServiceConnection: NAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
       AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
@@ -84,6 +84,7 @@ stages:
     parameters:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
+      ApimServiceConnection: NAS-PreProd-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
       AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
@@ -100,6 +101,7 @@ stages:
     parameters:
       Environment: TEST2
       ServiceConnection: SFA-DAS-DevTest-ARM
+      ApimServiceConnection: NAS-PreProd-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
       AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
@@ -116,6 +118,7 @@ stages:
     parameters:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
+      ApimServiceConnection: NAS-PreProd-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
       AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
@@ -132,6 +135,7 @@ stages:
     parameters:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
+      ApimServiceConnection: NAS-Prod-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
       AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
