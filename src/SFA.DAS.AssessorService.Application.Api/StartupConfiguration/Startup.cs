@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
