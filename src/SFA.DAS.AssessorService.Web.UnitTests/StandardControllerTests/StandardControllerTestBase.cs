@@ -6,9 +6,9 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using System;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         protected Mock<IOrganisationsApiClient> _mockOrgApiClient;
         protected Mock<IQnaApiClient> _mockQnaApiClient;
         protected Mock<IContactsApiClient> _mockContactsApiClient;
-        protected Mock<IStandardVersionClient> _mockStandardVersionApiClient;
+        protected Mock<IStandardVersionApiClient> _mockStandardVersionApiClient;
         protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         protected Mock<IWebConfiguration> _mockConfig;
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockOrgApiClient = new Mock<IOrganisationsApiClient>();
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockContactsApiClient = new Mock<IContactsApiClient>();
-            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
+            _mockStandardVersionApiClient = new Mock<IStandardVersionApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockConfig = new Mock<IWebConfiguration>();
 
@@ -52,11 +52,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new ApplicationResponse()
                 {
                     ApplicationStatus = ApplicationStatus.InProgress,
-                    ApplyData = new ApplyData()
+                    ApplyData = new Domain.Entities.ApplyData()
                     {
-                        Sequences = new List<ApplySequence>()
+                        Sequences = new List<Domain.Entities.ApplySequence>()
                         {
-                            new ApplySequence()
+                            new Domain.Entities.ApplySequence()
                             {
                                 IsActive = true,
                                 SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new List<ApplicationResponse>());
 
             _mockQnaApiClient
-                .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
+                .Setup(r => r.GetApplicationData<ApplicationData>(It.IsAny<Guid>()))
                 .ReturnsAsync(new ApplicationData()
                 {
                     OrganisationReferenceId = "12345"

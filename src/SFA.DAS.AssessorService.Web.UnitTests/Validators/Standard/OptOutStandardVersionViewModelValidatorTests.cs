@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [Test]
         public void EmptyStandardReference_FailsValidation()
         {
-            var sut = new OptOutStandardVersionViewModelValidator(GetMockHttpContextAccessor().Object, new Mock<IStandardVersionClient>().Object);
+            var sut = new OptOutStandardVersionViewModelValidator(GetMockHttpContextAccessor().Object, new Mock<IStandardVersionApiClient>().Object);
             var viewModel = new OptOutStandardVersionViewModel() { StandardReference = "" };
             var result = sut.Validate(viewModel);
 
@@ -82,9 +82,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
             return accessor;
         }
 
-        private static Mock<IStandardVersionClient> GetMockApiClient(params StandardVersion[] standardVersionsReturned)
+        private static Mock<IStandardVersionApiClient> GetMockApiClient(params StandardVersion[] standardVersionsReturned)
         {
-            var apiClient = new Mock<IStandardVersionClient>();
+            var apiClient = new Mock<IStandardVersionApiClient>();
             apiClient.Setup(a => a.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), It.IsAny<string>()))
                      .ReturnsAsync(standardVersionsReturned);
             return apiClient;

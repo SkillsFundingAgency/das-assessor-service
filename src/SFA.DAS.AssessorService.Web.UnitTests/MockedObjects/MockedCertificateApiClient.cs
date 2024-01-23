@@ -1,15 +1,13 @@
-﻿using System;
-using FizzWare.NBuilder;
-using FluentAssertions;
-using Microsoft.Extensions.Hosting;
+﻿using FizzWare.NBuilder;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {

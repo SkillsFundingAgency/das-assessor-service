@@ -1,10 +1,11 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -65,6 +66,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "api/v1/certificates/DeleteCertificate"))
             {
                 await PostPutRequestAsync(httpRequest, deleteCertificateRequest);
+            }
+        }
+
+        public async Task<Certificate> UpdateCertificateRequestReprint(UpdateCertificateRequestReprintCommand command)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/request-reprint"))
+            {
+                return await PostPutRequestWithResponseAsync<UpdateCertificateRequestReprintCommand, Certificate>(httpRequest, command);
+            }
+        }
+
+        public async Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/update-with-amend-reason"))
+            {
+                await PostPutRequestAsync(httpRequest, command);
+            }
+        }
+
+        public async Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/update-with-reprint-reason"))
+            {
+                await PostPutRequestAsync(httpRequest, command);
             }
         }
     }

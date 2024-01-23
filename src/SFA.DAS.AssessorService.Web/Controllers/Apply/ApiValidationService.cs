@@ -1,21 +1,21 @@
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     public class ApiValidationService : IApiValidationService
     {
         private readonly IWebConfiguration _config;
-        private readonly ITokenService _tokenService;
+        private readonly IAssessorTokenService _tokenService;
         private readonly ILogger<ApiValidationService> _logger;
         private readonly string _clientApiCallValidationName;
 

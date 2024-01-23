@@ -11,8 +11,6 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
@@ -383,9 +381,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 TradingName = organisationSearchResult.TradingName,
                 ProviderName = organisationSearchResult.ProviderName,
                 CompanyNumber = organisationSearchResult.CompanyNumber,
-                CompanySummary = _mapper.Map<CompaniesHouseSummary>(companyDetails),
+                CompanySummary = _mapper.Map<Domain.Entities.CompaniesHouseSummary>(companyDetails),
                 CharityNumber = organisationSearchResult.CharityNumber,
-                CharitySummary = _mapper.Map<CharityCommissionSummary>(charityDetails),
+                CharitySummary = _mapper.Map<Domain.Entities.CharityCommissionSummary>(charityDetails),
                 Address1 = organisationSearchResult.Address?.Address1,
                 Address2 = organisationSearchResult.Address?.Address2,
                 Address3 = organisationSearchResult.Address?.Address3,
