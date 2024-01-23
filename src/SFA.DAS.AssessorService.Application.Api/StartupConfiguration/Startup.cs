@@ -187,7 +187,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
-                
+
+                services.AddHostedService<TaskQueueHostedService>();
+
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
@@ -243,6 +245,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<IRoatpTokenService>().Use<RoatpTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
+
+                config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 
                 // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()

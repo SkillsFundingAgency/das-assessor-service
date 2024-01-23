@@ -8,7 +8,7 @@ using NUnit.Framework.Internal;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Application.Handlers.ao;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -20,10 +20,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
     [TestFixture]
     public class GetAparSummaryTests
     {
-        private static RegisterQueryController _sut;
-        private static Mock<IMediator> _mediator;
-        private static Mock<ILogger<RegisterQueryController>> _logger;
-        private static object _result;
+        private Mock<IBackgroundTaskQueue> _backgroundTaskQueue;
+        private Mock<IMediator> _mediator;
+        private Mock<ILogger<RegisterQueryController>> _logger;
+        private RegisterQueryController _sut;
+        private object _result;
 
         private List<AparSummary> _expectedAparSummaries;
         private AparSummary _aparSummary1;
@@ -32,6 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [SetUp]
         public async Task Arrange()
         {
+            _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             _aparSummary1 = new AparSummary { Id = "EPA0001", Name = "Name 1", Ukprn = 1111111, 
@@ -48,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Setup(m =>
                 m.Send(It.IsAny<GetAparSummaryRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedAparSummaries);
-            _sut = new RegisterQueryController(_mediator.Object, _logger.Object);
+            _sut = new RegisterQueryController(_mediator.Object, _backgroundTaskQueue.Object, _logger.Object);
 
             _result = await _sut.GetAparSummary();
         }
