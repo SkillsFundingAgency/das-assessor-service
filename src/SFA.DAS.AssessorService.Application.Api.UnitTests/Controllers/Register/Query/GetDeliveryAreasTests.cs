@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +7,9 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -16,10 +17,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
     [TestFixture]
     public class GetDeliveryAreasTests
     {
-        private static RegisterQueryController _queryController;
-        private static object _result;
-        private static Mock<IMediator> _mediator;
-        private static Mock<ILogger<RegisterQueryController>> _logger;
+        private Mock<IMediator> _mediator;
+        private Mock<IBackgroundTaskQueue> _backgroundTaskQueue;
+        private Mock<ILogger<RegisterQueryController>> _logger;
+        private RegisterQueryController _queryController;
+        private object _result;
+
         private List<DeliveryArea> _expectedDeliveryAreas;
         private DeliveryArea _deliveryArea1;
         private DeliveryArea _deliveryArea2;
@@ -28,6 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
+            _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             _deliveryArea1 = new DeliveryArea { Id = 1, Area = "Area 9", Status="Live" };
             _deliveryArea2 = new DeliveryArea { Id = 2, Area = "Area 2", Status="New" };
@@ -41,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Setup(m =>
                 m.Send(It.IsAny<GetDeliveryAreasRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedDeliveryAreas);
-            _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
+            _queryController = new RegisterQueryController(_mediator.Object, _backgroundTaskQueue.Object, _logger.Object);
 
             _result = _queryController.GetDeliveryAreas().Result;
         }

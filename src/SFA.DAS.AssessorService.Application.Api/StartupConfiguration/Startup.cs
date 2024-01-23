@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
@@ -179,14 +180,16 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                var testCreds = new RoatpApiClientConfiguration() { ApiBaseUrl = "https://at-providers-api.apprenticeships.education.gov.uk", IdentifierUri = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-roatpapi-as-ar" };
+
                 services.AddTransient<IRoatpApiClient>(x =>
                 new RoatpApiClient(
-                    new ManagedIdentityHttpClientFactory(testCreds).CreateHttpClient(),
+                    new ManagedIdentityHttpClientFactory(Configuration.RoatpApiAuthentication).CreateHttpClient(),
                     x.GetService<ILogger<RoatpApiClient>>()));
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
-                
+
+                services.AddHostedService<TaskQueueHostedService>();
+
                 services.AddHealthChecks();
 
                 serviceProvider = ConfigureIOC(services);
@@ -240,21 +243,17 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                //config.For<IRoatpTokenService>().Use<RoatpTokenService>()
-                //    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
+                config.For<IQnaApiClient>().Use<QnaApiClient>();
+                config.For<IReferenceDataApiClient>().Use<ReferenceDataApiClient>();
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
-                // This is a SOAP service. The client interfaces are contained within the generated proxy code
+                config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
+
+                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
                     .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
-                
-                config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
-                    .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
-
-                config.For<ICompaniesHouseApiClient>().Use<CompaniesHouseApiClient>()
-                    .Ctor<ICompaniesHouseApiClientConfiguration>().Is(Configuration.CompaniesHouseApiAuthentication);
-
-                config.For<IOuterApiClient>().Use<OuterApiClient>()
-                    .Ctor<IOuterApiClientConfiguration>().Is(Configuration.OuterApi);
+                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
+                // End of SOAP Services
 
                 config.Populate(services);
             });

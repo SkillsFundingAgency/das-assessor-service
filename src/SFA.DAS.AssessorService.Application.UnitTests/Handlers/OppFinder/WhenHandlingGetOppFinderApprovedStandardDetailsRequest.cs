@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Handlers.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,6 +22,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
         private Mock<IMediator> _mockMediator;
 
         private GetOppFinderApprovedStandardDetailsHandler _sut;
+        private string[] validationRequestValidEmailValues = { "", null, "valid@email.com" };
+
 
         [SetUp]
         public void Setup()
@@ -28,9 +31,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             _mockOppFinderRepository = new Mock<IOppFinderRepository>();
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<GetOppFinderApprovedStandardDetailsHandler>>();
+            
+            _mockMediator.Setup(s => s.Send(It.Is<ValidationRequest>(x => x.Type == "email" && validationRequestValidEmailValues.Contains(x.Value)), It.IsAny<CancellationToken>()))
+                       .ReturnsAsync(true);
 
-            _mockMediator.Setup(s => s.Send(It.Is<ValidationRequest>(x => x.Type == "email" && x.Value == "EMAIL"), It.IsAny<CancellationToken>()))
-                        .ReturnsAsync(true);
+            _mockMediator.Setup(s => s.Send(It.Is<ValidationRequest>(x => x.Type == "email" && x.Value == "invalid"), It.IsAny<CancellationToken>()))
+                        .ReturnsAsync(false);
 
             _mockOppFinderRepository.Setup(s => s.GetOppFinderApprovedStandardDetails("ST0001")).ReturnsAsync(new OppFinderApprovedStandardDetailsResult
             {
@@ -38,7 +44,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
                 {
                     StandardCode = 999,
                     StandardReference = "ST0001",
-                    EqaProviderContactEmail = "EMAIL"
                 },
                 RegionResults = new List<OppFinderApprovedStandardRegionResult>()
                 {
@@ -89,22 +94,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
         }
 
         [Test]
-        public async Task ThenReturnsEmails()
-        {
-            //Arrange
-            var request = new GetOppFinderApprovedStandardDetailsRequest()
-            {
-                StandardReference = "ST0001"
-            };
-
-            //Act
-            var result = await _sut.Handle(request, new CancellationToken());
-
-            //Assert
-            result.EqaProvider.Should().Be("EMAIL");
-        }
-
-        [Test]
         public async Task ThenReturnsRegionDetails()
         {
             //Arrange
@@ -144,6 +133,119 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
                 result.VersionResults[0].Version.Should().Be("1.0");
                 result.VersionResults[1].Version.Should().Be("1.1");
             }
+        }
+
+        [Test]
+        public async Task ThenReturnsEqaProviderContactEmailInEqaProvider()
+        {
+            //Arrange
+            var request = new GetOppFinderApprovedStandardDetailsRequest()
+            {
+                StandardReference = "ST0001"
+            };
+
+
+            _mockOppFinderRepository.Setup(s => s.GetOppFinderApprovedStandardDetails("ST0001")).ReturnsAsync(new OppFinderApprovedStandardDetailsResult
+            {
+                OverviewResult = new OppFinderApprovedStandardOverviewResult()
+                {
+                    StandardCode = 999,
+                    StandardReference = "ST0001",
+                    EqaProviderContactEmail = "valid@email.com",
+                },
+            });
+
+
+
+            //Act
+
+            _sut = new GetOppFinderApprovedStandardDetailsHandler(_mockLogger.Object, _mockOppFinderRepository.Object, _mockMediator.Object);
+            var result = await _sut.Handle(request, new CancellationToken());
+
+            //Assert
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.EqaProvider.Should().Be("valid@email.com");
+            }
+
+        }
+
+        [Test]
+        [TestCase("", "valid@email.com")]
+        [TestCase(null, "valid@email.com")]
+        [TestCase("invalid", "valid@email.com")]
+        public async Task ThenReturnsEqaProviderContactNameInEqaProvider(string eqaProviderContactEmail, string eqaProviderContactName)
+        {
+            //Arrange
+            var request = new GetOppFinderApprovedStandardDetailsRequest()
+            {
+                StandardReference = "ST0001"
+            };
+
+            _mockOppFinderRepository.Setup(s => s.GetOppFinderApprovedStandardDetails("ST0001")).ReturnsAsync(new OppFinderApprovedStandardDetailsResult
+            {
+                OverviewResult = new OppFinderApprovedStandardOverviewResult()
+                {
+                    StandardCode = 999,
+                    StandardReference = "ST0001",
+                    EqaProviderContactName = eqaProviderContactName,
+                    EqaProviderContactEmail = eqaProviderContactEmail
+                },
+            });
+
+
+            //Act
+
+            _sut = new GetOppFinderApprovedStandardDetailsHandler(_mockLogger.Object, _mockOppFinderRepository.Object, _mockMediator.Object);
+            var result = await _sut.Handle(request, new CancellationToken());
+
+            //Assert
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.EqaProvider.Should().Be(eqaProviderContactName);
+            }
+
+        }
+
+        [Test]
+        [TestCase("", "", "OFQUAL")]
+        [TestCase(null, null, "OFQUAL")]
+        [TestCase("invalid", "invalid", "OFQUAL")]
+        public async Task ThenReturnsEqaProviderNameInEqaProvider(string eqaProviderContactEmail, string eqaProviderContactName, string eqaProviderName)
+        {
+            //Arrange
+            var request = new GetOppFinderApprovedStandardDetailsRequest()
+            {
+                StandardReference = "ST0001"
+            };
+
+            _mockOppFinderRepository.Setup(s => s.GetOppFinderApprovedStandardDetails("ST0001")).ReturnsAsync(new OppFinderApprovedStandardDetailsResult
+            {
+                OverviewResult = new OppFinderApprovedStandardOverviewResult()
+                {
+                    StandardCode = 999,
+                    StandardReference = "ST0001",
+                    EqaProviderContactName = eqaProviderContactName,
+                    EqaProviderContactEmail = eqaProviderContactEmail,
+                    EqaProviderName = eqaProviderName
+                },
+            });
+
+
+            //Act
+
+            _sut = new GetOppFinderApprovedStandardDetailsHandler(_mockLogger.Object, _mockOppFinderRepository.Object, _mockMediator.Object);
+            var result = await _sut.Handle(request, new CancellationToken());
+
+            //Assert
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.EqaProvider.Should().Be(eqaProviderName);
+            }
+
         }
     }
 }

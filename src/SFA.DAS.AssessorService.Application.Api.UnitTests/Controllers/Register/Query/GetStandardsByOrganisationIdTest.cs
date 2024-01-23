@@ -11,16 +11,19 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
     [TestFixture]
     public class GetStandardsByOrganisationIdTest
     {
-        private static RegisterQueryController _queryController;
-        private static object _result;
-        private static Mock<IMediator> _mediator;
-        private static Mock<ILogger<RegisterQueryController>> _logger;
+        private Mock<IMediator> _mediator;
+        private Mock<IBackgroundTaskQueue> _backgroundTaskQueue;
+        private Mock<ILogger<RegisterQueryController>> _logger;
+        private RegisterQueryController _queryController;
+        private object _result;
+
         private List<OrganisationStandardSummary> _expectedStandards;
         private OrganisationStandardSummary _standard1;
         private OrganisationStandardSummary _standard2;
@@ -30,6 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
+            _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             _standard1 = new OrganisationStandardSummary { OrganisationId = OrganisationId, StandardCode = 1};
             _standard2 = new OrganisationStandardSummary { OrganisationId = OrganisationId, StandardCode= 2};
@@ -43,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Setup(m =>
                 m.Send(It.IsAny<GetAllStandardsByOrganisationRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedStandards);
-            _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
+            _queryController = new RegisterQueryController(_mediator.Object, _backgroundTaskQueue.Object, _logger.Object);
 
             _result = _queryController.GetOrganisationStandardsByOrganisation(OrganisationId).Result;
         }
