@@ -179,10 +179,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-
+                var testCreds = new RoatpApiClientConfiguration() { ApiBaseUrl = "https://at-providers-api.apprenticeships.education.gov.uk", IdentifierUri = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-roatpapi-as-ar" };
                 services.AddTransient<IRoatpApiClient>(x =>
                 new RoatpApiClient(
-                    new ManagedIdentityHttpClientFactory(Configuration.RoatpApiAuthentication).CreateHttpClient(),
+                    new ManagedIdentityHttpClientFactory(testCreds).CreateHttpClient(),
                     x.GetService<ILogger<RoatpApiClient>>()));
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
