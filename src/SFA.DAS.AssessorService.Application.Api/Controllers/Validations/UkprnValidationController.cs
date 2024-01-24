@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Validations
 {
-    [Authorize(Roles = "AssessorServiceInternalAPI")]
+    //[Authorize(Roles = "AssessorServiceInternalAPI")]
     public class UkprnValidationController : Controller
     {
         private readonly IRoatpApiClient _roatpApiClient;
