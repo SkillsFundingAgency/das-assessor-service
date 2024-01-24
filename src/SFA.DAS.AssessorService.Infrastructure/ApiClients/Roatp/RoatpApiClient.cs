@@ -22,6 +22,18 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
             _client = client;
             _logger = logger;
         }
+        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
+        {
+            _logger.LogInformation($"Searching RoATP. Search Term: {searchTerm}");
+            var apiResponse = await Get<OrganisationSearchResults>($"/api/v1/search?searchTerm={searchTerm}");
+
+            if (exactMatch && apiResponse?.SearchResults != null)
+            {
+                apiResponse.SearchResults = apiResponse.SearchResults.Where(r => r.LegalName.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            }
+
+            return Mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+        }
 
         public async Task<OrganisationSearchResult> GetOrganisationByUkprn(long ukprn)
         {
