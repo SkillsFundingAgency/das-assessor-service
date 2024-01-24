@@ -67,7 +67,7 @@ ON ([Source].OrganisationStandardId = [Target].Id)
 WHEN MATCHED
     THEN UPDATE SET 
         [Target].[EndPointAssessorOrganisationId] = [Source].[EndPointAssessorOrganisationId],
-        [Target].[StandardCode] = [Source].[StandardCode],
+        --[Target].[StandardCode] = [Source].[StandardCode],
         [Target].[EffectiveFrom] = [Source].[EffectiveFrom],
         [Target].[EffectiveTo] = [Source].[EffectiveTo],
         [Target].[DateStandardApprovedOnRegister] = [Source].[DateStandardApprovedOnRegister],

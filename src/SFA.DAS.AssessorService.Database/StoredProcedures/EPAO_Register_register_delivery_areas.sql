@@ -33,18 +33,21 @@ while exists(select * from #OrganisationStandardDeliveryAreaDetails where Delive
   END
 ;
 WITH Standards_CTE as(
-select ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * from Standards)
+-- get the current title for the standard 
+SELECT IFateReferenceNumber, Title FROM (
+select IFateReferenceNumber, Title, ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber,Larscode ORDER BY VersionMajor DESC, VersionMinor DESC) seq from Standards
+) ab1 WHERE seq =1 )
 
 select os.EndPointAssessorOrganisationId EPA_organisation_identifier,
   o.EndPointAssessorName as 'EPA_organisation (lookup auto-populated)',
-  os.StandardCode as Standard_Code,
+  os.StandardReference as StandardReference,
   scte.Title as 'StandardName (lookup auto-populated)',
   dad.DeliveryAreaList as Delivery_area,
   JSON_Value(os.OrganisationStandardData,'$.DeliveryAreasComments') as Comments
   --,os.EffectiveTo
  from OrganisationStandard os 
 inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId  and o.[Status] = 'Live'
-left outer join Standards_CTE scte on os.StandardCode = scte.LarsCode AND seq = 1
+left outer join Standards_CTE scte on os.StandardReference = scte.IFateReferenceNumber
 left outer join #OrganisationStandardDeliveryAreaDetails dad on dad.OrganisationStandardId = os.Id
 where DeliveryAreaList is not null
 and o.EndPointAssessorOrganisationId <> 'EPA0000'

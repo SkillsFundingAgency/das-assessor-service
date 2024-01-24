@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
       
         public virtual MergeOrganisation MergeOrganisation { get; set; }
 
-        public int StandardCode { get; set; }
+        //public int StandardCode { get; set; }
 
 
         public MergeOrganisationStandard() { }
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public MergeOrganisationStandard(OrganisationStandard sourceOrganisationStandard, string replicates)
         {
             EndPointAssessorOrganisationId = sourceOrganisationStandard.EndPointAssessorOrganisationId;
-            StandardCode = sourceOrganisationStandard.StandardCode;
+            //StandardCode = sourceOrganisationStandard.StandardCode;
             StandardReference = sourceOrganisationStandard.StandardReference;
             EffectiveFrom = sourceOrganisationStandard.EffectiveFrom;
             EffectiveTo = sourceOrganisationStandard.EffectiveTo;

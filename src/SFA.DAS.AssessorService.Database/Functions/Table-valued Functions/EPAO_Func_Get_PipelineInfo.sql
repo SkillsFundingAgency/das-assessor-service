@@ -33,8 +33,9 @@ RETURN
 			Learner le2
 		INNER JOIN 
 			-- must have at least one live version of a standard for the given EPAO
-			   (SELECT DISTINCT StandardCode FROM OrganisationStandard os1
+			   (SELECT DISTINCT StandardReference FROM OrganisationStandard os1
 				  JOIN OrganisationStandardVersion osv ON osv.OrganisationStandardId = os1.Id
+				  JOIN Standards st1 on st1.StandardUId = osv.StandardUId
 				 WHERE os1.Status = 'Live' 
 					AND (os1.EffectiveTo IS NULL OR os1.EffectiveTo >= GETDATE())
 					AND osv.Status = 'Live' 
@@ -42,8 +43,8 @@ RETURN
 					-- only standnard data for the given EPAO
 					AND os1.EndPointAssessorOrganisationId = @epaOrgId
 					-- filter by standard code if required
-					AND ( os1.StandardCode = @stdCode OR @stdCode IS NULL ) 
-				) os2 on os2.Standardcode = le2.StdCode
+					AND ( st1.LarsCode = @stdCode OR @stdCode IS NULL ) 
+				) os2 on os2.StandardReference = le2.StandardReference
 		LEFT JOIN 
 			( SELECT DISTINCT Uln, StandardCode FROM Certificates ) [ExistingCertificate] ON [ExistingCertificate].Uln = le2.Uln AND [ExistingCertificate].StandardCode = le2.StdCode
 		WHERE 1=1

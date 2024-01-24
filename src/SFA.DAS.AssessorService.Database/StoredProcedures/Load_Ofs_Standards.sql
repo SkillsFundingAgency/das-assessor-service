@@ -121,11 +121,11 @@ BEGIN
             
             -- these standards can be added to OrganisationStandard
             INSERT INTO [dbo].[OrganisationStandard]
-                ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister]
+                ([EndPointAssessorOrganisationId],/*[StandardCode],*/[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister]
                 ,[Comments],[Status],[ContactId],[OrganisationStandardData],[StandardReference])
             SELECT 
                 [EndPointAssessorOrganisationId]
-                ,[Larscode] [StandardCode]
+                --,[Larscode] [StandardCode]
                 ,CONVERT(Date, @dateTimeUtc) [EffectiveFrom]
                 ,null [EffectiveTo]
                 ,CONVERT(Date, @dateTimeUtc) [DateStandardApprovedOnRegister]

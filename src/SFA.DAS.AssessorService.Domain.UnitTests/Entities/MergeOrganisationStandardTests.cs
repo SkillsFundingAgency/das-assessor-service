@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Domain.UnitTests.Entities
 
             objectUnderTest.Replicates.Should().Be("Before");
             objectUnderTest.EndPointAssessorOrganisationId.Should().Be(sourceObject.EndPointAssessorOrganisationId);
-            objectUnderTest.StandardCode.Should().Be(sourceObject.StandardCode);
+            //objectUnderTest.StandardCode.Should().Be(sourceObject.StandardCode);
             objectUnderTest.StandardReference.Should().Be(sourceObject.StandardReference);
             objectUnderTest.EffectiveFrom.Should().Be(sourceObject.EffectiveFrom);
             objectUnderTest.EffectiveTo.Should().Be(sourceObject.EffectiveTo);
