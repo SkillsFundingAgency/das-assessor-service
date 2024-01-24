@@ -249,11 +249,20 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 
-                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+                // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
                     .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
+                
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
-                // End of SOAP Services
+
+                config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
+                    .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
+
+                config.For<ICompaniesHouseApiClient>().Use<CompaniesHouseApiClient>()
+                    .Ctor<ICompaniesHouseApiClientConfiguration>().Is(Configuration.CompaniesHouseApiAuthentication);
+
+                config.For<IOuterApiClient>().Use<OuterApiClient>()
+                    .Ctor<IOuterApiClientConfiguration>().Is(Configuration.OuterApi);
 
                 config.Populate(services);
             });
