@@ -201,11 +201,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         private IServiceProvider ConfigureIOC(IServiceCollection services)
         {
             var container = new Container();
-            var testCreds = new RoatpApiClientConfiguration()
-            {
-                ApiBaseUrl = "https://at-providers-api.apprenticeships.education.gov.uk",
-                IdentifierUri = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-roatpapi-as-ar"
-            };
 
             container.Configure(config =>
             {
@@ -243,7 +238,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                config.For<SFA.DAS.Http.Configuration.IManagedIdentityClientConfiguration>().Use(testCreds);
+                config.For<SFA.DAS.Http.Configuration.IManagedIdentityClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
                 config.For<IRoatpApiClientFactory>().Use<RoatpApiClientFactory>();
                 config.For<ILogger<RoatpApiClient>>().Use<Logger<RoatpApiClient>>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
