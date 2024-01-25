@@ -17,7 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers
         private readonly List<string> _controllersThatDoNotRequireAuthorize = new List<string>()
         {
             "PingController",
-            "BaseController"
+            "BaseController",
+            "UkprnValidationController"
         };
 
         [Test]
