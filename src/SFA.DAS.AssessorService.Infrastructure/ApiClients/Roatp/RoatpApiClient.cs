@@ -17,9 +17,9 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
 
-        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger)
+        public RoatpApiClient(IRoatpApiClientFactory roatpApiClientFactory, ILogger<RoatpApiClient> logger)
         {
-            _client = client;
+            _client = roatpApiClientFactory.CreateHttpClient();
             _logger = logger;
         }
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)

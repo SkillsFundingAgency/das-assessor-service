@@ -181,7 +181,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
 
-
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHostedService<TaskQueueHostedService>();
@@ -244,6 +243,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 //.Is(new ManagedIdentityHttpClientFactory(Configuration.RoatpApiAuthentication)
                 //.CreateHttpClient())
                 //.Ctor<ILogger<RoatpApiClient>>().Is<Logger<RoatpApiClient>>();
+
+                config.For<SFA.DAS.Http.Configuration.IManagedIdentityClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
+                config.For<IRoatpApiClientFactory>().Use<RoatpApiClientFactory>();
+                config.For<ILogger<RoatpApiClient>>().Use<Logger<RoatpApiClient>>();
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
                 config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 
