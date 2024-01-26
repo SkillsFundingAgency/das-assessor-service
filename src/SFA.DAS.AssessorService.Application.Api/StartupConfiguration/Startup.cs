@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         private const string SERVICE_NAME = "SFA.DAS.AssessorService.Api";
         private const string VERSION = "1.0";
-
+        
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
@@ -56,9 +56,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             _config = config;
             _logger = logger;
             _env = env;
-
+            
             _logger.LogInformation("In startup constructor.  Before GetConfig");
-
+            
             if (!bool.TryParse(config["UseSandboxServices"], out _useSandbox))
             {
                 _useSandbox = "yes".Equals(config["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
@@ -94,8 +94,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         {
                             validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
                         }
-
-                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}";
+                        
+                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
@@ -105,10 +105,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         {
                             OnTokenValidated = context => { return Task.FromResult(0); }
                         };
-                    });
-
+                    });    
+                
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-
+                
                 services.Configure<RequestLocalizationOptions>(options =>
                 {
                     options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     {
                         config.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
                         config.CustomSchemaIds(i => i.FullName);
-
+                        
                         if (_env.IsDevelopment())
                         {
                             var basePath = AppContext.BaseDirectory;
@@ -161,9 +161,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
 
-                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnAApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress);
+                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnAApiClient", config => 
+                    { 
+                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); 
                     });
 
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
@@ -201,11 +201,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         private IServiceProvider ConfigureIOC(IServiceCollection services)
         {
             var container = new Container();
-            var testCreds = new RoatpApiClientConfiguration()
-            {
-                ApiBaseUrl = "https://at-providers-api.apprenticeships.education.gov.uk",
-                IdentifierUri = "https://citizenazuresfabisgov.onmicrosoft.com/das-at-roatpapi-as-ar"
-            };
+
             container.Configure(config =>
             {
                 config.Scan(_ =>
@@ -222,7 +218,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
                 config.For<ISignInService>().Use<SignInService>();
-
+              
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
 
@@ -242,7 +238,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                config.For<RoatpApiClientConfiguration>().Use(testCreds);
+                config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
                 config.For<IRoatpApiClientFactory>().Use<RoatpApiClientFactory>();
                 config.For<ILogger<RoatpApiClient>>().Use<Logger<RoatpApiClient>>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
@@ -273,7 +269,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             try
             {
                 MappingStartup.AddMappings();
-
+                
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();
@@ -291,7 +287,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .UseAuthentication();
 
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-
+                
                 app.UseRequestLocalization();
                 app.UseHealthChecks("/health");
 
