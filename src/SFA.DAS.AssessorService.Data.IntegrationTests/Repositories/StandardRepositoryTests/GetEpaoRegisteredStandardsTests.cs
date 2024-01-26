@@ -10,17 +10,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
 {
     public class GetEpaoRegisteredStandardsTests : TestBase
     {
+        private static DateTime DefaultEffectiveFrom = DateTime.Today.AddDays(-50);
+
         [Test]
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersions_WhenRequireAtLeastOneVersionIsDefault()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)) // no versions are opted in
             {
                 (await fixture.GetEpaoRegisteredStandards("EPA0001", true)).Verify(1);
@@ -31,13 +33,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersions_WhenRequireAtLeastOneVersionIsTrue()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)) // no versions are opted in
             {
                 (await fixture.GetEpaoRegisteredStandards("EPA0001", true)).Verify(1);
@@ -48,13 +50,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithOrWithoutVersions_WhenRequireAtLeastOneVersionIsFalse()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)) // no versions are opted in
             {
                 (await fixture.GetEpaoRegisteredStandards("EPA0001", false)).Verify(2);
@@ -65,13 +67,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsNotRemoved_WhenRequireAtLeastOneVersionIsDefault()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, DateTime.Today, null) // standard has been removed
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)) // no versions are opted in
             {
                 (await fixture.GetEpaoRegisteredStandards("EPA0001")).Verify(0);
@@ -82,13 +84,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsNotRemoved_WhenRequireAtLeastOneVersionIsTrue()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, DateTime.Today, null) // standard has been removed
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)) // no versions are opted in
             {
                 (await fixture.GetEpaoRegisteredStandards("EPA0001", true)).Verify(0);
@@ -99,13 +101,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsNotRemoved_WhenRequireAtLeastOneVersionIsFalse()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, DateTime.Today, null) // standard has been removed
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)) // no versions are opted in
             {
                 (await fixture.GetEpaoRegisteredStandards("EPA0001", false)).Verify(1);
@@ -116,13 +118,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersionsWithVersionsOptedIn_WhenRequireAtLeastOneVersionIsDefault()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", null, DateTime.Today)) // version is opted out
             {
@@ -134,13 +136,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersionsWithVersionsOptedIn_WhenRequireAtLeastOneVersionIsTrue()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", null, DateTime.Today)) // version is opted out
             {
@@ -152,13 +154,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
         public async Task GetEpaoRegisteredStandards_ReturnsOrganisationStandardsWithVersionsOptedInOrOut_WhenRequireAtLeastOneVersionIsFalse()
         {
             using (var fixture = new GetEpaoRegisteredStandardsTestsFixture()
-                .WithStandard("BrickLayer", "ST0001", 101, "1.0", null)
-                .WithStandard("Bricklayer", "ST0001", 101, "1.1", null)
+                .WithStandard("BrickLayer", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("Bricklayer", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Brick & Co", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", null, null)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.1", null, null)
-                .WithStandard("Roofer", "ST0002", 102, "1.0", null)
+                .WithStandard("Roofer", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", null, null, null)
                 .WithOrganisationStandardVersion("EPA0001", 102, "ST0002", "1.0", null, DateTime.Today)) // version is opted out
             {
