@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         public HttpClient CreateHttpClient()
         {
             var httpClient = new ManagedIdentityHttpClientFactory(_roatpApiClientConfiguration).CreateHttpClient();
-            httpClient.DefaultRequestHeaders.Add("Accept", "Application/json");
 
             return httpClient;
         }
