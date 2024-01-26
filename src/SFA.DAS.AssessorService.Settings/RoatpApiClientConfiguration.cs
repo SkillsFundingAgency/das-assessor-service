@@ -1,5 +1,4 @@
-﻿
-namespace SFA.DAS.AssessorService.Api.Common.Settings
+﻿namespace SFA.DAS.AssessorService.Settings
 {
     public class RoatpApiClientConfiguration : SFA.DAS.Http.Configuration.IManagedIdentityClientConfiguration
     {

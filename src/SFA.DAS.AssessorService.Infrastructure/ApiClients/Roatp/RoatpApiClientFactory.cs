@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Http;
+﻿using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.Http;
 using SFA.DAS.Http.Configuration;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,17 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
 {
     public class RoatpApiClientFactory : IRoatpApiClientFactory
     {
-        private readonly IManagedIdentityClientConfiguration _managedIdentityClientConfiguration;
+        private readonly RoatpApiClientConfiguration _roatpApiClientConfiguration;
 
-        public RoatpApiClientFactory(IManagedIdentityClientConfiguration managedIdentityClientConfiguration) 
+        public RoatpApiClientFactory(RoatpApiClientConfiguration roatpApiClientConfiguration) 
         {
-            _managedIdentityClientConfiguration = managedIdentityClientConfiguration;
-        }  
+            _roatpApiClientConfiguration = roatpApiClientConfiguration;
+        }
+
+
         public HttpClient CreateHttpClient()
         {
-            var httpClient = new ManagedIdentityHttpClientFactory(_managedIdentityClientConfiguration).CreateHttpClient();
+            var httpClient = new ManagedIdentityHttpClientFactory(_roatpApiClientConfiguration).CreateHttpClient();
             httpClient.DefaultRequestHeaders.Add("Accept", "Application/json");
 
             return httpClient;

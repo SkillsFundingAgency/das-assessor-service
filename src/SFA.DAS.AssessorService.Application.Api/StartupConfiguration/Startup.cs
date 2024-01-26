@@ -238,7 +238,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                config.For<SFA.DAS.Http.Configuration.IManagedIdentityClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
+                config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
                 config.For<IRoatpApiClientFactory>().Use<RoatpApiClientFactory>();
                 config.For<ILogger<RoatpApiClient>>().Use<Logger<RoatpApiClient>>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
