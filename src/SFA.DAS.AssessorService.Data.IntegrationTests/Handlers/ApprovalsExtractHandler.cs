@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                    $"AND {NullQueryParam(approvalsExtract, p => p.EmployerAccountId)} " +
                    $"AND {NullQueryParam(approvalsExtract, p => p.EmployerName)}";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<ApprovalsExtractModel, ApprovalsExtractModel>(sqlToQuery, approvalsExtract);
+            return await DatabaseService.QueryFirstOrDefaultAsync<ApprovalsExtractModel>(sqlToQuery, approvalsExtract);
         }
 
         public static void DeleteAllRecords()

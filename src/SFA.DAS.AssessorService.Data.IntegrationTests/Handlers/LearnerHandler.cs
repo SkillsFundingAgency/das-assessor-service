@@ -229,7 +229,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 $"AND {NotNullQueryParam(learner, p => p.IsTransfer)} " +
                 $"AND {NullQueryParam(learner, p => p.DateTransferIdentified)} ";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<LearnerModel, LearnerModel>(sqlToQuery, learner);
+            return await DatabaseService.QueryFirstOrDefaultAsync<LearnerModel>(sqlToQuery, learner);
         }
 
         public static async Task<int> QueryCountAllAsync()

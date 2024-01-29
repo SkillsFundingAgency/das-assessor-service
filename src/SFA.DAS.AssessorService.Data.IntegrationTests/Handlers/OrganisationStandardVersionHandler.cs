@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     $"AND {NullQueryParam(organisationStandardVersion, p => p.Comments)} " +
                     $"AND {NotNullQueryParam(organisationStandardVersion, p => p.Status)} ";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardVersionModel, OrganisationStandardVersionModel>(sqlToQuery, organisationStandardVersion);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardVersionModel>(sqlToQuery, organisationStandardVersion);
         }
 
         public static async Task<int> QueryCountAllAsync()
