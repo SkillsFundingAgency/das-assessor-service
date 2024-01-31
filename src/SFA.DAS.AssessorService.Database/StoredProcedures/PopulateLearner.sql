@@ -3,7 +3,8 @@ CREATE PROCEDURE [dbo].[PopulateLearner]
  		@overlaptimeIlr int = -15,  -- days to allow for an overlap on ILR submissions changes
 		@overlaptimeApx int = -15,  -- days to allow for an overlap on Approvals changes
 		@transferWindow int = -60,  -- days to allow for Transfer predication, after which it is voided (as nothing happened)
-		@reset Int = 0              -- set to 1 to do a full reset of learner
+		@reset int = 0,             -- set to 1 to do a full reset of learner
+		@uln bigint = null          -- set to a valid ULN to reset an individual ULN (Ops Support only)
 
 AS
 BEGIN
@@ -51,18 +52,22 @@ BEGIN
 			SELECT ilrs.Uln, ilrs.StdCode FROM Ilrs
 			-- Only interested if the latest Ilrs hasn't been used already to create/updated Learner.
 			LEFT JOIN Learner le2 ON le2.Uln = Ilrs.Uln AND le2.StdCode = Ilrs.StdCode
-			WHERE @reset =1 OR
-			 (ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
-			  AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.LastUpdated)) )
+			WHERE @reset = 1 
+            -- optional filter by ULN
+            OR (@uln IS NOT NULL AND Ilrs.Uln = @uln)
+            OR (ilrs.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeIlr,MAX(LatestIlrs)), '01-Jan-2017') FROM Learner)
+			    AND (le2.Id IS NULL OR le2.LatestIlrs < CONVERT(datetime,Ilrs.LastUpdated)) )
 
 			UNION
 			
 			-- Only interested if the latest ApprovalsExtract hasn't been used already to create/updated Learner.
 			SELECT ax1.Uln, TrainingCode FROM ApprovalsExtract ax1
 			LEFT JOIN Learner le3 ON le3.Uln = ax1.Uln AND le3.StdCode = ax1.TrainingCode
-			WHERE @reset =1 OR
-			 (ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
-			  AND (le3.Id IS NULL OR le3.LatestApprovals IS NULL OR le3.LatestApprovals < ax1.LastUpdated) )
+			WHERE @reset = 1  
+            -- optional filter by ULN
+            OR (@uln IS NOT NULL AND ax1.Uln = @uln)
+            OR (ax1.LastUpdated >= (SELECT ISNULL(DATEADD(day,@overlaptimeApx,MAX(LatestApprovals)), '01-Jan-2017') FROM Learner)
+			    AND (le3.Id IS NULL OR le3.LatestApprovals IS NULL OR le3.LatestApprovals < ax1.LastUpdated) )
 			
 			UNION
 			
