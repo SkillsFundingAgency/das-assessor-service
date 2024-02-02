@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
@@ -19,18 +20,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 {
     public class StandardVersionControllerTests
     {
-        private Mock<IStandardService> _mockStandardService;
         private Mock<IMediator> _mockMediator;
+        private Mock<IBackgroundTaskQueue> _backgroundTaskQueue;
+        private Mock<IStandardService> _mockStandardService;
 
         private StandardVersionController _standardVersionController;
 
         [SetUp]
         public void SetUp()
         {
-            _mockStandardService = new Mock<IStandardService>();
             _mockMediator = new Mock<IMediator>();
+            _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
+            _mockStandardService = new Mock<IStandardService>();
 
-            _standardVersionController = new StandardVersionController(Mock.Of<ILogger<StandardVersionController>>(), _mockStandardService.Object, _mockMediator.Object);
+            _standardVersionController = new StandardVersionController(_mockMediator.Object, _backgroundTaskQueue.Object, Mock.Of<ILogger<StandardVersionController>>(), _mockStandardService.Object);
         }
 
         [Test, MoqAutoData]

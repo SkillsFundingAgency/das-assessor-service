@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
@@ -24,9 +22,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Address4 { get; set; }
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
-        public CompaniesHouseSummary CompanySummary { get; set; }
+        public Domain.Entities.CompaniesHouseSummary CompanySummary { get; set; }
         public string CharityNumber { get; set; }
-        public CharityCommissionSummary CharitySummary { get; set; }
+        public Domain.Entities.CharityCommissionSummary CharitySummary { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
         public string ActionChoice { get; set; }

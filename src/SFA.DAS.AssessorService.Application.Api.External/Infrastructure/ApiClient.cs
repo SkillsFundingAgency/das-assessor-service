@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Standards;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -17,9 +17,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiClient> _logger;
-        private readonly ITokenService _tokenService;
+        private readonly IAssessorTokenService _tokenService;
 
-        public ApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClient> logger)
+        public ApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClient> logger)
         {
             _httpClient = httpClient;
             _tokenService = tokenService;

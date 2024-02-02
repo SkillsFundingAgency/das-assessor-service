@@ -2,6 +2,7 @@
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;

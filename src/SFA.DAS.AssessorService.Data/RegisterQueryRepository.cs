@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace SFA.DAS.AssessorService.Data
         public RegisterQueryRepository(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
-            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
+            SqlMapper.AddTypeHandler(typeof(Domain.Entities.ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
@@ -23,6 +19,12 @@ using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -161,19 +163,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 if (_useSandbox)
                 {
-                    config.For<ITokenService>().Use<TokenService>()
-                        .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication)
-                        .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    config.For<IAssessorTokenService>().Use<AssessorTokenService>()
+                        .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication);
 
-                    config.For<IApiClient>().Use<SandboxApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
+                    config.For<IApiClient>().Use<SandboxApiClient>().Ctor<IAssessorTokenService>().Is(c => c.GetInstance<IAssessorTokenService>());
                 }
                 else
                 {
-                    config.For<ITokenService>().Use<TokenService>()
-                        .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.AssessorApiAuthentication)
-                        .Ctor<ILogger<TokenService>>().Is<Logger<TokenService>>();
+                    config.For<IAssessorTokenService>().Use<AssessorTokenService>()
+                        .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.AssessorApiAuthentication);
 
-                    config.For<IApiClient>().Use<ApiClient>().Ctor<ITokenService>().Is(c => c.GetInstance<ITokenService>());
+                    config.For<IApiClient>().Use<ApiClient>().Ctor<IAssessorTokenService>().Is(c => c.GetInstance<IAssessorTokenService>());
                 }
 
                 config.For<IExternalApiConfiguration>().Use(ApplicationConfiguration);

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
             return string.Empty;
         }
 
-        private bool IsSequenceRequired(ApplyData applyData, int sequenceNo)
+        private bool IsSequenceRequired(Domain.Entities.ApplyData applyData, int sequenceNo)
         {
             // a sequence cannot be considered required if it does not exist in the ApplyData
             return applyData
@@ -52,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
                 ?.Any(x => x.SequenceNo == sequenceNo && !x.NotRequired) ?? false;
         }
 
-        private bool IsSectionRequired(ApplyData applyData, int sequenceNo, int sectionNo)
+        private bool IsSectionRequired(Domain.Entities.ApplyData applyData, int sequenceNo, int sectionNo)
         {
             // a sequence section cannot be considered required if the sequence or sequence section does not exist in the ApplyData
             return applyData
