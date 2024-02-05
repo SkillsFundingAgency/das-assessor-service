@@ -1,31 +1,33 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/oppfinder")]
     [ValidateBadRequest]
-    public class OppFinderController : Controller
+    public class OppFinderController : BaseController
     {
-        private readonly ILogger<OppFinderController> _logger;
         private readonly IMediator _mediator;
+        private readonly ILogger<OppFinderController> _logger;
 
-        public OppFinderController(IMediator mediator, ILogger<OppFinderController> logger)
+        public OppFinderController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<OppFinderController> logger)
+            : base(taskQueue, logger)
         {
             _mediator = mediator;
             _logger = logger;
-
         }
 
         [HttpPost("expression-of-interest", Name = "CreateExpressionOfInterest")]
@@ -53,21 +55,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost("update-standard-summary", Name = "UpdateStandardSummary")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task UpdateStandardSummary([FromBody] UpdateStandardSummaryRequest request)
+        public IActionResult UpdateStandardSummary()
         {
-            try
+            var requestName = "update standard summary";
+            return QueueBackgroundRequest(new UpdateStandardSummaryRequest(), requestName, (response, duration, log) =>
             {
-                _logger.LogInformation($"Received request to update standard summary");
-                await _mediator.Send(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Request to update standard summary failed");
-                throw new Exception("Request to update standard summary failed");
-            }
+                log.LogInformation($"Completed request to {requestName} in {duration.ToReadableString()}");
+            });
         }
     }
 }

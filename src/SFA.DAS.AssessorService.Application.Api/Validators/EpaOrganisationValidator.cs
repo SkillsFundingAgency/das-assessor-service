@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -26,8 +25,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
 
 
-        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
-                                         ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer, IStandardService standardService) 
+        public EpaOrganisationValidator(IRegisterValidationRepository registerRepository, IRegisterQueryRepository registerQueryRepository,
+                                        ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer, IStandardService standardService)
         {
             _registerRepository = registerRepository;
             _registerQueryRepository = registerQueryRepository;
@@ -202,7 +201,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 ? string.Empty
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist);
         }
-        
+
         public string CheckIfContactIdIsValid(string contactId, string organisationId)
         {
             if (!Guid.TryParse(contactId, out Guid newContactId))
@@ -682,6 +681,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("ApplicationId",
               CheckApplicationdId(request.ApplicationId), validationResult,
+              ValidationStatusCode.BadRequest);
+
+            return validationResult;
+        }
+
+        public ValidationResponse ValidatorWithdrawStandardRequest(WithdrawStandardRequest request)
+        {
+            var validationResult = new ValidationResponse();
+
+            RunValidationCheckAndAppendAnyError(nameof(request.EndPointAssessorOrganisationId),
+               CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+               ValidationStatusCode.BadRequest);
+
+            RunValidationCheckAndAppendAnyError(nameof(request.StandardCode),
+              CheckIfOrganisationStandardDoesNotExist(request.EndPointAssessorOrganisationId, request.StandardCode), validationResult,
               ValidationStatusCode.BadRequest);
 
             return validationResult;

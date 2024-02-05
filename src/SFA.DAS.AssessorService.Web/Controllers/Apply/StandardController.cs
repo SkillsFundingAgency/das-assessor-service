@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,16 +5,20 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.OrganisationStandards;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
     {
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IStandardVersionClient _standardVersionApiClient;
+        private readonly IStandardVersionApiClient _standardVersionApiClient;
         private readonly IWebConfiguration _config;
 
         #region Routes
@@ -35,6 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public const string ApplyStandardSearchRoutePost = nameof(ApplyStandardSearchRoutePost);
         public const string ApplyStandardSearchResultsRouteGet = nameof(ApplyStandardSearchResultsRouteGet);
         public const string ApplyStandardConfirmOfqualRouteGet = nameof(ApplyStandardConfirmOfqualRouteGet);
+        public const string ApplyStandardOfsShutterPageRouteGet = nameof(ApplyStandardOfsShutterPageRouteGet);
         public const string ApplyStandardConfirmRouteGet = nameof(ApplyStandardConfirmRouteGet);
         public const string ApplyStandardConfirmRoutePost = nameof(ApplyStandardConfirmRoutePost);
         public const string AddStandardSearchRouteGet = nameof(AddStandardSearchRouteGet);
@@ -54,8 +55,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public const string OptOutStandardVersionConfirmationRouteGet = nameof(OptOutStandardVersionConfirmationRouteGet);
         #endregion
 
-        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IContactsApiClient contactsApiClient,
-            IStandardVersionClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
+        public StandardController(IApplicationApiClient apiClient, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient,
+            IContactsApiClient contactsApiClient, IStandardVersionApiClient standardVersionApiClient, IHttpContextAccessor httpContextAccessor, IWebConfiguration config)
             : base(apiClient, contactsApiClient, httpContextAccessor)
         {
             _orgApiClient = orgApiClient;
@@ -89,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToRoute(AddStandardSearchRouteGet, new { search = model.Search });
             }
-            
+
             return RedirectToRoute(AddStandardSearchResultsRouteGet, new { search = model.Search });
         }
 
@@ -230,10 +231,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [HttpGet("standard/standard-details/{referenceNumber}", Name = StandardDetailsRouteGet)]
-        public async Task<IActionResult> StandardDetails(string referenceNumber)
+        public async Task<IActionResult> StandardDetails(string referenceNumber, [FromQuery] string backRouteName)
         {
-            if (string.IsNullOrEmpty(referenceNumber))
-                throw new ArgumentException("The value must not be null or empty", nameof(referenceNumber));
+            if (string.IsNullOrWhiteSpace(referenceNumber))
+                throw new ArgumentException("The value must not be null empty or whitespace", nameof(referenceNumber));
 
             var allVersions = await _standardVersionApiClient.GetStandardVersionsByIFateReferenceNumber(referenceNumber);
             var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(GetEpaOrgIdFromClaim(), referenceNumber);
@@ -245,7 +246,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 SelectedStandard = allVersions.FirstOrDefault(),
                 AllVersions = allVersions.ToList(),
-                ApprovedVersions = approvedVersions.ToList()
+                ApprovedVersions = approvedVersions.ToList(),
+                BackRouteName = backRouteName
             };
 
             return View(model);
@@ -365,6 +367,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [HttpGet("standard/{id}/confirm-ofs", Name = ApplyStandardOfsShutterPageRouteGet)]
+        [ApplicationAuthorize(routeId: "Id")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult ApplyStandardOfsShutterPage(Guid id, string search, bool showNeedToRegisterPage, bool showNeedToSubmitIlrPage)
+        {
+            var viewModel = new ApplyStandardOfsShutterPageViewModel
+            {
+                Id = id,
+                Search = search,
+                ShowNeedToRegisterPage = showNeedToRegisterPage,
+                ShowNeedToSubmitIlrPage = showNeedToSubmitIlrPage
+            };
+
+            return View(viewModel);
+        }
+
+        [PrivilegeAuthorize(Privileges.ApplyForStandard)]
         [HttpGet("standard/{id}/apply-standard/{search}/{referenceNumber}/confirm", Name = ApplyStandardConfirmRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
@@ -408,6 +427,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             else if (latestStandard.EqaProviderName == "Ofqual")
             {
                 return RedirectToRoute(ApplyStandardConfirmOfqualRouteGet, new { id, search, referenceNumber });
+            }
+            else if (latestStandard.EqaProviderName == "Office for Students")
+            {
+                var shutterPageSelector = new OfsShutterPageSelector(_orgApiClient);
+                var shutterPagesToShow = await shutterPageSelector.GetFromOrganisationAndStandard(org, latestStandard);
+                if (shutterPagesToShow.ShowNeedToRegisterPage || shutterPagesToShow.ShowNeedToSubmitIlrPage)
+                {
+                    return RedirectToRoute(ApplyStandardOfsShutterPageRouteGet, new { id, search, shutterPagesToShow.ShowNeedToRegisterPage, shutterPagesToShow.ShowNeedToSubmitIlrPage });
+                }
             }
 
             var viewModel = new ApplyStandardConfirmViewModel
@@ -487,6 +515,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpGet("standard/opt-in/{referenceNumber}/{version}", Name = OptInStandardVersionRouteGet)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> OptInStandardVersion(string referenceNumber, string version)
         {
             if (string.IsNullOrEmpty(referenceNumber))
@@ -515,25 +544,22 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
         [HttpPost("standard/opt-in", Name = OptInStandardVersionRoutePost)]
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> OptInStandardVersion(OptInStandardVersionViewModel model)
         {
-            if (model == null)
-                throw new ArgumentException("Value cannot be null or empty", nameof(model));
-
-            if (string.IsNullOrEmpty(model.StandardReference))
+            if (string.IsNullOrEmpty(model?.StandardReference))
                 throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
-            if (string.IsNullOrEmpty(model.Version))
+            if (string.IsNullOrEmpty(model?.Version))
                 throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
-            var contactId = await GetUserId();
-            var epaOrgId = GetEpaOrgIdFromClaim();
-
-            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
-            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) != null)
+            if (!ModelState.IsValid)
             {
-                throw new AlreadyExistsException($"Unable to opt in to StandardReference {model.StandardReference} organisation {epaOrgId} already assesses this standard version");
+                return RedirectToRoute(OptInStandardVersionRouteGet, new { referenceNumber = model.StandardReference, version = model.Version });
             }
+
+            var epaOrgId = GetEpaOrgIdFromClaim();
+            var contactId = await GetUserId();
 
             await _orgApiClient.OrganisationStandardVersionOptIn(
                 epaOrgId,
@@ -605,13 +631,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> OptOutStandardVersion(OptOutStandardVersionViewModel model)
         {
-            if (model == null)
-                throw new ArgumentException("Value cannot be null or empty", nameof(model));
-
-            if (string.IsNullOrEmpty(model.StandardReference))
+            if (string.IsNullOrEmpty(model?.StandardReference))
                 throw new ArgumentException($"Value of {nameof(model.StandardReference)} cannot be null or empty");
 
-            if (string.IsNullOrEmpty(model.Version))
+            if (string.IsNullOrEmpty(model?.Version))
                 throw new ArgumentException($"Value of {nameof(model.Version)} cannot be null or empty");
 
             if (!ModelState.IsValid)
@@ -621,13 +644,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var contactId = await GetUserId();
             var epaOrgId = GetEpaOrgIdFromClaim();
-
-            var approvedVersions = await _standardVersionApiClient.GetEpaoRegisteredStandardVersions(epaOrgId, model.StandardReference);
-
-            if (approvedVersions.FirstOrDefault(p => p.Version.Equals(model.Version, StringComparison.InvariantCultureIgnoreCase)) == null)
-            {
-                throw new NotFoundException($"Unable to opt out of StandardReference {model.StandardReference} organisation {epaOrgId} does not assesses this standard version");
-            }
 
             await _orgApiClient.OrganisationStandardVersionOptOut(
                 epaOrgId,

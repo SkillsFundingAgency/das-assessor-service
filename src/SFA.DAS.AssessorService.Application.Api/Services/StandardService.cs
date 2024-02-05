@@ -212,6 +212,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return options;
         }
 
+        public async Task<bool> GetCoronationEmblemForStandardReferenceAndVersion(string iFateReferenceNumber, string version)
+        {
+            var result = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(iFateReferenceNumber, version);
+            return result;
+        }
+
         public async Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string id, string version)
         {
             Standard standard = new Standard();

@@ -81,6 +81,11 @@ namespace SFA.DAS.AssessorService.Data
              return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
         }
 
+        public async Task<bool> IsOfsOrganisation(int ukprn)
+        {
+            return await _assessorDbContext.OfsOrganisation.AnyAsync(o => o.Ukprn == ukprn);
+        }
+
         public async Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
         {
             var organisations = await _assessorDbContext
@@ -146,12 +151,10 @@ namespace SFA.DAS.AssessorService.Data
                 .Select(o => new MergeLogEntry() 
                 {
                     Id = o.Id,
-                    PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
                     PrimaryEndPointAssessorOrganisationName = o.PrimaryEndPointAssessorOrganisationName,
-                    SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
                     SecondaryEndPointAssessorOrganisationName = o.SecondaryEndPointAssessorOrganisationName,
-                    CompletedAt = o.CompletedAt,
-                    SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
+                    CompletedAt = o.CompletedAt ?? DateTime.MaxValue,
+                    SecondaryEpaoEffectiveTo = o.SecondaryEPAOEffectiveTo
                 })
                 .ToListAsync();
 
@@ -165,12 +168,10 @@ namespace SFA.DAS.AssessorService.Data
             return new MergeLogEntry()
             {
                 Id = o.Id,
-                PrimaryEndPointAssessorOrganisationId = o.PrimaryEndPointAssessorOrganisationId,
                 PrimaryEndPointAssessorOrganisationName = o.PrimaryEndPointAssessorOrganisationName,
-                SecondaryEndPointAssessorOrganisationId = o.SecondaryEndPointAssessorOrganisationId,
                 SecondaryEndPointAssessorOrganisationName = o.SecondaryEndPointAssessorOrganisationName,
-                CompletedAt = o.CompletedAt,
-                SecondaryEPAOEffectiveTo = o.SecondaryEPAOEffectiveTo
+                CompletedAt = o.CompletedAt ?? DateTime.MaxValue,
+                SecondaryEpaoEffectiveTo = o.SecondaryEPAOEffectiveTo
             };
         }
     }

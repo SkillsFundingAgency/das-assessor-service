@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
@@ -13,43 +15,48 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
     {
         private readonly IContactRepository _contactRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
-        private readonly IMediator _mediator;
         private readonly IApiConfiguration _config;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly IMediator _mediator;
 
-        public ApproveContactHandler(IContactRepository contactRepository, IContactQueryRepository contactQueryRepository,
-            IEMailTemplateQueryRepository eMailTemplateQueryRepository, IMediator mediator, IApiConfiguration config, IOrganisationQueryRepository organisationQueryRepository)
+        public ApproveContactHandler(IContactRepository contactRepository,
+            IContactQueryRepository contactQueryRepository,
+            IApiConfiguration config,
+            IOrganisationQueryRepository organisationQueryRepository,
+            IMediator mediator)
         {
             _contactRepository = contactRepository;
             _contactQueryRepository = contactQueryRepository;
-            _eMailTemplateQueryRepository = eMailTemplateQueryRepository;
-            _mediator = mediator;
             _config = config;
             _organisationQueryRepository = organisationQueryRepository;
+            _mediator = mediator;
         }
 
         public async Task<Unit> Handle(ApproveContactRequest message, CancellationToken cancellationToken)
         {
-            const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
-
             var contact = await _contactQueryRepository.GetContactById(message.ContactId);
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
 
             await _contactRepository.UpdateContactWithOrganisationData(new UpdateContactWithOrgAndStausRequest(message.ContactId.ToString(),
                 organisation.Id.ToString(), organisation.EndPointAssessorOrganisationId, ContactStatus.Live));
             
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoApproveConfirmTemplate);
+            
+            if (!_config.UseGovSignIn)
+            {
+                return Unit.Value;
+            }
+            // send approve confirmation email to the user with service link.
+            await _mediator.Send(new SendEmailRequest(contact.Email, new EmailTemplateSummary
+            {
+                TemplateId = _config.EmailTemplatesConfig.UserApproveConfirm,
+                TemplateName = nameof(_config.EmailTemplatesConfig.UserApproveConfirm)
+            }, new
+            {
+                name = $"{contact.DisplayName}",
+                organisation = organisation.EndPointAssessorName,
+                link = _config.ServiceLink
+            }), cancellationToken);
 
-            await _mediator.Send(new SendEmailRequest(contact.Email,
-                emailTemplate, new
-                {
-                    Contact = $"{contact.DisplayName}",
-                    ServiceName = "Apprenticeship assessment service",
-                    Organisation = organisation.EndPointAssessorName,
-                    LoginLink = _config.ServiceLink,
-                    ServiceTeam = "Apprenticeship assessment services team"
-                }), cancellationToken);
             return Unit.Value;
         }
     }

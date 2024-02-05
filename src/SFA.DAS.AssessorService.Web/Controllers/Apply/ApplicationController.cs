@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +7,10 @@ using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -24,6 +18,12 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels.Apply;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -34,22 +34,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IRegisterApiClient _registerApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
-        #region routes
+        #region Routes
         public const string StandardApplicationsRouteGet = nameof(StandardApplicationsRouteGet);
+        public const string SequenceRouteGet = nameof(SequenceRouteGet);
         #endregion
 
-        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient,
+            IRegisterApiClient registerApiClient, IWebConfiguration config, IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
             : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _apiValidationService = apiValidationService;
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
+            _registerApiClient = registerApiClient;
             _contextAccessor = httpContextAccessor;
             _config = config;
             _logger = logger;
@@ -224,7 +227,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
+        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}", Name = SequenceRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Sequence(Guid Id, int sequenceNo)
         {
@@ -454,9 +457,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
             ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
-
-            // the standard name preamble answer is currently stored in the application, instead of the application data
-            ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
 
             if (viewModel.AllowMultipleAnswers)
             {
@@ -811,10 +811,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName,
-                Versions = application?.ApplyData?.Apply?.Versions
+                Versions = application?.ApplyData?.Apply?.Versions,
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -825,9 +823,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -864,9 +860,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         // Get data from API using question.Input.DataEndpoint
                         // var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
 
-                        // NOTE: For now it seems the only DataFed type is delivery areas and someone has coded it that way in the api client
-                        var deliveryAreas = await _applicationApiClient.GetQuestionDataFedOptions();
-                        var questionOptions = deliveryAreas.Select(da => new Option() { Label = da.Area, Value = da.Area }).ToList();
+                        // NOTE: For now it seems the only DataFed type is delivery areas
+                        var deliveryAreas = await _registerApiClient.GetDeliveryAreas();
+                        var questionOptions = deliveryAreas.Select(da => new QnA.Api.Types.Page.Option() { Label = da.Area, Value = da.Area }).ToList();
 
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
@@ -1142,38 +1138,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return answers;
         }
 
-        private static void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
-        {
-            if (pageVmQuestions == null) return;
-
-            var placeholderString = "StandardName";
-            var isPlaceholderPresent = false;
-
-            foreach (var question in pageVmQuestions)
-
-                if (question.Label.Contains($"[{placeholderString}]") ||
-                   question.Hint.Contains($"[{placeholderString}]") ||
-                    question.QuestionBodyText.Contains($"[{placeholderString}]") ||
-                    question.ShortLabel.Contains($"[{placeholderString}]")
-                   )
-                    isPlaceholderPresent = true;
-
-            if (!isPlaceholderPresent) return;
-
-            var standardName = application?.ApplyData?.Apply?.StandardName;
-
-            if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
-
-            foreach (var question in pageVmQuestions)
-            {
-                question.Label = question.Label?.Replace($"[{placeholderString}]", standardName);
-                question.Hint = question.Hint?.Replace($"[{placeholderString}]", standardName);
-                question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
-                question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
-            }
-        }
-
-        private void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
+        private static void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
         {
             if (questions == null) return;
 
@@ -1198,7 +1163,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
+        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<Domain.Entities.ApplySection> applySections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
 
@@ -1262,7 +1227,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return canUpdate;
         }
 
-        public bool IsSequenceActive(ApplyData applyData, int sequenceNo)
+        public bool IsSequenceActive(Domain.Entities.ApplyData applyData, int sequenceNo)
         {
             // a sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
             return applyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;

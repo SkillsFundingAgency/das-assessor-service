@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string Version { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
+        public bool CoronationEmblem { get; set; }
         public DateTime? StandardPublicationDate { get; set; }
         public string ContactName { get; set; }
         public string ContactOrganisation { get; set; }

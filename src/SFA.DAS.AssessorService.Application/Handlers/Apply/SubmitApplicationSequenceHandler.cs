@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 {
                     if (application.ApplyData.Apply == null)
                     {
-                        application.ApplyData.Apply = new ApplyTypes.Apply();
+                        application.ApplyData.Apply = new Domain.Entities.ApplyInfo();
                     }
 
                     if (string.IsNullOrWhiteSpace(application.ApplyData.Apply.ReferenceNumber))
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void UpdateSequenceAndSectionStatus(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
+        private void UpdateSequenceAndSectionStatus(Domain.Entities.ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
         {
             if (applyData.Sequences != null)
             {
@@ -97,9 +97,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private void AddSubmissionInfoToApplyData(ApplyData applyData, int sequenceNo, Domain.Entities.Contact submittingContact)
+        private void AddSubmissionInfoToApplyData(Domain.Entities.ApplyData applyData, int sequenceNo, Domain.Entities.Contact submittingContact)
         {
-            var submission = new Submission
+            var submission = new Domain.Entities.Submission
             {
                 SubmittedAt = DateTime.UtcNow,
                 SubmittedBy = submittingContact.Id,
@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private string GetFinancialStatus(ApplyData applyData)
+        private string GetFinancialStatus(Domain.Entities.ApplyData applyData)
         {
             if (applyData.Sequences != null)
             {
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return referenceNumber;
         }
 
-        private async Task NotifyContact(Domain.Entities.Contact contactToNotify, ApplyData applyData, int sequenceNo, CancellationToken cancellationToken)
+        private async Task NotifyContact(Domain.Entities.Contact contactToNotify, Domain.Entities.ApplyData applyData, int sequenceNo, CancellationToken cancellationToken)
         {
             var email = contactToNotify.Email;
             var contactname = contactToNotify.DisplayName;

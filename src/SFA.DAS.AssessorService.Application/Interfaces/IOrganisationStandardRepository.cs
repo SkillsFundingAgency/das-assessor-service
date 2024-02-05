@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version);
         Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, string version);
         Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion organisationStandardVersion);
-        Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate);
+        Task WithdrawOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate);
+        Task WithdrawStandard(string endPointAssessorOrganisationId, int standardCode, DateTime withdrawalDate);
     }
 }

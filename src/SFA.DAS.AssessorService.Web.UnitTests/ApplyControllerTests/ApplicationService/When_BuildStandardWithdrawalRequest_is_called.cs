@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.QnA.Api.Types;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
 {
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty, string.Empty);
+                }, standardCode, string.Empty);
 
             // Assert
             _mockLearnerDetailsApiClient
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty, string.Empty);
+                }, standardCode, string.Empty);
 
             // Assert
             _mockQnaApiClient
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = organisationId,
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty, string.Empty);
+                }, standardCode, string.Empty);
 
             // Assert
             _mockOrganisationsApiClient
@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = organisationId,
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty, string.Empty);
+                }, standardCode, string.Empty);
 
             // Assert
             _mockQnaApiClient
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplicationServiceTests
                     Id = Guid.NewGuid(),
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     EndPointAssessorName = "Organisation Limited"
-                }, standardCode, string.Empty, string.Empty);
+                }, standardCode, string.Empty);
 
             // Assert
             result.ApplicationType.Should().Be(ApplicationTypes.StandardWithdrawal);

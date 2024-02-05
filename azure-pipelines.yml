@@ -53,6 +53,8 @@ stages:
       SolutionBaseName: $(SolutionBaseName).Database
       SqlProjectPath: src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
 
+- template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
+
 - stage: Deploy_AT
   dependsOn: Build
   displayName: Deploy to AT
@@ -67,8 +69,9 @@ stages:
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
-      LegacyApimServiceConnection: NAS-DevTest-ARM
+      ApimServiceConnection: NAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_TEST
   dependsOn: Build
@@ -83,7 +86,9 @@ stages:
     parameters:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
+      ApimServiceConnection: NAS-PreProd-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_TEST2
   dependsOn: Build
@@ -98,7 +103,9 @@ stages:
     parameters:
       Environment: TEST2
       ServiceConnection: SFA-DAS-DevTest-ARM
+      ApimServiceConnection: NAS-PreProd-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS
 
 - stage: Deploy_PP
   dependsOn: Build
@@ -113,7 +120,9 @@ stages:
     parameters:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
+      ApimServiceConnection: NAS-PreProd-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
 - stage: Deploy_PROD
   dependsOn: Build
@@ -128,7 +137,9 @@ stages:
     parameters:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
+      ApimServiceConnection: NAS-Prod-ARM (FCS)
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
 - stage: Deploy_MO
   dependsOn: Build
@@ -143,6 +154,7 @@ stages:
       Environment: MO
       ServiceConnection: SFA-ASM-ModelOffice-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-FCS
 
 - stage: Deploy_DEMO
   dependsOn: Build
@@ -157,3 +169,4 @@ stages:
       Environment: DEMO
       ServiceConnection: SFA-DAS-DevTest-ARM
       OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+      AppRoleAssignmentsServiceConnection: das-app-role-assignments-CDS

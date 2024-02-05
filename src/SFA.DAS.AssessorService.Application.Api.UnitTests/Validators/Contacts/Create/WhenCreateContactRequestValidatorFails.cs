@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
             Setup();
 
             ContactRequest = new CreateContactRequest(Moq.It.IsAny<string>(), Moq.It.IsAny<string>(),
-                Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>());
+                Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>());
 
             _validationResult = CreateContactRequestValidator.Validate(ContactRequest);
         }

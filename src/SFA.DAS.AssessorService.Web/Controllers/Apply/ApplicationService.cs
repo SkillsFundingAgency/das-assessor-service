@@ -1,14 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.QnA;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.QnA.Api.Types;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             _organisationsApiClient = organisationsApiClient;
         }
 
-        public async Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat, string standardOrVersion)
+        public async Task<CreateApplicationRequest> BuildStandardWithdrawalRequest(ContactResponse contact, OrganisationResponse organisation, int standardCode, string referenceFormat)
         {
             var pipelinesCount = _learnerDetailsApiClient.GetPipelinesCount(organisation.EndPointAssessorOrganisationId, standardCode);
             var earliestWithdrawalDate = _organisationsApiClient.GetEarliestWithdrawalDate(organisation.Id, standardCode);
@@ -46,8 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     OrganisationName = organisation.EndPointAssessorName,
                     OrganisationReferenceId = organisation.Id.ToString(),
                     PipelinesCount = pipelinesCount.Result,
-                    EarliestDateOfWithdrawal = earliestWithdrawalDate.Result,
-                    StandardOrVersion = standardOrVersion
+                    EarliestDateOfWithdrawal = earliestWithdrawalDate.Result
                 })
             };
 
@@ -111,10 +110,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 OrganisationId = organisationId,
                 ApplicationReferenceFormat = referenceFormat,
                 CreatingContactId = contactId,
-                ApplySequences = sequences.Select(sequence => new ApplySequence
+                ApplySequences = sequences.Select(sequence => new Domain.Entities.ApplySequence
                 {
                     SequenceId = sequence.Id,
-                    Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new ApplySection
+                    Sections = sections.SelectMany(y => y.Where(x => x.SequenceNo == sequence.SequenceNo).Select(x => new Domain.Entities.ApplySection
                     {
                         SectionId = x.Id,
                         SectionNo = x.SectionNo,

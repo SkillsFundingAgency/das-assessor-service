@@ -2092,3 +2092,7 @@ th[aria-sort="ascending"] a:after {
 .das-user-navigation__sub-menu-list-item:last-child {
     border-bottom: none;
 }}
+
+.govuk-notification-banner__content > * {
+  max-width: 100% !important;
+}

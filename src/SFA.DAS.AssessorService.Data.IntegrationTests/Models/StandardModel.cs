@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public string Route { get; set; }
         public int VersionMajor { get; set; }
         public int VersionMinor { get; set; }
+        public string EqaProviderName { get; set; }
         public string OverviewOfRole { get; set; }
+        public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
     }
 }

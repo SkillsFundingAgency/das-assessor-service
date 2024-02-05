@@ -1,12 +1,41 @@
 ﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
-    public class StandardsHandler
+    public class StandardsHandler : HandlerBase
     {
         private static readonly DatabaseService DatabaseService = new DatabaseService();
+
+        public static StandardModel Create(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
+        {
+            ConvertVersionStringToInts(version, out int major, out int minor);
+         
+            return new StandardModel
+            {
+                StandardUId = $"{referenceNumber}_{version}",
+                IFateReferenceNumber = referenceNumber,
+                LarsCode = larsCode,
+                Title = title,
+                Version = version,
+                Level = 4,
+                Status = "Approved for delivery",
+                EffectiveFrom = DateTime.Now.AddDays(-50),
+                EffectiveTo = effectiveTo,
+                TypicalDuration = 12,
+                VersionApprovedForDelivery = DateTime.Now.AddDays(-50),
+                EPAChanged = epaChanged,
+                TrailblazerContact = "TrailblazerContact",
+                VersionMajor = major,
+                VersionMinor = minor,
+                StandardPageUrl = "www.standard.com",
+                EqaProviderName = eqaProviderName,
+                OverviewOfRole = "OverviewOfRole",
+                EpaoMustBeApprovedByRegulatorBody = epaoMustBeApprovedByRegulatorBody
+            };
+        }
 
         public static void InsertRecord(StandardModel standard)
         {
@@ -27,10 +56,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [ProposedTypicalDuration]" +
                     ", [ProposedMaxFunding]" +
                     ", [EPAChanged]" +
-                    ", [TrailblazerContact]" +
                     ", [StandardPageUrl]" +
+                    ", [TrailblazerContact]" +
+                    ", [VersionMajor]" +
+                    ", [VersionMinor]" +
+                    ", [EqaProviderName]" +
                     ", [OverviewOfRole]" +
-                    ", [VersionApprovedForDelivery])" +
+                    ", [VersionApprovedForDelivery]" +
+                    ", [EpaoMustBeApprovedByRegulatorBody])" +
                 "VALUES " +
                     "(@StandardUId" +
                     ", @iFateReferenceNumber" +
@@ -47,10 +80,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @proposedTypicalDuration" +
                     ", @proposedMaxFunding" +
                     ", @epaChanged" +
-                    ", @trailblazerContact" +
                     ", @standardPageUrl" +
+                    ", @trailblazerContact" +
+                    ", @versionMajor" +
+                    ", @versionMinor" +
+                    ", @eqaProviderName" +
                     ", @overviewOfRole" +
-                    ", @versionApprovedForDelivery)";
+                    ", @versionApprovedForDelivery" +
+                    ", @epaoMustBeApprovedByRegulatorBody)";
 
             DatabaseService.Execute(sqlToInsertStandard, standard);
         }
@@ -68,6 +105,18 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sql = "DELETE FROM [Standards]";
 
             DatabaseService.Execute(sql);
+        }
+
+        private static void ConvertVersionStringToInts(string version, out int major, out int minor)
+        {
+            string[] parts = version.Split('.');
+            if (parts.Length != 2)
+            {
+                throw new ArgumentException("Invalid version format");
+            }
+
+            major = int.Parse(parts[0]);
+            minor = int.Parse(parts[1]);
         }
     }
 }

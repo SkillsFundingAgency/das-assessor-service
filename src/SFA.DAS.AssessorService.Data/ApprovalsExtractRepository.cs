@@ -1,14 +1,13 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
@@ -175,7 +174,11 @@ namespace SFA.DAS.AssessorService.Data
 
         private async Task<IEnumerable<int>> UkprnsInExtractNotInProviders()
         {
-            var ukprns = await _unitOfWork.Connection.QueryAsync<int>("SELECT DISTINCT ax1.Ukprn FROM ApprovalsExtract ax1 LEFT JOIN Providers pr1 ON pr1.ukprn = ax1.ukprn WHERE pr1.ukprn IS NULL");
+            var ukprns = 
+                await _unitOfWork.Connection
+                    .QueryAsync<int>(
+                    "SELECT DISTINCT ax1.Ukprn FROM ApprovalsExtract ax1 LEFT JOIN Providers pr1 ON pr1.ukprn = ax1.ukprn WHERE pr1.ukprn IS NULL",
+                    commandTimeout: 120);
             return ukprns;
         }
 

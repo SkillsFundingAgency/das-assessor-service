@@ -19,16 +19,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/version")]
     public class CertificateVersionController : CertificateBaseController
     {
-        private readonly IStandardVersionClient _standardVersionClient;
+        private readonly IStandardVersionApiClient _standardVersionClient;
         public CertificateVersionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardVersionClient standardVersionClient, ISessionService sessionService)
+            ICertificateApiClient certificateApiClient, IStandardVersionApiClient standardVersionClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _standardVersionClient = standardVersionClient;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Version(bool? redirectToCheck = false)
+        public async Task<IActionResult> Version(bool? redirectToCheck = false) 
         {
             var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)

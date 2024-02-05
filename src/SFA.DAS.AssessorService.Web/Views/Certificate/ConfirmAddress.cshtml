@@ -41,13 +41,13 @@ else
                 @Html.HiddenFor(c => c.Postcode)
 
                 <h1 class="govuk-heading-xl">
-                    @string.Format(Localizer["Heading"].Value, Model.GivenNames, Model.FamilyName)
+                    @string.Format(Localizer["Heading"].Value, Model.GivenNames.ToUpper(), Model.FamilyName.ToUpper())
                 </h1>
 
                 <div class="govuk-inset-text">
                     <ul class="govuk-list">
                         <li @(string.IsNullOrEmpty(Model.Name) ? "hidden" : string.Empty)>
-                            <span><b>@Model.Name</b></span>
+                            <span><b>@Model.Name.ToUpper()</b></span>
                         </li>
                         <li @(string.IsNullOrEmpty(Model.Dept) ? "hidden" : string.Empty)>
                             <span>@Model.Dept</span>

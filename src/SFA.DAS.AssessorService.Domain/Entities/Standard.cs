@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string IfateReferenceNumber { get; set; }
         public int LarsCode { get; set; }
         public string Title { get; set; }
+        public bool CoronationEmblem { get; set; }
         public string Version { get; set; }
         public int VersionMajor { get; set; }
         public int VersionMinor { get; set; }
@@ -34,5 +35,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string EqaProviderContactName { get; set; }
         public string EqaProviderContactEmail { get; set; }
         public string OverviewOfRole { get; set; }
+        public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
     }
 }

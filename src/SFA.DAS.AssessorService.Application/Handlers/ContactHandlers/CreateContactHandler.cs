@@ -39,9 +39,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             var newContact = Mapper.Map<Contact>(createContactRequest);           
             newContact.OrganisationId = null;
             newContact.Status = ContactStatus.New;
-            newContact.SignInType = "ASLogin";
+            newContact.SignInType = string.IsNullOrEmpty(createContactRequest.GovIdentifier) ? "ASLogin" : "GovLogin";
             newContact.Title = "";
             newContact.GivenNames = createContactRequest.GivenName;
+            newContact.GovUkIdentifier = createContactRequest.GovIdentifier;
             
             var existingContact = await _contactRepository.GetContact(newContact.Email);
             if (existingContact == null)
@@ -56,13 +57,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     _logger.LogInformation($"CreateContactHandler Error: {e.Message} {e.StackTrace} {e.InnerException?.Message}");
                     throw;
                 }
+                
+                if (!string.IsNullOrEmpty(createContactRequest.GovIdentifier))
+                {
+                    await _contactRepository.UpdateSignInId(contactResponse.Id, Guid.NewGuid(), createContactRequest.GovIdentifier);
+                    response.Result = true;
+                    return response;
+                }
 
                 var invitationResult = await _signInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, contactResponse.Id);
                 if (!invitationResult.IsSuccess)
                 {
                     if (invitationResult.UserExists)
                     {
-                        await _contactRepository.UpdateSignInId(contactResponse.Id, invitationResult.ExistingUserId);
+                        await _contactRepository.UpdateSignInId(contactResponse.Id, invitationResult.ExistingUserId, null);
                         response.Result = true;
                         return response;
                     }
@@ -72,12 +80,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             }
             else
             {
+                if (!string.IsNullOrEmpty(createContactRequest.GovIdentifier))
+                {
+                    await _contactRepository.UpdateSignInId(existingContact.Id, Guid.NewGuid(), createContactRequest.GovIdentifier);
+                    response.Result = true;
+                    return response;
+                }
+                
                 var invitationResult = await _signInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
                 if (!invitationResult.IsSuccess)
                 {
                     if (invitationResult.UserExists)
                     {
-                        await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId);
+                        await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId, null);
                         response.Result = true;
                         return response;
                     }
