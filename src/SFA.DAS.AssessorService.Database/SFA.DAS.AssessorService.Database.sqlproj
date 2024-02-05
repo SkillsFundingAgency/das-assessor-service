@@ -195,6 +195,8 @@
     <Build Include="Tables\StagingOfsOrganisation.sql" />
     <Build Include="Tables\OfsOrganisation.sql" />
     <Build Include="StoredProcedures\Load_Ofs_Standards.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetMinDateTime.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetMaxDateTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

@@ -13,6 +13,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
 {
     public class LoadOfqualStandardsTests : TestBase
     {
+        private static DateTime DefaultEffectiveFrom = DateTime.Today.AddDays(-50);
+
         [TestCase("RN0001", "Name_A", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2", 
             "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone", 
             "OfqualStatus", "2020-01-01", "2020-02-01")]
@@ -261,7 +263,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, 101, "1.0", null, true, "Ofqual")
+                .WithStandard("BrickLayer", ifateReferenceNumber, 101, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
                 .WithOrganisation("OrganisationOne", "EPA0001", 12345678, recognitionNumber)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
@@ -289,7 +291,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, 101, "1.0", null, true, "Office for Students")
+                .WithStandard("BrickLayer", ifateReferenceNumber, 101, "1.0", DefaultEffectiveFrom, null, true, "Office for Students")
                 .WithOrganisation("OrganisationOne", "EPA0001", 12345678, recognitionNumber)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
@@ -313,7 +315,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, 101, "1.0", null, true, "Ofqual")
+                .WithStandard("BrickLayer", ifateReferenceNumber, 101, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
                 .WithOrganisation("OrganisationOne", "EPA0001", 12345678, recognitionNumber)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithOrganisationStandard(1, "EPA0001", 101, ifateReferenceNumber, operationalStartDate.AddDays(-15), operationalEndDate?.AddDays(5), currentDateTime.Date.AddDays(-10))
@@ -347,30 +349,30 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
-                .WithStandard("One", "ST0001", 101, "1.0", null, false, "Ofqual")
-                .WithStandard("One", "ST0001", 101, "1.1", null, false, "Ofqual")
-                .WithStandard("One", "ST0001", 101, "1.2", null, false, "Ofqual")
-                .WithStandard("Two", "ST0002", 102, "1.0", null, true, "Ofqual")
-                .WithStandard("Two", "ST0002", 102, "1.1", null, false, "Ofqual")
-                .WithStandard("Two", "ST0002", 102, "1.2", null, false, "Ofqual")
-                .WithStandard("Three", "ST0003", 103, "1.0", null, false, "Ofqual")
-                .WithStandard("Three", "ST0003", 103, "1.1", null, true, "Ofqual")
-                .WithStandard("Three", "ST0003", 103, "1.2", null, false, "Ofqual")
-                .WithStandard("Four", "ST0004", 104, "1.0", null, false, "Ofqual")
-                .WithStandard("Four", "ST0004", 104, "1.1", null, false, "Ofqual")
-                .WithStandard("Four", "ST0004", 104, "1.2", null, true, "Ofqual")
-                .WithStandard("Five", "ST0005", 105, "1.0", null, false, "Ofqual")
-                .WithStandard("Five", "ST0005", 105, "1.1", null, true, "Ofqual")
-                .WithStandard("Five", "ST0005", 105, "1.2", null, true, "Ofqual")
-                .WithStandard("Six", "ST0006", 106, "1.0", null, true, "Ofqual")
-                .WithStandard("Six", "ST0006", 106, "1.1", null, false, "Ofqual")
-                .WithStandard("Six", "ST0006", 106, "1.2", null, true, "Ofqual")
-                .WithStandard("Seven", "ST0007", 107, "1.0", null, true, "Ofqual")
-                .WithStandard("Seven", "ST0007", 107, "1.1", null, true, "Ofqual")
-                .WithStandard("Seven", "ST0007", 107, "1.2", null, false, "Ofqual")
-                .WithStandard("Eight", "ST0008", 108, "1.0", null, true, "Ofqual")
-                .WithStandard("Eight", "ST0008", 108, "1.1", null, true, "Ofqual")
-                .WithStandard("Eight", "ST0008", 108, "1.2", null, true, "Ofqual")
+                .WithStandard("One", "ST0001", 101, "1.0", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("One", "ST0001", 101, "1.1", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("One", "ST0001", 101, "1.2", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Two", "ST0002", 102, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Two", "ST0002", 102, "1.1", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Two", "ST0002", 102, "1.2", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Three", "ST0003", 103, "1.0", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Three", "ST0003", 103, "1.1", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Three", "ST0003", 103, "1.2", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Four", "ST0004", 104, "1.0", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Four", "ST0004", 104, "1.1", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Four", "ST0004", 104, "1.2", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Five", "ST0005", 105, "1.0", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Five", "ST0005", 105, "1.1", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Five", "ST0005", 105, "1.2", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Six", "ST0006", 106, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Six", "ST0006", 106, "1.1", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Six", "ST0006", 106, "1.2", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Seven", "ST0007", 107, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Seven", "ST0007", 107, "1.1", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Seven", "ST0007", 107, "1.2", DefaultEffectiveFrom, null, false, "Ofqual")
+                .WithStandard("Eight", "ST0008", 108, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Eight", "ST0008", 108, "1.1", DefaultEffectiveFrom, null, true, "Ofqual")
+                .WithStandard("Eight", "ST0008", 108, "1.2", DefaultEffectiveFrom, null, true, "Ofqual")
                 .WithOrganisation("OrganisationOne", "EPA0001", 12345678, recognitionNumber)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
@@ -401,7 +403,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
-                .WithStandard("One", "ST0001", 101, "1.0", null, false, "Ofqual")
+                .WithStandard("One", "ST0001", 101, "1.0", DefaultEffectiveFrom, null, false, "Ofqual")
                 .WithOrganisation("OrganisationOne", "EPA0001", 12345678, recognitionNumber)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",

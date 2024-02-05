@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.TestHelper\SFA.DAS.AssessorService.TestHelper.csproj" />
   </ItemGroup>
 
   <ItemGroup>

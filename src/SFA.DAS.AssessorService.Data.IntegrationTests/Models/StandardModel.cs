@@ -19,6 +19,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public int IsActive { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
+        public DateTime? VersionEarliestStartDate { get; set; }
+        public DateTime? VersionLatestStartDate { get; set; }
+        public DateTime? VersionLatestEndDate { get; set; }
         public DateTime VersionApprovedForDelivery { get; set; }
         public int ProposedTypicalDuration { get; set; }
         public int ProposedMaxFunding { get; set; }

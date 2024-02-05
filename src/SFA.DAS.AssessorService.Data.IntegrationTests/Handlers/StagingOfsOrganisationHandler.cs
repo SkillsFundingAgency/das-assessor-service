@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     "AND RegistrationStatus = @registrationStatus " +
                     "AND HighestLevelOfDegreeAwardingPowers = @highestLevelOfDegreeAwardingPowers";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<StagingOfsOrganisationModel, StagingOfsOrganisationModel>(sqlToQuery, stagingOfsOrganisation);
+            return await DatabaseService.QueryFirstOrDefaultAsync<StagingOfsOrganisationModel>(sqlToQuery, stagingOfsOrganisation);
         }
 
         public static void DeleteAllRecords()

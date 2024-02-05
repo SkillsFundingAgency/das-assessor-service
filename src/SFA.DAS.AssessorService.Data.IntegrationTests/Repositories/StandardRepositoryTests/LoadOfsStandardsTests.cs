@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
 {
     public class LoadOfsStandardsTests : TestBase
     {
+        private static DateTime DefaultEffectiveFrom = DateTime.Today.AddDays(-50);
+
         [TestCase(23456781, "Registered", null, 2)]
         [TestCase(23456781, "Registered", "", 2)]
         [TestCase(23456781, "Registered", "Bachelor's", 2)]
@@ -76,12 +78,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1 ))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -102,14 +104,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumberFirst, stdCodeFirst, "1.0", null, true, "Office for Students", false)
-                .WithStandard("Plaster", ifateReferenceNumberSecond, stdCodeSecond, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumberFirst, stdCodeFirst, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Plaster", ifateReferenceNumberSecond, stdCodeSecond, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationIdFirst, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeFirst, 1, IlrHandler.GetAcademicYear(currentDateTime))
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeSecond, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeFirst, IlrHandler.GetAcademicYear(currentDateTime), null, 1)
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeSecond, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -135,7 +137,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprnFirst, string.Empty)
                 .WithOrganisation("OrganisationTwo", "EPA0002", ukprnSecond, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationIdFirst, ukprnFirst, currentDateTime.AddDays(-1))
@@ -144,8 +146,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithProvider(ukprnSecond)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "usernameone")
                 .WithContact("DisplayName", "displayname@organisationtwo.com", "EPA0002", "usernametwo")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprnFirst, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime))
-                .WithIlr(Guid.NewGuid(), 2345678901, ukprnSecond, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprnFirst, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1)
+                .WithIlr(Guid.NewGuid(), 2345678901, ukprnSecond, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -171,12 +173,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime.AddYears(-1))))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime.AddYears(-1)), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -194,12 +196,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 3, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 3))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -217,12 +219,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", true)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", true)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -240,13 +242,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOrganisationStandard(1, "EPA0001", stdCode, ifateReferenceNumber, currentDateTime.Date, null, currentDateTime.Date)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -264,12 +266,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Ofqual")
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Ofqual")
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(12345678)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -293,35 +295,35 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("One", "ST0001", 101, "1.0", null, false, "Office for Students", false)
-                .WithStandard("One", "ST0001", 101, "1.1", null, false, "Office for Students", false)
-                .WithStandard("One", "ST0001", 101, "1.2", null, false, "Office for Students", false)
-                .WithStandard("Two", "ST0002", 102, "1.0", null, true, "Office for Students", false)
-                .WithStandard("Two", "ST0002", 102, "1.1", null, false, "Office for Students", false)
-                .WithStandard("Two", "ST0002", 102, "1.2", null, false, "Office for Students", false)
-                .WithStandard("Three", "ST0003", 103, "1.0", null, false, "Office for Students", false)
-                .WithStandard("Three", "ST0003", 103, "1.1", null, true, "Office for Students", false)
-                .WithStandard("Three", "ST0003", 103, "1.2", null, false, "Office for Students", false)
-                .WithStandard("Four", "ST0004", 104, "1.0", null, false, "Office for Students", false)
-                .WithStandard("Four", "ST0004", 104, "1.1", null, false, "Office for Students", false)
-                .WithStandard("Four", "ST0004", 104, "1.2", null, true, "Office for Students", false)
-                .WithStandard("Five", "ST0005", 105, "1.0", null, false, "Office for Students", false)
-                .WithStandard("Five", "ST0005", 105, "1.1", null, true, "Office for Students", false)
-                .WithStandard("Five", "ST0005", 105, "1.2", null, true, "Office for Students", false)
-                .WithStandard("Six", "ST0006", 106, "1.0", null, true, "Office for Students", false)
-                .WithStandard("Six", "ST0006", 106, "1.1", null, false, "Office for Students", false)
-                .WithStandard("Six", "ST0006", 106, "1.2", null, true, "Office for Students", false)
-                .WithStandard("Seven", "ST0007", 107, "1.0", null, true, "Office for Students", false)
-                .WithStandard("Seven", "ST0007", 107, "1.1", null, true, "Office for Students", false)
-                .WithStandard("Seven", "ST0007", 107, "1.2", null, false, "Office for Students", false)
-                .WithStandard("Eight", "ST0008", 108, "1.0", null, true, "Office for Students", false)
-                .WithStandard("Eight", "ST0008", 108, "1.1", null, true, "Office for Students", false)
-                .WithStandard("Eight", "ST0008", 108, "1.2", null, true, "Office for Students", false)
+                .WithStandard("One", "ST0001", 101, "1.0", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("One", "ST0001", 101, "1.1", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("One", "ST0001", 101, "1.2", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Two", "ST0002", 102, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Two", "ST0002", 102, "1.1", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Two", "ST0002", 102, "1.2", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Three", "ST0003", 103, "1.0", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Three", "ST0003", 103, "1.1", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Three", "ST0003", 103, "1.2", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Four", "ST0004", 104, "1.0", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Four", "ST0004", 104, "1.1", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Four", "ST0004", 104, "1.2", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Five", "ST0005", 105, "1.0", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Five", "ST0005", 105, "1.1", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Five", "ST0005", 105, "1.2", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Six", "ST0006", 106, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Six", "ST0006", 106, "1.1", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Six", "ST0006", 106, "1.2", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Seven", "ST0007", 107, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Seven", "ST0007", 107, "1.1", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Seven", "ST0007", 107, "1.2", DefaultEffectiveFrom, null, false, "Office for Students", false)
+                .WithStandard("Eight", "ST0008", 108, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Eight", "ST0008", 108, "1.1", DefaultEffectiveFrom, null, true, "Office for Students", false)
+                .WithStandard("Eight", "ST0008", 108, "1.2", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -347,12 +349,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfsStandardsTestsFixture()
-                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", null, true, "Office for Students", false)
+                .WithStandard("BrickLayer", ifateReferenceNumber, stdCode, "1.0", DefaultEffectiveFrom, null, true, "Office for Students", false)
                 .WithOrganisation("OrganisationOne", "EPA0001", ukprn, string.Empty)
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, 1, IlrHandler.GetAcademicYear(currentDateTime)))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), currentDateTime, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 

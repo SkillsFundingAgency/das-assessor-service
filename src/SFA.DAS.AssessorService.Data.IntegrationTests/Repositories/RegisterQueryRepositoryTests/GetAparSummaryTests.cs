@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenOrganisationHasAtLeastOneStandardVersion()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesOrganisations_WhenOrganisationDoesNotHaveAtLeastOneStandardVersion()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenOrganisationStandardEffectiveToDateNotSet()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenOrganisationStandardEffectiveToDateInFuture()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Now.AddDays(1), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesOrganisations_WhenOrganisationStandardEffectiveToInPast()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Now.AddDays(1), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenOrganisationStandardVersionEffectiveToDateNotSet()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenOrganisationStandardVersionEffectiveToDateInFuture()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Now.AddDays(1))
@@ -180,7 +180,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesOrganisations_WhenOrganisationStandardVersionEffectiveToInPast()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -203,8 +203,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenStandardEffectiveToDateNotSet()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard1", "ST0001", 101, "1.1", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.1", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -227,8 +227,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisations_WhenStandardEffectiveToDateInFuture()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard1", "ST0001", 101, "1.1", DateTime.Today.AddDays(1))
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.1", DefaultEffectiveFrom, DateTime.Today.AddDays(1))
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -251,8 +251,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesOrganisations_WhenStandardEffectiveToDateInPast()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard1", "ST0001", 101, "1.1", DateTime.Today.AddDays(-1))
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.1", DefaultEffectiveFrom, DateTime.Today.AddDays(-1))
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -275,8 +275,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenOrganisationStandardHasAtLeastOneStandardVersion()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -297,8 +297,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesStandards_WhenOrganisationDoesNotHaveAtLeastOneStandardVersion()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister) // no standard version
                 .WithOrganisationStandard(2, "EPA0001", 102, "ST0002", DefaultEffectiveFrom.AddDays(5), null, DefaultDateStandardApprovedOnRegister.AddDays(5))
@@ -318,8 +318,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenOrganisationStandardVersionHasEffectiveToDateNotSet()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -340,8 +340,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenOrganisationStandardVersionHasEffectiveToDateInFuture()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Today.AddDays(10))
@@ -362,8 +362,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesStandards_WhenOrganisationStandardVersionHasEffectiveToDateInPast()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, DateTime.Today.AddDays(-10))
@@ -384,8 +384,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenOrganisationStandardHasEffectiveToDateNotSet()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -406,8 +406,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenOrganisationStandardHasEffectiveToDateInFuture()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Today.AddDays(10), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -428,8 +428,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesStandards_WhenOrganisationStandardHasEffectiveToDateInPast()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, DateTime.Today.AddDays(-10), DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -450,8 +450,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenStandardHasEffectiveToDateNotSet()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -472,8 +472,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesStandards_WhenStandardHasEffectiveToDateInFuture()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DateTime.Today.AddDays(10))
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, DateTime.Today.AddDays(10))
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -494,8 +494,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_ExcludesStandards_WhenStandardHasEffectiveToDateInPast()
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DateTime.Today.AddDays(-10))
-                .WithStandard("TestStandard2", "ST0002", 102, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, DateTime.Today.AddDays(-10))
+                .WithStandard("TestStandard2", "ST0002", 102, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)
@@ -518,7 +518,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
         public async Task GetAparSummary_IncludesOrganisationForSpecificUkprn_WhenOrganisationHasAtLeastOneStandardVersion(int ukprn, string expectedEndPointAssessorOrganisationId)
         {
             using (var fixture = new GetAparSummaryTestsFixture()
-                .WithStandard("TestStandard1", "ST0001", 101, "1.0", null)
+                .WithStandard("TestStandard1", "ST0001", 101, "1.0", DefaultEffectiveFrom, null)
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithOrganisationStandard(1, "EPA0001", 101, "ST0001", DefaultEffectiveFrom, null, DefaultDateStandardApprovedOnRegister)
                 .WithOrganisationStandardVersion("EPA0001", 101, "ST0001", "1.0", DefaultEffectiveFrom, null)

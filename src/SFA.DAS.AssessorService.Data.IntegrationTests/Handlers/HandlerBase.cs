@@ -2,6 +2,7 @@
 using System;
 using System.Security.AccessControl;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Castle.Components.DictionaryAdapter;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
@@ -10,12 +11,36 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         protected static string NullQueryParam<T, TKey>(T item, Expression<Func<T, TKey>> propertySelector)
         {
             GetPropertyNameAndValue(item, propertySelector, out string propertyName, out TKey propertyValue);
-            return $"[{propertyName}] {(propertyValue == null ? "IS NULL" : "= @" + LowercaseFirstLetter(propertyName))}";
+
+            if (propertyValue == null)
+            {
+                return $"[{propertyName}] IS NULL";
+            }
+
+            return QueryParam(propertyName, propertyValue);
         }
 
         protected static string NotNullQueryParam<T, TKey>(T item, Expression<Func<T, TKey>> propertySelector)
         {
             GetPropertyNameAndValue(item, propertySelector, out string propertyName, out TKey propertyValue);
+            return QueryParam(propertyName, propertyValue);
+        }
+
+        private static string QueryParam<TKey>(string propertyName, TKey propertyValue)
+        {
+            if (typeof(TKey) == typeof(DateTime) || typeof(TKey) == typeof(DateTime?))
+            {
+                if (IsDateOnly(DateTime.Parse(propertyValue.ToString())))
+                {
+                    // convert to a DATE so that SQL can compare correctly
+                    return $"[{propertyName}] = CONVERT(DATE,@{LowercaseFirstLetter(propertyName)})";
+                }
+                else
+                {
+                    // convert to yyyy-MM-dd HH:mm:ss to remove milliseconds which sometimes have rounding errors
+                    return $"CONVERT(VARCHAR,[{propertyName}], 120) = CONVERT(VARCHAR,@{LowercaseFirstLetter(propertyName)}, 120)";
+                }
+            }
 
             return $"[{propertyName}] = @{LowercaseFirstLetter(propertyName)}";
         }
@@ -39,5 +64,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
             return char.ToLower(input[0]) + input.Substring(1);
         }
+
+        private static bool IsDateOnly(DateTime dateTime)
+        {
+            return dateTime.TimeOfDay == TimeSpan.Zero;
+        }
+
     }
 }

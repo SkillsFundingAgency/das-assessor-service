@@ -9,7 +9,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
     {
         private static readonly DatabaseService DatabaseService = new DatabaseService();
 
-        public static StandardModel Create(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
+        public static StandardModel Create(string title, string referenceNumber, int larsCode, string version, 
+            DateTime? effectiveFrom, DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
+            bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
             ConvertVersionStringToInts(version, out int major, out int minor);
          
@@ -22,10 +24,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 Version = version,
                 Level = 4,
                 Status = "Approved for delivery",
-                EffectiveFrom = DateTime.Now.AddDays(-50),
+                EffectiveFrom = effectiveFrom,
                 EffectiveTo = effectiveTo,
+                VersionEarliestStartDate = versionEarliestStartDate,
+                VersionLatestStartDate = versionLatestStartDate,
+                VersionLatestEndDate = versionLatestEndDate,
                 TypicalDuration = 12,
-                VersionApprovedForDelivery = DateTime.Now.AddDays(-50),
+                VersionApprovedForDelivery = effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
                 EPAChanged = epaChanged,
                 TrailblazerContact = "TrailblazerContact",
                 VersionMajor = major,
@@ -53,6 +58,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [IsActive]" +
                     ", [EffectiveFrom]" +
                     ", [EffectiveTo]" +
+                    ", [VersionEarliestStartDate]" +
+                    ", [VersionLatestStartDate]" +
+                    ", [VersionLatestEndDate]" +
                     ", [ProposedTypicalDuration]" +
                     ", [ProposedMaxFunding]" +
                     ", [EPAChanged]" +
@@ -77,6 +85,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @isActive" +
                     ", @effectiveFrom" +
                     ", @effectiveTo" +
+                    ", @versionEarliestStartDate" +
+                    ", @versionLatestStartDate" +
+                    ", @versionLatestEndDate" +
                     ", @proposedTypicalDuration" +
                     ", @proposedMaxFunding" +
                     ", @epaChanged" +

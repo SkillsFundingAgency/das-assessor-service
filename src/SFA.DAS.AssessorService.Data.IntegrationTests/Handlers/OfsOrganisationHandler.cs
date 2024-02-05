@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     "AND Ukprn = @ukprn " +
                     "AND CreatedAt = @createdAt";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<OfsOrganisationModel, OfsOrganisationModel>(sqlToQuery, ofsOrganisation);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OfsOrganisationModel>(sqlToQuery, ofsOrganisation);
         }
 
         public static async Task<int> QueryCountAllAsync()
