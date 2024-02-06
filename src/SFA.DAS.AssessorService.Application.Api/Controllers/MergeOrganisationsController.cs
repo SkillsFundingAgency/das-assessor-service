@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +8,10 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -39,10 +39,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.Created)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> MergeOrganisations(
-            [FromBody] MergeOrganisationsRequest mergeOrganisationsRequest)
+        public async Task<IActionResult> MergeOrganisations([FromBody] MergeOrganisationsRequest request)
         {
             _logger.LogInformation("Received Merge Organisation Request");
+
+            var mergeOrganisationsRequest = new Handlers.OrganisationHandlers.MergeOrganisationsRequest
+            {
+                PrimaryEndPointAssessorOrganisationId = request.PrimaryEndPointAssessorOrganisationId,
+                SecondaryEndPointAssessorOrganisationId = request.SecondaryEndPointAssessorOrganisationId,
+                SecondaryStandardsEffectiveTo = request.SecondaryStandardsEffectiveTo,
+                ActionedByUser = request.ActionedByUser
+            };
 
             var mergeOrganisation = await _mediator.Send(mergeOrganisationsRequest);
 
@@ -98,13 +105,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Get Merge Organisation Request");
 
-            var mergeOrganisation = await _mediator.Send(new GetMergeOrganisationRequest() { Id = id } );
-            if(null == mergeOrganisation)
+            var request = new Handlers.OrganisationHandlers.GetMergeOrganisationRequest() { Id = id };
+
+            var response = await _mediator.Send(request);
+            if(null == response)
             {
                 return NotFound();
             }
 
-            return new OkObjectResult(mergeOrganisation);
+            return new OkObjectResult(response);
         }
 
         [HttpGet("log", Name = "GetMergeLog")]
@@ -114,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetMergeLog(int? pageSize, int? pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId)
         {
-            var request = new GetMergeLogRequest() 
+            var request = new Handlers.OrganisationHandlers.GetMergeLogRequest()
             { 
                 PageSize = pageSize, 
                 PageIndex = pageIndex, 
@@ -124,6 +133,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 SecondaryEPAOId = secondaryEPAOId,
                 Status = "Completed"
             };
+            
             var response = await _mediator.Send(request);
             return new OkObjectResult(response);
         }

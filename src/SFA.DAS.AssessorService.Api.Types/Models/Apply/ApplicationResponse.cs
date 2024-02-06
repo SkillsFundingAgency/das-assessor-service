@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Domain.Consts;
+﻿using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
@@ -12,11 +11,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public string StandardApplicationType { get; set; }
         public Guid OrganisationId { get; set; }
         public string EndPointAssessorName { get; set; }
-        public FinancialGrade FinancialGrade { get; set; }
+        public Domain.Entities.FinancialGrade FinancialGrade { get; set; }
         public string ApplicationStatus { get; set; }
         public string ReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
-        public ApplyData ApplyData { get; set; }
+        public Domain.Entities.ApplyData ApplyData { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public bool ApplyViaOptIn { get; set; }

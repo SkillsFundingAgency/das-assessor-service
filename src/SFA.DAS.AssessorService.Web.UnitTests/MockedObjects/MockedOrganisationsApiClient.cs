@@ -2,6 +2,7 @@
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -66,8 +67,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 
             var tokenServiceMock = new Mock<IAssessorTokenService>();
             tokenServiceMock
-                .Setup(m => m.GetToken())
-                .Returns(string.Empty);
+                .Setup(m => m.GetTokenAsync())
+                .ReturnsAsync(string.Empty);
 
             var apiBaseLogger = new Mock<ILogger<ApiClientBase>>();
 

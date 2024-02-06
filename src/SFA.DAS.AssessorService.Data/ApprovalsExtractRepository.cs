@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Data;

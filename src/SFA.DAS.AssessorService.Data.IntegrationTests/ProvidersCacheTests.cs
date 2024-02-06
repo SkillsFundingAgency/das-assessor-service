@@ -1,16 +1,16 @@
-﻿using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using Dapper;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Dapper;
 using FluentAssertions;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {

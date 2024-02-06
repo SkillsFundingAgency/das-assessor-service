@@ -215,7 +215,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 if (applyData.Apply == null)
                 {
-                    applyData.Apply = new ApplyTypes.Apply();
+                    applyData.Apply = new ApplyInfo();
                 }
 
                 applyData.Apply.StandardCode = standardCode;
@@ -293,7 +293,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 if (applyData.Apply == null)
                 {
-                    applyData.Apply = new ApplyTypes.Apply();
+                    applyData.Apply = new ApplyInfo();
                 }
 
                 applyData.Apply.StandardCode = null;

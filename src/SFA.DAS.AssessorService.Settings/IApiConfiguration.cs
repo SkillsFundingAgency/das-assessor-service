@@ -1,4 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Settings
+﻿using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Common.Settings;
+
+namespace SFA.DAS.AssessorService.Settings
 {
     public interface IApiConfiguration
     {
@@ -9,16 +12,16 @@
         
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        ClientApiAuthentication QnaApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration QnaApiAuthentication { get; set; }
 
         LoginServiceConfig LoginService { get; set; }
         
-        ClientApiAuthentication RoatpApiAuthentication { get; set; }
-        ClientApiAuthentication ReferenceDataApiAuthentication { get; set; }
-        CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
-        CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
+        CompaniesHouseApiClientConfiguration CompaniesHouseApiAuthentication { get; set; }
+        CharityCommissionApiClientConfiguration CharityCommissionApiAuthentication { get; set; }
 
-        OuterApiConfiguration OuterApi { get; set; }
+        OuterApiClientConfiguration OuterApi { get; set; }
 
         string SqlConnectionString { get; set; }
         string SandboxSqlConnectionString { get; set; }
