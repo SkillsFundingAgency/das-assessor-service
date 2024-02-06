@@ -2,8 +2,8 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -128,9 +128,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
             return value;
         }
 
-        private async Task UpsertApprovalsExtractToStaging(List<Infrastructure.OuterApi.Learner> learners)
+        private async Task UpsertApprovalsExtractToStaging(List<Infrastructure.ApiClients.OuterApi.Learner> learners)
         {
-            var approvalsExtract = Mapper.Map<List<Infrastructure.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>(learners);
+            var approvalsExtract = Mapper.Map<List<Infrastructure.ApiClients.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>(learners);
             await _approvalsExtractRepository.UpsertApprovalsExtractToStaging(approvalsExtract);
         }
     }

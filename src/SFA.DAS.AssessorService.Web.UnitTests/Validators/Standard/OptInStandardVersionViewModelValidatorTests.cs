@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
         [Test]
         public void EmptyStandardReference_FailsValidation()
         {
-            var sut = new OptInStandardVersionViewModelValidator(GetMockHttpContextAccessor().Object, new Mock<IStandardVersionClient>().Object);
+            var sut = new OptInStandardVersionViewModelValidator(GetMockHttpContextAccessor().Object, new Mock<IStandardVersionApiClient>().Object);
             var viewModel = new OptInStandardVersionViewModel() { StandardReference = "" };
             var result = sut.Validate(viewModel);
 
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
             var viewModel = new OptInStandardVersionViewModel() { Version = "1.2", StandardReference = "ST999" };
             var standardVersion = new StandardVersion() { Version = "1.2" }; // same as the view model's version
 
-            var apiClientMock = new Mock<IStandardVersionClient>();
+            var apiClientMock = new Mock<IStandardVersionApiClient>();
             apiClientMock.Setup(a => a.GetEpaoRegisteredStandardVersions(It.IsAny<string>(), It.IsAny<string>()))
                          .ReturnsAsync(new[] {standardVersion});
 

@@ -21,7 +21,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ResourceEnvironmentName": "LOCAL",
-        "StubAuth": "false"
+        "StubAuth": "true"
       },
       "applicationUrl": "https://localhost:5015;http://localhost:59122/"
     }

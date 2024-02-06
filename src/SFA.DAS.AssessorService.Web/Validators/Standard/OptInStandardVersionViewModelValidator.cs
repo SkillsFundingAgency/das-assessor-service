@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
 {
     public class OptInStandardVersionViewModelValidator : AbstractValidator<OptInStandardVersionViewModel>
     {
-        public OptInStandardVersionViewModelValidator(IHttpContextAccessor httpContextAccessor, IStandardVersionClient standardVersionApiClient)
+        public OptInStandardVersionViewModelValidator(IHttpContextAccessor httpContextAccessor, IStandardVersionApiClient standardVersionApiClient)
         {
             var epaoOrgId = EpaOrgIdFinder.GetFromClaim(httpContextAccessor);
 

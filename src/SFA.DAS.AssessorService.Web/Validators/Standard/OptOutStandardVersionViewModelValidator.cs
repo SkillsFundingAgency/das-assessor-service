@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Validators.Standard
     {
         public const string OneApprovedVersionRequiredMessage = "One approved standard version is required";
 
-        public OptOutStandardVersionViewModelValidator(IHttpContextAccessor httpContextAccessor, IStandardVersionClient standardVersionApiClient)
+        public OptOutStandardVersionViewModelValidator(IHttpContextAccessor httpContextAccessor, IStandardVersionApiClient standardVersionApiClient)
         {
             var epaoOrgId = EpaOrgIdFinder.GetFromClaim(httpContextAccessor);
 
