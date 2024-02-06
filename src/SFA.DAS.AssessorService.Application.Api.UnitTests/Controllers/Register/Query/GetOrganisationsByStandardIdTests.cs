@@ -12,6 +12,7 @@ using NUnit.Framework.Internal;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -19,10 +20,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
     [TestFixture]
     public class GetOrganisationsByStandardIdTests
     {
-        private static RegisterQueryController _queryController;
-        private static object _result;
-        private static Mock<IMediator> _mediator;
-        private static Mock<ILogger<RegisterQueryController>> _logger;
+        private Mock<IMediator> _mediator;
+        private Mock<IBackgroundTaskQueue> _backgroundTaskQueue;
+        private Mock<ILogger<RegisterQueryController>> _logger;
+        private RegisterQueryController _queryController;
+        private object _result;
+
         private List<EpaOrganisation> _expectedAssessmentOrganisationSetOfDetails;
         private EpaOrganisation _assOrgDetails1;
         private EpaOrganisation _assOrgDetails2;
@@ -32,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
+            _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             // needs more details
             _assOrgDetails1 = new EpaOrganisation { OrganisationId = "Id1", Name = "Name 9", Ukprn = 9999999 };
@@ -46,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Setup(m =>
                 m.Send(It.IsAny<GetAssessmentOrganisationsbyStandardRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedAssessmentOrganisationSetOfDetails);
-            _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
+            _queryController = new RegisterQueryController(_mediator.Object, _backgroundTaskQueue.Object, _logger.Object);
 
             _result = _queryController.GetAssessmentOrganisationsByStandard(standardId).Result;
         }

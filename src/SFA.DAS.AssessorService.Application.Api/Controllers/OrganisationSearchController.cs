@@ -1,20 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Api.Infrastructure;
-using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.Api.Types.CharityCommission;
-using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
-using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -24,12 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IRoatpApiClient _roatpApiClient;
-        private readonly ReferenceDataApiClient _referenceDataApiClient;
-        private readonly CompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly CharityCommissionApiClient _charityCommissionApiClient;
+        private readonly IReferenceDataApiClient _referenceDataApiClient;
+        private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IMediator _mediator;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, IRoatpApiClient roatpApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, IRoatpApiClient roatpApiClient, IReferenceDataApiClient referenceDataApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -38,7 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _charityCommissionApiClient = charityCommissionApiClient;
             _mediator = mediator;
         }
-
 
         [HttpGet("organisations")]
         public async Task<PaginatedList<OrganisationSearchResult>> OrganisationSearchPaged(string searchTerm, int pageSize, int pageIndex)

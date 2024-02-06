@@ -1,6 +1,7 @@
-﻿using System.Net.Http;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -15,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/register-import/"))
             {
-                await PostPutRequest(request);
+                await PostPutRequestAsync(request);
             }
         }
     }

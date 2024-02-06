@@ -1,7 +1,7 @@
 parameters:  
   Environment:
   ServiceConnection:
-  LegacyApimServiceConnection: NAS Pre-Prod (ARM)
+  ApimServiceConnection:
   OverrideBlockOnPossibleDataLoss: false
   AppRoleAssignmentsServiceConnection:
 
@@ -127,7 +127,7 @@ jobs:
         - task: AzurePowerShell@5
           displayName: 'Import Swagger Definition'
           inputs:
-            azureSubscription: ${{ parameters.LegacyApimServiceConnection }}
+            azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -SwaggerSpecificationUrl "$(externalApiSwaggerUrl)" -ApiUrlSuffix "$(externalApiUrlSuffix)" -ServiceUrl "https://$(externalApiCustomHostname)"'
             azurePowerShellVersion: LatestVersion
@@ -135,7 +135,7 @@ jobs:
         - task: AzurePowerShell@5
           displayName: 'Set API Level Policy'
           inputs:
-            azureSubscription: ${{ parameters.LegacyApimServiceConnection }}
+            azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion
@@ -190,7 +190,7 @@ jobs:
         - task: AzurePowerShell@5
           displayName: 'Import Swagger Definition'
           inputs:
-            azureSubscription: 'NAS Pre-Prod (ARM)'
+            azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Import-APIMSwaggerApiDefinition.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -SwaggerSpecificationUrl "$(externalApiSandboxSwaggerUrl)" -ApiUrlSuffix "$(externalApiSandboxUrlSuffix)" -ServiceUrl "https://$(externalApiSandboxCustomHostname)"'
             azurePowerShellVersion: LatestVersion
@@ -198,7 +198,7 @@ jobs:
         - task: AzurePowerShell@5
           displayName: 'Set API Level Policy'
           inputs:
-            azureSubscription: 'NAS Pre-Prod (ARM)'
+            azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
             ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)"'
             azurePowerShellVersion: LatestVersion

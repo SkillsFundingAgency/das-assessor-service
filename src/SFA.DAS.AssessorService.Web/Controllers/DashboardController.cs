@@ -13,6 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Api.Common.Exceptions;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -99,9 +100,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task<ContactResponse> GetUserAndUpdateEmail()
         {
             var signinId = _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            ContactResponse contact = null;
+            try
+            {
+                contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
+            }
+            catch (EntityNotFoundException)
+            {
+                _logger.LogInformation("Failed to retrieve user by Sign In Id.");
+            }
             
-            var contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
-            if (_configuration.UseGovSignIn)
+            if (_configuration.UseGovSignIn && contact != null)
             {
                 var govIdentifier = _contextAccessor.HttpContext.User.Claims
                     .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

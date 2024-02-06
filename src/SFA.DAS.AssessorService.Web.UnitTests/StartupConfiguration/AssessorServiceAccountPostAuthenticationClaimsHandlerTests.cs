@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
@@ -11,14 +6,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.Testing.AutoFixture;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
 {
@@ -135,6 +135,44 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
                 c.NewEmail.Equals(newEmailAddress)
                 && c.GovUkIdentifier.Equals(contactResponse.GovUkIdentifier)
                 )), Times.Once);
+        }
+        [Test, MoqAutoData]
+        public async Task Then_The_User_Status_Is_Updated_If_Pending
+        (
+            string nameIdentifier,
+            string emailAddress,
+            ContactResponse contactResponse,
+            ContactResponse contactUpdateResponse,
+            EpaOrganisation epaOrganisation)
+        {
+            contactResponse.Status = "Pending";
+            var contactsApiClient = new Mock<IContactsApiClient>();
+            var organisationApiClient = new Mock<IOrganisationsApiClient>();
+            var sessionService = new Mock<ISessionService>();
+            var webConfiguration = new Mock<IWebConfiguration>();
+            var handler =
+                new AssessorServiceAccountPostAuthenticationClaimsHandler(
+                    Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
+                    organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
+            
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress, "");
+            contactsApiClient.Setup(x => x.GetContactByEmail(emailAddress)).ReturnsAsync(contactResponse);
+            organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
+                .ReturnsAsync(epaOrganisation);
+            
+        
+            var actual = await handler.GetClaims(tokenValidatedContext);
+        
+            actual.First(c => c.Type.Equals("UserId")).Value.Should().Be(contactResponse.Id.ToString());
+            actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
+            actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
+            actual.First(c => c.Type.Equals("email")).Value.Should().Be(contactResponse.Email);
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactResponse.SignInId.ToString());
+            actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId); 
+            actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
+            contactsApiClient.Verify(x => x.Callback(It.Is<SignInCallback>(c =>
+                c.GovIdentifier.Equals(nameIdentifier) && c.Sub.Equals(contactResponse.SignInId.ToString()) &&
+                c.SourceId.Equals(contactResponse.Id.ToString()))), Times.Once);
         }
         
         [Test, AutoData]

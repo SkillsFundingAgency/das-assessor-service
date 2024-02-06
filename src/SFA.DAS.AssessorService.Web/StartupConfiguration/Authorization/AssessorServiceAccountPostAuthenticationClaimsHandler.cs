@@ -5,10 +5,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.Services;
@@ -52,16 +52,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     user = await _contactsApiClient.GetContactBySignInId(signInId);
                 }
-                catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+                catch (EntityNotFoundException)
                 {
-                    _logger.LogInformation("Failed to retrieve user be Sign In Id.");
+                    _logger.LogInformation("Failed to retrieve user by Sign In Id.");
                 }
                 
                 try
                 {
                     user ??= await _contactsApiClient.GetContactByEmail(email);
                 }
-                catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+                catch (EntityNotFoundException)
                 {
                     _logger.LogInformation("Failed to retrieve user by email.");
                 }
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     user ??= await _contactsApiClient.GetContactByGovIdentifier(govLoginId);
                 }
-                catch (SFA.DAS.AssessorService.Application.Api.Client.Exceptions.EntityNotFoundException)
+                catch (EntityNotFoundException)
                 {
                     _logger.LogInformation("Failed to retrieve user by gov login.");
                 }
@@ -148,6 +148,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     else
                     {
                         claims.Add(new Claim("sub", user.SignInId.ToString()));
+                    }
+
+                    if (user.Status == "Pending")
+                    {
+                        await _contactsApiClient.Callback(new SignInCallback
+                        {
+                            Sub = user.SignInId.ToString(),
+                            SourceId = user.Id.ToString(),
+                            GovIdentifier = govLoginId
+                        });
                     }
                 }
             }

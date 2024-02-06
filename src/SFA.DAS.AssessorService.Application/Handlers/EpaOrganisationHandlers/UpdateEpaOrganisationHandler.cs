@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Ukprn = request.Ukprn,
                 Status = status,
                 RecognitionNumber = request.RecognitionNumber ?? existingOrganisation?.RecognitionNumber,
-                OrganisationData = new OrganisationData
+                OrganisationData = new AssessorService.Api.Types.Models.AO.OrganisationData
                 {
                     Address1 = request.Address1,
                     Address2 = request.Address2,
@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoATPApproved = existingOrganisation?.OrganisationData?.RoATPApproved ?? false,
                     RoEPAOApproved = roEPAOApproved,
                     EndPointAssessmentOrgId = existingOrganisation?.OrganisationData?.EndPointAssessmentOrgId,
-                    FinancialGrades = existingOrganisation?.OrganisationData?.FinancialGrades ?? new List<ApplyTypes.FinancialGrade>(),
+                    FinancialGrades = existingOrganisation?.OrganisationData?.FinancialGrades ?? new List<Domain.Entities.FinancialGrade>(),
                     FHADetails = new FHADetails
                     {
                         FinancialDueDate = request.FinancialDueDate,

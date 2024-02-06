@@ -1,9 +1,11 @@
-﻿namespace SFA.DAS.AssessorService.Settings
+﻿using SFA.DAS.AssessorService.Api.Common.Settings;
+
+namespace SFA.DAS.AssessorService.Settings
 {
     public interface IExternalApiConfiguration
     {
-        ClientApiAuthentication AssessorApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
 
-        ClientApiAuthentication SandboxAssessorApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration SandboxAssessorApiAuthentication { get; set; }
     }
 }
