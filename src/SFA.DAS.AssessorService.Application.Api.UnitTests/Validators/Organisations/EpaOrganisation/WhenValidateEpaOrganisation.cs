@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
 
@@ -43,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
                 ActionChoice = "MakeLive",
                 CompanyNumber = "AA000000",
                 OrganisationId = "123",
-                CompanySummary = new ApplyTypes.CompaniesHouse.CompaniesHouseSummary(),
+                CompanySummary = new Domain.Entities.CompaniesHouseSummary(),
                 CharityNumber = "AA000000",
                 Name = "TestName",
                 Ukprn = 12345679,

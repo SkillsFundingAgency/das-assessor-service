@@ -4,5 +4,6 @@
     {
         public string Sub { get; set; }
         public string SourceId { get; set; }
+        public string GovIdentifier { get; set; }
     }
 }

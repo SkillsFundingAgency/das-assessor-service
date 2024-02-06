@@ -1,14 +1,17 @@
-﻿namespace SFA.DAS.AssessorService.Settings
+﻿using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Common.Settings;
+
+namespace SFA.DAS.AssessorService.Settings
 {
     public interface IWebConfiguration
     {
-        ClientApiAuthentication AssessorApiAuthentication { get; set; }
-        AzureApiAuthentication AzureApiAuthentication { get; set; }
-        ClientApiAuthentication QnaApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
+        AzureApiClientConfiguration AzureApiAuthentication { get; set; }
+        ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
         
         LoginServiceConfig LoginService { get; set; }
 
-        ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
 
         string FeedbackUrl { get; set; }
         string ReferenceFormat { get; set; }

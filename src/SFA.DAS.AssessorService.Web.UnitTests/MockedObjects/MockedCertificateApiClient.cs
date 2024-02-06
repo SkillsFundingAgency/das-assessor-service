@@ -1,15 +1,13 @@
-﻿using System;
-using FizzWare.NBuilder;
-using FluentAssertions;
-using Microsoft.Extensions.Hosting;
+﻿using FizzWare.NBuilder;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -17,12 +15,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var clientApiAuthenticationMock = new Mock<IClientApiAuthentication>();
+            var clientApiAuthenticationMock = new Mock<IAzureActiveDirectoryClientConfiguration>();
             
             var tokenServiceMock = new Mock<IAssessorTokenService>();
             tokenServiceMock
-                .Setup(m => m.GetToken())
-                .Returns(string.Empty);
+                .Setup(m => m.GetTokenAsync())
+                .ReturnsAsync(string.Empty);
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();

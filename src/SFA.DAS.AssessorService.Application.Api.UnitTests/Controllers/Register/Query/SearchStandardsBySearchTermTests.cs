@@ -11,16 +11,19 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
 using FluentAssertions.Equivalency;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
     [TestFixture]
     public class SearchStandardsBySearchTermTests
     {
-        private static RegisterQueryController _queryController;
-        private static object _result;
-        private static Mock<IMediator> _mediator;
-        private static Mock<ILogger<RegisterQueryController>> _logger;
+        private Mock<IMediator> _mediator;
+        private Mock<IBackgroundTaskQueue> _backgroundTaskQueue;
+        private Mock<ILogger<RegisterQueryController>> _logger;
+        private RegisterQueryController _queryController;
+        private object _result;
+
         private List<Standard> _expectedStandards;
         private Standard _standard1;
         private Standard _standard2;
@@ -31,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
+            _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             _standard1 = new Standard {LarsCode = 1, Title = "Test 9"};
             _standard2 = new Standard {LarsCode = 1, Title = "Test 2"};
@@ -43,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Setup(m =>
                 m.Send(It.IsAny<SearchStandardsRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedStandards);
-            _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
+            _queryController = new RegisterQueryController(_mediator.Object, _backgroundTaskQueue.Object, _logger.Object);
             _result = _queryController.SearchStandards(_searchTerm).Result;
         }  
 

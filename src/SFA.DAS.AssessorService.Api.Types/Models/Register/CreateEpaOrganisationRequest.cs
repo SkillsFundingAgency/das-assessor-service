@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
@@ -22,9 +20,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Address4 { get; set; }
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
-        public CompaniesHouseSummary CompanySummary { get; set; } // Summary of Company info from Companies House. Similar format to that used in RoATP.
+        public Domain.Entities.CompaniesHouseSummary CompanySummary { get; set; } // Summary of Company info from Companies House. Similar format to that used in RoATP.
         public string CharityNumber { get; set; }
-        public CharityCommissionSummary CharitySummary { get; set; } // Summary of Charity info from Charity Commission. Similar format to that used in RoATP.
+        public Domain.Entities.CharityCommissionSummary CharitySummary { get; set; } // Summary of Charity info from Charity Commission. Similar format to that used in RoATP.
         public string ProviderName { get; set; }
         public string City { get; set; }
         public string Status { get; set; }

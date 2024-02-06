@@ -1,0 +1,577 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+
+    <Description>Assessor service shared codebase</Description>
+    <Authors>ESFA</Authors>
+    <Company>ESFA</Company>
+    <PackageLicense>https://github.com/SkillsFundingAgency/das-assessor-service/master/LICENSE</PackageLicense>
+    <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>$(SolutionDir)..\..\NugetPackages</PackageOutputPath>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" Link="SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Exceptions\EntityAlreadyExistsException.cs" Link="SFA.DAS.AssessorService.Api.Common\Exceptions\EntityAlreadyExistsException.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Exceptions\EntityNotFoundException.cs" Link="SFA.DAS.AssessorService.Api.Common\Exceptions\EntityNotFoundException.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ITokenService.cs" Link="SFA.DAS.AssessorService.Api.Common\ITokenService.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\AzureActiveDirectoryClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\AzureActiveDirectoryClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\AzureApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\AzureApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\CharityCommissionApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\CharityCommissionApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\CompaniesHouseApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\CompaniesHouseApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IAzureActiveDirectoryClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IAzureActiveDirectoryClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IAzureApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IAzureApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ICharityCommissionApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ICharityCommissionApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ICompaniesHouseApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ICompaniesHouseApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IManagedIdentityClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IManagedIdentityClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IOuterApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IOuterApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ManagedIdentityClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ManagedIdentityClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\OuterApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\OuterApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\TokenService.cs" Link="SFA.DAS.AssessorService.Api.Common\TokenService.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Accounts.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Accounts.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Trustee.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Trustee.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Accounts.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Accounts.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Address.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Company.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Company.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Disqualification.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Disqualification.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Officer.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\Officer.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CompaniesHouse\PersonWithSignificantControl.cs" Link="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\PersonWithSignificantControl.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Consts\EmailTemplateNames.cs" Link="SFA.DAS.AssessorService.Api.Types\Consts\EmailTemplateNames.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Consts\EmailTemplateTokens.cs" Link="SFA.DAS.AssessorService.Api.Types\Consts\EmailTemplateTokens.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Enums\AmendReasons.cs" Link="SFA.DAS.AssessorService.Api.Types\Enums\AmendReasons.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Enums\ReprintReasons.cs" Link="SFA.DAS.AssessorService.Api.Types\Enums\ReprintReasons.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddressResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddressResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactASignInId.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactASignInId.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AparSummary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AparSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AppliedStandardVersion.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AppliedStandardVersion.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationContact.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationContact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationSummary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\DeliveryArea.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\DeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\EpaContact.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\EpaContact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\EpaOrganisation.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\EpaOrganisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\EpaOrganisationStandard.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\EpaOrganisationStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationData.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandard.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardData.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardDeliveryArea.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardDeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardPeriod.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardPeriod.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardSummary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardVersion.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationStandardVersion.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\OrganisationType.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\ReportDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\ReportDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\ReportType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\ReportType.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\WorksheetDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\WorksheetDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AparSummaryUpdateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AparSummaryUpdateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\ApplicationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\ApplicationResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\CreateApplicationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\CreateApplicationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\DeleteApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\DeleteApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\ClosedFinancialApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\ClosedFinancialApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\FeedbackAddedFinancialApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\FeedbackAddedFinancialApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\OpenFinancialApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\OpenFinancialApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\Review\ReturnFinancialReviewRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\Review\ReturnFinancialReviewRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\Review\StartFinancialReviewRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\Review\StartFinancialReviewRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\GetApplicationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\GetApplicationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\GetApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\GetApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\GetLatestWithdrawalDateForStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\GetLatestWithdrawalDateForStandardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\ResetApplicationToStage1Request.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\ResetApplicationToStage1Request.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\ApplicationReviewStatusCountsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\ApplicationReviewStatusCountsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\ApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\ApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\EvaluateApplicationSectionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\EvaluateApplicationSectionRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\OrganisationApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\OrganisationApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\ReturnApplicationSequenceRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\ReturnApplicationSequenceRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\StandardApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\StandardApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\StartApplicationSectionReviewRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\StartApplicationSectionReviewRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\WithdrawalApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\WithdrawalApplicationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\SubmitApplicationSequenceRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\SubmitApplicationSequenceRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\UpdateStandardDataRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\UpdateStandardDataRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureGroup.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureGroup.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureIdentity.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureIdentity.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureProduct.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureProduct.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureSubscription.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureSubscription.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureUser.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\AzureUser.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\CreateAzureUserRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\CreateAzureUserRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\CreateAzureUserSubscriptionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\CreateAzureUserSubscriptionRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\EnableDisableAzureUserRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\EnableDisableAzureUserRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\UpdateAzureUserNoteRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\UpdateAzureUserNoteRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureGroupResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureGroupResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureProductResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureProductResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureSubscriptionResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureSubscriptionResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureUserResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\AzureUserResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\BatchLogResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\BatchLogResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\CreateBatchLogRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\CreateBatchLogRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\GetBatchNumberReadyToPrintRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\GetBatchNumberReadyToPrintRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\UpdateBatchLogPrintedRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\UpdateBatchLogPrintedRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\UpdateBatchLogReadyToPrintAddCertificatesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\UpdateBatchLogReadyToPrintAddCertificatesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\UpdateBatchLogSentToPrinterRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\UpdateBatchLogSentToPrinterRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CertificateReprintResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CertificateReprintResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateDataResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateDataResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatePrintStatusUpdate.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatePrintStatusUpdate.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatePrintStatusUpdateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatePrintStatusUpdateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatesCountResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatesCountResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatesForBatchNumberResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatesForBatchNumberResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateSummaryResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateSummaryResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\DeleteCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\DeleteCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateForUlnRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateForUlnRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateHistoryRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateHistoryRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesForBatchNumberRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesForBatchNumberRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesReadyToPrintCountRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesReadyToPrintCountRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetContacttPreviousAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetContacttPreviousAddressesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequestReprintCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequestReprintCommand.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithAmendReasonCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithAmendReasonCommand.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithReprintReasonCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithReprintReasonCommand.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateGradeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateGradeRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CheckIfOfsOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CheckIfOfsOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Charge.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Charge.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\SicCodeDictionary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\SicCodeDictionary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\CompanyDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\CompanyDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\DateOfBirth.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\DateOfBirth.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Disqualification.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Disqualification.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\InsolvencyDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\InsolvencyDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Officer.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Officer.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\PersonWithSignificantControl.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\PersonWithSignificantControl.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ContactBoolResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ContactBoolResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ContactIncludePrivilegesResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ContactIncludePrivilegesResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ContactResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ContactResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CreateContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CreateContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CreateOrganisationAndContactFromApplyResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CreateOrganisationAndContactFromApplyResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CreateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CreateOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CreateOrganisationStandardFromApplyResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CreateOrganisationStandardFromApplyResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Dashboard\GetEpaoDashboardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Dashboard\GetEpaoDashboardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Dashboard\GetEpaoDashboardResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Dashboard\GetEpaoDashboardResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\DeleteContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\DeleteContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\DeleteOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\DeleteOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Email\SendAddStandardEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Email\SendAddStandardEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Email\SendEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Email\SendEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Email\SendOptInStandardVersionEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Email\SendOptInStandardVersionEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Email\SendOptOutStandardVersionEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Email\SendOptOutStandardVersionEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Email\SendOrganisationDetailsAmendedEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Email\SendOrganisationDetailsAmendedEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsExtractRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsExtractRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsExtractResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsExtractResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsFiltersRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsFiltersRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsFiltersResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsFiltersResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoPipelineStandardsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaOrganisationContactResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaOrganisationContactResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaOrganisationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaOrganisationResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoStandardResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoStandardResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\EpaoStandardVersionResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\EpaoStandardVersionResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\BatchCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\BatchCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\BatchCertificateResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\BatchCertificateResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\CreateBatchCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\CreateBatchCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\DeleteBatchCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\DeleteBatchCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\GetBatchCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\GetBatchCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\GetBatchCertificateResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\GetBatchCertificateResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\SubmitBatchCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\SubmitBatchCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\SubmitBatchCertificateResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\SubmitBatchCertificateResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\UpdateBatchCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\UpdateBatchCertificateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\BatchEpaRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\BatchEpaRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\BatchEpaResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\BatchEpaResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\CreateBatchEpaRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\CreateBatchEpaRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\DeleteBatchEpaRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\DeleteBatchEpaRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\UpdateBatchEpaRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\UpdateBatchEpaRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllStandardsByOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllStandardsByOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryLastUpdatedRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryLastUpdatedRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAppliedStandardVersionsForEPAORequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAppliedStandardVersionsForEPAORequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationByEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationByEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationsbyStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationsbyStandardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetBatchLogRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetBatchLogRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetCalculatedStandardVersionForApprenticeshipRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetCalculatedStandardVersionForApprenticeshipRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetContactsForOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetContactsForOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetContactsWhoCanBePrimaryForOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetContactsWhoCanBePrimaryForOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetDeliveryAreasRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetDeliveryAreasRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEarliestWithdrawalDateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEarliestWithdrawalDateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEmailTemplateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEmailTemplateRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactByEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactByEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactBySignInIdRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactBySignInIdRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetLastBatchLogRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetLastBatchLogRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetMergeLogRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetMergeLogRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetMergeOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetMergeOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationStandardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationTypesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationTypesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetStandardVersionRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ISignInService.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ISignInService.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\ApprovalsLearnerResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\ApprovalsLearnerResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\GetPipelinesCountRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\GetPipelinesCountRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\ImportLearnerDetailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\ImportLearnerDetailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\ImportLearnerDetailResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\ImportLearnerDetailResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\LoginRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\LoginRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\MergeLogEntry.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\MergeLogEntry.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\MergeOrganisationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\MergeOrganisationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\MergeOrganisationsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\MergeOrganisationsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\MigrateContactOrganisation.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\MigrateContactOrganisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\NewApplyContact.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\NewApplyContact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\NotifyUserManagementUsersRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\NotifyUserManagementUsersRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardDetailsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardDetailsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardDetailsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardDetailsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderApprovedStandardsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderFilterStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderFilterStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderFilterStandardsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderFilterStandardsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardDetailsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardDetailsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardDetailsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardDetailsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\GetOppFinderNonApprovedStandardsResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderApprovedSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderApprovedSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderApprovedStandardDetailsRegionResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderApprovedStandardDetailsRegionResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderApprovedStandardDetailsVersionResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderApprovedStandardDetailsVersionResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderExpressionOfInterestRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderExpressionOfInterestRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderFilterResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderFilterResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\OppFinderSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OppFinder\UpdateStandardSummaryRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\UpdateStandardSummaryRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationSearchRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandardResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandardResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandards\OrganisationStandardAddRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandards\OrganisationStandardAddRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandardVersionOptInRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandardVersionOptInRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandardVersionOptOutRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandardVersionOptOutRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\OrganisationType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\OrganisationType.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\PrivilegeResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\PrivilegeResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ProviderRegister\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ProviderRegister\Address.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ProviderRegister\Provider.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ProviderRegister\Provider.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\Address.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\Organisation.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\Organisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\OrganisationType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\OrganisationType.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\AssociateEpaOrganisationWithEpaContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\AssociateEpaOrganisationWithEpaContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaContactValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaContactValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationStandardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationStandardValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationStandardValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\CreateEpaOrganisationValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\SearchStandardsValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\SearchStandardsValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationAddressRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationAddressRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationContactValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationContactValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationPhoneNumberRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationPhoneNumberRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationPrimaryContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationPrimaryContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardVersionValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationStandardVersionValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationWebsiteLinkRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateEpaOrganisationWebsiteLinkRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateFinancialsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Register\UpdateFinancialsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchQuery.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchQuery.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchStandardsRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SignInCallback.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SignInCallback.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SigninIdWrapper.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SigninIdWrapper.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\StaffSearchItems.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\StaffSearchItems.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\StaffSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\StaffSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\LearnerDetailResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\LearnerDetailResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchLogRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchLogRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchLogResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchLogResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchSearchReponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchSearchReponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchSearchRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\StaffBatchSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardData.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardNonApprovedData.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardNonApprovedData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardOptions.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardOptions.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersion.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersion.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionApplication.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionApplication.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionOption.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Standards\StandardVersionOption.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactGovLoginRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactGovLoginRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactWithOrgAndStausRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactWithOrgAndStausRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\RemoveContactFromOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\RemoveContactFromOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\RemoveContactFromOrganisationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\RemoveContactFromOrganisationResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\RequestForPrivilegeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\RequestForPrivilegeRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\SetContactPrivilegesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\SetContactPrivilegesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\SetContactPrivilegesResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\SetContactPrivilegesResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Validation\ApiValidationResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Validation\ApiValidationResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationErrorDetail.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationErrorDetail.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationStatusCode.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationStatusCode.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\WithdrawOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\WithdrawOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\WithdrawStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\WithdrawStandardRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\AssessorTokenService.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\AssessorTokenService.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ApplicationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ApplicationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ApprovalsLearnerApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ApprovalsLearnerApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\CertificateApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\CertificateApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ContactsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ContactsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\DashboardApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\DashboardApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\EmailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\EmailApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IApplicationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IApplicationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IApprovalsLearnerApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IApprovalsLearnerApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ICertificateApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ICertificateApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IContactsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IContactsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IDashboardApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IDashboardApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IEmailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IEmailApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IMergeOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IMergeOrganisationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IOppFinderApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IOppFinderApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IOrganisationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IRegisterValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IScheduleApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IScheduleApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ISearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ISearchApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffReportsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffReportsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStaffSearchApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardVersionApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IStandardVersionApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LearnerDetailsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LocationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\LoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\LoginApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\MergeOrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\MergeOrganisationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\OppFinderApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\OppFinderApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\OrganisationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\OrganisationsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterImportApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterImportApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\RegisterValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ScheduleApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ScheduleApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\SearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\SearchApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffReportsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffReportsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StaffSearchApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardsApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SystemTime.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SystemTime.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\Application.cs" Link="SFA.DAS.AssessorService.ApplyTypes\Application.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationReviewStatus.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationReviewStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationReviewStatusCounts.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationReviewStatusCounts.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationSection.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationSection.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationSequence.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationSequence.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationStatus.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationSummaryItem.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationSummaryItem.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplyTypeBase.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplyTypeBase.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\Contact.cs" Link="SFA.DAS.AssessorService.ApplyTypes\Contact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\CreateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.ApplyTypes\CreateOrganisationRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\FinancialApplicationSummaryItem.cs" Link="SFA.DAS.AssessorService.ApplyTypes\FinancialApplicationSummaryItem.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\FinancialReviewStatus.cs" Link="SFA.DAS.AssessorService.ApplyTypes\FinancialReviewStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\Organisation.cs" Link="SFA.DAS.AssessorService.ApplyTypes\Organisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\OrganisationDetails.cs" Link="SFA.DAS.AssessorService.ApplyTypes\OrganisationDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\ApplicationTypes.cs" Link="SFA.DAS.AssessorService.Domain\Const\ApplicationTypes.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\ApplyConst.cs" Link="SFA.DAS.AssessorService.Domain\Const\ApplyConst.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\ApprovedStatus.cs" Link="SFA.DAS.AssessorService.Domain\Const\ApprovedStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\CertificateActions.cs" Link="SFA.DAS.AssessorService.Domain\Const\CertificateActions.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\CertificateGrade.cs" Link="SFA.DAS.AssessorService.Domain\Const\CertificateGrade.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\CertificateStatus.cs" Link="SFA.DAS.AssessorService.Domain\Const\CertificateStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\CompletionStatus.cs" Link="SFA.DAS.AssessorService.Domain\Const\CompletionStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\ContactStatus.cs" Link="SFA.DAS.AssessorService.Domain\Const\ContactStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\EpaOutcome.cs" Link="SFA.DAS.AssessorService.Domain\Const\EpaOutcome.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\OrganisationStatus.cs" Link="SFA.DAS.AssessorService.Domain\Const\OrganisationStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\Privileges.cs" Link="SFA.DAS.AssessorService.Domain\Const\Privileges.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\StandardApplicationTypes.cs" Link="SFA.DAS.AssessorService.Domain\Const\StandardApplicationTypes.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\SystemUsers.cs" Link="SFA.DAS.AssessorService.Domain\Const\SystemUsers.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\TimezoneNames.cs" Link="SFA.DAS.AssessorService.Domain\Const\TimezoneNames.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\VersionStatus.cs" Link="SFA.DAS.AssessorService.Domain\Const\VersionStatus.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Consts\WithdrawalTypes.cs" Link="SFA.DAS.AssessorService.Domain\Const\WithdrawalTypes.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\ApplySummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\ApplySummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\CertificateHistoryModel.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\CertificateHistoryModel.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\CertificatePrintSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\CertificatePrintSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\EmailTemplateSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\EmailTemplateSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\BatchLogSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\BatchLogSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateBatchLogSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateBatchLogSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateForSearch.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateForSearch.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateLogSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateLogSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\GetBatchLogsResult.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\GetBatchLogsResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\GetCertificateLogsForBatchResult.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\GetCertificateLogsForBatchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ApplicationListItem.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ApplicationListItem.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Apply.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Apply.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ApprenticeLearner.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ApprenticeLearner.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ApprovalsExtract.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ApprovalsExtract.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\ApprenticeshipStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\ApprenticeshipStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\DeliveryArea.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\DeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\EpaOrganisationStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\EpaOrganisationStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\EpaOrganisationStandardDeliveryArea.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\EpaOrganisationStandardDeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\OrganisationContact.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\OrganisationContact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\OrganisationStandardData.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\OrganisationStandardData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\Status.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\Status.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\TypeOfOrganisation.cs" Link="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\TypeOfOrganisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\BaseEntity.cs" Link="SFA.DAS.AssessorService.Domain\Entities\BaseEntity.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\BatchLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\BatchLog.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Certificate.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Certificate.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateAddress.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateAddress.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateBatchLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateBatchLog.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateLog.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CharityCommissionSummary.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CharityCommissionSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CompaniesHouseSummary.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CompaniesHouseSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Contact.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Contact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ContactInvitation.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ContactInvitation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ContactLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ContactLog.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ContactsPrivilege.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ContactsPrivilege.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\DeliveryArea.cs" Link="SFA.DAS.AssessorService.Domain\Entities\DeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EMailTemplate.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EMailTemplate.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EmailTemplatesRecipients.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EmailTemplatesRecipients.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandardFilter.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EpaoPipelineStandardFilter.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EPORegisteredStandards.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EPORegisteredStandards.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FHADetails.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FHADetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FinancialGrade.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FinancialGrade.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Ilr.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Ilr.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Learner.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Learner.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeApply.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeApply.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeOrganisation.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeOrganisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeOrganisationStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeOrganisationStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeOrganisationStandardDeliveryArea.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeOrganisationStandardDeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeOrganisationStandardVersion.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeOrganisationStandardVersion.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OfsOrganisation.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OfsOrganisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderApprovedStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderApprovedStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderLevelFilterResult.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderLevelFilterResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderNonApprovedStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderNonApprovedStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderSectorFilterResult.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OppFinder\OppFinderSectorFilterResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Option.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Option.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Organisation.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Organisation.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OrganisationData.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OrganisationData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OrganisationStandard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OrganisationStandard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OrganisationStandardDeliveryArea.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OrganisationStandardDeliveryArea.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OrganisationStandardVersion.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OrganisationStandardVersion.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\OrganisationType.cs" Link="SFA.DAS.AssessorService.Domain\Entities\OrganisationType.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Privilege.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Privilege.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\PrivilegeData.cs" Link="SFA.DAS.AssessorService.Domain\Entities\PrivilegeData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Provider.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Provider.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ReviewStatusCount.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ReviewStatusCount.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\ScheduleRun.cs" Link="SFA.DAS.AssessorService.Domain\Entities\ScheduleRun.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\SearchData.cs" Link="SFA.DAS.AssessorService.Domain\Entities\SearchData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\SearchLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\SearchLog.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\StaffReport.cs" Link="SFA.DAS.AssessorService.Domain\Entities\StaffReport.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Standard.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Standard.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\StandardOption.cs" Link="SFA.DAS.AssessorService.Domain\Entities\StandardOption.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Exceptions\EntityNotFoundException.cs" Link="SFA.DAS.AssessorService.Domain\Exceptions\EntityNotFoundException.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Exceptions\NotFoundException.cs" Link="SFA.DAS.AssessorService.Domain\Exceptions\NotFoundException.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Extensions\BaseEntityExtensions.cs" Link="SFA.DAS.AssessorService.Domain\Extensions\BaseEntityExtensions.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Extensions\DateTimeUtils.cs" Link="SFA.DAS.AssessorService.Domain\Extensions\DateTimeUtils.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Helpers\DateTimeHelper.cs" Link="SFA.DAS.AssessorService.Domain\Helpers\DateTimeHelper.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\CertificateData.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\CertificateData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\BatchData.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\BatchData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\CertificateForPrinting.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\CertificateForPrinting.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\CoveringLetter.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\CoveringLetter.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\LearningDetails.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\LearningDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\PostalContact.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\PostalContact.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\PrintCertificate.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\PrintCertificate.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\PrintData.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\PrintData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\Printing\PrintOutput.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\Printing\PrintOutput.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\ReportDownloadData.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\ReportDownloadData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\SchedulingConfiguraionData.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\SchedulingConfiguraionData.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\JsonData\WorksheetDetails.cs" Link="SFA.DAS.AssessorService.Domain\JsonData\WorksheetDetails.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Paging\PaginatedList.cs" Link="SFA.DAS.AssessorService.Domain\Paging\PaginatedList.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Validation\EmailRegexValidator.cs" Link="SFA.DAS.AssessorService.Domain\Validation\EmailRegexValidator.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Validation\FluentValidationExtensions.cs" Link="SFA.DAS.AssessorService.Domain\Validation\FluentValidationExtensions.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Validation\Guard.cs" Link="SFA.DAS.AssessorService.Domain\Validation\Guard.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SFA.DAS.AssessorService.Api.Common\Settings\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Common\Exceptions\" />
+    <Folder Include="SFA.DAS.AssessorService.Application.Api.Client\Clients\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Commands\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\CompaniesHouse\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Consts\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Enums\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Apply\Financial\Review\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Apply\Review\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Azure\Requests\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Azure\Responses\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Dashboard\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Email\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Certificates\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Epas\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Learner\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Certificates\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\AO\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\CharityCommission\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Setting\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Staff\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Standards\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Validation\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\OrganisationStandards\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ProviderRegister\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Register\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Const\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\DTOs\Staff\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Entities\OppFinder\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Exceptions\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Extensions\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Helpers\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\JsonData\Printing\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Validation\" />
+    <Folder Include="SFA.DAS.AssessorService.Domain\Paging\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="FluentValidation" Version="11.2.1" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Polly" Version="7.2.2" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
+  </ItemGroup>
+
+</Project>

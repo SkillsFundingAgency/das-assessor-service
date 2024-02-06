@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
@@ -9,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
     {
         public CompaniesHouseSummaryProfile()
         {
-            CreateMap<Company, CompaniesHouseSummary>()
+            CreateMap<Company, Domain.Entities.CompaniesHouseSummary>()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -23,9 +22,9 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
                 .ForAllOtherMembers(opt => opt.Ignore());
         }
 
-        public class MapManualEntryRequiredAction : IMappingAction<Company, CompaniesHouseSummary>
+        public class MapManualEntryRequiredAction : IMappingAction<Company, Domain.Entities.CompaniesHouseSummary>
         {
-            public void Process(Company source, CompaniesHouseSummary destination, ResolutionContext context)
+            public void Process(Company source, Domain.Entities.CompaniesHouseSummary destination, ResolutionContext context)
             {
                 if (destination != null
                      && (destination.Directors is null || destination.Directors.Count == 0)
@@ -41,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
     {
         public DirectorInformationProfile()
         {
-            CreateMap<Officer, DirectorInformation>()
+            CreateMap<Officer, Domain.Entities.DirectorInformation>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
@@ -55,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
     {
         public PersonSignificantControlInformationProfile()
         {
-            CreateMap<PersonWithSignificantControl, PersonWithSignificantControlInformation>()
+            CreateMap<PersonWithSignificantControl, Domain.Entities.PersonWithSignificantControlInformation>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))

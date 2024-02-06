@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -42,10 +41,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var sequences = request.ApplySequences;
                 RemoveSequencesAndSections(sequences, org, orgType, request.ApplicationType);
               
-                var applyData = new ApplyData
+                var applyData = new Domain.Entities.ApplyData
                 {
                     Sequences = sequences,
-                    Apply = new ApplyTypes.Apply
+                    Apply = new Domain.Entities.ApplyInfo
                     {
                         ReferenceNumber = await CreateReferenceNumber(request.ApplicationReferenceFormat)
                     }
@@ -69,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return Guid.Empty;
         }
 
-        private void RemoveSequencesAndSections(List<ApplySequence> sequences, Domain.Entities.Organisation org, OrganisationType orgType, string applicationType)
+        private void RemoveSequencesAndSections(List<Domain.Entities.ApplySequence> sequences, Domain.Entities.Organisation org, AssessorService.Api.Types.Models.AO.OrganisationType orgType, string applicationType)
         {
             if (applicationType == ApplicationTypes.Initial)
             {
@@ -134,7 +133,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return referenceNumber;
         }
 
-        private void RemoveSequences(List<ApplySequence> sequences, params int[] sequenceNumbers)
+        private void RemoveSequences(List<Domain.Entities.ApplySequence> sequences, params int[] sequenceNumbers)
         {
             foreach (var sequence in sequences.Where(s => sequenceNumbers.Contains(s.SequenceNo)))
             {
@@ -153,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private void MakeLowestSequenceActive(List<ApplySequence> sequences)
+        private void MakeLowestSequenceActive(List<Domain.Entities.ApplySequence> sequences)
         {
             int lowestActiveSequenceNo = sequences.Where(seq => seq.IsActive).Min(seq => seq.SequenceNo);
             foreach (var sequence in sequences.Where(seq => seq.SequenceNo != lowestActiveSequenceNo))
@@ -162,7 +161,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        public void RemoveSections(List<ApplySequence> sequences, int sequenceNumber, params int[] sectionNumbers)
+        public void RemoveSections(List<Domain.Entities.ApplySequence> sequences, int sequenceNumber, params int[] sectionNumbers)
         {
             var sequence = sequences.Single(p => p.SequenceNo == sequenceNumber);
             if (sequence != null)
