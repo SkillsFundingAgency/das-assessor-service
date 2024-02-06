@@ -180,12 +180,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
@@ -244,15 +238,17 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
-                config.For<IRoatpTokenService>().Use<RoatpTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
+                config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
+                config.For<IRoatpApiClientFactory>().Use<RoatpApiClientFactory>();
+                config.For<ILogger<RoatpApiClient>>().Use<Logger<RoatpApiClient>>();
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
                 config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 
                 // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
                     .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
-                
+
                 config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
                     .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
 

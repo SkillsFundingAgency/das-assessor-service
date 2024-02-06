@@ -16,15 +16,12 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
     {
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
-        private readonly ITokenService _tokenService;
 
-        public RoatpApiClient(HttpClient client, IRoatpTokenService tokenService, ILogger<RoatpApiClient> logger)
+        public RoatpApiClient(IRoatpApiClientFactory roatpApiClientFactory, ILogger<RoatpApiClient> logger)
         {
-            _client = client;
-            _tokenService = tokenService;
+            _client = roatpApiClientFactory.CreateHttpClient();
             _logger = logger;
         }
-
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
         {
             _logger.LogInformation($"Searching RoATP. Search Term: {searchTerm}");
@@ -69,8 +66,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
 
         private async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
+            
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 if (response.IsSuccessStatusCode)
