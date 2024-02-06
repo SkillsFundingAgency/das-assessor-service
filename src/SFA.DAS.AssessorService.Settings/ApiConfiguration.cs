@@ -4,8 +4,7 @@ using SFA.DAS.AssessorService.Api.Common.Settings;
 
 namespace SFA.DAS.AssessorService.Settings
 {
-    public class ApiConfiguration
-        : IApiConfiguration
+    public class ApiConfiguration : IApiConfiguration
     {
         [JsonIgnore] public string Environment { get; set; }
 
@@ -14,7 +13,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration QnaApiAuthentication { get; set; }
+        [JsonRequired] public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
 
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 
