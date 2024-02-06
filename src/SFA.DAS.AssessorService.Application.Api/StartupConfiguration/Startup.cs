@@ -161,11 +161,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
 
-                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnAApiClient", config => 
-                    { 
-                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseUrl); 
-                    });
-
                 services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
@@ -228,20 +223,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                // This configuration for ILogger<ApiClientBase> is required to create a IQnaApiClient from the Api project, it is unknown why as StructureMap
-                // can create all other types of ILogger<T> and the Web project does not require ILogger<ApiClientBase> to be configured
-                config.For<ILogger<ApiClientBase>>().Use<Logger<ApiClientBase>>();
-
-                config.For<IQnaTokenService>().Use<QnaTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication);
-
                 config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
                     .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
 
                 config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
-                config.For<IRoatpApiClientFactory>().Use<RoatpApiClientFactory>();
-                config.For<ILogger<RoatpApiClient>>().Use<Logger<RoatpApiClient>>();
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
+                config.For<QnaApiClientConfiguration>().Use(Configuration.QnaApiAuthentication);
 
                 config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 

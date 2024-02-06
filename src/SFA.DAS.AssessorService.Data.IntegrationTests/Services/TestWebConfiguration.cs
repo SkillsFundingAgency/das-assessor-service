@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Settings;
 using System;
 
@@ -11,12 +12,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string Environment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication ApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AzureApiClientConfiguration AzureApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public AssessorApiClientConfiguration AssessorApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string SqlConnectionString { get; set; }
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
+        public QnaApiClientConfiguration QnaApiAuthentication { get; set; }
         public string ServiceLink { get; set; }
         public LoginServiceConfig LoginService { get; set; }
         public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

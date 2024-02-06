@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Azure.Identity;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Api.Common.Settings;
 using System;
@@ -34,17 +32,6 @@ namespace SFA.DAS.AssessorService.Api.Common
                     var result = await context.AcquireTokenAsync(azureActiveDirectoryClientConfiguration.ResourceId, clientCredential);
 
                     return result.AccessToken;
-                }
-                else if (_clientConfiguration is IManagedIdentityClientConfiguration managedIdentityClientConfiguration)
-                {
-                    if (IsLocal(managedIdentityClientConfiguration.ApiBaseUrl))
-                        return string.Empty;
-
-                    var defaultAzureCredential = new DefaultAzureCredential( new DefaultAzureCredentialOptions());
-                    var result = await defaultAzureCredential.GetTokenAsync(
-                        new TokenRequestContext(scopes: new string[] { managedIdentityClientConfiguration.IdentifierUri + "/.default" }) { });
-
-                    return result.Token;
                 }
             }
             catch (Exception ex)

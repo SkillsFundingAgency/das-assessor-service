@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        [JsonRequired] public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
+        [JsonRequired] public QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 

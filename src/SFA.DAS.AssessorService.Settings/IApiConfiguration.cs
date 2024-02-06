@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Settings
         
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-        ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
+        QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
         LoginServiceConfig LoginService { get; set; }
         

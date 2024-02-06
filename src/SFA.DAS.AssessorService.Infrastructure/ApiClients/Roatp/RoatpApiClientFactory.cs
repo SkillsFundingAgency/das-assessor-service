@@ -1,12 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http;
-using SFA.DAS.Http.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
 {
@@ -19,11 +13,9 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
             _roatpApiClientConfiguration = roatpApiClientConfiguration;
         }
 
-
         public HttpClient CreateHttpClient()
         {
             var httpClient = new ManagedIdentityHttpClientFactory(_roatpApiClientConfiguration).CreateHttpClient();
-
             return httpClient;
         }
     }

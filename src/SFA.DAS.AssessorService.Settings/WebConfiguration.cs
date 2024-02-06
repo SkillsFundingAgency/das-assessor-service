@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 
 namespace SFA.DAS.AssessorService.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
+        [JsonRequired] public AssessorApiClientConfiguration AssessorApiAuthentication { get; set; }
         [JsonRequired] public AzureApiClientConfiguration AzureApiAuthentication { get; set; }
-        [JsonRequired] public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
+        [JsonRequired] public QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 

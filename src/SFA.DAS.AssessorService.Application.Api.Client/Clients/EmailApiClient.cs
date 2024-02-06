@@ -11,8 +11,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<ApiClientBase> _logger;
 
-        public EmailApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public EmailApiClient(IAssessorApiClientFactory clientFactory, ILogger<EmailApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
             _logger = logger;
         }

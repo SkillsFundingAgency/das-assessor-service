@@ -10,8 +10,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class StaffSearchApiClient : ApiClientBase, IStaffSearchApiClient
     {
-        public StaffSearchApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public StaffSearchApiClient(IAssessorApiClientFactory clientFactory, ILogger<StaffSearchApiClient> logger) 
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
