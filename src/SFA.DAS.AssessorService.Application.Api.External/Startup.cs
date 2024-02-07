@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 config.Scan(_ =>
                 {
-                    _.AssemblyContainingType(typeof(Startup));
+                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
                     _.WithDefaultConventions();
                 });
 

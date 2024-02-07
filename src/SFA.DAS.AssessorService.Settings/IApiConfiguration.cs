@@ -1,5 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Settings
 {
@@ -17,7 +19,7 @@ namespace SFA.DAS.AssessorService.Settings
         LoginServiceConfig LoginService { get; set; }
         
         RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
-        AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
+        ReferenceDataApiClientConfiguration ReferenceDataApiAuthentication { get; set; }
         CompaniesHouseApiClientConfiguration CompaniesHouseApiAuthentication { get; set; }
         CharityCommissionApiClientConfiguration CharityCommissionApiAuthentication { get; set; }
 

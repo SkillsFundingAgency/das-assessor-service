@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.Http;
+﻿using SFA.DAS.Http;
 using System.Net.Http;
 
 namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp

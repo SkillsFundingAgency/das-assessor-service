@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 
 namespace SFA.DAS.AssessorService.Settings
 {

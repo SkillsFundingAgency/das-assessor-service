@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Settings
 {
@@ -18,7 +20,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
 
         [JsonRequired] public RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
+        [JsonRequired] public ReferenceDataApiClientConfiguration ReferenceDataApiAuthentication { get; set; }
         [JsonRequired] public CompaniesHouseApiClientConfiguration CompaniesHouseApiAuthentication { get; set; }
         [JsonRequired] public CharityCommissionApiClientConfiguration CharityCommissionApiAuthentication { get; set; }
 

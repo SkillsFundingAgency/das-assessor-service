@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 
 namespace SFA.DAS.AssessorService.Settings
 {
@@ -12,8 +12,6 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
         [JsonRequired] public LoginServiceConfig LoginService { get; set; }
-
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
 
         [JsonRequired] public string FeedbackUrl { get; set; }
         [JsonRequired] public string ReferenceFormat { get; set; }

@@ -14,7 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
@@ -161,20 +160,12 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
 
-                services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
                 services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
 
                 services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
@@ -223,11 +214,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
-
                 config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
                 config.For<QnaApiClientConfiguration>().Use(Configuration.QnaApiAuthentication);
+                config.For<ReferenceDataApiClientConfiguration>().Use(Configuration.ReferenceDataApiAuthentication);
 
                 config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 

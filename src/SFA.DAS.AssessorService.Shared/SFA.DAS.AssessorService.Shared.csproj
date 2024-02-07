@@ -24,19 +24,15 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" Link="SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Exceptions\EntityAlreadyExistsException.cs" Link="SFA.DAS.AssessorService.Api.Common\Exceptions\EntityAlreadyExistsException.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Exceptions\EntityNotFoundException.cs" Link="SFA.DAS.AssessorService.Api.Common\Exceptions\EntityNotFoundException.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ITokenService.cs" Link="SFA.DAS.AssessorService.Api.Common\ITokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\AzureActiveDirectoryClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\AzureActiveDirectoryClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\AzureApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\AzureApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\CharityCommissionApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\CharityCommissionApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\CompaniesHouseApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\CompaniesHouseApiClientConfiguration.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IAzureActiveDirectoryClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IAzureActiveDirectoryClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IAzureApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IAzureApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ICharityCommissionApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ICharityCommissionApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ICompaniesHouseApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ICompaniesHouseApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IOuterApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IOuterApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\OuterApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\OuterApiClientConfiguration.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\TokenService.cs" Link="SFA.DAS.AssessorService.Api.Common\TokenService.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Accounts.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Accounts.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" />

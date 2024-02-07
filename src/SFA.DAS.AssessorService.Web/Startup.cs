@@ -13,14 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
-using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
@@ -204,7 +200,7 @@ namespace SFA.DAS.AssessorService.Web
             {
                 config.Scan(_ =>
                 {
-                    _.AssemblyContainingType(typeof(Startup));
+                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
                     _.WithDefaultConventions();
                 });
 

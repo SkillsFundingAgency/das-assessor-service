@@ -15,8 +15,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var clientApiAuthenticationMock = new Mock<IAzureActiveDirectoryClientConfiguration>();
-
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
 
