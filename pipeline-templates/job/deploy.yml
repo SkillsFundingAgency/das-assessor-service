@@ -170,12 +170,6 @@ jobs:
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
-            ResourceName: $(InternalApiActiveSandboxAppServiceName)
-            Tenant: $(Tenant)
-            IsMultiRepoCheckout: true
-        - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
-          parameters:
-            ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
             ResourceName: $(ExternalApiActiveSandboxAppServiceName)
             Tenant: $(Tenant)
             IsMultiRepoCheckout: true
