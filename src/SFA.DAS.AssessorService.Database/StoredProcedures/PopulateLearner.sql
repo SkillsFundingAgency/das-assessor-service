@@ -30,6 +30,24 @@ BEGIN
 
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
+		-- Clear-out any ApprenticeshipId values from Learner records
+		-- where the Apprenticeship details have been changed for ULN or TrainingCode
+		-- in the latest ApprovalsExtract
+		----------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------
+
+		MERGE INTO [dbo].[Learner] tar
+		USING (
+			SELECT le1.[Id], LEFT(le1.Source,4) ILRSource
+			FROM Learner le1
+			JOIN ApprovalsExtract ax1 on ax1.ApprenticeshipId = le1.ApprenticeshipId
+			WHERE NOT (le1.Uln = ax1.ULN AND le1.StdCode = ax1.TrainingCode)
+		) upd 
+		ON (tar.[Id] = upd.[id])
+		WHEN MATCHED THEN UPDATE SET tar.[Apprenticeshipid] = NULL, tar.[Source] = upd.ILRSource;
+
+		----------------------------------------------------------------------------------------------------------------------
+		----------------------------------------------------------------------------------------------------------------------
 		-- Populate Learner with latest changes from ILR or Approvals
 		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
