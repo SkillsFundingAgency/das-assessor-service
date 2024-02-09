@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class LearnerDetailsApiClient : ApiClientBase, ILearnerDetailsApiClient
     {
-        public LearnerDetailsApiClient(IAssessorApiClientFactory clientFactory, ILogger<ApiClientBase> logger)
+        public LearnerDetailsApiClient(IAssessorApiClientFactory clientFactory, ILogger<LearnerDetailsApiClient> logger)
             : base(clientFactory.CreateHttpClient(), logger)
         {
         }
