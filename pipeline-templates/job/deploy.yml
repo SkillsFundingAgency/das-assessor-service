@@ -167,6 +167,12 @@ jobs:
             TemplateSecrets:
               LoggingRedisConnectionString: $(LoggingRedisConnectionString)
               ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
+        - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
+            ResourceName: $(ExternalApiActiveSandboxAppServiceName)
+            Tenant: $(Tenant)
+            IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
           parameters:
             AzureSubscription: ${{ parameters.ServiceConnection }}
