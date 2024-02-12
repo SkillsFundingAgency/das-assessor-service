@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper.Configuration;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -87,7 +88,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                         if (_useSandbox)
                         {
-                            validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
+                            Configuration.SandboxApiAuthentication.Audience = "https://fcsazuresfabisgov.onmicrosoft.com/das-assessorservice-sandbox-api-pp,https://fcsazuresfabisgov.onmicrosoft.com/das-pp-assacintapi-sbox-as-ar";
+                            validAudiences.AddRange(Configuration.SandboxApiAuthentication.Audience.Split(","));
                         }
                         else
                         {
