@@ -38,6 +38,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
