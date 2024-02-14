@@ -1,4 +1,9 @@
-﻿using AutoMapper.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -31,14 +36,7 @@ using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -86,18 +84,20 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .AddJwtBearer(o =>
                     {
                         var validAudiences = new List<string>();
+                        var authority = string.Empty;
 
                         if (_useSandbox)
                         {
-                            Configuration.SandboxApiAuthentication.Audience = "https://fcsazuresfabisgov.onmicrosoft.com/das-assessorservice-sandbox-api-pp,https://fcsazuresfabisgov.onmicrosoft.com/das-pp-assacintapi-sbox-as-ar";
-                            validAudiences.AddRange(Configuration.SandboxApiAuthentication.Audience.Split(","));
+                            validAudiences.AddRange(Configuration.SandboxApiAuthentication.Audiences.Split(","));
+                            authority = o.Authority = Configuration.SandboxApiAuthentication.Tenant;
                         }
                         else
                         {
-                            validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
+                            validAudiences.AddRange(Configuration.ApiAuthentication.Audiences.Split(","));
+                            authority = o.Authority = Configuration.ApiAuthentication.Tenant;
                         }
-                        
-                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
+
+                        o.Authority = $"https://login.microsoftonline.com/{authority}";
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
