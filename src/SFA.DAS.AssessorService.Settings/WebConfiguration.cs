@@ -23,7 +23,5 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string ZenDeskSectionId { get; set; }
         [JsonRequired] public string ZenDeskCobrowsingSnippetKey { get; set; }
 
-        /// <inheritdoc />
-        [JsonRequired] public bool UseGovSignIn { get; set; }
     }
 }

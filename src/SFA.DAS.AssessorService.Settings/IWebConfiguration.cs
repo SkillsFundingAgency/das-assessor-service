@@ -21,10 +21,6 @@ namespace SFA.DAS.AssessorService.Settings
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
         string ZenDeskCobrowsingSnippetKey { get; set; }
-        
-        /// <summary>
-        /// Property to hold the value of GovSignIn enabled/disabled.
-        /// </summary>
-        bool UseGovSignIn { get; set; }
+
     }
 }

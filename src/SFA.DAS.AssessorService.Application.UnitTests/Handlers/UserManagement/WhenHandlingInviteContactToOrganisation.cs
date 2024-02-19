@@ -60,7 +60,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             contactRepository.Setup(x => x.CreateNewContact(It.IsAny<Contact>())).ReturnsAsync(contact);
             apiConfiguration.Setup(x => x.EmailTemplatesConfig).Returns(emailTemplatesConfig);
             apiConfiguration.Setup(x => x.ServiceLink).Returns(It.IsAny<string>());
-            apiConfiguration.Setup(x => x.UseGovSignIn).Returns(true);
 
             //Act
             var result = await sut.Handle(request, new CancellationToken());
@@ -71,37 +70,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.UserManagement
             result.Success.Should().BeTrue();
 
             mediator.Verify(x => x.Send(It.Is<SendEmailRequest>(c=>c.Email.Equals(request.Email)), It.IsAny<CancellationToken>()), Times.Once);
-        }
-        
-        [Test, MoqAutoData]
-        public async Task Then_Returns_InviteContactToOrganisationResponse_And_Doesnt_Send_Email_If_Not_Gov_Login(
-            [Frozen] Mock<IContactQueryRepository> contactQueryRepository,
-            [Frozen] Mock<IContactRepository> contactRepository,
-            [Frozen] Mock<IOrganisationQueryRepository> organisationQueryRepository,
-            [Frozen] Mock<IMediator> mediator,
-            [Frozen] Mock<IApiConfiguration> apiConfiguration,
-            EmailTemplatesConfig emailTemplatesConfig,
-            InviteContactToOrganisationRequest request,
-            InviteContactToOrganisationHandler sut)
-        {
-            //Arrange
-            var contact = new Contact { Id = Guid.NewGuid() };
-            contactQueryRepository.Setup(s => s.GetContactFromEmailAddress(request.Email)).ReturnsAsync((Contact)null);
-            organisationQueryRepository.Setup(s => s.Get(request.OrganisationId)).ReturnsAsync(new Organisation());
-            contactRepository.Setup(x => x.CreateNewContact(It.IsAny<Contact>())).ReturnsAsync(contact);
-            apiConfiguration.Setup(x => x.EmailTemplatesConfig).Returns(emailTemplatesConfig);
-            apiConfiguration.Setup(x => x.ServiceLink).Returns(It.IsAny<string>());
-            apiConfiguration.Setup(x => x.UseGovSignIn).Returns(false);
-
-            //Act
-            var result = await sut.Handle(request, new CancellationToken());
-
-            //Assert
-            result.Should().NotBeNull();
-            result.ContactId.Should().Be(contact.Id);
-            result.Success.Should().BeTrue();
-
-            mediator.Verify(x => x.Send(It.IsAny<SendEmailRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

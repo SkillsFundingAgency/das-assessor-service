@@ -37,6 +37,5 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string ZenDeskSectionId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ZenDeskCobrowsingSnippetKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public OuterApiClientConfiguration OuterApi { get; set; }
-        public bool UseGovSignIn { get; set; }
     }
 }

@@ -232,21 +232,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public IActionResult CreateAnAccount()
         {
-            if (_config.UseGovSignIn)
-            {
-                return RedirectToAction("UpdateAnAccount");
-            }
-            var vm = new CreateAccountViewModel();
-            return View(vm);
+            return RedirectToAction("UpdateAnAccount");
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAnAccount(CreateAccountViewModel vm)
-        {
-            if (_config.UseGovSignIn)
-            {
-                RedirectToAction("Error", "Home");
-            }
+        {          
+            RedirectToAction("Error", "Home");  
             
             _createAccountValidator.Validate(vm);
 

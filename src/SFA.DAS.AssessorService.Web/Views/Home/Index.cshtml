@@ -4,7 +4,7 @@
     ViewData["Title"] = "Apprenticeship assessment service";
     ViewBag.ZenDeskLabel = "ass-start-page";
     Layout = "_Layout";
-    var actionName = Model.UseGovSignIn ? "UpdateAnAccount" : "CreateAnAccount";
+    var actionName = "UpdateAnAccount";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -26,12 +26,11 @@
                 <li>record assessments and request certificates</li>
                 <li>apply for new standards or versions</li>
             </ul>
-            @if (Model.UseGovSignIn)
-            {
-                <p class="govuk-body">
-                    You’ll need a GOV.UK One Login to set up or access an account. You can create one in the service using a work email address.
-                </p>
-            }
+
+            <p class="govuk-body">
+                You’ll need a GOV.UK One Login to set up or access an account. You can create one in the service using a work email address.
+            </p>
+            
         </div>
         <div class="govuk-grid-column-one-third">
             <hr/>
