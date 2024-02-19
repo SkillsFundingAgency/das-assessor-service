@@ -18,7 +18,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
         public string ServiceLink { get; set; }
-        public LoginServiceConfig LoginService { get; set; }
         public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
         public CompaniesHouseApiClientConfiguration CompaniesHouseApiAuthentication { get; set; }
