@@ -87,13 +87,13 @@ jobs:
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
-            ResourceName: $(apiAppServiceName)
+            ResourceName: $(ApiAppServiceName)
             Tenant: $(Tenant)
             IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}
-            ResourceName: $(externalApiAppServiceName)
+            ResourceName: $(ExternalApiAppServiceName)
             Tenant: $(Tenant)
             IsMultiRepoCheckout: true
         - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
@@ -114,12 +114,12 @@ jobs:
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppServiceName: $(apiAppServiceName)
+            AppServiceName: $(ApiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.zip
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppServiceName: $(externalApiAppServiceName)
+            AppServiceName: $(ExternalApiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.External.zip
 - deployment: DeployExternalAPIAPIMResources
   condition: in('${{ parameters.Environment }}', 'AT', 'TEST', 'TEST2', 'PP', 'PROD')
