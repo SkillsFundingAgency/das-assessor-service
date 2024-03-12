@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -16,8 +15,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ApplicationApiClient : ApiClientBase, IApplicationApiClient
     {
-        public ApplicationApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public ApplicationApiClient(IAssessorApiClientFactory clientFactory, ILogger<ApplicationApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
