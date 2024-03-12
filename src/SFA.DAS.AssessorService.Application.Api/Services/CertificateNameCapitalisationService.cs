@@ -172,7 +172,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         }
 
         /// <summary>
-        /// Updates irish/scottish Mac & Mc.
+        /// Updates irish/scottish Mac and Mc.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>

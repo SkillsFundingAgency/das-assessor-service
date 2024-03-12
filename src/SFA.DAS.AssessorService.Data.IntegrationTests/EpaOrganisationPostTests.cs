@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterRepository(unitOfWork, new Mock<ILogger<RegisterRepository>>().Object);

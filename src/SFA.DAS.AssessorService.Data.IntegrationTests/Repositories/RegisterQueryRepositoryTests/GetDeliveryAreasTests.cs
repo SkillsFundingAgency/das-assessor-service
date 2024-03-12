@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
 
             public GetDeliveryAreasTestsFixture()
             {
-                _sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+                _sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
                 _repository = new RegisterQueryRepository(new UnitOfWork(_sqlConnection));
             }
 

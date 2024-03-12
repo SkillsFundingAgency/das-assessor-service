@@ -65,14 +65,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             mockHttp.When($"/api/ao/assessment-organisations/EPA00001/standards")
                 .Respond("application/json", JsonConvert.SerializeObject(standardOrganisartionSummaries));
 
-            var tokenServiceMock = new Mock<IAssessorTokenService>();
-            tokenServiceMock
-                .Setup(m => m.GetTokenAsync())
-                .ReturnsAsync(string.Empty);
+            var assessorApiClientFactory = new Mock<IAssessorApiClientFactory>();
+            assessorApiClientFactory
+                .Setup(m => m.CreateHttpClient())
+                .Returns(clientlocal);
 
-            var apiBaseLogger = new Mock<ILogger<ApiClientBase>>();
-
-            var apiClient = new OrganisationsApiClient(clientlocal, tokenServiceMock.Object, apiBaseLogger.Object);
+            var apiClient = new OrganisationsApiClient(assessorApiClientFactory.Object, Mock.Of<ILogger<OrganisationsApiClient>>());
 
             return apiClient;
         }

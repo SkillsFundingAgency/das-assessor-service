@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Common\SFA.DAS.AssessorService.Api.Common.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Infrastructure\SFA.DAS.AssessorService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
