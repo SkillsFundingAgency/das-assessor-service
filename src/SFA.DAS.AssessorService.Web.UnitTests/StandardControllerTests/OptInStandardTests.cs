@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
         [Test]
-        public async Task OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
+        public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(null));
             Assert.That(ex.ParamName, Is.Null);

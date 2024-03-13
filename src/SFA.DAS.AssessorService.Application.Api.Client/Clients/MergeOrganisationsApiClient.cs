@@ -9,8 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class MergeOrganisationsApiClient : ApiClientBase, IMergeOrganisationsApiClient
     {
-        public MergeOrganisationsApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public MergeOrganisationsApiClient(IAssessorApiClientFactory clientFactory, ILogger<MergeOrganisationsApiClient> logger) 
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 

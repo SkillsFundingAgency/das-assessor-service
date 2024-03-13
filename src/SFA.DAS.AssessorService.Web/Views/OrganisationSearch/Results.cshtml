@@ -57,7 +57,6 @@
         <div class="govuk-grid-column-two-thirds">
             @if (@Model.Organisations != null && @Model.Organisations.Items.Any())
             {
-
                 <span class="govuk-body">@Model.OrganisationFoundString()</span>
                 <ul class="govuk-list">
                         @foreach (var result in Model.Organisations.Items)
@@ -86,45 +85,45 @@
                                             var addressArray = new[] { result.Address?.Address1, result.Address?.City, result.Address.Postcode };
                                             @string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
                                         }
-                                    </p>
-                                    @*Caters for both PROD and PREPROD*@
-                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                                </p>
+                                @*Caters for both PROD and PREPROD*@
+                                @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                    @if (result.OrganisationType != null)
                                     {
-                                        @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
-                                        @if (result.OrganisationType != null)
-                                        {
-                                            <p class="govuk-body govuk-!-margin-bottom-1">
-                                                <span class="govuk-!-font-weight-bold">Type:</span>
-                                                @result.OrganisationType
-                                            </p>
-                                        }
-                                        <p class="govuk-body">
-                                            <span class="govuk-!-font-weight-bold">Found on:</span>
-                                            @if (result.RoEPAOApproved)
-                                            {
-                                                <span>RoEPAO</span>
-                                            }
-                                            @if (result.RoEPAOApproved && result.RoATPApproved)
-                                            {
-                                                <span> and </span>
-                                            }
-                                            @if (result.RoATPApproved)
-                                            {
-                                                <span>RoATP</span>
-                                            }
-                                            @if (!result.RoEPAOApproved && !result.RoATPApproved)
-                                            {
-                                                switch (result.EasApiOrganisationType)
-                                                {
-                                                    case "Charity":<span>Charity Commission</span> break;
-                                                    case "Company": <span>Companies House</span> break;
-                                                    case "PublicSector": <span>EASAPI - Public Sector</span>break;
-                                                    case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
-                                                    default: <span>EASAPI</span>break;
-                                                }
-                                            }
+                                        <p class="govuk-body govuk-!-margin-bottom-1">
+                                            <span class="govuk-!-font-weight-bold">Type:</span>
+                                            @result.OrganisationType
                                         </p>
                                     }
+                                    <p class="govuk-body">
+                                        <span class="govuk-!-font-weight-bold">Found on:</span>
+                                        @if (result.RoEPAOApproved)
+                                        {
+                                            <span>RoEPAO</span>
+                                        }
+                                        @if (result.RoEPAOApproved && result.RoATPApproved)
+                                        {
+                                            <span> and </span>
+                                        }
+                                        @if (result.RoATPApproved)
+                                        {
+                                            <span>RoATP</span>
+                                        }
+                                        @if (!result.RoEPAOApproved && !result.RoATPApproved)
+                                        {
+                                            switch (result.EasApiOrganisationType)
+                                            {
+                                                case "Charity":<span>Charity Commission</span> break;
+                                                case "Company": <span>Companies House</span> break;
+                                                case "PublicSector": <span>EASAPI - Public Sector</span>break;
+                                                case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
+                                                default: <span>EASAPI</span>break;
+                                            }
+                                        }
+                                    </p>
+                                }
 
                                     @if (result.RoEPAOApproved && result.OrganisationIsLive)
                                     {
@@ -146,24 +145,24 @@
                         {"HasNextPage", Model.Organisations.HasNextPage},
                         {"SearchTerm",Model.SearchString },
                         {"Action", "NextResults"}
-                    });
+                });
 
 
 
-            }
+        }
             else
             {
-                <div class="govuk-form-group">
-                    <h1 class="govuk-heading-m">We cannot find your organisation details</h1>
-                    <p class="govuk-body">Check the:</p>
-                    <ul class="govuk-list govuk-list--bullet">
-                        <li>spelling of the name</li>
-                        <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
-                        <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
-                        <li>company number</li>
-                        <li>charity number</li>
-                    </ul>
-                </div>
+            <div class="govuk-form-group">
+                <h1 class="govuk-heading-m">We cannot find your organisation details</h1>
+                <p class="govuk-body">Check the:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>spelling of the name</li>
+                    <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
+                    <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
+                    <li>company number</li>
+                    <li>charity number</li>
+                </ul>
+            </div>
             }
         </div>
     </div>
