@@ -8,6 +8,6 @@ public static class EpaOrgIdFinder
 
     public static string GetFromClaim(IHttpContextAccessor accessor)
     {
-        return accessor.HttpContext.User.FindFirst(ClaimType)?.Value;
+        return accessor?.HttpContext?.User?.FindFirst(ClaimType)?.Value;
     }
 }

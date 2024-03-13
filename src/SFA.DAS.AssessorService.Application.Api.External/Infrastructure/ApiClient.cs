@@ -17,19 +17,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ApiClient> _logger;
-        private readonly IAssessorTokenService _tokenService;
 
-        public ApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClient> logger)
+        public ApiClient(IAssessorApiClientFactory clientFactory, ILogger<ApiClient> logger)
         {
-            _httpClient = httpClient;
-            _tokenService = tokenService;
+            _httpClient = clientFactory.CreateHttpClient();
             _logger = logger;
         }
 
         protected async Task<T> Get<T>(string uri)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
             using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 try
@@ -55,7 +51,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         protected async Task<U> Post<T, U>(string uri, T model)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
             var serializeObject = JsonConvert.SerializeObject(model);
 
             using (var response = await _httpClient.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
@@ -83,7 +78,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         protected async Task<U> Put<T, U>(string uri, T model)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
             var serializeObject = JsonConvert.SerializeObject(model);
 
             using (var response = await _httpClient.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
@@ -111,8 +105,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         protected async Task<T> Delete<T>(string uri)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
             using (var response = await _httpClient.DeleteAsync(new Uri(uri, UriKind.Relative)))
             {
                 try

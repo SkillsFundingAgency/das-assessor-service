@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data
                         SET
                             [EffectiveFrom] = @effectiveFrom,
                             [EffectiveTo] = @effectiveTo,
-                            [DateVersionApproved] = @dateVersionApproved,
+                            [DateVersionApproved] = COALESCE(DateVersionApproved, @dateVersionApproved),
                             [Comments] = @comments,
                             [Status] = @status
                         WHERE

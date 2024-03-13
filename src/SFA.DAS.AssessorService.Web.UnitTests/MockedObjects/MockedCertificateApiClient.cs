@@ -15,13 +15,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var clientApiAuthenticationMock = new Mock<IAzureActiveDirectoryClientConfiguration>();
-            
-            var tokenServiceMock = new Mock<IAssessorTokenService>();
-            tokenServiceMock
-                .Setup(m => m.GetTokenAsync())
-                .ReturnsAsync(string.Empty);
-
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
 
@@ -29,6 +22,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 
             var client = mockHttp.ToHttpClient();
             client.BaseAddress = new Uri("http://localhost:59022/");
+
+            var assessorApiClientFactory = new Mock<IAssessorApiClientFactory>();
+            assessorApiClientFactory
+                .Setup(m => m.CreateHttpClient())
+                .Returns(client);
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/{certificate.Id}?includeLogs={false}")
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
@@ -49,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new CertificateApiClient(client, tokenServiceMock.Object, apiClientLoggerMock.Object);
+            var apiClient = new CertificateApiClient(assessorApiClientFactory.Object, apiClientLoggerMock.Object);
 
             return apiClient;
         }

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterQueryRepository(unitOfWork);

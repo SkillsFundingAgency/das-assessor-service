@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 
 namespace SFA.DAS.AssessorService.Settings
 {
@@ -7,8 +7,8 @@ namespace SFA.DAS.AssessorService.Settings
         : IExternalApiConfiguration
 
     {
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
+        [JsonRequired] public AssessorApiClientConfiguration AssessorApiAuthentication { get; set; }
 
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration SandboxAssessorApiAuthentication { get; set; }
+        [JsonRequired] public AssessorApiClientConfiguration SandboxAssessorApiAuthentication { get; set; }
     }
 }

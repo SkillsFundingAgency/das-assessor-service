@@ -7,8 +7,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class RegisterImportApiClient : ApiClientBase
     {
-        public RegisterImportApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public RegisterImportApiClient(IAssessorApiClientFactory clientFactory, ILogger<RegisterImportApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
