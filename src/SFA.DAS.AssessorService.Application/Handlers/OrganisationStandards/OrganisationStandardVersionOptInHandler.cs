@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     OrganisationStandardId = organisationStandard.Id,
                     EffectiveFrom = request.EffectiveFrom,
                     EffectiveTo = request.EffectiveTo,
-                    DateVersionApproved = null,
+                    DateVersionApproved = request.OptInRequestedAt,
                     Comments = string.IsNullOrEmpty(existingVersion?.Comments)
                         ? newComment
                         : existingVersion.Comments + ";" + newComment,
