@@ -58,8 +58,11 @@
             @if (@Model.Organisations != null && @Model.Organisations.Items.Any())
             {
                 <span class="govuk-body">@Model.OrganisationFoundString()</span>
+                <ul class="govuk-list">
                         @foreach (var result in Model.Organisations.Items)
                         {
+                            <li class="govuk-!-margin-bottom-4">
+                          
                                     <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
@@ -122,18 +125,20 @@
                                     </p>
                                 }
 
-                                @if (result.RoEPAOApproved && result.OrganisationIsLive)
-                                {
-                                    <p class="govuk-body">
-                                        <strong class="govuk-tag">
-                                            ACTIVE ACCOUNT
-                                        </strong>
-                                    </p>
-                                }
-                    }
-                
-            await Html.RenderPartialAsync("_OrgSearchPaginationLinks", new ViewDataDictionary(ViewData)
-                    {
+                                    @if (result.RoEPAOApproved && result.OrganisationIsLive)
+                                    {
+                                        <p class="govuk-body">
+                                            <strong class="govuk-tag">
+                                                ACTIVE ACCOUNT
+                                            </strong>
+                                        </p>
+                                    }
+                            </li>
+                        }
+                    </ul>
+
+                await Html.RenderPartialAsync("_OrgSearchPaginationLinks", new ViewDataDictionary(ViewData)
+                        {
                         {"PageIndex", Model.Organisations.PageIndex},
                         {"TotalPages", Model.Organisations.TotalPages},
                         {"HasPreviousPage", Model.Organisations.HasPreviousPage},
