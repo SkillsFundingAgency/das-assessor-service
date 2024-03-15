@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Web.Controllers;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {

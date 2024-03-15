@@ -603,10 +603,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 application.ReviewStatus = ApplicationReviewStatus.Deleted;
                 application.DeletedBy = deletedBy;
 
-                foreach (var sequence in application.ApplyData?.Sequences)
+                if (application?.ApplyData?.Sequences != null)
                 {
-                    sequence.IsActive = false;
-                    sequence.Status = ApplicationSequenceStatus.Declined;
+                    foreach (var sequence in application?.ApplyData?.Sequences)
+                    {
+                        sequence.IsActive = false;
+                        sequence.Status = ApplicationSequenceStatus.Declined;
+                    }
                 }
 
                 await _unitOfWork.Connection.ExecuteAsync(

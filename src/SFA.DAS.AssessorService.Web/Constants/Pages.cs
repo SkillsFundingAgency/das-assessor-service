@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SFA.DAS.AssessorService.Web.Constants
+﻿namespace SFA.DAS.AssessorService.Web.Constants
 {
     public static class Pages
     {

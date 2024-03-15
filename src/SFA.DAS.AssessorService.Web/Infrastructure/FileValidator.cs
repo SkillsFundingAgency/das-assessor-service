@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.QnA.Api.Types.Page;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure
 {

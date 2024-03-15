@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
     public class CertificateResponse
     {

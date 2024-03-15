@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

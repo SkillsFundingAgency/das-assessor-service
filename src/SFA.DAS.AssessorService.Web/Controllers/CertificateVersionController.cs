@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Only 1 version no need for a selection
                 var singularStandard = certSession.Versions.First();
                 var options = await _standardVersionClient.GetStandardOptions(singularStandard.StandardUId);
-                if (options != null & options.HasOptions())
+                if (options?.HasOptions() ?? false)
                 {
                     certSession.StandardUId = singularStandard.StandardUId;
                     certSession.Options = options.CourseOption.ToList();
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 SessionService.Set("AttemptedStandardVersion", vm.StandardUId);
-                
+
                 return RedirectToAction("NotApprovedToAssess", "CertificateVersionNotApproved", redirectToCheck ? new { redirectToCheck } : null);
             }
 
@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             certSession.StandardUId = vm.StandardUId;
-                        
+
             // To pass in to inherited method.
             vm.SelectedStandardVersion = standardVersion;
             vm.SelectedStandardOptions = options;

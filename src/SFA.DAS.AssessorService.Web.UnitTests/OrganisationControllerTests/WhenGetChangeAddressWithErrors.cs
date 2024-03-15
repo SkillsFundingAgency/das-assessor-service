@@ -2,7 +2,6 @@
 
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NUnit.Framework;
 
 using SFA.DAS.AssessorService.Web.ViewModels;

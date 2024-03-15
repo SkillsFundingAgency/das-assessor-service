@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -23,13 +22,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             _contactRepository = contactRepository;
             _mediator = mediator;
         }
-        
+
         public async Task<SetContactPrivilegesResponse> Handle(SetContactPrivilegesRequest request, CancellationToken cancellationToken)
         {
             var currentPrivileges = (await ContactQueryRepository.GetPrivilegesFor(request.ContactId));
             var privilegesBeingRemoved = GetRemovedPrivileges(request, currentPrivileges);
             var privilegesBeingAdded = await GetAddedPrivileges(request, currentPrivileges);
-            
+
             var privilegesBeingRemovedThatMustBelongToSomeone = privilegesBeingRemoved.Where(p => p.Privilege.MustBeAtLeastOneUserAssigned).ToList();
 
             foreach (var currentPrivilege in privilegesBeingRemovedThatMustBelongToSomeone)
@@ -38,12 +37,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 {
                     return new SetContactPrivilegesResponse()
                     {
-                        Success = false, 
+                        Success = false,
                         ErrorMessage = $"Before you remove '{currentPrivilege.Privilege.UserPrivilege}' you must assign '{currentPrivilege.Privilege.UserPrivilege}' to another user."
                     };
                 }
             }
-            
+
             await UpdatePrivileges(request);
 
             if (!request.IsNewContact)
@@ -52,22 +51,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 
                 await LogPrivilegeChanges(privilegesBeingAdded, privilegesBeingRemoved, request);
             }
-            
+
             return new SetContactPrivilegesResponse()
             {
-                Success = true, 
+                Success = true,
                 HasRemovedOwnUserManagement = request.ContactId.Equals(request.AmendingContactId) && privilegesBeingRemovedThatMustBelongToSomeone.Any(p => p.Privilege.Key == Privileges.ManageUsers)
             };
         }
 
         private async Task LogPrivilegeChanges(List<ContactsPrivilege> privilegesBeingAdded, List<ContactsPrivilege> privilegesBeingRemoved, SetContactPrivilegesRequest request)
-        {          
+        {
             await _contactRepository.CreateContactLog(
-                request.AmendingContactId, 
+                request.AmendingContactId,
                 request.ContactId,
                 request.AmendingContactId.Equals(Guid.Empty)
                     ? ContactLogType.PrivilegesAmendedByStaff
-                    : ContactLogType.PrivilegesAmended, 
+                    : ContactLogType.PrivilegesAmended,
                 new
                 {
                     PrivilegesAdded = privilegesBeingAdded.Select(p => p.Privilege.UserPrivilege),
@@ -83,25 +82,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 var addedText = GetAddedPrivilegesEmailToken(privilegesBeingAdded);
 
                 var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
-                    {TemplateName= "EPAOPermissionsAmended" });
+                { TemplateName = "EPAOPermissionsAmended" });
 
-                var amendingContact = 
+                var amendingContact =
                     request.AmendingContactId.Equals(Guid.Empty)
                         ? null
                         : await ContactQueryRepository.GetContactById(request.AmendingContactId);
 
-                var amendingContactDispalyName =
-                    request.AmendingContactId.Equals(Guid.Empty)
-                        ? "EFSA Staff" 
-                        : amendingContact.DisplayName;
+                var amendingContactDisplayName = 
+                    amendingContact == null
+                    ? "ESFA Staff"
+                    : amendingContact.DisplayName;
+
 
                 var contactBeingAmended = await ContactQueryRepository.GetContactById(request.ContactId);
-            
+
                 await _mediator.Send(new SendEmailRequest(contactBeingAmended.Email, emailTemplate, new
                 {
                     ServiceName = "Apprenticeship assessment service",
                     Contact = contactBeingAmended.DisplayName,
-                    Editor = amendingContactDispalyName,
+                    Editor = amendingContactDisplayName,
                     ServiceTeam = "Apprenticeship assessment service team",
                     PermissionsAdded = addedText,
                     PermissionsRemoved = removedText
@@ -149,6 +149,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
         }
 
-        
+
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using System;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {
