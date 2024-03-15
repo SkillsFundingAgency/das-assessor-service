@@ -27,7 +27,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected IActionResult _actionResult;
 
         protected Mock<IHttpContextAccessor> HttpContextAssessor;
-        protected Mock<ITokenService> TokenService;
         protected Mock<ISessionService> SessionService;
         protected Mock<IOrganisationsApiClient> OrganisationApiClient;
         protected Mock<IContactsApiClient> ContactsApiClient;
@@ -90,9 +89,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 
             Logger = new Mock<ILogger<OrganisationController>>();
             SessionService = new Mock<ISessionService>();
-            TokenService = new Mock<ITokenService>();
-            TokenService.Setup(s => s.GetTokenAsync()).ReturnsAsync("jwt");
-
+            
             OrganisationApiClient = new Mock<IOrganisationsApiClient>();
             OrganisationApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 

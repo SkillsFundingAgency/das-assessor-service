@@ -8,17 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ContactsApiClient : ApiClientBase, IContactsApiClient
     {
-        private readonly ILogger<ApiClientBase> _logger;
+        private readonly ILogger<ContactsApiClient> _logger;
 
-        public ContactsApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public ContactsApiClient(IAssessorApiClientFactory clientFactory, ILogger<ContactsApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
             _logger = logger;
         }
@@ -159,18 +158,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {
                 await PostPutRequestAsync(request, callback);
-            }
-        }
-
-        public async Task MigrateUsers()
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateUsers"))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await TokenService.GetTokenAsync());
-                request.Headers.Add("Accept", "application/json");
-                request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
-
-                await HttpClient.SendAsync(request);
             }
         }
 

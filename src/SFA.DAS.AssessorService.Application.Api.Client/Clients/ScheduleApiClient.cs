@@ -1,20 +1,17 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-using SFA.DAS.AssessorService.Domain.Paging;
-using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ScheduleApiClient : ApiClientBase, IScheduleApiClient
     {
-        public ScheduleApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public ScheduleApiClient(IAssessorApiClientFactory clientFactory, ILogger<ScheduleApiClient> logger) 
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 

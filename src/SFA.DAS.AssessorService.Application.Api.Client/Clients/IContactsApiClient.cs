@@ -38,8 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
         Task Callback(SignInCallback callback);
 
-        Task MigrateUsers();
-
         Task MigrateSingleContactToApply(System.Guid signinId);
 
         Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);

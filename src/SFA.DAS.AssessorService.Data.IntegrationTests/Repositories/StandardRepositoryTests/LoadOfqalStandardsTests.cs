@@ -427,7 +427,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
 
             public LoadOfqualStandardsTestsFixture()
             {
-                _sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+                _sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
                 _repository = new StandardRepository(new UnitOfWork(_sqlConnection));
             }
 

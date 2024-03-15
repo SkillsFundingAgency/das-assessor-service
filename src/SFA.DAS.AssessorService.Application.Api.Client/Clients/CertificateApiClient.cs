@@ -11,8 +11,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class CertificateApiClient : ApiClientBase, ICertificateApiClient
     {
-        public CertificateApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public CertificateApiClient(IAssessorApiClientFactory clientFactory, ILogger<CertificateApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
