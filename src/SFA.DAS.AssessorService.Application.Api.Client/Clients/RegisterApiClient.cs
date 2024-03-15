@@ -12,8 +12,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class RegisterApiClient : ApiClientBase, IRegisterApiClient
     {
-        public RegisterApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public RegisterApiClient(IAssessorApiClientFactory clientFactory, ILogger<RegisterApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 

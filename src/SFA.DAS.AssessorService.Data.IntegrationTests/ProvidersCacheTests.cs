@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void CommonSetup()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _roatpApiClientMock = new Mock<IRoatpApiClient>();
             _repository = new ApprovalsExtractRepository(_unitOfWork, _roatpApiClientMock.Object, new Mock<ILogger<ApprovalsExtractRepository>>().Object);
