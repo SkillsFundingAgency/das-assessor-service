@@ -646,7 +646,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     if (__redirectAction == "Feedback")
                     {
                         var answer = answers.FirstOrDefault();
-
                         if (answer != null && page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                         {
                             return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction, "Hide");
@@ -937,7 +936,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
             }
-            return false;
+            
+            return atLeastOneAnswerChanged;
         }
 
         private async Task<IActionResult> ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
