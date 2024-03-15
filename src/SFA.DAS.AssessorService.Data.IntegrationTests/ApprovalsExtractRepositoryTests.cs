@@ -25,9 +25,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetupApprovalsExtractTests()
         {
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
+            option.UseSqlServer(_databaseService.SqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
 
-            _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString));
+            _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.SqlConnectionStringTest));
 
             _repository = new ApprovalsExtractRepository(_unitOfWork, new Mock<IRoatpApiClient>().Object, new Mock<ILogger<ApprovalsExtractRepository>>().Object);
         }
