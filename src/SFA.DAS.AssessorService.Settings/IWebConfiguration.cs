@@ -1,15 +1,14 @@
 ﻿using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 
 namespace SFA.DAS.AssessorService.Settings
 {
     public interface IWebConfiguration
     {
-        AzureActiveDirectoryClientConfiguration AssessorApiAuthentication { get; set; }
+        AssessorApiClientConfiguration AssessorApiAuthentication { get; set; }
         AzureApiClientConfiguration AzureApiAuthentication { get; set; }
-        ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
-        
-        AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
+        QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
         string FeedbackUrl { get; set; }
         string ReferenceFormat { get; set; }

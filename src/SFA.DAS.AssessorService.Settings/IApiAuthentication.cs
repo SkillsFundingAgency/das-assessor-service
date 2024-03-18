@@ -2,7 +2,7 @@
 {
     public interface IApiAuthentication
     {
-        string TenantId { get; set; }
-        string Audience { get; set; }
+        string Tenant { get; set; }
+        string Audiences { get; set; }
     }
 }

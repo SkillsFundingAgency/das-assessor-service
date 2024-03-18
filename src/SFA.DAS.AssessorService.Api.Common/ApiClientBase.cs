@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Api.Common
@@ -16,13 +15,8 @@ namespace SFA.DAS.AssessorService.Api.Common
     public abstract class ApiClientBase : IDisposable
     {
         private readonly ILogger<ApiClientBase> _logger;
-        private readonly ITokenService _tokenService;
         private readonly HttpClient _httpClient;
         private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
-
-        protected ITokenService TokenService => _tokenService;
-        protected HttpClient HttpClient => _httpClient;
-
 
         protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
@@ -30,9 +24,8 @@ namespace SFA.DAS.AssessorService.Api.Common
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        protected ApiClientBase(HttpClient httpClient, ILogger<ApiClientBase> logger)
         {
-            _tokenService = tokenService;
             _logger = logger;
             _httpClient = httpClient;
 
@@ -41,7 +34,6 @@ namespace SFA.DAS.AssessorService.Api.Common
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
-
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
@@ -75,11 +67,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var result = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                clonedRequest.Headers.Add("Accept", "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
 
             if (result.StatusCode == HttpStatusCode.OK)
@@ -141,10 +129,8 @@ namespace SFA.DAS.AssessorService.Api.Common
                     clonedRequest.Headers.Add("Accept", mediaType);
                 }
                 clonedRequest.Content = content;
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
 
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
 
             var json = await response.Content.ReadAsStringAsync();
@@ -152,7 +138,6 @@ namespace SFA.DAS.AssessorService.Api.Common
                 || response.StatusCode == HttpStatusCode.Created
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
-
                 return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, setting));
             }
             else
@@ -162,7 +147,6 @@ namespace SFA.DAS.AssessorService.Api.Common
             }
         }
 
-
         protected async Task<HttpResponseMessage> RequestToDownloadFileAsync(HttpRequestMessage request, string message = null)
         {
             HttpRequestMessage clonedRequest = null;
@@ -170,10 +154,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var result = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
 
             if (result.StatusCode == HttpStatusCode.OK)
@@ -201,18 +182,13 @@ namespace SFA.DAS.AssessorService.Api.Common
 
         protected async Task PostPutRequestAsync<T>(HttpRequestMessage requestMessage, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);                     
+            var serializeObject = JsonConvert.SerializeObject(model);
             HttpRequestMessage clonedRequest = null;
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Add("Accept", "application/json");
-                clonedRequest.Content = new StringContent(serializeObject,
-                    System.Text.Encoding.UTF8, "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
+                clonedRequest.Content = new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json");
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
            
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -221,18 +197,14 @@ namespace SFA.DAS.AssessorService.Api.Common
             }
         }
 
-
         protected async Task PostPutRequestAsync(HttpRequestMessage requestMessage)
         {
             HttpRequestMessage clonedRequest = null;
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
-                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);               
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest);
-
-            });        
+            });
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -246,10 +218,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
             
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -264,16 +233,12 @@ namespace SFA.DAS.AssessorService.Api.Common
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
-
                 return await _httpClient.SendAsync(clonedRequest);
-
             });
 
             var json = await response.Content.ReadAsStringAsync();
-            //var result = await response;
-            if (response.StatusCode == HttpStatusCode.OK
-                || response.StatusCode == HttpStatusCode.NoContent)
+            if (response.StatusCode == HttpStatusCode.OK || 
+                response.StatusCode == HttpStatusCode.NoContent)
             {
 
                 return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));

@@ -24,21 +24,15 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" Link="SFA.DAS.AssessorService.Api.Common\ApiClientBase.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Exceptions\EntityAlreadyExistsException.cs" Link="SFA.DAS.AssessorService.Api.Common\Exceptions\EntityAlreadyExistsException.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Exceptions\EntityNotFoundException.cs" Link="SFA.DAS.AssessorService.Api.Common\Exceptions\EntityNotFoundException.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\ITokenService.cs" Link="SFA.DAS.AssessorService.Api.Common\ITokenService.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\AzureActiveDirectoryClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\AzureActiveDirectoryClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\AzureApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\AzureApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\CharityCommissionApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\CharityCommissionApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\CompaniesHouseApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\CompaniesHouseApiClientConfiguration.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IAzureActiveDirectoryClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IAzureActiveDirectoryClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IAzureApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IAzureApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ICharityCommissionApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ICharityCommissionApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ICompaniesHouseApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ICompaniesHouseApiClientConfiguration.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IManagedIdentityClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IManagedIdentityClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\IOuterApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\IOuterApiClientConfiguration.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\ManagedIdentityClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\ManagedIdentityClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Common\Settings\OuterApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Api.Common\Settings\OuterApiClientConfiguration.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Common\TokenService.cs" Link="SFA.DAS.AssessorService.Api.Common\TokenService.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Accounts.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Accounts.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Address.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" Link="SFA.DAS.AssessorService.Api.Types\CharityCommission\Charity.cs" />
@@ -335,7 +329,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationStatusCode.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Validation\ValidationStatusCode.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\WithdrawOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\WithdrawOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\WithdrawStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\WithdrawStandardRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\AssessorTokenService.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\AssessorTokenService.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\AssessorApiClientFactory.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\AssessorApiClientFactory.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ApplicationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ApplicationApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ApprovalsLearnerApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ApprovalsLearnerApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\CertificateApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\CertificateApiClient.cs" />
@@ -379,6 +373,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\StandardVersionApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ValidationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ValidationApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Configuration\AssessorApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Configuration\AssessorApiClientConfiguration.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\IAssessorApiClientFactory.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\IAssessorApiClientFactory.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SystemTime.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SystemTime.cs" />
@@ -540,6 +536,7 @@
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ReferenceData\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Register\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\OppFinder\" />
+    <Folder Include="SFA.DAS.AssessorService.Application.Api.Client\Configuration\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\Const\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\DTOs\Staff\" />
     <Folder Include="SFA.DAS.AssessorService.Domain\Entities\AssessmentOrganisations\" />
@@ -561,12 +558,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />

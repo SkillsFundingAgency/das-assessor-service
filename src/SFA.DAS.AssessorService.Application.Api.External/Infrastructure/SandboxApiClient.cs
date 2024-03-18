@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using GetBatchLearnerRequest = SFA.DAS.AssessorService.Application.Api.External.Models.Internal.GetBatchLearnerRequest;
 
@@ -16,8 +15,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
     {
         private readonly ILogger<SandboxApiClient> _logger;
         
-        public SandboxApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<SandboxApiClient> logger)
-            : base(httpClient, tokenService, logger)
+        public SandboxApiClient(IAssessorApiClientFactory clientFactory, ILogger<SandboxApiClient> logger)
+            : base(clientFactory, logger)
         {
             _logger = logger;
         }

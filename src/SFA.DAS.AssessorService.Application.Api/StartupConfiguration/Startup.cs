@@ -1,4 +1,10 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +20,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
@@ -31,12 +36,6 @@ using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
@@ -85,17 +84,20 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .AddJwtBearer(o =>
                     {
                         var validAudiences = new List<string>();
+                        var authority = string.Empty;
 
                         if (_useSandbox)
                         {
-                            validAudiences.Add(Configuration.SandboxApiAuthentication.Audience);
+                            validAudiences.AddRange(Configuration.SandboxApiAuthentication.Audiences.Split(","));
+                            authority = o.Authority = Configuration.SandboxApiAuthentication.Tenant;
                         }
                         else
                         {
-                            validAudiences.AddRange(Configuration.ApiAuthentication.Audience.Split(","));
+                            validAudiences.AddRange(Configuration.ApiAuthentication.Audiences.Split(","));
+                            authority = o.Authority = Configuration.ApiAuthentication.Tenant;
                         }
-                        
-                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
+
+                        o.Authority = $"https://login.microsoftonline.com/{authority}";
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
@@ -161,28 +163,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
 
-                services.AddHttpClient<IQnaApiClient, QnaApiClient>("QnAApiClient", config => 
-                    { 
-                        config.BaseAddress = new Uri(Configuration.QnaApiAuthentication.ApiBaseAddress); 
-                    });
-
-                services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
                 services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
                     {
                         config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                    })
-                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-                services.AddHttpClient<IRoatpApiClient, RoatpApiClient>("RoatpApiClient", config =>
-                    {
-                        config.BaseAddress = new Uri(Configuration.RoatpApiAuthentication.ApiBaseAddress); //  "https://at-providers-api.apprenticeships.education.gov.uk"
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
@@ -233,25 +216,16 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
 
-                // This configuration for ILogger<ApiClientBase> is required to create a IQnaApiClient from the Api project, it is unknown why as StructureMap
-                // can create all other types of ILogger<T> and the Web project does not require ILogger<ApiClientBase> to be configured
-                config.For<ILogger<ApiClientBase>>().Use<Logger<ApiClientBase>>();
-
-                config.For<IQnaTokenService>().Use<QnaTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.QnaApiAuthentication);
-
-                config.For<IReferenceDataTokenService>().Use<ReferenceDataTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.ReferenceDataApiAuthentication);
-
-                config.For<IRoatpTokenService>().Use<RoatpTokenService>()
-                    .Ctor<IClientConfiguration>().Is(Configuration.RoatpApiAuthentication);
+                config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
+                config.For<QnaApiClientConfiguration>().Use(Configuration.QnaApiAuthentication);
+                config.For<ReferenceDataApiClientConfiguration>().Use(Configuration.ReferenceDataApiAuthentication);
 
                 config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
 
                 // This is a SOAP service. The client interfaces are contained within the generated proxy code
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
                     .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
-                
+
                 config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
                     .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
 
