@@ -16,8 +16,6 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public AzureActiveDirectoryClientConfiguration QnaApiAuthentication { get; set; }
 
-        [JsonRequired] public LoginServiceConfig LoginService { get; set; }
-
         [JsonRequired] public AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
         [JsonRequired] public AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }
         [JsonRequired] public CompaniesHouseApiClientConfiguration CompaniesHouseApiAuthentication { get; set; }

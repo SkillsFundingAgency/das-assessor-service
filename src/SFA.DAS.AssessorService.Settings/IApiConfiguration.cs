@@ -13,8 +13,6 @@ namespace SFA.DAS.AssessorService.Settings
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         AzureActiveDirectoryClientConfiguration QnaApiAuthentication { get; set; }
-
-        LoginServiceConfig LoginService { get; set; }
         
         AzureActiveDirectoryClientConfiguration RoatpApiAuthentication { get; set; }
         AzureActiveDirectoryClientConfiguration ReferenceDataApiAuthentication { get; set; }

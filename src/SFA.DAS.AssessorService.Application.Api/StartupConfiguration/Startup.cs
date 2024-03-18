@@ -223,7 +223,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IApiConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<ISignInService>().Use<SignInService>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
