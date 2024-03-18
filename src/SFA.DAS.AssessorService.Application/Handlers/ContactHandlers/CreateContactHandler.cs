@@ -80,9 +80,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             }
             else
             {
-                await _contactRepository.UpdateSignInId(existingContact.Id, Guid.NewGuid(), createContactRequest.GovIdentifier);
-                response.Result = true;
-                return response;
+                if (!string.IsNullOrEmpty(createContactRequest.GovIdentifier))
+                {
+                    await _contactRepository.UpdateSignInId(existingContact.Id, Guid.NewGuid(), createContactRequest.GovIdentifier);
+                    response.Result = true;
+                    return response;
+                }
+                
+                var invitationResult = await _signInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
+                if (!invitationResult.IsSuccess)
+                {
+                    if (invitationResult.UserExists)
+                    {
+                        await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId, null);
+                        response.Result = true;
+                        return response;
+                    }
+                    response.Result = false;
+                    return response;
+                }
             }
             return response;
         }
