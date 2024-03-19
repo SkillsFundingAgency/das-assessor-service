@@ -57,7 +57,7 @@ The default JSON configuration was created to work with dotnet run:
 * run `dotnet restore`
 * run `dotnet run`
 
-**Note:** Running the solution from VS2019 is not supported currently as the Login Service (OpenId Identity Server 4) is configured by default for the client end point to originate at https://localhost:5015 which is not a valid port for IIS Express; altering the Login Service configuration is out of scope for this Readme.
+**Note:** In production, user authentication in this solution is handled by an external service, GovUkSignIn. Running the solution from VS2019 is supported by bybassing this external authentication using the configuration variable "StubAuth" = true. Take care, when changing this variable in a deployment pipeline, that the change is not accidentally applied to production and ensure that you revert the change in any pipelines you have used to test authentication.
 
 * To run a local copy you will also need the following solutions locally:
     * [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
