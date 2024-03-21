@@ -60,7 +60,6 @@ The default JSON configuration was created to work with dotnet run:
 **Note:** Running the solution from Visual Studio is supported by bypassing the external authentication using the configuration variable "StubAuth" = true.
 
 * To run a local copy you will also need the following solutions locally:
-    * [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
     * [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
     * [Admin Service](https://github.com/SkillsFundingAgency/das-admin-service)
 *  And you may also require:  
