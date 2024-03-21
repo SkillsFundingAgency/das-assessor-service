@@ -2,6 +2,6 @@
 {
     public class HomeIndexViewModel
     {
-        public string BannerViewPath => Constants.Banners.GovNotifyBannerViewPath;
+
     }
 }
