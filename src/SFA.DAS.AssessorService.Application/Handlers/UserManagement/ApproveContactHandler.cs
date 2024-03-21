@@ -41,10 +41,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 organisation.Id.ToString(), organisation.EndPointAssessorOrganisationId, ContactStatus.Live));
             
             
-            if (!_config.UseGovSignIn)
-            {
-                return Unit.Value;
-            }
             // send approve confirmation email to the user with service link.
             await _mediator.Send(new SendEmailRequest(contact.Email, new EmailTemplateSummary
             {

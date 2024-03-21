@@ -82,8 +82,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     tokenValidatedContext.HandleResponse();
                 }
 
-                if (_webConfiguration.UseGovSignIn 
-                    && user != null 
+                if (user != null 
                     && !string.Equals(user.Email, email, StringComparison.CurrentCultureIgnoreCase))
                 {
                     // update the email address if the Gov Uk Sign In comes with different email address. 

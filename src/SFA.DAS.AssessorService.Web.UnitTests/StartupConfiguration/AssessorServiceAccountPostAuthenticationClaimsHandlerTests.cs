@@ -119,7 +119,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             contactsApiClient.Setup(x => x.GetContactByGovIdentifier(nameIdentifier)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
-            webConfiguration.Setup(x => x.UseGovSignIn).Returns(true);
 
             var actual = await handler.GetClaims(tokenValidatedContext);
 
@@ -176,7 +175,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
         }
         
         [Test, AutoData]
-        public async Task Then_The_Claims_Are_Populated_For_Gov_User_And_Sign_In_Id_Not_Updated_If_Returning_Gov_User(
+        public async Task Then_The_Claims_Are_Populated_For_Sign_In_Id_Not_Updated(
             string nameIdentifier,
             string emailAddress,
             ContactResponse contactResponse,

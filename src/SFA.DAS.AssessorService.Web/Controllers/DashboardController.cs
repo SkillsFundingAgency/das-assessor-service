@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 _logger.LogInformation("Failed to retrieve user by Sign In Id.");
             }
             
-            if (_configuration.UseGovSignIn && contact != null)
+            if (contact != null)
             {
                 var govIdentifier = _contextAccessor.HttpContext.User.Claims
                     .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

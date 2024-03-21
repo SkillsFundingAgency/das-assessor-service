@@ -232,33 +232,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
         
-        [HttpPost("MigrateUsers", Name= "MigrateUsers")]
-        public async Task<ActionResult> MigrateUsers()
-        {
-            var endpoint = new Uri(new Uri(_config.LoginService.MetadataAddress), "/Migrate"); 
-            using (var httpClient = new HttpClient())
-            {
-                var usersToMigrate = await _contactQueryRepository.GetUsersToMigrate();
-                foreach (var user in usersToMigrate)
-                {
-                    var result = await httpClient.PostAsJsonAsync(endpoint, new
-                    {
-                        ClientId = _config.LoginService.ClientId, 
-                        GivenName = user.GivenNames, 
-                        FamilyName = user.FamilyName, 
-                        Email = user.Email
-                    });
-
-                    var migrateResult = await result.Content.ReadAsAsync<MigrateUserResult>();
-
-                    await _contactQueryRepository.UpdateMigratedContact(user.Id, migrateResult.NewUserId);
-                }
-            }
-            
-            
-            return Ok(); 
-        }
-        
         private void ValidateEndPointAssessorOrganisation(string endPointAssessorOrganisationId)
         {
             var result = _searchOrganisationForContactsValidator.Validate(endPointAssessorOrganisationId);

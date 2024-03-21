@@ -10,8 +10,6 @@ namespace SFA.DAS.AssessorService.Settings
         AzureApiClientConfiguration AzureApiAuthentication { get; set; }
         QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
-        LoginServiceConfig LoginService { get; set; }
-
         string FeedbackUrl { get; set; }
         string ReferenceFormat { get; set; }
         string ServiceLink { get; set; }
@@ -21,9 +19,5 @@ namespace SFA.DAS.AssessorService.Settings
         string ZenDeskSectionId { get; set; }
         string ZenDeskCobrowsingSnippetKey { get; set; }
 
-        /// <summary>
-        /// Property to hold the value of GovSignIn enabled/disabled.
-        /// </summary>
-        bool UseGovSignIn { get; set; }
     }
 }
