@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ApplicationControllerTests\" />
+    <Folder Include="ModelsTests\HomeIndexViewModelTests\" />
     <Folder Include="ViewModelTests\DashboardViewModelTests\" />
   </ItemGroup>
 </Project>
