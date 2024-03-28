@@ -18,7 +18,6 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi
         {
             _httpClient = httpClient;
             _configuration = configuration;
-            _httpClient.BaseAddress = new Uri(_configuration.BaseUrl);
         }
 
         public async Task<TResponse> Get<TResponse>(IGetApiRequest request)
