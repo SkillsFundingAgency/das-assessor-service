@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
 
             public PopulateLearnerTestsFixture()
             {
-                _sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+                _sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
                 _roatpApiClient = new Mock<IRoatpApiClient>();
                 _logger = new Mock<ILogger<ApprovalsExtractRepository>>();
                 _repository = new ApprovalsExtractRepository(new UnitOfWork(_sqlConnection), _roatpApiClient.Object, _logger.Object);
