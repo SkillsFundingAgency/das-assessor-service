@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
 
             public GetEpaoRegisteredStandardsTestsFixture()
             {
-                _sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+                _sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
                 _repository = new StandardRepository(new UnitOfWork(_sqlConnection));
 
                 // this is to workaround the other tests which are not clearing up after themselves properly

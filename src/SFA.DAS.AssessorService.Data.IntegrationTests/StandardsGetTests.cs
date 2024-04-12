@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupStandardsTable()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _repository = new StandardRepository(_unitOfWork);
             

@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
@@ -61,25 +62,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             try
             {
                 ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
-                if (_useSandbox)
-                {
-                    services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
-                    {
-                        config.BaseAddress = new Uri(ApplicationConfiguration.SandboxAssessorApiAuthentication.ApiBaseAddress);
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                        config.Timeout = TimeSpan.FromMinutes(5);
-                    });
-                }
-                else
-                {
-                    services.AddHttpClient<IApiClient, ApiClient>(config =>
-                    {
-                        config.BaseAddress = new Uri(ApplicationConfiguration.AssessorApiAuthentication.ApiBaseAddress);
-                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                        config.Timeout = TimeSpan.FromMinutes(5);
-                    });
-                }
 
                 services.AddSwaggerGen(c =>
                 {
@@ -157,23 +139,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 config.Scan(_ =>
                 {
-                    _.AssemblyContainingType(typeof(Startup));
+                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
                     _.WithDefaultConventions();
                 });
 
                 if (_useSandbox)
                 {
-                    config.For<IAssessorTokenService>().Use<AssessorTokenService>()
-                        .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.SandboxAssessorApiAuthentication);
-
-                    config.For<IApiClient>().Use<SandboxApiClient>().Ctor<IAssessorTokenService>().Is(c => c.GetInstance<IAssessorTokenService>());
+                    config.For<AssessorApiClientConfiguration>().Use(ApplicationConfiguration.SandboxAssessorApiAuthentication);
+                    config.For<IApiClient>().Use<SandboxApiClient>();
                 }
                 else
                 {
-                    config.For<IAssessorTokenService>().Use<AssessorTokenService>()
-                        .Ctor<IClientConfiguration>().Is(ApplicationConfiguration.AssessorApiAuthentication);
-
-                    config.For<IApiClient>().Use<ApiClient>().Ctor<IAssessorTokenService>().Is(c => c.GetInstance<IAssessorTokenService>());
+                    config.For<AssessorApiClientConfiguration>().Use(ApplicationConfiguration.AssessorApiAuthentication);
+                    config.For<IApiClient>().Use<ApiClient>();
                 }
 
                 config.For<IExternalApiConfiguration>().Use(ApplicationConfiguration);

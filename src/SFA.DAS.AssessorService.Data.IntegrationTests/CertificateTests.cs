@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task SetupCertificateTests()
         {
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            var sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _context = new AssessorDbContext(sqlConnection, option.Options);
             _unitOfWork = new UnitOfWork(sqlConnection);
 

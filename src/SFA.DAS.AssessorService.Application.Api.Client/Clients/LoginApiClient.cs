@@ -8,8 +8,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class LoginApiClient : ApiClientBase, ILoginApiClient
     {
-        public LoginApiClient(HttpClient httpClient, IAssessorTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public LoginApiClient(IAssessorApiClientFactory clientFactory, ILogger<LoginApiClient> logger) 
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
