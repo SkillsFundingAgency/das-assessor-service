@@ -24,6 +24,16 @@
         "StubAuth": "true"
       },
       "applicationUrl": "https://localhost:5015;http://localhost:59122/"
+    },
+    "SFA.DAS.AssessorService.Web.GovUk.Auth": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:6016",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ResourceEnvironmentName": "LOCAL",
+        "StubAuth": "false"
+      }
     }
   }
 }
