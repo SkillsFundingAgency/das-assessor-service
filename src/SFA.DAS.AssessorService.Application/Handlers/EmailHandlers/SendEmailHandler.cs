@@ -20,14 +20,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
     {
         private const string SystemId = "AssessorService";
         private const string ReplyToAddress = "digital.apprenticeship.service@notifications.service.gov.uk";
-        private const string Subject = "EPAO user to approve";
-        private readonly INotificationsApi _notificationsApi;        
+        private const string Subject = "EPAO user to approve";      
         private readonly ILogger<SendEmailHandler> _logger;
         private readonly IMessageSession _messageSession;
 
-        public SendEmailHandler(INotificationsApi notificationsApi, ILogger<SendEmailHandler> logger, IMessageSession messageSession)
-        {
-            _notificationsApi = notificationsApi;            
+        public SendEmailHandler(ILogger<SendEmailHandler> logger, IMessageSession messageSession)
+        {       
             _logger = logger;
             _messageSession = messageSession;
         }
@@ -85,29 +83,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             }
         }
 
-        private async Task SendEmailViaNotificationsApi(string toAddress, string templateId, string templateName, Dictionary<string, string> personalisationTokens)
-        {
-            // Note: It appears that if anything is hard copied in the template it'll ignore any values below
-            var email = new Email
-            {
-                RecipientsAddress = toAddress,
-                TemplateId = templateId,
-                ReplyToAddress = ReplyToAddress,
-                Subject = Subject,
-                SystemId = SystemId,
-                Tokens = personalisationTokens
-            };
-
-            try
-            {
-                _logger.LogInformation($"Sending {templateName} email ({templateId}) to {toAddress}");
-                await Task.Run(() => _notificationsApi.SendEmail(email));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error sending {templateName} email ({templateId}) to {toAddress}");
-            }
-        }
 
         private async Task SendEmailViaNserviceBus(string toAddress, string templateId, string templateName, Dictionary<string, string> personalisationTokens)
         {

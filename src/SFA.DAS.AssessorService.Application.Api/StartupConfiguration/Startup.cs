@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -289,6 +290,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 _logger.LogError(e, "Error during Startup Configure");
                 throw;
             }
+        }
+
+        public void ConfigureContainer(UpdateableServiceProvider serviceProvider)
+        {
+            serviceProvider.StartNServiceBus(_config).GetAwaiter().GetResult();
         }
 
         private Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration NotificationConfiguration()

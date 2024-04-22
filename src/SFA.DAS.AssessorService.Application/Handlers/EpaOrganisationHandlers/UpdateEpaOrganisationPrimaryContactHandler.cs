@@ -71,8 +71,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                             }), cancellationToken);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    var test = ex;
                     _logger.LogInformation($"Unable to send email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name}");
                 }
 

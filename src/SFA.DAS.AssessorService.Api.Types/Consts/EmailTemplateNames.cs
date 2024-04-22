@@ -54,5 +54,6 @@
         public const string EPAOUserApproveRequest = "EPAOUserApproveRequest";
         public const string EPAOUserApproveReject = "EPAOUserApproveReject";
         public const string EPAOPermissionsRequested = "EPAOPermissionsRequested";
+        public const string EPAOPermissionsAmended = "EPAOPermissionsAmended";
     }
 }

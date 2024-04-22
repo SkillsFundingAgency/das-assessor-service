@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -83,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
                 var addedText = GetAddedPrivilegesEmailToken(privilegesBeingAdded);
 
                 var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest
-                    {TemplateName= "EPAOPermissionsAmended" });
+                    {TemplateName= EmailTemplateNames.EPAOPermissionsAmended });
 
                 var amendingContact = 
                     request.AmendingContactId.Equals(Guid.Empty)

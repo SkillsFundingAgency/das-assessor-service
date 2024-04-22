@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             //if (configuration.IsIntegrationTests()) return serviceProvider;
 
-            var appSettings = configuration.GetSection("ApplicationSettings").Get<ApiConfiguration>();
+            var appSettings = configuration as ApiConfiguration;
 
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.AssessorService.Application.Api")
                 .UseMessageConventions()

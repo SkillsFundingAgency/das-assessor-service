@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace SFA.DAS.AssessorService.Application.Api
 {
     using global::NLog.Web;
+    using Microsoft.Extensions.Hosting;
+    using SFA.DAS.NServiceBus.Configuration.MicrosoftDependencyInjection;
 
     public class Program
     {
@@ -38,7 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Api
                         services.AddApplicationInsightsTelemetry();
                     })
                 .UseStartup<Startup>()
+                .UseNServiceBusContainer()
                 .UseNLog();
         }
+
     }
 }
