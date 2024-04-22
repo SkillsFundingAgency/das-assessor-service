@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -27,7 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
         {
             const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
 
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoUserApproveRequestTemplate);
+            //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoUserApproveRequestTemplate);
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOUserApproveRequest });
 
             var organisation = await _organisationQueryRepository.Get(message.EndPointAssessorOrganisationId);
             

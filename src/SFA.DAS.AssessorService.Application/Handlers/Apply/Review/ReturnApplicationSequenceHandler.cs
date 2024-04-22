@@ -83,7 +83,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     {
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_UPDATE);
+                        //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_UPDATE);
+                        var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.APPLY_EPAO_UPDATE });
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, LoginLink = loginLink }), cancellationToken);
                     }
@@ -96,7 +97,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                         var standardName = application.ApplyData?.Apply.StandardName ?? string.Empty;
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
+                        //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.APPLY_EPAO_RESPONSE);
+                        var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.APPLY_EPAO_RESPONSE });
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, standard = standardName, LoginLink = loginLink }), cancellationToken);
                     }
@@ -112,7 +114,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     if (lastSubmission != null)
                     {
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedbackNotification);
+                        //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedbackNotification);
+                        var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOWithdrawalFeedbackNotification });
 
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new
@@ -131,7 +134,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     {                        
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAORegisterWithdrawalApproval);
+                        //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAORegisterWithdrawalApproval);
+                        var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAORegisterWithdrawalApproval });
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName,  LoginLink = loginLink }), cancellationToken);
                     }
@@ -145,7 +149,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                         var standardReferance = application.ApplyData?.Apply.StandardReference ?? string.Empty;
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardWithdrawalApproval);
+                        //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardWithdrawalApproval);
+                        var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOStandardWithdrawalApproval });
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardName = standardName, StandardReference = standardReferance,  LoginLink = loginLink }), cancellationToken);
                     }

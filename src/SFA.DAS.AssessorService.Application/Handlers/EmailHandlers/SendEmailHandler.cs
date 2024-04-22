@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NServiceBus;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
+using SFA.DAS.Notifications.Messages.Commands;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
@@ -21,11 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
         private const string Subject = "EPAO user to approve";
         private readonly INotificationsApi _notificationsApi;        
         private readonly ILogger<SendEmailHandler> _logger;
+        private readonly IMessageSession _messageSession;
 
-        public SendEmailHandler(INotificationsApi notificationsApi, ILogger<SendEmailHandler> logger)
+        public SendEmailHandler(INotificationsApi notificationsApi, ILogger<SendEmailHandler> logger, IMessageSession messageSession)
         {
             _notificationsApi = notificationsApi;            
             _logger = logger;
+            _messageSession = messageSession;
         }
 
       
@@ -36,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 
             if (emailTemplateSummary != null && !string.IsNullOrWhiteSpace(message.Email))
             {                
-                await SendEmailViaNotificationsApi(message.Email, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
+                await SendEmailViaNserviceBus(message.Email, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
             }
             else if (emailTemplateSummary != null && emailTemplateSummary.Recipients != string.Empty)
             {
@@ -77,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             var recipients = emailTemplateSummary.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)
             {
-                await SendEmailViaNotificationsApi(recipient, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
+                await SendEmailViaNserviceBus(recipient, emailTemplateSummary.TemplateId, emailTemplateSummary.TemplateName, personalisationTokens);
             }
         }
 
@@ -105,6 +109,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             }
         }
 
-        
+        private async Task SendEmailViaNserviceBus(string toAddress, string templateId, string templateName, Dictionary<string, string> personalisationTokens)
+        {
+            try
+            {
+                var emailCommand = new SendEmailCommand(templateId, toAddress, personalisationTokens);
+                _logger.LogInformation($"Sending {templateName} email ({templateId}) to {toAddress}");
+                await _messageSession.Send(emailCommand);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error sending {templateName} email ({templateId}) to {toAddress}");
+            }
+        }
+
+
     }
 }

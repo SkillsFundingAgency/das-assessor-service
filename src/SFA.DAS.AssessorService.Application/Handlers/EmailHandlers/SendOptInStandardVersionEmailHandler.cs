@@ -44,7 +44,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 throw new NotFoundException($"Unable to send email for opt in standard version, cannot find version {request.Version} for standard reference {request.StandardReference}");
             }
 
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptIn);
+            //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptIn);
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOStandardConfimOptIn });
+
             if (emailTemplate == null)
             {
                 throw new NotFoundException($"Unable to send email for opt in standard version, cannot find email template {EmailTemplateNames.EPAOStandardConfimOptIn}");

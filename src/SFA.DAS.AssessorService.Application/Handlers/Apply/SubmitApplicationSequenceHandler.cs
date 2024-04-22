@@ -208,20 +208,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             if (sequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
+                //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
+                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.ApplyEPAOInitialSubmission });
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
 
-                var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);               
+                //var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);
+                var emailTemplateAlert = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.ApplyEPAOAlertSubmission });
                 await _mediator.Send(new SendEmailRequest(string.Empty, emailTemplateAlert, new { contactname, reference }), cancellationToken);
             }
             else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
+                //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOStandardSubmission);
+                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.ApplyEPAOStandardSubmission });
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference, standard, standardreference }), cancellationToken);
             }
             else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.WithdrawalEPAOSubmission);
+                //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.WithdrawalEPAOSubmission);
+                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.WithdrawalEPAOSubmission });
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
             }
 

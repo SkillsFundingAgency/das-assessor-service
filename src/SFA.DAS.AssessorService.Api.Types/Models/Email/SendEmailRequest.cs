@@ -15,5 +15,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public EmailTemplateSummary EmailTemplateSummary { get;  }
         public string Email { get; set; }
         public dynamic Tokens { get; }
+         
     }
 }

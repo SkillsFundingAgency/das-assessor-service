@@ -53,8 +53,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private async Task NotifyContact(Guid id, Guid submittedBy, string standardWithReference, CancellationToken cancellationToken)
         {
             var contactToNotify = await _contactQueryRepository.GetContactById(submittedBy);
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOCancelApplication);
-            
+            //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOCancelApplication);
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOCancelApplication });
+
             await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                 new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName, StandardWithReference = standardWithReference }), cancellationToken);
         }

@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -36,7 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             await _contactRepository.UpdateStatus(message.ContactId, ContactStatus.New);
             await _contactRepository.UpdateOrganisationId(message.ContactId, null);
             
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoUserReject);
+            //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(epaoUserReject);
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOUserApproveRequest });
 
             await _mediator.Send(new SendEmailRequest(contact.Email,
                 emailTemplate, new

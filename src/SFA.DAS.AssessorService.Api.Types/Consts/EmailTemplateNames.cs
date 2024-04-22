@@ -47,5 +47,12 @@
         /// Requires tokens: { contactname, standard, standardreference, version, servicename }
         /// </summary>
         public const string EPAOStandardConfimOptOut = "EPAOStandardConfimOptOut";
+
+
+        public const string EPAOLoginAccountCreated = "EPAOLoginAccountCreated";
+
+        public const string EPAOUserApproveRequest = "EPAOUserApproveRequest";
+        public const string EPAOUserApproveReject = "EPAOUserApproveReject";
+        public const string EPAOPermissionsRequested = "EPAOPermissionsRequested";
     }
 }

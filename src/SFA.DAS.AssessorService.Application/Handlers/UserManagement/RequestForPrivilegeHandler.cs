@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -47,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
             }
             else
             {
-                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest{TemplateName= "EPAOPermissionsRequested" }, cancellationToken);
+                var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest{TemplateName = EmailTemplateNames.EPAOPermissionsRequested }, cancellationToken);
             
                 contactsWithUserManagementPrivilege.ForEach(async contact =>
                 {

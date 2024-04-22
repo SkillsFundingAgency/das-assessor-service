@@ -39,7 +39,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                         (c.Contact.Status == ContactStatus.Live || c.Contact.Status == ContactStatus.Active))
                     .ToList();
 
-                var organisationDetailsAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationDetailsAmended);
+                //var organisationDetailsAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationDetailsAmended);
+                var organisationDetailsAmendedEmailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOOrganisationDetailsAmended });
                 if (organisationDetailsAmendedEmailTemplate != null)
                 {
                     foreach (var contactWithManageUserPrivilege in contactsWithManageUserPrivilege)

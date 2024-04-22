@@ -58,7 +58,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 try
                 {
-                    var primaryEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.MergeConfirmationForPrimaryEpao);
+                    //var primaryEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.MergeConfirmationForPrimaryEpao);
+                    var primaryEmailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.MergeConfirmationForPrimaryEpao });
                     if (null != primaryEmailTemplate)
                     {
                         await _mediator.Send(new SendEmailRequest(mergeOrganisation.PrimaryOrganisationEmail, primaryEmailTemplate,
@@ -70,7 +71,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                             }));
                     }
 
-                    var secondaryEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.MergeConfirmationForSecondaryEpao);
+                    //var secondaryEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.MergeConfirmationForSecondaryEpao);
+                    var secondaryEmailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.MergeConfirmationForSecondaryEpao });
                     if (null != secondaryEmailTemplate)
                     {
                         await _mediator.Send(new SendEmailRequest(mergeOrganisation.SecondaryOrganisationEmail, secondaryEmailTemplate,

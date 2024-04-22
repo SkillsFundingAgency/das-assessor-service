@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Settings
 {
@@ -33,5 +34,9 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string ServiceLink { get; set; }
         [JsonRequired] public EmailTemplatesConfig EmailTemplatesConfig { get; set; }
         public bool UseGovSignIn { get; set; }
+        public string NServiceBusConnectionString { get; set; }
+        public string NServiceBusLicense { get; set; }
+
+        public List<NotificationTemplate> NotificationTemplates { get; set; }
     }
 }

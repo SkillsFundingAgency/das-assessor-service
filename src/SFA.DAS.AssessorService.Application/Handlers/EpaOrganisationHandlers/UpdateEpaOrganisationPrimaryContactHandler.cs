@@ -6,9 +6,11 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Settings;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,7 +54,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
                 try
                 {
-                    var primaryContactaAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOPrimaryContactAmended);
+                    //var primaryContactaAmendedEmailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOPrimaryContactAmended);
+                    var primaryContactaAmendedEmailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOPrimaryContactAmended});
                     if (primaryContactaAmendedEmailTemplate != null)
                     {
                         _logger.LogInformation($"Sending email to notify updated primary contact {primaryContact.Username} for organisation {organisation.Name}");

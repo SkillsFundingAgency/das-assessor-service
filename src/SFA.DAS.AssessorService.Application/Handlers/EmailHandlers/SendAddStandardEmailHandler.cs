@@ -50,7 +50,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 throw new NotFoundException($"Unable to send email for add standard, cannot find StandardReference {request.StandardReference}");
             }
 
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardAdd);
+            //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardAdd);
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOStandardAdd });
             if (emailTemplate == null)
             {
                 throw new NotFoundException($"Unable to send email for add standard, cannot find email template {EmailTemplateNames.EPAOStandardAdd}");

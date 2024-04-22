@@ -44,7 +44,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 throw new NotFoundException($"Unable to send email for opt out standard version, cannot find version {request.Version} for standard reference {request.StandardReference}");
             }
 
-            var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptOut);
+            //var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOStandardConfimOptOut);
+            var emailTemplate = await _mediator.Send(new GetEmailTemplateRequest { TemplateName = EmailTemplateNames.EPAOStandardConfimOptOut });
             if (emailTemplate == null)
             {
                 throw new NotFoundException($"Unable to send email for opt out standard version, cannot find email template {EmailTemplateNames.EPAOStandardConfimOptOut}");
