@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Services.AppAuthentication;
+﻿using Azure.Core;
+using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Data;
 using StructureMap;
@@ -15,13 +16,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         public static void AddDatabaseRegistration(this ConfigurationExpression config, string environment, string sqlConnectionString)
         {
             config.For<IDbConnection>().Use($"Build IDbConnection", c => {
-                var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                var tokenCredential = new DefaultAzureCredential();
                 return environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
                     : new SqlConnection
                     {
                         ConnectionString = sqlConnectionString,
-                        AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
+                        AccessToken = tokenCredential.GetTokenAsync(
+                            new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { }
+                            ).Result.ToString()
                     };
             });
             

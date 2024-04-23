@@ -551,13 +551,12 @@
   </ItemGroup>
 
   <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Azure.Identity" Version="1.10.4" />
     <PackageReference Include="FluentValidation" Version="11.2.1" />
     <PackageReference Include="MediatR" Version="11.1.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
