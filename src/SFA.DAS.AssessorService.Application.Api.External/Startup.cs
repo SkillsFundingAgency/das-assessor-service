@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.Configuration.AzureTableStorage;
 using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
 using System;
@@ -31,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 {
     public class Startup
     {
+        private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
         private const string SERVICE_NAME = "SFA.DAS.AssessorService.ExternalApi";
@@ -41,8 +43,23 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             _env = env;
             _logger = logger;
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory());
             _logger.LogInformation("In startup constructor.  Before Config");
-            Configuration = configuration;
+
+            config.AddEnvironmentVariables();
+            config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
+            );
+
+            _config = config.Build();
+            Configuration = (IConfiguration)_config.Get<ExternalApiConfiguration>();
 
             if(!bool.TryParse(configuration["UseSandboxServices"], out _useSandbox))
             {
@@ -61,8 +78,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             try
             {
-                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
