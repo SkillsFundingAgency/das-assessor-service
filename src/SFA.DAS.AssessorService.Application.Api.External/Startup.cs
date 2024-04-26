@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             );
 
             _config = config.Build();
-            Configuration = (IConfiguration)_config.Get<ExternalApiConfiguration>();
+            Configuration = _config.Get<ExternalApiConfiguration>();
 
             if(!bool.TryParse(configuration["UseSandboxServices"], out _useSandbox))
             {
@@ -68,8 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
-        public IConfiguration Configuration { get; }
-        public IExternalApiConfiguration ApplicationConfiguration { get; set; }
+        public IExternalApiConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -78,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {_config["InstanceName"]}", Version = "v1" });
                     c.EnableAnnotations();
                     c.ExampleFilters();
                     c.SchemaFilter<SwaggerRequiredSchemaFilter>();
@@ -148,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             var container = new Container();
 
-            container.Configure(config =>
+            container.Configure((Action<ConfigurationExpression>)(config =>
             {
                 config.Scan(_ =>
                 {
@@ -158,19 +157,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 if (_useSandbox)
                 {
-                    config.For<AssessorApiClientConfiguration>().Use(ApplicationConfiguration.SandboxAssessorApiAuthentication);
+                    config.For<AssessorApiClientConfiguration>().Use((AssessorApiClientConfiguration)this.Configuration.SandboxAssessorApiAuthentication);
                     config.For<IApiClient>().Use<SandboxApiClient>();
                 }
                 else
                 {
-                    config.For<AssessorApiClientConfiguration>().Use(ApplicationConfiguration.AssessorApiAuthentication);
+                    config.For<AssessorApiClientConfiguration>().Use((AssessorApiClientConfiguration)this.Configuration.AssessorApiAuthentication);
                     config.For<IApiClient>().Use<ApiClient>();
                 }
 
-                config.For<IExternalApiConfiguration>().Use(ApplicationConfiguration);
+                config.For<IExternalApiConfiguration>().Use((IExternalApiConfiguration)this.Configuration);
 
                 config.Populate(services);
-            });
+            }));
 
             return container.GetInstance<IServiceProvider>();
         }
