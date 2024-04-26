@@ -43,9 +43,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Api";
-        private const string VERSION = "1.0";
-        
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;

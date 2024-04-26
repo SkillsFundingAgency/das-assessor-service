@@ -35,8 +35,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService.ExternalApi";
-        private const string VERSION = "1.0";
         private readonly bool _useSandbox;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env, ILogger<Startup> logger)
