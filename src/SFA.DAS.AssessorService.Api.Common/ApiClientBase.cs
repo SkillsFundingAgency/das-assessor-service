@@ -38,11 +38,10 @@ namespace SFA.DAS.AssessorService.Api.Common
                 DelayGenerator = static opt =>
                     ValueTask.FromResult((TimeSpan?)TimeSpan.FromSeconds(Math.Pow(2, opt.AttemptNumber)))
             };
-            ResiliencePipeline<HttpResponseMessage> resiliencePipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+
+            _resiliencePipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
                 .AddRetry(options)
                 .Build();
-
-            _resiliencePipeline = resiliencePipeline;
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
