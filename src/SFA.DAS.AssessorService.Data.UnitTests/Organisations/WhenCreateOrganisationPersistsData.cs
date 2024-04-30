@@ -10,8 +10,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
-    using OrganisationResponse = Api.Types.Models.OrganisationResponse;
-   
+
     public class WhenCreateOrganisationPersistsData
     {
         private  OrganisationRepository _organisationRepository;

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-  public class OppFinderApprovedStandardDetailsRegionResult
+    public class OppFinderApprovedStandardDetailsRegionResult
   {
     public string Region { get; set; }
     public string[] EndPointAssessorsNames { get; set; }

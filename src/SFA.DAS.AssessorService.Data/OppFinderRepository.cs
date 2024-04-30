@@ -1,11 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;

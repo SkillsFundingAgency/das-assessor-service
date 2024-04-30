@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Extensions;
-using System.Collections;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
 {
