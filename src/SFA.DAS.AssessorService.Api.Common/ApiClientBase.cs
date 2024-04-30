@@ -1,14 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Http.Resilience;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Polly;
-using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace SFA.DAS.AssessorService.Api.Common
 {
@@ -16,7 +18,7 @@ namespace SFA.DAS.AssessorService.Api.Common
     {
         private readonly ILogger<ApiClientBase> _logger;
         private readonly HttpClient _httpClient;
-        private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
+        private readonly ResiliencePipeline<HttpResponseMessage> _resiliencePipeline;
 
         protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
@@ -29,10 +31,18 @@ namespace SFA.DAS.AssessorService.Api.Common
             _logger = logger;
             _httpClient = httpClient;
 
-            _retryPolicy = HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
+            var options = new RetryStrategyOptions<HttpResponseMessage>
+            {
+                ShouldHandle = async args => await PollyUtils.HandleTransientHttpError(args.Outcome),
+                MaxRetryAttempts = 3,
+                DelayGenerator = static opt =>
+                    ValueTask.FromResult((TimeSpan?)TimeSpan.FromSeconds(Math.Pow(2, opt.AttemptNumber)))
+            };
+            ResiliencePipeline<HttpResponseMessage> resiliencePipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+                .AddRetry(options)
+                .Build();
+
+            _resiliencePipeline = resiliencePipeline;
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
@@ -64,11 +74,11 @@ namespace SFA.DAS.AssessorService.Api.Common
         {
             HttpRequestMessage clonedRequest = null;
 
-            var result = await _retryPolicy.ExecuteAsync(async () =>
+            var result = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
 
             if (result.StatusCode == HttpStatusCode.OK)
             {
@@ -121,7 +131,7 @@ namespace SFA.DAS.AssessorService.Api.Common
         protected async Task<U> PostPutRequestWithResponseAsync<U>(HttpRequestMessage requestMessage, HttpContent content, string mediaType, JsonSerializerSettings setting = null)
         {
             HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 if (!string.IsNullOrEmpty(mediaType))
@@ -131,7 +141,7 @@ namespace SFA.DAS.AssessorService.Api.Common
                 clonedRequest.Content = content;
 
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
 
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK
@@ -151,11 +161,11 @@ namespace SFA.DAS.AssessorService.Api.Common
         {
             HttpRequestMessage clonedRequest = null;
 
-            var result = await _retryPolicy.ExecuteAsync(async () =>
+            var result = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
 
             if (result.StatusCode == HttpStatusCode.OK)
             {
@@ -184,12 +194,12 @@ namespace SFA.DAS.AssessorService.Api.Common
         {
             var serializeObject = JsonConvert.SerializeObject(model);
             HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 clonedRequest.Content = new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json");
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
            
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -200,11 +210,11 @@ namespace SFA.DAS.AssessorService.Api.Common
         protected async Task PostPutRequestAsync(HttpRequestMessage requestMessage)
         {
             HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -215,11 +225,11 @@ namespace SFA.DAS.AssessorService.Api.Common
         protected async Task DeleteAsync(HttpRequestMessage requestMessage)
         {
             HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
             
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -230,11 +240,11 @@ namespace SFA.DAS.AssessorService.Api.Common
         protected async Task<U> DeleteAsync<U>(HttpRequestMessage requestMessage)
         {
             HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest);
-            });
+            }, CancellationToken.None);
 
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK || 
