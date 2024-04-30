@@ -175,14 +175,18 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         }
                     });
 
-                services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
+                services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
                     {
-                        config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
+                        config.BaseAddress = new Uri(Configuration.CompaniesHouseApiAuthentication.ApiBaseAddress);
                         config.DefaultRequestHeaders.Add("Accept", "Application/json");
                     })
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-                services.AddHttpClient<OuterApiClient>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
+                services.AddHttpClient<IOuterApiClient, OuterApiClient>(config => 
+                    {
+                        config.BaseAddress = new Uri(Configuration.OuterApi.BaseUrl);
+                    })
+                    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
                 services.AddHostedService<TaskQueueHostedService>();
 
@@ -218,7 +222,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IApiConfiguration>().Use(Configuration);
                 config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<ISignInService>().Use<SignInService>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
                 config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
@@ -242,11 +245,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
                     .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
 
-                config.For<ICompaniesHouseApiClient>().Use<CompaniesHouseApiClient>()
-                    .Ctor<ICompaniesHouseApiClientConfiguration>().Is(Configuration.CompaniesHouseApiAuthentication);
+                config.For<ICompaniesHouseApiClient>().Use<CompaniesHouseApiClient>();
+                config.For<ICompaniesHouseApiClientConfiguration>().Use(Configuration.CompaniesHouseApiAuthentication);
 
-                config.For<IOuterApiClient>().Use<OuterApiClient>()
-                    .Ctor<IOuterApiClientConfiguration>().Is(Configuration.OuterApi);
+                config.For<IOuterApiClient>().Use<OuterApiClient>();
+                config.For<IOuterApiClientConfiguration>().Use(Configuration.OuterApi);
 
                 config.Populate(services);
             });

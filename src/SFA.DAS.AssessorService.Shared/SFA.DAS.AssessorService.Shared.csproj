@@ -221,7 +221,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ISignInService.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ISignInService.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\ApprovalsLearnerResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\ApprovalsLearnerResult.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Learner\GetApprenticeLearnerResponse.cs" />

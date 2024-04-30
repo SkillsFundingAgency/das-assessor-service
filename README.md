@@ -57,10 +57,9 @@ The default JSON configuration was created to work with dotnet run:
 * run `dotnet restore`
 * run `dotnet run`
 
-**Note:** Running the solution from VS2019 is not supported currently as the Login Service (OpenId Identity Server 4) is configured by default for the client end point to originate at https://localhost:5015 which is not a valid port for IIS Express; altering the Login Service configuration is out of scope for this Readme.
+**Note:** Running the solution from Visual Studio is supported by bypassing the external authentication using the configuration variable "StubAuth" = true.
 
 * To run a local copy you will also need the following solutions locally:
-    * [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
     * [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
     * [Admin Service](https://github.com/SkillsFundingAgency/das-admin-service)
 *  And you may also require:  

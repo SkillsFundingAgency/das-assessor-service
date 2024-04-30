@@ -32,6 +32,9 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Infrastructure\SFA.DAS.AssessorService.Infrastructure.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Banners\" />
+  </ItemGroup>
   <!-- see https://github.com/NuGet/Home/issues/4989 -->
   <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
     <ItemGroup>
