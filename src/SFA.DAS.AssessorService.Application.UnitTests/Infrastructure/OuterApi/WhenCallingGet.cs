@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -33,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             };
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.BaseUrl + getTestRequest.GetUrl, config.Key);
             var client = new HttpClient(httpMessageHandler.Object);
+            client.BaseAddress = new Uri(config.BaseUrl);
             var apiClient = new OuterApiClient(client, config);
 
             //Act
@@ -57,6 +59,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.BaseUrl + getTestRequest.GetUrl, config.Key);
             var client = new HttpClient(httpMessageHandler.Object);
+            client.BaseAddress = new Uri(config.BaseUrl);
             var apiClient = new OuterApiClient(client, config);
             
             //Act Assert
@@ -79,6 +82,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
             
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, config.BaseUrl + getTestRequest.GetUrl, config.Key);
             var client = new HttpClient(httpMessageHandler.Object);
+            client.BaseAddress = new Uri(config.BaseUrl);
             var apiClient = new OuterApiClient(client, config);
             
             //Act Assert
