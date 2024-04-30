@@ -8,7 +8,11 @@
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-    <partial name=@Model.BannerViewPath />
+    @if (!string.IsNullOrEmpty(Model.BannerViewPath))
+    {
+        <partial name=@Model.BannerViewPath/>    
+    }
+    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Apprenticeship assessment service</h1>
@@ -17,7 +21,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">Use this service if you're an end-point assessor and want to assess apprenticeships. You need to be part of an organisation on our Apprenticeship provider and assessment register (APAR).</p>
-                
+
             <p class="govuk-body">You can use this service to:</p>
 
             <ul class="govuk-list govuk-list--bullet">
@@ -38,7 +42,7 @@
             <h2 class="govuk-heading-s govuk-!-font-size-14">Related content</h2>
             <p class="govuk-body-s"><a class="govuk-link" href="https://www.gov.uk/guidance/joining-the-apar-as-an-end-point-assessment-organisation" rel="noreferrer noopener" target="_blank">How to join Apprenticeship provider and assessment register (APAR) as an end-point assessment organisation<span class="govuk-visually-hidden">(opens in new tab)</span></a></p>
             <p class="govuk-body-s"><a class="govuk-link" href="https://www.gov.uk/government/publications/apprenticeship-provider-and-assessment-register-conditions-of-acceptance" rel="noreferrer noopener" target="_blank">Conditions of acceptance for APAR<span class="govuk-visually-hidden">(opens in new tab)</span></a></p>
-            
+
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -48,7 +52,7 @@
                     <a asp-action="SignIn" asp-controller="Account" role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-bottom-0" data-module="govuk-button">
                         Start now
                         <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"/>
                         </svg>
                     </a>
                     <span class="das-inline-button-link das-inline-button-link--start">
