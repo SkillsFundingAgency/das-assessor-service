@@ -232,40 +232,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return View(new AccountViewModel());
         }
-        
-        [HttpGet]
-        public IActionResult CreateAnAccount()
-        {
-            if (_config.UseGovSignIn)
-            {
-                return RedirectToAction("UpdateAnAccount");
-            }
-            var vm = new CreateAccountViewModel();
-            return View(vm);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateAnAccount(CreateAccountViewModel vm)
-        {
-            if (_config.UseGovSignIn)
-            {
-                RedirectToAction("Error", "Home");
-            }
-            
-            _createAccountValidator.Validate(vm);
-
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
-
-            var inviteSuccess =
-                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email, null));
-
-            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
-            return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
-            
-        }
 
         [Authorize]
         [HttpPost]

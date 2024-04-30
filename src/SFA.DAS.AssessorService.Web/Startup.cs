@@ -85,18 +85,11 @@ namespace SFA.DAS.AssessorService.Web
                 services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
                 services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
                 
-                if (Configuration.UseGovSignIn)
-                {
-                    var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
-                                  || _config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
-                    var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
-                    var loginRedirect = isLocal ? "" : $"{Configuration.ServiceLink}/service/account-details";
-                    services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout", "/service/account-details", cookieDomain, loginRedirect);
-                }
-                else
-                {
-                    services.AddAndConfigureAuthentication(Configuration, _env);
-                }
+                var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
+                                || _config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+                var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
+                var loginRedirect = isLocal ? "" : $"{Configuration.ServiceLink}/service/account-details";
+                services.AddAndConfigureGovUkAuthentication(_config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler), "/account/signedout", "/service/account-details", cookieDomain, loginRedirect);
 
                 services.AddAuthorization(options =>
                 {
