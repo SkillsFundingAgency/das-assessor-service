@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                     Connection = connection,
                     CommandText =
                         @"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); " + 
-                            " ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
+                         "ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
                 };
                 var reader = comm.ExecuteReader();
                 reader.Close();
@@ -66,10 +66,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 connection.Execute(sql);
-                connection.Close();
             }
         }
 
@@ -77,10 +74,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 var result = connection.Query<T>(sql);
-                connection.Close();
                 return result.FirstOrDefault();
             }    
         }
@@ -89,15 +83,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 var result = connection.Query<T>(sql);
-                connection.Close();
                 return result;
             }
         }
 
-        public async Task<T> QueryFirstOrDefaultAsync<T, M>(string sql, M model) where T : TestModel
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, object model) //where T : TestModel
         {
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
@@ -117,11 +108,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 var result = connection.ExecuteScalar(sql);
-                connection.Close();
-
                 return result;
             }
         }

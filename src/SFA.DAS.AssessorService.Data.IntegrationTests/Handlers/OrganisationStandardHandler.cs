@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     $"AND {NullQueryParam(organisationStandard, p => p.ContactId)} " +
                     $"AND {NullQueryParam(organisationStandard, p => p.StandardReference)}";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardModel, OrganisationStandardModel>(sqlToQuery, organisationStandard);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardModel>(sqlToQuery, organisationStandard);
         }
 
         public static async Task<int> QueryCountAllAsync()
