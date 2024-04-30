@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             var newContact = Mapper.Map<Contact>(createContactRequest);           
             newContact.OrganisationId = null;
             newContact.Status = ContactStatus.New;
-            newContact.SignInType = string.IsNullOrEmpty(createContactRequest.GovIdentifier) ? "ASLogin" : "GovLogin";
+            newContact.SignInType = "GovLogin";
             newContact.Title = "";
             newContact.GivenNames = createContactRequest.GivenName;
             newContact.GovUkIdentifier = createContactRequest.GovIdentifier;
