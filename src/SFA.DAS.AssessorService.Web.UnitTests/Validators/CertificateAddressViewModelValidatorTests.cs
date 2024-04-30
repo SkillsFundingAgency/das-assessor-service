@@ -1,15 +1,12 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation.Results;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 {

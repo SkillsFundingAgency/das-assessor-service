@@ -17,8 +17,6 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public QnaApiClientConfiguration QnaApiAuthentication { get; set; }
 
-        [JsonRequired] public LoginServiceConfig LoginService { get; set; }
-
         [JsonRequired] public RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
         [JsonRequired] public ReferenceDataApiClientConfiguration ReferenceDataApiAuthentication { get; set; }
         [JsonRequired] public CompaniesHouseApiClientConfiguration CompaniesHouseApiAuthentication { get; set; }
@@ -32,6 +30,5 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public int PipelineCutoff { get; set; }
         [JsonRequired] public string ServiceLink { get; set; }
         [JsonRequired] public EmailTemplatesConfig EmailTemplatesConfig { get; set; }
-        public bool UseGovSignIn { get; set; }
     }
 }

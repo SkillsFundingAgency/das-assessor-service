@@ -15,8 +15,6 @@ namespace SFA.DAS.AssessorService.Settings
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         QnaApiClientConfiguration QnaApiAuthentication { get; set; }
-
-        LoginServiceConfig LoginService { get; set; }
         
         RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
         ReferenceDataApiClientConfiguration ReferenceDataApiAuthentication { get; set; }
@@ -31,6 +29,5 @@ namespace SFA.DAS.AssessorService.Settings
         int PipelineCutoff { get; set; }
         string ServiceLink { get; set; }
         EmailTemplatesConfig EmailTemplatesConfig { get; set; }
-        bool UseGovSignIn { get; set; }
     }
 }

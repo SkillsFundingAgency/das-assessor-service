@@ -1,4 +1,6 @@
-﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+﻿using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using System;
 using System.Collections.Generic;
