@@ -1,4 +1,6 @@
-﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+﻿using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using System;
 using System.Collections.Generic;
@@ -101,7 +103,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     $"AND {NullQueryParam(organisationStandard, p => p.ContactId)} " +
                     $"AND {NullQueryParam(organisationStandard, p => p.StandardReference)}";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardModel, OrganisationStandardModel>(sqlToQuery, organisationStandard);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardModel>(sqlToQuery, organisationStandard);
         }
 
         public static async Task<int> QueryCountAllAsync()

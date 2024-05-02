@@ -1,10 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Localization;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Web.Constants;
-using SFA.DAS.AssessorService.Web.Validators;
-using SFA.DAS.AssessorService.Web.ViewModels.Search;
+﻿using NUnit.Framework;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {

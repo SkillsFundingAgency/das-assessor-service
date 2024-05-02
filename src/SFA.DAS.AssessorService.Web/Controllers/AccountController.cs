@@ -75,9 +75,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
-        { 
+        {
             var loginResult = await _loginOrchestrator.Login();
-//            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
+            //            var orgName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/orgname")?.Value;
             var epaoId = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
             _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    
+
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
@@ -182,16 +182,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("InvitePending", "Home");
                 }
 
-                if (organisation != null && organisation.Status == OrganisationStatus.Applying ||
-                    organisation.Status == OrganisationStatus.New)
+                if (organisation != null)
                 {
-                    return RedirectToAction("Index", "Dashboard");
+                    if (organisation.Status == OrganisationStatus.Applying ||
+                    organisation.Status == OrganisationStatus.New)
+                    {
+                        return RedirectToAction("Index", "Dashboard");
+                    }
+
                 }
 
                 var privilege = (await _contactsApiClient.GetPrivileges()).Single(p => p.Id == deniedContext.PrivilegeId);
 
                 var usersPrivileges = await _contactsApiClient.GetContactPrivileges(userId);
-                
+
                 return View("~/Views/Account/AccessDeniedForPrivilege.cshtml", new AccessDeniedViewModel
                 {
                     Title = privilege.UserPrivilege,
@@ -227,40 +231,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult UpdateAnAccount()
         {
             return View(new AccountViewModel());
-        }
-        
-        [HttpGet]
-        public IActionResult CreateAnAccount()
-        {
-            if (_config.UseGovSignIn)
-            {
-                return RedirectToAction("UpdateAnAccount");
-            }
-            var vm = new CreateAccountViewModel();
-            return View(vm);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateAnAccount(CreateAccountViewModel vm)
-        {
-            if (_config.UseGovSignIn)
-            {
-                RedirectToAction("Error", "Home");
-            }
-            
-            _createAccountValidator.Validate(vm);
-
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
-
-            var inviteSuccess =
-                await _contactsApiClient.InviteUser(new CreateContactRequest(vm.GivenName, vm.FamilyName, vm.Email,null,vm.Email, null));
-
-            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(vm));
-            return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
-            
         }
 
         [Authorize]
