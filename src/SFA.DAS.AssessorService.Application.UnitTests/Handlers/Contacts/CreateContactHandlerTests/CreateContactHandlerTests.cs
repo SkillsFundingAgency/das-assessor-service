@@ -1,56 +1,158 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Handlers.ContactHandlers;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.CreateContactHandlerTests;
-
-public class CreateContactHandlerTests: CreateContactsHandlerTestBase
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.CreateContactHandlerTests
 {
-    private Guid _existingContactUserId;
-        
-    [SetUp]
-    public void Arrange()
-    {
-        _existingContactUserId = Guid.NewGuid();
-        ContactRepository.Setup(r => r.GetContact("user@email.com")).ReturnsAsync(new Contact(){Id = _existingContactUserId});
-        
-    }
 
-    [Test]
-    public async Task When_Gov_Login_Identifier_Supplied_And_User_Does_Exist_Then_User_Is_Not_Invited_And_Contact_Updated_With_Guid_And_GovIdentifier()
+    [TestFixture]
+    public class CreateContactHandlerTests
     {
-        await CreateContactHandler.Handle(
-            new CreateContactRequest("Given Name", "Family Name", "user@email.com", null, null, "some-identifier"),
-            CancellationToken.None);
+        private Mock<IContactRepository> _mockContactRepository;
+        private Mock<ILogger<CreateContactHandler>> _mockLogger;
+        private CreateContactHandler _sut;
 
-        SignInService.Verify(
-            x => x.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()),
-            Times.Never);
-        ContactRepository.Verify(r => r.UpdateSignInId(_existingContactUserId, It.IsAny<Guid?>(), "some-identifier"));
-    }
-    
-    [Test]
-    public async Task When_Gov_Login_Identifier_Supplied_And_User_Doesnt_Exist_Then_User_Is_Not_Invited_And_Contact_Updated_With_Guid_And_GovIdentifier()
-    {
-        var contactId = Guid.NewGuid();
-        ContactRepository.Setup(x => x.CreateNewContact(It.Is<Contact>(c =>
-            c.SignInType.Equals("GovLogin") && c.GovUkIdentifier.Equals("some-identifier") &&
-            c.Email.Equals("user2@email.com")))).ReturnsAsync(new Contact
+        [SetUp]
+        public void Setup()
         {
-            Id = contactId
-        });
-        
-        await CreateContactHandler.Handle(
-            new CreateContactRequest("Given Name", "Family Name", "user2@email.com", null, null, "some-identifier"),
-            CancellationToken.None);
+            _mockContactRepository = new Mock<IContactRepository>();
+            _mockLogger = new Mock<ILogger<CreateContactHandler>>();
+            _sut = new CreateContactHandler(_mockContactRepository.Object, _mockLogger.Object);
+        }
 
-        SignInService.Verify(
-            x => x.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()),
-            Times.Never);
-        ContactRepository.Verify(r => r.UpdateSignInId(contactId, It.IsAny<Guid?>(), "some-identifier"));
+        [Test]
+        public async Task Handle_WhenContactDoesNotExist_ShouldCreateContact()
+        {
+            // Arrange
+            var request = new CreateContactRequest
+            {
+                Email = "test@example.com",
+                Username = "TestUser",
+                DisplayName = "Test User",
+                GovIdentifier = "12345"
+            };
+            
+            _mockContactRepository.Setup(x => x.GetContact(request.Email)).ReturnsAsync((Contact)null);
+            _mockContactRepository.Setup(x => x.CreateNewContact(It.IsAny<Contact>())).ReturnsAsync(new Contact { Id = Guid.NewGuid() });
+
+            // Act
+            var result = await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            result.Result.Should().BeTrue();
+            _mockContactRepository.Verify(x => x.CreateNewContact(It.IsAny<Contact>()), Times.Once);
+            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        public async Task Handle_WhenContactDoesNotExist_AndGovUkIdentifierIsNotSet_ShouldNotUpdateSignInId(string govIdentifier)
+        {
+            // Arrange
+            var request = new CreateContactRequest
+            {
+                Email = "test@example.com",
+                Username = "TestUser",
+                DisplayName = "Test User",
+                GovIdentifier = govIdentifier
+            };
+
+            _mockContactRepository.Setup(x => x.GetContact(request.Email)).ReturnsAsync((Contact)null);
+            _mockContactRepository.Setup(x => x.CreateNewContact(It.IsAny<Contact>())).ReturnsAsync(new Contact { Id = Guid.NewGuid() });
+
+            // Act
+            var result = await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            result.Result.Should().BeTrue();
+            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+            VerifyLogger(LogLevel.Error, Times.Never);
+        }
+
+        [Test]
+        public async Task Handle_WhenContactExists_ShouldUpdateSignInId()
+        {
+            // Arrange
+            var request = new CreateContactRequest
+            {
+                Email = "existing@example.com",
+                Username = "ExistingUser",
+                DisplayName = "Existing User",
+                GovIdentifier = "12345"
+            };
+            
+            _mockContactRepository.Setup(x => x.GetContact(request.Email)).ReturnsAsync(new Contact { Id = Guid.NewGuid() });
+
+            // Act
+            var result = await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            result.Result.Should().BeTrue();
+            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        public async Task Handle_WhenContactExists_AndGovUkIdentifierIsNotSet_ShouldNotUpdateSignInId(string govIdentifier)
+        {
+            // Arrange
+            var request = new CreateContactRequest
+            {
+                Email = "existing@example.com",
+                Username = "ExistingUser",
+                DisplayName = "Existing User",
+                GovIdentifier = govIdentifier
+            };
+
+            _mockContactRepository.Setup(x => x.GetContact(request.Email)).ReturnsAsync(new Contact { Id = Guid.NewGuid() });
+
+            // Act
+            var result = await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            result.Result.Should().BeTrue();
+            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), request.GovIdentifier), Times.Never);
+            VerifyLogger(LogLevel.Error, Times.Never);
+        }
+
+        [Test]
+        public void Handle_WhenExceptionIsThrown_ShouldLogErrorAndThrow()
+        {
+            // Arrange
+            var request = new CreateContactRequest
+            {
+                Email = "error@example.com",
+                Username = "ErrorUser"
+            };
+
+            _mockContactRepository.Setup(x => x.GetContact(request.Email))
+                .Throws(new Exception("Repository exception"));
+
+            // Act
+            Func<Task> act = async () => await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            act.Should().ThrowAsync<Exception>().WithMessage("Repository exception");
+            VerifyLogger(LogLevel.Error, Times.Once);
+        }
+
+        private void VerifyLogger(LogLevel logLevel, Func<Times> times)
+        {
+            _mockLogger.Verify(logger => logger.Log(
+                It.Is<LogLevel>(p => p == logLevel),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((@object, @type) => @type.Name == "FormattedLogValues"),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                times);
+        }
     }
 }
