@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.AssessorService.Data;
 using StructureMap;
 using System;
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             config.For<IDbConnection>().Use($"Build IDbConnection", c => {
                 var tokenCredential = new DefaultAzureCredential();
-                return environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
+                return environment.Equals(Environments.Development, StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
                     : new SqlConnection
                     {

@@ -22,6 +22,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.5.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="7.5.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.5.1" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
