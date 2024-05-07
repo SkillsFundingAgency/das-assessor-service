@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using System;
 using System.Collections.Generic;
@@ -15,19 +16,29 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "INSERT INTO [Ilrs] " +
                     "([Id]" +
                     ", [Uln] " +
+                    ", [GivenNames] " +
+                    ", [FamilyName] " +
                     ", [Ukprn] " +
                     ", [StdCode]" +
+                    ", [LearnStartDate]" +
+                    ", [FundingModel]" +
                     ", [Source]" +
                     ", [CreatedAt]" +
-                    ", [CompletionStatus])" +
+                    ", [CompletionStatus]" +
+                    ", [PlannedEndDate])" +
                 "VALUES " +
                     "(@id" +
                     ", @uln" +
+                    ", @givenNames" +
+                    ", @familyName" +
                     ", @ukprn" +
                     ", @stdCode" +
+                    ", @learnStartDate" +
+                    ", @fundingModel" +
                     ", @source" +
                     ", @createdAt" +
-                    ", @completionStatus); ";
+                    ", @completionStatus" +
+                    ", @plannedEndDate); ";
 
             DatabaseService.Execute(sql, ilr);
         }
@@ -40,17 +51,24 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             }
         }
 
-        public static IlrModel Create(Guid? id, long uln, int ukprn, int stdCode, int completionStatus, string source = null, DateTime? createdAt = null)
+        public static IlrModel Create(
+            Guid? id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, int? fundingModel, 
+            string source, DateTime? createdAt, int completionStatus, DateTime? plannedEndDate)
         {
             return new IlrModel
             {
                 Id = id,
                 Uln = uln,
+                GivenNames = givenNames ?? "Alice",
+                FamilyName = familyName ?? "Bobdotter",
                 Ukprn = ukprn,
                 StdCode = stdCode,
+                LearnStartDate = learnStartDate ?? DateTime.UtcNow,
+                FundingModel = fundingModel ?? 36,
                 Source = source ?? GetAcademicYear(DateTime.UtcNow),
                 CreatedAt = createdAt ?? DateTime.UtcNow,
-                CompletionStatus = completionStatus
+                CompletionStatus = completionStatus,
+                PlannedEndDate = plannedEndDate ?? DateTime.UtcNow.AddMonths(12),
             };
         }
 

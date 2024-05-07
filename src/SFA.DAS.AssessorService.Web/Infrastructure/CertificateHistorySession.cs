@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models;
-using System;
+﻿using System;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AssessorService.Web.Infrastructure

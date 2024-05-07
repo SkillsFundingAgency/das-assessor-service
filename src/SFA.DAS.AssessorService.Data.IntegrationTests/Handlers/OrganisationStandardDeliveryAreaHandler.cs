@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     $"AND {NullQueryParam(organisationStandardDeliveryArea, p => p.Comments)} " +
                     $"AND {NotNullQueryParam(organisationStandardDeliveryArea, p => p.Status)} ";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardDeliveryAreaModel, OrganisationStandardDeliveryAreaModel>(sqlToQuery, organisationStandardDeliveryArea);
+            return await DatabaseService.QueryFirstOrDefaultAsync<OrganisationStandardDeliveryAreaModel>(sqlToQuery, organisationStandardDeliveryArea);
         }
 
         public static async Task<int> QueryCountAllAsync()

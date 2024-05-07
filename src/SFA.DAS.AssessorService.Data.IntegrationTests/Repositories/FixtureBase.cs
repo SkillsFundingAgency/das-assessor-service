@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 {
     public class FixtureBase<T> where T : class, IDisposable
     {
+        private readonly List<ApprovalsExtractModel> _approvalsExtracts = new List<ApprovalsExtractModel>();
         private readonly List<IlrModel> _ilrs = new List<IlrModel>();
         private readonly List<OrganisationModel> _organisations = new List<OrganisationModel>();
         private readonly List<ProviderModel> _providers = new List<ProviderModel>();
@@ -32,6 +33,41 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         {
             // this is to workaround the other tests which are not clearing up after themselves properly
             DeleteAllRecords();
+        }
+
+        public T WithApprovalsExtract(int apprenticeshipId, string firstName, string lastName, string uln, int trainingCode, string trainingCourseVersion, bool trainingCourseVersionConfirmed,
+            string trainingCourseOption, string standardUId, DateTime? startDate, DateTime? endDate, DateTime? createdOn, DateTime? updatedOn, DateTime? stopDate, DateTime? pauseDate, DateTime? completionDate,
+            int ukprn, string learnRefNumber, int paymentStatus, long employerAccountId, string employerName)
+        {
+            var approvalsExtract = new ApprovalsExtractModel
+            {
+                ApprenticeshipId = apprenticeshipId,
+                FirstName = firstName,
+                LastName = lastName,
+                ULN = uln,
+                TrainingCode = trainingCode,
+                TrainingCourseVersion = trainingCourseVersion,
+                TrainingCourseVersionConfirmed = trainingCourseVersionConfirmed,
+                TrainingCourseOption = trainingCourseOption,
+                StandardUId = standardUId,
+                StartDate = startDate,
+                EndDate = endDate,
+                CreatedOn = createdOn,
+                UpdatedOn = updatedOn,
+                StopDate = stopDate,
+                PauseDate = pauseDate,
+                CompletionDate = completionDate,
+                UKPRN = ukprn,
+                LearnRefNumber = learnRefNumber,
+                PaymentStatus = paymentStatus,
+                EmployerAccountId = employerAccountId,
+                EmployerName = employerName,
+            };
+
+            _approvalsExtracts.Add(approvalsExtract);
+            ApprovalsExtractHandler.InsertRecord(approvalsExtract);
+
+            return this as T;
         }
 
         public T WithOrganisation(string endPointAssessorName, string endPointAssessorOrganisationId, int ukprn, string recognitionNumber)
@@ -75,23 +111,57 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
             return this as T;
         }
-
-        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveTo, bool epaChanged = false, string eqaProviderName = "", bool epaoMustBeApprovedByRegulatorBody = false)
+        
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
+            DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
+            bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
             var standard = StandardsHandler.Create(
-                title, 
-                referenceNumber, 
-                larsCode, 
-                version, 
-                effectiveTo, 
-                epaChanged, 
+                title,
+                referenceNumber,
+                larsCode,
+                version,
+                effectiveFrom,
+                effectiveTo,
+                versionEarliestStartDate,
+                versionLatestStartDate,
+                versionLatestEndDate,
+                epaChanged,
                 eqaProviderName,
                 epaoMustBeApprovedByRegulatorBody);
-            
+
             _standards.Add(standard);
             StandardsHandler.InsertRecord(standard);
 
             return this as T;
+        }
+
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
+            DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate)
+        {
+            return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
+                versionEarliestStartDate, versionLatestStartDate, versionLatestEndDate, false, string.Empty, false);
+        }
+
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
+            DateTime? effectiveTo, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
+        {
+            return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
+                null, null, null, epaChanged, eqaProviderName, epaoMustBeApprovedByRegulatorBody);
+        }
+
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
+            DateTime? effectiveTo, bool epaChanged, string eqaProviderName)
+        {
+            return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
+                null, null, null, epaChanged, eqaProviderName, false);
+        }
+
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom, 
+            DateTime? effectiveTo)
+        {
+            return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
+                null, null, null, false, string.Empty, false);
         }
 
         public T WithOrganisationStandard(int id, string endPointAssessorOrganisationId, int larsCode, string standardReference,
@@ -260,13 +330,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         }
 
         public T WithIlr(
-            Guid id, long uln, int ukprn, int stdCode, int completionStatus, string source = null, DateTime? createdOn = null)
+            Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, string source, DateTime? createdOn, int completionStatus, DateTime? plannedEndDate)
         {
-            var ilr = IlrHandler.Create(id, uln, ukprn, stdCode, completionStatus, source, createdOn);
+            var ilr = IlrHandler.Create(id, uln, givenNames, familyName, ukprn, stdCode, learnStartDate, null, source, createdOn, completionStatus, plannedEndDate);
             _ilrs.Add(ilr);
             IlrHandler.InsertRecord(ilr);
 
             return this as T;
+        }
+
+        public T WithIlr(
+            Guid id, long uln, int ukprn, int stdCode, string source, DateTime? createdOn, int completionStatus)
+        {
+            return WithIlr(id, uln, null, null, ukprn, stdCode, null, source, createdOn, completionStatus, null);
         }
 
         public T WithOfsOrganisation(
@@ -381,6 +457,22 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public async Task<T> VerifyLearnerRowCount(int count)
+        {
+            var result = await LearnerHandler.QueryCountAllAsync();
+            result.Should().Be(count);
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyLearnerExists(LearnerModel learner)
+        {
+            var result = await LearnerHandler.QueryFirstOrDefaultAsync(learner);
+            result.Should().NotBeNull();
+
+            return this as T;
+        }
+
         public void Dispose()
         {
             DeleteAllRecords();
@@ -388,7 +480,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
         protected static void DeleteAllRecords()
         {
+            ApprovalsExtractHandler.DeleteAllRecords();
             IlrHandler.DeleteAllRecords();
+            LearnerHandler.DeleteAllRecords();
             OfqualOrganisationHandler.DeleteAllRecords();
             OfqualStandardHandler.DeleteAllRecords();
             OfsOrganisationHandler.DeleteAllRecords();

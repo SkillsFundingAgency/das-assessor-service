@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.AssessorService.Domain.Consts
+﻿namespace SFA.DAS.AssessorService.Domain.Consts
 {
     public enum CompletionStatus
     {

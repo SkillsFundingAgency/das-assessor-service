@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "FROM [Contacts] " +
                 "WHERE Email = @email";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<ContactModel, dynamic>(sqlToQuery, new { Email = contactEmailAddress });
+            return await DatabaseService.QueryFirstOrDefaultAsync<ContactModel>(sqlToQuery, new { Email = contactEmailAddress });
         }
 
         public static async Task<ContactModel> QuerySingleOrDefaultAsync(ContactModel contact)
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     "AND Status = @status" +
                     "AND Username = @username";
 
-            return await DatabaseService.QueryFirstOrDefaultAsync<ContactModel, ContactModel>(sqlToQuery, contact);
+            return await DatabaseService.QueryFirstOrDefaultAsync<ContactModel>(sqlToQuery, contact);
         }
 
         public static void DeleteAllRecords()
