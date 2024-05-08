@@ -157,16 +157,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 if (_useSandbox)
                 {
-                    config.For<AssessorApiClientConfiguration>().Use((AssessorApiClientConfiguration)this.Configuration.SandboxAssessorApiAuthentication);
+                    config.For<AssessorApiClientConfiguration>().Use(Configuration.SandboxAssessorApiAuthentication);
                     config.For<IApiClient>().Use<SandboxApiClient>();
                 }
                 else
                 {
-                    config.For<AssessorApiClientConfiguration>().Use((AssessorApiClientConfiguration)this.Configuration.AssessorApiAuthentication);
+                    config.For<AssessorApiClientConfiguration>().Use(Configuration.AssessorApiAuthentication);
                     config.For<IApiClient>().Use<ApiClient>();
                 }
 
-                config.For<IExternalApiConfiguration>().Use((IExternalApiConfiguration)this.Configuration);
+                config.For<IExternalApiConfiguration>().Use(Configuration);
 
                 config.Populate(services);
             }));
