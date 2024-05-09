@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
-        public IExternalApiConfiguration Configuration { get; set; }
+        private IExternalApiConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)

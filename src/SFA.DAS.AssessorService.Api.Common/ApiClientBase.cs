@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Http.Resilience;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Polly;
@@ -76,7 +74,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var result = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
             if (result.StatusCode == HttpStatusCode.OK)
@@ -139,7 +137,7 @@ namespace SFA.DAS.AssessorService.Api.Common
                 }
                 clonedRequest.Content = content;
 
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
             var json = await response.Content.ReadAsStringAsync();
@@ -163,7 +161,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var result = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
             if (result.StatusCode == HttpStatusCode.OK)
@@ -197,7 +195,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 clonedRequest.Content = new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json");
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
            
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -212,7 +210,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -227,7 +225,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
             
             if (response.StatusCode == HttpStatusCode.InternalServerError)
@@ -242,7 +240,7 @@ namespace SFA.DAS.AssessorService.Api.Common
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                return await _httpClient.SendAsync(clonedRequest);
+                return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
             var json = await response.Content.ReadAsStringAsync();

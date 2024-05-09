@@ -43,7 +43,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
         private readonly bool _useSandbox;
@@ -66,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 }
             );
 
-            _config = configuration.Build();
+            config = configuration.Build();
 
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
@@ -77,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
             _logger.LogInformation($"UseSandbox is: {_useSandbox.ToString()}");
             
-            Configuration = _config.Get<ApiConfiguration>();
+            Configuration = config.Get<ApiConfiguration>();
 
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }

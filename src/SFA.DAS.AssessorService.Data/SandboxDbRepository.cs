@@ -284,12 +284,14 @@ namespace SFA.DAS.AssessorService.Data
         private SqlConnection SandboxSqlConnection(string sqlConnectionString)
         {
             var tokenCredential = new DefaultAzureCredential();
+            var valueTask = tokenCredential.GetTokenAsync(
+            new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { }
+            );
+            valueTask.AsTask().ConfigureAwait(true);
             return new SqlConnection
             {
                 ConnectionString = sqlConnectionString,
-                AccessToken = tokenCredential.GetTokenAsync(
-                    new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { }
-                    ).Result.ToString()            
+                AccessToken = valueTask.Result.ToString()            
             };
         }
     }
