@@ -19,15 +19,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             config.For<IDbConnection>().Use($"Build IDbConnection", c => {
                 var tokenCredential = new DefaultAzureCredential();
                 var valueTask = tokenCredential.GetTokenAsync(
-                            new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { }
-                            );
-                valueTask.AsTask().ConfigureAwait(true);
+                    new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { });
+                valueTask.AsTask().Wait();
+
                 return environment.Equals(Environments.Development, StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
                     : new SqlConnection
                     {
                         ConnectionString = sqlConnectionString,
-                        AccessToken = valueTask.Result.ToString()
+                        AccessToken = valueTask.Result.Token
                     };
             });
             

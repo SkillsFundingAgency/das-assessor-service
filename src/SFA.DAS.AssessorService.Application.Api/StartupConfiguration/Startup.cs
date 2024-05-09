@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 }
             );
 
-            config = configuration.Build();
+            var _config = configuration.Build();
 
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
             _logger.LogInformation($"UseSandbox is: {_useSandbox.ToString()}");
             
-            Configuration = config.Get<ApiConfiguration>();
+            Configuration = _config.Get<ApiConfiguration>();
 
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
