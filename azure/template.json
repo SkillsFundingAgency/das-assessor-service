@@ -128,7 +128,9 @@
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
-        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
+        "uiAppServiceConfigNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn",
+        "apiAppServiceConfigNames": "SFA.DAS.AssessorService.Api",
+        "externalApiAppServiceConfigNames": "SFA.DAS.AssessorService.ExternalApi"
     },
     "resources": [
         {
@@ -257,7 +259,11 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
+                                    "value": "[variables('uiAppServiceConfigNames')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
                                 },
                                 {
                                     "name": "StubAuth",
@@ -378,12 +384,16 @@
                                     "value": "[toUpper(parameters('environmentName'))]"
                                 },
                                 {
-                                    "name": "Version",
-                                    "value": "1.0"
-                                },
-                                {
                                     "name": "ResourceEnvironmentName",
                                     "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('apiAppServiceConfigNames')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
                                 },
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
@@ -510,6 +520,14 @@
                                 {
                                     "name": "InstanceName",
                                     "value": "[variables('instanceName')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('externalApiAppServiceConfigNames')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
                                 }
                             ]
                         }
@@ -628,6 +646,14 @@
                                 {
                                     "name": "InstanceName",
                                     "value": "[concat(variables('instanceName'),' (Sandbox)')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[variables('externalApiAppServiceConfigNames')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "1.0"
                                 },
                                 {
                                     "name": "UseSandboxServices",
