@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public interface IApiConfiguration
     {
-        string Environment { get; set; }
+        string EnvironmentName { get; set; }
 
         ApiAuthentication ApiAuthentication { get; set; }
         ApiAuthentication SandboxApiAuthentication { get; set; }

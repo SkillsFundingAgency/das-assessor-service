@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class ApiConfiguration : IApiConfiguration
     {
-        [JsonIgnore] public string Environment { get; set; }
+        [JsonIgnore] public string EnvironmentName { get; set; }
 
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
         [JsonRequired] public ApiAuthentication SandboxApiAuthentication { get; set; }

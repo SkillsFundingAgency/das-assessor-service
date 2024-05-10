@@ -223,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IMediator>().Use<Mediator>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
-                config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
+                config.AddDatabaseRegistration(Configuration.EnvironmentName, sqlConnectionString);
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()

@@ -14,23 +14,22 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         private const string AzureResource = "https://database.windows.net/";
 
-        public static void AddDatabaseRegistration(this ConfigurationExpression config, string environment, string sqlConnectionString)
+        public static void AddDatabaseRegistration(this ConfigurationExpression config, string environmentName, string sqlConnectionString)
         {
             config.For<IDbConnection>().Use($"Build IDbConnection", c => {
                 var tokenCredential = new DefaultAzureCredential();
-                var valueTask = tokenCredential.GetTokenAsync(
+                var accessToken = tokenCredential.GetTokenAsync(
                     new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { });
-                valueTask.AsTask().Wait();
 
-                return environment.Equals(Environments.Development, StringComparison.CurrentCultureIgnoreCase)
+                return environmentName.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
                     : new SqlConnection
                     {
                         ConnectionString = sqlConnectionString,
-                        AccessToken = valueTask.Result.Token
+                        AccessToken = accessToken.AsTask().GetAwaiter().GetResult().Token
                     };
             });
-            
+
             var option = new DbContextOptionsBuilder<AssessorDbContext>();
             config.For<AssessorDbContext>().Use(c => new AssessorDbContext(c.GetInstance<IDbConnection>(), option.Options));
         }
