@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
 
     [Authorize]
-    public class OrganisationSearchController : Controller
+    public class OrganisationSearchController : BaseController
     {
         private const int PageSize = 10;
         private readonly IContactsApiClient _contactsApiClient;
@@ -37,6 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             IContactsApiClient contactsApiClient,
             IWebConfiguration config,
             ISessionService sessionService)
+            : base(contactsApiClient, contextAccessor)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -175,15 +176,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.CompanyNumber != null)
-                {
-                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
-
-                    if (!isActivelyTrading)
-                    {
-                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
-                    }
-                }
 
                 viewModel.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult },1,1,1);
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
@@ -293,16 +285,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
             { 
-                if (organisationSearchResult.CompanyNumber != null)
-                {
-                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
-
-                    if (!isActivelyTrading)
-                    {
-                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
-                    }
-                }
-
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
                     if (organisationSearchResult.OrganisationIsLive)
@@ -450,10 +432,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return (pageIndex ?? 1) < 0 ? 1 : pageIndex ?? 1;
         }
 
-        private async Task<ContactResponse> GetUser()
-        {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            return await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
-        }
+        
     }
 }

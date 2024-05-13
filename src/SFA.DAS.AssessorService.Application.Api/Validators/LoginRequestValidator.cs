@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             RuleFor(lr => lr.DisplayName).NotEmpty().WithMessage("Display name must not be empty");
             RuleFor(lr => lr.Email).NotEmpty().WithMessage("Email must not be empty");
-            RuleFor(lr => lr.SignInId).NotEmpty().WithMessage("SignInId must not be empty");
+            RuleFor(lr => lr.GovUkIdentifier).NotEmpty().WithMessage("GovIdentifier must not be empty");
         }
     }
 }

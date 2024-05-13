@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
     [CheckSession]
-    public class DashboardController : Controller
+    public class DashboardController : BaseController
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IContactsApiClient _contactsApiClient;
@@ -39,6 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             IDashboardApiClient dashboardApiClient,
             IWebConfiguration configuration,
             ILogger<DashboardController> logger)
+            :base(contactsApiClient, contextAccessor)
         {
             _contextAccessor = contextAccessor;
             _contactsApiClient = contactsApiClient;
@@ -99,11 +100,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task<ContactResponse> GetUserAndUpdateEmail()
         {
-            var signinId = _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+           
             ContactResponse contact = null;
             try
             {
-                contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
+                contact = await GetUser();
             }
             catch (EntityNotFoundException)
             {
@@ -112,14 +113,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             
             if (contact != null)
             {
-                var govIdentifier = _contextAccessor.HttpContext.User.Claims
-                    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 var email = _contextAccessor.HttpContext.User.Claims
                     .FirstOrDefault(c => c.Type == "email")?.Value;
                 await _contactsApiClient.UpdateEmail(new UpdateEmailRequest
                 {
                     NewEmail = email,
-                    GovUkIdentifier = govIdentifier
+                    GovUkIdentifier = contact.GovUkIdentifier
                 });    
             }
             

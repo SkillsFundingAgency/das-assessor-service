@@ -25,10 +25,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
             OrgQueryRepository = new Mock<IOrganisationQueryRepository>();
 
             ContactQueryRepository = new Mock<IContactQueryRepository>();
-            ContactQueryRepository.Setup(r => r.GetBySignInId(It.IsNotIn(Guid.Empty)))
+            ContactQueryRepository.Setup(r => r.GetContactFromGovIdentifier(It.IsNotIn(string.Empty)))
                 .Returns(Task.FromResult(new Contact() {Id = It.IsAny<Guid>(), Status = ContactStatus.Live,
                     OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
-            ContactQueryRepository.Setup(r => r.GetBySignInId(Guid.Empty))
+            ContactQueryRepository.Setup(r => r.GetContactFromGovIdentifier(string.Empty))
                 .Returns(Task.FromResult(new Contact() { Id = Guid.Empty, Status = ContactStatus.InvitePending,
                     OrganisationId = It.IsAny<Guid>(), Username = "Test", Email = "test@email.com" }));
 

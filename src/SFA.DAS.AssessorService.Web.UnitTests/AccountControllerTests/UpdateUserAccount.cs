@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 x.ValidateAsync(
                     It.Is<ValidationContext<AccountViewModel>>(c => c.InstanceToValidate.Equals(accountViewModel)),
                     CancellationToken.None), Times.Once);
-            Assert.AreEqual("InviteSent",actualViewResult.ActionName);
+            Assert.AreEqual("Index",actualViewResult.ActionName);
         }
 
         [Test]

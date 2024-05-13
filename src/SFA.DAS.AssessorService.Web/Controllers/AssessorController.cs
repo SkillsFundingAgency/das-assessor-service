@@ -11,13 +11,14 @@ using SFA.DAS.AssessorService.Web.Helpers;
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
-    public class AssessorController : Controller
+    public class AssessorController : BaseController
     {
         protected readonly IApplicationApiClient _applicationApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AssessorController(IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor)
+        public AssessorController(IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor ) 
+            : base(contactsApiClient, httpContextAccessor)
         {
             _applicationApiClient = applicationApiClient;
             _contactsApiClient = contactsApiClient;
@@ -26,24 +27,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         protected async Task<Guid> GetUserId()
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             return contact?.Id ?? Guid.Empty;
         }
 
         protected string GetEpaOrgIdFromClaim()
         {
             return EpaOrgIdFinder.GetFromClaim(_httpContextAccessor);
-        }
-
-        protected async Task<ContactResponse> GetUserContact()
-        {
-            var signinId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            return await GetUserContact(signinId);
-        }
-
-        private async Task<ContactResponse> GetUserContact(string signinId)
-        {
-            return await _contactsApiClient.GetContactBySignInId(signinId);
         }
     }
 }

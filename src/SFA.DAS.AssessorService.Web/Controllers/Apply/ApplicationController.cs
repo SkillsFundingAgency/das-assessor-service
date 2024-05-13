@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application")]
         public async Task<IActionResult> StartApplication()
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
@@ -788,7 +788,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var dictRequestedFeedbackAnswered = sections.Select(t => new { t.SectionNo, t.QnAData.RequestedFeedbackAnswered })
                .ToDictionary(t => t.SectionNo, t => t.RequestedFeedbackAnswered);
 
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
