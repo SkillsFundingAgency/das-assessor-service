@@ -134,8 +134,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("callback", Name = "Callback")]
         public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
-            _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
-            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId), callback.GovIdentifier));
+            _logger.LogInformation($"Received callback from DfE: GovUkIdentifier: {callback.GovIdentifier} SourceId: {callback.SourceId}");
+            await _mediator.Send(new UpdateGovUkIdentifierRequest(Guid.Parse(callback.SourceId), callback.GovIdentifier));
             await _mediator.Send(new InvitationCheckRequest(Guid.Parse(callback.SourceId)));
             return NoContent();
         }

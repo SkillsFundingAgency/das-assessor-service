@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     if (string.IsNullOrEmpty(contact.GovUkIdentifier))
                         return;
 
-                    var result = contactQueryRepository.GetContactFromGovIdentifier(contact.GovUkIdentifier).Result;
+                    var result = contactQueryRepository.GetContactByGovIdentifier(contact.GovUkIdentifier).Result;
                     if (result == null)
                     {
                         context.AddFailure(new ValidationFailure("Contact",

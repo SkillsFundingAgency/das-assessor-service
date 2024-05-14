@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactByGovIdentifier(string govIdentifier)
         {
-            var contact = await _contactQueryRepository.GetContactFromGovIdentifier(govIdentifier);
+            var contact = await _contactQueryRepository.GetContactByGovIdentifier(govIdentifier);
             if (contact == null)
                 throw new ResourceNotFoundException();
             return Ok(Mapper.Map<ContactResponse>(contact));

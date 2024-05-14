@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
-                    return RedirectToAction("UpdateAnAccount", "Account");
+                    return RedirectToAction("CreateAnAccount", "Account");
                 default:
                     throw new ApplicationException();
             }
@@ -227,14 +227,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult UpdateAnAccount()
+        public IActionResult CreateAnAccount()
         {
             return View(new AccountViewModel());
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UpdateAnAccount(AccountViewModel accountViewModel)
+        public async Task<IActionResult> CreateAnAccount(AccountViewModel accountViewModel)
         {
             await _updateAccountValidator.ValidateAsync(accountViewModel);
 

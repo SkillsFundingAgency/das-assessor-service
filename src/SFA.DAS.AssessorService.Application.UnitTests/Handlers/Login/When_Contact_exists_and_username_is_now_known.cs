@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         {
             var guid = Guid.NewGuid();
 
-            ContactQueryRepository.Setup(x => x.GetContactFromGovIdentifier(It.IsAny<string>())).Returns(Task.FromResult(
+            ContactQueryRepository.Setup(x => x.GetContactByGovIdentifier(It.IsAny<string>())).Returns(Task.FromResult(
                 new Contact
                 {
                     Id = guid,

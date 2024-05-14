@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
             // Assert
             result.Result.Should().BeTrue();
             _mockContactRepository.Verify(x => x.CreateNewContact(It.IsAny<Contact>()), Times.Once);
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
         }
 
         [TestCase(null)]
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
             // Assert
             result.Result.Should().BeTrue();
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
             VerifyLogger(LogLevel.Error, Times.Never);
         }
 
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
             // Assert
             result.Result.Should().BeTrue();
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
         }
 
         [TestCase(null)]
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
             // Assert
             result.Result.Should().BeTrue();
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), request.GovIdentifier), Times.Never);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), request.GovIdentifier), Times.Never);
             VerifyLogger(LogLevel.Error, Times.Never);
         }
 

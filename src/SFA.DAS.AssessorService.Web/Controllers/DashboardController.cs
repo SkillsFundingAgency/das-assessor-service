@@ -22,7 +22,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class DashboardController : BaseController
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IContactsApiClient _contactsApiClient;
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IDashboardApiClient _dashboardApiClient;
         private readonly IWebConfiguration _configuration;
@@ -34,15 +33,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public DashboardController(
             IHttpContextAccessor contextAccessor,
+            IApplicationApiClient applicationApiClient,
             IContactsApiClient contactsApiClient,
             IOrganisationsApiClient organisationApiClient,
             IDashboardApiClient dashboardApiClient,
             IWebConfiguration configuration,
             ILogger<DashboardController> logger)
-            :base(contactsApiClient, contextAccessor)
+            :base(applicationApiClient, contactsApiClient, contextAccessor)
         {
             _contextAccessor = contextAccessor;
-            _contactsApiClient = contactsApiClient;
             _organisationApiClient = organisationApiClient;
             _dashboardApiClient = dashboardApiClient;
             _configuration = configuration;
@@ -76,7 +75,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else if (user.EndPointAssessorOrganisationId is null)
             {
                 return RedirectToAction("NotRegistered", "Home");
-            }else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
+            }
+            else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
             {
                 return RedirectToAction("NotActivated", "Home");
             }

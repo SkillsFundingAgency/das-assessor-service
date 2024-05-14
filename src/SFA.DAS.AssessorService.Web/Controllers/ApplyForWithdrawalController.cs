@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [PrivilegeAuthorize(Privileges.ApplyForStandard)]
     [Authorize]
-    public class ApplyForWithdrawalController : AssessorController
+    public class ApplyForWithdrawalController : BaseController
     {
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;

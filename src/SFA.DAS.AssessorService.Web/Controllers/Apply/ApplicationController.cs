@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
-    public class ApplicationController : AssessorController
+    public class ApplicationController : BaseController
     {
         private readonly IApiValidationService _apiValidationService;
         private readonly IApplicationService _applicationService;

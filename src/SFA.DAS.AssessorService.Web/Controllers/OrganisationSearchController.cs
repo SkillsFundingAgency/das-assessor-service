@@ -24,8 +24,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class OrganisationSearchController : BaseController
     {
         private const int PageSize = 10;
-        private readonly IContactsApiClient _contactsApiClient;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IMapper _mapper;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ILogger<OrganisationSearchController> _logger;
@@ -34,16 +32,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMapper mapper,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,
+            IApplicationApiClient applicationApiClient,
             IContactsApiClient contactsApiClient,
             IWebConfiguration config,
             ISessionService sessionService)
-            : base(contactsApiClient, contextAccessor)
+            : base(applicationApiClient, contactsApiClient, contextAccessor)
         {
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _mapper = mapper;
             _organisationsApiClient = organisationsApiClient;
-            _contactsApiClient = contactsApiClient;
             _config = config;
             _sessionService = sessionService;
         }

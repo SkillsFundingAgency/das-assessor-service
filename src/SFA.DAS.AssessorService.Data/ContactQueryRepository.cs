@@ -92,19 +92,13 @@ namespace SFA.DAS.AssessorService.Data
             
             return contact;
         }
-        public async Task<Contact> GetContactFromGovIdentifier(string govIdentifier)
+        public async Task<Contact> GetContactByGovIdentifier(string govIdentifier)
         {
             var contact = await _assessorDbContext.Contacts
                 .Include(c => c.Organisation)
                 .FirstOrDefaultAsync(c => c.GovUkIdentifier.ToLower() == govIdentifier.ToLower() && c.Organisation.Status != OrganisationStatus.Deleted);
             
             return contact;
-        }
-
-      
-        public async Task<Contact> GetBySignInId(Guid requestSignInId)
-        {
-            return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
         }
 
         public async Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId)

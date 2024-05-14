@@ -16,7 +16,7 @@ public class UpdateContactGovLoginRequestHandler : IRequestHandler<UpdateContact
     }
     public async Task<UpdateContactGovLoginResponse> Handle(UpdateContactGovLoginRequest request, CancellationToken cancellationToken)
     {
-        var contact = await _contactRepository.UpdateSignInId(request.ContactId, request.GovIdentifier);
+        var contact = await _contactRepository.UpdateGovUkIdentifier(request.ContactId, request.GovIdentifier);
         
         return new UpdateContactGovLoginResponse
         {
