@@ -33,15 +33,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTest
         {
             _contactsApiClient = new Mock<IContactsApiClient>();
 
-            _contactsApiClient
-                .Setup(x => x.GetContactByGovIdentifier(It.IsAny<string>())).Returns(Task.FromResult(
-                new ContactResponse
-                {
-                    Username = "Unknown-100",
-                    Email = Email,
-                    GovUkIdentifier = GovIdentifier
-                }));
-
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(h => h.HttpContext).Returns(new DefaultHttpContext()
             {
