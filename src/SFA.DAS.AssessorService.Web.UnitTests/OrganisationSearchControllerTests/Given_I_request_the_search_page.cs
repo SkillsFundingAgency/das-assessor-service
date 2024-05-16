@@ -19,10 +19,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Orchestrators.Login;
-using SFA.DAS.AssessorService.Web.Validators;
-using SFA.DAS.AssessorService.Web.ViewModels.Account;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTests
