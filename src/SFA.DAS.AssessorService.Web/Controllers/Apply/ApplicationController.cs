@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("/Application")]
         public async Task<IActionResult> Applications()
         {
-            _logger.LogInformation($"Got LoggedInUser from Session: {User.Identity.Name}");
+            _logger.LogInformation($"Got LoggedInUser from Session: {_contextAccessor.HttpContext.User.Identity.Name}");
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
