@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                 .Returns(SetupHttpContextSubAuthorityClaim());
 
             _mockContactsApiClient
-                .Setup(r => r.GetContactBySignInId(It.IsAny<string>()))
+                .Setup(r => r.GetContactByGovIdentifier(It.IsAny<string>()))
                 .ReturnsAsync(new ContactResponse { });
 
             _mockOrganisationsApiClient
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         {
             var fakeClaims = new List<Claim>()
             {
-                new Claim("sub", "")
+                new Claim(ClaimTypes.NameIdentifier, "urn:fdc:gov.uk:2022:2zQE1QeShp-Dmy1sNvzXnVyW9FrOcH5H91YmhEu7szo")
             };
 
             var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");

@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
                 .With(q => q.NewEmail = q.NewEmail.PadLeft(257, 'x'))
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.GetContactFromGovIdentifier(Moq.It.IsAny<string>()))
+            ContactQueryRepositoryMock.Setup(q => q.GetContactByGovIdentifier(Moq.It.IsAny<string>()))
                 .ReturnsAsync(new Contact());
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))

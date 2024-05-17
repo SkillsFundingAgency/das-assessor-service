@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
@@ -33,17 +33,17 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
             _logger.LogInformation("Start of PostSignIn");
 
-            var signinId = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-            var email = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            var govIdentifier = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "email")?.Value ?? _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "emailaddress")?.Value;
             var displayName = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "display_name")?.Value;
 
-            if (signinId != null && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(displayName))
+            if (govIdentifier != null && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(displayName))
             {
                 loginResult = await _loginApiClient.Login(new LoginRequest()
                 {
                     DisplayName = displayName,
                     Email = email,
-                    SignInId = Guid.Parse(signinId)
+                    GovUkIdentifier = govIdentifier
                 });
             }
 
