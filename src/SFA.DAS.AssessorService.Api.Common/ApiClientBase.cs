@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Polly;
 using Polly.Retry;
@@ -7,8 +8,8 @@ using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Api.Common
 {
@@ -42,19 +43,19 @@ namespace SFA.DAS.AssessorService.Api.Common
                 .Build();
         }
 
-        protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
+        protected static HttpRequestException RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
             if (failedResponse.StatusCode == HttpStatusCode.NotFound)
             {
                 throw new EntityNotFoundException(message, CreateRequestException(failedRequest, failedResponse));
             }
 
-            throw CreateRequestException(failedRequest, failedResponse);
+            return CreateRequestException(failedRequest, failedResponse);
         }
 
-        protected static void RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
+        protected static HttpRequestException RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
-            throw CreateRequestException(failedRequest, failedResponse);
+            return CreateRequestException(failedRequest, failedResponse);
         }
 
         private static HttpRequestException CreateRequestException(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
@@ -64,68 +65,69 @@ namespace SFA.DAS.AssessorService.Api.Common
                     failedRequest.Method.ToString().ToUpperInvariant(),
                     failedRequest.RequestUri,
                     (int)failedResponse.StatusCode,
-                    failedResponse.Content.ReadAsStringAsync().Result));
+                    failedResponse.Content?.ReadAsStringAsync().Result));
         }
 
-        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null, bool mapNotFoundToNull = false)
+        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage requestMessage, string message = null, bool mapNotFoundToNull = false)
         {
             HttpRequestMessage clonedRequest = null;
 
-            var result = await _resiliencePipeline.ExecuteAsync(async token =>
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
-                clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
                 return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
-            if (result.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                // NOTE: Struct values are valid JSON. For example: 'True'
-                var json = await result.Content.ReadAsStringAsync();
-                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (IsValidJson(json))
+                {
+                    return JsonConvert.DeserializeObject<T>(json, _jsonSettings);
+                }
             }
-            else if(result.StatusCode == HttpStatusCode.NoContent)
+            else if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 return default;
             }
-            else if (result.StatusCode == HttpStatusCode.NotFound)
+            else if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                if (!mapNotFoundToNull)
+                if (mapNotFoundToNull)
+                    return default;
+
+                if (message == null)
                 {
-                    if (message == null)
-                    {
-                        if (!request.RequestUri.IsAbsoluteUri)
-                            message = "Could not find " + request.RequestUri;
-                        else
-                            message = "Could not find " + request.RequestUri.PathAndQuery;
-                    }
-
-                    RaiseResponseError(message, clonedRequest, result);
+                    if (!requestMessage.RequestUri.IsAbsoluteUri)
+                        message = "Could not find " + requestMessage.RequestUri;
+                    else
+                        message = "Could not find " + requestMessage.RequestUri.PathAndQuery;
                 }
-            }
-            else 
-                RaiseResponseError(clonedRequest, result);
 
-            return default;
+                throw RaiseResponseError(message, clonedRequest, response);
+            }
+            
+            throw RaiseResponseError(clonedRequest, response);
         }
 
-        protected async Task<U> PostPutRequestWithResponseAsync<T, U>(HttpRequestMessage requestMessage, T model, JsonSerializerSettings setting = null)
+        protected async Task<T> PostPutRequestWithResponseAsync<M, T>(HttpRequestMessage requestMessage, M model, JsonSerializerSettings setting = null)
         {
             var serializeObject = JsonConvert.SerializeObject(model);
             var content = new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json");
-            return await PostPutRequestWithResponseAsync<U>(requestMessage, content, "application/json", setting);
+            return await PostPutRequestWithResponseAsync<T>(requestMessage, content, "application/json", setting);
         }
 
-        protected async Task<U> PostPutRequestWithResponseAsync<U>(HttpRequestMessage requestMessage, JsonSerializerSettings setting)
+        protected async Task<T> PostPutRequestWithResponseAsync<T>(HttpRequestMessage requestMessage, JsonSerializerSettings setting)
         {
-            return await PostPutRequestWithResponseAsync<U>(requestMessage, null, null, setting);
+            return await PostPutRequestWithResponseAsync<T>(requestMessage, null, null, setting);
         }
 
-        protected async Task<U> PostPutRequestWithResponseAsync<U>(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent, JsonSerializerSettings setting)
+        protected async Task<T> PostPutRequestWithResponseAsync<T>(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent, JsonSerializerSettings setting)
         {
-            return await PostPutRequestWithResponseAsync<U>(requestMessage, formDataContent, null, setting);
+            return await PostPutRequestWithResponseAsync<T>(requestMessage, formDataContent, null, setting);
         }
 
-        protected async Task<U> PostPutRequestWithResponseAsync<U>(HttpRequestMessage requestMessage, HttpContent content, string mediaType, JsonSerializerSettings setting = null)
+        protected async Task<T> PostPutRequestWithResponseAsync<T>(HttpRequestMessage requestMessage, HttpContent content, string mediaType, JsonSerializerSettings setting = null)
         {
             HttpRequestMessage clonedRequest = null;
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
@@ -140,72 +142,72 @@ namespace SFA.DAS.AssessorService.Api.Common
                 return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
-            var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK
                 || response.StatusCode == HttpStatusCode.Created
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, setting));
-            }
-            else
-            {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                throw new HttpRequestException(json);
-            }
-        }
+                var json = await response.Content.ReadAsStringAsync();
 
-        protected async Task<HttpResponseMessage> RequestToDownloadFileAsync(HttpRequestMessage request, string message = null)
-        {
-            HttpRequestMessage clonedRequest = null;
-
-            var result = await _resiliencePipeline.ExecuteAsync(async token =>
-            {
-                clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                return await _httpClient.SendAsync(clonedRequest, token);
-            }, CancellationToken.None);
-
-            if (result.StatusCode == HttpStatusCode.OK)
-            {
-                return result;
-            }
-
-            if (result.StatusCode == HttpStatusCode.NotFound)
-            {
-                if (message == null)
+                if (IsValidJson(json))
                 {
-                    if (!request.RequestUri.IsAbsoluteUri)
-                        message = "Could not find " + request.RequestUri;
-                    else
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
+                    return JsonConvert.DeserializeObject<T>(json, _jsonSettings);
                 }
-
-                RaiseResponseError(message, clonedRequest, result);
             }
 
-            RaiseResponseError(clonedRequest, result);
-
-            return result;
+            throw RaiseResponseError(clonedRequest, response);
         }
 
-        protected async Task PostPutRequestAsync<T>(HttpRequestMessage requestMessage, T model)
+        protected async Task<HttpResponseMessage> RequestToDownloadFileAsync(HttpRequestMessage requestMessage, string message = null)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
             HttpRequestMessage clonedRequest = null;
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
                 clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Content = new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json");
+                return await _httpClient.SendAsync(clonedRequest, token);
+            }, CancellationToken.None);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return response;
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                if (message == null)
+                {
+                    if (!requestMessage.RequestUri.IsAbsoluteUri)
+                        message = "Could not find " + requestMessage.RequestUri;
+                    else
+                        message = "Could not find " + requestMessage.RequestUri.PathAndQuery;
+                }
+
+                throw RaiseResponseError(message, clonedRequest, response);
+            }
+
+            throw RaiseResponseError(clonedRequest, response);;
+        }
+
+        protected async Task PostPutRequestAsync<T>(HttpRequestMessage requestMessage, T model)
+        {
+            HttpRequestMessage clonedRequest = null;
+            var response = await _resiliencePipeline.ExecuteAsync(async token =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Content = new StringContent(JsonConvert.SerializeObject(model), System.Text.Encoding.UTF8, "application/json");
                 return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
            
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                throw new HttpRequestException();
+                throw RaiseResponseError(clonedRequest, response);
             }
         }
 
         protected async Task PostPutRequestAsync(HttpRequestMessage requestMessage)
         {
+            if (requestMessage.Method != HttpMethod.Post && requestMessage.Method != HttpMethod.Put)
+                throw new ArgumentException("The HttpMethod must be either Post or Put");
+
             HttpRequestMessage clonedRequest = null;
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
@@ -215,12 +217,15 @@ namespace SFA.DAS.AssessorService.Api.Common
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                throw new HttpRequestException();
+                throw RaiseResponseError(clonedRequest, response);
             }
         }
 
         protected async Task DeleteAsync(HttpRequestMessage requestMessage)
         {
+            if (requestMessage.Method != HttpMethod.Delete)
+                throw new ArgumentException("The HttpMethod must be Delete");
+            
             HttpRequestMessage clonedRequest = null;
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
@@ -230,12 +235,15 @@ namespace SFA.DAS.AssessorService.Api.Common
             
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                throw new HttpRequestException();
+                throw RaiseResponseError(clonedRequest, response);
             }
         }
 
-        protected async Task<U> DeleteAsync<U>(HttpRequestMessage requestMessage)
+        protected async Task<T> DeleteAsync<T>(HttpRequestMessage requestMessage)
         {
+            if (requestMessage.Method != HttpMethod.Delete)
+                throw new ArgumentException("The HttpMethod must be Delete");
+
             HttpRequestMessage clonedRequest = null;
             var response = await _resiliencePipeline.ExecuteAsync(async token =>
             {
@@ -243,23 +251,46 @@ namespace SFA.DAS.AssessorService.Api.Common
                 return await _httpClient.SendAsync(clonedRequest, token);
             }, CancellationToken.None);
 
-            var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK || 
                 response.StatusCode == HttpStatusCode.NoContent)
             {
+                var json = await response.Content.ReadAsStringAsync();
 
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
+                if (IsValidJson(json))
+                {
+                    return JsonConvert.DeserializeObject<T>(json, _jsonSettings);
+                }
             }
-            else
+
+            throw RaiseResponseError(clonedRequest, response);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                throw new HttpRequestException(json);
+                _httpClient?.Dispose();
             }
         }
 
         public void Dispose()
         {
-            _httpClient?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool IsValidJson(string jsonString)
+        {
+            try
+            {
+                JToken.Parse(jsonString);
+                return true;
+            }
+            catch (JsonReaderException)
+            {
+                _logger.LogError($"Unable to parse Json object: {jsonString}");
+                return false;
+            }
         }
     }
 }
