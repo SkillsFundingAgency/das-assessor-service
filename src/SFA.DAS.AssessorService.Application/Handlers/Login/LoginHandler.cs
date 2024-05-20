@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         {
             var response =new LoginResponse();
 
-            var contact = await _contactQueryRepository.GetContactByGovIdentifier(request.GovUkIdentifier);
+            var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
 
             //Check if username is null or starts with unnown then update the username with users email
             var originalUsername = contact.Username;
