@@ -6,26 +6,26 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateSignInId
+namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateGovUkidentifier
 {
-    public class UpdateSignInIdHandler : IRequestHandler<UpdateSignInIdRequest>
+    public class UpdateGovUkidentifierHandler : IRequestHandler<UpdateGovUkIdentifierRequest>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
 
-        public UpdateSignInIdHandler(IContactRepository contactRepository, IContactQueryRepository contactQueryRepository)
+        public UpdateGovUkidentifierHandler(IContactRepository contactRepository, IContactQueryRepository contactQueryRepository)
         {
             _contactRepository = contactRepository;
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<Unit> Handle(UpdateSignInIdRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateGovUkIdentifierRequest request, CancellationToken cancellationToken)
         {
             var existingContact = await _contactQueryRepository.GetContactById(request.ContactId);
 
             await UpdateContactStatusToLive(existingContact);
             
-            await _contactRepository.UpdateSignInId(existingContact.Id, request.SignInId, request.GovIdentifier);
+            await _contactRepository.UpdateGovUkIdentifier(existingContact.Id, request.GovIdentifier);
             return Unit.Value;
         }
         private async Task UpdateContactStatusToLive(Contact existingContact)

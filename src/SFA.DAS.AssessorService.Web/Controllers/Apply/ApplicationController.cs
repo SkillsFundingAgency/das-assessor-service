@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
-    public class ApplicationController : AssessorController
+    public class ApplicationController : BaseController
     {
         private readonly IApiValidationService _apiValidationService;
         private readonly IApplicationService _applicationService;
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("/Application")]
         public async Task<IActionResult> Applications()
         {
-            _logger.LogInformation($"Got LoggedInUser from Session: {User.Identity.Name}");
+            _logger.LogInformation($"Got LoggedInUser from Session: {_contextAccessor.HttpContext.User.Identity.Name}");
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application")]
         public async Task<IActionResult> StartApplication()
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
@@ -788,7 +788,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var dictRequestedFeedbackAnswered = sections.Select(t => new { t.SectionNo, t.QnAData.RequestedFeedbackAnswered })
                .ToDictionary(t => t.SectionNo, t => t.RequestedFeedbackAnswered);
 
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))

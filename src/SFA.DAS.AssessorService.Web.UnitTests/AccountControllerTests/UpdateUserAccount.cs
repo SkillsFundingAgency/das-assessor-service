@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             var accountViewModel = new AccountViewModel();
             _controller.ModelState.AddModelError("error","error");
             
-            var actual = await _controller.UpdateAnAccount(accountViewModel);
+            var actual = await _controller.CreateAnAccount(accountViewModel);
 
             var actualViewResult = actual as ViewResult;
             _validator.Verify(x =>
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 FamilyName = FamilyName,
                 GivenName = GivenName
             };
-            var actual = await _controller.UpdateAnAccount(accountViewModel);
+            var actual = await _controller.CreateAnAccount(accountViewModel);
 
             var actualViewResult = actual as RedirectToActionResult;
             Assert.IsNotNull(actualViewResult);
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 x.ValidateAsync(
                     It.Is<ValidationContext<AccountViewModel>>(c => c.InstanceToValidate.Equals(accountViewModel)),
                     CancellationToken.None), Times.Once);
-            Assert.AreEqual("InviteSent",actualViewResult.ActionName);
+            Assert.AreEqual("Index",actualViewResult.ActionName);
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 FamilyName = FamilyName,
                 GivenName = GivenName
             };
-            var actual = await _controller.UpdateAnAccount(accountViewModel);
+            var actual = await _controller.CreateAnAccount(accountViewModel);
 
             var actualViewResult = actual as RedirectToActionResult;
             Assert.IsNotNull(actualViewResult);
