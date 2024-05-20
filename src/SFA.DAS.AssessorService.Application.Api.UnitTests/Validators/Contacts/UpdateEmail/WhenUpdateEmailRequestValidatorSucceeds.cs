@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.
                 .With(q => q.GovUkIdentifier = "identifier")
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.GetContactByGovIdentifier(Moq.It.IsAny<string>()))
+            ContactQueryRepositoryMock.Setup(q => q.GetContactFromGovIdentifier(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult(new Contact()));
 
             _validationResult = UpdateEmailRequestValidator.Validate(_updateEmailRequest);

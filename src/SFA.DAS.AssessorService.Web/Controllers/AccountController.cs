@@ -106,7 +106,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     _sessionService.Set("EndPointAssessorOrganisationId", epaoId);
                     return RedirectToAction("Rejected", "Home");
                 case LoginResult.ContactDoesNotExist:
-                    return RedirectToAction("CreateAnAccount", "Account");
+                    ResetCookies();
+                    return RedirectToAction("NotRegistered", "Home");
                 default:
                     throw new ApplicationException();
             }
@@ -227,14 +228,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult CreateAnAccount()
+        public IActionResult UpdateAnAccount()
         {
             return View(new AccountViewModel());
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateAnAccount(AccountViewModel accountViewModel)
+        public async Task<IActionResult> UpdateAnAccount(AccountViewModel accountViewModel)
         {
             await _updateAccountValidator.ValidateAsync(accountViewModel);
 
@@ -245,13 +246,35 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var email = User.Identities.FirstOrDefault()?.FindFirst(ClaimTypes.Email)?.Value;
             var govIdentifier = User.Identities.FirstOrDefault()?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+            
             var inviteSuccess =
-                await _contactsApiClient.InviteUser(new CreateContactRequest(accountViewModel.GivenName, accountViewModel.FamilyName, email, null, email, govIdentifier));
+                await _contactsApiClient.InviteUser(new CreateContactRequest(accountViewModel.GivenName, accountViewModel.FamilyName, email,null,email, govIdentifier));
 
-            return inviteSuccess.Result ? RedirectToAction("Index", "OrganisationSearch") : RedirectToAction("Error", "Home");
+            _sessionService.Set("NewAccount", JsonConvert.SerializeObject(new CreateAccountViewModel
+            {
+                Email = email,
+                FamilyName = accountViewModel.FamilyName,
+                GivenName = accountViewModel.GivenName
+            }));
+            return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
         }
         
+        [HttpGet]
+        public IActionResult InviteSent()
+        {
+            CreateAccountViewModel viewModel;
+            var newAccount = _sessionService.Get("NewAccount");
+            if (string.IsNullOrEmpty(newAccount))
+            {
+                viewModel = new CreateAccountViewModel() { Email = "[email placeholder]" };
+            }
+            else
+            {
+                viewModel = JsonConvert.DeserializeObject<CreateAccountViewModel>(newAccount);
+            }
+
+            return View(viewModel);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Callback([FromBody] SignInCallback callback)
