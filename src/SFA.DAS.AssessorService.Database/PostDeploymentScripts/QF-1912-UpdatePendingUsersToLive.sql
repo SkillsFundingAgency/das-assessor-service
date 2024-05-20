@@ -1,5 +1,6 @@
 ﻿/*
-	Update User Status to Live for users with Pending Status and GovUkIdentifier is not null or empty
+	Temporary script to update the Status for Pending users with a non-null GovUkIdentifier to Live.  
+    Only needs to be run once on each environment.
 */
 
 UPDATE dbo.Contacts

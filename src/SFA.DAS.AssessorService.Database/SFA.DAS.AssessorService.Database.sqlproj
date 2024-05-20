@@ -197,7 +197,6 @@
     <Build Include="StoredProcedures\Load_Ofs_Standards.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetMinDateTime.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetMaxDateTime.sql" />
-    <None Include="PostDeploymentScripts\QF-1912-AddIndexToContacts-GovUkIdentifier.sql.sql" />
     <None Include="PostDeploymentScripts\QF-1912-UpdatePendingUsersToLive.sql" />
   </ItemGroup>
   <ItemGroup>
