@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactByGovIdentifier(string govIdentifier)
         {
-            var contact = await _contactQueryRepository.GetContactByGovIdentifier(govIdentifier);
+            var contact = await _contactQueryRepository.GetContactFromGovIdentifier(govIdentifier);
             if (contact == null)
                 throw new ResourceNotFoundException();
             return Ok(Mapper.Map<ContactResponse>(contact));
@@ -205,7 +205,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(new ContactBoolResponse(havePrivileges));
         }
-        
+
+        [HttpGet("signInId/{signInId}", Name = "GetContactBySignInId")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContactBySignInId(string signInId)
+        {
+            Contact contact = null;
+            _logger.LogInformation($" Get Request using signin id = {signInId}");
+            try
+            {
+                var guidId = Guid.Parse(signInId);
+                contact = await _contactQueryRepository.GetBySignInId(guidId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Failed to retrieve contact with signin id : {signInId}");
+            }
+
+            if (contact == null)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            return Ok(Mapper.Map<ContactResponse>(contact));
+        }
         
         private void ValidateEndPointAssessorOrganisation(string endPointAssessorOrganisationId)
         {

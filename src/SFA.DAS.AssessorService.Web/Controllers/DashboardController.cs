@@ -19,9 +19,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
     [CheckSession]
-    public class DashboardController : BaseController
+    public class DashboardController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IContactsApiClient _contactsApiClient;
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IDashboardApiClient _dashboardApiClient;
         private readonly IWebConfiguration _configuration;
@@ -33,15 +34,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public DashboardController(
             IHttpContextAccessor contextAccessor,
-            IApplicationApiClient applicationApiClient,
             IContactsApiClient contactsApiClient,
             IOrganisationsApiClient organisationApiClient,
             IDashboardApiClient dashboardApiClient,
             IWebConfiguration configuration,
             ILogger<DashboardController> logger)
-            :base(applicationApiClient, contactsApiClient, contextAccessor)
         {
             _contextAccessor = contextAccessor;
+            _contactsApiClient = contactsApiClient;
             _organisationApiClient = organisationApiClient;
             _dashboardApiClient = dashboardApiClient;
             _configuration = configuration;
@@ -75,8 +75,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else if (user.EndPointAssessorOrganisationId is null)
             {
                 return RedirectToAction("NotRegistered", "Home");
-            }
-            else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
+            }else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
             {
                 return RedirectToAction("NotActivated", "Home");
             }
@@ -100,11 +99,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private async Task<ContactResponse> GetUserAndUpdateEmail()
         {
-           
+            var signinId = _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
             ContactResponse contact = null;
             try
             {
-                contact = await GetUser();
+                contact = await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
             }
             catch (EntityNotFoundException)
             {
@@ -113,12 +112,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             
             if (contact != null)
             {
+                var govIdentifier = _contextAccessor.HttpContext.User.Claims
+                    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 var email = _contextAccessor.HttpContext.User.Claims
                     .FirstOrDefault(c => c.Type == "email")?.Value;
                 await _contactsApiClient.UpdateEmail(new UpdateEmailRequest
                 {
                     NewEmail = email,
-                    GovUkIdentifier = contact.GovUkIdentifier
+                    GovUkIdentifier = govIdentifier
                 });    
             }
             

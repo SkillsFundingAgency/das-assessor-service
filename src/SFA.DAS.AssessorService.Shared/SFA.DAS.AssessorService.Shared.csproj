@@ -310,10 +310,10 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactWithOrgAndStausRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactWithOrgAndStausRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateGovUkIdentifierRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateGovUkIdentifierRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationResponse.cs" />
