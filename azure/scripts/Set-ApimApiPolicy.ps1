@@ -14,6 +14,9 @@ The ApiId of the API to update. This will be the API Name if it was created usin
 .PARAMETER ApimApiPolicyFilePath
 The full path to the XML file containing the policy to apply to the API
 
+.PARAMETER ApplicationIdentifierUri
+The Application Identifier URI of the API app registration
+
 #>
 [CmdletBinding()]
 Param(
@@ -24,7 +27,9 @@ Param(
     [Parameter(Mandatory=$true)]
     [String]$ApiId,
     [Parameter(Mandatory=$true)]
-    [String]$ApimApiPolicyFilePath
+    [String]$ApimApiPolicyFilePath,
+    [Parameter(Mandatory=$true)]
+    [String]$ApplicationIdentifierUri
 )
 
 try {
@@ -37,7 +42,11 @@ try {
     Write-Host "Test that policy file exists"
     if (Test-Path -Path $ApimApiPolicyFilePath) {
         Write-Host "Set API policy"
-        Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyFilePath $ApimApiPolicyFilePath -ErrorAction Stop -Verbose:$VerbosePreference
+        
+	$policy = Get-Content -Path $ApimApiPolicyFilePath -Raw
+	$policy = $policy -replace "{ApplicationIdentifierUri}", $ApplicationIdentifierUri
+
+	Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $content -ErrorAction Stop -Verbose:$VerbosePreference
     } else {
         Write-Host "Please specify a valid policy file path"
     }

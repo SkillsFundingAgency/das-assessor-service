@@ -6,5 +6,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Configuration
     {
         public string IdentifierUri { get; set; }
         public string ApiBaseUrl { get; set; }
+        public string Tenant { get; set; }
+        public string Audiences { get; set; }
+
     }
 }
