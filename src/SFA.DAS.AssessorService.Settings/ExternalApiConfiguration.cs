@@ -10,5 +10,11 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public AssessorApiClientConfiguration AssessorApiAuthentication { get; set; }
 
         [JsonRequired] public AssessorApiClientConfiguration SandboxAssessorApiAuthentication { get; set; }
+
+        [JsonRequired] public AssessorExternalApiClientConfiguration ExternalApiAuthentication { get; set; }
+
+        [JsonRequired] public AssessorExternalApiClientConfiguration SandboxExternalApiAuthentication { get; set; }
+
     }
+
 }

@@ -66,33 +66,33 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                    .AddJwtBearer(auth =>
+                .AddJwtBearer(auth =>
+                {
+                    var validAudiences = new List<string>();
+                    var tenant = string.Empty;
+
+                    if (_useSandbox)
                     {
-                        var validAudiences = new List<string>();
-                        var tenant = string.Empty;
+                        validAudiences.AddRange(ApplicationConfiguration.SandboxExternalApiAuthentication.Audiences.Split(","));
+                        tenant = auth.Authority = ApplicationConfiguration.SandboxExternalApiAuthentication.Tenant;
+                    }
+                    else
+                    {
+                        validAudiences.AddRange(ApplicationConfiguration.ExternalApiAuthentication.Audiences.Split(","));
+                        tenant = auth.Authority = ApplicationConfiguration.ExternalApiAuthentication.Tenant;
+                    }
 
-                        if (_useSandbox)
-                        {
-                            validAudiences.AddRange(ApplicationConfiguration.SandboxAssessorApiAuthentication.Audiences.Split(","));
-                            tenant = auth.Authority = ApplicationConfiguration.SandboxAssessorApiAuthentication.Tenant;
-                        }
-                        else
-                        {
-                            validAudiences.AddRange(ApplicationConfiguration.AssessorApiAuthentication.Audiences.Split(","));
-                            tenant = auth.Authority = ApplicationConfiguration.AssessorApiAuthentication.Tenant;
-                        }
-
-                        auth.Authority = $"https://login.microsoftonline.com/{tenant}";
-                        auth.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                        {
-                            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                            ValidAudiences = validAudiences
-                        };
-                        auth.Events = new JwtBearerEvents()
-                        {
-                            OnTokenValidated = context => { return Task.FromResult(0); }
-                        };
-                    });
+                    auth.Authority = $"https://login.microsoftonline.com/{tenant}";
+                    auth.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                        ValidAudiences = validAudiences
+                    };
+                    auth.Events = new JwtBearerEvents()
+                    {
+                        OnTokenValidated = context => { return Task.FromResult(0); }
+                    };
+                });
 
                 services.AddAuthorization(o =>
                 {
