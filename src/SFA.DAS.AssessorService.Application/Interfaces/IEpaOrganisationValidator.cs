@@ -10,30 +10,29 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IEpaOrganisationValidator
     {
         string CheckOrganisationIdIsPresentAndValid(string organisationId);
-        string CheckOrganisationName(string name);
+        string CheckOrganisationNameIsPresentAndValid(string name);
         string CheckIfOrganisationAlreadyExists(string organisationId);
         string CheckIfOrganisationUkprnExists(long? ukprn);
         string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore);
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
         string CheckOrganisationTypeExists(int? organisationTypeId);
-        string CheckIfOrganisationNotFound(string organisationId); 
+        string CheckOrganisationExists(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
-        string CheckOrganisationNameNotUsed(string name);
-        string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
+        string CheckOrganisationNameNotExists(string name);
+        string CheckOrganisationNameNotExistsExcludingOrganisation(string name, string excludingOrganisationId);
         string CheckContactIdExists(string contactId);
         string CheckSearchStringForStandardsIsValid(string searchstring);
 
         string CheckIfContactIdIsValid(string contactId, string organisationId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
-        string CheckDisplayName(string displayName);
-        string CheckIfEmailIsPresentAndInSuitableFormat(string email);
-        string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
-        string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
+        string CheckDisplayNameIsPresentAndValid(string displayName);
+        string CheckEmailPresentAndValid(string email);
+        string CheckEmailNotExistsExcludingContact(string email, string excludingContactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
         string CheckOrganisationStandardEffectiveFromIsEntered(DateTime? effectiveFrom);
-        string CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phone,
+        string CheckContactDetailsNotExists(string firstName, string lastName, string email, string phone,
             string contactId);
 
         string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom,
@@ -49,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckUkprnForOrganisation(long? ukprn);
         string CheckContactCountForOrganisation(int? numberOfContacts);
 
-        string CheckCompanyNumberIsValid(string companyNumber);
+        string CheckCompanyNumberIsMissingOrValid(string companyNumber);
         string CheckIfOrganisationCompanyNumberExists(string organisationIdToExclude, string companyNumber);
         string CheckIfOrganisationCompanyNumberExists(string companyNumber);
         string CheckCharityNumberIsValid(string charityNumber);
