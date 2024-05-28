@@ -21,7 +21,7 @@ public class WhenUpdatingGovLoginContact
         [Frozen] Mock<IContactRepository> contactRepository,
         UpdateContactGovLoginRequestHandler handler)
     {
-        contactRepository.Setup(x => x.UpdateGovUkIdentifier(request.ContactId, request.GovIdentifier))
+        contactRepository.Setup(x => x.UpdateSignInId(request.ContactId, request.SignInId, request.GovIdentifier))
             .ReturnsAsync(contact);
             
         var actual = await handler.Handle(request, CancellationToken.None);

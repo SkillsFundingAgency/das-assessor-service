@@ -14,12 +14,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> EpaOrganisationExistsWithUkprn(long ukprn);
         Task<bool> OrganisationTypeExists(int organisationTypeId);
         Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationId);
-        Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationId);
+        Task<bool> EpaOrganisationNameExists(string organisationName, string excludingOrganisationId = null);
         Task<bool> ContactIdIsValid(Guid contactId);
-        Task<bool> EmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
-        Task<bool> EmailAlreadyPresent(string email);
+        Task<bool> EmailExists(string email);
 
-        Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, Guid contactId);
+        Task<bool> EmailExistsExcludeContact(string email, Guid excludingContactId);
         Task<bool> ContactIdIsValidForOrganisationId(Guid contactId, string organisationId);
         Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode);
         Task<bool> EpaOrganisationStandardVersionExists(string organisationId, int standardCode, List<string> standardVersions);

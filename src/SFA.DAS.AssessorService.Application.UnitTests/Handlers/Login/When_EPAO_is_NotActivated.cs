@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         public void Then_not_activated_is_returned_when_live_user()
         {
             OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation{Status = OrganisationStatus.New});
-            var response = Handler.Handle(new LoginRequest() { Roles = new List<string>() { "ABC", "DEF", "EPA" }, UkPrn = 12345, GovUkIdentifier = "urn:fdc:gov.uk:2022:2zQE1QeShp-Dmy1sNvzXnVyW9FrOcH5H91YmhEu7szo" }, new CancellationToken()).Result;
+            var response = Handler.Handle(new LoginRequest() { Roles = new List<string>() { "ABC", "DEF", "EPA" }, UkPrn = 12345, SignInId = Guid.NewGuid() }, new CancellationToken()).Result;
             response.Result.Should().Be(LoginResult.NotActivated);
         }
 
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         public void Then_invite_pending_is_returned_when_invite_pending_user()
         {
             OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation { Status = OrganisationStatus.New });
-            var response = Handler.Handle(new LoginRequest() { Roles = new List<string>() { "ABC", "DEF", "EPA" }, UkPrn = 12345, GovUkIdentifier = string.Empty }, new CancellationToken()).Result;
+            var response = Handler.Handle(new LoginRequest() { Roles = new List<string>() { "ABC", "DEF", "EPA" }, UkPrn = 12345, SignInId = Guid.Empty }, new CancellationToken()).Result;
             response.Result.Should().Be(LoginResult.InvitePending);
         }
     }

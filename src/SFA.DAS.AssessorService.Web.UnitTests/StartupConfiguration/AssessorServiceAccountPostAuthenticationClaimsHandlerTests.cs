@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
         public async Task Then_The_Claims_Are_Populated_For_Non_Gov_User(
             string nameIdentifier,
             string emailAddress,
+            string sub,
             ContactResponse contactResponse,
             EpaOrganisation epaOrganisation)
         {
@@ -41,8 +42,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
                     Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
                     organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
             
-            var tokenValidatedContext = ArrangeTokenValidatedContext("", emailAddress);
-            contactsApiClient.Setup(x => x.GetContactByEmail(emailAddress)).ReturnsAsync(contactResponse);
+            var tokenValidatedContext = ArrangeTokenValidatedContext("", emailAddress, sub);
+            contactsApiClient.Setup(x => x.GetContactBySignInId(sub)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
         
@@ -67,6 +68,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             ContactResponse contactUpdateResponse,
             EpaOrganisation epaOrganisation)
         {
+            contactResponse.SignInId = null;
             var contactsApiClient = new Mock<IContactsApiClient>();
             var organisationApiClient = new Mock<IOrganisationsApiClient>();
             var sessionService = new Mock<ISessionService>();
@@ -76,13 +78,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
                     Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
                     organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
             
-            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress);
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress, "");
             contactsApiClient.Setup(x => x.GetContactByEmail(emailAddress)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
             contactsApiClient.Setup(x => x.UpdateFromGovLogin(It.Is<UpdateContactGovLoginRequest>(c =>
                 c.GovIdentifier.Equals(nameIdentifier) 
-                && c.ContactId.Equals(contactResponse.Id)))).ReturnsAsync(contactUpdateResponse);
+                && c.ContactId.Equals(contactResponse.Id)
+                && !c.SignInId.Equals(Guid.Empty)))).ReturnsAsync(contactUpdateResponse);
         
             var actual = await handler.GetClaims(tokenValidatedContext);
         
@@ -90,6 +93,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
             actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
             actual.First(c => c.Type.Equals("email")).Value.Should().Be(contactResponse.Email);
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactUpdateResponse.SignInId.ToString());
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId); 
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
         }
@@ -109,8 +113,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             AssessorServiceAccountPostAuthenticationClaimsHandler handler)
         {
             contactResponse.Email = emailAddress;
-            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, newEmailAddress);
-            contactsApiClient.Setup(x => x.GetContactByGovIdentifier(nameIdentifier)).ThrowsAsync(new EntityNotFoundException());
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, newEmailAddress, "");
+            contactsApiClient.Setup(x => x.GetContactBySignInId(null)).ThrowsAsync(new EntityNotFoundException());
             contactsApiClient.Setup(x => x.GetContactByEmail(newEmailAddress)).ThrowsAsync(new EntityNotFoundException());
             contactsApiClient.Setup(x => x.GetContactByGovIdentifier(nameIdentifier)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
@@ -122,6 +126,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
             actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
             actual.First(c => c.Type.Equals("email")).Value.Should().Be(newEmailAddress);
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactResponse.SignInId.ToString());
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId);
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
 
@@ -149,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
                     Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
                     organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
             
-            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress);
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress, "");
             contactsApiClient.Setup(x => x.GetContactByEmail(emailAddress)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
@@ -161,10 +166,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
             actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
             actual.First(c => c.Type.Equals("email")).Value.Should().Be(contactResponse.Email);
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactResponse.SignInId.ToString());
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId); 
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
             contactsApiClient.Verify(x => x.Callback(It.Is<SignInCallback>(c =>
-                c.GovIdentifier.Equals(nameIdentifier) &&
+                c.GovIdentifier.Equals(nameIdentifier) && c.Sub.Equals(contactResponse.SignInId.ToString()) &&
                 c.SourceId.Equals(contactResponse.Id.ToString()))), Times.Once);
         }
         
@@ -185,7 +191,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
                     Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
                     organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
             
-            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress);
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress, "");
             contactsApiClient.Setup(x => x.GetContactByEmail(emailAddress)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
@@ -197,12 +203,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
             actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
             actual.First(c => c.Type.Equals("email")).Value.Should().Be(contactResponse.Email);
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactResponse.SignInId.ToString());
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId); 
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
             contactsApiClient.Verify(x => x.UpdateFromGovLogin(It.Is<UpdateContactGovLoginRequest>(c=>
                 c.GovIdentifier.Equals(nameIdentifier)
-                && c.ContactId.Equals(contactResponse.Id))), 
-                Times.Once);
+                && c.ContactId.Equals(contactResponse.Id)
+                && c.SignInId.Equals(contactResponse.SignInId))), Times.Once);
         }
         
         
@@ -216,6 +223,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             ContactResponse contactUpdateResponse,
             EpaOrganisation epaOrganisation)
         {
+            contactResponse.SignInId = null;
             var contactsApiClient = new Mock<IContactsApiClient>();
             var organisationApiClient = new Mock<IOrganisationsApiClient>();
             var sessionService = new Mock<ISessionService>();
@@ -225,14 +233,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
                     Mock.Of<ILogger<AssessorServiceAccountPostAuthenticationClaimsHandler>>(), contactsApiClient.Object,
                     organisationApiClient.Object, sessionService.Object, webConfiguration.Object);
             
-            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress);
-            contactsApiClient.Setup(x => x.GetContactByGovIdentifier(nameIdentifier)).ThrowsAsync(new EntityNotFoundException());
+            var tokenValidatedContext = ArrangeTokenValidatedContext(nameIdentifier, emailAddress, signInId.ToString());
+            contactsApiClient.Setup(x => x.GetContactBySignInId(signInId.ToString())).ThrowsAsync(new EntityNotFoundException());
             contactsApiClient.Setup(x => x.GetContactByEmail(emailAddress)).ReturnsAsync(contactResponse);
             organisationApiClient.Setup(x => x.GetEpaOrganisationById(contactResponse.OrganisationId.ToString()))
                 .ReturnsAsync(epaOrganisation);
             contactsApiClient.Setup(x => x.UpdateFromGovLogin(It.Is<UpdateContactGovLoginRequest>(c=>
                 c.GovIdentifier.Equals(nameIdentifier)
-                && c.ContactId.Equals(contactResponse.Id)))).ReturnsAsync(contactUpdateResponse);
+                && c.ContactId.Equals(contactResponse.Id)
+                && c.SignInId.Equals(signInId)))).ReturnsAsync(contactUpdateResponse);
             
         
             var actual = await handler.GetClaims(tokenValidatedContext);
@@ -241,12 +250,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             actual.First(c => c.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Value.Should().Be(contactResponse.Username);
             actual.First(c => c.Type.Equals("display_name")).Value.Should().Be(contactResponse.DisplayName);
             actual.First(c => c.Type.Equals("email")).Value.Should().Be(contactResponse.Email);
+            actual.First(c => c.Type.Equals("sub")).Value.Should().Be(contactUpdateResponse.SignInId.ToString());
             actual.First(c => c.Type.Equals("http://schemas.portal.com/epaoid")).Value.Should().Be(epaOrganisation.OrganisationId); 
             actual.First(c => c.Type.Equals("http://schemas.portal.com/ukprn")).Value.Should().Be(epaOrganisation.Ukprn.ToString());
             
         }
         
-        private TokenValidatedContext ArrangeTokenValidatedContext(string nameIdentifier, string emailAddress)
+        private TokenValidatedContext ArrangeTokenValidatedContext(string nameIdentifier, string emailAddress, string sub)
         {
             var claims = new List<Claim>
             {
@@ -256,7 +266,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
             if (!string.IsNullOrEmpty(nameIdentifier))
             {
                 claims.Add(new Claim(ClaimTypes.NameIdentifier, nameIdentifier));
-            }  
+            }
+            
+            if (!string.IsNullOrEmpty(sub))
+            {
+                claims.Add(new Claim("sub", sub));
+            }
             
             var identity = new ClaimsIdentity(claims);
         
