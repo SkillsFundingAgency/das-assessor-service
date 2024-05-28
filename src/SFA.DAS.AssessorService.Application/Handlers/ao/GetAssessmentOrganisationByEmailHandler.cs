@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var email = _cleanser.CleanseStringForSpecialCharacters(request.Email.Trim());
 
 
-            if (_validator.CheckIfEmailIsPresentAndInSuitableFormat(email) != string.Empty)
+            if (_validator.CheckEmailPresentAndValid(email) != string.Empty)
             {
                 _logger.LogInformation($@"Getting AssessmentOrganisation based on contact email with invalid email address format: [{email}]");
-                return (AssessmentOrganisationSummary) null;
+                return null;
             }
 
             _logger.LogInformation($@"Getting AssessmentOrganisation based on contact email: [{email}]");
