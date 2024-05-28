@@ -143,7 +143,7 @@ jobs:
           inputs:
             azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)" -ApplicationIdentifierUri "$(ApplicationIdentifierUri)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)" -ApplicationIdentifierUri "$(ExternalApiActiveApplicationIdentifierUri)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
 - deployment: DeploySandboxResources
@@ -212,6 +212,6 @@ jobs:
           inputs:
             azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)" -ApplicationIdentifierUri "$(SandboxApplicationIdentifierUri)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)" -ApplicationIdentifierUri "$(ExternalApiActiveSandboxApplicationIdentifierUri)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
