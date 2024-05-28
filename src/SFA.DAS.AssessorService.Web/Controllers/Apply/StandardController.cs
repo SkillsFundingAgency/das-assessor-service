@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
-    public class StandardController : BaseController
+    public class StandardController : AssessorController
     {
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;

@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         [Test]
         public void Then_Epao_PrimaryContact_is_Updated()
         {
-            ContactQueryRepository.Setup(x => x.GetContactByGovIdentifier(It.IsAny<string>())).Returns(Task.FromResult(
+            ContactQueryRepository.Setup(x => x.GetBySignInId(It.IsAny<Guid>())).Returns(Task.FromResult(
                 new Contact
                 {
                     Id = Guid.NewGuid()

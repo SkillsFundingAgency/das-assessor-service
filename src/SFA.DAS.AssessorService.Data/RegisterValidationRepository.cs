@@ -121,20 +121,18 @@ namespace SFA.DAS.AssessorService.Data
             return standardExists;
         }
 
-        public async Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationIdToExclude)
+        public async Task<bool> EpaOrganisationNameExists(string organisationName, string excludingOrganisationId = null)
         {
             var sqlToCheckExists =
-                "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                "SELECT CASE COUNT(0) WHEN 0 THEN 0 ELSE 1 END Result FROM [Organisations] " +
                 "WHERE EndPointAssessorName = @organisationName";
 
-            if (!string.IsNullOrEmpty(organisationIdToExclude))
+            if (!string.IsNullOrEmpty(excludingOrganisationId))
             {
-                sqlToCheckExists = "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                                    "WHERE EndPointAssessorName = @organisationName AND  EndPointAssessorOrganisationId != @organisationIdToExclude";
-                return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationName, organisationIdToExclude });
+                sqlToCheckExists += " AND EndPointAssessorOrganisationId != @excludingOrganisationId";
             }
 
-            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationName });
+            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationName, excludingOrganisationId });
         }
 
         public async Task<bool> ContactIdIsValid(Guid contactId)
@@ -155,23 +153,13 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, organisationId });
         }
 
-
-        public async Task<bool> EmailAlreadyPresentInAnotherOrganisation(string email, string organisationId)
+        public async Task<bool> EmailExistsExcludeContact(string email, Guid excludingContactId)
         {
             const string sqlToCheckExists =
-                "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                "WHERE email  = @email and EndPointAssessorOrganisationId != @organisationId";
+                "SELECT CASE COUNT(0) WHEN 0 THEN 0 ELSE 1 END Result FROM [Contacts] " +
+                "WHERE Email = @email AND Id != @excludingContactId";
             
-            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, organisationId });
-        }
-
-        public async Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, Guid contactId)
-        {
-            const string sqlToCheckExists =
-                "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                "WHERE email  = @email and EndPointAssessorOrganisationId != (select EndPointAssessorOrganisationId from contacts where id=@contactId)";
-            
-            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, contactId });
+            return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, excludingContactId });
         }
 
         public async Task<bool> ContactExists(Guid contactId)
@@ -199,7 +187,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.Connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, firstName, lastName, email, phone });
         }
 
-        public async Task<bool> EmailAlreadyPresent(string email)
+        public async Task<bool> EmailExists(string email)
         {
             const string sqlToCheckExists =
                 "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +

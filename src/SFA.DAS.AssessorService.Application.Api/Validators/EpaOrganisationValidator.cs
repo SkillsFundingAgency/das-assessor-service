@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        public string CheckOrganisationName(string name)
+        public string CheckOrganisationNameIsPresentAndValid(string name)
         {
             var organisationName = _cleanserService.CleanseStringForSpecialCharacters(name);
             if (string.IsNullOrEmpty(organisationName) || organisationName.Trim().Length==0)
@@ -60,38 +60,47 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckIfOrganisationAlreadyExists(string organisationId)
         {
-            if (organisationId == null ||
-                !_registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result) return string.Empty;
+            if (organisationId == null || !_registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result) 
+                return string.Empty;
+            
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed);
         }
 
         public string CheckIfOrganisationUkprnExists(long? ukprn)
         {
-            if (ukprn == null || !_registerRepository.EpaOrganisationExistsWithUkprn(ukprn.Value).Result) return string.Empty;
+            if (ukprn == null || !_registerRepository.EpaOrganisationExistsWithUkprn(ukprn.Value).Result) 
+                return string.Empty;
+            
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnAlreadyUsed);
         }
 
         public string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId)
         {
-            if (organisationTypeId == null || _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid);
+            if (organisationTypeId == null || _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) 
+                return string.Empty;
+                
+            return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid);
         }
 
         public string CheckOrganisationTypeExists(int? organisationTypeId)
         {
-            if (organisationTypeId != null && _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
+            if (organisationTypeId != null && _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) 
+                return string.Empty;
+            
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationTypeIsRequired);
         }
 
 
         public string CheckUkprnIsValid(long? ukprn)
         {
-            if (ukprn == null) return string.Empty;
+            if (ukprn == null) 
+                return string.Empty;
+            
             var isValid = ukprn >= 10000000 && ukprn <= 99999999;
             return isValid ? string.Empty : FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsInvalid);
         }
 
-        public string CheckCompanyNumberIsValid(string companyNumber)
+        public string CheckCompanyNumberIsMissingOrValid(string companyNumber)
         {
 
             if (String.IsNullOrWhiteSpace(companyNumber))
@@ -123,16 +132,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
-        public string CheckOrganisationNameNotUsed(string name)
+        public string CheckOrganisationNameNotExists(string name)
         {
-            return _registerRepository.EpaOrganisationAlreadyUsingName(name, string.Empty).Result 
+            return _registerRepository.EpaOrganisationNameExists(name).Result 
                 ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent) : 
                 string.Empty;
         }
 
-        public string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore)
+        public string CheckOrganisationNameNotExistsExcludingOrganisation(string name, string excludingOrganisationId)
         {
-            return _registerRepository.EpaOrganisationAlreadyUsingName(name, organisationIdToIgnore).Result 
+            return _registerRepository.EpaOrganisationNameExists(name, excludingOrganisationId).Result 
                 ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent) : 
                 string.Empty;
         }
@@ -169,7 +178,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnAlreadyUsed);
         }
 
-        public string CheckIfOrganisationNotFound(string organisationId)
+        public string CheckOrganisationExists(string organisationId)
         {
             return organisationId != null && _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result 
                 ? string.Empty :
@@ -204,17 +213,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckIfContactIdIsValid(string contactId, string organisationId)
         {
-            if (!Guid.TryParse(contactId, out Guid newContactId))
+            if (!Guid.TryParse(contactId, out Guid validContactId))
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdIsRequired);
 
-            return _registerRepository.ContactIdIsValidForOrganisationId(newContactId, organisationId).Result
+            return _registerRepository.ContactIdIsValidForOrganisationId(validContactId, organisationId).Result
                 ? string.Empty 
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId);
         }
 
-        public string CheckDisplayName(string name)
+        public string CheckDisplayNameIsPresentAndValid(string displayName)
         {
-            var newName = _cleanserService.CleanseStringForSpecialCharacters(name);
+            var newName = _cleanserService.CleanseStringForSpecialCharacters(displayName);
             if (string.IsNullOrEmpty(newName) || newName.Trim().Length == 0)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameIsMissing);
 
@@ -223,7 +232,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        public string CheckFirstName(string name)
+        public string CheckFirstNameIsPresentAndMinimumLength(string name)
         {
             var newName = _cleanserService.CleanseStringForSpecialCharacters(name);
             if (string.IsNullOrEmpty(newName) || newName.Trim().Length == 0)
@@ -234,7 +243,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        public string CheckLastName(string name)
+        public string CheckLastNameIsPresentAndMininumLength(string name)
         {
             var newName = _cleanserService.CleanseStringForSpecialCharacters(name);
             if (string.IsNullOrEmpty(newName) || newName.Trim().Length == 0)
@@ -245,97 +254,68 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        public string CheckUpdatedBy(string updatedBy)
+        public string CheckContactDetailsNotExists(string firstName, string lastName, string email, string phone, string contactId)
         {
-            var newUpdatedBy = _cleanserService.CleanseStringForSpecialCharacters(updatedBy);
-            if (string.IsNullOrWhiteSpace(newUpdatedBy))
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.UpdatedByIsMissing);
+            Guid? validContactId = Guid.TryParse(contactId, out Guid parsedContactId) ? parsedContactId : null;
 
-            return string.Empty;
-        }
-
-        public string CheckIfEmailIsMissing(string emailName)
-        {
-            return string.IsNullOrEmpty(emailName?.Trim())
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
-                : string.Empty;
-        }
-
-
-        public string CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phoneNumber, string contactId)
-        {
-            Guid? newContactId = null;
-
-            if (contactId!=null && Guid.TryParse(contactId, out Guid guidContactId))
-                 newContactId = guidContactId;
-
-            return _registerRepository.ContactDetailsAlreadyExist(firstName, lastName, email, phoneNumber, newContactId).Result
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactDetailsAreDuplicates)  
-                : string.Empty;
+            return _registerRepository.ContactDetailsAlreadyExist(firstName, lastName, email, phone, validContactId).Result
+                    ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactDetailsAreDuplicates)
+                    : string.Empty;
         }
 
         public string CheckContactIdExists(string contactId)
         {
-
-            if (!Guid.TryParse(contactId, out Guid newContactId))
+            if (!Guid.TryParse(contactId, out Guid validContactId))
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
             
-            return _registerRepository.ContactExists(newContactId).Result
+            return _registerRepository.ContactExists(validContactId).Result
                 ? string.Empty
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
         }
 
-        public string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId)
+        public string CheckEmailNotExists(string email)
         {
-            return _registerRepository.EmailAlreadyPresentInAnotherOrganisation(email, organisationId).Result
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation)
+            return _registerRepository.EmailExists(email).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyExists)
                 : string.Empty;
         }
 
-        public string EmailAlreadyPresent(string email)
+        public string CheckEmailNotExistsExcludingContact(string email, string excludingContactId)
         {
-            return _registerRepository.EmailAlreadyPresent(email).Result
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInCurrentOrganisation)
-                : string.Empty;
-        }
-
-
-        public string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId)
-        {
-            if (!Guid.TryParse(contactId, out Guid newContactId))
-                return string.Empty;
+            if (!Guid.TryParse(excludingContactId, out Guid validExcludingContactId))
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
 
             return _registerRepository
-                .EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(email, newContactId).Result
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation)
+                .EmailExistsExcludeContact(email, validExcludingContactId).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyExists)
                 : string.Empty;
         }
 
-        public string CheckIfEmailIsPresentAndInSuitableFormat(string email)
+        public string CheckEmailPresentAndValid(string email)
         {
             var validationResults = new EmailValidator().Validate(new EmailChecker {EmailToCheck = email});
             return validationResults.IsValid ? string.Empty : FormatErrorMessage(validationResults.Errors.First().ErrorMessage);
         }
 
-        public string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? organisationStandardEffectiveFrom, DateTime? standardEffectiveFrom,
+        public string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom, DateTime? standardEffectiveFrom,
             DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts)
         {
-            if (organisationStandardEffectiveFrom == null || standardEffectiveFrom == null)
+            if (effectiveFrom == null || standardEffectiveFrom == null)
                 return string.Empty;
 
-            if (organisationStandardEffectiveFrom < standardEffectiveFrom)
+            if (effectiveFrom < standardEffectiveFrom)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom);
 
             return string.Empty;
         }
 
 
-        public string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? organisationStandardEffectiveTo, DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo)
+        public string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? effectiveTo, DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo)
         {
-            if (organisationStandardEffectiveTo == null)
+            if (effectiveTo == null)
                 return string.Empty;
 
-            if (organisationStandardEffectiveTo < standardEffectiveFrom)
+            if (effectiveTo < standardEffectiveFrom)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveToBeforeStandardEffectiveFrom);
 
             return string.Empty;
@@ -498,11 +478,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
-        public string CheckApplicationdId(Guid applicationId)
+        public string CheckApplicationdIdIsPresent(Guid applicationId)
         {
-            if (applicationId == default)
+            if (applicationId == Guid.Empty)
             {
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ApplicationIdIsMissing);
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ApplicationIdIsRequired);
             }
             return string.Empty;
         }
@@ -533,12 +513,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameIsPresentAndValid(request.Name), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);    
-            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotExists(request.Name), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult, ValidationStatusCode.AlreadyExists);
-            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsMissingOrValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("CompanyNumber", CheckIfOrganisationCompanyNumberExists(request.CompanyNumber), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.CharityNumber), validationResult, ValidationStatusCode.AlreadyExists);
@@ -552,28 +532,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             CreateEpaOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email),
+            RunValidationCheckAndAppendAnyError("Email", 
+                CheckEmailPresentAndValid(request.Email), 
                 validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Email",
-              CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId),
-              validationResult, ValidationStatusCode.AlreadyExists);
-            RunValidationCheckAndAppendAnyError("Email",
-               EmailAlreadyPresent(request.Email),
-               validationResult, ValidationStatusCode.AlreadyExists);
-          
+            
+            RunValidationCheckAndAppendAnyError("Email", 
+                CheckEmailNotExists(request.Email), 
+                validationResult, ValidationStatusCode.AlreadyExists);
 
             if (validationResult.IsValid)
+            {
                 RunValidationCheckAndAppendAnyError("ContactDetails",
-                    CheckIfContactDetailsAlreadyPresentInSystem(request.FirstName,request.LastName, request.Email, request.PhoneNumber,
-                        null), validationResult, ValidationStatusCode.AlreadyExists);
+                    CheckContactDetailsNotExists(request.FirstName, request.LastName, request.Email, request.PhoneNumber, null), 
+                    validationResult, ValidationStatusCode.AlreadyExists);
+            }
 
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
-                CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
-                ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
-                ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("LastName", CheckLastName(request.LastName), validationResult,
-                ValidationStatusCode.BadRequest);
+                CheckOrganisationExists(request.EndPointAssessorOrganisationId), 
+                validationResult, ValidationStatusCode.BadRequest);
+
+            RunValidationCheckAndAppendAnyError("FirstName", 
+                CheckFirstNameIsPresentAndMinimumLength(request.FirstName), 
+                validationResult, ValidationStatusCode.BadRequest);
+
+            RunValidationCheckAndAppendAnyError("LastName", 
+                CheckLastNameIsPresentAndMininumLength(request.LastName), 
+                validationResult, ValidationStatusCode.BadRequest);
 
             return validationResult;
         }
@@ -582,16 +566,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("Email", CheckEmailPresentAndValid(request.Email), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Email", CheckEmailNotExistsExcludingContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
 
             if (validationResult.IsValid)
-                RunValidationCheckAndAppendAnyError("ContactDetails", CheckIfContactDetailsAlreadyPresentInSystem(request.FirstName, request.LastName, request.Email, request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
+                RunValidationCheckAndAppendAnyError("ContactDetails", CheckContactDetailsNotExists(request.FirstName, request.LastName, request.Email, request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
 
             RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
+            RunValidationCheckAndAppendAnyError("FirstName", CheckFirstNameIsPresentAndMinimumLength(request.FirstName), validationResult,
                 ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("LastName", CheckLastName(request.LastName), validationResult,
+            RunValidationCheckAndAppendAnyError("LastName", CheckLastNameIsPresentAndMininumLength(request.LastName), validationResult,
                 ValidationStatusCode.BadRequest);
             return validationResult;
         }
@@ -601,7 +585,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationExists(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
             if (!validationResult.IsValid) return validationResult;
 
             //  SV-658 / SV-659 Now that we have versions, this will check will include versions too.
@@ -676,11 +660,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
 
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
-               CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+               CheckOrganisationExists(request.EndPointAssessorOrganisationId), validationResult,
                ValidationStatusCode.BadRequest);
 
             RunValidationCheckAndAppendAnyError("ApplicationId",
-              CheckApplicationdId(request.ApplicationId), validationResult,
+              CheckApplicationdIdIsPresent(request.ApplicationId), validationResult,
               ValidationStatusCode.BadRequest);
 
             return validationResult;
@@ -691,7 +675,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
 
             RunValidationCheckAndAppendAnyError(nameof(request.EndPointAssessorOrganisationId),
-               CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+               CheckOrganisationExists(request.EndPointAssessorOrganisationId), validationResult,
                ValidationStatusCode.BadRequest);
 
             RunValidationCheckAndAppendAnyError(nameof(request.StandardCode),
@@ -717,19 +701,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
             var doLiveValidation = false || request.Status == "Live" || request.ActionChoice == "MakeLive";
 
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationExists(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
             if (!validationResult.IsValid)
                 return validationResult;
 
-            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsMissingOrValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("CompanyNumber", CheckIfOrganisationCompanyNumberExists(request.OrganisationId, request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
 
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.OrganisationId, request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameIsPresentAndValid(request.Name), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsedForOtherOrganisations(request.Name, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotExistsExcludingOrganisation(request.Name, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberExists(request.RecognitionNumber), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("RecognitionNumber", CheckRecognitionNumberInUse(request.RecognitionNumber, request.OrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
