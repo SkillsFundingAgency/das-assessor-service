@@ -97,8 +97,7 @@
     "externalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acextapi-sbox-as')]",
     "internalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acintapi-sbox-as')]",
     "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
-    "sandboxDatabaseName": "[concat(variables('resourceNamePrefix'), '-sbox-db')]",
-    "externalApiActiveSandboxApplicationIdentifierUri": "[concat(variables('resourceNamePrefix'), 'acextapi-sbox-as-ar')]"
+    "sandboxDatabaseName": "[concat(variables('resourceNamePrefix'), '-sbox-db')]"
   },
     "resources": [
         {
@@ -486,10 +485,6 @@
     "SandboxDatabaseName": {
       "type": "string",
       "value": "[variables('sandboxDatabaseName')]"
-    },
-    "ExternalApiActiveSandboxApplicationIdentifierUri": {
-      "type": "string",
-      "value": "[variables('externalApiActiveSandboxApplicationIdentifierUri')]"
     }
   }
 }

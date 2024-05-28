@@ -128,8 +128,7 @@
     "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
     "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
     "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
-    "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn",
-    "externalApiApplicationIdentifierUri": "[concat(variables('resourceNamePrefix'), 'extapi-as-ar')]"
+    "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
   },
     "resources": [
         {
@@ -815,10 +814,6 @@
     "StorageAccountName": {
       "type": "string",
       "value": "[variables('storageAccountName')]"
-    },
-    "ExternalApiActiveApplicationIdentifierUri": {
-      "type": "string",
-      "value": "[variables('externalApiApplicationIdentifierUri')]"
     }
   }
 }
