@@ -212,6 +212,6 @@ jobs:
           inputs:
             azureSubscription: ${{ parameters.ApimServiceConnection }}
             ScriptPath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/azure/scripts/Set-ApimApiPolicy.ps1
-            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)" -ApplicationIdentifierUri "$(ApplicationIdentifierSandboxUri)"'
+            ScriptArguments: '-ResourceGroupName "$(ApimResourceGroup)" -ServiceName "$(ApimServiceName)" -ApiId "$(externalApiSandboxApiId)"  -ApimApiPolicyFilePath "$(ApimApiPolicyFilePath)" -ApplicationIdentifierUri "$(SandboxApplicationIdentifierUri)"'
             azurePowerShellVersion: LatestVersion
             pwsh: true
