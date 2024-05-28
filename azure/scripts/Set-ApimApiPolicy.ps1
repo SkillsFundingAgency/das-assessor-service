@@ -46,7 +46,7 @@ try {
 	$policy = Get-Content -Path $ApimApiPolicyFilePath -Raw
 	$policy = $policy -replace "{ApplicationIdentifierUri}", $ApplicationIdentifierUri
 
-	Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $content -ErrorAction Stop -Verbose:$VerbosePreference
+	Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $policy -ErrorAction Stop -Verbose:$VerbosePreference
     } else {
         Write-Host "Please specify a valid policy file path"
     }

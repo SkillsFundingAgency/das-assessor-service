@@ -74,12 +74,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     if (_useSandbox)
                     {
                         validAudiences.AddRange(ApplicationConfiguration.SandboxExternalApiAuthentication.Audiences.Split(","));
-                        tenant = auth.Authority = ApplicationConfiguration.SandboxExternalApiAuthentication.Tenant;
+                        tenant = ApplicationConfiguration.SandboxExternalApiAuthentication.Tenant;
                     }
                     else
                     {
                         validAudiences.AddRange(ApplicationConfiguration.ExternalApiAuthentication.Audiences.Split(","));
-                        tenant = auth.Authority = ApplicationConfiguration.ExternalApiAuthentication.Tenant;
+                        tenant = ApplicationConfiguration.ExternalApiAuthentication.Tenant;
                     }
 
                     auth.Authority = $"https://login.microsoftonline.com/{tenant}";
