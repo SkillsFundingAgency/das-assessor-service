@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(contact => contact.Organisation)
                 .Where(contact =>
                     contact.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
+                    (!withUser.HasValue || (withUser.Value && contact.GovUkIdentifier != null) || (!withUser.Value && contact.GovUkIdentifier == null)))
                 .ToListAsync();
 
             return contacts;
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include("ContactsPrivileges.Privilege")
                 .Where(contact =>
                     contact.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
+                    (!withUser.HasValue || (withUser.Value && contact.GovUkIdentifier != null) || (!withUser.Value && contact.GovUkIdentifier == null)))
                 .OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames)
                 .ToListAsync();
             
