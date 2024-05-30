@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new List<OrganisationStandardSummary>());
 
             _mockContactsApiClient
-                .Setup(r => r.GetContactBySignInId(GovUkIdentifier))
+                .Setup(r => r.GetContactByEmail(GovUkIdentifier))
                 .ReturnsAsync(new ContactResponse { Id = UserId, GovUkIdentifier = GovUkIdentifier });
 
             _mockConfig

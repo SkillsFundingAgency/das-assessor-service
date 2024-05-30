@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
             var email = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "email")?.Value ?? _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "emailaddress")?.Value;
             var displayName = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "display_name")?.Value;
 
-            if (govIdentifier != null && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(displayName))
+            if (govIdentifier != null)
             {
                 loginResult = await _loginApiClient.Login(new LoginRequest()
                 {

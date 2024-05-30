@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> GetById(Guid id);
 
-        Task<ContactResponse> GetContactBySignInId(string signInId);
+        Task<ContactResponse> GetContactByGovUkIdentifier(string govUkIdentifier);
 
         Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId, bool? withUser = null);
         Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null);
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
         Task Callback(SignInCallback callback);
 
-        Task MigrateSingleContactToApply(System.Guid signinId);
+        Task MigrateSingleContactToApply(string govUkIdentifier);
 
         Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);
 

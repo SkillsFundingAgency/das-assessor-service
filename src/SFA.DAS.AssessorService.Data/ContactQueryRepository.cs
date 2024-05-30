@@ -121,19 +121,19 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<Contact>> GetUsersToMigrate()
         {
             return await _assessorDbContext.Contacts.Where(c =>
-                c.SignInId == null
+                c.GovUkIdentifier == null
                 && c.Status == "Live"
                 && !c.Username.StartsWith("unknown")
                 && c.Organisation != null
                 && c.Organisation.Status == "Live").ToListAsync();
         }
 
-        public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
+        public async Task UpdateMigratedContact(Guid contactId, string govUkIdentifier)
         {
             var contact = await _assessorDbContext.Contacts.SingleOrDefaultAsync(c => c.Id == contactId);
             if (contact != null)
             {
-                contact.SignInId = signInId;
+                contact.GovUkIdentifier = govUkIdentifier;
                 await _assessorDbContext.SaveChangesAsync();
             }
         }

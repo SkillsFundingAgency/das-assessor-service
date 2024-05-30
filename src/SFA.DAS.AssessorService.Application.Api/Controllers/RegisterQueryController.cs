@@ -157,15 +157,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetEpaContactBySignInId")]
+        [HttpGet("assessment-organisations/contacts/govUkIdentifier/{govUKIdentifier}", Name = "GetEpaContactByGovUkIdentifier")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaContactBySignInId(string signInId)
+        public async Task<IActionResult> GetEpaContactByGovUkIdentifier(string govUkIdentifier)
         {
-            _logger.LogInformation($@"Get EpaContact from SignInId [{signInId}]");
-            var result = await _mediator.Send(new GetEpaContactBySignInIdRequest { SignInId = signInId });
+            _logger.LogInformation($@"Get EpaContact from GovUkIdentifier [{govUkIdentifier}]");
+            var result = await _mediator.Send(new GetEpaContactByGovUkIdentifierRequest { GovUkIdentifier = govUkIdentifier });
             if (result == null) return BadRequest();
             return Ok(result);
         }
