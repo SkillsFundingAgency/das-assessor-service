@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
             _registerRepositoryMock.Setup(x => x.EpaOrganisationAlreadyUsingUkprn(_request.Ukprn.Value, _request.OrganisationId))
                 .ReturnsAsync(false);
 
-            _registerRepositoryMock.Setup(x => x.EpaOrganisationAlreadyUsingName(_request.Name, _request.OrganisationId))
+            _registerRepositoryMock.Setup(x => x.EpaOrganisationNameExists(_request.Name, _request.OrganisationId))
                 .ReturnsAsync(false);
 
             _registerRepositoryMock.Setup(x => x.OrganisationTypeExists(_request.OrganisationTypeId.Value))
