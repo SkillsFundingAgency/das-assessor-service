@@ -213,6 +213,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationStandardRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationTypesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationTypesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetStandardVersionRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GovUKIdentifierWrapper.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GovUKIdentifierWrapper.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" />
@@ -290,7 +291,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SignInCallback.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SignInCallback.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GovUkIdentifierWrapper.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GovUkIdentifierWrapper.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\StaffSearchItems.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\StaffSearchItems.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\StaffSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\StaffSearchResult.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\LearnerDetailResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\LearnerDetailResult.cs" />
