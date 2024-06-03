@@ -211,7 +211,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StartupConfiguration
         public async Task Then_The_Claims_Are_Populated_For_New_User_And_Sign_In_Id_Not_Updated_If_Gov_User_With_Sign_In_Id(
             string nameIdentifier,
             string emailAddress,
-            Guid signInId,
             ContactResponse contactResponse,
             ContactResponse contactUpdateResponse,
             EpaOrganisation epaOrganisation)

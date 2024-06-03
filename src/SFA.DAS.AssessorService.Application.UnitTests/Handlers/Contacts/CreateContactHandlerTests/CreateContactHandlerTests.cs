@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task Handle_WhenContactDoesNotExist_AndGovUkIdentifierIsNotSet_ShouldNotUpdateSignInId(string govIdentifier)
+        public async Task Handle_WhenContactDoesNotExist_AndGovUkIdentifierIsNotSet_ShouldNotUpdateGovUkIdentifier(string govIdentifier)
         {
             // Arrange
             var request = new CreateContactRequest
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
         }
 
         [Test]
-        public async Task Handle_WhenContactExists_ShouldUpdateSignInId()
+        public async Task Handle_WhenContactExists_ShouldUpdateGovUkIdentifier()
         {
             // Arrange
             var request = new CreateContactRequest
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task Handle_WhenContactExists_AndGovUkIdentifierIsNotSet_ShouldNotUpdateSignInId(string govIdentifier)
+        public async Task Handle_WhenContactExists_AndGovUkIdentifierIsNotSet_ShouldNotUpdateGovUKIdentifier(string govIdentifier)
         {
             // Arrange
             var request = new CreateContactRequest

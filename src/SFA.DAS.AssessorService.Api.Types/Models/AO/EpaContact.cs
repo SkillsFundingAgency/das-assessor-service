@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string Email { get; set; }
         public string Status { get; set; }
         public string PhoneNumber { get; set; }
-        public Guid? SigninId { get; set; }
+        public string GovUkIdentifier { get; set; }
         public string SigninType { get; set; }
     }
 }

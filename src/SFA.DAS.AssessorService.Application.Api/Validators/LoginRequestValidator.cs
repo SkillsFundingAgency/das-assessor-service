@@ -9,8 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     {
         public LoginRequestValidator(IStringLocalizer<LoginRequestValidator> localizer)
         {
-            RuleFor(lr => lr.DisplayName).NotEmpty().WithMessage("Display name must not be empty");
-            RuleFor(lr => lr.Email).NotEmpty().WithMessage("Email must not be empty");
             RuleFor(lr => lr.GovUkIdentifier).NotEmpty().WithMessage("GovIdentifier must not be empty");
         }
     }
