@@ -51,3 +51,7 @@ WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
 --QF-1366 Map OFQUAL RN to EPAOrgId
 :r .\PostDeploymentScripts\QF-1366-MapOFQUALRNtoEPAOrgId.sql
+
+--QF-1912 Update Pending users to Live.  
+--Temporary script which can be removed from Post Deployment once it has been run on all environments
+:r .\PostDeploymentScripts\QF-1912-UpdatePendingUsersToLive.sql
