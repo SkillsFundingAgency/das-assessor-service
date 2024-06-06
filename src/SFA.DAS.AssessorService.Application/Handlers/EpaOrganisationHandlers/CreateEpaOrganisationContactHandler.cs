@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 LastName = request.LastName,
                 FirstName = request.FirstName,
                 SigninType = "",
-                SigninId = null,
+                GovUkIdentifier = null,
                 Status="New"
             };
         }

@@ -206,10 +206,10 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<string> CreateEpaOrganisationContact(EpaContact contact)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
+                $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [GovUkIdentifier], [SigninType]) " +
                     $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
                     $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
-                    $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @SigninId, @SigninType);",
+                    $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @govUkIdentifier, @SigninType);",
                     new
                     {
                         contact.Id,
@@ -220,7 +220,7 @@ namespace SFA.DAS.AssessorService.Data
                         contact.PhoneNumber,
                         firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
                         lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,
-                        contact.SigninId,
+                        contact.GovUkIdentifier,
                         contact.SigninType
                     });
 

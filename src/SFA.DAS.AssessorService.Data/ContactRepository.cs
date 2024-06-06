@@ -220,12 +220,11 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public async Task<Contact> UpdateSignInId(Guid contactId, Guid? signInId, string govIdentifier)
+        public async Task<Contact> UpdateGovUkIdentifier(Guid contactId, string govIdentifier)
         {
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
-            contactEntity.SignInId = signInId;
             if (!string.IsNullOrEmpty(govIdentifier))
             {
                 contactEntity.GovUkIdentifier = govIdentifier;

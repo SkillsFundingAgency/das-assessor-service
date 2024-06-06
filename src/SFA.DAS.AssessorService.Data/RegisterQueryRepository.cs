@@ -388,7 +388,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<EpaContact> GetContactByContactId(Guid contactId)
         {
             var sql =
-                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, GovUkIdentifier, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Id = @contactId";
 
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
@@ -397,19 +397,19 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<EpaContact> GetContactByEmail(string email)
         {
             var sql =
-                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, GovUkIdentifier, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Email = @email";
 
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { email });
         }
 
-        public async Task<EpaContact> GetContactBySignInId(string signinId)
+        public async Task<EpaContact> GetContactByGovUkIdentifier(string govUKIdentifier)
         {
             var sql =
-                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
-                    " from Contacts where SigninId = @signinId";
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, GovUkIdentifier, SigninType, Email, Status, PhoneNumber " +
+                    " from Contacts where GovUkIdentifier = @govUKIdentifier";
 
-            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { signinId });
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { govUKIdentifier });
         }
 
         public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(

@@ -71,14 +71,14 @@ namespace SFA.DAS.AssessorService.Data
             return organisation.Contacts.Count() != 0;
         }
 
-        public async Task<bool> CheckIfOrganisationHasContactsWithSigninId(string endPointAssessorOrganisationId, Guid contactId)
+        public async Task<bool> CheckIfOrganisationHasContactsWithGovUkIdentifier(string endPointAssessorOrganisationId, Guid contactId)
         {
             var organisation = await _assessorDbContext.Organisations
                 .Include(q => q.Contacts)
                 .FirstOrDefaultAsync(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
              //Ignore calling contact
-             return organisation.Contacts?.Any(x => x.SignInId != null && x.Id != contactId) ?? false;
+             return organisation.Contacts?.Any(x => x.GovUkIdentifier != null && x.Id != contactId) ?? false;
         }
 
         public async Task<bool> IsOfsOrganisation(int ukprn)

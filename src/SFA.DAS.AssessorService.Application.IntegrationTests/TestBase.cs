@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
         {
             var orgId = Guid.NewGuid();
             DatabaseHelper.Execute($"INSERT INTO Organisations (Id, CreatedAt, DeletedAt, EndPointAssessorName, EndpointAssessorOrganisationId, EndPointAssessorUkprn, PrimaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData, ApiEnabled, ApiUser) VALUES ('{orgId}', '{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}', NULL, '{epaName}', '{epaId}', '10004375', '{contactEmail}', 'Live', '{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}', 1, '{{}}', 0, NULL);");
-            DatabaseHelper.Execute($"INSERT INTO Contacts (Id, CreatedAt, DeletedAt, DisplayName, Email, EndPointAssessorOrganisationId, OrganisationId, Status, UpdatedAt, Username, PhoneNumber, Title, GivenNames, FamilyName, SignInType, SignInId) VALUES ('{contactId}', '{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}', NULL, '{contactName}', '{contactEmail}', '{epaId}', '{orgId}', 'Live', NULL, '{contactEmail}', '01234 567890', 'Mr', 'Test', 'Contact', '', NULL);");
+            DatabaseHelper.Execute($"INSERT INTO Contacts (Id, CreatedAt, DeletedAt, DisplayName, Email, EndPointAssessorOrganisationId, OrganisationId, Status, UpdatedAt, Username, PhoneNumber, Title, GivenNames, FamilyName, SignInType, GovUkIdentifier) VALUES ('{contactId}', '{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}', NULL, '{contactName}', '{contactEmail}', '{epaId}', '{orgId}', 'Live', NULL, '{contactEmail}', '01234 567890', 'Mr', 'Test', 'Contact', '', NULL);");
         }
 
         protected int CreateOrganisationStandard(string epaId, int standardCode, string standardReference, Guid contactId)

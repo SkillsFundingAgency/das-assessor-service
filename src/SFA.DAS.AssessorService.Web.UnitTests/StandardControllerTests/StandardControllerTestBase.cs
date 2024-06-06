@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         protected Mock<IWebConfiguration> _mockConfig;
 
-        protected Guid SignInId = Guid.NewGuid();
+        protected string GovUkIdentifier = "urn:fdc:gov.uk:2022:2zQE1QeShp-Dmy1sNvzXnVyW9FrOcH5H91YmhEu7szo";
         protected Guid UserId = Guid.NewGuid();
         protected string EpaOrgId = "EPA0001";
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
 
             _mockHttpContextAccessor
                 .Setup(r => r.HttpContext)
-                .Returns(SetupHttpContextSubAuthorityClaim(SignInId, EpaOrgId));
+                .Returns(SetupHttpContextSubAuthorityClaim(GovUkIdentifier, EpaOrgId));
 
             _mockApiClient
                 .Setup(r => r.GetApplication(It.IsAny<Guid>()))
@@ -92,16 +92,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 });
 
             _mockContactsApiClient
-                .Setup(r => r.GetContactBySignInId(SignInId.ToString()))
-                .ReturnsAsync(new ContactResponse { Id = UserId, SignInId = SignInId });
+                .Setup(r => r.GetContactByGovIdentifier(GovUkIdentifier))
+                .ReturnsAsync(new ContactResponse { Id = UserId, GovUkIdentifier =  GovUkIdentifier});
 
             _mockOrgApiClient
                 .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
                 .ReturnsAsync(new List<OrganisationStandardSummary>());
 
             _mockContactsApiClient
-                .Setup(r => r.GetContactBySignInId(SignInId.ToString()))
-                .ReturnsAsync(new ContactResponse { Id = UserId, SignInId = SignInId });
+                .Setup(r => r.GetContactByEmail(GovUkIdentifier))
+                .ReturnsAsync(new ContactResponse { Id = UserId, GovUkIdentifier = GovUkIdentifier });
 
             _mockConfig
                 .Setup(r => r.FeedbackUrl)
@@ -115,11 +115,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         }
 
 
-        private static HttpContext SetupHttpContextSubAuthorityClaim(Guid signInId, string epaOrgId)
+        private static HttpContext SetupHttpContextSubAuthorityClaim(string govUkIdentifier, string epaOrgId)
         {
             var fakeClaims = new List<Claim>()
             {
-                new Claim("sub", signInId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, govUkIdentifier),
                 new Claim("http://schemas.portal.com/epaoid", epaOrgId)
             };
 
