@@ -38,8 +38,11 @@ try {
     Write-Host "Building APIM context for $ResourceGroupName\$ServiceName"
     $ApimContext = New-AzApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
 
+    #Verify ApplicationIdentifierUri
+    Write-Host "ApplicationIdentifierUri = $ApplicationIdentifierUri"
+
     # Ensure policy file exists
-    Write-Host "Test that policy file exists"
+    Write-Host "Test that policy file exists $ApimApiPolicyFilePath"
     if (Test-Path -Path $ApimApiPolicyFilePath) {
         Write-Host "Set API policy"
         
