@@ -116,20 +116,20 @@
             "type": "string"
         }
     },
-  "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-    "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
-    "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
-    "externalApiAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-as')]",
-    "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbox-as')]",
-    "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
-    "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
-    "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
-    "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
-    "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
-  },
+    "variables": {
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+        "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
+        "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
+        "externalApiAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-as')]",
+        "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbox-as')]",
+        "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
+        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
+        "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
+        "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
+        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
+    },
     "resources": [
         {
             "apiVersion": "2020-10-01",
@@ -782,38 +782,38 @@
             }
         }
     ],
-  "outputs": {
-    "ResourceGroupName": {
-      "type": "string",
-      "value": "[variables('resourceGroupName')]"
-    },
-    "UiAppServiceName": {
-      "type": "string",
-      "value": "[variables('uiAppServiceName')]"
-    },
-    "ApiAppServiceName": {
-      "type": "string",
-      "value": "[variables('apiAppServiceName')]"
-    },
-    "ExternalApiAppServiceName": {
-      "type": "string",
-      "value": "[variables('externalApiAppServiceName')]"
-    },
-    "ExternalApiSandboxAppServiceName": {
-      "type": "string",
-      "value": "[variables('externalApiSandboxAppServiceName')]"
-    },
-    "DatabaseName": {
-      "type": "string",
-      "value": "[variables('databaseName')]"
-    },
-    "ServiceBusName": {
-      "type": "string",
-      "value": "[variables('serviceBusName')]"
-    },
-    "StorageAccountName": {
-      "type": "string",
-      "value": "[variables('storageAccountName')]"
+    "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('resourceGroupName')]"
+        },
+        "UiAppServiceName": {
+            "type": "string",
+            "value": "[variables('uiAppServiceName')]"
+        },
+        "ApiAppServiceName": {
+            "type": "string",
+            "value": "[variables('apiAppServiceName')]"
+        },
+        "ExternalApiAppServiceName": {
+            "type": "string",
+            "value": "[variables('externalApiAppServiceName')]"
+        },
+        "ExternalApiSandboxAppServiceName": {
+            "type": "string",
+            "value": "[variables('externalApiSandboxAppServiceName')]"
+        },
+        "DatabaseName": {
+            "type": "string",
+            "value": "[variables('databaseName')]"
+        },
+        "ServiceBusName": {
+            "type": "string",
+            "value": "[variables('serviceBusName')]"
+        },
+        "StorageAccountName": {
+            "type": "string",
+            "value": "[variables('storageAccountName')]"
+        }
     }
-  }
 }

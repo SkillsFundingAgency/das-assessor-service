@@ -89,16 +89,17 @@
             "defaultValue": "[utcNow()]"
         }
     },
-  "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-    "activeSandboxAppServicePlanName": "[concat(variables('resourceNamePrefix'), 'ac-sbox-asp')]",
-    "externalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acextapi-sbox-as')]",
-    "internalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acintapi-sbox-as')]",
-    "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
-    "sandboxDatabaseName": "[concat(variables('resourceNamePrefix'), '-sbox-db')]"
-  },
+    "variables": {
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+        "activeSandboxAppServicePlanName": "[concat(variables('resourceNamePrefix'), 'ac-sbox-asp')]",
+        "externalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acextapi-sbox-as')]",
+        "internalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acintapi-sbox-as')]",
+        "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
+        "sandboxDatabaseName": "[concat(variables('resourceNamePrefix'), '-sbox-db')]"
+
+    },
     "resources": [
         {
             "apiVersion": "2020-10-01",
@@ -469,22 +470,22 @@
             }
         }
     ],
-  "outputs": {
-    "ResourceGroupName": {
-      "type": "string",
-      "value": "[variables('resourceGroupName')]"
-    },
-    "ExternalApiActiveSandboxAppServiceName": {
-      "type": "string",
-      "value": "[variables('externalApiActiveSandboxAppServiceName')]"
-    },
-    "InternalApiActiveSandboxAppServiceName": {
-      "type": "string",
-      "value": "[variables('internalApiActiveSandboxAppServiceName')]"
-    },
-    "SandboxDatabaseName": {
-      "type": "string",
-      "value": "[variables('sandboxDatabaseName')]"
+    "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('resourceGroupName')]"
+        },
+        "ExternalApiActiveSandboxAppServiceName": {
+            "type": "string",
+            "value": "[variables('externalApiActiveSandboxAppServiceName')]"
+        },
+        "InternalApiActiveSandboxAppServiceName": {
+            "type": "string",
+            "value": "[variables('internalApiActiveSandboxAppServiceName')]"
+        },
+        "SandboxDatabaseName": {
+            "type": "string",
+            "value": "[variables('sandboxDatabaseName')]"
+        }        
     }
-  }
 }
