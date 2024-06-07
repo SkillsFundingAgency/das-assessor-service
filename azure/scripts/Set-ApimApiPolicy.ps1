@@ -34,62 +34,42 @@ Param(
 
 try {
 
-    # --- Build context and retrieve apiid
-    Write-Host "Building APIM context for $ResourceGroupName\$ServiceName"
-    $ApimContext = New-AzApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
+    # Function to list XML files in a directory
+    function List-XmlFiles {
+    param (
+        [string]$directoryPath
+    )
 
-    #Verify ApplicationIdentifierUri
-    Write-Host "ApplicationIdentifierUri = $ApplicationIdentifierUri"
+    if (Test-Path -Path $directoryPath) {
+        Write-Host "Searching in directory: $directoryPath"
+        $xmlFiles = Get-ChildItem -Path $directoryPath -Recurse -File -Filter "*.xml"
 
-    # Ensure policy file exists
-    Write-Host "Test that policy file exists $ApimApiPolicyFilePath"
-
-    # Define the relative path to the file from the root directory
-    $relativePath = "SFA.DAS.AssessorService/azure/api-management/policies/apis"
-    $fileName = "das-assessor-service-api-external.xml"
-
-    # Get the value of System.DefaultWorkingDirectory from the environment variable
-    $defaultWorkingDirectory = $env:SYSTEM_DEFAULTWORKINGDIRECTORY
-
-    # Combine the base path with the relative path
-    $searchPath = Join-Path -Path $defaultWorkingDirectory -ChildPath $relativePath
-
-    Write-Host "Searching in directory: $searchPath"
-
-    # Search for the specific file
-    $files = Get-ChildItem -Path $searchPath -Recurse -File -Filter $fileName
-
-    if ($files) {
-        Write-Host "Policy file(s) found:"
-        foreach ($file in $files) {
-            Write-Host $file.FullName
-        }
-    } else {
-        Write-Host "File '$fileName' not found in directory '$searchPath'."
-
-        # Search for any XML files
-        $xmlFiles = Get-ChildItem -Path $searchPath -Recurse -File -Filter "*.xml"
         if ($xmlFiles) {
-            Write-Host "XML File(s) found:"
+            Write-Host "XML file(s) found in $directoryPath:"
             foreach ($file in $xmlFiles) {
                 Write-Host $file.FullName
             }
         } else {
-            Write-Host "No XML files found in directory '$searchPath'."
+            Write-Host "No XML files found in directory $directoryPath."
         }
+    } else {
+        Write-Host "Directory $directoryPath does not exist."
+    }
 }
- 
 
-    #if (Test-Path -Path $ApimApiPolicyFilePath) {
-    #    Write-Host "Set API policy"
-        
-	#$policy = Get-Content -Path $ApimApiPolicyFilePath -Raw
-	#$policy = $policy -replace "{ApplicationIdentifierUri}", $ApplicationIdentifierUri
-    #
-	#Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $policy -ErrorAction Stop -Verbose:$VerbosePreference
-    #} else {
-    #    Write-Host "Please specify a valid policy file path"
-    #}
+# List of common artifact paths
+$paths = @(
+    $env:SYSTEM_DEFAULTWORKINGDIRECTORY,
+    $env:BUILD_ARTIFACTSTAGINGDIRECTORY,
+    $env:BUILD_BINARIESDIRECTORY,
+    $env:AGENT_TEMPDIRECTORY
+)
+
+# Check each path
+foreach ($path in $paths) {
+    List-XmlFiles -directoryPath $path
+}
+
     
 } catch {
    throw $_
