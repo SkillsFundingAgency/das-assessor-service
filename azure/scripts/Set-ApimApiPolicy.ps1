@@ -44,7 +44,7 @@ try {
     # Ensure policy file exists
     Write-Host "Test that policy file exists $ApimApiPolicyFilePath"
 
-    $files = Get-ChildItem $files = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "das-assessor-service-api-external.xml"
+    $files = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "das-assessor-service-api-external.xml"
 
     if ($files) {
         Write-Host "Policy file(s) found:"
