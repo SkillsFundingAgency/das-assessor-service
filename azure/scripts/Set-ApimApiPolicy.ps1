@@ -52,6 +52,25 @@ try {
 	Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $policy -ErrorAction Stop -Verbose:$VerbosePreference
     } else {
         Write-Host "Please specify a valid policy file path"
+
+        $files = Get-ChildItem $files = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "das-assessor-service-api-external.xml"
+
+        if ($files) {
+            Write-Host "Policy file(s) found:"
+            foreach ($file in $files) {
+                Write-Host $file.FullName
+            }
+        }  else {
+            Write-Host "File '$fileName' not found in directory '$directoryPath'."
+
+            $xmlFiles = Get-ChildItem $files = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "*.xml"
+            if ($xmlFiles) {
+                Write-Host "XML File(s) found:"
+                foreach ($file in $files) {
+                    Write-Host $file.FullName
+                }
+            }
+        }
     }
     
 } catch {
