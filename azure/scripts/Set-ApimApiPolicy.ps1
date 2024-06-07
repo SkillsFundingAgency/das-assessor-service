@@ -34,43 +34,37 @@ Param(
 
 try {
 
-    # Function to list XML files in a directory
-    function List-XmlFiles {
-    param (
-        [string]$directoryPath
-    )
+    # --- Build context and retrieve apiid
+    Write-Host "Building APIM context for $ResourceGroupName\$ServiceName"
+    $ApimContext = New-AzApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
 
-    if (Test-Path -Path $directoryPath) {
-        Write-Host "Searching in directory: $directoryPath"
-        $xmlFiles = Get-ChildItem -Path $directoryPath -Recurse -File -Filter "*.xml"
+    #Verify ApplicationIdentifierUri
+    Write-Host "ApplicationIdentifierUri = $ApplicationIdentifierUri"
 
-        if ($xmlFiles) {
-            Write-Host "XML file(s) found in $directoryPath:"
-            foreach ($file in $xmlFiles) {
-                Write-Host $file.FullName
-            }
-        } else {
-            Write-Host "No XML files found in directory $directoryPath."
-        }
-    } else {
-        Write-Host "Directory $directoryPath does not exist."
-    }
-}
+    # Ensure policy file exists
+    Write-Host "$ApimApiPolicyFilePath =  $ApimApiPolicyFilePath"
 
-# List of common artifact paths
-$paths = @(
+   $paths = @(
     $env:SYSTEM_DEFAULTWORKINGDIRECTORY,
     $env:BUILD_ARTIFACTSTAGINGDIRECTORY,
     $env:BUILD_BINARIESDIRECTORY,
     $env:AGENT_TEMPDIRECTORY
-)
+    )
 
-# Check each path
-foreach ($path in $paths) {
-    List-XmlFiles -directoryPath $path
-}
+    ## Check each path
+    foreach ($path in $paths) {
 
+        Write-Host "Searching path : $path"    
     
+        $xmlFiles = Get-ChildItem -Path $path -Recurse -File -Filter "das-assessor-service-api-external.xml"
+
+        if($xmlFiles){
+            foreach ($file in $xmlFiles) {
+                Write-Host $file.FullName
+            }
+        }
+    }
+
 } catch {
    throw $_
 }
