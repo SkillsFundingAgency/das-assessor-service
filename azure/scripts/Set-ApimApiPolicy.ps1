@@ -45,7 +45,7 @@ try {
     Write-Host "Test that policy file exists $ApimApiPolicyFilePath"
 
     # Define the relative path to the file from the root directory
-    $relativePath = "azure/api-management/policies/apis"
+    $relativePath = "SFA.DAS.AssessorService/azure/api-management/policies/apis"
     $fileName = "das-assessor-service-api-external.xml"
 
     # Get the value of System.DefaultWorkingDirectory from the environment variable
