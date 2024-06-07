@@ -44,35 +44,52 @@ try {
     # Ensure policy file exists
     Write-Host "Test that policy file exists $ApimApiPolicyFilePath"
 
-    $files = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "das-assessor-service-api-external.xml"
+    # Define the relative path to the file from the root directory
+    $relativePath = "azure/api-management/policies/apis"
+    $fileName = "das-assessor-service-api-external.xml"
+
+    # Get the value of System.DefaultWorkingDirectory from the environment variable
+    $defaultWorkingDirectory = $env:SYSTEM_DEFAULTWORKINGDIRECTORY
+
+    # Combine the base path with the relative path
+    $searchPath = Join-Path -Path $defaultWorkingDirectory -ChildPath $relativePath
+
+    Write-Host "Searching in directory: $searchPath"
+
+    # Search for the specific file
+    $files = Get-ChildItem -Path $searchPath -Recurse -File -Filter $fileName
 
     if ($files) {
         Write-Host "Policy file(s) found:"
         foreach ($file in $files) {
             Write-Host $file.FullName
         }
-    }  else {
-        Write-Host "File '$fileName' not found in directory '$directoryPath'."
+    } else {
+        Write-Host "File '$fileName' not found in directory '$searchPath'."
 
-        $xmlFiles = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "*.xml"
+        # Search for any XML files
+        $xmlFiles = Get-ChildItem -Path $searchPath -Recurse -File -Filter "*.xml"
         if ($xmlFiles) {
             Write-Host "XML File(s) found:"
-            foreach ($file in $files) {
+            foreach ($file in $xmlFiles) {
                 Write-Host $file.FullName
             }
+        } else {
+            Write-Host "No XML files found in directory '$searchPath'."
         }
-    }
+}
+ 
 
-    if (Test-Path -Path $ApimApiPolicyFilePath) {
-        Write-Host "Set API policy"
+    #if (Test-Path -Path $ApimApiPolicyFilePath) {
+    #    Write-Host "Set API policy"
         
-	$policy = Get-Content -Path $ApimApiPolicyFilePath -Raw
-	$policy = $policy -replace "{ApplicationIdentifierUri}", $ApplicationIdentifierUri
-
-	Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $policy -ErrorAction Stop -Verbose:$VerbosePreference
-    } else {
-        Write-Host "Please specify a valid policy file path"
-    }
+	#$policy = Get-Content -Path $ApimApiPolicyFilePath -Raw
+	#$policy = $policy -replace "{ApplicationIdentifierUri}", $ApplicationIdentifierUri
+    #
+	#Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $policy -ErrorAction Stop -Verbose:$VerbosePreference
+    #} else {
+    #    Write-Host "Please specify a valid policy file path"
+    #}
     
 } catch {
    throw $_
