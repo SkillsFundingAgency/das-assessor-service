@@ -42,32 +42,18 @@ try {
     Write-Host "ApplicationIdentifierUri = $ApplicationIdentifierUri"
 
     # Ensure policy file exists
-    Write-Host "$ApimApiPolicyFilePath =  $ApimApiPolicyFilePath"
+    Write-Host "Test that policy file exists $ApimApiPolicyFilePath"
+    if (Test-Path -Path $ApimApiPolicyFilePath) {
+        Write-Host "Set API policy"
+        
+	$policy = Get-Content -Path $ApimApiPolicyFilePath -Raw
+	$policy = $policy -replace "{ApplicationIdentifierUri}", $ApplicationIdentifierUri
 
-   $paths = @(
-    $env:SYSTEM_DEFAULTWORKINGDIRECTORY,
-    $env:BUILD_ARTIFACTSTAGINGDIRECTORY,
-    $env:BUILD_BINARIESDIRECTORY,
-    $env:AGENT_TEMPDIRECTORY,
-    $env:AGENT_BUILDDIRECTORY,
-    $env:PIPELINE_WORKSPACE
-
-    )
-
-    ## Check each path
-    foreach ($path in $paths) {
-
-        Write-Host "Searching path : $path"    
-    
-        $xmlFiles = Get-ChildItem -Path $path -Recurse -File -Filter "das-assessor-service-api-external.xml"
-
-        if($xmlFiles){
-            foreach ($file in $xmlFiles) {
-                Write-Host $file.FullName
-            }
-        }
+	Set-AzApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiId -PolicyContent $policy -ErrorAction Stop -Verbose:$VerbosePreference
+    } else {
+        Write-Host "Please specify a valid policy file path"
     }
-
+    
 } catch {
    throw $_
 }
