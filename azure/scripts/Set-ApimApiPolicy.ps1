@@ -54,7 +54,7 @@ try {
     }  else {
         Write-Host "File '$fileName' not found in directory '$directoryPath'."
 
-        $xmlFiles = Get-ChildItem $files = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "*.xml"
+        $xmlFiles = Get-ChildItem -Path $ApimApiPolicyFilePath -Recurse -File -Filter "*.xml"
         if ($xmlFiles) {
             Write-Host "XML File(s) found:"
             foreach ($file in $files) {
