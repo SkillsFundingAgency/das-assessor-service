@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -96,13 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddAuthorization(o =>
                 {
-                    o.AddPolicy("Default", policy =>
-                    {
-                        policy.RequireAuthenticatedUser();
-                        policy.RequireRole("Default");
-                    });
-
-                    o.AddPolicy("APIM", policy =>
+                    o.AddPolicy("default", policy =>
                     {
                         policy.RequireAuthenticatedUser();
                         policy.RequireRole("APIM");
@@ -129,8 +124,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
                 services.AddHttpContextAccessor();
 
-                services.AddMvc()
-                    .ConfigureApiBehaviorOptions(options =>
+                services.AddMvc(options =>
+                {
+                    options.Filters.Add(new AuthorizeFilter("default"));
+                }).ConfigureApiBehaviorOptions(options =>
                     {
                         options.InvalidModelStateResponseFactory = context =>
                         {
