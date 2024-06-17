@@ -35,3 +35,7 @@ GO
 GO
 
 CREATE INDEX [ixu_contacts_signinid] ON [Contacts] (SignInId);
+
+GO
+
+CREATE INDEX [IX_Contacts_GovUkIdentifier] ON [Contacts] (GovUkIdentifier);

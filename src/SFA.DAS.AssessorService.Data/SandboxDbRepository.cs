@@ -158,7 +158,7 @@ namespace SFA.DAS.AssessorService.Data
                                         , Email = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
                                         , Username = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
                                         , PhoneNumber = NULL
-                                        , SignInId = NULL;", transaction: transaction);
+                                        , GovUkIdentifier = NULL;", transaction: transaction);
 
             transaction.Connection.Execute(@" UPDATE Organisations
                                     SET PrimaryContact = NULL

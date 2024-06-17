@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [PrivilegeAuthorize(Privileges.ApplyForStandard)]
     [Authorize]
-    public class ApplyForWithdrawalController : AssessorController
+    public class ApplyForWithdrawalController : BaseController
     {
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> ChooseStandardForWithdrawal(int? pageIndex)
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var org = await _orgApiClient.GetEpaOrganisationById(contact.OrganisationId?.ToString());
 
             var standards = await _standardsApiClient.GetEpaoRegisteredStandards(org.OrganisationId, pageIndex ?? 1, 10);
@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> CheckWithdrawalRequest(string ifateReferenceNumber)
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
             if (string.IsNullOrWhiteSpace(ifateReferenceNumber))
@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> CheckWithdrawalRequest(CheckWithdrawalRequestViewModel model)
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var organisation = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
             if (!ModelState.IsValid)

@@ -28,7 +28,6 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web\SFA.DAS.AssessorService.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApplicationControllerTests\" />
     <Folder Include="ModelsTests\HomeIndexViewModelTests\" />
     <Folder Include="ViewModelTests\DashboardViewModelTests\" />
   </ItemGroup>

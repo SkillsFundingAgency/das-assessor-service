@@ -53,7 +53,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Enums\AmendReasons.cs" Link="SFA.DAS.AssessorService.Api.Types\Enums\AmendReasons.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Enums\ReprintReasons.cs" Link="SFA.DAS.AssessorService.Api.Types\Enums\ReprintReasons.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddressResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddressResponse.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactASignInId.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactASignInId.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactAGovUkIdentifier.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactAGovUkIdentifier.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AparSummary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AparSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AppliedStandardVersion.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AppliedStandardVersion.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationContact.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationContact.cs" />
@@ -208,7 +208,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEarliestWithdrawalDateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEarliestWithdrawalDateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEmailTemplateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEmailTemplateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactByEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactByEmailRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactBySignInIdRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactBySignInIdRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactByGovUkIdentifierRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaContactByGovUkidentifierRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetEpaoRegisteredStandardsResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetLastBatchLogRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetLastBatchLogRequest.cs" />
@@ -218,6 +218,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationStandardRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationStandardRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationTypesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetOrganisationTypesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetStandardVersionRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GovUKIdentifierWrapper.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GovUKIdentifierWrapper.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportApprovalsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ImportStandardsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\InviteUserResponse.cs" />
@@ -295,7 +296,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SignInCallback.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SignInCallback.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SigninIdWrapper.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SigninIdWrapper.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\StaffSearchItems.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\StaffSearchItems.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\StaffSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\StaffSearchResult.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Staff\LearnerDetailResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Staff\LearnerDetailResult.cs" />
@@ -315,10 +315,10 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactStatusRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateContactWithOrgAndStausRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateContactWithOrgAndStausRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateEmailRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateGovUkIdentifierRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateGovUkIdentifierRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateOrganisationStandardVersionRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateProvidersCacheRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UpdateSignInIdRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\ApproveContactRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\UserManagement\InviteContactToOrganisationResponse.cs" />
