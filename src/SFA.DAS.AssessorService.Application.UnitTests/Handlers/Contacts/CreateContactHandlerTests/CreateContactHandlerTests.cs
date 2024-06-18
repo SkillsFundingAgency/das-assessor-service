@@ -49,12 +49,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
             // Assert
             result.Result.Should().BeTrue();
             _mockContactRepository.Verify(x => x.CreateNewContact(It.IsAny<Contact>()), Times.Once);
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task Handle_WhenContactDoesNotExist_AndGovUkIdentifierIsNotSet_ShouldNotUpdateSignInId(string govIdentifier)
+        public async Task Handle_WhenContactDoesNotExist_AndGovUkIdentifierIsNotSet_ShouldNotUpdateGovUkIdentifier(string govIdentifier)
         {
             // Arrange
             var request = new CreateContactRequest
@@ -73,12 +73,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
             // Assert
             result.Result.Should().BeTrue();
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
             VerifyLogger(LogLevel.Error, Times.Never);
         }
 
         [Test]
-        public async Task Handle_WhenContactExists_ShouldUpdateSignInId()
+        public async Task Handle_WhenContactExists_ShouldUpdateGovUkIdentifier()
         {
             // Arrange
             var request = new CreateContactRequest
@@ -96,12 +96,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
             // Assert
             result.Result.Should().BeTrue();
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), request.GovIdentifier), Times.Once);
         }
 
         [TestCase(null)]
         [TestCase("")]
-        public async Task Handle_WhenContactExists_AndGovUkIdentifierIsNotSet_ShouldNotUpdateSignInId(string govIdentifier)
+        public async Task Handle_WhenContactExists_AndGovUkIdentifierIsNotSet_ShouldNotUpdateGovUKIdentifier(string govIdentifier)
         {
             // Arrange
             var request = new CreateContactRequest
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
 
             // Assert
             result.Result.Should().BeTrue();
-            _mockContactRepository.Verify(x => x.UpdateSignInId(It.IsAny<Guid>(), It.IsAny<Guid>(), request.GovIdentifier), Times.Never);
+            _mockContactRepository.Verify(x => x.UpdateGovUkIdentifier(It.IsAny<Guid>(), request.GovIdentifier), Times.Never);
             VerifyLogger(LogLevel.Error, Times.Never);
         }
 

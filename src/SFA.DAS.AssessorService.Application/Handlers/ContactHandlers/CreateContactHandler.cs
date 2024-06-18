@@ -48,14 +48,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     Contact contactResponse = await _contactRepository.CreateNewContact(newContact);
                     if (!string.IsNullOrEmpty(request.GovIdentifier))
                     {
-                        await _contactRepository.UpdateSignInId(contactResponse.Id, Guid.NewGuid(), request.GovIdentifier);
+                        await _contactRepository.UpdateGovUkIdentifier(contactResponse.Id,  request.GovIdentifier);
                     }
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(request.GovIdentifier))
                     {
-                        await _contactRepository.UpdateSignInId(existingContact.Id, Guid.NewGuid(), request.GovIdentifier);
+                        await _contactRepository.UpdateGovUkIdentifier(existingContact.Id, request.GovIdentifier);
                     }
                 }
             }

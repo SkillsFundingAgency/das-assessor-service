@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include(contact => contact.Organisation)
                 .Where(contact =>
                     contact.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
+                    (!withUser.HasValue || (withUser.Value && contact.GovUkIdentifier != null) || (!withUser.Value && contact.GovUkIdentifier == null)))
                 .ToListAsync();
 
             return contacts;
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Data
                 .Include("ContactsPrivileges.Privilege")
                 .Where(contact =>
                     contact.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    (!withUser.HasValue || (withUser.Value && contact.SignInId != null) || (!withUser.Value && contact.SignInId == null)))
+                    (!withUser.HasValue || (withUser.Value && contact.GovUkIdentifier != null) || (!withUser.Value && contact.GovUkIdentifier == null)))
                 .OrderBy(c => c.FamilyName).ThenBy(c => c.GivenNames)
                 .ToListAsync();
             
@@ -92,19 +92,13 @@ namespace SFA.DAS.AssessorService.Data
             
             return contact;
         }
-        public async Task<Contact> GetContactFromGovIdentifier(string govIdentifier)
+        public async Task<Contact> GetContactByGovIdentifier(string govIdentifier)
         {
             var contact = await _assessorDbContext.Contacts
                 .Include(c => c.Organisation)
                 .FirstOrDefaultAsync(c => c.GovUkIdentifier.ToLower() == govIdentifier.ToLower() && c.Organisation.Status != OrganisationStatus.Deleted);
             
             return contact;
-        }
-
-      
-        public async Task<Contact> GetBySignInId(Guid requestSignInId)
-        {
-            return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
         }
 
         public async Task<IList<ContactsPrivilege>> GetPrivilegesFor(Guid contactId)
@@ -127,19 +121,19 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<Contact>> GetUsersToMigrate()
         {
             return await _assessorDbContext.Contacts.Where(c =>
-                c.SignInId == null
+                c.GovUkIdentifier == null
                 && c.Status == "Live"
                 && !c.Username.StartsWith("unknown")
                 && c.Organisation != null
                 && c.Organisation.Status == "Live").ToListAsync();
         }
 
-        public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
+        public async Task UpdateMigratedContact(Guid contactId, string govUkIdentifier)
         {
             var contact = await _assessorDbContext.Contacts.SingleOrDefaultAsync(c => c.Id == contactId);
             if (contact != null)
             {
-                contact.SignInId = signInId;
+                contact.GovUkIdentifier = govUkIdentifier;
                 await _assessorDbContext.SaveChangesAsync();
             }
         }

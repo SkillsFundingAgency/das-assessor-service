@@ -94,11 +94,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> GetContactBySignInId(string signInId)
+        public async Task<ContactResponse> GetContactByGovUkIdentifier(string govUkIdentifier)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/signInId/{signInId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/govUkIdentifier/{govUkIdentifier}"))
             {
-                var result = await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {signInId}");
+                var result = await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {govUkIdentifier}");
                 return result;
             }
         }
@@ -161,13 +161,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task MigrateSingleContactToApply(System.Guid signinId)
+        public async Task MigrateSingleContactToApply(string govUkIdentifier)
         {
-            var signinIdWrapper = new SigninIdWrapper(signinId);
-            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
+            var govUkIdentifierWrapper = new GovUkIdentifierWrapper(govUkIdentifier);
+            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(govUkIdentifierWrapper)}");
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
             {
-                await PostPutRequestAsync(request, signinIdWrapper);
+                await PostPutRequestAsync(request, govUkIdentifierWrapper);
             }
         }
 

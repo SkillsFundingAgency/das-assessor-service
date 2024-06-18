@@ -41,22 +41,22 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         {
 
             var claims = new List<Claim>();                
-            var signInId = tokenValidatedContext.Principal.FindFirst("sub")?.Value;
+            
             var email = tokenValidatedContext.Principal.FindFirst(ClaimTypes.Email)?.Value;
             var govLoginId = tokenValidatedContext.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             ContactResponse user = null;
-            if (!string.IsNullOrEmpty(signInId) || !string.IsNullOrEmpty(email))
+            if (!string.IsNullOrEmpty(govLoginId) || !string.IsNullOrEmpty(email))
             {
                 try
                 {
-                    user = await _contactsApiClient.GetContactBySignInId(signInId);
+                    user = await _contactsApiClient.GetContactByGovIdentifier(govLoginId);
                 }
                 catch (EntityNotFoundException)
                 {
-                    _logger.LogInformation("Failed to retrieve user by Sign In Id.");
+                    _logger.LogInformation("Failed to retrieve user by gov login.");
                 }
-                
+
                 try
                 {
                     user ??= await _contactsApiClient.GetContactByEmail(email);
@@ -65,15 +65,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     _logger.LogInformation("Failed to retrieve user by email.");
                 }
-                
-                try
-                {
-                    user ??= await _contactsApiClient.GetContactByGovIdentifier(govLoginId);
-                }
-                catch (EntityNotFoundException)
-                {
-                    _logger.LogInformation("Failed to retrieve user by gov login.");
-                }
+           
 
                 if (user?.Status == ContactStatus.Deleted)
                 {
@@ -133,27 +125,17 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     claims.Add(new Claim("display_name", user?.DisplayName));
                     claims.Add(new Claim("email", user?.Email));
-                    var userSignInId = user.SignInId ?? (string.IsNullOrEmpty(signInId) ? Guid.NewGuid() : Guid.Parse(signInId));
+                   
                     var response = await _contactsApiClient.UpdateFromGovLogin(new UpdateContactGovLoginRequest
                     {
                         GovIdentifier = govLoginId,
-                        SignInId = userSignInId,
                         ContactId = user.Id
                     });
-                    if (user.SignInId == null && !string.IsNullOrEmpty(govLoginId))
-                    {
-                        claims.Add(new Claim("sub", response.SignInId.ToString()));
-                    }
-                    else
-                    {
-                        claims.Add(new Claim("sub", user.SignInId.ToString()));
-                    }
-
+                    
                     if (user.Status == "Pending")
                     {
                         await _contactsApiClient.Callback(new SignInCallback
                         {
-                            Sub = user.SignInId.ToString(),
                             SourceId = user.Id.ToString(),
                             GovIdentifier = govLoginId
                         });
