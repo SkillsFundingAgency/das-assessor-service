@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
                 var results = await fixture.PopulateLearner();
 
                 var expected = LearnerHandler.Create(null, 123456789, "Chris", "Woodcock", 12345678, 456, learnStartDateTime,
-                    null, 36, 12345, "2324", null, 2, plannedEndDateTime, null, null, null, null, null, null, expectedVersion, 0, null,
+                    null, 36, 12345, HandlerBase.GetAcademicYear(DateTime.UtcNow), null, 2, plannedEndDateTime, null, null, null, null, null, null, expectedVersion, 0, null,
                     expectedStandardUid, "ST0002", "Standard 2", currentDateTime.Date, plannedEndDateTime.Date.GetEndOfMonth(),
                     null, null, null, null, currentDateTime, null, null, null, 0, null);
 
@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
                 var results = await fixture.PopulateLearner();
 
                 var expected = LearnerHandler.Create(null, 123456789, "Chris", "Woodcock", 12345678, 456, learnStartDateTime,
-                    null, 36, 12345, "2324", null, 2, plannedEndDateTime, null, null, null, null, null, null, expectedVersion, 1 /* version is confirmed when only 1.0 exists */, null,
+                    null, 36, 12345, HandlerBase.GetAcademicYear(DateTime.UtcNow), null, 2, plannedEndDateTime, null, null, null, null, null, null, expectedVersion, 1 /* version is confirmed when only 1.0 exists */, null,
                     expectedStandardUid, "ST0002", "Standard 2", currentDateTime.Date, plannedEndDateTime.Date.GetEndOfMonth(),
                     null, null, null, null, currentDateTime, null, null, null, 0, null);
 
