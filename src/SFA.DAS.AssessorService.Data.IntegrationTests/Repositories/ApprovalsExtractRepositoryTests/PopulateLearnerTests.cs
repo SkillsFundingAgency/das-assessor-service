@@ -26,17 +26,58 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
         [TestCase(-11, "1.4")] // overlapping VersionEarliestStartDate with previous VersionLastestStartDate
         [TestCase(10, "1.4")]
         [TestCase(100, "1.4")]
-        public async Task GetVersionFromLarsCode_WhenCalled_GetsHighestValidVersionForLearnStartDate(int learnStartDateOffset, string expectedVersion)
+        public async Task GetVersionFromLarsCode_WhenCalled_GetsHighestVersionWithinVersionDateRangeForLearnStartDate(int learnStartDateOffset, string expectedVersion)
         {
             var currentDateTime = DateTime.Now;
             var learnStartDateTime = currentDateTime.AddDays(learnStartDateOffset);
 
             using (var fixture = new PopulateLearnerTestsFixture()
-                .WithStandard("Standard 1", "ST0001", 123, "1.0", currentDateTime.AddYears(-1).Date, null, null, currentDateTime.AddDays(-40).Date, null)
-                .WithStandard("Standard 1", "ST0001", 123, "1.1", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-39).Date, currentDateTime.AddDays(-30).Date, null)
+                .WithStandard("Standard 1", "ST0001", 123, "1.0", currentDateTime.AddYears(-1).Date, null, null, currentDateTime.AddDays(-40).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.1", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-39).Date, currentDateTime.AddDays(-30).Date, currentDateTime.AddDays(10).Date)
                 .WithStandard("Standard 1", "ST0001", 123, "1.2", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-29).Date, currentDateTime.AddDays(-20).Date, currentDateTime.AddDays(10).Date)
                 .WithStandard("Standard 1", "ST0001", 123, "1.3", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-19).Date, currentDateTime.AddDays(-10).Date, currentDateTime.AddDays(10).Date)
                 .WithStandard("Standard 1", "ST0001", 123, "1.4", currentDateTime.AddYears(-1).Date, null, currentDateTime.Date.AddDays(-12), null, null))
+            {
+                var results = await fixture.GetVersionFromLarsCode(learnStartDateTime, 123);
+                results.VerifyVersionFromLarsCode(expectedVersion);
+            }
+        }
+
+        [TestCase(-25, "1.0")]
+        [TestCase(-20, "1.0")]
+        [TestCase(-19, "1.1")]
+        [TestCase(-10, "1.1")]
+        [TestCase(-5, "1.1")] /* in range of a standard which is not approved for delivery */
+        public async Task GetVersionFromLarsCode_WhenCalled_AndStandardNotApprovedForDelivery_GetsHighestApprovedVersionWithinVersionDateRangeForLearnStartDate(int learnStartDateOffset, string expectedVersion)
+        {
+            var currentDateTime = DateTime.Now;
+            var learnStartDateTime = currentDateTime.AddDays(learnStartDateOffset);
+
+            using (var fixture = new PopulateLearnerTestsFixture()
+                .WithStandard("Standard 1", "ST0001", 123, "1.0", currentDateTime.AddYears(-1).Date, null, null, currentDateTime.AddDays(-20).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.1", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-19).Date, currentDateTime.AddDays(-10).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.2", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-9).Date, null, null, null /* standard not approved for delivery */))
+            {
+                var results = await fixture.GetVersionFromLarsCode(learnStartDateTime, 123);
+                results.VerifyVersionFromLarsCode(expectedVersion);
+            }
+        }
+
+        [TestCase(-25, "1.0")]
+        [TestCase(-20, "1.0")]
+        [TestCase(-19, "1.1")]
+        [TestCase(-10, "1.1")]
+        [TestCase(-5, "1.2")]
+        [TestCase(5, "1.2")] /* after the standard latest start date when there are no later versions */
+        public async Task GetVersionFromLarsCode_WhenCalled_AndStandardVersionHasEnded_GetsHighestApprovedVersionWithinVersionDateRangeForLearnStartDate(int learnStartDateOffset, string expectedVersion)
+        {
+            var currentDateTime = DateTime.Now;
+            var learnStartDateTime = currentDateTime.AddDays(learnStartDateOffset);
+
+            using (var fixture = new PopulateLearnerTestsFixture()
+                .WithStandard("Standard 1", "ST0001", 123, "1.0", currentDateTime.AddYears(-1).Date, null, null, currentDateTime.AddDays(-20).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.1", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-19).Date, currentDateTime.AddDays(-10).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.2", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-9).Date, currentDateTime.AddDays(0), currentDateTime.AddDays(10).Date))
             {
                 var results = await fixture.GetVersionFromLarsCode(learnStartDateTime, 123);
                 results.VerifyVersionFromLarsCode(expectedVersion);
@@ -55,7 +96,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
         [TestCase(-11, "ST0001_1.4")] // overlapping VersionEarliestStartDate with previous VersionLastestStartDate
         [TestCase(10, "ST0001_1.4")]
         [TestCase(100, "ST0001_1.4")]
-        public async Task GetStandardUidFromLarsCode_WhenCalled_GetsHighestValidStandardUidForLearnStartDate(int learnStartDateOffset, string expectedStandardUid)
+        public async Task GetStandardUidFromLarsCode_WhenCalled_GetsHighestStandardUiWithinVersionDateRangeForLearnStartDate(int learnStartDateOffset, string expectedStandardUid)
         {
             var currentDateTime = DateTime.Now;
             var learnStartDateTime = currentDateTime.AddDays(learnStartDateOffset);
@@ -66,6 +107,47 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
                 .WithStandard("Standard 1", "ST0001", 123, "1.2", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-29).Date, currentDateTime.AddDays(-20).Date, currentDateTime.AddDays(10).Date)
                 .WithStandard("Standard 1", "ST0001", 123, "1.3", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-19).Date, currentDateTime.AddDays(-10).Date, currentDateTime.AddDays(10).Date)
                 .WithStandard("Standard 1", "ST0001", 123, "1.4", currentDateTime.AddYears(-1).Date, null, currentDateTime.Date.AddDays(-12), null, null))
+            {
+                var results = await fixture.GetStandardUidFromLarsCode(learnStartDateTime, 123);
+                results.VerifyStandardUidFromLarsCode(expectedStandardUid);
+            }
+        }
+
+        [TestCase(-25, "ST0001_1.0")]
+        [TestCase(-20, "ST0001_1.0")]
+        [TestCase(-19, "ST0001_1.1")]
+        [TestCase(-10, "ST0001_1.1")]
+        [TestCase(-5, "ST0001_1.1")] /* in range of a standard which is not approved for delivery */
+        public async Task GetStandardUidFromLarsCode_WhenCalled_AndStandardNotApprovedForDelivery_GetsHighestApprovedVersionWithinVersionDateRangeForLearnStartDate(int learnStartDateOffset, string expectedStandardUid)
+        {
+            var currentDateTime = DateTime.Now;
+            var learnStartDateTime = currentDateTime.AddDays(learnStartDateOffset);
+
+            using (var fixture = new PopulateLearnerTestsFixture()
+                .WithStandard("Standard 1", "ST0001", 123, "1.0", currentDateTime.AddYears(-1).Date, null, null, currentDateTime.AddDays(-20).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.1", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-19).Date, currentDateTime.AddDays(-10).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.2", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-9).Date, null, null, null /* standard not approved for delivery */))
+            {
+                var results = await fixture.GetStandardUidFromLarsCode(learnStartDateTime, 123);
+                results.VerifyStandardUidFromLarsCode(expectedStandardUid);
+            }
+        }
+
+        [TestCase(-25, "ST0001_1.0")]
+        [TestCase(-20, "ST0001_1.0")]
+        [TestCase(-19, "ST0001_1.1")]
+        [TestCase(-10, "ST0001_1.1")]
+        [TestCase(-5, "ST0001_1.2")]
+        [TestCase(5, "ST0001_1.2")] /* after the standard latest start date when there are no later versions */
+        public async Task GetStandardUidFromLarsCode_WhenCalled_AndStandardVersionHasEnded_GetsHighestApprovedVersionWithinVersionDateRangeForLearnStartDate(int learnStartDateOffset, string expectedStandardUid)
+        {
+            var currentDateTime = DateTime.Now;
+            var learnStartDateTime = currentDateTime.AddDays(learnStartDateOffset);
+
+            using (var fixture = new PopulateLearnerTestsFixture()
+                .WithStandard("Standard 1", "ST0001", 123, "1.0", currentDateTime.AddYears(-1).Date, null, null, currentDateTime.AddDays(-20).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.1", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-19).Date, currentDateTime.AddDays(-10).Date, currentDateTime.AddDays(10).Date)
+                .WithStandard("Standard 1", "ST0001", 123, "1.2", currentDateTime.AddYears(-1).Date, null, currentDateTime.AddDays(-9).Date, currentDateTime.AddDays(0), currentDateTime.AddDays(10).Date))
             {
                 var results = await fixture.GetStandardUidFromLarsCode(learnStartDateTime, 123);
                 results.VerifyStandardUidFromLarsCode(expectedStandardUid);
