@@ -26,9 +26,6 @@
         "externalAPiKeyvaultCertificateName": {
             "type": "string"
         },
-        "externalAPiSandboxKeyvaultCertificateName": {
-            "type": "string"
-        },
         "uiCustomHostname": {
             "type": "string"
         },
@@ -36,9 +33,6 @@
             "type": "string"
         },
         "externalApiCustomHostname": {
-            "type": "string"
-        },
-        "externalApiSandboxCustomHostname": {
             "type": "string"
         },
         "frontEndAccessRestrictions": {
@@ -114,6 +108,10 @@
         },
         "stubAuth": {
             "type": "string"
+        },
+        "minimumTlsVersion": {
+            "type": "string",
+            "defaultValue": "TLS1_2"
         }
     },
     "variables": {
@@ -123,7 +121,6 @@
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
         "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "externalApiAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-as')]",
-        "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbox-as')]",
         "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
@@ -702,6 +699,9 @@
                     },
                     "allowSharedKeyAccess": {
                         "value": true
+                    },
+                    "minimumTlsVersion": {
+                        "value": "[parameters('minimumTlsVersion')]"
                     }
                 }
             },
@@ -824,10 +824,6 @@
         "ExternalApiAppServiceName": {
             "type": "string",
             "value": "[variables('externalApiAppServiceName')]"
-        },
-        "ExternalApiSandboxAppServiceName": {
-            "type": "string",
-            "value": "[variables('externalApiSandboxAppServiceName')]"
         },
         "DatabaseName": {
             "type": "string",

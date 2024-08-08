@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -75,6 +78,47 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             try
             {
+                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
+
+                services.AddAuthentication(auth =>
+                {
+                    auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(auth =>
+                {
+                    var validAudiences = new List<string>();
+                    var tenant = string.Empty;
+                    if (_useSandbox)
+                    {
+                        validAudiences.AddRange(ApplicationConfiguration.SandboxExternalApiAuthentication.Audiences.Split(","));
+                        tenant = ApplicationConfiguration.SandboxExternalApiAuthentication.Tenant;
+                    }
+                    else
+                    {
+                        validAudiences.AddRange(ApplicationConfiguration.ExternalApiAuthentication.Audiences.Split(","));
+                        tenant = ApplicationConfiguration.ExternalApiAuthentication.Tenant;
+                    }
+                    auth.Authority = $"https://login.microsoftonline.com/{tenant}";
+                    auth.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                        ValidAudiences = validAudiences
+                    };
+                    auth.Events = new JwtBearerEvents()
+                    {
+                        OnTokenValidated = context => { return Task.FromResult(0); }
+                    };
+                });
+
+                services.AddAuthorization(o =>
+                {
+                    o.AddPolicy("default", policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireRole("APIM");
+                    });
+                });
+
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {_config["InstanceName"]}", Version = "v1" });
@@ -95,8 +139,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
                 services.AddHttpContextAccessor();
 
-                services.AddMvc()
-                    .ConfigureApiBehaviorOptions(options =>
+                services.AddMvc(options =>
+                {
+                    options.Filters.Add(new AuthorizeFilter("default"));
+                }).ConfigureApiBehaviorOptions(options =>
                     {
                         options.InvalidModelStateResponseFactory = context =>
                         {
