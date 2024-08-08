@@ -26,9 +26,6 @@
         "externalAPiKeyvaultCertificateName": {
             "type": "string"
         },
-        "externalAPiSandboxKeyvaultCertificateName": {
-            "type": "string"
-        },
         "uiCustomHostname": {
             "type": "string"
         },
@@ -36,9 +33,6 @@
             "type": "string"
         },
         "externalApiCustomHostname": {
-            "type": "string"
-        },
-        "externalApiSandboxCustomHostname": {
             "type": "string"
         },
         "frontEndAccessRestrictions": {
@@ -127,7 +121,6 @@
         "uiAppServiceName": "[concat(variables('resourceNamePrefix'), 'ui-as')]",
         "apiAppServiceName": "[concat(variables('resourceNamePrefix'), 'api-as')]",
         "externalApiAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-as')]",
-        "externalApiSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'extapi-sbox-as')]",
         "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
@@ -542,128 +535,6 @@
             }
         },
         {
-            "condition": "[greater(length(parameters('externalApiSandboxCustomHostname')), 0)]",
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-certificate.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultCertificateName": {
-                        "value": "[parameters('externalAPiSandboxKeyvaultCertificateName')]"
-                    },
-                    "keyVaultName": {
-                        "value": "[parameters('sharedKeyVaultName')]"
-                    },
-                    "keyVaultResourceGroup": {
-                        "value": "[parameters('sharedManagementResourceGroup')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('externalApiSandboxAppServiceName')]"
-                    },
-                    "attachedService": {
-                        "value": "[variables('externalApiSandboxAppServiceName')]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('resourceGroupName')]"
-            ]
-        },
-        {
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiSandboxAppServiceName'), '-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServiceName": {
-                        "value": "[variables('externalApiSandboxAppServiceName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedEnvResourceGroup')]"
-                    },
-                    "subnetResourceId": {
-                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
-                    },
-                    "appServiceAppSettings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('externalApiSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
-                                },
-                                {
-                                    "name": "EnvironmentName",
-                                    "value": "[parameters('environmentName')]"
-                                },
-                                {
-                                    "name": "ConfigurationStorageConnectionString",
-                                    "value": "[parameters('configurationStorageConnectionString')]"
-                                },
-                                {
-                                    "name": "InstanceName",
-                                    "value": "[concat(variables('instanceName'),' (Sandbox)')]"
-                                },
-                                {
-                                    "name": "UseSandboxServices",
-                                    "value": "yes"
-                                }
-                            ]
-                        }
-                    },
-                    "appServiceConnectionStrings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "Redis",
-                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                    "type": "Custom"
-                                }
-                            ]
-                        }
-                    },
-                    "customHostName": {
-                        "value": "[parameters('externalApiSandboxCustomHostname')]"
-                    },
-                    "certificateThumbprint": {
-                        "value": "[reference(concat(variables('externalApiSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value]"
-                    },
-                    "ipSecurityRestrictions": {
-                        "value": "[parameters('externalApiAppServiceAllowedIPs')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "[concat(variables('storageAccountName'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
@@ -805,10 +676,6 @@
         "ExternalApiAppServiceName": {
             "type": "string",
             "value": "[variables('externalApiAppServiceName')]"
-        },
-        "ExternalApiSandboxAppServiceName": {
-            "type": "string",
-            "value": "[variables('externalApiSandboxAppServiceName')]"
         },
         "DatabaseName": {
             "type": "string",
