@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1 ))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1 ))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -110,8 +110,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationIdFirst, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeFirst, IlrHandler.GetAcademicYear(currentDateTime), null, 1)
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeSecond, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeFirst, HandlerBase.GetAcademicYear(currentDateTime), null, 1)
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCodeSecond, HandlerBase.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -146,8 +146,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithProvider(ukprnSecond)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "usernameone")
                 .WithContact("DisplayName", "displayname@organisationtwo.com", "EPA0002", "usernametwo")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprnFirst, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1)
-                .WithIlr(Guid.NewGuid(), 2345678901, ukprnSecond, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprnFirst, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1)
+                .WithIlr(Guid.NewGuid(), 2345678901, ukprnSecond, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -178,7 +178,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime.AddYears(-1)), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime.AddYears(-1)), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -201,7 +201,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 3))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 3))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -224,7 +224,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -248,7 +248,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -271,7 +271,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(12345678)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -323,7 +323,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), null, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), null, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 
@@ -354,7 +354,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOfsOrganisation(ofsOrganisationId, ukprn, currentDateTime.AddDays(-1))
                 .WithProvider(ukprn)
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
-                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, IlrHandler.GetAcademicYear(currentDateTime), currentDateTime, 1))
+                .WithIlr(Guid.NewGuid(), 1234567890, ukprn, stdCode, HandlerBase.GetAcademicYear(currentDateTime), currentDateTime, 1))
             {
                 var results = await fixture.LoadOfsStandards(currentDateTime);
 

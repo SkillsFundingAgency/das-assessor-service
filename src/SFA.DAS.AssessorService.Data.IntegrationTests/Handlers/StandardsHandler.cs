@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
         public static StandardModel Create(string title, string referenceNumber, int larsCode, string version, 
             DateTime? effectiveFrom, DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
-            bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
+            DateTime? versionApprovedForDelivery, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
             ConvertVersionStringToInts(version, out int major, out int minor);
          
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 VersionLatestStartDate = versionLatestStartDate,
                 VersionLatestEndDate = versionLatestEndDate,
                 TypicalDuration = 12,
-                VersionApprovedForDelivery = effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
+                VersionApprovedForDelivery = versionApprovedForDelivery,
                 EPAChanged = epaChanged,
                 TrailblazerContact = "TrailblazerContact",
                 VersionMajor = major,

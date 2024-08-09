@@ -70,5 +70,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             return dateTime.TimeOfDay == TimeSpan.Zero;
         }
 
+        public static string GetAcademicYear(DateTime date)
+        {
+            if (date.Month < 8)
+            {
+                return (date.Year - 1).ToString().Substring(2) + date.Year.ToString().Substring(2);
+            }
+            else
+            {
+                return date.Year.ToString().Substring(2) + (date.Year + 1).ToString().Substring(2);
+            }
+        }
     }
 }

@@ -114,7 +114,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
             DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
-            bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
+            DateTime? versionApprovedForDelivery, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
             var standard = StandardsHandler.Create(
                 title,
@@ -126,6 +126,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
                 versionEarliestStartDate,
                 versionLatestStartDate,
                 versionLatestEndDate,
+                versionApprovedForDelivery,
                 epaChanged,
                 eqaProviderName,
                 epaoMustBeApprovedByRegulatorBody);
@@ -140,28 +141,41 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                versionEarliestStartDate, versionLatestStartDate, versionLatestEndDate, false, string.Empty, false);
+                versionEarliestStartDate, versionLatestStartDate, versionLatestEndDate, effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
+                false, string.Empty, false);
+        }
+
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
+            DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate, 
+            DateTime? versionApprovedForDelivery)
+        {
+            return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
+                versionEarliestStartDate, versionLatestStartDate, versionLatestEndDate, versionApprovedForDelivery, 
+                false, string.Empty, false);
         }
 
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
             DateTime? effectiveTo, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                null, null, null, epaChanged, eqaProviderName, epaoMustBeApprovedByRegulatorBody);
+                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
+                epaChanged, eqaProviderName, epaoMustBeApprovedByRegulatorBody);
         }
 
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
             DateTime? effectiveTo, bool epaChanged, string eqaProviderName)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                null, null, null, epaChanged, eqaProviderName, false);
+                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date), 
+                epaChanged, eqaProviderName, false);
         }
 
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom, 
             DateTime? effectiveTo)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                null, null, null, false, string.Empty, false);
+                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date), 
+                false, string.Empty, false);
         }
 
         public T WithOrganisationStandard(int id, string endPointAssessorOrganisationId, int larsCode, string standardReference,
