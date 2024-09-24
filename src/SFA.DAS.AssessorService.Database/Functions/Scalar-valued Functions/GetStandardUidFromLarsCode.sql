@@ -13,13 +13,15 @@ BEGIN
 		SELECT StandardUId FROM 
 		(
 			SELECT 
-				ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) Seq, 
+				ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber ORDER BY CASE 
+					WHEN @StartDate BETWEEN ISNULL(VersionEarliestStartDate, [dbo].GetMinDateTime()) AND ISNULL(VersionLatestStartDate, [dbo].GetMaxDateTime()) THEN 0 
+					ELSE 1 END, VersionMajor DESC, VersionMinor DESC) Seq, 
 				StandardUId
 			FROM 
 				Standards 
 			WHERE 
 				LarsCode = @StdCode 
-				AND (@StartDate BETWEEN ISNULL(VersionEarliestStartDate, dbo.GetMinDateTime()) AND ISNULL(VersionLatestStartDate, dbo.GetMaxDateTime()))
+				AND VersionApprovedForDelivery IS NOT NULL
 		) [AllValidVersions] 
 		WHERE 
 			Seq = 1

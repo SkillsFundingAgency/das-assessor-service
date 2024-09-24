@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public DateTime? VersionEarliestStartDate { get; set; }
         public DateTime? VersionLatestStartDate { get; set; }
         public DateTime? VersionLatestEndDate { get; set; }
-        public DateTime VersionApprovedForDelivery { get; set; }
+        public DateTime? VersionApprovedForDelivery { get; set; }
         public int ProposedTypicalDuration { get; set; }
         public int ProposedMaxFunding { get; set; }
         public bool EPAChanged { get; set; }

@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 StdCode = stdCode,
                 LearnStartDate = learnStartDate ?? DateTime.UtcNow,
                 FundingModel = fundingModel ?? 36,
-                Source = source ?? GetAcademicYear(DateTime.UtcNow),
+                Source = source ?? HandlerBase.GetAcademicYear(DateTime.UtcNow),
                 CreatedAt = createdAt ?? DateTime.UtcNow,
                 CompletionStatus = completionStatus,
                 PlannedEndDate = plannedEndDate ?? DateTime.UtcNow.AddMonths(12),
@@ -82,18 +82,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         {
             var sql = $@"DELETE FROM Ilrs";
             DatabaseService.Execute(sql);
-        }
-
-        public static string GetAcademicYear(DateTime date)
-        {
-            if (date.Month < 8)
-            {
-                return (date.Year - 1).ToString().Substring(2) + date.Year.ToString().Substring(2);
-            }
-            else
-            {
-                return date.Year.ToString().Substring(2) + (date.Year + 1).ToString().Substring(2);
-            }
         }
     }
 }
