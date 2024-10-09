@@ -10,9 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
-using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
@@ -35,21 +32,22 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 {
     public class Startup
     {
-        private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
         private readonly bool _useSandbox;
+        public IConfiguration _configuration { get; }
+        public IExternalApiConfiguration _externalApiConfiguration { get; set; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
+
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory());
-            _logger.LogInformation("In startup constructor.  Before Config");
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables(); ;
 
-            config.AddEnvironmentVariables();
             config.AddAzureTableStorage(options =>
                 {
                     options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
@@ -59,8 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 }
             );
 
-            _config = config.Build();
-            Configuration = _config.Get<ExternalApiConfiguration>();
+            _configuration = config.Build();
+            _externalApiConfiguration = _configuration.Get<ExternalApiConfiguration>();
 
             if(!bool.TryParse(configuration["UseSandboxServices"], out _useSandbox))
             {
@@ -71,15 +69,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
-        private IExternalApiConfiguration Configuration { get; set; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             try
             {
-                ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
                 services.AddAuthentication(auth =>
                 {
                     auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -90,13 +84,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     var tenant = string.Empty;
                     if (_useSandbox)
                     {
-                        validAudiences.AddRange(ApplicationConfiguration.SandboxExternalApiAuthentication.Audiences.Split(","));
-                        tenant = ApplicationConfiguration.SandboxExternalApiAuthentication.Tenant;
+                        validAudiences.AddRange(_externalApiConfiguration.SandboxExternalApiAuthentication.Audiences.Split(","));
+                        tenant = _externalApiConfiguration.SandboxExternalApiAuthentication.Tenant;
                     }
                     else
                     {
-                        validAudiences.AddRange(ApplicationConfiguration.ExternalApiAuthentication.Audiences.Split(","));
-                        tenant = ApplicationConfiguration.ExternalApiAuthentication.Tenant;
+                        validAudiences.AddRange(_externalApiConfiguration.ExternalApiAuthentication.Audiences.Split(","));
+                        tenant = _externalApiConfiguration.ExternalApiAuthentication.Tenant;
                     }
                     auth.Authority = $"https://login.microsoftonline.com/{tenant}";
                     auth.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -121,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {_config["InstanceName"]}", Version = "v1" });
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {_configuration["InstanceName"]}", Version = "v1" });
                     c.EnableAnnotations();
                     c.ExampleFilters();
                     c.SchemaFilter<SwaggerRequiredSchemaFilter>();
@@ -203,16 +197,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 if (_useSandbox)
                 {
-                    config.For<AssessorApiClientConfiguration>().Use(Configuration.SandboxAssessorApiAuthentication);
+                    config.For<AssessorApiClientConfiguration>().Use(_externalApiConfiguration.SandboxAssessorApiAuthentication);
                     config.For<IApiClient>().Use<SandboxApiClient>();
                 }
                 else
                 {
-                    config.For<AssessorApiClientConfiguration>().Use(Configuration.AssessorApiAuthentication);
+                    config.For<AssessorApiClientConfiguration>().Use(_externalApiConfiguration.AssessorApiAuthentication);
                     config.For<IApiClient>().Use<ApiClient>();
                 }
 
-                config.For<IExternalApiConfiguration>().Use(Configuration);
+                config.For<IExternalApiConfiguration>().Use(_externalApiConfiguration);
 
                 config.Populate(services);
             }));
