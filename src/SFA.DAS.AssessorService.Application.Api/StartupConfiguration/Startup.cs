@@ -31,6 +31,7 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
@@ -42,20 +43,30 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {
-        private const string SERVICE_NAME = "SFA.DAS.AssessorService.Api";
-        private const string VERSION = "1.0";
-        
-        private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
         private readonly bool _useSandbox;
 
         public Startup(IConfiguration config, ILogger<Startup> logger, IWebHostEnvironment env)
         {
-            _config = config;
+            var configuration = new ConfigurationBuilder()
+                .AddConfiguration(config)
+                .SetBasePath(Directory.GetCurrentDirectory());
             _logger = logger;
             _env = env;
-            
+
+            configuration.AddEnvironmentVariables();
+            configuration.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = config["ConfigNames"].Split(",");
+                    options.StorageConnectionString = config["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = config["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
+            );
+
+            var _config = configuration.Build();
+
             _logger.LogInformation("In startup constructor.  Before GetConfig");
             
             if (!bool.TryParse(config["UseSandboxServices"], out _useSandbox))
@@ -64,6 +75,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             }
 
             _logger.LogInformation($"UseSandbox is: {_useSandbox.ToString()}");
+            
+            Configuration = _config.Get<ApiConfiguration>();
+
             _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
@@ -71,9 +85,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            Configuration = ConfigurationService
-                .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
-
             IServiceProvider serviceProvider;
             try
             {
@@ -212,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IMediator>().Use<Mediator>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
-                config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
+                config.AddDatabaseRegistration(Configuration.EnvironmentName, sqlConnectionString);
 
                 config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
                     ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()

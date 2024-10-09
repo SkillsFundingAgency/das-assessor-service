@@ -5,10 +5,12 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
-using Microsoft.Azure.Services.AppAuthentication;
+using Azure.Identity;
+using Azure.Core;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
+using Microsoft.Extensions.Hosting;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -282,12 +284,17 @@ namespace SFA.DAS.AssessorService.Data
 
         private SqlConnection SandboxSqlConnection(string sqlConnectionString)
         {
-            var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            return new SqlConnection
-            {
-                ConnectionString = sqlConnectionString,
-                AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
-            };
+            var tokenCredential = new DefaultAzureCredential();
+            var accessToken = tokenCredential.GetTokenAsync(
+                new TokenRequestContext(scopes: new string[] { AzureResource + "/.default" }) { });
+
+            return _config.EnvironmentName.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
+                ? new SqlConnection(sqlConnectionString)
+                : new SqlConnection
+                {
+                    ConnectionString = sqlConnectionString,
+                    AccessToken = accessToken.AsTask().GetAwaiter().GetResult().Token
+                };
         }
     }
 }
