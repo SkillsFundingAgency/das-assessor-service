@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
+    public class CreateOrganisationHandler : BaseHandler, IRequestHandler<CreateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IContactRepository _contactRepository;    
@@ -18,7 +18,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 
         public CreateOrganisationHandler(IOrganisationRepository organisationRepository,                   
             IOrganisationQueryRepository organisationQueryRepository,
-            IContactRepository contactRepository)
+            IContactRepository contactRepository,
+            IMapper mapper) :  base(mapper)
         {
             _organisationRepository = organisationRepository;
             _contactRepository = contactRepository;          
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 
         private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
-            var organisation = Mapper.Map<Organisation>(createOrganisationRequest);
+            var organisation = _mapper.Map<Organisation>(createOrganisationRequest);
             
             organisation.Status = OrganisationStatus.New;
 

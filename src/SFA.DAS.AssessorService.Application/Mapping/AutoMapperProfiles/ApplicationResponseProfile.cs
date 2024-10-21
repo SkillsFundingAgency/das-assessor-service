@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<ApplySummary, ApplicationResponse>()
+                .IgnoreAll()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.ApplicationId, opt => opt.MapFrom(source => source.ApplicationId))
                 .ForMember(dest => dest.OrganisationId, opt => opt.MapFrom(source => source.OrganisationId))
@@ -25,10 +26,9 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))
                 .ForMember(dest => dest.ContactName, opt => opt.MapFrom(source => source.CreatedByName))
                 .ForMember(dest => dest.ContactEmail, opt => opt.MapFrom(source => source.CreatedByEmail))
-                .ForMember(dest => dest.ApplicationType, opts => { opts.ResolveUsing<ApplicationTypeResolver>(); })
+                .ForMember(dest => dest.ApplicationType, opts => opts.MapFrom<ApplicationTypeResolver>())
                 .ForMember(dest => dest.StandardApplicationType, opt => opt.MapFrom(source => source.StandardApplicationType))
-                .ForMember(dest => dest.ApplyViaOptIn, opt => opt.MapFrom(source => source.ApplyViaOptIn))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.ApplyViaOptIn, opt => opt.MapFrom(source => source.ApplyViaOptIn));
         }
     }
 }

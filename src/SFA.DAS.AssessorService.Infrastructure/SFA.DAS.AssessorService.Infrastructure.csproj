@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,13 +17,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.302" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--These packages are required to override transient package vulnerabilities-->
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>

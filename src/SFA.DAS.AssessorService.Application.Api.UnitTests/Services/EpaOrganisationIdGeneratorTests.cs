@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             _registerQueryRepository.Setup(r => r.EpaOrganisationIdCurrentMaximum()).Returns(Task.FromResult(currentId));
            var returnedId = _generator.GetNextOrganisationId();
-            Assert.AreEqual(returnedId, newId);
+            newId.Should().Be(returnedId);
         }
     }
 }

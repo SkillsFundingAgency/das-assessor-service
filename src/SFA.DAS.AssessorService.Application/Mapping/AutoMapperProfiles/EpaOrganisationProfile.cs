@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<EpaOrganisation, UpdateEpaOrganisationRequest>()
+                .IgnoreAll()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.OrganisationId, opt => opt.MapFrom(source => source.OrganisationId))
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
@@ -32,8 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.OrganisationData.CharityNumber))
                 .ForMember(dest => dest.CharitySummary, opt => opt.MapFrom(source => source.OrganisationData.CharitySummary))
                 .ForMember(dest => dest.FinancialDueDate, opt => opt.ResolveUsing(source => source.OrganisationData.FHADetails?.FinancialDueDate))
-                .ForMember(dest => dest.FinancialExempt, opt => opt.ResolveUsing(source => source.OrganisationData.FHADetails?.FinancialExempt))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.FinancialExempt, opt => opt.ResolveUsing(source => source.OrganisationData.FHADetails?.FinancialExempt));
         }
     }
 }

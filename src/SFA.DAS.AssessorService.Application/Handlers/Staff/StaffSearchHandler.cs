@@ -16,7 +16,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class StaffSearchHandler : IRequestHandler<StaffSearchRequest, StaffSearchResult>
+    public class StaffSearchHandler : BaseHandler, IRequestHandler<StaffSearchRequest, StaffSearchResult>
     {
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<SearchHandler> _logger;
@@ -26,7 +26,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public StaffSearchHandler(IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
             IStaffLearnerRepository staffLearnerRepository, 
-            IStandardService staffService)
+            IStandardService staffService,
+            IMapper mapper) : base(mapper)
         {
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
@@ -62,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             _logger.LogInformation(searchResult.PageOfResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = Mapper.Map<List<StaffSearchItems>>(searchResult.PageOfResults);
+            var searchResults = _mapper.Map<List<StaffSearchItems>>(searchResult.PageOfResults);
 
             searchResults = MatchUpExistingCompletedStandards(searchResults);
             searchResults = await PopulateStandards(searchResults, _standardService, _logger);

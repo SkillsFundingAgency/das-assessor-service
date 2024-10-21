@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
+using SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
@@ -78,6 +78,7 @@ namespace SFA.DAS.AssessorService.Web
             IServiceProvider serviceProvider;
             try
             {
+                services.AddAutoMapper(typeof(MapperProfiles).Assembly);
                 services.AddApplicationInsightsTelemetry();
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -215,9 +216,6 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IApiValidationService>().Use<ApiValidationService>();
                 config.For<IDateTimeHelper>().Use<DateTimeHelper>();
-
-                var mapper = services.AddMappings().CreateMapper();
-                config.For<IMapper>().Use(mapper);
 
                 config.Populate(services);
             });

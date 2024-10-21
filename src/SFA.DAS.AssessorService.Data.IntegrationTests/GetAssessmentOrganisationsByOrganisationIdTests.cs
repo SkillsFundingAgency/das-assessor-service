@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string orgId, int expectedCount)
         {
             var organisationsReturned = _repository.GetAssessmentOrganisationsByOrganisationId(orgId).Result.ToList();
-            Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
+            expectedCount.Should().Be(organisationsReturned.Count, $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count}");
         }
 
 

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class UpdateContactStatusRequest : IRequest
+    public class UpdateContactStatusRequest : IRequest<Unit>
     {
         public UpdateContactStatusRequest(Guid id, string status)
         {

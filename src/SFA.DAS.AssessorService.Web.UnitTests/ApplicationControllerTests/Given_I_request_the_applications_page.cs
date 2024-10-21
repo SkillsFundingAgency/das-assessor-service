@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("StandardApplications");
         }
@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var actualViewResult = actual as ViewResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ViewName.Should().Be("~/Views/Application/Declaration.cshtml");
         }
@@ -128,7 +128,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("StandardApplications");
         }
@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("StandardApplications");
         }
@@ -173,7 +173,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var result = actual as ViewResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             result.ViewName.Should().Be("~/Views/Application/FeedbackIntro.cshtml");
             result.Model.Should().BeOfType<FeedbackIntroViewModel>();
@@ -200,7 +200,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var result = actual as RedirectToActionResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             result.ActionName.Should().Be("StandardApplications");
         }
@@ -226,7 +226,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var result = actual as RedirectToActionResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             result.ActionName.Should().Be("Submitted");
         }
@@ -252,7 +252,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var result = actual as RedirectToActionResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             result.ActionName.Should().Be("Submitted");
         }
@@ -278,7 +278,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.Applications();
 
             var result = actual as RedirectToActionResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             result.ActionName.Should().Be("SequenceSignPost");
         }

@@ -16,7 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         public void Arrange()
         {
             Setup();
-            MappingBootstrapper.Initialize();
             var contacts = Builder<Contact>.CreateListOfSize(10).Build().AsEnumerable();
 
             ContactQueryRepositoryMock.Setup(q => q.GetContactsForEpao(Moq.It.IsAny<string>()))

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class ReturnApplicationSequenceHandler : IRequestHandler<ReturnApplicationSequenceRequest>
+    public class ReturnApplicationSequenceHandler : IRequestHandler<ReturnApplicationSequenceRequest, Unit>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;

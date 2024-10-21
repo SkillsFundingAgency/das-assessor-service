@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class RejectContactHandler : IRequestHandler<RejectContactRequest>
+    public class RejectContactHandler : IRequestHandler<RejectContactRequest, Unit>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;

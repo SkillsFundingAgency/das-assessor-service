@@ -1,29 +1,36 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <Compile Remove="StartupConfiguration\MappingStartup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Identity" Version="1.13.0" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.21.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.14" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.0.3" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.77-prerelease-3" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.302" />
     <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.296" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <!--These packages are required to override transient package vulnerabilities-->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.35" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.36.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+    <PackageReference Include="System.Net.Security" Version="4.3.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
@@ -41,6 +48,7 @@
     <ItemGroup>
       <ReferencePath Condition="'%(FileName)' == 'StackExchange.Redis.StrongName'">
         <Aliases>signed</Aliases>
+        
       </ReferencePath>
     </ItemGroup>
   </Target>

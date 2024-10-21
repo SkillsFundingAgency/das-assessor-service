@@ -1,5 +1,6 @@
 ﻿using System;
 using Castle.Core.Internal;
+using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
@@ -37,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 testData.StandardEffectiveFrom,
                 testData.StandardEffectiveTo);
 
-            Assert.AreEqual(string.IsNullOrEmpty(results), testData.IsValid);
+            testData.IsValid.Should().Be(string.IsNullOrEmpty(results));
         }
 
         public class TestDataForEffectiveTo

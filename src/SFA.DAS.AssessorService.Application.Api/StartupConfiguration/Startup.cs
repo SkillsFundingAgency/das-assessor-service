@@ -71,6 +71,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
+            
             Configuration = ConfigurationService
                 .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
@@ -208,7 +210,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 });
 
                 config.For<IApiConfiguration>().Use(Configuration);
-                config.For<ServiceFactory>().Use<ServiceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<IMediator>().Use<Mediator>();
               
                 var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
@@ -248,9 +249,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             try
-            {
-                MappingStartup.AddMappings();
-                
+            {                
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();

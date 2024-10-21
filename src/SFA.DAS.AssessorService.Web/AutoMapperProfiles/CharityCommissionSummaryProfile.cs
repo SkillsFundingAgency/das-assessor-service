@@ -8,12 +8,12 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CharityCommissionSummaryProfile()
         {
             CreateMap<Charity, Domain.Entities.CharityCommissionSummary>()
+                .IgnoreAll()
                 .ForMember(dest => dest.CharityName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.IncorporatedOn))
                 .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => source.Trustees))
-                .AfterMap<MapManualEntryRequiredAction>()
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .AfterMap<MapManualEntryRequiredAction>();
         }
 
         public class MapManualEntryRequiredAction : IMappingAction<Charity, Domain.Entities.CharityCommissionSummary>
@@ -34,9 +34,9 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CharityTrusteeProfile()
         {
             CreateMap<Trustee, Domain.Entities.TrusteeInformation>()
+                .IgnoreAll()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name));
         }
     }
 }

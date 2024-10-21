@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
@@ -24,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Co
 
             await CertificateDataVersionChangeUpdater.UpdateCoronationEmblemAndStandardIfNeeded(currentCertificateData, newCertificateData, standardRepositoryMock.Object);
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 standardRepositoryMock.Verify(
                     s => s.GetCoronationEmblemForStandardReferenceAndVersion(newCertificateData.StandardReference, newCertificateData.Version),
@@ -33,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Co
                 standardRepositoryMock.Verify(
                     s => s.GetTitleForStandardReferenceAndVersion(newCertificateData.StandardReference, newCertificateData.Version),
                     Times.Exactly(expectedCallCount));
-            });
+            }
         }
 
         [TestCase("1.1", "1.2", true, "new name")] 
@@ -58,11 +60,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Co
 
             var updatedData = await CertificateDataVersionChangeUpdater.UpdateCoronationEmblemAndStandardIfNeeded(currentCertificateData, newCertificateData, standardRepositoryMock.Object);
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(updatedData.CoronationEmblem, Is.EqualTo(expectedCoronationEmblem));
-                Assert.That(updatedData.StandardName, Is.EqualTo(expectedStandardName));
-            });
+                updatedData.CoronationEmblem.Should().Be(expectedCoronationEmblem);
+                updatedData.StandardName.Should().Be(expectedStandardName);
+            }
         }
     }
 }

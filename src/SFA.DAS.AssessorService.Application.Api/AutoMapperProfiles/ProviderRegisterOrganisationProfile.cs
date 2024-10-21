@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
@@ -9,6 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public ProviderRegisterOrganisationProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ProviderRegister.Provider, OrganisationSearchResult>()
+                .IgnoreAll()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)
@@ -17,9 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source =>
-                    Mapper.Map<AssessorService.Api.Types.Models.ProviderRegister.Address, OrganisationAddress>(source.Addresses.FirstOrDefault())))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source =>source.Addresses.FirstOrDefault()));
         }
     }
 
@@ -28,10 +28,10 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public ProviderRegisterOrganisationAddressProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ProviderRegister.Address, OrganisationAddress>()
+                .IgnoreAll()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Street))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.Town))
-                .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.PostCode))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.PostCode));
         }
     }
 }

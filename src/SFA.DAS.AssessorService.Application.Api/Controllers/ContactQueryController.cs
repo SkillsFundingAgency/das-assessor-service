@@ -29,17 +29,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
         private readonly IApiConfiguration _config;
+        private readonly IMapper _mapper;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
             IMediator mediator,
-            ILogger<ContactQueryController> logger, IApiConfiguration config)
+            ILogger<ContactQueryController> logger, IApiConfiguration config, IMapper mapper)
         {
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _config = config;
             _searchOrganisationForContactsValidator = searchOrganisationForContactsValidator;
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet("privileges")]
@@ -70,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
 
             var contacts =
-                Mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetContactsForEpao(endPointAssessorOrganisationId)).ToList();
+                _mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetContactsForEpao(endPointAssessorOrganisationId)).ToList();
             return Ok(contacts);
         }
 
@@ -129,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var contact = await _contactQueryRepository.GetContact(userName);
             if (contact == null)
                 throw new ResourceNotFoundException();
-            return Ok(Mapper.Map<ContactResponse>(contact));
+            return Ok(_mapper.Map<ContactResponse>(contact));
         }
 
         
@@ -142,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
             if (contact == null)
                 throw new ResourceNotFoundException();
-            return Ok(Mapper.Map<ContactResponse>(contact));
+            return Ok(_mapper.Map<ContactResponse>(contact));
         }
 
         [HttpGet("govidentifier/{govIdentifier}", Name = "SearchContactByGovIdentifier")]
@@ -154,7 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var contact = await _contactQueryRepository.GetContactByGovIdentifier(govIdentifier);
             if (contact == null)
                 throw new ResourceNotFoundException();
-            return Ok(Mapper.Map<ContactResponse>(contact));
+            return Ok(_mapper.Map<ContactResponse>(contact));
         }
         
         [HttpGet("user/{id}", Name = "GetContactById")]
@@ -179,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException();
             }
          
-            return Ok(Mapper.Map<ContactResponse>(contact));
+            return Ok(_mapper.Map<ContactResponse>(contact));
         }
 
         [HttpGet("user/{id}/haveprivileges", Name = "DoesContactHavePrivileges")]

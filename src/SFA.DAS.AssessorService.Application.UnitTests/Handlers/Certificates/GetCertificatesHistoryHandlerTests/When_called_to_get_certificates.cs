@@ -36,8 +36,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         [SetUp]
         public void Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             var certificates = Builder<CertificateHistoryModel>.CreateListOfSize(10)
                 .All()
                 .With(x => x.CertificateLogs = Builder<CertificateLog>.CreateListOfSize(2)

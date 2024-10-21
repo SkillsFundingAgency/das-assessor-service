@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class SendEmailRequest : IRequest
+    public class SendEmailRequest : IRequest<Unit>
     {
         public SendEmailRequest(string email, EmailTemplateSummary emailTemplateSummary, dynamic tokens)
         {
