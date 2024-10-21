@@ -64,27 +64,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetAssessmentOrganisationsRequest()));
         }
 
-        [HttpGet("assessment-organisations/apar-summary", Name = "GetAPARSummary")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AparSummary>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAparSummary()
-        {
-            _logger.LogInformation("Get APAR Summary");
-            return Ok(await _mediator.Send(new GetAparSummaryRequest()));
-        }
-
-        [HttpGet("assessment-organisations/apar-summary/{ukprn}", Name = "GetAparSummaryByUkprn")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AparSummary))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAparSummaryByUkprn(int ukprn)
-        {
-            _logger.LogInformation($"Get Apar Summary by UKPRN [{ukprn}]");
-            var results = await _mediator.Send(new GetAparSummaryRequest(ukprn));
-            return Ok(results.FirstOrDefault());
-        }
-
         [HttpGet("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
@@ -238,30 +217,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var results = await _mediator.Send(new SearchStandardsRequest { SearchTerm = searchstring });
 
             return Ok(results.Select(s => (StandardVersion)s).ToList());
-        }
-
-        [HttpPost("assessment-organisations/apar-summary-update", Name = "APARSummaryUpdate")]
-        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(int?))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public IActionResult AparSummaryUpdate()
-        {
-            var requestName = "update APAR summary";
-            return QueueBackgroundRequest(new AparSummaryUpdateRequest(), requestName, (response, duration, log) =>
-            {
-                var result = response;
-                log.LogInformation($"Completed request to {requestName}, there were {result} changes made to APAR for EPAOs in {duration.ToReadableString()}");
-            });
-        }
-
-        [HttpGet("assessment-organisations/apar-summary-last-updated", Name = "GetAparSummaryLastUpdated")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<DateTime>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAparSummaryLastUpdated()
-        {
-            _logger.LogInformation("Getting APAR Summary Last Updated Date");
-
-            return Ok(await _mediator.Send(new GetAparSummaryLastUpdatedRequest()));
         }
     }
 }
