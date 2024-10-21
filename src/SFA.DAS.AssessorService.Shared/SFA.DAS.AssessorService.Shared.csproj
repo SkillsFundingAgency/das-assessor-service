@@ -49,7 +49,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Enums\ReprintReasons.cs" Link="SFA.DAS.AssessorService.Api.Types\Enums\ReprintReasons.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddressResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddressResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactAGovUkIdentifier.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AddToApplyContactAGovUkIdentifier.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AparSummary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AparSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AppliedStandardVersion.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AppliedStandardVersion.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationContact.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationContact.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationSummary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\AssessmentOrganisationSummary.cs" />
@@ -68,7 +67,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\ReportDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\ReportDetails.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\ReportType.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\ReportType.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AO\WorksheetDetails.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AO\WorksheetDetails.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\AparSummaryUpdateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\AparSummaryUpdateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\ApplicationResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\ApplicationResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\CreateApplicationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\CreateApplicationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Apply\DeleteApplicationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Apply\DeleteApplicationsRequest.cs" />
@@ -187,8 +185,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllStandardsByOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllStandardsByOrganisationRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryLastUpdatedRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryLastUpdatedRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAparSummaryRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAppliedStandardVersionsForEPAORequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAppliedStandardVersionsForEPAORequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationByEmailRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationByEmailRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAssessmentOrganisationRequest.cs" />

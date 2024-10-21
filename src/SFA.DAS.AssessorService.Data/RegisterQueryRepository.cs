@@ -102,26 +102,6 @@ namespace SFA.DAS.AssessorService.Data
             return assessmentOrganisationSummaries;
         }
 
-        public async Task<IEnumerable<AparSummary>> GetAparSummary(int? ukprn = null)
-        {
-            var sql =
-                "SELECT " +
-                    "a.EndPointAssessorOrganisationId as Id, " +
-                    "a.EndPointAssessorName as Name, " +
-                    "a.EndPointAssessorUkprn as Ukprn, " +
-                    "a.EarliestDateStandardApprovedOnRegister, " +
-                    "a.EarliestEffectiveFromDate " +
-                "FROM [dbo].[APARSummary] a ";
-
-            if (ukprn != null)
-            {
-                sql += "WHERE a.EndPointAssessorUkprn = @ukprn";
-            }
-
-            return await _unitOfWork.Connection.QueryAsync<AparSummary>(sql, new { ukprn });
-        }
-
-
         public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
         {
             var sql =
@@ -433,26 +413,6 @@ namespace SFA.DAS.AssessorService.Data
                     + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @name ";
 
             return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(sql, new { name });
-        }
-
-        public async Task<int?> AparSummaryUpdate()
-        {
-            var result = await _unitOfWork.Connection.QueryAsync<int>(
-                "AparSummaryUpdate",
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
-
-            return result.First();
-        }
-
-        public async Task<DateTime> GetAparSummaryLastUpdated()
-        {
-            var sql =
-                "SELECT " +
-                    "a.LastUpdated " +
-                "FROM [dbo].[APARSummaryUpdated] a";
-
-            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<DateTime>(sql);
         }
     }
 }
