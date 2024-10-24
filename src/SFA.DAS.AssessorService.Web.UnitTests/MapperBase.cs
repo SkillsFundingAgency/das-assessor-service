@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Web.UnitTests
         {
             var services = new ServiceCollection();
 
-            var config = new MapperConfiguration(cfg =>
+            services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<ResultViewModel, SearchResult>();
 
@@ -42,9 +42,8 @@ namespace SFA.DAS.AssessorService.Application.Web.UnitTests
                 cfg.AddProfile<RoatpOrganisationProfile>();
             });
 
-            //config.AssertConfigurationIsValid();
-
-            Mapper = config.CreateMapper();
+            var serviceProvider = services.BuildServiceProvider();
+            Mapper = serviceProvider.GetRequiredService<IMapper>();
         }
     }
 }

@@ -78,7 +78,8 @@ namespace SFA.DAS.AssessorService.Web
             IServiceProvider serviceProvider;
             try
             {
-                services.AddAutoMapper(typeof(MapperProfiles).Assembly);
+                services.AddMappings();
+
                 services.AddApplicationInsightsTelemetry();
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -144,16 +145,18 @@ namespace SFA.DAS.AssessorService.Web
                 {
                     try
                     {
-                        var redis = ConnectionMultiplexer.Connect(
-                            $"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+                        var redisConnectionString = Configuration.SessionRedisConnectionString;
+                        var redis = ConnectionMultiplexer.Connect($"{redisConnectionString},DefaultDatabase=1");
 
                         services.AddDataProtection()
                             .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
                             .SetApplicationName("AssessorApply");
-                        services.AddDistributedRedisCache(options =>
+
+                        services.AddStackExchangeRedisCache(options =>
                         {
-                            options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
+                            options.Configuration = $"{redisConnectionString},DefaultDatabase=0";
                         });
+
                     }
                     catch (Exception e)
                     {

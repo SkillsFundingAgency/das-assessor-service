@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests
 {
@@ -14,7 +12,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests
         public TestBase()
         {
             var services = new ServiceCollection();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.CreateMap<CreateOrganisationRequest, Organisation>();
+                cfg.CreateMap<Organisation, OrganisationResponse>();
+                cfg.CreateMap<Contact, CreateContactRequest>();
+                cfg.CreateMap<Contact, ContactResponse>();
+
+            });
 
             var serviceProvider = services.BuildServiceProvider();
             Mapper = serviceProvider.GetRequiredService<IMapper>();

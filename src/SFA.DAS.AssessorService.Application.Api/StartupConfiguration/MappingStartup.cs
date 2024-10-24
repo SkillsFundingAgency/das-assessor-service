@@ -12,18 +12,14 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 using Learner = SFA.DAS.AssessorService.Domain.Entities.Learner;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests
+namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
-    public class MapperBase
+    public static class MappingStartup
     {
-        public IMapper Mapper { get; private set; }
-
-        public MapperBase()
+        public static void AddMappings(this IServiceCollection services)
         {
-            var services = new ServiceCollection();
             services.AddAutoMapper(cfg =>
             {
-                
                 cfg.CreateMap<Organisation, OrganisationResponse>();
 
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
@@ -101,13 +97,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
                 cfg.AddProfile<LearnerSearchResultProfile>();
 
                 cfg.CreateMap<AddressResponse, GetAddressResponse>().ReverseMap();
-
-                cfg.AddProfile<ImportApprovalsProfile>();
             });
-
-            var serviceProvider = services.BuildServiceProvider();
-            Mapper = serviceProvider.GetRequiredService<IMapper>();
-
         }
     }
 }

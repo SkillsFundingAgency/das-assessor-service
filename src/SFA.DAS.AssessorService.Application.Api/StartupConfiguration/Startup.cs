@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.Internal;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -21,9 +26,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
@@ -71,8 +78,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Startup));
-            
+            services.AddMappings();
+
             Configuration = ConfigurationService
                 .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 

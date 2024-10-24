@@ -15,36 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
     {
         public MapperProfiles()
         {
-            CreateMap<Organisation, OrganisationResponse>();
-            CreateMap<CreateOrganisationRequest, Organisation>();
-            CreateMap<UpdateOrganisationRequest, Organisation>();
-
-            CreateMap<CreateContactRequest, Contact>().ReverseMap();
             CreateMap<Contact, ContactResponse>();
-            CreateMap<Learner, StaffSearchItems>()
-                    .ForMember(q => q.StandardCode, opts => { opts.MapFrom(i => i.StdCode); });
-
-            CreateMap<CreateBatchLogRequest, BatchLog>();
-            CreateMap<BatchData, BatchDataResponse>();
-            CreateMap<BatchLog, BatchLogResponse>()
-                    .ForMember(q => q.BatchData, opts => { opts.MapFrom(q => q.BatchData); });
-
-            CreateMap<Certificate, CertificateResponse>()
-                    .ForMember(q => q.EndPointAssessorOrganisationId,
-                        opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorOrganisationId); })
-                    .ForMember(q => q.EndPointAssessorOrganisationName,
-                        opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorName); })
-                    .ForMember(q => q.BatchNumber,
-                        opts => { opts.MapFrom<BatchNumberResolver>(); });
-
-            CreateMap<string, CertificateDataResponse>()
-                    .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
-
-            CreateMap<Certificate, CertificateSummaryResponse>();
-            CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>();
-            CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
-            CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
-            CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
             CreateMap<AddressResponse, GetAddressResponse>();
         }
     }

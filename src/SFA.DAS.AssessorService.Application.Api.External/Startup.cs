@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
+using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
@@ -162,7 +163,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         options.RequestCultureProviders.Clear();
                     });
 
-                services.AddAutoMapper(typeof(Startup));
+                services.AddMappings();
 
                 return ConfigureIoC(services);
             }
