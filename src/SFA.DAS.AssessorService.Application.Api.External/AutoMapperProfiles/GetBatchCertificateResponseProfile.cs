@@ -9,9 +9,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetBatchCertificateResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Certificates.GetBatchCertificateResponse, GetCertificateResponse>()
-            .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Certificate>(source.Certificate)))
-            .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors))
-            .ForAllOtherMembers(dest => dest.Ignore());
+            .IgnoreAll()
+            .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => source.Certificate))
+            .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));
         }
     }
 }

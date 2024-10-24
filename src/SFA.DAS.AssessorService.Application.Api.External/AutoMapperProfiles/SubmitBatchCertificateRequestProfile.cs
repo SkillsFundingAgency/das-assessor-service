@@ -8,14 +8,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public SubmitBatchCertificateRequestProfile()
         {
             CreateMap<SubmitBatchCertificateRequest, AssessorService.Api.Types.Models.ExternalApi.Certificates.SubmitBatchCertificateRequest>()
+            .IgnoreAll()
             .ForMember(dest => dest.RequestId, opt => opt.MapFrom(source => source.RequestId))
             .ForMember(dest => dest.Uln, opt => opt.MapFrom(source => source.Uln))
             .ForMember(dest => dest.FamilyName, opt => opt.MapFrom(source => source.FamilyName))
             .ForMember(dest => dest.StandardCode, opt => opt.MapFrom(source => source.StandardCode ?? 0))
             .ForMember(dest => dest.StandardReference, opt => opt.MapFrom(source => source.StandardReference))
             .ForMember(dest => dest.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))            
-            .ForMember(dest => dest.UkPrn, opt => opt.MapFrom(source => source.UkPrn))
-            .ForAllOtherMembers(dest => dest.Ignore());
+            .ForMember(dest => dest.UkPrn, opt => opt.MapFrom(source => source.UkPrn));
         }
     }
 }

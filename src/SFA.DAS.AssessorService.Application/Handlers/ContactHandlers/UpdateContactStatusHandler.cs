@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class UpdateContactStatusHandler : IRequestHandler<UpdateContactStatusRequest>
+    public class UpdateContactStatusHandler : IRequestHandler<UpdateContactStatusRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
 

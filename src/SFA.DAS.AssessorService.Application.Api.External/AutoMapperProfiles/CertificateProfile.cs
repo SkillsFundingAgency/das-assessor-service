@@ -13,31 +13,30 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public CertificateProfile()
         {
             CreateMap<Domain.Entities.Certificate, Certificate>()
-                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Domain.JsonData.CertificateData, CertificateData>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData ?? ""))))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Status>(source)))
-                .ForMember(dest => dest.Created, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Created>(source)))
-                .ForMember(dest => dest.Submitted, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Submitted>(source)))
-                .ForMember(dest => dest.Printed, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Printed>(source)))
-                .ForMember(dest => dest.Delivered, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.CertificateLog, Delivered>(source.CertificateLogs
+                .IgnoreAll()
+                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData ?? "")))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Created, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Submitted, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Printed, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Delivered, opt => opt.MapFrom(source => source.CertificateLogs
                     .Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered)
                     .OrderByDescending(log => log.EventTime)
-                    .FirstOrDefault())))
+                    .FirstOrDefault()))
                 .ForPath(dest => dest.CertificateData.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
                 .ForPath(dest => dest.CertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
                 .ForPath(dest => dest.CertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
                 .AfterMap<MapProviderUkPrnAction>()
-                .AfterMap<CollapseNullsAction>()
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .AfterMap<CollapseNullsAction>();
 
             CreateMap<Domain.Entities.CertificateLog, Delivered>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
-                .ForMember(dest => dest.DeliveryDate, opt => opt.MapFrom(source => source.EventTime.DropMilliseconds()))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.DeliveryDate, opt => opt.MapFrom(source => source.EventTime.DropMilliseconds()));
         }
 
         public class MapProviderUkPrnAction : IMappingAction<Domain.Entities.Certificate, Certificate>
         {
-            public void Process(Domain.Entities.Certificate source, Certificate destination)
+            public void Process(Domain.Entities.Certificate source, Certificate destination, ResolutionContext context)
             {
                 if (destination.CertificateData.LearningDetails != null)
                 {
@@ -48,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
         public class CollapseNullsAction : IMappingAction<Domain.Entities.Certificate, Certificate>
         {
-            public void Process(Domain.Entities.Certificate source, Certificate destination)
+            public void Process(Domain.Entities.Certificate source, Certificate destination, ResolutionContext context)
             {
                 if (destination.Created.CreatedBy is null)
                 {

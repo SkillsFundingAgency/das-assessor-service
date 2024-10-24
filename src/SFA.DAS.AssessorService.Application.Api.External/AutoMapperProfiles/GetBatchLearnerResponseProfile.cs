@@ -13,9 +13,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetBatchLearnerResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearnerResponse>()
-            .ForMember(dest => dest.Learner, opt => opt.MapFrom(source => Mapper.Map<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>(source)))
-            .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors))
-            .ForAllOtherMembers(dest => dest.Ignore());
+            .IgnoreAll()
+            .ForMember(dest => dest.Learner, opt => opt.MapFrom(source => source))
+            .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));
         }
     }
 
@@ -24,18 +24,18 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetLearnerProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
-                .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Certificate>(source.Certificate)))
+                .IgnoreAll()
+                .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => source.Certificate))
                 .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => source.EpaDetails))
                 .AfterMap<MapStatusAction>()
                 .AfterMap<MapLearnerDataAction>()
                 .AfterMap<HideCertificateAction>()
-                .AfterMap<CollapseNullsAction>()
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .AfterMap<CollapseNullsAction>();
         }
 
         public class MapLearnerDataAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
         {
-            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
+            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination, ResolutionContext context)
             {
                 // Always use the learner first if it is there!
                 if (source.Learner != null)
@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
         public class MapStatusAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
         {
-            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
+            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination, ResolutionContext context)
             {
                 if (source.Learner?.CompletionStatus != null)
                 {
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
         public class HideCertificateAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
         {
-            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
+            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination, ResolutionContext context)
             {
                 if (destination.Certificate is null) return;
 
@@ -163,7 +163,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
         public class CollapseNullsAction : IMappingAction<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>
         {
-            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination)
+            public void Process(AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse source, GetLearner destination, ResolutionContext context)
             {
                 if (destination.EpaDetails != null && string.IsNullOrEmpty(destination.EpaDetails.LatestEpaOutcome))
                 {

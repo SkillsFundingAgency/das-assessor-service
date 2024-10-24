@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Api.Types.Enums;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class UpdateCertificateWithAmendReasonCommand : IRequest
+    public class UpdateCertificateWithAmendReasonCommand : IRequest<Unit>
     {
         public string CertificateReference { get; set; }
         public string Username { get; set; }

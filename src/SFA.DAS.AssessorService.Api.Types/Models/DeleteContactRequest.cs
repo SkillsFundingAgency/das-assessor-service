@@ -2,7 +2,7 @@
 {
     using MediatR;
 
-    public class DeleteContactRequest : IRequest
+    public class DeleteContactRequest : IRequest<Unit>
     {
         public string UserName { get; set; }                  
     }

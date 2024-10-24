@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class UpdateCertificateWithAmendReasonCommandHandler : IRequestHandler<UpdateCertificateWithAmendReasonCommand>
+    public class UpdateCertificateWithAmendReasonCommandHandler : IRequestHandler<UpdateCertificateWithAmendReasonCommand, Unit>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<UpdateCertificateWithAmendReasonCommandHandler> _logger;

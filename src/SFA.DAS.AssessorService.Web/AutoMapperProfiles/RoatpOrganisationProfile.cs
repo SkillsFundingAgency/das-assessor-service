@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public RoatpOrganisationProfile()
         {
             CreateMap<Organisation, OrganisationSearchResult>()
+                .IgnoreAll()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)
@@ -21,8 +22,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => string.IsNullOrEmpty(source.TradingName) || "NULL".Equals(source.TradingName, StringComparison.InvariantCultureIgnoreCase) ? null : source.TradingName))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => (null == source.OrganisationData) ? null : source.OrganisationData.CompanyNumber))
-                .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => (null == source.OrganisationData) ? null : source.OrganisationData.CharityNumber))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => (null == source.OrganisationData) ? null : source.OrganisationData.CharityNumber));
         }
     }
 }

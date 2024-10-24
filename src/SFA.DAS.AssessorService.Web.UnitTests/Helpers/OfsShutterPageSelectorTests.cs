@@ -4,6 +4,7 @@ using Moq;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Web.Helpers;
+using FluentAssertions;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
 {
@@ -22,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
             var sut = new OfsShutterPageSelector(mockOrgApiClient.Object);
             var result = await sut.GetFromOrganisationAndStandard(organisation, standard);
 
-            Assert.That(result.ShowNeedToRegisterPage, Is.EqualTo(expected));
+            result.ShowNeedToRegisterPage.Should().Be(expected);
         }
 
         [TestCase(true, true, false)]
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
             var sut = new OfsShutterPageSelector(mockOrgApiClient.Object);
             var result = await sut.GetFromOrganisationAndStandard(organisation, standard);
 
-            Assert.That(result.ShowNeedToSubmitIlrPage, Is.EqualTo(expected));
+            result.ShowNeedToSubmitIlrPage.Should().Be(expected);
         }
     }
 }

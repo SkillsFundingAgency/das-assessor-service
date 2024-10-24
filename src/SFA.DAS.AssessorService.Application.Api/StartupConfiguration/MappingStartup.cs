@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -15,9 +16,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public static class MappingStartup
     {
-        public static void AddMappings()
+        public static void AddMappings(this IServiceCollection services)
         {
-            Mapper.Initialize(cfg =>
+            services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
 
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Learner, SearchResult>();
                 cfg.CreateMap<Learner, StaffSearchItems>()
-                    .ForMember(q => q.StandardCode, opts => {opts.MapFrom(i => i.StdCode);});
+                    .ForMember(q => q.StandardCode, opts => { opts.MapFrom(i => i.StdCode); });
 
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>();
                 cfg.CreateMap<BatchData, BatchDataResponse>();
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .ForMember(q => q.EndPointAssessorOrganisationName,
                         opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorName); })
                     .ForMember(q => q.BatchNumber,
-                        opts => { opts.ResolveUsing<BatchNumberResolver>(); });
+                        opts => { opts.MapFrom<BatchNumberResolver>(); });
 
                 cfg.CreateMap<string, CertificateDataResponse>()
                     .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
@@ -51,8 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.AddProfile<EpaOrganisationProfile>();
                 cfg.AddProfile<OppFinderProfile>();
 
-                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>(); 
-                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>(); 
+                cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisationResponse>();
+                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisationResponse>();
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
 
@@ -95,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 cfg.AddProfile<LearnerSearchResultProfile>();
 
-                cfg.CreateMap<AddressResponse, GetAddressResponse>();
+                cfg.CreateMap<AddressResponse, GetAddressResponse>().ReverseMap();
             });
         }
     }

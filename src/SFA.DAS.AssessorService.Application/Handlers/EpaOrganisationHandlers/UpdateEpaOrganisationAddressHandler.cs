@@ -12,12 +12,13 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationAddressHandler : IRequestHandler<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>
+    public class UpdateEpaOrganisationAddressHandler : BaseHandler, IRequestHandler<UpdateEpaOrganisationAddressRequest, List<ContactResponse>>
     { 
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public UpdateEpaOrganisationAddressHandler(IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public UpdateEpaOrganisationAddressHandler(IContactQueryRepository contactQueryRepository, IMediator mediator, IMapper mapper)
+            :base(mapper)
         {
             _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
-            var updateEpaOrganisationRequest = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
+            var updateEpaOrganisationRequest = _mapper.Map<UpdateEpaOrganisationRequest>(organisation);
             updateEpaOrganisationRequest.Address1 = request.AddressLine1;
             updateEpaOrganisationRequest.Address2 = request.AddressLine2;
             updateEpaOrganisationRequest.Address3 = request.AddressLine3;

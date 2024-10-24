@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System.Threading.Tasks;
+using FluentAssertions;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.DeleteCertificateHandlerTests
 {
@@ -42,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
             var result = await _deleteCertificateHandler.Handle(_deleteCertificateRequest, CancellationToken.None);
 
             //Assert
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
             _certificateRepository.Verify(c => c.Delete(_deleteCertificateRequest.Uln, _deleteCertificateRequest.StandardCode, _deleteCertificateRequest.UserName, CertificateActions.Delete, true, _deleteCertificateRequest.ReasonForChange, _deleteCertificateRequest.IncidentNumber), Times.Once);
         }
         

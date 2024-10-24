@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 {
-    public class ImportApprovalsHandler : IRequestHandler<ImportApprovalsRequest>
+    public class ImportApprovalsHandler : BaseHandler, IRequestHandler<ImportApprovalsRequest, Unit>
     {
         public const string TOLERANCE_SETTING_NAME = "ApprovalsExtract.StartToleranceS";
         public const string BATCHSIZE_SETTING_NAME = "ApprovalsExtract.BatchSize";
@@ -22,11 +22,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
         private readonly IOuterApiService _outerApiService;
 
         public ImportApprovalsHandler(
-            ILogger<ImportApprovalsHandler> logger
-            , IApprovalsExtractRepository approvalsExtractRepository
-            , ISettingRepository settingRepository
-            , IOuterApiService outerApiService
-            )
+            ILogger<ImportApprovalsHandler> logger, 
+            IApprovalsExtractRepository approvalsExtractRepository, 
+            ISettingRepository settingRepository, 
+            IOuterApiService outerApiService, IMapper mapper)
+            :base(mapper)
         {
             _logger = logger;
             _approvalsExtractRepository = approvalsExtractRepository;
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Approvals
 
         private async Task UpsertApprovalsExtractToStaging(List<Infrastructure.ApiClients.OuterApi.Learner> learners)
         {
-            var approvalsExtract = Mapper.Map<List<Infrastructure.ApiClients.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>(learners);
+            var approvalsExtract = _mapper.Map<List<Infrastructure.ApiClients.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>(learners);
             await _approvalsExtractRepository.UpsertApprovalsExtractToStaging(approvalsExtract);
         }
     }

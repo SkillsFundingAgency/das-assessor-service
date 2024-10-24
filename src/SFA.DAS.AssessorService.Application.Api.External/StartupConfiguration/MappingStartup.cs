@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
 {
     public static class MappingStartup
     {
-        public static void AddMappings()
+        public static void AddMappings(this IServiceCollection services)
         {
-            Mapper.Reset();
-
-            Mapper.Initialize(cfg =>
+            services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<CertificateDataProfile>();
                 cfg.AddProfile<CertificateProfile>();
@@ -32,8 +31,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
                 cfg.AddProfile<UpdateBatchEpaRequestProfile>();
                 cfg.AddProfile<UpdateBatchEpaResponseProfile>();
             });
-
-            Mapper.AssertConfigurationIsValid();
         }
     }
 }

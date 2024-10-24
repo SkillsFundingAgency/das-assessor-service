@@ -10,9 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
-using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
@@ -166,6 +163,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         options.RequestCultureProviders.Clear();
                     });
 
+                services.AddMappings();
+
                 return ConfigureIoC(services);
             }
             catch (Exception e)
@@ -211,8 +210,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             try
             {
-                MappingStartup.AddMappings();
-
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();

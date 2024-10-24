@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class InvitationCheckHandler : IRequestHandler<InvitationCheckRequest>
+    public class InvitationCheckHandler : IRequestHandler<InvitationCheckRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IMediator _mediator;

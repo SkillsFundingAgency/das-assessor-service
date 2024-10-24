@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class ImportStandardsHandler : IRequestHandler<ImportStandardsRequest>
+    public class ImportStandardsHandler : IRequestHandler<ImportStandardsRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IOuterApiService outerApiService;

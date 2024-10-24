@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
@@ -45,8 +46,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
            
             // Assert
             var result = _certificateRepository.GetCertificateLogsFor(_certificateId);
-            Assert.AreEqual(_reasonForChange, result.Result.First().ReasonForChange);
-            Assert.AreEqual(2, result.Result.Count());
+            result.Result[0].ReasonForChange.Should().Be(_reasonForChange);
+            result.Result.Count.Should().Be(2);
         }
 
         [Test]
@@ -58,7 +59,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             // Assert
             var certificate =  _certificateRepository.GetCertificate(_certificateId);            
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.Result.CertificateData);
-            Assert.AreEqual(certificateData.IncidentNumber, _incidentNumber);
+            _incidentNumber.Should().Be(certificateData.IncidentNumber);
         }
 
         private Mock<AssessorDbContext> CreateMockDbContext()

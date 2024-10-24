@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class DeleteCertificateHandler : IRequestHandler<DeleteCertificateRequest>
+    public class DeleteCertificateHandler : IRequestHandler<DeleteCertificateRequest, Unit>
     {
         private readonly ICertificateRepository _certificateRepository;        
 

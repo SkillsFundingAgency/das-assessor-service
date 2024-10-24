@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
@@ -17,11 +18,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.ApplyStandardOfsShutterPage(Guid.NewGuid(), "doesn't matter", showNeedToRegisterPage, showNeedToSubmitIlrPage) as ViewResult;
             var vm = result.Model as ApplyStandardOfsShutterPageViewModel;
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(vm.ShowNeedToRegisterPage, Is.EqualTo(showNeedToRegisterPage));
-                Assert.That(vm.ShowNeedToSubmitIlrPage, Is.EqualTo(showNeedToSubmitIlrPage));
-            });
+                vm.ShowNeedToRegisterPage.Should().Be(showNeedToRegisterPage);
+                vm.ShowNeedToSubmitIlrPage.Should().Be(showNeedToSubmitIlrPage);
+            }
         }
     }
 }

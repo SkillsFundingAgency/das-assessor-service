@@ -9,12 +9,13 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
-    public class CreateBatchLogHandler : IRequestHandler<CreateBatchLogRequest, BatchLogResponse>
+    public class CreateBatchLogHandler : BaseHandler, IRequestHandler<CreateBatchLogRequest, BatchLogResponse>
     {
         private readonly IBatchLogRepository _batchLogRepository;
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
 
-        public CreateBatchLogHandler(IBatchLogRepository batchLogRepository, IBatchLogQueryRepository batchLogQueryRepository)
+        public CreateBatchLogHandler(IBatchLogRepository batchLogRepository, IBatchLogQueryRepository batchLogQueryRepository, IMapper mapper)
+            :base(mapper)
         {
             _batchLogRepository = batchLogRepository;
             _batchLogQueryRepository = batchLogQueryRepository;
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
             };
 
             batchLog = await _batchLogRepository.Create(batchLog);
-            return Mapper.Map<BatchLogResponse>(batchLog);
+            return _mapper.Map<BatchLogResponse>(batchLog);
         }
     }
 }

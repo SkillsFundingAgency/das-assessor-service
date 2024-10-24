@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 {
     [TestFixture]
-    public class WhenHandlingImportApprovalsRequest
+    public class WhenHandlingImportApprovalsRequest : MapperBase
     {
         private Mock<ILogger<ImportApprovalsHandler>> _loggerMock;
         private Mock<IApprovalsExtractRepository> _approvalsExtractRepoMock;
@@ -40,13 +40,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
                                         new AssessorService.Infrastructure.ApiClients.OuterApi.Learner() { ApprenticeshipId = 1, FirstName = "Test", LastName = "Test1" }
                                     }
                                 });
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<List<AssessorService.Infrastructure.ApiClients.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>();
-            });
 
-            _sut = new ImportApprovalsHandler(_loggerMock.Object, _approvalsExtractRepoMock.Object, _settingRepositoryMock.Object, _outerApiServiceMock.Object);
+            _sut = new ImportApprovalsHandler(_loggerMock.Object, _approvalsExtractRepoMock.Object, _settingRepositoryMock.Object, _outerApiServiceMock.Object, Mapper);
         }
 
         [Test]

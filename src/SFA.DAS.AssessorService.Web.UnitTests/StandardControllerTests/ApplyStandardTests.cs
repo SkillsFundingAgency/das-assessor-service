@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
 using NUnit.Framework;
@@ -39,16 +41,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.ApplyStandardSearch(Guid.NewGuid(), search);
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<ViewResult>(result);
+                result.Should().BeOfType<ViewResult>();
 
                 var viewResult = result as ViewResult;
-                Assert.IsInstanceOf<ApplyStandardSearchViewModel>(viewResult.Model);
+                viewResult.Model.Should().BeOfType<ApplyStandardSearchViewModel>();
 
                 var model = viewResult.Model as ApplyStandardSearchViewModel;
-                Assert.AreEqual(search, model.Search);
-            });
+                model.Search.Should().Be(search);
+            }
         }
 
         [Test]
@@ -65,13 +67,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.ApplyStandardSearch(new ApplyStandardSearchViewModel { Id = Guid.NewGuid() });
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<RedirectToRouteResult>(result);
+                result.Should().BeOfType<RedirectToRouteResult>();
 
                 var redirectToRouteResult = result as RedirectToRouteResult;
-                Assert.AreEqual(StandardController.ApplyStandardSearchRouteGet, redirectToRouteResult.RouteName);
-            });
+                redirectToRouteResult.RouteName.Should().Be(StandardController.ApplyStandardSearchRouteGet);
+            }
         }
 
         [Test]
@@ -86,13 +88,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = _sut.ApplyStandardSearch(new ApplyStandardSearchViewModel { Id = Guid.NewGuid() });
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<RedirectToRouteResult>(result);
+                result.Should().BeOfType<RedirectToRouteResult>();
 
                 var redirectToRouteResult = result as RedirectToRouteResult;
-                Assert.AreEqual(StandardController.ApplyStandardSearchResultsRouteGet, redirectToRouteResult.RouteName);
-            });
+                redirectToRouteResult.RouteName.Should().Be(StandardController.ApplyStandardSearchResultsRouteGet);
+            }
         }
 
         [TestCase]
@@ -127,17 +129,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardSearchResults(Guid.NewGuid(), search);
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<ViewResult>(result);
+                result.Should().BeOfType<ViewResult>();
 
                 var viewResult = result as ViewResult;
-                Assert.IsInstanceOf<ApplyStandardSearchViewModel>(viewResult.Model);
+                viewResult.Model.Should().BeOfType<ApplyStandardSearchViewModel>();
 
                 var model = viewResult.Model as ApplyStandardSearchViewModel;
-                Assert.AreEqual(search, model.Search);
-                Assert.AreEqual(standards.Count, model.Results.Count);
-            });
+                model.Search.Should().Be(search);
+                model.Results.Count.Should().Be(standards.Count);
+            }
         }
 
         [TestCase]
@@ -176,13 +178,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(Guid.NewGuid(), "Tec", "ST0001");
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<RedirectToRouteResult>(result);
+                result.Should().BeOfType<RedirectToRouteResult>();
 
                 var redirectToRouteResult = result as RedirectToRouteResult;
-                Assert.AreEqual(StandardController.StandardDetailsRouteGet, redirectToRouteResult.RouteName);
-            });
+                redirectToRouteResult.RouteName.Should().Be(StandardController.StandardDetailsRouteGet);
+            }
         }
 
         [Test]
@@ -204,13 +206,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(Guid.NewGuid(), "Tec", "ST0001");
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<RedirectToRouteResult>(result);
+                result.Should().BeOfType<RedirectToRouteResult>();
 
                 var redirectToRouteResult = result as RedirectToRouteResult;
-                Assert.AreEqual(StandardController.ApplyStandardConfirmOfqualRouteGet, redirectToRouteResult.RouteName);
-            });
+                redirectToRouteResult.RouteName.Should().Be(StandardController.ApplyStandardConfirmOfqualRouteGet);
+            }
         }
 
         [Test]
@@ -236,20 +238,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(id, search, referenceNumber);
 
             // Assert
-            Assert.Multiple(() => {
-                Assert.IsInstanceOf<ViewResult>(result);
+            using (new AssertionScope()) {
+                result.Should().BeOfType<ViewResult>();
 
                 var viewResult = result as ViewResult;
-                Assert.IsInstanceOf<ApplyStandardConfirmViewModel>(viewResult.Model);
+                viewResult.Model.Should().BeOfType<ApplyStandardConfirmViewModel>();
 
                 var model = viewResult.Model as ApplyStandardConfirmViewModel;
-                Assert.AreEqual(id, model.Id);
-                Assert.AreEqual(search, model.Search);
-                Assert.AreEqual(referenceNumber, model.StandardReference);
-                Assert.AreEqual(appliedStandardVersions.Count, model.Results.Count);
-                Assert.AreEqual("1.1", model.SelectedStandard.Version);
-                Assert.AreEqual(versionEarliestStartDate, model.EarliestVersionEffectiveFrom);
-            });
+                model.Id.Should().Be(id);
+                model.Search.Should().Be(search);
+                model.StandardReference.Should().Be(referenceNumber);
+                model.Results.Count.Should().Be(appliedStandardVersions.Count);
+                model.SelectedStandard.Version.Should().Be("1.1");
+                model.EarliestVersionEffectiveFrom.Should().Be(versionEarliestStartDate);
+            }
         }
 
         [Test]
@@ -286,20 +288,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(id, search, referenceNumber);
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<ViewResult>(result);
+                result.Should().BeOfType<ViewResult>();
                 var viewResult = result as ViewResult;
-                Assert.IsInstanceOf<ApplyStandardConfirmViewModel>(viewResult.Model);
+                viewResult.Model.Should().BeOfType<ApplyStandardConfirmViewModel>();
 
                 var model = viewResult.Model as ApplyStandardConfirmViewModel;
-                Assert.AreEqual(search, model.Search);
-                Assert.AreEqual(referenceNumber, model.StandardReference);
-                Assert.AreEqual(appliedStandardVersions.Count, model.Results.Count);
-                Assert.AreEqual("1.1", model.SelectedStandard.Version);
-                Assert.AreEqual(selectedVersions.Split(',').ToList(), model.SelectedVersions);
-                Assert.AreEqual(bool.Parse(isConfirmed), model.IsConfirmed);
-            });
+                model.Search.Should().Be(search);
+                model.StandardReference.Should().Be(referenceNumber);
+                model.Results.Count.Should().Be(appliedStandardVersions.Count);
+                model.SelectedStandard.Version.Should().Be("1.1");
+                model.SelectedVersions.Should().BeEquivalentTo(selectedVersions.Split(',').ToList());
+                model.IsConfirmed.Should().Be(bool.Parse(isConfirmed));
+            }
         }
 
         [Test]
@@ -325,20 +327,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(id, search, referenceNumber);
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<ViewResult>(result);
+                result.Should().BeOfType<ViewResult>();
                 var viewResult = result as ViewResult;
-                Assert.IsInstanceOf<ApplyStandardConfirmViewModel>(viewResult.Model);
+                viewResult.Model.Should().BeOfType<ApplyStandardConfirmViewModel>();
 
                 var model = viewResult.Model as ApplyStandardConfirmViewModel;
-                Assert.AreEqual(search, model.Search);
-                Assert.AreEqual(referenceNumber, model.StandardReference);
-                Assert.AreEqual(appliedStandardVersions.Count, model.Results.Count);
-                Assert.AreEqual("1.1", model.SelectedStandard.Version);
-                Assert.AreEqual(new List<string>(), model.SelectedVersions);
-                Assert.AreEqual(false, model.IsConfirmed);
-            });
+                model.Search.Should().Be(search);
+                model.StandardReference.Should().Be(referenceNumber);
+                model.Results.Count.Should().Be(appliedStandardVersions.Count);
+                model.SelectedStandard.Version.Should().Be("1.1");
+                model.SelectedVersions.Should().BeEquivalentTo(new List<string>());
+                model.IsConfirmed.Should().Be(false);
+            }
         }
 
         [Test]
@@ -354,13 +356,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(new ApplyStandardConfirmViewModel { Id = Guid.NewGuid(), Search = "Tec", StandardReference = "ST0001" });
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<RedirectToRouteResult>(result);
+                result.Should().BeOfType<RedirectToRouteResult>();
 
                 var redirectToRouteResult = result as RedirectToRouteResult;
-                Assert.AreEqual(StandardController.ApplyStandardConfirmRouteGet, redirectToRouteResult.RouteName);
-            });
+                redirectToRouteResult.RouteName.Should().Be(StandardController.ApplyStandardConfirmRouteGet);
+            }
         }
 
         [Test]
@@ -390,14 +392,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.ApplyStandardConfirm(new ApplyStandardConfirmViewModel { Id = Guid.NewGuid(), Search = "Tec", StandardReference = "ST0001" });
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.IsInstanceOf<RedirectToActionResult>(result);
+                result.Should().BeOfType<RedirectToActionResult>();
 
                 var redirectToActionResult = result as RedirectToActionResult;
-                Assert.AreEqual(nameof(ApplicationController.SequenceSignPost), redirectToActionResult.ActionName);
-                Assert.AreEqual(nameof(ApplicationController).RemoveController(), redirectToActionResult.ControllerName);
-            });
+                redirectToActionResult.ActionName.Should().Be(nameof(ApplicationController.SequenceSignPost));
+                redirectToActionResult.ControllerName.Should().Be(nameof(ApplicationController).RemoveController());
+            }
         }
 
         [Test]

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
@@ -24,11 +26,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ViewModelTests.StandardDetailsVi
                 ApprovedVersions = new List<StandardVersion>() { versionOne, versionTwo } 
             };
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(sut.CannotOptOut(versionOne), Is.False);
-                Assert.That(sut.CannotOptOut(versionTwo), Is.False);
-            });
+                sut.CannotOptOut(versionOne).Should().BeFalse();
+                sut.CannotOptOut(versionTwo).Should().BeFalse();
+            }
         }
 
         [Test, RecursiveMoqAutoData]

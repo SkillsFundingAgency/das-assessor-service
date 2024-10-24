@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class UpdateStandardSummaryHandler : IRequestHandler<UpdateStandardSummaryRequest>
+    public class UpdateStandardSummaryHandler : IRequestHandler<UpdateStandardSummaryRequest, Unit>
     {
         private readonly ILogger<UpdateStandardSummaryHandler> _logger;
         private readonly IOppFinderRepository _oppFinderRepository;

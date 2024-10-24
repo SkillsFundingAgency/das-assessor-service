@@ -12,9 +12,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
     public static class MappingStartup
     {
-        public static MapperConfiguration AddMappings(this IServiceCollection services)
+        public static void AddMappings(this IServiceCollection services)
         {
-            return new MapperConfiguration(cfg =>
+            services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<ResultViewModel, SearchResult>();
                 
