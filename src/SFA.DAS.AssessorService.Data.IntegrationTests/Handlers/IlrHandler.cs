@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
-    public static class IlrHandler
+    public class IlrHandler : HandlerBase
     {
         private static readonly DatabaseService DatabaseService = new DatabaseService();
 
@@ -63,13 +63,53 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 FamilyName = familyName ?? "Bobdotter",
                 Ukprn = ukprn,
                 StdCode = stdCode,
-                LearnStartDate = learnStartDate ?? DateTime.UtcNow,
+                LearnStartDate = learnStartDate,
                 FundingModel = fundingModel ?? 36,
                 Source = source ?? HandlerBase.GetAcademicYear(DateTime.UtcNow),
                 CreatedAt = createdAt ?? DateTime.UtcNow,
                 CompletionStatus = completionStatus,
-                PlannedEndDate = plannedEndDate ?? DateTime.UtcNow.AddMonths(12),
+                PlannedEndDate = plannedEndDate
             };
+        }
+
+        public static async Task<IlrModel> QueryFirstOrDefaultAsync(IlrModel ilr)
+        {
+            var sqlToQuery =
+            "SELECT " +
+                "[Id]" +
+                ", [Uln]" +
+                ", [GivenNames]" +
+                ", [FamilyName]" +
+                ", [Ukprn]" +
+                ", [StdCode]" +
+                ", [LearnStartDate]" +
+                ", [FundingModel]" +
+                ", [Source]" +
+                ", [CreatedAt]" +
+                ", [CompletionStatus]" +
+                ", [PlannedEndDate] " +
+             "FROM [Ilrs] " +
+            $"WHERE (Id = @id OR @id IS NULL) " + // when @id is null then Id is not predicated
+                $"AND {NullQueryParam(ilr, p => p.Uln)} " +
+                $"AND {NullQueryParam(ilr, p => p.GivenNames)} " +
+                $"AND {NullQueryParam(ilr, p => p.FamilyName)} " +
+                $"AND {NullQueryParam(ilr, p => p.Ukprn)} " +
+                $"AND {NullQueryParam(ilr, p => p.StdCode)} " +
+                $"AND {NullQueryParam(ilr, p => p.LearnStartDate)} " +
+                $"AND {NullQueryParam(ilr, p => p.FundingModel)} " +
+                $"AND {NullQueryParam(ilr, p => p.Source)} " +
+                $"AND {NotNullQueryParam(ilr, p => p.CreatedAt)} " +
+                $"AND {NullQueryParam(ilr, p => p.CompletionStatus)} " +
+                $"AND {NullQueryParam(ilr, p => p.PlannedEndDate)} ";
+
+            return await DatabaseService.QueryFirstOrDefaultAsync<IlrModel>(sqlToQuery, ilr);
+        }
+
+        public static async Task<int> QueryCountAllAsync()
+        {
+            var sqlToQuery = "SELECT COUNT(1) FROM [Ilrs]";
+
+            return await DatabaseService.QueryFirstOrDefaultAsync<int>(sqlToQuery);
         }
 
         public static void DeleteRecord(int uln, int stdCode)

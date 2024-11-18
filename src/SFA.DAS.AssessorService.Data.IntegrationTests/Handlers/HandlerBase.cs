@@ -12,7 +12,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         {
             GetPropertyNameAndValue(item, propertySelector, out string propertyName, out TKey propertyValue);
 
-            if (propertyValue == null)
+            if (!IsNullableType(typeof(TKey)))
+            {
+                throw new InvalidOperationException($"Property '{propertyName}' is not nullable.");
+            }
+            
+            if (Equals(propertyValue, default(TKey)))
             {
                 return $"[{propertyName}] IS NULL";
             }
@@ -68,6 +73,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         private static bool IsDateOnly(DateTime dateTime)
         {
             return dateTime.TimeOfDay == TimeSpan.Zero;
+        }
+
+        private static bool IsNullableType(Type type)
+        {
+            return !type.IsValueType || (Nullable.GetUnderlyingType(type) != null);
         }
 
         public static string GetAcademicYear(DateTime date)
