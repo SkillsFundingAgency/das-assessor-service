@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.32.1" />
+      <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.304-prerelease-3" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 

@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.32.1" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.304-prerelease-3" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="8.0.0" />
