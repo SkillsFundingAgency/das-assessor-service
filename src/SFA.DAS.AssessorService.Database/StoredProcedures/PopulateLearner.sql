@@ -13,6 +13,18 @@ BEGIN
 	BEGIN
 
 		----------------------------------------------------------------------------------------------------------------------
+		-- Clean up for overlapping Ilrs and Learner records. It is only necessary to run this prior to first populate learner
+		-- following an Ilr import, however there there is no Ilr import completion because Ilrs are received from an event queue. 
+		----------------------------------------------------------------------------------------------------------------------
+		EXEC [dbo].[PopulateLearner_WithdrawOverlappingIlrsAndLearners]
+
+		----------------------------------------------------------------------------------------------------------------------
+		-- Clean up for superseded Ilrs and Learner records to supress duplicated ApprenticeshipId's when training code changes
+		----------------------------------------------------------------------------------------------------------------------
+		EXEC [dbo].[PopulateLearner_WithdrawSupersededIlrs];
+		EXEC [dbo].[PopulateLearner_RemoveSupersededLearners];
+
+		----------------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------------------------------------------------------------------------
 		-- Reset predicted Transfers where this has exceeded the transfer window
 		-- Will be resetting IsTransfer flag after the transfer window

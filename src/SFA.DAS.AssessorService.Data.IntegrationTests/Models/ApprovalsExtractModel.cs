@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
     public class ApprovalsExtractModel : TestModel
     {
-        public int ApprenticeshipId { get; set; }
+        public int? ApprenticeshipId { get; set; }
 
         public string FirstName { get; set; }
 
@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 
         public string ULN { get; set; }
 
-        public int TrainingCode { get; set; }
+        public int? TrainingCode { get; set; }
 
         public string TrainingCourseVersion { get; set; }
 
@@ -36,13 +36,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 
         public DateTime? CompletionDate { get; set; }
 
-        public int UKPRN { get; set; }
+        public int? UKPRN { get; set; }
 
         public string LearnRefNumber { get; set; }
 
-        public int PaymentStatus { get; set; }
+        public int? PaymentStatus { get; set; }
 
-        public long EmployerAccountId { get; set; }
+        public long? EmployerAccountId { get; set; }
         public string EmployerName { get; set; }
     }
 }
