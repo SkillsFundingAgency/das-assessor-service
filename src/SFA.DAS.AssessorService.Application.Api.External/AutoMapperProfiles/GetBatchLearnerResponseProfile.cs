@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetBatchLearnerResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearnerResponse>()
-            .IgnoreAll()
+            .MapMatchingMembersAndIgnoreOthers()
             .ForMember(dest => dest.Learner, opt => opt.MapFrom(source => source))
             .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));
         }
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetLearnerProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => source.Certificate))
                 .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => source.EpaDetails))
                 .AfterMap<MapStatusAction>()

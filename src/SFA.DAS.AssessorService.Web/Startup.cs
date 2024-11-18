@@ -12,8 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
-using SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
@@ -21,17 +22,21 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.Orchestrators.Login;
+using SFA.DAS.AssessorService.Web.Orchestrators.Search;
+using SFA.DAS.AssessorService.Web.Services;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.Utils;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Services;
 using StackExchange.Redis;
-using StructureMap;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -59,12 +64,12 @@ namespace SFA.DAS.AssessorService.Web
 
             config.AddEnvironmentVariables();
             config.AddAzureTableStorage(options =>
-                {
-                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                    options.EnvironmentName = configuration["EnvironmentName"];
-                    options.PreFixConfigurationKeys = false;
-                }
+            {
+                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["EnvironmentName"];
+                options.PreFixConfigurationKeys = false;
+            }
             );
 
             _config = config.Build();
@@ -73,9 +78,8 @@ namespace SFA.DAS.AssessorService.Web
 
         private IWebConfiguration Configuration { get; set; }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            IServiceProvider serviceProvider;
             try
             {
                 services.AddMappings();
@@ -86,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web
 
                 services.AddTransient<ICustomClaims, AssessorServiceAccountPostAuthenticationClaimsHandler>();
                 services.AddTransient<IStubAuthenticationService, StubAuthenticationService>();
-                
+
                 var isLocal = string.IsNullOrEmpty(_config["ResourceEnvironmentName"])
                                 || _config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
                 var cookieDomain = isLocal ? "" : Configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
@@ -121,8 +125,7 @@ namespace SFA.DAS.AssessorService.Web
                     options.HtmlHelperOptions.CheckBoxHiddenInputRenderMode = CheckBoxHiddenInputRenderMode.None;
                 });
 
-                services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
-                    .AddControllersAsServices()
+                services.AddControllersWithViews(options => { options.Filters.Add<CheckSessionFilter>(); })
                     .AddSessionStateTempDataProvider()
                     .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
@@ -178,52 +181,79 @@ namespace SFA.DAS.AssessorService.Web
 
                 services.AddHealthChecks();
 
-                serviceProvider = ConfigureIoc(services);
+                services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                    AppDomain.CurrentDomain.GetAssemblies()
+                        .Where(a => a.FullName.StartsWith("SFA"))
+                        .ToArray()
+                ));
+
+                //Configuration
+                services.AddSingleton<IWebConfiguration>(Configuration);
+                services.AddSingleton<IAzureApiClientConfiguration>(Configuration.AzureApiAuthentication);
+                services.AddSingleton<AssessorApiClientConfiguration>(Configuration.AssessorApiAuthentication);
+                services.AddSingleton<QnaApiClientConfiguration>(Configuration.QnaApiAuthentication);
+                services.Configure<AzureApiClientConfiguration>(_config.GetSection("AzureApiAuthentication"));
+
+
+                ////Factories
+                services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
+                services.AddTransient<IQnaApiClientFactory, QnaApiClientFactory>();
+
+                //ApiClients
+                services.AddTransient<IAzureApiClient>(sp =>
+                {
+                    var tokenService = sp.GetRequiredService<IAzureTokenService>();
+                    var logger = sp.GetRequiredService<ILogger<AzureApiClientBase>>();
+                    var azureApiClientConfig = sp.GetRequiredService<IAzureApiClientConfiguration>();
+                    var organisationsApiClient = sp.GetRequiredService<IOrganisationsApiClient>();
+                    var contactsApiClient = sp.GetRequiredService<IContactsApiClient>();
+                    var baseUri = azureApiClientConfig.ApiBaseAddress;
+
+                    return new AzureApiClient(baseUri, tokenService, logger, azureApiClientConfig, organisationsApiClient, contactsApiClient);
+                });
+
+                services.AddTransient<IApplicationApiClient, ApplicationApiClient>();
+                services.AddTransient<IApprovalsLearnerApiClient, ApprovalsLearnerApiClient>();
+                services.AddTransient<ICertificateApiClient, CertificateApiClient>();
+                services.AddTransient<IContactsApiClient, ContactsApiClient>();
+                services.AddTransient<IDashboardApiClient, DashboardApiClient>();
+                services.AddTransient<IEmailApiClient, EmailApiClient>();
+                services.AddTransient<ILearnerDetailsApiClient, LearnerDetailsApiClient>();
+                services.AddTransient<ILocationsApiClient, LocationsApiClient>();
+                services.AddTransient<ILoginApiClient, LoginApiClient>();
+                services.AddTransient<IOppFinderApiClient, OppFinderApiClient>();
+                services.AddTransient<IOrganisationsApiClient, OrganisationsApiClient>();
+                services.AddTransient<IQnaApiClient, QnaApiClient>();
+                services.AddTransient<IRegisterApiClient, RegisterApiClient>();
+                services.AddTransient<ISearchApiClient, SearchApiClient>();
+                services.AddTransient<IStandardVersionApiClient, StandardVersionApiClient>();
+                services.AddTransient<IStandardsApiClient, StandardsApiClient>();
+                services.AddTransient<IValidationApiClient, ValidationApiClient>();
+
+
+                ////Services
+                services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                services.AddTransient<ISessionService>(sp => new SessionService(
+                    sp.GetRequiredService<IHttpContextAccessor>(),
+                    _env.EnvironmentName));
+                services.AddTransient<IClaimService, ClaimService>();
+                services.AddScoped<IOppFinderSession, OppFinderSession>();
+                services.AddScoped<ICertificateHistorySession, CertificateHistorySession>();
+                services.AddTransient<IAzureTokenService>(sp => new AzureTokenService(Configuration.AzureApiAuthentication));
+                services.AddTransient<IApiValidationService, ApiValidationService>();
+                services.AddSingleton<IDateTimeHelper, DateTimeHelper>();
+
+                services.AddTransient<ILoginOrchestrator, LoginOrchestrator>();
+                services.AddTransient<ISearchOrchestrator, SearchOrchestrator>();
+
+                services.AddTransient<IApplicationService, ApplicationService>();
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during Startup Configure Services");
                 throw;
             }
-
-            return serviceProvider;
-        }
-
-        private IServiceProvider ConfigureIoc(IServiceCollection services)
-        {
-            var container = new Container();
-
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-                    _.WithDefaultConventions();
-                });
-
-                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
-                config.For<IOppFinderSession>().Use<OppFinderSession>();
-                config.For<ICertificateHistorySession>().Use<CertificateHistorySession>();
-                config.For<IWebConfiguration>().Use(Configuration);
-
-                config.For<IAzureApiClientConfiguration>().Use(Configuration.AzureApiAuthentication);
-
-                config.For<IAzureTokenService>().Use<AzureTokenService>()
-                    .Ctor<IAzureApiClientConfiguration>().Is(Configuration.AzureApiAuthentication);
-
-                config.For<AssessorApiClientConfiguration>().Use(Configuration.AssessorApiAuthentication);
-                config.For<QnaApiClientConfiguration>().Use(Configuration.QnaApiAuthentication);
-
-                config.For<IAzureApiClient>().Use<AzureApiClient>()
-                    .Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
-
-                config.For<IApiValidationService>().Use<ApiValidationService>();
-                config.For<IDateTimeHelper>().Use<DateTimeHelper>();
-
-                config.Populate(services);
-            });
-
-            return container.GetInstance<IServiceProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

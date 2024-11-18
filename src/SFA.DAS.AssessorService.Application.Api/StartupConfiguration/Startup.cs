@@ -4,7 +4,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -25,23 +27,19 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
-using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
-using SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles;
-using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.Http;
+using SFA.DAS.Http.Configuration;
 using SFA.DAS.Http.TokenGenerators;
-using SFA.DAS.Notifications.Api.Client;
-using StructureMap;
 using Swashbuckle.AspNetCore.Filters;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
@@ -76,14 +74,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         private IApiConfiguration Configuration { get; set; }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddMappings();
 
             Configuration = ConfigurationService
                 .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-            IServiceProvider serviceProvider;
             try
             {
                 services.AddAuthentication(o =>
@@ -130,18 +127,19 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 services.Configure<IISServerOptions>(options => { options.AutomaticAuthentication = false; });
 
-                IMvcBuilder mvcBuilder;
-                if (_env.IsDevelopment())
-                    mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-                else
-                    mvcBuilder = services.AddMvc();
-
-                mvcBuilder
-                    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
-                        opts => { opts.ResourcesPath = "Resources"; })
-                    .AddDataAnnotationsLocalization()
-                    .AddControllersAsServices()
-                    .AddNewtonsoftJson();
+                services.AddControllers(options =>
+                {
+                    if (_env.IsDevelopment())
+                    {
+                        options.Filters.Add(new AllowAnonymousFilter());
+                    }
+                })
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix, opts =>
+                {
+                    opts.ResourcesPath = "Resources";
+                })
+                .AddDataAnnotationsLocalization()
+                .AddNewtonsoftJson();
 
                 services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
                 services.AddValidatorsFromAssemblyContaining<Startup>();
@@ -188,69 +186,49 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 services.AddHostedService<TaskQueueHostedService>();
 
                 services.AddHealthChecks();
+                services.AddTransient<IDateTimeHelper, DateTimeHelper>();
 
-                serviceProvider = ConfigureIOC(services);
+                services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                    AppDomain.CurrentDomain.GetAssemblies()
+                        .Where(a => a.FullName.StartsWith("SFA"))
+                        .ToArray()
+                ));
+
+                services.AddScoped<IUnitOfWork, UnitOfWork>();
+                services.AddTransient<JwtBearerTokenGenerator>();
+                services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+                var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
+                services.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
+
+                //Configuration
+                services.AddSingleton<IApiConfiguration>(Configuration);
+                services.AddSingleton<RoatpApiClientConfiguration>(Configuration.RoatpApiAuthentication);
+                services.AddSingleton<QnaApiClientConfiguration>(Configuration.QnaApiAuthentication);
+                services.AddSingleton<ReferenceDataApiClientConfiguration>(Configuration.ReferenceDataApiAuthentication);
+                services.AddSingleton<ICharityCommissionApiClientConfiguration>(Configuration.CharityCommissionApiAuthentication);
+                services.AddSingleton<ICompaniesHouseApiClientConfiguration>(Configuration.CompaniesHouseApiAuthentication);
+                services.AddSingleton<IOuterApiClientConfiguration>(Configuration.OuterApi);
+
+                var notificationConfig = NotificationConfiguration();
+                services.AddSingleton<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>(notificationConfig);
+
+                services.AddSingleton<IJwtClientConfiguration>(sp =>
+                    sp.GetRequiredService<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>());
+
+                services.AddApiClients(notificationConfig);
+                services.AddCustomServices();
+
+                services.RegisterRepositories();
+                services.RegisterValidators();
+
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during Startup Configure Services");
                 throw;
             }
-
-            return serviceProvider;
-        }
-
-        private IServiceProvider ConfigureIOC(IServiceCollection services)
-        {
-            var container = new Container();
-
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-                    _.WithDefaultConventions();
-
-                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
-                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
-                    _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
-                });
-
-                config.For<IApiConfiguration>().Use(Configuration);
-                config.For<IMediator>().Use<Mediator>();
-              
-                var sqlConnectionString = _useSandbox ? Configuration.SandboxSqlConnectionString : Configuration.SqlConnectionString;
-                config.AddDatabaseRegistration(Configuration.Environment, sqlConnectionString);
-
-                config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
-                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()
-                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureActiveDirectoryBearerTokenGenerator(NotificationConfiguration())).Build());
-
-                config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
-
-                config.For<RoatpApiClientConfiguration>().Use(Configuration.RoatpApiAuthentication);
-                config.For<QnaApiClientConfiguration>().Use(Configuration.QnaApiAuthentication);
-                config.For<ReferenceDataApiClientConfiguration>().Use(Configuration.ReferenceDataApiAuthentication);
-
-                config.ForSingletonOf<IBackgroundTaskQueue>().Use<BackgroundTaskQueue>();
-
-                // This is a SOAP service. The client interfaces are contained within the generated proxy code
-                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
-                    .Ctor<EndpointConfiguration>().Is(EndpointConfiguration.SearchCharitiesV1Soap);
-
-                config.For<ICharityCommissionApiClient>().Use<CharityCommissionApiClient>()
-                    .Ctor<ICharityCommissionApiClientConfiguration>().Is(Configuration.CharityCommissionApiAuthentication);
-
-                config.For<ICompaniesHouseApiClient>().Use<CompaniesHouseApiClient>();
-                config.For<ICompaniesHouseApiClientConfiguration>().Use(Configuration.CompaniesHouseApiAuthentication);
-
-                config.For<IOuterApiClient>().Use<OuterApiClient>();
-                config.For<IOuterApiClientConfiguration>().Use(Configuration.OuterApi);
-
-                config.Populate(services);
-            });
-
-            return container.GetInstance<IServiceProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

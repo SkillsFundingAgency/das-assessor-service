@@ -10,17 +10,16 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
-using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
-using StructureMap;
-using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             _logger.LogInformation("In startup constructor.  Before Config");
             Configuration = configuration;
 
-            if(!bool.TryParse(configuration["UseSandboxServices"], out _useSandbox))
+            if (!bool.TryParse(configuration["UseSandboxServices"], out _useSandbox))
             {
                 _useSandbox = "yes".Equals(configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
@@ -57,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         public IExternalApiConfiguration ApplicationConfiguration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             try
             {
@@ -102,56 +101,39 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     });
                 });
 
-                services.AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
-                    c.EnableAnnotations();
-                    c.ExampleFilters();
-                    c.SchemaFilter<SwaggerRequiredSchemaFilter>();
-                    c.CustomSchemaIds(x => x.FullName.Replace("SFA.DAS.AssessorService.Application.Api.External.Models.", ""));
-
-                    if (_env.IsDevelopment())
-                    {
-                        var basePath = AppContext.BaseDirectory;
-                        var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                        c.IncludeXmlComments(xmlPath);
-                    }
-                });
-                services.AddSwaggerExamplesFromAssemblyOf<Startup>();
-
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
                 services.AddHttpContextAccessor();
 
-                services.AddMvc(options =>
+                services.AddControllers(options =>
                 {
                     options.Filters.Add(new AuthorizeFilter("default"));
-                }).ConfigureApiBehaviorOptions(options =>
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
                     {
-                        options.InvalidModelStateResponseFactory = context =>
+                        try
                         {
-                            try
-                            {
-                                var requestUrl = context.HttpContext.Request.Path;
-                                var requestMethod = context.HttpContext.Request.Method;
-                                var modelErrors = context.ModelState.SelectMany(model => model.Value.Errors.Select(err => err.ErrorMessage));
-                                _logger.LogError($"Invalid request detected. {requestMethod.ToUpper()}: {requestUrl} - Errors: {string.Join(",", modelErrors)}");
-                            }
-                            catch
-                            {
-                                // safe to ignore!
-                            }
+                            var requestUrl = context.HttpContext.Request.Path;
+                            var requestMethod = context.HttpContext.Request.Method;
+                            var modelErrors = context.ModelState.SelectMany(model => model.Value.Errors.Select(err => err.ErrorMessage));
+                            _logger.LogError($"Invalid request detected. {requestMethod.ToUpper()}: {requestUrl} - Errors: {string.Join(",", modelErrors)}");
+                        }
+                        catch
+                        {
+                            // safe to ignore!
+                        }
 
-                            var error = new ApiResponse((int)HttpStatusCode.Forbidden, "Your request contains invalid input. Please ensure it matches the swagger definition and try again.");
-                            return new BadRequestObjectResult(error) { StatusCode = error.StatusCode };
-                        };
-                    }
-                    )
-                    .AddNewtonsoftJson(options =>
-                    {
-                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                        options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;                        
-                    });
+                        var error = new ApiResponse((int)HttpStatusCode.Forbidden, "Your request contains invalid input. Please ensure it matches the swagger definition and try again.");
+                        return new BadRequestObjectResult(error) { StatusCode = error.StatusCode };
+                    };
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+                });
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
@@ -165,44 +147,44 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddMappings();
 
-                return ConfigureIoC(services);
+                services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
+
+                if (_useSandbox)
+                {
+                    services.AddSingleton<AssessorApiClientConfiguration>(ApplicationConfiguration.SandboxAssessorApiAuthentication);
+                    services.AddScoped<IApiClient, SandboxApiClient>();
+                }
+                else
+                {
+                    services.AddSingleton<AssessorApiClientConfiguration>(ApplicationConfiguration.AssessorApiAuthentication);
+                    services.AddScoped<IApiClient, ApiClient>();
+                }
+
+                // Register the external API configuration
+                services.AddSingleton<IExternalApiConfiguration>(ApplicationConfiguration);
+
+                services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Title = $"Assessor Service API {Configuration["InstanceName"]}",
+                        Version = "v1"
+                    });
+
+                    if (_env.IsDevelopment())
+                    {
+                        var basePath = AppContext.BaseDirectory;
+                        var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
+                        c.IncludeXmlComments(xmlPath);
+                    }
+                });
+
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error during Startup Configure Services");
                 throw;
             }
-        }
-
-        private IServiceProvider ConfigureIoC(IServiceCollection services)
-        {
-            var container = new Container();
-
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-                    _.WithDefaultConventions();
-                });
-
-                if (_useSandbox)
-                {
-                    config.For<AssessorApiClientConfiguration>().Use(ApplicationConfiguration.SandboxAssessorApiAuthentication);
-                    config.For<IApiClient>().Use<SandboxApiClient>();
-                }
-                else
-                {
-                    config.For<AssessorApiClientConfiguration>().Use(ApplicationConfiguration.AssessorApiAuthentication);
-                    config.For<IApiClient>().Use<ApiClient>();
-                }
-
-                config.For<IExternalApiConfiguration>().Use(ApplicationConfiguration);
-
-                config.Populate(services);
-            });
-
-            return container.GetInstance<IServiceProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

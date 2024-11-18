@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CompaniesHouseSummaryProfile()
         {
             CreateMap<Company, Domain.Entities.CompaniesHouseSummary>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public DirectorInformationProfile()
         {
             CreateMap<Officer, Domain.Entities.DirectorInformation>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public PersonSignificantControlInformationProfile()
         {
             CreateMap<PersonWithSignificantControl, Domain.Entities.PersonWithSignificantControlInformation>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))

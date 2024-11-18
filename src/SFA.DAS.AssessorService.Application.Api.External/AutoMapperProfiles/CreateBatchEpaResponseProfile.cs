@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public CreateBatchEpaResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Epas.BatchEpaResponse, CreateEpaResponse>()
-            .IgnoreAll()
+            .MapMatchingMembersAndIgnoreOthers()
             .ForMember(dest => dest.RequestId, opt => opt.MapFrom(source => source.RequestId))
             .ForMember(dest => dest.EpaReference, opt => opt.ResolveUsing(source => source.EpaDetails?.EpaReference))
             .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));

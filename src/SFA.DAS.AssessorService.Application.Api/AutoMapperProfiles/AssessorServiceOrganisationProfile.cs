@@ -50,9 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public AssessorServiceOrganisationTypeProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.OrganisationType, OrganisationType>()
-                .IgnoreAll()
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
-                .ForMember(dest => dest.TypeDescription, opt => opt.MapFrom(source => source.TypeDescription));
+                .MapMatchingMembersAndIgnoreOthers();
         }
     }
 
@@ -61,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public AssessorServiceOrganisationResponse()
         {
             CreateMap<Domain.Entities.Organisation, OrganisationResponse>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -81,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public OrganisationWithStandardResponseMapper()
         {
             CreateMap<Domain.Entities.Organisation, OrganisationStandardResponse>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))

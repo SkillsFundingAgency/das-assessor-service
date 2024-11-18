@@ -10,12 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<EpaOrganisation, UpdateEpaOrganisationRequest>()
-                .IgnoreAll()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
-                .ForMember(dest => dest.OrganisationId, opt => opt.MapFrom(source => source.OrganisationId))
-                .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
-                .ForMember(dest => dest.OrganisationTypeId, opt => opt.MapFrom(source => source.OrganisationTypeId))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.LegalName, opt => opt.MapFrom(source => source.OrganisationData.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => source.OrganisationData.TradingName))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.OrganisationData.ProviderName))

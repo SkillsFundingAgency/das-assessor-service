@@ -14,7 +14,7 @@
     <PackageReference Include="Azure.Identity" Version="1.13.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
     <PackageReference Include="Polly" Version="8.4.2" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.302" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.32.1" />
   </ItemGroup>
 
   <ItemGroup>

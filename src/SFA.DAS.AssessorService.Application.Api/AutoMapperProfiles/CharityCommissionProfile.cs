@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public CharityCommissionProfile()
         {
             CreateMap<CharityCommissionService.Charity, AssessorService.Api.Types.CharityCommission.Charity>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.RegisteredCharityNumber))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.RegisteredCompanyNumber))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.CharityName.Trim()))
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public CharityCommissionAddressProfile()
         {
             CreateMap<CharityCommissionService.Address, AssessorService.Api.Types.CharityCommission.Address>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .BeforeMap((source, dest) => dest.Country = "United Kingdom")
                 .ForMember(dest => dest.AddressLine1, opt => opt.MapFrom(source => source.Line1))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => string.IsNullOrEmpty(source.Line3) ? null : source.Line2)) // sometimes city is on line 2
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public CharityCommissionAccountsProfile()
         {
             CreateMap<CharityCommissionService.LatestFiling, AssessorService.Api.Types.CharityCommission.Accounts>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.LastAccountsDate, opt => opt.ResolveUsing(source => source.AccountsPeriodDateTime > source.AnnualReturnPeriodDateTime ? source.AccountsPeriodDateTime : source.AnnualReturnPeriodDateTime));
         }
     }
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public CharityCommissionTrusteeProfile()
         {
             CreateMap<CharityCommissionService.Trustee, AssessorService.Api.Types.CharityCommission.Trustee>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.TrusteeNumber))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.TrusteeName));
         }

@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CharityCommissionSummaryProfile()
         {
             CreateMap<Charity, Domain.Entities.CharityCommissionSummary>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.CharityName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.IncorporatedOn))
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CharityTrusteeProfile()
         {
             CreateMap<Trustee, Domain.Entities.TrusteeInformation>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name));
         }

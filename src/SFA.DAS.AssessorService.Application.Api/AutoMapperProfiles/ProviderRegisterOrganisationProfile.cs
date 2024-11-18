@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public ProviderRegisterOrganisationProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ProviderRegister.Provider, OrganisationSearchResult>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public ProviderRegisterOrganisationAddressProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ProviderRegister.Address, OrganisationAddress>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Street))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.Town))
                 .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.PostCode));

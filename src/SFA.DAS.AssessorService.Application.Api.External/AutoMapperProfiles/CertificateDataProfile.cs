@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<Models.Request.Certificates.CertificateData, Domain.JsonData.CertificateData>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.LearnerFamilyName, opt => opt.MapFrom(source => source.Learner.FamilyName))
                 .ForMember(dest => dest.AchievementDate, opt => opt.MapFrom(source => source.LearningDetails.AchievementDate))
                 .ForMember(dest => dest.StandardReference, opt => opt.MapFrom(source => source.Standard.StandardReference))
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
             // Response from Int API
             CreateMap<Domain.JsonData.CertificateData, Models.Response.Certificates.CertificateData>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .ForMember(dest => dest.CertificateReference, opt => opt.MapFrom(source => string.Empty))
                 .ForPath(dest => dest.Learner.FamilyName, opt => opt.MapFrom(source => source.LearnerFamilyName))
                 .ForPath(dest => dest.Learner.GivenNames, opt => opt.MapFrom(source => source.LearnerGivenNames))

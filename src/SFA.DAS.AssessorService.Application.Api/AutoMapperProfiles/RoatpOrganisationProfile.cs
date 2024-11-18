@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public RoatpOrganisationProfile()
         {
             CreateMap<Organisation, OrganisationSearchResult>()
-                .IgnoreAll()
+                .MapMatchingMembersAndIgnoreOthers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)

@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public CreateBatchCertificateResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Certificates.BatchCertificateResponse, CreateCertificateResponse>()
-            .IgnoreAll()
+            .MapMatchingMembersAndIgnoreOthers()
             .ForMember(dest => dest.RequestId, opt => opt.MapFrom(source => source.RequestId))
             .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => source.Certificate))
             .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));

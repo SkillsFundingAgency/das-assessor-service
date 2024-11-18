@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Data;
-using StructureMap;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,10 +12,12 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         private const string AzureResource = "https://database.windows.net/";
 
-        public static void AddDatabaseRegistration(this ConfigurationExpression config, string environment, string sqlConnectionString)
+        public static void AddDatabaseRegistration(this IServiceCollection services, string environment, string sqlConnectionString)
         {
-            config.For<IDbConnection>().Use($"Build IDbConnection", c => {
+            services.AddScoped<IDbConnection>(sp =>
+            {
                 var azureServiceTokenProvider = new AzureServiceTokenProvider();
+
                 return environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
                     : new SqlConnection
@@ -24,9 +26,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
                     };
             });
-            
-            var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            config.For<AssessorDbContext>().Use(c => new AssessorDbContext(c.GetInstance<IDbConnection>(), option.Options));
+
+            services.AddScoped<AssessorDbContext>(sp =>
+            {
+                var dbConnection = sp.GetRequiredService<IDbConnection>();
+                var optionsBuilder = new DbContextOptionsBuilder<AssessorDbContext>();
+                return new AssessorDbContext(dbConnection, optionsBuilder.Options);
+            });
         }
     }
 }
