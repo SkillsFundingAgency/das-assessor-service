@@ -187,6 +187,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 services.AddHealthChecks();
                 services.AddTransient<IDateTimeHelper, DateTimeHelper>();
+                services.AddDistributedMemoryCache();
 
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                     AppDomain.CurrentDomain.GetAssemblies()
