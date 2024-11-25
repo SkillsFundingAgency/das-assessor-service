@@ -5,6 +5,7 @@ using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.OrganisationType;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public AssessorServiceOrganisationProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.AssessmentOrganisationSummary, OrganisationSearchResult>()
-                .IgnoreAll()
+                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoEPAO")
                 .BeforeMap((source, dest) => dest.RoEPAOApproved = true)
                 .BeforeMap((source, dest) => dest.EasApiOrganisationType = null)
@@ -37,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public AssessorServiceOrganisationAddressProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.OrganisationData, OrganisationAddress>()
-                .IgnoreAll()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Address1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Address2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Address3))
@@ -50,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public AssessorServiceOrganisationTypeProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.OrganisationType, OrganisationType>()
-                .MapMatchingMembersAndIgnoreOthers();
+                .IgnoreUnmappedMembers();
         }
     }
 
@@ -59,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public AssessorServiceOrganisationResponse()
         {
             CreateMap<Domain.Entities.Organisation, OrganisationResponse>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -79,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public OrganisationWithStandardResponseMapper()
         {
             CreateMap<Domain.Entities.Organisation, OrganisationStandardResponse>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -110,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public OrganisationStandardDeliveryAreaMapper()
         {
             CreateMap<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>()
-                .IgnoreAll()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.DeliveryArea, opt => opt.MapFrom(source => source.DeliveryArea.Area))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -123,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public OrganisationStandardMapper ()
         {
             CreateMap<Domain.Entities.OrganisationStandard, OrganisationStandard>()
-                .IgnoreAll()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.StandardId, opt=> opt.MapFrom(source =>source.StandardCode))
                 .ForMember(dest => dest.EffectiveFrom, opt=> opt.MapFrom(source =>source.EffectiveFrom))
                 .ForMember(dest => dest.EffectiveTo, opt=> opt.MapFrom(source =>source.EffectiveTo))

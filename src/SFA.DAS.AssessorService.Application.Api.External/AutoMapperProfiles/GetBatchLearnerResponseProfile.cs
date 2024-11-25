@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Learners;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetBatchLearnerResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearnerResponse>()
-            .MapMatchingMembersAndIgnoreOthers()
+            .IgnoreUnmappedMembers()
             .ForMember(dest => dest.Learner, opt => opt.MapFrom(source => source))
             .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));
         }
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public GetLearnerProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => source.Certificate))
                 .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => source.EpaDetails))
                 .AfterMap<MapStatusAction>()

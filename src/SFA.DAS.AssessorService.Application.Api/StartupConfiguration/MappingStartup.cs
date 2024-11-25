@@ -12,41 +12,43 @@ using Learner = SFA.DAS.AssessorService.Domain.Entities.Learner;
 using SFA.DAS.AssessorService.ApplyTypes;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public static class MappingStartup
     {
-        public static void AddMappings(this IServiceCollection services)
+        public static void AddMappings(this IServiceCollection services, ILogger logger)
         {
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>()
-                    .MapMatchingMembersAndIgnoreOthers();
+                    .IgnoreUnmappedMembers();
 
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>()
-                    .MapMatchingMembersAndIgnoreOthers();
-                   
+                    .IgnoreUnmappedMembers();
+
                 cfg.CreateMap<CreateContactRequest, Contact>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                     .ForMember(dest => dest.GivenNames, opt => opt.MapFrom(src => src.GivenName))
                     .ForMember(dest => dest.GovUkIdentifier, opt => opt.MapFrom(src => src.GovIdentifier))
                     .ReverseMap();
 
                 cfg.CreateMap<Learner, StaffSearchItems>()
-                    .MapMatchingMembersAndIgnoreOthers()
+                    .IgnoreUnmappedMembers()
                     .ForMember(q => q.StandardCode, opts => { opts.MapFrom(i => i.StdCode); });
 
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>()
-                    .MapMatchingMembersAndIgnoreOthers();
+                    .IgnoreUnmappedMembers();
                 cfg.CreateMap<BatchData, BatchDataResponse>()
-                    .MapMatchingMembersAndIgnoreOthers();
+                    .IgnoreUnmappedMembers();
                 cfg.CreateMap<BatchLog, BatchLogResponse>()
-                    .MapMatchingMembersAndIgnoreOthers()
+                    .IgnoreUnmappedMembers()
                     .ForMember(q => q.BatchData, opts => { opts.MapFrom(q => q.BatchData); });
 
                 cfg.CreateMap<Certificate, CertificateResponse>()
-                    .MapMatchingMembersAndIgnoreOthers()
+                    .IgnoreUnmappedMembers()
                     .ForMember(q => q.EndPointAssessorOrganisationId,
                         opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorOrganisationId); })
                     .ForMember(q => q.EndPointAssessorOrganisationName,
@@ -58,26 +60,36 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
 
                 cfg.CreateMap<Certificate, CertificateSummaryResponse>()
-                    .MapMatchingMembersAndIgnoreOthers();
+                    .IgnoreUnmappedMembers();
 
                 cfg.AddProfile<EpaOrganisationProfile>();
                 cfg.AddProfile<OppFinderProfile>();
                 cfg.AddProfile<ApplicationResponseProfile>();
 
-                
-
                 cfg.CreateMap<AddressResponse, GetAddressResponse>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Organisation, OrganisationResponse>()
-                    .MapMatchingMembersAndIgnoreOthers();
+                    .IgnoreUnmappedMembers();
 
                 cfg.CreateMap<ApplicationListItem, ApplicationSummaryItem>()
                     .ForMember(dest => dest.Versions, opt => opt.Ignore())
                     .ForMember(dest => dest.WithdrawalType, opt => opt.Ignore());
             });
 
-            services.AddSingleton(config.CreateMapper());
 
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
+#if DEBUF
+
+            mapper.PrintMappings<Organisation, OrganisationResponse>();
+            mapper.PrintMappings<EpaOrganisation, UpdateEpaOrganisationRequest>();
+            mapper.PrintMappings<ApplicationListItem, ApplicationSummaryItem>();
+
+            string referencingAssemblyPath = Assembly.GetExecutingAssembly().Location;
+            MapCallAnalyzer.FindAndPrintMapCalls(referencingAssemblyPath, mapper.ConfigurationProvider);
+
+#endif
         }
 
     }

@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.AutoMapperExtensions\SFA.DAS.AssessorService.AutoMapperExtensions.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
 using System;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public UkrlpOrganisationProfile()
         {
             CreateMap<ProviderDetails, OrganisationSearchResult>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "UKRLP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.EasApiOrganisationType = null)
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public UkrlpOrganisationAddressProfile()
         {
             CreateMap<ContactAddress, OrganisationAddress>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Address1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Address2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Address3))

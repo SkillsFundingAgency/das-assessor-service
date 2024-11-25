@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
@@ -10,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public RoatpOrganisationProfile()
         {
             CreateMap<Organisation, OrganisationSearchResult>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)

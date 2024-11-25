@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -83,6 +84,19 @@ namespace SFA.DAS.AssessorService.Web
             try
             {
                 services.AddMappings();
+#if DEBUG
+                try
+                {
+                    var serviceProvider = services.BuildServiceProvider();
+                    var mapper = serviceProvider.GetRequiredService<IMapper>();
+                    mapper.ConfigurationProvider.AssertConfigurationIsValid();
+                }
+                catch (AutoMapperConfigurationException ex)
+                {
+                    _logger.LogError("AutoMapper configuration validation failed: {Message}", ex.Message);
+                    throw; // Rethrow to prevent startup if configuration is invalid
+                }
+#endif
 
                 services.AddApplicationInsightsTelemetry();
 

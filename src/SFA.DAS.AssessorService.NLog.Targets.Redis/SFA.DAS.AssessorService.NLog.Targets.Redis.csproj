@@ -10,6 +10,7 @@
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.IO.Pipelines" Version="9.0.0" />
   </ItemGroup>
   <PropertyGroup>
     <PackageId>SFA.DAS.NLog.Targets.Redis</PackageId>

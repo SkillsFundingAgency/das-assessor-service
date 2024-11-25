@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
 {
@@ -10,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<EpaOrganisation, UpdateEpaOrganisationRequest>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.LegalName, opt => opt.MapFrom(source => source.OrganisationData.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => source.OrganisationData.TradingName))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.OrganisationData.ProviderName))

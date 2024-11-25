@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
@@ -9,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CompaniesHouseSummaryProfile()
         {
             CreateMap<Company, Domain.Entities.CompaniesHouseSummary>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public DirectorInformationProfile()
         {
             CreateMap<Officer, Domain.Entities.DirectorInformation>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
@@ -55,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public PersonSignificantControlInformationProfile()
         {
             CreateMap<PersonWithSignificantControl, Domain.Entities.PersonWithSignificantControlInformation>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))

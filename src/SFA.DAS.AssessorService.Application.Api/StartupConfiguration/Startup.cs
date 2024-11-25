@@ -76,7 +76,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMappings();
+            services.AddMappings(_logger);
+
+#if DEBUG
+            //var serviceProvider = services.BuildServiceProvider();
+            //var mapper = serviceProvider.GetRequiredService<IMapper>();
+            //mapper.ConfigurationProvider.AssertConfigurationIsValid();
+#endif
 
             Configuration = ConfigurationService
                 .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;

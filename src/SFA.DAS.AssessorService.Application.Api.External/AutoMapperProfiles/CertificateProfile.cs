@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public CertificateProfile()
         {
             CreateMap<Domain.Entities.Certificate, Certificate>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData ?? "")))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source))
                 .ForMember(dest => dest.Created, opt => opt.MapFrom(source => source))

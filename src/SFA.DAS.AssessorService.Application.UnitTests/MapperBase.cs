@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -61,44 +60,44 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
                 cfg.CreateMap<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>();
                 cfg.CreateMap<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>();
 
-                cfg.AddProfile<AssessorServiceOrganisationProfile>();
-                cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
-                cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
-                cfg.AddProfile<AssessorServiceOrganisationResponse>();
+                //cfg.AddProfile<AssessorServiceOrganisationProfile>();
+                //cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
+                //cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
+                //cfg.AddProfile<AssessorServiceOrganisationResponse>();
 
-                cfg.AddProfile<ProviderRegisterOrganisationProfile>();
-                cfg.AddProfile<ProviderRegisterOrganisationAddressProfile>();
+                //cfg.AddProfile<ProviderRegisterOrganisationProfile>();
+                //cfg.AddProfile<ProviderRegisterOrganisationAddressProfile>();
 
-                cfg.AddProfile<ReferenceDataOrganisationProfile>();
-                cfg.AddProfile<ReferenceDataOrganisationAddressProfile>();
+                //cfg.AddProfile<ReferenceDataOrganisationProfile>();
+                //cfg.AddProfile<ReferenceDataOrganisationAddressProfile>();
 
-                cfg.AddProfile<RoatpOrganisationProfile>();
-                cfg.AddProfile<UkrlpOrganisationProfile>();
-                cfg.AddProfile<UkrlpOrganisationAddressProfile>();
+                //cfg.AddProfile<RoatpOrganisationProfile>();
+                //cfg.AddProfile<UkrlpOrganisationProfile>();
+                //cfg.AddProfile<UkrlpOrganisationAddressProfile>();
 
-                cfg.AddProfile<CompaniesHouseCompanyProfile>();
-                cfg.AddProfile<CompaniesHouseAccountsProfile>();
-                cfg.AddProfile<CompaniesHouseRegisteredOfficeAddressProfile>();
-                cfg.AddProfile<CompaniesHouseOfficerAddressProfile>();
-                cfg.AddProfile<CompaniesHouseOfficerProfile>();
-                cfg.AddProfile<CompaniesHouseOfficerDisqualificationProfile>();
-                cfg.AddProfile<CompaniesHousePersonWithSignificantControlProfile>();
-                cfg.AddProfile<CompaniesHousePersonWithSignificantControlAddressProfile>();
+                //cfg.AddProfile<CompaniesHouseCompanyProfile>();
+                //cfg.AddProfile<CompaniesHouseAccountsProfile>();
+                //cfg.AddProfile<CompaniesHouseRegisteredOfficeAddressProfile>();
+                //cfg.AddProfile<CompaniesHouseOfficerAddressProfile>();
+                //cfg.AddProfile<CompaniesHouseOfficerProfile>();
+                //cfg.AddProfile<CompaniesHouseOfficerDisqualificationProfile>();
+                //cfg.AddProfile<CompaniesHousePersonWithSignificantControlProfile>();
+                //cfg.AddProfile<CompaniesHousePersonWithSignificantControlAddressProfile>();
 
-                cfg.AddProfile<CharityCommissionProfile>();
-                cfg.AddProfile<CharityCommissionAddressProfile>();
-                cfg.AddProfile<CharityCommissionAccountsProfile>();
-                cfg.AddProfile<CharityCommissionTrusteeProfile>();
+                //cfg.AddProfile<CharityCommissionProfile>();
+                //cfg.AddProfile<CharityCommissionAddressProfile>();
+                //cfg.AddProfile<CharityCommissionAccountsProfile>();
+                //cfg.AddProfile<CharityCommissionTrusteeProfile>();
 
-                cfg.AddProfile<OrganisationWithStandardResponseMapper>();
-                cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
-                cfg.AddProfile<OrganisationStandardMapper>();
+                //cfg.AddProfile<OrganisationWithStandardResponseMapper>();
+                //cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
+                //cfg.AddProfile<OrganisationStandardMapper>();
 
                 cfg.AddProfile<ApplicationResponseProfile>();
 
                 cfg.AddProfile<ApplicationSummaryItemProfile>();
 
-                cfg.AddProfile<LearnerSearchResultProfile>();
+                //cfg.AddProfile<LearnerSearchResultProfile>();
 
                 cfg.CreateMap<AddressResponse, GetAddressResponse>().ReverseMap();
 

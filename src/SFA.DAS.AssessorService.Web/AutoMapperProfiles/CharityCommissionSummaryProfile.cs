@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
 {
@@ -8,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CharityCommissionSummaryProfile()
         {
             CreateMap<Charity, Domain.Entities.CharityCommissionSummary>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.CharityName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.IncorporatedOn))
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CharityTrusteeProfile()
         {
             CreateMap<Trustee, Domain.Entities.TrusteeInformation>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name));
         }

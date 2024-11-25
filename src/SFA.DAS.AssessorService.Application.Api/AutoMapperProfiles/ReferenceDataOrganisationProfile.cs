@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
@@ -9,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public ReferenceDataOrganisationProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ReferenceData.Organisation,OrganisationSearchResult>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.Ukprn = null)
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "EASAPI")
                 .BeforeMap((source, dest) => dest.Email = null)
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public ReferenceDataOrganisationAddressProfile()
         {
             CreateMap<SFA.DAS.AssessorService.Api.Types.Models.ReferenceData.Address, OrganisationAddress>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Line1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Line2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Line3))

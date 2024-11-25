@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
@@ -11,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<ApplySummary, ApplicationResponse>()
-                .MapMatchingMembersAndIgnoreOthers()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.ApplicationType, opts => opts.MapFrom<ApplicationTypeResolver>());
         }
     }

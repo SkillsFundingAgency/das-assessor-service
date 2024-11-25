@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -146,6 +147,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     });
 
                 services.AddMappings();
+
+#if DEBUG
+                var serviceProvider = services.BuildServiceProvider();
+                var mapper = serviceProvider.GetRequiredService<IMapper>();
+                mapper.ConfigurationProvider.AssertConfigurationIsValid();
+#endif
 
                 services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
 
