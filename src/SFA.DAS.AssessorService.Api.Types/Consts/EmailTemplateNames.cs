@@ -7,8 +7,8 @@
         public const string ApplyEPAOInitialSubmission = "ApplyEPAOInitialSubmission";
         public const string ApplyEPAOStandardSubmission = "ApplyEPAOStandardSubmission";
         public const string ApplyEPAOAlertSubmission = "ApplyEPAOAlertSubmission";
-        public const string WithdrawalEPAOSubmission = "WithdrawalEPAOSubmission";
-        public const string EPAOWithdrawalFeedbackNotification = "EPAOWithdrawalFeedbackNotification";
+        public const string EPAOWithdrawalSubmission = "EPAOWithdrawalSubmission";
+        public const string EPAOWithdrawalFeedback = "EPAOWithdrawalFeedback";
         public const string EPAOCancelApplication = "EPAOCancelApplication";
         public const string EPAOStandardWithdrawalApproval = "EPAOStandardWithdrawalApproval";
         public const string EPAOOrganisationWithdrawalApproval = "EPAOOrganisationWithdrawalApproval";

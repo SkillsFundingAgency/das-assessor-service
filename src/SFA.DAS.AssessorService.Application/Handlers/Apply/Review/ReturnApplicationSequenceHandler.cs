@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     if (lastSubmission != null)
                     {
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedbackNotification);
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedback);
 
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new
