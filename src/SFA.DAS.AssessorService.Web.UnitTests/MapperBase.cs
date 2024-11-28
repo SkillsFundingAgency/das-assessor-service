@@ -18,29 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Web.UnitTests
         {
             var services = new ServiceCollection();
 
-            services.AddAutoMapper(cfg =>
-            {
-                cfg.CreateMap<ResultViewModel, SearchResult>();
-
-                cfg.CreateMap<StandardVersionViewModel, StandardVersion>()
-                    .ReverseMap();
-
-                cfg.CreateMap<OrganisationSearchViewModel, RequestAccessOrgSearchViewModel>()
-                    .ForMember(dest => dest.Address, x => x.Ignore())
-                    .ForMember(dest => dest.CompanyNumber, x => x.Ignore())
-                    .ForMember(dest => dest.CompanyOrCharityDisplayText, x => x.Ignore())
-                    .ForMember(dest => dest.OrganisationIsLive, x => x.Ignore())
-                    .ForMember(dest => dest.RoEPAOApproved, x => x.Ignore());
-
-                cfg.CreateMap<ContactResponse, UserViewModel>();
-
-                cfg.AddProfile<CompaniesHouseSummaryProfile>();
-                cfg.AddProfile<DirectorInformationProfile>();
-                cfg.AddProfile<PersonSignificantControlInformationProfile>();
-                cfg.AddProfile<CharityCommissionSummaryProfile>();
-                cfg.AddProfile<CharityTrusteeProfile>();
-                cfg.AddProfile<RoatpOrganisationProfile>();
-            });
+            services.AddAutoMapper(
+                typeof(CharityCommissionSummaryProfile).Assembly
+            );
 
             var serviceProvider = services.BuildServiceProvider();
             Mapper = serviceProvider.GetRequiredService<IMapper>();

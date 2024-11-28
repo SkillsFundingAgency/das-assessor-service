@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Settings;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -12,13 +14,15 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         private const string AzureResource = "https://database.windows.net/";
 
-        public static void AddDatabaseRegistration(this IServiceCollection services, string environment, string sqlConnectionString)
+        public static void AddDatabaseRegistration(this IServiceCollection services, bool useSandbox, IApiConfiguration config)
         {
+            var sqlConnectionString = useSandbox ? config.SandboxSqlConnectionString : config.SqlConnectionString;
+
             services.AddScoped<IDbConnection>(sp =>
             {
                 var azureServiceTokenProvider = new AzureServiceTokenProvider();
 
-                return environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
+                return config.Environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                     ? new SqlConnection(sqlConnectionString)
                     : new SqlConnection
                     {

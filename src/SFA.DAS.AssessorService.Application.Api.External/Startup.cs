@@ -1,31 +1,14 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Settings;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -63,129 +46,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 ApplicationConfiguration = ConfigurationService.GetConfigExternalApi(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
 
-                services.AddAuthentication(auth =>
-                {
-                    auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(auth =>
-                {
-                    var validAudiences = new List<string>();
-                    var tenant = string.Empty;
-                    if (_useSandbox)
-                    {
-                        validAudiences.AddRange(ApplicationConfiguration.SandboxExternalApiAuthentication.Audiences.Split(","));
-                        tenant = ApplicationConfiguration.SandboxExternalApiAuthentication.Tenant;
-                    }
-                    else
-                    {
-                        validAudiences.AddRange(ApplicationConfiguration.ExternalApiAuthentication.Audiences.Split(","));
-                        tenant = ApplicationConfiguration.ExternalApiAuthentication.Tenant;
-                    }
-                    auth.Authority = $"https://login.microsoftonline.com/{tenant}";
-                    auth.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                    {
-                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                        ValidAudiences = validAudiences
-                    };
-                    auth.Events = new JwtBearerEvents()
-                    {
-                        OnTokenValidated = context => { return Task.FromResult(0); }
-                    };
-                });
+                services.AddCustomAuthenticationAndAuthorization(Configuration, _useSandbox, ApplicationConfiguration);
 
-                services.AddAuthorization(o =>
-                {
-                    o.AddPolicy("default", policy =>
-                    {
-                        policy.RequireAuthenticatedUser();
-                        policy.RequireRole("APIM");
-                    });
-                });
-
-                services.AddScoped<IHeaderInfo, HeaderInfo>();
-                services.AddHttpContextAccessor();
-
-                services.AddControllers(options =>
-                {
-                    options.Filters.Add(new AuthorizeFilter("default"));
-                })
-                .ConfigureApiBehaviorOptions(options =>
-                {
-                    options.InvalidModelStateResponseFactory = context =>
-                    {
-                        try
-                        {
-                            var requestUrl = context.HttpContext.Request.Path;
-                            var requestMethod = context.HttpContext.Request.Method;
-                            var modelErrors = context.ModelState.SelectMany(model => model.Value.Errors.Select(err => err.ErrorMessage));
-                            _logger.LogError($"Invalid request detected. {requestMethod.ToUpper()}: {requestUrl} - Errors: {string.Join(",", modelErrors)}");
-                        }
-                        catch
-                        {
-                            // safe to ignore!
-                        }
-
-                        var error = new ApiResponse((int)HttpStatusCode.Forbidden, "Your request contains invalid input. Please ensure it matches the swagger definition and try again.");
-                        return new BadRequestObjectResult(error) { StatusCode = error.StatusCode };
-                    };
-                })
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-                    options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
-                });
-
-                services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-
-                services.Configure<RequestLocalizationOptions>(
-                    options =>
-                    {
-                        options.DefaultRequestCulture = new RequestCulture("en-GB");
-                        options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
-                        options.RequestCultureProviders.Clear();
-                    });
+                services.AddCustomControllers(_logger)
+                    .AddCustomLocalization()
+                    .AddCustomSwagger(Configuration["InstanceName"], _env)
+                    .AddApiClients(_useSandbox, ApplicationConfiguration)
+                    .AddHttpContextServices();
 
                 services.AddMappings();
-
-#if DEBUG
-                var serviceProvider = services.BuildServiceProvider();
-                var mapper = serviceProvider.GetRequiredService<IMapper>();
-                mapper.ConfigurationProvider.AssertConfigurationIsValid();
-#endif
-
-                services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
-
-                if (_useSandbox)
-                {
-                    services.AddSingleton<AssessorApiClientConfiguration>(ApplicationConfiguration.SandboxAssessorApiAuthentication);
-                    services.AddScoped<IApiClient, SandboxApiClient>();
-                }
-                else
-                {
-                    services.AddSingleton<AssessorApiClientConfiguration>(ApplicationConfiguration.AssessorApiAuthentication);
-                    services.AddScoped<IApiClient, ApiClient>();
-                }
-
-                // Register the external API configuration
-                services.AddSingleton<IExternalApiConfiguration>(ApplicationConfiguration);
-
-                services.AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("v1", new OpenApiInfo
-                    {
-                        Title = $"Assessor Service API {Configuration["InstanceName"]}",
-                        Version = "v1"
-                    });
-
-                    if (_env.IsDevelopment())
-                    {
-                        var basePath = AppContext.BaseDirectory;
-                        var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                        c.IncludeXmlComments(xmlPath);
-                    }
-                });
-
             }
             catch (Exception e)
             {
@@ -226,6 +95,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 app.UseSecurityHeaders();
 
                 app.UseRouting();
+                app.UseAuthorization();
+                app.UseAuthentication();
                 app.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();

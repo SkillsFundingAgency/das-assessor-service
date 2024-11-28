@@ -8,7 +8,7 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.AutoMapperExtensions
 {
-    public static class MapCallAnalyzer
+    public static class AutoMapAnalyser
     {
         public static void FindAndPrintMapCalls(string assemblyPath, IConfigurationProvider mapperConfig)
         {
@@ -17,21 +17,19 @@ namespace SFA.DAS.AssessorService.AutoMapperExtensions
                 var mainAssembly = AssemblyDefinition.ReadAssembly(assemblyPath);
                 var referencedAssemblies = GetReferencedAssemblies(assemblyPath);
 
-                Console.WriteLine($"Analyzing assembly: {Path.GetFileName(assemblyPath)}");
+                System.Diagnostics.Trace.WriteLine($"Analyzing assembly: {Path.GetFileName(assemblyPath)}");
 
-                // Analyze the main assembly
                 AnalyzeAssemblyForMapCalls(mainAssembly, mainAssembly.MainModule, Path.GetFileName(assemblyPath), mapperConfig);
 
-                // Analyze referenced assemblies
                 foreach (var referencedAssembly in referencedAssemblies)
                 {
-                    Console.WriteLine($"Analyzing referenced assembly: {referencedAssembly.MainModule.FileName}");
+                    System.Diagnostics.Trace.WriteLine($"Analyzing referenced assembly: {referencedAssembly.MainModule.FileName}");
                     AnalyzeReferencedAssembly(mainAssembly, referencedAssembly, mapperConfig);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error analyzing assembly {Path.GetFileName(assemblyPath)}: {ex.Message}");
+                System.Diagnostics.Trace.WriteLine($"Error analyzing assembly {Path.GetFileName(assemblyPath)}: {ex.Message}");
             }
         }
 
@@ -101,7 +99,6 @@ namespace SFA.DAS.AssessorService.AutoMapperExtensions
                         System.Diagnostics.Trace.WriteLine($"    Location: {declaringTypeName}.{method.Name} (Assembly: {assemblyName})");
                         System.Diagnostics.Trace.WriteLine($"    Mapping: {sourceObjectType} -> {string.Join(", ", destinationTypes)}");
 
-                        // Validate the mapping
                         ValidateMapping(destinationTypes, sourceObjectType, mapperConfig);
 
                         System.Diagnostics.Trace.WriteLine($"---------------------------");

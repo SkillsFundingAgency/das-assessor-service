@@ -27,11 +27,170 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using System.IO;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+using Microsoft.AspNetCore.Hosting;
+using SFA.DAS.AssessorService.Domain.Helpers;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public static class ServiceCollectionExtensions
     {
+        public static IServiceCollection AddBaseConfiguration(this IServiceCollection services, IApiConfiguration apiConfig)
+        {
+            services.AddSingleton<IApiConfiguration>(apiConfig);
+            services.AddSingleton<RoatpApiClientConfiguration>(apiConfig.RoatpApiAuthentication);
+            services.AddSingleton<QnaApiClientConfiguration>(apiConfig.QnaApiAuthentication);
+            services.AddSingleton<ReferenceDataApiClientConfiguration>(apiConfig.ReferenceDataApiAuthentication);
+            services.AddSingleton<ICharityCommissionApiClientConfiguration>(apiConfig.CharityCommissionApiAuthentication);
+            services.AddSingleton<ICompaniesHouseApiClientConfiguration>(apiConfig.CompaniesHouseApiAuthentication);
+            services.AddSingleton<IOuterApiClientConfiguration>(apiConfig.OuterApi);
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomControllers(this IServiceCollection services, IWebHostEnvironment env)
+        {
+            services.AddControllers(options =>
+            {
+                if (env.IsDevelopment())
+                {
+                    options.Filters.Add(new AllowAnonymousFilter());
+                }
+            })
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix, opts =>
+                {
+                    opts.ResourcesPath = "Resources";
+                })
+                .AddDataAnnotationsLocalization()
+                .AddNewtonsoftJson();
+
+            return services;
+        }
+
+        public static IServiceCollection AddIisServerOptions(this IServiceCollection services)
+        {
+            services.Configure<IISServerOptions>(options => { options.AutomaticAuthentication = false; });
+            return services;
+        }
+
+        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, bool useSandbox, IApiConfiguration config)
+        {
+            services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                   .AddJwtBearer(o =>
+                   {
+                       var validAudiences = new List<string>();
+                       var authority = string.Empty;
+
+                       if (useSandbox)
+                       {
+                           validAudiences.AddRange(config.SandboxApiAuthentication.Audiences.Split(","));
+                           authority = o.Authority = config.SandboxApiAuthentication.Tenant;
+                       }
+                       else
+                       {
+                           validAudiences.AddRange(config.ApiAuthentication.Audiences.Split(","));
+                           authority = o.Authority = config.ApiAuthentication.Tenant;
+                       }
+
+                       o.Authority = $"https://login.microsoftonline.com/{authority}";
+                       o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                       {
+                           RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                           ValidAudiences = validAudiences
+                       };
+                       o.Events = new JwtBearerEvents()
+                       {
+                           OnTokenValidated = context => { return Task.FromResult(0); }
+                       };
+                   });
+
+            services.AddTransient<JwtBearerTokenGenerator>();
+            return services;
+        }
+
+        public static IServiceCollection AddCustomLocalization(this IServiceCollection services)
+        {
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("en-GB");
+                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                options.RequestCultureProviders.Clear();
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services, IHostEnvironment env)
+        {
+            services.AddSwaggerGen(config =>
+            {
+                config.SwaggerDoc("v1", new OpenApiInfo { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
+                config.CustomSchemaIds(i => i.FullName);
+
+                if (env.IsDevelopment())
+                {
+                    var basePath = AppContext.BaseDirectory;
+                    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
+                    config.IncludeXmlComments(xmlPath);
+                }
+
+                if (!env.IsDevelopment())
+                {
+                    config.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                    {
+                        Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                        In = ParameterLocation.Header,
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey
+                    });
+
+                    config.OperationFilter<SecurityRequirementsOperationFilter>();
+                }
+            });
+            return services;
+        }
+
+        public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddHostedService<TaskQueueHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<Startup>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(a => a.FullName.StartsWith("SFA"))
+                    .ToArray()
+            ));
+            return services;
+        }
+
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddTransient<CacheService>();
@@ -40,13 +199,21 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             return services;
         }
 
-        public static IServiceCollection AddApiClients(this IServiceCollection services, Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration notificationConfig)
+        public static IServiceCollection AddHttpAndApiClients(this IServiceCollection services, 
+            IApiConfiguration apiConfiguration, Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration notificationConfig)
         {
-            services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
-            services.AddTransient<IReferenceDataApiClientFactory, ReferenceDataApiClientFactory>();
-            services.AddTransient<IRoatpApiClientFactory, RoatpApiClientFactory>();
-            services.AddTransient<IQnaApiClientFactory, QnaApiClientFactory>();
+            services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(apiConfiguration.CompaniesHouseApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(apiConfiguration.OuterApi.BaseUrl);
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddHttpClient<INotificationsApi, NotificationsApi>((serviceProvider, client) =>
             {
@@ -67,10 +234,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
 
-            // This is a SOAP service. The client interfaces are contained within the generated proxy code
             services.AddSingleton<CharityCommissionService.ISearchCharitiesV1SoapClient>(sp =>
                 new CharityCommissionService.SearchCharitiesV1SoapClient(EndpointConfiguration.SearchCharitiesV1Soap)
             );
+
+            services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
+            services.AddTransient<IReferenceDataApiClientFactory, ReferenceDataApiClientFactory>();
+            services.AddTransient<IRoatpApiClientFactory, RoatpApiClientFactory>();
+            services.AddTransient<IQnaApiClientFactory, QnaApiClientFactory>();
 
             services.AddSingleton<IReferenceDataApiClient, ReferenceDataApiClient>();
             services.AddSingleton<IRoatpApiClient, RoatpApiClient>();
@@ -81,6 +252,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddSingleton<IOrganisationsApiClient, OrganisationsApiClient>();
             services.AddSingleton<IContactsApiClient, ContactsApiClient>();
             services.AddSingleton<IOuterApiClient, OuterApiClient>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddHelpers(this IServiceCollection services)
+        {
+            services.AddTransient<IDateTimeHelper, DateTimeHelper>();
             return services;
         }
 
@@ -121,99 +299,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddScoped<SearchOrganisationForContactsValidator>();
             services.AddScoped<IEpaOrganisationValidator, EpaOrganisationValidator>();
             services.AddScoped<IEpaOrganisationSearchValidator, EpaOrganisationSearchValidator>();
-            services.AddScoped<SearchOrganisationForContactsValidator>();
             return services;
 
         }
-        public static void InspectAssemblies(this IServiceCollection services, bool includeExternalDependencies = true)
-        {
-            // Get all registered service types
-            var registeredServices = services.Select(s => s.ServiceType).ToHashSet();
 
-            // Get the current assembly
-            var currentAssembly = typeof(Startup).Assembly;
-
-            // Keep track of inspected types to avoid infinite loops
-            var inspectedTypes = new HashSet<Type>();
-
-            foreach (var type in currentAssembly.GetTypes())
-            {
-                InspectTypeDependencies(type, registeredServices, inspectedTypes, services, new Stack<Type>(), includeExternalDependencies);
-            }
-        }
-
-        private static void InspectTypeDependencies(
-            Type type,
-            HashSet<Type> registeredServices,
-            HashSet<Type> inspectedTypes,
-            IServiceCollection services,
-            Stack<Type> dependencyStack,
-            bool includeExternalDependencies)
-        {
-            // Initialize the stack if it's the root call
-            dependencyStack ??= new Stack<Type>();
-
-            // Skip already inspected types
-            if (!type.IsClass || type.IsAbstract || inspectedTypes.Contains(type))
-                return;
-
-            // Mark type as inspected
-            inspectedTypes.Add(type);
-
-            // Push the current type onto the dependency stack
-            dependencyStack.Push(type);
-
-            foreach (var constructor in type.GetConstructors())
-            {
-                foreach (var parameter in constructor.GetParameters())
-                {
-                    var parameterType = parameter.ParameterType;
-
-                    // Skip logger parameters
-                    if (string.Equals(parameter.Name, "logger", StringComparison.OrdinalIgnoreCase))
-                        continue;
-
-                    // Skip Microsoft interfaces
-                    if (parameterType.IsInterface && IsMicrosoftAssembly(parameterType))
-                        continue;
-
-                    // Skip external dependencies if not included
-                    if (!includeExternalDependencies && parameterType.Assembly != typeof(Startup).Assembly)
-                        continue;
-
-                    // Check if the parameter is an interface and is not registered
-                    if (parameterType.IsInterface && !registeredServices.Contains(parameterType))
-                    {
-                        // Log unregistered interface with stack trace
-                        Trace.WriteLine($"Unregistered interface: {parameterType.FullName}");
-                        Trace.WriteLine("Dependency chain:");
-
-                        foreach (var dependency in dependencyStack)
-                        {
-                            Trace.WriteLine($"  -> {dependency.FullName}");
-                        }
-
-                        Trace.WriteLine($"  -> {parameterType.FullName} (parameter: {parameter.Name})");
-                    }
-
-                    // If the parameter is a class, recursively check its dependencies
-                    if (parameterType.IsClass && !parameterType.IsAbstract)
-                    {
-                        InspectTypeDependencies(parameterType, registeredServices, inspectedTypes, services, dependencyStack, includeExternalDependencies);
-                    }
-                }
-            }
-
-            // Pop the current type off the stack after processing
-            dependencyStack.Pop();
-        }
-
-
-        private static bool IsMicrosoftAssembly(Type type)
-        {
-            // Check if the type's assembly is from Microsoft
-            return type.Assembly.FullName?.StartsWith("Microsoft.", StringComparison.OrdinalIgnoreCase) == true ||
-                   type.Assembly.FullName?.StartsWith("System.", StringComparison.OrdinalIgnoreCase) == true;
-        }
+        
     }
 }
