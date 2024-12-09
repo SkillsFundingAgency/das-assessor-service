@@ -35,6 +35,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Organisation
         public string ActionChoice { get; set; }
         public List<AzureSubscription> ExternalApiSubscriptions { get; set; }
         public string SubscriptionId { get; set; }
+        public string FindAnEPAOUrl { get; set; }
     }
 }
  
