@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class NotifyUserManagementUsersRequest : IRequest
+    public class NotifyUserManagementUsersRequest : IRequest<Unit>
     {
         public NotifyUserManagementUsersRequest(string displayName, string endPointAssessorOrganisationId, string serviceLink)
         {

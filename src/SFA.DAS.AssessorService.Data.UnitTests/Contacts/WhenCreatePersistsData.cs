@@ -20,8 +20,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
         [SetUp]
         public void Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             var contactCreateDomainModel = Builder<Contact>.CreateNew().Build();
 
             var mockSet = CreateMockSet();

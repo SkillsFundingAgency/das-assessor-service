@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage, ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationContactRequest(requestFailedContactDetails)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationContactHandler.Handle(requestFailedContactDetails, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationContactRequest(requestFailedContactDetails));
         }

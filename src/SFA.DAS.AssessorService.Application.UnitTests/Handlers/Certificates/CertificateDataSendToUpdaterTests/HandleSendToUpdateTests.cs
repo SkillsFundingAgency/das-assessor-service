@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -16,17 +18,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
 
             var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(result.ContactName, Is.Not.Null);
-                Assert.That(result.Department, Is.Not.Null);
-                Assert.That(result.ContactOrganisation, Is.Not.Null);
-                Assert.That(result.ContactAddLine1, Is.Not.Null);
-                Assert.That(result.ContactAddLine2, Is.Not.Null);
-                Assert.That(result.ContactAddLine3, Is.Not.Null);
-                Assert.That(result.ContactAddLine4, Is.Not.Null);
-                Assert.That(result.ContactPostCode, Is.Not.Null);
-            });
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+            }
         }
 
         [TestCase(CertificateSendTo.None, CertificateSendTo.None, "NOT API")]
@@ -46,17 +48,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
 
             var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(result.ContactName, Is.Not.Null);
-                Assert.That(result.Department, Is.Not.Null);
-                Assert.That(result.ContactOrganisation, Is.Not.Null);
-                Assert.That(result.ContactAddLine1, Is.Not.Null);
-                Assert.That(result.ContactAddLine2, Is.Not.Null);
-                Assert.That(result.ContactAddLine3, Is.Not.Null);
-                Assert.That(result.ContactAddLine4, Is.Not.Null);
-                Assert.That(result.ContactPostCode, Is.Not.Null);
-            });
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+                result.ContactName.Should().NotBeNull();
+            }
         }
 
         [TestCase(CertificateSendTo.None, CertificateSendTo.Employer, "NOT API")]
@@ -80,17 +82,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
 
             var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(result.ContactName, Is.Null);
-                Assert.That(result.Department, Is.Null);
-                Assert.That(result.ContactOrganisation, Is.Null);
-                Assert.That(result.ContactAddLine1, Is.Null);
-                Assert.That(result.ContactAddLine2, Is.Null);
-                Assert.That(result.ContactAddLine3, Is.Null);
-                Assert.That(result.ContactAddLine4, Is.Null);
-                Assert.That(result.ContactPostCode, Is.Null);
-            });
+                result.ContactName.Should().BeNull();
+                result.Department.Should().BeNull();
+                result.ContactOrganisation.Should().BeNull();
+                result.ContactAddLine1.Should().BeNull();
+                result.ContactAddLine2.Should().BeNull();
+                result.ContactAddLine3.Should().BeNull();
+                result.ContactAddLine4.Should().BeNull();
+                result.ContactPostCode.Should().BeNull();
+            }
         }
 
         [TestCase(CertificateSendTo.None, "API")]
@@ -107,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
 
             var result = CertificateDataSendToUpdater.HandleSendToUpdate(certificate, currentCertificateData, updatedCertificateData);
 
-            Assert.That(result.ContactName, Is.EqualTo(result.FullName.ToUpper()));
+            result.ContactName.Should().Be(result.FullName.ToUpper());
         }
 
         [Test]
@@ -118,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Ce
 
             CertificateDataSendToUpdater.HandleSendToUpdate(new Certificate(), currentData, newData);
 
-            Assert.That(newData.CourseOption, Is.EqualTo(newData.CourseOption));
+            newData.CourseOption.Should().Be(newData.CourseOption);
         }
 
         private static CertificateData GetCertificateDataContainingAddress(CertificateSendTo certificateSendTo)

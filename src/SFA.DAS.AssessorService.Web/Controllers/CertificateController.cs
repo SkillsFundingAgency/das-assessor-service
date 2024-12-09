@@ -116,6 +116,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var cert = await _certificateApiClient.Start(startCertificateRequest);
 
+            System.Diagnostics.Debug.WriteLine($"Type of versions: {versions?.GetType()}");
+
             var certificateSession = new CertificateSession()
             {
                 CertificateId = cert.Id,

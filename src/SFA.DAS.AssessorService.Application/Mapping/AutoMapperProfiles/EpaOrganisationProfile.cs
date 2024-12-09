@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
 {
@@ -10,11 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         {
             // Request going to Int API
             CreateMap<EpaOrganisation, UpdateEpaOrganisationRequest>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
-                .ForMember(dest => dest.OrganisationId, opt => opt.MapFrom(source => source.OrganisationId))
-                .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
-                .ForMember(dest => dest.OrganisationTypeId, opt => opt.MapFrom(source => source.OrganisationTypeId))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.LegalName, opt => opt.MapFrom(source => source.OrganisationData.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => source.OrganisationData.TradingName))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.OrganisationData.ProviderName))
@@ -32,8 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.OrganisationData.CharityNumber))
                 .ForMember(dest => dest.CharitySummary, opt => opt.MapFrom(source => source.OrganisationData.CharitySummary))
                 .ForMember(dest => dest.FinancialDueDate, opt => opt.ResolveUsing(source => source.OrganisationData.FHADetails?.FinancialDueDate))
-                .ForMember(dest => dest.FinancialExempt, opt => opt.ResolveUsing(source => source.OrganisationData.FHADetails?.FinancialExempt))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.FinancialExempt, opt => opt.ResolveUsing(source => source.OrganisationData.FHADetails?.FinancialExempt));
         }
     }
 }

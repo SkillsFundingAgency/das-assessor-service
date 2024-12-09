@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
 {
-    public class DeleteBatchEpaHandler : IRequestHandler<DeleteBatchEpaRequest>
+    public class DeleteBatchEpaHandler : IRequestHandler<DeleteBatchEpaRequest, Unit>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<DeleteBatchEpaHandler> _logger;

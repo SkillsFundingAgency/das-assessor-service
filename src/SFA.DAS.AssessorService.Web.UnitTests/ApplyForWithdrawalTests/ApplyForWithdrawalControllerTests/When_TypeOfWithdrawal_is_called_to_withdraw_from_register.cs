@@ -1,3 +1,5 @@
+using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -17,12 +19,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToRouteResult;
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.RouteName, Is.EqualTo(ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet));
+                result.Should().NotBeNull();
+                result.RouteName.Should().Be(ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet);
                 Assert.That(result.RouteValues, Contains.Item(new KeyValuePair<string, object>("backRouteName", ApplyForWithdrawalController.TypeofWithdrawalRouteGet)));
-            });
+            }
         }
     }
 }

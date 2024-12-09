@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
@@ -160,16 +161,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             if (expectedCount > 0)
             {
-                Assert.IsNotNull(organisationStandardReturned, "Expected OrganisationStandardRecord but found none");
+                organisationStandardReturned.Should().NotBeNull("Expected OrganisationStandardRecord but found none");
 
                 if (expectedVersionCount > 0)
                 {
-                    Assert.AreEqual(expectedVersionCount, organisationStandardReturned.Versions.Count(), $@"Expected {expectedVersionCount} organisations back but got {organisationStandardReturned.Versions.Count()}");
+                    organisationStandardReturned.Versions.Count.Should().Be(expectedVersionCount,  $@"Expected {expectedVersionCount} organisations back but got {organisationStandardReturned.Versions.Count}");
                 }
             }
             else
             {
-                Assert.IsNull(organisationStandardReturned, "Did not expect OrganisationStandardRecord but found one");
+                organisationStandardReturned.Should().BeNull("Did not expect OrganisationStandardRecord but found one");
             }
 
 

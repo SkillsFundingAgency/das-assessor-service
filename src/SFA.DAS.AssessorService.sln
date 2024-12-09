@@ -70,7 +70,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Infrastructure", "SFA.DAS.AssessorService.Infrastructure\SFA.DAS.AssessorService.Infrastructure.csproj", "{45EA48B1-2ABD-402F-843A-FC06CD13140C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Shared", "SFA.DAS.AssessorService.Shared\SFA.DAS.AssessorService.Shared.csproj", "{FF7AA660-C54A-470C-B94A-D50833B31D54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Shared", "SFA.DAS.AssessorService.Shared\SFA.DAS.AssessorService.Shared.csproj", "{FF7AA660-C54A-470C-B94A-D50833B31D54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.AutoMapperExtensions", "SFA.DAS.AssessorService.AutoMapperExtensions\SFA.DAS.AssessorService.AutoMapperExtensions.csproj", "{419522E6-4056-48EC-95CC-1D1EA72CA19B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -175,6 +177,10 @@ Global
 		{FF7AA660-C54A-470C-B94A-D50833B31D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF7AA660-C54A-470C-B94A-D50833B31D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF7AA660-C54A-470C-B94A-D50833B31D54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{419522E6-4056-48EC-95CC-1D1EA72CA19B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{419522E6-4056-48EC-95CC-1D1EA72CA19B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{419522E6-4056-48EC-95CC-1D1EA72CA19B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{419522E6-4056-48EC-95CC-1D1EA72CA19B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,5 @@
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
@@ -20,9 +21,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Account
         {
             var result = _validator.Validate(new AccountViewModel());
 
-            Assert.IsFalse(result.IsValid);
-            Assert.IsNotNull(result.Errors.FirstOrDefault(c => c.ErrorMessage.Equals("Family name must not be empty")));
-            Assert.IsNotNull(result.Errors.FirstOrDefault(c => c.ErrorMessage.Equals("Given name must not be empty")));
+            result.IsValid.Should().BeFalse();
+            result.Errors.Find(c => c.ErrorMessage.Equals("Family name must not be empty")).Should().NotBeNull();
+            result.Errors.Find(c => c.ErrorMessage.Equals("Given name must not be empty")).Should().NotBeNull();
         }
 
         [Test]
@@ -33,8 +34,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Account
                 GivenName = "test"
             });
 
-            Assert.IsFalse(result.IsValid);
-            Assert.IsNotNull(result.Errors.FirstOrDefault(c => c.ErrorMessage.Equals("Family name must not be empty")));
+            result.IsValid.Should().BeFalse();
+            result.Errors.Find(c => c.ErrorMessage.Equals("Family name must not be empty")).Should().NotBeNull();
         }
 
         [Test]
@@ -46,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Account
                 FamilyName = "test",
             });
 
-            Assert.IsTrue(result.IsValid);
+            result.IsValid.Should().BeTrue();
         }
     }
 }

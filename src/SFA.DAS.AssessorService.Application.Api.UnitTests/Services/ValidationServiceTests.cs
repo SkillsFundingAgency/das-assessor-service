@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -25,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckEmailAddress(string emailAddress, bool expectedResult)
         {
             var checkResult = _validationService.CheckEmailIsValid(emailAddress);
-            Assert.AreEqual(expectedResult,checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", false)]
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckIsNotEmpty(string stringToCheck, bool expectedResult)
         {
             var checkResult = _validationService.IsNotEmpty(stringToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("1", false)]
@@ -49,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckUkprnIsValid(string stringToCheck, bool expectedResult)
         {
             var checkResult = _validationService.UkprnIsValid(stringToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", true)]
@@ -64,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckUlnIsValid(string stringToCheck, bool expectedResult)
         {
             var checkResult = _validationService.UlnIsValid(stringToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", 2, true)]
@@ -78,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckMinimumLength(string stringToCheck, int minimumLength, bool expectedResult)
         {
             var checkResult = _validationService.IsMinimumLengthOrMore(stringToCheck, minimumLength);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
 
@@ -93,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckMaximumLength(string stringToCheck, int maximumLength, bool expectedResult)
         {
             var checkResult = _validationService.IsMaximumLengthOrLess(stringToCheck, maximumLength);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", true)]
@@ -108,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckDateIsValid(string dateToCheck, bool expectedResult)
         {
             var checkResult = _validationService.DateIsValid(dateToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", true)]
@@ -122,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             dateToCheck = MapDateToRelativeWords(dateToCheck);
             var checkResult = _validationService.DateIsTodayOrInFuture(dateToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", true)]
@@ -137,7 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             dateToCheck = MapDateToRelativeWords(dateToCheck);
             var checkResult = _validationService.DateIsTodayOrInPast(dateToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("", true)]
@@ -156,7 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckOrganisationId(string organisationIdToCheck, bool expectedResult)
         {
             var checkResult = _validationService.OrganisationIdIsValid(organisationIdToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("33333", false)]
@@ -166,7 +167,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckCompanyNumber(string companyNumberToCheck, bool expectedResult)
         {
             var checkResult = _validationService.CompanyNumberIsValid(companyNumberToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         [TestCase("33333", true)]
@@ -181,7 +182,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void CheckCharityNumber(string charityNumberToCheck, bool expectedResult)
         {
             var checkResult = _validationService.CharityNumberIsValid(charityNumberToCheck);
-            Assert.AreEqual(expectedResult, checkResult);
+            checkResult.Should().Be(expectedResult);
         }
 
         private string MapDateToRelativeWords(string dateCheck)

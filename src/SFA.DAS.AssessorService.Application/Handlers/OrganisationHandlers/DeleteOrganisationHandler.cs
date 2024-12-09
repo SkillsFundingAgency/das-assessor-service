@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationRequest>
+    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationRequest, Unit>
     {
         private readonly IOrganisationRepository _organisationRepository;
 

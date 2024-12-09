@@ -30,8 +30,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations.G
             var actual = await handler.Handle(query, It.IsAny<CancellationToken>());
             
             //Assert
-            Assert.IsNotNull(actual);
-            Assert.IsAssignableFrom<GetEpaOrganisationsByStandardResponse>(actual);
+            actual.Should().NotBeNull();
+            actual.Should().BeOfType<GetEpaOrganisationsByStandardResponse>();
             actual.EpaOrganisations.Should().BeEquivalentTo(entityOrganisations);
         }
 

@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
         {
             var mediator = new Mock<IMediator>();
 
-            MappingBootstrapper.Initialize();
             var certificateResponses = new CertificatesForBatchNumberResponse()
             {
                 Certificates = Builder<CertificatePrintSummary>.CreateListOfSize(10).Build().ToList()

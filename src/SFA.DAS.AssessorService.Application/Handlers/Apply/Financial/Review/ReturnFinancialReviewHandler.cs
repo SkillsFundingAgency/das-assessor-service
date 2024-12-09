@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
 {
-    public class ReturnFinancialReviewHandler : IRequestHandler<ReturnFinancialReviewRequest>
+    public class ReturnFinancialReviewHandler : IRequestHandler<ReturnFinancialReviewRequest, Unit>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;

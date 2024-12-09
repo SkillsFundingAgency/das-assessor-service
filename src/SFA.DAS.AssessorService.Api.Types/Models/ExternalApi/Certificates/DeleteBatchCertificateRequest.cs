@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates
 {
-    public class DeleteBatchCertificateRequest : IRequest
+    public class DeleteBatchCertificateRequest : IRequest<Unit>
     {
         public long Uln { get; set; }
         public string FamilyName { get; set; }

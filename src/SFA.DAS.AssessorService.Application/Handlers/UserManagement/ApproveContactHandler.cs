@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class ApproveContactHandler : IRequestHandler<ApproveContactRequest>
+    public class ApproveContactHandler : IRequestHandler<ApproveContactRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IContactQueryRepository _contactQueryRepository;

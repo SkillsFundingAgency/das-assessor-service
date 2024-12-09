@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
-    public class DeleteBatchCertificateHandler : IRequestHandler<DeleteBatchCertificateRequest>
+    public class DeleteBatchCertificateHandler : IRequestHandler<DeleteBatchCertificateRequest, Unit>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<DeleteBatchCertificateHandler> _logger;

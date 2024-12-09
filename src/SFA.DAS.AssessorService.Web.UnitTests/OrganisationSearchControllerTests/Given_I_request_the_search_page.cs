@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -27,7 +24,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTest
     {
         private OrganisationSearchController _controller;
         private Mock<IContactsApiClient> _contactsApiClient;
-        private Mock<IHttpContextAccessor> _mockContextAccessor;
         private const string Email = "test@test.com";
         private const string GovIdentifier = "GovIdentifier-12345";
        
@@ -122,10 +118,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTest
             var actual = await _controller.Results(orgSearchViewModel, 0);
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
-            Assert.AreEqual("Index", actualViewResult.ActionName);
-            Assert.AreEqual("Dashboard", actualViewResult.ControllerName);
+            actualViewResult.ActionName.Should().Be("Index");
+            actualViewResult.ControllerName.Should().Be("Dashboard");
         }
 
         [Test]
@@ -135,7 +131,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTest
             var actual = await _controller.Results(orgSearchViewModel, 0);
 
             var actualViewResult = actual as ViewResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ViewData.ModelState.ErrorCount.Should().BeGreaterThan(0);
             actualViewResult.ViewName.Should().Be("Index");
@@ -152,7 +148,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTest
             var actual = await _controller.Results(orgSearchViewModel, 0);
 
             var actualViewResult = actual as ViewResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.Model.Should().BeOfType<OrganisationSearchViewModel>();
         }

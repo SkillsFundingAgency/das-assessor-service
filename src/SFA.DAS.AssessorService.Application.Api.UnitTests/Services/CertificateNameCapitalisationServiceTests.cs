@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
 
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("  ", "")]
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("Smith\tJones", "Smith Jones")]
@@ -46,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(inputName, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("smith", "Smith")]
@@ -57,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("MacEvicius", "Macevicius")]
@@ -102,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("MacMillan", "MacMillan")]
@@ -115,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("Al-Malik", "Al-Malik")]
@@ -140,7 +141,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
 
         [TestCase("López y Martínez", "López y Martínez")]
@@ -151,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             var actualName = _certificateNameCapitalisationService.ProperCase(name, true);
 
-            Assert.AreEqual(expectedName, actualName);
+            actualName.Should().Be(expectedName);
         }
     }
 }

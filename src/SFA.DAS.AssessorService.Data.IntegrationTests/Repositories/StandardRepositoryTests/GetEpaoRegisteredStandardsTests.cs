@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using System;
@@ -199,7 +200,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
 
             public void Verify(int numberOfResults)
             {
-                Assert.That(_result.PageOfResults.Count, Is.EqualTo(numberOfResults));
+                _result.PageOfResults.Count().Should().Be(numberOfResults);
             }
         }
     }

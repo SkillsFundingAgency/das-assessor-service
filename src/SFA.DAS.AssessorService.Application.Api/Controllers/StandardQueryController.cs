@@ -23,11 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         private readonly ILogger<StandardQueryController> _logger;
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public StandardQueryController(IMediator mediator, ILogger<StandardQueryController> logger)
+        public StandardQueryController(IMediator mediator, ILogger<StandardQueryController> logger, IMapper mapper)
         {
             _mediator = mediator;
             _logger = logger;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -104,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return NotFound();
             }
 
-            var result = epaOrganisationResponse.EpaOrganisations.Select(Mapper.Map<OrganisationStandardResponse>).ToList();
+            var result = epaOrganisationResponse.EpaOrganisations.Select(_mapper.Map<OrganisationStandardResponse>).ToList();
 
             return Ok(result);
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -13,7 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Api
         public static void Main(string[] args)
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var logger = NLogBuilder.ConfigureNLog(environment == "Development" ? "nlog.Development.config" : "nlog.config").GetCurrentClassLogger();
+            var configFileName = environment == "Development" ? "nlog.Development.config" : "nlog.config";
+
+            LogManager.Setup().LoadConfigurationFromFile(configFileName);
+            var logger = LogManager.GetCurrentClassLogger();
 
             try
             {
