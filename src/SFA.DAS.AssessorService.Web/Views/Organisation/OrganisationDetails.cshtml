@@ -21,8 +21,8 @@
                     </h2>
                     <ul class="govuk-tabs__list">
                         <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                            <a class="govuk-tabs__tab" href="#register-details">
-                                Register details
+                            <a class="govuk-tabs__tab" href="#details">
+                                Details
                             </a>
                         </li>
                         <li class="govuk-tabs__list-item">
@@ -31,21 +31,21 @@
                             </a>
                         </li>
                     </ul>
-                    <section class="govuk-tabs__panel" id="register-details">
+                    <section class="govuk-tabs__panel" id="details">
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-two-thirds">
-                                <h2 class="govuk-heading-l">Register details</h2>
+                                <h2 class="govuk-heading-l">Details</h2>
                                 @if (string.IsNullOrEmpty(Model.PrimaryContactName))
                                 {
                                     <div class="govuk-warning-text">
                                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                                         <strong class="govuk-warning-text__text">
                                             <span class="govuk-warning-text__assistive">Warning</span>
-                                            We need to know your contact name for the register
+                                            We need to know your contact name
                                         </strong>
                                     </div>
                                 }
-                                <p class="govuk-body">This is the information that employers and training providers will use to contact you.</p>
+                            <p class="govuk-body">Employers and training providers will see this contact information on <a class="govuk-link das-wrap" href="@Model.FindAnEPAOUrl">Find an end-point assessment organisation</a></p>
                             </div>
                         </div>
                         <div class="govuk-grid-row">
