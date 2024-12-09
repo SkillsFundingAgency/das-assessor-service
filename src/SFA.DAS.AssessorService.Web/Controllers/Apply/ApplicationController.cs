@@ -959,7 +959,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
             else if (sequence.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                pageContext = "Withdrawing from register";
+                pageContext = "Withdrawing from all standards";
             }
             return pageContext;
         }
