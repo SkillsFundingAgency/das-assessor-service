@@ -104,6 +104,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 var viewModel = MapOrganisationModel(organisation);
                 viewModel.ExternalApiSubscriptions = await GetExternalApiSubscriptions(_webConfiguration.AzureApiAuthentication.ProductId, ukprn);
+                viewModel.FindAnEPAOUrl = _webConfiguration.FindAnEPAOUrl;
 
                 var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
                 var userPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userId));

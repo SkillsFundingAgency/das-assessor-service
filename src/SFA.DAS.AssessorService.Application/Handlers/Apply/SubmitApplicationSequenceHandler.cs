@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
             else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.WithdrawalEPAOSubmission);
+                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
             }
 
