@@ -35,6 +35,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Web.Extensions;
 using System.Linq;
 using SFA.DAS.GovUK.Auth.Services;
+using SFA.DAS.GovUK.Auth.Models;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
@@ -79,8 +80,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             var cookieDomain = isLocal ? "" : configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
             var loginRedirect = isLocal ? "" : $"{configuration.ServiceLink}/service/account-details";
 
-            services.AddAndConfigureGovUkAuthentication(config, typeof(AssessorServiceAccountPostAuthenticationClaimsHandler),
-                "/account/signedout", "/service/account-details", cookieDomain, loginRedirect);
+            services.AddAndConfigureGovUkAuthentication(config, 
+                new AuthRedirects
+                { 
+                    CookieDomain = cookieDomain,
+                    LoginRedirect = loginRedirect,
+                    SignedOutRedirectUrl = "/account/signedout"
+
+                },
+                typeof(AssessorServiceAccountPostAuthenticationClaimsHandler));
 
             services.AddAuthorization(options =>
             {
