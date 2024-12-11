@@ -28,7 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string organisationName);
         Task<IEnumerable<OrganisationStandardSummary>> GetAllOrganisationStandardByOrganisationId(string organisationId);
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId);
-        Task<IEnumerable<AparSummary>> GetAparSummary(int? ukprn = null);
 
         Task<IEnumerable<AppliedStandardVersion>> GetAppliedStandardVersionsForEPAO(string organisationId, string standardReference);
 
@@ -38,8 +37,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(int organisationStandardId);
 
         Task<string> GetEpaOrgIdByEndPointAssessmentName(string name);
-
-        Task<int?> AparSummaryUpdate();
-        Task<DateTime> GetAparSummaryLastUpdated();
     }
 }
