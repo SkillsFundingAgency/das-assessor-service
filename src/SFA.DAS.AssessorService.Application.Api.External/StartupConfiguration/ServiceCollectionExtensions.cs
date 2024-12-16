@@ -156,19 +156,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
 
         public static IServiceCollection AddCustomSwagger(this IServiceCollection services, string instanceName, IWebHostEnvironment env)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(config =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = $"Assessor Service API {instanceName}",
-                    Version = "v1"
-                });
+                config.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {instanceName}", Version = "v1" });
+                config.CustomSchemaIds(i => i.FullName);
 
                 if (env.IsDevelopment())
                 {
                     var basePath = AppContext.BaseDirectory;
                     var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                    c.IncludeXmlComments(xmlPath);
+                    config.IncludeXmlComments(xmlPath);
                 }
             });
 
