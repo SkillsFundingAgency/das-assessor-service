@@ -87,7 +87,7 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Version</th>
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">Active apprentices</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Registered EPAOs</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Active EPAOs</th>
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">Completed assessments</th>
             </tr>
         </thead>
@@ -189,8 +189,6 @@
                     <a class="govuk-link" asp-controller="OppFinder" asp-action="ExpressionOfInterest" asp-route-standardReference="@Model.StandardReference" asp-route-standardStatus="@StandardStatus.Approved" asp-route-backLink="true">expression of interest form</a>
                 </p>
             *@
-            <a class="govuk-button" href="/" target="_blank" rel="noopener noreferrer">Apply to assess this Standard</a>
-
             <p class="govuk-body">
                 <a class="govuk-link" href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed" target="_blank" rel="noopener noreferrer">How apprentices in England are assessed</a>
             </p>

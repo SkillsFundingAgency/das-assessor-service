@@ -4,7 +4,7 @@
     {
         public int ActiveApprentices { get; set; }
 
-        public int RegisteredEPAOs { get; set; }
+        public int ActiveEPAOs { get; set; }
 
         public string Versions { get; set; }
     }
@@ -13,6 +13,6 @@
     {
         StandardName,
         ActiveApprentices,
-        RegisteredEPAOs
+        ActiveEPAOs
     }
 }
