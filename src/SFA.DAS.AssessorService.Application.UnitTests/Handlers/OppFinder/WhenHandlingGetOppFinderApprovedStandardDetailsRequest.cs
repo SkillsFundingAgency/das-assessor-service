@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
                 {
                     StandardCode = 999,
                     StandardReference = "ST0001",
+                    ApprovedForDelivery = "2021-12-15"
                 },
                 RegionResults = new List<OppFinderApprovedStandardRegionResult>()
                 {
@@ -90,6 +91,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             {
                 result.StandardCode.Should().Be(999);
                 result.StandardReference.Should().Be("ST0001");
+                result.ApprovedForDelivery.Should().Be("15 December 2021");
             }
         }
 
