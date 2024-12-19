@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards
 {
-    public class WithdrawStandardHandler : IRequestHandler<WithdrawStandardRequest>
+    public class WithdrawStandardHandler : IRequestHandler<WithdrawStandardRequest, Unit>
     {
         private readonly IEpaOrganisationValidator _validator;
         private readonly IOrganisationStandardRepository _organisationStandardRepository;

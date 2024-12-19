@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
-    public class SendOptInStandardVersionEmailHandler : IRequestHandler<SendOptInStandardVersionEmailRequest>
+    public class SendOptInStandardVersionEmailHandler : IRequestHandler<SendOptInStandardVersionEmailRequest, Unit>
     {
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;

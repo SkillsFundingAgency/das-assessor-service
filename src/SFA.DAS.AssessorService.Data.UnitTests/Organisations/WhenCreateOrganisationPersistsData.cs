@@ -20,8 +20,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [SetUp]
         public void Arrange()
         { 
-            MappingBootstrapper.Initialize();
-
             var organisation = Builder<Organisation>.CreateNew().Build();           
                        
             var mockSet = CreateMockDbSet();

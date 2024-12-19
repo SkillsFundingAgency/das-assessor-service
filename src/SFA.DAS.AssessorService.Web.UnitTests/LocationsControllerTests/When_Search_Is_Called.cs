@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -52,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.LocationsControllerTests
 
             // Assert
             _mockLocationsApiClient.Verify(m => m.SearchLocations("Search"), Times.Once);
-            Assert.AreEqual(2, results.Count);
+            results.Count.Should().Be(2);
         }
     }
 }

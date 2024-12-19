@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Review
 {
-    public class ReturnApplicationSequenceRequest : IRequest
+    public class ReturnApplicationSequenceRequest : IRequest<Unit>
     {
         public Guid ApplicationId { get; }
         public int SequenceId { get; }

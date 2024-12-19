@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -75,7 +76,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 x.ValidateAsync(
                     It.Is<ValidationContext<AccountViewModel>>(c => c.InstanceToValidate.Equals(accountViewModel)),
                     CancellationToken.None), Times.Once);
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
         }
     
         [Test]
@@ -89,12 +90,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             var actual = await _controller.CreateAnAccount(accountViewModel);
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
             _validator.Verify(x =>
                 x.ValidateAsync(
                     It.Is<ValidationContext<AccountViewModel>>(c => c.InstanceToValidate.Equals(accountViewModel)),
                     CancellationToken.None), Times.Once);
-            Assert.AreEqual("Index",actualViewResult.ActionName);
+            actualViewResult.ActionName.Should().Be("Index");
         }
 
         [Test]
@@ -112,11 +113,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             var actual = await _controller.CreateAnAccount(accountViewModel);
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
             _validator.Verify(x =>
                 x.ValidateAsync(It.Is<ValidationContext<AccountViewModel>>(c => c.InstanceToValidate.Equals(accountViewModel)),
                     CancellationToken.None), Times.Once);
-            Assert.AreEqual("Error",actualViewResult.ActionName);
+            actualViewResult.ActionName.Should().Be("Error");
         }
         
     }    

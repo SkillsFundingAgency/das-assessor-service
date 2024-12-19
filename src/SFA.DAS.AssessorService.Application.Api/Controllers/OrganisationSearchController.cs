@@ -30,8 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, IRoatpApiClient roatpApiClient, IReferenceDataApiClient referenceDataApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMediator mediator, IRoatpApiClient roatpApiClient, IReferenceDataApiClient referenceDataApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient, IMapper mapper)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -39,6 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet("organisations")]
@@ -226,7 +228,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     _logger.LogInformation($@"Search Assessment Organisations for [{searchTerm}]");
                     var apiResponse = await _mediator.Send(new SearchAssessmentOrganisationsRequest { SearchTerm = searchTerm });
                     var organisationSearchResults =
-                        Mapper.Map<IEnumerable<AssessmentOrganisationSummary>, IEnumerable<OrganisationSearchResult>>(apiResponse);
+                        _mapper.Map<IEnumerable<AssessmentOrganisationSummary>, IEnumerable<OrganisationSearchResult>>(apiResponse);
                     if (organisationSearchResults != null) results.AddRange(organisationSearchResults);
                 }
                 catch (Exception ex)

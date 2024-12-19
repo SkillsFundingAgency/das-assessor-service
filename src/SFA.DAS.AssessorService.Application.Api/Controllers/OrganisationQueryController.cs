@@ -28,16 +28,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
+        private readonly IMapper _mapper;
 
         public OrganisationQueryController(
             ILogger<OrganisationQueryController> logger, IMediator mediator, IOrganisationQueryRepository organisationQueryRepository, 
-            UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer)
+            UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer, IMapper mapper)
         {
             _logger = logger;
             _mediator = mediator;
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
+            _mapper = mapper;
         }
         
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
@@ -53,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (!result.IsValid)
                 throw new BadRequestException(result.Errors[0].ErrorMessage);
 
-            var organisation = Mapper.Map<OrganisationResponse>(await _organisationQueryRepository.GetByUkPrn(ukprn));
+            var organisation = _mapper.Map<OrganisationResponse>(await _organisationQueryRepository.GetByUkPrn(ukprn));
             if (organisation == null)
             {
                 var ex = new ResourceNotFoundException(
@@ -72,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation("Received request to retrieve All Organisations");
 
             var organisations =
-                Mapper.Map<List<OrganisationResponse>>(await _organisationQueryRepository.GetAllOrganisations());
+                _mapper.Map<List<OrganisationResponse>>(await _organisationQueryRepository.GetAllOrganisations());
                 
             return Ok(organisations);
         }
@@ -109,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException(userId.ToString());
             }
             
-            return Ok(Mapper.Map<Organisation,OrganisationResponse>(organisation));
+            return Ok(_mapper.Map<Organisation,OrganisationResponse>(organisation));
         }
 
         [HttpGet("organisation/earliest-withdrawal/{id}", Name = "GetOrganisationEarliestWithdrawal")]

@@ -17,12 +17,14 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission
         private readonly ISearchCharitiesV1SoapClient _client;
         private readonly ILogger<CharityCommissionApiClient> _logger;
         private readonly ICharityCommissionApiClientConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public CharityCommissionApiClient(ISearchCharitiesV1SoapClient client, ILogger<CharityCommissionApiClient> logger, ICharityCommissionApiClientConfiguration configuration)
+        public CharityCommissionApiClient(ISearchCharitiesV1SoapClient client, ILogger<CharityCommissionApiClient> logger, ICharityCommissionApiClientConfiguration configuration, IMapper mapper)
         {
             _client = client;
             _logger = logger;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         public async Task<AssessorService.Api.Types.CharityCommission.Charity> GetCharity(int charityNumber)
@@ -56,7 +58,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission
             _logger.LogInformation($"Searching Charity Commission - Charity Details. Charity Number: {charityNumber}");
             var request = new GetCharityByRegisteredCharityNumberRequest(_configuration.ApiKey, charityNumber);
             var apiResponse = await _client.GetCharityByRegisteredCharityNumberAsync(request);
-            return Mapper.Map<Charity, AssessorService.Api.Types.CharityCommission.Charity>(apiResponse.GetCharityByRegisteredCharityNumberResult);
+            return _mapper.Map<Charity, AssessorService.Api.Types.CharityCommission.Charity>(apiResponse.GetCharityByRegisteredCharityNumberResult);
         }
     }
 }

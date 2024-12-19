@@ -20,13 +20,16 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse
         private readonly HttpClient _client;
         private readonly ILogger<CompaniesHouseApiClient> _logger;
         private readonly ICompaniesHouseApiClientConfiguration _configuration;
+        private readonly IMapper _mapper;
 
         public CompaniesHouseApiClient(HttpClient client, ILogger<CompaniesHouseApiClient> logger,
-            ICompaniesHouseApiClientConfiguration configuration)
+            ICompaniesHouseApiClientConfiguration configuration,
+            IMapper mapper)
         {
             _client = client;
             _logger = logger;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         public async Task<AssessorService.Api.Types.CompaniesHouse.Company> GetCompany(string companyNumber)
@@ -89,7 +92,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse
             _logger.LogInformation($"Searching Companies House - Company Details. Company Number: {companyNumber}");
             var apiResponse =
                 await Get<AssessorService.Api.Types.Models.CompaniesHouse.CompanyDetails>($"/company/{companyNumber}");
-            return Mapper
+            return _mapper
                 .Map<AssessorService.Api.Types.Models.CompaniesHouse.CompanyDetails,
                     AssessorService.Api.Types.CompaniesHouse.Company>(apiResponse);
         }
@@ -105,7 +108,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse
             var items = activeOnly ? apiResponse.items?.Where(i => i.resigned_on is null) : apiResponse.items;
 
             var officers =
-                Mapper
+                _mapper
                     .Map<IEnumerable<AssessorService.Api.Types.Models.CompaniesHouse.Officer>,
                         IEnumerable<AssessorService.Api.Types.CompaniesHouse.Officer>>(items);
 
@@ -144,7 +147,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse
                 disqualifications.AddRange(apiResponseCorporate.disqualifications);
             }
 
-            return Mapper
+            return _mapper
                 .Map<IEnumerable<AssessorService.Api.Types.Models.CompaniesHouse.Disqualification>,
                     IEnumerable<AssessorService.Api.Types.CompaniesHouse.Disqualification>>(disqualifications);
         }
@@ -159,7 +162,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse
                     $"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
 
             var items = activeOnly ? apiResponse.items?.Where(i => i.ceased_on is null) : apiResponse.items;
-            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.CompaniesHouse.PersonWithSignificantControl>,
+            return _mapper.Map<IEnumerable<AssessorService.Api.Types.Models.CompaniesHouse.PersonWithSignificantControl>,
                 IEnumerable<AssessorService.Api.Types.CompaniesHouse.PersonWithSignificantControl>>(items);
         }
 

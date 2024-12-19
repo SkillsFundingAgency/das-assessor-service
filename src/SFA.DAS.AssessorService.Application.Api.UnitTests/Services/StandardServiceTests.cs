@@ -41,8 +41,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetAllStandardOptions();
 
-            Assert.IsInstanceOf<IEnumerable<StandardOptions>>(result);
-            Assert.AreEqual(result.Count(), options.Count());
+            result.Should().BeAssignableTo<IEnumerable<StandardOptions>>();
+            options.Count().Should().Be(result.Count());
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetAllStandardOptions();
 
-            Assert.IsNull(result);
+            result.Should().BeNull();
             VerifyLogger(LogLevel.Error, new EventId(0), "STANDARD OPTIONS: Failed to get standard options");
         }
 
@@ -63,8 +63,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardOptionsForLatestStandardVersions();
 
-            Assert.IsInstanceOf<IEnumerable<StandardOptions>>(result);
-            Assert.AreEqual(result.Count(), standardOptions.Count());
+            result.Should().BeAssignableTo<IEnumerable<StandardOptions>>();
+            standardOptions.Count().Should().Be(result.Count());
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardOptionsForLatestStandardVersions();
 
-            Assert.IsNull(result);
+            result.Should().BeNull();
             VerifyLogger(LogLevel.Error, new EventId(0), "STANDARD OPTIONS: Failed to get options for latest version of each standard");
         }
 
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _mockStandardRepository.Setup(s => s.GetStandardOptionsByStandardUId(standardUId)).Throws<TimeoutException>();
 
             var result = await _standardService.GetStandardOptionsByStandardId(standardUId);
-            Assert.IsNull(result);
+            result.Should().BeNull();
             VerifyLogger(LogLevel.Error, new EventId(0), $"STANDARD OPTIONS: Failed to get standard options for id {standardUId}");
         }
 
@@ -156,7 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
                 .Throws(new Exception());
 
             var result = await _standardService.GetStandardOptionsByStandardIdAndVersion(standardReference, version);
-            Assert.AreEqual(null, result);
+            result.Should().Be(null);
             
             VerifyLogger(LogLevel.Error, new EventId(0), $"Could not find standard with id: {standardReference} and Version: {version}");
         }
@@ -198,8 +198,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetAllStandardVersions();
 
-            Assert.IsInstanceOf<IEnumerable<Standard>>(result);
-            Assert.AreEqual(result.Count(), standards.Count());
+            result.Should().BeAssignableTo<IEnumerable<Standard>>();
+            standards.Count().Should().Be(result.Count());
         }
 
         [Test, AutoData]
@@ -209,8 +209,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
             var result = await _standardService.GetStandardVersionsByLarsCode(standardId);
 
-            Assert.IsInstanceOf<IEnumerable<Standard>>(result);
-            Assert.AreEqual(result.Count(), standards.Count());
+            result.Should().BeAssignableTo<IEnumerable<Standard>>();
+            standards.Count().Should().Be(result.Count());
         }
 
         [Test, AutoData]

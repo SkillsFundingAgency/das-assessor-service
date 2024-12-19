@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -85,14 +86,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var model = viewResult.Model as OptInStandardVersionViewModel;
 
             // Assert all fields are populated correctly
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.AreEqual(testData.ReferenceNumber, model.StandardReference);
-                Assert.AreEqual(testData.ExpectedTitle, model.StandardTitle);
-                Assert.AreEqual(testData.ExpectedVersion, model.Version);
-                Assert.AreEqual(testData.ExpectedVersionEarliestStartDate, model.EffectiveFrom);
-                Assert.AreEqual(testData.ExpectedVersionLatestEndDate, model.EffectiveTo);
-            });
+                model.StandardReference.Should().Be(testData.ReferenceNumber);
+                model.StandardTitle.Should().Be(testData.ExpectedTitle);
+                model.Version.Should().Be(testData.ExpectedVersion);
+                model.EffectiveFrom.Should().Be(testData.ExpectedVersionEarliestStartDate);
+                model.EffectiveTo.Should().Be(testData.ExpectedVersionLatestEndDate);
+            }
         }
 
         [TestCase(null)]
@@ -100,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public void OptInStandardVersion_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(referenceNumber, "1.0"));
-            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
+            ex.ParamName.Should().Be("referenceNumber");
         }
 
         [TestCase(null)]
@@ -108,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public void OptInStandardVersion_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion("ST0001", version));
-            Assert.That(ex.ParamName, Is.EqualTo("version"));
+            ex.ParamName.Should().Be("version");
         }
 
         [TestCase("ST0001", "1.3")]
@@ -134,22 +135,22 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.OptInStandardVersion(model);
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 Assert.That(result, Is.TypeOf<RedirectToRouteResult>());
 
                 var redirectResult = result as RedirectToRouteResult;
-                Assert.That(redirectResult.RouteName, Is.EqualTo(StandardController.OptInStandardVersionConfirmationRouteGet));
-                Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
-                Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
-            });
+                redirectResult.RouteName.Should().Be(StandardController.OptInStandardVersionConfirmationRouteGet);
+                redirectResult.RouteValues["referenceNumber"].Should().Be(model.StandardReference);
+                redirectResult.RouteValues["version"].Should().Be(model.Version);
+            };
         }
 
         [Test]
         public void OptInStandardVersion_ReturnsArgumentException_WhenPostCalledWithNullModel()
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersion(null));
-            Assert.That(ex.ParamName, Is.Null);
+            ex.ParamName.Should().BeNull();
         }
 
         [TestCase(null)]
@@ -192,12 +193,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.OptInStandardVersion(model);
             var redirectResult = result as RedirectToRouteResult;
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(redirectResult.RouteName, Is.EqualTo(nameof(StandardController.OptInStandardVersionRouteGet)));
-                Assert.That(redirectResult.RouteValues["referenceNumber"], Is.EqualTo(model.StandardReference));
-                Assert.That(redirectResult.RouteValues["version"], Is.EqualTo(model.Version));
-            });
+                redirectResult.RouteName.Should().Be(nameof(StandardController.OptInStandardVersionRouteGet));
+                redirectResult.RouteValues["referenceNumber"].Should().Be(model.StandardReference);
+                redirectResult.RouteValues["version"].Should().Be(model.Version);
+            }
         }
 
         [Test]
@@ -207,18 +208,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.OptInStandardVersionConfirmation("ST0001", "1.0");
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 Assert.That(result, Is.TypeOf<ViewResult>());
                 var viewResult = result as ViewResult;
                 Assert.That(viewResult.Model, Is.TypeOf<OptInStandardVersionConfirmationViewModel>());
                 var model = viewResult.Model as OptInStandardVersionConfirmationViewModel;
 
-                Assert.AreEqual("Standard Title One", model.StandardTitle);
-                Assert.AreEqual("ST0001", model.StandardReference);
-                Assert.AreEqual("1.0", model.Version);
-                Assert.AreEqual("http://feedback-url.com", model.FeedbackUrl);
-            });
+                model.StandardTitle.Should().Be("Standard Title One");
+                model.StandardReference.Should().Be("ST0001");
+                model.Version.Should().Be("1.0");
+                model.FeedbackUrl.Should().Be("http://feedback-url.com");
+            }
         }
 
         [TestCase(null)]
@@ -226,7 +227,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyReference(string referenceNumber)
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersionConfirmation(referenceNumber, "1.0"));
-            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
+            ex.ParamName.Should().Be("referenceNumber");
         }
 
         [TestCase(null)]
@@ -234,7 +235,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         public void OptInStandardVersionConfirmation_ReturnsArgumentException_WhenGetCalledWithNullOrEmptyVersion(string version)
         {
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.OptInStandardVersionConfirmation("ST0001", version));
-            Assert.That(ex.ParamName, Is.EqualTo("version"));
+            ex.ParamName.Should().Be("version");
         }
 
         [Test]

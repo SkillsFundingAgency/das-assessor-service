@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
@@ -9,6 +10,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public CompaniesHouseSummaryProfile()
         {
             CreateMap<Company, Domain.Entities.CompaniesHouseSummary>()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -18,8 +20,7 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.PersonsWithSignificantControl, opt => opt.MapFrom(source => source.PeopleWithSignificantControl))
                 .ForMember(dest => dest.CompanyTypeDescription, opt => opt.Ignore())
                 .ForMember(dest => dest.ManualEntryRequired, opt => opt.Ignore())
-                .AfterMap<MapManualEntryRequiredAction>()
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .AfterMap<MapManualEntryRequiredAction>();
         }
 
         public class MapManualEntryRequiredAction : IMappingAction<Company, Domain.Entities.CompaniesHouseSummary>
@@ -41,12 +42,12 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public DirectorInformationProfile()
         {
             CreateMap<Officer, Domain.Entities.DirectorInformation>()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
                 .ForMember(dest => dest.AppointedDate, opt => opt.MapFrom(source => source.AppointedOn))
-                .ForMember(dest => dest.ResignedDate, opt => opt.MapFrom(source => source.ResignedOn))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.ResignedDate, opt => opt.MapFrom(source => source.ResignedOn));
         }
     }
 
@@ -55,12 +56,12 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public PersonSignificantControlInformationProfile()
         {
             CreateMap<PersonWithSignificantControl, Domain.Entities.PersonWithSignificantControlInformation>()
+                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
                 .ForMember(dest => dest.NotifiedDate, opt => opt.MapFrom(source => source.NotifiedOn))
-                .ForMember(dest => dest.CeasedDate, opt => opt.MapFrom(source => source.CeasedOn))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.CeasedDate, opt => opt.MapFrom(source => source.CeasedOn));
         }
     }
 }

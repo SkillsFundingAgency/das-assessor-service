@@ -11,22 +11,16 @@ using System.Collections.Generic;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.GetApplicationHandlerTests
 {
     [TestFixture]
-    public class GetApplicationsHandlerTestsBase
+    public class GetApplicationsHandlerTestsBase : MapperBase
     {
         protected Mock<IApplyRepository> ApplyRepository;
-        protected GetApplicationsHandler Handler;   
+        protected GetApplicationsHandler Handler;
 
         [SetUp]
         public void Setup()
         {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<List<ApplySummary>, List<ApplicationResponse>>();
-            });
-
             ApplyRepository = new Mock<IApplyRepository>();
-            Handler = new GetApplicationsHandler(ApplyRepository.Object);
+            Handler = new GetApplicationsHandler(ApplyRepository.Object, Mapper);
         }
     }
 }

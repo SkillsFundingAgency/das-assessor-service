@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class NotifyUserManagementUsersHandler : IRequestHandler<NotifyUserManagementUsersRequest>
+    public class NotifyUserManagementUsersHandler : IRequestHandler<NotifyUserManagementUsersRequest, Unit>
     {
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;

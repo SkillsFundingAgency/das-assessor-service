@@ -18,8 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         {
             Setup();
 
-            MappingBootstrapper.Initialize();
-
             _contactResponse = Builder<Contact>.CreateNew().Build();
 
             ContactQueryRepositoryMock.Setup(q => q.GetContact(Moq.It.IsAny<string>()))

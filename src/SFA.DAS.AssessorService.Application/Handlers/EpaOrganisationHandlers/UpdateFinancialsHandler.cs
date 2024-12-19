@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateFinancialsHandler : IRequestHandler<UpdateFinancialsRequest>
+    public class UpdateFinancialsHandler : IRequestHandler<UpdateFinancialsRequest, Unit>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly IRegisterQueryRepository _registerQueryRepository;

@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class SendOptOutStandardVersionEmailRequest : IRequest
+    public class SendOptOutStandardVersionEmailRequest : IRequest<Unit>
     {
         public Guid ContactId { get; set; }
 

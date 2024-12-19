@@ -11,10 +11,12 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class GetContactsForOrganisationHandler : IRequestHandler<GetContactsForOrganisationRequest, List<ContactResponse>>
+    public class GetContactsForOrganisationHandler : BaseHandler, IRequestHandler<GetContactsForOrganisationRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public GetContactsForOrganisationHandler(IContactQueryRepository contactQueryRepository)
+
+        public GetContactsForOrganisationHandler(IContactQueryRepository contactQueryRepository, IMapper mapper)
+            :base(mapper)
         {
             _contactQueryRepository = contactQueryRepository;
         }
@@ -25,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             var contacts = await _contactQueryRepository.GetContactsForOrganisation(request.OrganisationId);
             if (contacts == null)
                 return response;
-            return Mapper.Map<List<ContactResponse>>(
+            return _mapper.Map<List<ContactResponse>>(
                 contacts.Where(x => x.Status == ContactStatus.Live));
         }
     }

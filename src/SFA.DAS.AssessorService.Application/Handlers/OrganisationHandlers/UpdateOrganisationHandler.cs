@@ -9,18 +9,18 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class UpdateOrganisationHandler : IRequestHandler<UpdateOrganisationRequest, Organisation>
+    public class UpdateOrganisationHandler : BaseHandler, IRequestHandler<UpdateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
 
-        public UpdateOrganisationHandler(IOrganisationRepository organisationRepository)
+        public UpdateOrganisationHandler(IOrganisationRepository organisationRepository, IMapper mapper) :  base(mapper)
         {
             _organisationRepository = organisationRepository;
         }
 
         public async Task<Organisation> Handle(UpdateOrganisationRequest updateOrganisationRequest, CancellationToken cancellationToken)
         {
-            var organisation = Mapper.Map<Organisation>(updateOrganisationRequest);
+            var organisation = _mapper.Map<Organisation>(updateOrganisationRequest);
             return await _organisationRepository.UpdateOrganisation(organisation);
         }
     }

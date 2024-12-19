@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
-    public class OrganisationQueryBase
+    public class OrganisationQueryBase:TestBase
     {
         protected OrganisationQueryController OrganisationQueryController;
         protected UkPrnValidator UkPrnValidator;
@@ -33,15 +33,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         {
             Mediator = new Mock<IMediator>();
 
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<Organisation, OrganisationResponse>();
-            });
-
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object);
+            OrganisationQueryController = new OrganisationQueryController(
+                ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, Mapper);
         }
 
         private void SetupControllerMocks()

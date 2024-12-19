@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId));
         }
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.NotFound);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<NotFoundException>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgNotFound, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound));
         }
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.AlreadyExists);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId));
         }       

@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateEma
     /// <summary>
     /// Handler responsible for updating the Email address of the Contact.
     /// </summary>
-    public class UpdateEmailHandler : IRequestHandler<UpdateEmailRequest>
+    public class UpdateEmailHandler : IRequestHandler<UpdateEmailRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
 

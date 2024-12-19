@@ -14,12 +14,13 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class WithdrawalApplicationsHandler : IRequestHandler<WithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>
+    public class WithdrawalApplicationsHandler : BaseHandler, IRequestHandler<WithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>
     {
         private readonly IApplyRepository _repository;
         private readonly ILogger<WithdrawalApplicationsHandler> _logger;
 
-        public WithdrawalApplicationsHandler(IApplyRepository repository, ILogger<WithdrawalApplicationsHandler> logger)
+        public WithdrawalApplicationsHandler(IApplyRepository repository, ILogger<WithdrawalApplicationsHandler> logger, IMapper mapper)
+            :base(mapper)
         {
             _repository = repository;
             _logger = logger;
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
             var organisationApplicationsResult = await _repository.GetWithdrawalApplications(request.OrganisationId, request.ReviewStatus, request.SortColumn, request.SortAscending,
                 request.PageSize, request.PageIndex);
 
-            var items = Mapper.Map<IEnumerable<ApplicationListItem>, IEnumerable<ApplicationSummaryItem>>(organisationApplicationsResult.PageOfResults);
+            var items = _mapper.Map<IEnumerable<ApplicationListItem>, IEnumerable<ApplicationSummaryItem>>(organisationApplicationsResult.PageOfResults);
 
             if (items.Any())
             {

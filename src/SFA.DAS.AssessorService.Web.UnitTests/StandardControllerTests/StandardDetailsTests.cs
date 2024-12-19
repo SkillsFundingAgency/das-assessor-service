@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -69,17 +71,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             var result = await _sut.StandardDetails("ST0001", string.Empty);
 
             // Assert
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 Assert.That(result, Is.TypeOf<ViewResult>());
                 var viewResult = result as ViewResult;
                 Assert.That(viewResult.Model, Is.TypeOf<StandardDetailsViewModel>());
                 var model = viewResult.Model as StandardDetailsViewModel;
 
-                Assert.AreEqual(_allVersions.FirstOrDefault(), model.SelectedStandard);
-                Assert.AreEqual(_allVersions, model.AllVersions);
-                Assert.AreEqual(_approvedVersions, model.ApprovedVersions);
-            });
+                model.SelectedStandard.Should().Be(_allVersions.FirstOrDefault());
+                model.AllVersions.Should().BeEquivalentTo(_allVersions);
+                model.ApprovedVersions.Should().BeEquivalentTo(_approvedVersions);
+            }
         }
 
         [TestCase(null)]
@@ -89,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         {
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _sut.StandardDetails(referenceNumber, string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("referenceNumber"));
+            ex.ParamName.Should().Be("referenceNumber");
         }
 
         [Test]

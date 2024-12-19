@@ -10,10 +10,10 @@ using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class GetContactsWhoCanBePrimaryForOrganisationHandler : IRequestHandler<GetContactsWhoCanBePrimaryForOrganisationRequest, List<ContactResponse>>
+    public class GetContactsWhoCanBePrimaryForOrganisationHandler : BaseHandler, IRequestHandler<GetContactsWhoCanBePrimaryForOrganisationRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public GetContactsWhoCanBePrimaryForOrganisationHandler(IContactQueryRepository contactQueryRepository)
+        public GetContactsWhoCanBePrimaryForOrganisationHandler(IContactQueryRepository contactQueryRepository, IMapper mapper) : base (mapper)
         {
             _contactQueryRepository = contactQueryRepository;
         }
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             var contacts = await _contactQueryRepository.GetContactsForEpao(request.EndPointAssessorOrganisationId);
             if (contacts == null)
                 return response;
-            return Mapper.Map<List<ContactResponse>>(
+            return _mapper.Map<List<ContactResponse>>(
                 contacts.Where(x => x.Status == ContactStatus.Live));
         }
     }

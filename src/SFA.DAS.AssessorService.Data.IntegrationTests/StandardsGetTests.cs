@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var standard = await _repository.GetStandardVersionByIFateReferenceNumber(standardReference, version);
 
-            Assert.AreEqual(expectedStandard.StandardUId, standard.StandardUId);
+            standard.StandardUId.Should().Be(expectedStandard.StandardUId);
         }
 
         [OneTimeTearDown]

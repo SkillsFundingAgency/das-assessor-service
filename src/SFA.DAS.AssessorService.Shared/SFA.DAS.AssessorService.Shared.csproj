@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 
     <Description>Assessor service shared codebase</Description>
     <Authors>ESFA</Authors>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -372,7 +372,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Configuration\AssessorApiClientConfiguration.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Configuration\AssessorApiClientConfiguration.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\IAssessorApiClientFactory.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\IAssessorApiClientFactory.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\ICache.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SessionCache.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\SystemTime.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\SystemTime.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\Application.cs" Link="SFA.DAS.AssessorService.ApplyTypes\Application.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.ApplyTypes\ApplicationReviewStatus.cs" Link="SFA.DAS.AssessorService.ApplyTypes\ApplicationReviewStatus.cs" />
@@ -546,24 +545,37 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="7.0.1" />
-    <PackageReference Include="Azure.Identity" Version="1.10.4" />
-    <PackageReference Include="FluentValidation" Version="11.2.1" />
-    <PackageReference Include="MediatR" Version="11.1.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.9" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Identity" Version="1.13.0" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.10" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Polly" Version="7.2.2" />
-    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="Polly" Version="8.4.2" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.304-prerelease-3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--These packages are required to override transient package vulnerabilities-->
+
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.10" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

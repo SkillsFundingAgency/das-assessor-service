@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class UpdateCertificateWithReprintReasonCommandHandler : IRequestHandler<UpdateCertificateWithReprintReasonCommand>
+    public class UpdateCertificateWithReprintReasonCommandHandler : IRequestHandler<UpdateCertificateWithReprintReasonCommand, Unit>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<UpdateCertificateWithReprintReasonCommandHandler> _logger;

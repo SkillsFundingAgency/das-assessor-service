@@ -11,12 +11,13 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationEmailHandler : IRequestHandler<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>
+    public class UpdateEpaOrganisationEmailHandler : BaseHandler, IRequestHandler<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>
     { 
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public UpdateEpaOrganisationEmailHandler(IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public UpdateEpaOrganisationEmailHandler(IContactQueryRepository contactQueryRepository, IMediator mediator, IMapper mapper)
+            :base(mapper)
         {
             _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
-            var updateEpaOrganisationRequest = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
+            var updateEpaOrganisationRequest = _mapper.Map<UpdateEpaOrganisationRequest>(organisation);
             updateEpaOrganisationRequest.Email = request.Email;
 
             await _mediator.Send(updateEpaOrganisationRequest);

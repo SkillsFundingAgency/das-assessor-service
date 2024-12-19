@@ -122,6 +122,7 @@ jobs:
             AppServiceName: $(ExternalApiAppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/SFA.DAS.AssessorService/SFA.DAS.AssessorService.Application.Api.External.zip
 - deployment: DeployExternalAPIAPIMResources
+  dependsOn: DeployResources
   condition: in('${{ parameters.Environment }}', 'AT', 'TEST', 'TEST2', 'PP', 'PROD')
   pool:
     name: DAS - Continuous Deployment Agents
