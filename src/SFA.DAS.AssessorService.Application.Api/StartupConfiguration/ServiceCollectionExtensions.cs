@@ -15,18 +15,14 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.Http.Configuration;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using System;
-using System.Configuration;
 using System.Net.Http.Headers;
-using static CharityCommissionService.SearchCharitiesV1SoapClient;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
@@ -40,11 +36,13 @@ using System.IO;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using Microsoft.AspNetCore.Hosting;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+using SFA.DAS.AssessorService.Application.Api.Services.Validation;
+using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -196,10 +194,13 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddTransient<CacheService>();
             services.AddTransient<IStandardService, StandardService>();
             services.AddTransient<IAzureTokenService, AzureTokenService>();
+            services.AddTransient<IValidationService, ValidationService>();
+            services.AddTransient<ICertificateNameCapitalisationService, CertificateNameCapitalisationService>();
+            services.AddTransient<IOuterApiService, OuterApiService>();
             return services;
         }
 
-        public static IServiceCollection AddHttpAndApiClients(this IServiceCollection services, 
+        public static IServiceCollection AddHttpAndApiClients(this IServiceCollection services,
             IApiConfiguration apiConfiguration, Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration notificationConfig)
         {
             services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
@@ -211,7 +212,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
             services.AddHttpClient<IOuterApiClient, OuterApiClient>(config =>
             {
-                config.BaseAddress = new Uri(apiConfiguration.OuterApi.BaseUrl);
+                var baseUrl = apiConfiguration.OuterApi.BaseUrl;
+                config.BaseAddress = new Uri(baseUrl);
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
@@ -245,17 +247,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
             services.AddSingleton<IReferenceDataApiClient, ReferenceDataApiClient>();
             services.AddSingleton<IRoatpApiClient, RoatpApiClient>();
-            services.AddSingleton<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddSingleton<ICharityCommissionApiClient, CharityCommissionApiClient>();
             services.AddSingleton<IQnaApiClient, QnaApiClient>();
             services.AddSingleton<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
             services.AddSingleton<IOrganisationsApiClient, OrganisationsApiClient>();
             services.AddSingleton<IContactsApiClient, ContactsApiClient>();
-            services.AddSingleton<IOuterApiClient, OuterApiClient>();
 
             return services;
         }
-
         public static IServiceCollection AddHelpers(this IServiceCollection services)
         {
             services.AddTransient<IDateTimeHelper, DateTimeHelper>();
@@ -302,7 +301,5 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             return services;
 
         }
-
-        
     }
 }
