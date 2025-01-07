@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -99,7 +100,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 app.UseAuthentication();
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapControllers();
+                    if (env.IsDevelopment())
+                    {
+                        endpoints.MapControllers().WithMetadata(new AllowAnonymousAttribute());
+                    }
+                    else
+                    {
+                        endpoints.MapControllers();
+                    }
                 });
             }
             catch (Exception e)

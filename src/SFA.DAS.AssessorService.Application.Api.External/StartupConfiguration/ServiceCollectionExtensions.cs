@@ -25,6 +25,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
 {
@@ -160,6 +162,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
             {
                 config.SwaggerDoc("v1", new OpenApiInfo { Title = $"Assessor Service API {instanceName}", Version = "v1" });
                 config.CustomSchemaIds(i => i.FullName);
+                config.EnableAnnotations();
+                config.ExampleFilters();
 
                 if (env.IsDevelopment())
                 {
@@ -167,7 +171,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
                     var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
                     config.IncludeXmlComments(xmlPath);
                 }
+                config.SchemaFilter<SwaggerRequiredSchemaFilter>();
             });
+            services.AddSwaggerExamplesFromAssemblyOf<Startup>();
 
             return services;
         }
