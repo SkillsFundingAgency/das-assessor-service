@@ -81,14 +81,21 @@ BEGIN
     MERGE INTO [dbo].[Learner] [Target]
     USING #IlrIdsToBeWithdrawn [Source]
     ON ([Target].[Id] = [Source].[Id])
-    WHEN MATCHED THEN UPDATE SET [CompletionStatus] = 3;
+    WHEN MATCHED THEN UPDATE
+    SET 
+        [CompletionStatus] = 3,
+        [LastUpdated] = GETUTCDATE(),
+        [LatestIlrs] = GETUTCDATE();
 
     -- withdraw the Ilrs
     MERGE INTO [dbo].[Ilrs] [Target]
     USING #IlrIdsToBeWithdrawn [Source]
     ON ([Target].[Id] = [Source].[Id])
-    WHEN MATCHED THEN UPDATE SET [CompletionStatus] = 3;
-    
+    WHEN MATCHED THEN UPDATE 
+    SET 
+        [CompletionStatus] = 3,
+        [UpdatedAt] = GETUTCDATE();
+
     IF @TestMode = 1
     BEGIN
         SELECT PossibleOverlap, Id, CompletionStatus
