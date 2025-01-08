@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     if (lastSubmission != null)
                     {
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedbackNotification);
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedback);
 
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new
@@ -131,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     {                        
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAORegisterWithdrawalApproval);
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationWithdrawalApproval);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName,  LoginLink = loginLink }), cancellationToken);
                     }

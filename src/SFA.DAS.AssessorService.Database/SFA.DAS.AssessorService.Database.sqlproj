@@ -73,6 +73,7 @@
     <Folder Include="Security\Roles\DatabaseRoles" />
     <Folder Include="Security\Schemas" />
     <Folder Include="StoredProcedures\DashboardReporting" />
+    <Folder Include="PostDeploymentScripts\TemporaryPatches" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -157,7 +158,6 @@
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
     <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
     <Build Include="Tables\StandardOptions.sql" />
-    <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Security\Roles\DatabaseRoles\DashboardReporting.sql" />
     <Build Include="Security\Schemas\DashboardReporting.sql" />
@@ -175,8 +175,6 @@
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
-    <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
-    <None Include="PostDeploymentScripts\SV-1290-RemoveOldStandardCollationTables.sql" />
     <Build Include="Tables\MergeOrganisations.sql" />
     <Build Include="Tables\MergeOrganisationStandard.sql" />
     <Build Include="Tables\MergeOrganisationStandardDeliveryArea.sql" />
@@ -188,16 +186,13 @@
     <Build Include="Tables\StagingOfqualOrganisation.sql" />
     <Build Include="Tables\OfqualStandard.sql" />
     <Build Include="Tables\StagingOfqualStandard.sql" />
-    <Build Include="StoredProcedures\AparSummaryUpdate.sql" />
-    <Build Include="Tables\APARSummary.sql" />
-    <Build Include="Tables\APARSummaryUpdated.sql" />
     <Build Include="StoredProcedures\Load_Ofqual_Standards.sql" />
     <Build Include="Tables\StagingOfsOrganisation.sql" />
     <Build Include="Tables\OfsOrganisation.sql" />
     <Build Include="StoredProcedures\Load_Ofs_Standards.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetMinDateTime.sql" />
     <Build Include="Functions\Scalar-valued Functions\GetMaxDateTime.sql" />
-    <None Include="PostDeploymentScripts\QF-1912-UpdatePendingUsersToLive.sql" />
+    <None Include="PostDeploymentScripts\TemporaryPatches\P2-2241_Drop_apar_tables.sql" />
     <Build Include="StoredProcedures\PopulateLearner_WithdrawSupersededIlrs.sql" />
     <Build Include="StoredProcedures\PopulateLearner_RemoveSupersededLearners.sql" />
     <Build Include="StoredProcedures\PopulateLearner_WithdrawOverlappingIlrsAndLearners.sql" />
@@ -224,7 +219,7 @@
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
-    <None Include="PostDeploymentScripts\QF-1366-MapOFQUALRNtoEPAOrgId.sql" />
+    <None Include="PostDeploymentScripts\TemporaryPatches\ON-613_Patch_standard_reference.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

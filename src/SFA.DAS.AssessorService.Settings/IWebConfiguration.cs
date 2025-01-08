@@ -18,6 +18,6 @@ namespace SFA.DAS.AssessorService.Settings
         string ZenDeskSnippetKey { get; set; }
         string ZenDeskSectionId { get; set; }
         string ZenDeskCobrowsingSnippetKey { get; set; }
-
+        string FindAnEPAOUrl { get; set; }
     }
 }
