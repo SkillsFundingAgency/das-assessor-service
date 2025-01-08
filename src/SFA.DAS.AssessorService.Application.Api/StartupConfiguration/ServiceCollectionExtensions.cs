@@ -197,6 +197,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<ICertificateNameCapitalisationService, CertificateNameCapitalisationService>();
             services.AddTransient<IOuterApiService, OuterApiService>();
+            services.AddTransient<IEpaOrganisationIdGenerator, EpaOrganisationIdGenerator>();
             return services;
         }
 
