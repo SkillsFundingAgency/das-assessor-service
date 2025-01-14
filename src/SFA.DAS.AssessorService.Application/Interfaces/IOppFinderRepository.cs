@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         public int TotalCompletedAssessments { get; set; }
         public string Sector { get; set; }
         public int TypicalDuration { get; set; }
-        public string ApprovedForDelivery { get; set; }
+        public DateTime ApprovedForDelivery { get; set; }
         public string MaxFunding { get; set; }
         public string Trailblazer { get; set; }
         public string StandardPageUrl { get; set; }

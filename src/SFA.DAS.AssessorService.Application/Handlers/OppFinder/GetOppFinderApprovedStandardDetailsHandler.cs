@@ -48,14 +48,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 eqaProvider = result.OverviewResult?.EqaProviderName;
             }
 
-            var formattedApprovedForDelivery = DateTime.TryParseExact(
-                result.OverviewResult?.ApprovedForDelivery,
-                "yyyy-MM-dd",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out DateTime parsedApprovedForDelivery)
-                ? parsedApprovedForDelivery.ToString("d MMMM yyyy")
-                : string.Empty;
+            var formattedApprovedForDelivery = result.OverviewResult?.ApprovedForDelivery
+                .ToString("d MMMM yyyy", CultureInfo.InvariantCulture)
+                ?? string.Empty;
 
             return new GetOppFinderApprovedStandardDetailsResponse
             {
