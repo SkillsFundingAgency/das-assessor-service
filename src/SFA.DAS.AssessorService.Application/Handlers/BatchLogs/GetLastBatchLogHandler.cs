@@ -8,11 +8,12 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
-    public class GetLastBatchLogHandler : IRequestHandler<GetLastBatchLogRequest, BatchLogResponse>
+    public class GetLastBatchLogHandler : BaseHandler, IRequestHandler<GetLastBatchLogRequest, BatchLogResponse>
     {
         private readonly IBatchLogQueryRepository _batchLogQueryRepository;
 
-        public GetLastBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository)
+        public GetLastBatchLogHandler(IBatchLogQueryRepository batchLogQueryRepository, IMapper mapper)
+            :base(mapper)
         {
             _batchLogQueryRepository = batchLogQueryRepository;
         }
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
             if (batchLog == null)
                 return null;
 
-            var batchLogResponse = Mapper.Map<BatchLog, BatchLogResponse>(batchLog);
+            var batchLogResponse = _mapper.Map<BatchLog, BatchLogResponse>(batchLog);
             return batchLogResponse;
         }
     }

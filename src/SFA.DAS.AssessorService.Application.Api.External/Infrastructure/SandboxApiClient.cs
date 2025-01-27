@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.Client;
@@ -15,8 +16,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
     {
         private readonly ILogger<SandboxApiClient> _logger;
         
-        public SandboxApiClient(IAssessorApiClientFactory clientFactory, ILogger<SandboxApiClient> logger)
-            : base(clientFactory, logger)
+        public SandboxApiClient(IAssessorApiClientFactory clientFactory, ILogger<SandboxApiClient> logger, IMapper mapper)
+            : base(clientFactory, logger, mapper)
         {
             _logger = logger;
         }

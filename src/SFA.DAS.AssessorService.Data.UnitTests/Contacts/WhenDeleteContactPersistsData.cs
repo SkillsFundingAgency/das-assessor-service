@@ -17,8 +17,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
         [SetUp]
         public async Task Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             _mockDbContext = new Mock<AssessorDbContext>();
                  
            var contacts = new List<Contact>

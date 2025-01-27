@@ -119,10 +119,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.StandardApplications();
 
             var result = actual as ViewResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             var model = result.Model as ApplicationResponseViewModel;
-            Assert.IsNotNull(model);
+            model.Should().NotBeNull();
 
             model.FinancialAssessmentUrl.Should().Be("callbackUrl");
         }
@@ -140,10 +140,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AppplicationControllerTests
             var actual = await _controller.StandardApplications();
 
             var result = actual as ViewResult;
-            Assert.IsNotNull(result);
+            result.Should().NotBeNull();
 
             var model = result.Model as ApplicationResponseViewModel;
-            Assert.IsNotNull(model);
+            model.Should().NotBeNull();
 
             model.FinancialAssessmentUrl.Should().Be(string.Empty);
         }

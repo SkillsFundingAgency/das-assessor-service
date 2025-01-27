@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
-    public class SendAddStandardEmailHandler : IRequestHandler<SendAddStandardEmailRequest>
+    public class SendAddStandardEmailHandler : IRequestHandler<SendAddStandardEmailRequest, Unit>
     {
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;

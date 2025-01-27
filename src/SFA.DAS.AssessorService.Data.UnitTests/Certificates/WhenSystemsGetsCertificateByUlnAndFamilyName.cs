@@ -19,9 +19,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
         [SetUp]
         public void Arrange()
-        {
-            MappingBootstrapper.Initialize();
-            
+        {            
             _mockDbContext = CreateMockDbContext();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
 

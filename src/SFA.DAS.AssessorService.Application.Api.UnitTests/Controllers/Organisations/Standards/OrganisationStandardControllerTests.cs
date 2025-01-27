@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentAssertions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -36,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             var result = await _controller.OptInOrganisationStandardVersion(request);
 
-            Assert.IsInstanceOf<CreatedAtRouteResult>(result);
+            result.Should().BeOfType<CreatedAtRouteResult>();
         }
 
         [Test]
@@ -48,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             var result = await _controller.OptOutOrganisationStandardVersion(request);
 
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            result.Should().BeOfType<OkObjectResult>();
         }
 
         [Test]
@@ -60,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             var result = await _controller.UpdateOrganisationStandardVersion(request);
 
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            result.Should().BeOfType<OkObjectResult>();
         }
 
         [Test]
@@ -74,9 +75,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             var result = await _controller.OptInOrganisationStandardVersion(request) as CreatedAtRouteResult;
             var model = result.Value as OrganisationStandardVersion;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(model.Version, Is.EqualTo("1.2"));
-            Assert.That(model.StandardUId, Is.EqualTo("ST0001_1.2"));
+            result.Should().NotBeNull();
+            model.Version.Should().Be("1.2");
+            model.StandardUId.Should().Be("ST0001_1.2");
         }
 
         [Test]
@@ -91,9 +92,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             var result = await _controller.OptInOrganisationStandardVersion(request) as BadRequestObjectResult;
             var response = result.Value as EpaoStandardVersionResponse;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Details, Is.EqualTo(exMessage));
+            result.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.Details.Should().Be(exMessage);
         }
 
         [Test]
@@ -107,8 +108,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             var model = result.Value as EpaoStandardVersionResponse;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(model.Details, Is.EqualTo("1.2"));
+            result.Should().NotBeNull();
+            model.Details.Should().Be("1.2");
         }
 
         [Test]
@@ -122,9 +123,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             var result = await _controller.OptOutOrganisationStandardVersion(request) as BadRequestObjectResult;
             var response = result.Value as EpaoStandardVersionResponse;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Details, Is.EqualTo(exMessage));
+            result.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.Details.Should().Be(exMessage);
         }
 
         [Test]
@@ -137,8 +138,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             var result = await _controller.UpdateOrganisationStandardVersion(request) as OkObjectResult;
             var model = result.Value as EpaoStandardVersionResponse;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(model.Details, Is.EqualTo("1.2"));
+            result.Should().NotBeNull();
+            model.Details.Should().Be("1.2");
         }
 
         [Test]
@@ -152,9 +153,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             var result = await _controller.UpdateOrganisationStandardVersion(request) as BadRequestObjectResult;
             var response = result.Value as EpaoStandardVersionResponse;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Details, Is.EqualTo(exMessage));
+            result.Should().NotBeNull();
+            response.Should().NotBeNull();
+            response.Details.Should().Be(exMessage);
         }
     }
 }

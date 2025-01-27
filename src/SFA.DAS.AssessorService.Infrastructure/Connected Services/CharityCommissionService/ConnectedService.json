@@ -11,7 +11,7 @@
     "namespaceMappings": [
       "*, CharityCommissionService"
     ],
-    "targetFramework": "net6.0",
+    "targetFramework": "net8.0",
     "typeReuseMode": "None"
   }
 }

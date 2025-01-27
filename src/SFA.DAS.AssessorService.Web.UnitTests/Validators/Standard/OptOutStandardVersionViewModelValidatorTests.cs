@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -42,11 +43,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators.Standard
 
             var result = sut.Validate(viewModel);
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 Assert.That(result.IsValid, Is.False);
                 Assert.That(result.Errors.Exists(e => e.ErrorMessage == OptOutStandardVersionViewModelValidator.OneApprovedVersionRequiredMessage));
-            });
+            }
         }
 
         [Test]

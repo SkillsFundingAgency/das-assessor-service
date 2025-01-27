@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         public void Arrange()
         {
             Setup();
-            MappingBootstrapper.Initialize();
+
             _contact = Builder<Contact>.CreateNew().Build();
 
             ContactQueryRepositoryMock.Setup(q => q.GetContactFromEmailAddress(searchEmail))

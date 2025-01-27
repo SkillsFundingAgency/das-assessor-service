@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class StartApplicationSectionReviewHandler : IRequestHandler<StartApplicationSectionReviewRequest>
+    public class StartApplicationSectionReviewHandler :IRequestHandler<StartApplicationSectionReviewRequest, Unit>
     {
         private readonly IApplyRepository _applyRepository;
 

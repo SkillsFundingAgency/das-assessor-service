@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("Index");
             actualViewResult.ControllerName.Should().Be("Home");

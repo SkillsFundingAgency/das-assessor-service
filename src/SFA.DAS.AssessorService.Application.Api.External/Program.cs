@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using NLog.Web;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
@@ -12,7 +13,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            var logger = LogManager.Setup()
+                       .LoadConfigurationFromFile("nlog.config")
+                       .GetCurrentClassLogger();
 
             try
             {

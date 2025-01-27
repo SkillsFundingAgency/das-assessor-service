@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
@@ -65,17 +66,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned()
         {
             var organisationsReturned = _repository.GetAssessmentOrganisations().Result.ToList();
-            Assert.AreEqual(2, organisationsReturned.Count(), $@"Expected 2 organisations back but got {organisationsReturned.Count()}");
-            Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation1.EndPointAssessorOrganisationId), "Organisation 1 Id was not found");
-            Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation2.EndPointAssessorOrganisationId), "Organisation 2 Id was not found");
+            organisationsReturned.Count.Should().Be(2, $@"Expected 2 organisations back but got {organisationsReturned.Count()}");
+            organisationsReturned.Count(x => x.Id == _organisation1.EndPointAssessorOrganisationId).Should().Be(1, "Organisation 1 Id was not found");
+            organisationsReturned.Count(x => x.Id == _organisation2.EndPointAssessorOrganisationId).Should().Be(1, "Organisation 2 Id was not found");
         }
 
         [Test]
         public void GetOrganisationByIdAndCheckTheOrganisationIsReturned()
         {
             var organisation = OrganisationHandler.GetOrganisationSummaryByOrgId(_organisationId2);
-            Assert.AreEqual(_organisation2.EndPointAssessorName, organisation.Name, "The organisation names do not match");
-            Assert.AreEqual(_organisation2.EndPointAssessorOrganisationId, organisation.Id, "The organisation Ids do not match");
+            organisation.Name.Should().Be(_organisation2.EndPointAssessorName, "The organisation names do not match");
+            organisation.Id.Should().Be(_organisation2.EndPointAssessorOrganisationId, "The organisation Ids do not match");
         }
 
         [OneTimeTearDown]

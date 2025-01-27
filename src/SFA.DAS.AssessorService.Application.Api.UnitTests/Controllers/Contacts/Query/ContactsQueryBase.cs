@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts.Query
 {
-    public class ContactsQueryBase
+    public class ContactsQueryBase : TestBase
     {
         protected ContactQueryController ContactQueryController;
         protected UkPrnValidator UkPrnValidator;
@@ -31,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         
         private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
 
+
         protected void Setup()
         {
             SetupOrchestratorMocks();
@@ -42,7 +44,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
                 ContactQueryRepositoryMock.Object,
                 _searchOrganisationForContactsValidator,
                 MediatorMock.Object,
-                ControllerLoggerMock.Object, new Mock<IApiConfiguration>().Object);
+                ControllerLoggerMock.Object, new Mock<IApiConfiguration>().Object,
+                Mapper);
         }
 
         private void SetupControllerMocks()

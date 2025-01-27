@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using AutoMapper;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -11,7 +12,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 {
     [TestFixture]
-    public class WhenDeletedOrganisationExists
+    public class WhenDeletedOrganisationExists : MapperBase
     {
         private CreateOrganisationHandler _handler;
         private Mock<IOrganisationRepository> _orgRepos;
@@ -20,8 +21,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         [SetUp]
         public void Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             _orgRepos = new Mock<IOrganisationRepository>();
             _contactRepository = new Mock<IContactRepository>();
 
@@ -37,7 +36,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             _handler = new CreateOrganisationHandler(_orgRepos.Object,             
                 orgQueryRepos.Object,
-                _contactRepository.Object);
+                _contactRepository.Object,
+                Mapper);
         }
 
         [Test]

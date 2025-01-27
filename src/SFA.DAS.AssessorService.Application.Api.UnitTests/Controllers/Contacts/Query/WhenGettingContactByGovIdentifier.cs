@@ -20,7 +20,7 @@ public class WhenGettingContactByGovIdentifier : ContactsQueryBase
     public void Arrange()
     {
         Setup();
-        MappingBootstrapper.Initialize();
+
         _contact = Builder<Contact>.CreateNew().Build();
 
         ContactQueryRepositoryMock.Setup(q => q.GetContactByGovIdentifier(_govIdentifier))

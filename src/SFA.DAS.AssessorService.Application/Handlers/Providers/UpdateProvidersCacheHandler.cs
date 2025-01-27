@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Providers
 {
-    public class UpdateProvidersCacheHandler : IRequestHandler<UpdateProvidersCacheRequest>
+    public class UpdateProvidersCacheHandler : IRequestHandler<UpdateProvidersCacheRequest, Unit>
     {
         private readonly ILogger<UpdateProvidersCacheHandler> _logger;
         private readonly IApprovalsExtractRepository _approvalsExtractRepository;
