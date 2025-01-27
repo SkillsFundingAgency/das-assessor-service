@@ -53,14 +53,14 @@ else
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-fifth">
                     <sfa-sortable-column-header 
                         class="approved-sort govuk-link"
-                        data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
+                        data-sortColumn="@nameof(OppFinderApprovedSearchSortColumn.ActiveEPAOs)"
                         asp-action="SortApprovedStandards"
                         asp-controller="OppFinder"
                         asp-fragment="approved"
-                        sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.RegisteredEPAOs)"
+                        sfa-sort-column="@nameof(OppFinderApprovedSearchSortColumn.ActiveEPAOs)"
                         sfa-table-sort-column="@Model.ApprovedSortColumn"
                         sfa-sort-direction="@Model.ApprovedSortDirection"
-                    >Registered EPAO's</sfa-sortable-column-header>
+                    >Active EPAOs</sfa-sortable-column-header>
                 </th>
             </tr>
         </thead>
@@ -81,7 +81,7 @@ else
                             Version @approvedStandard.Versions
                         </td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.ActiveApprentices</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.RegisteredEPAOs</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@approvedStandard.ActiveEPAOs</td>
                     </tr>
                 }
             }
