@@ -48,8 +48,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 eqaProvider = result.OverviewResult?.EqaProviderName;
             }
 
-            var approvedForDeliveryValidDate = DateTime
-                .TryParse(result.OverviewResult?.ApprovedForDelivery, out DateTime approvedForDelivery);
+            var formattedApprovedForDelivery = result.OverviewResult?.ApprovedForDelivery
+                .ToString("d MMMM yyyy", CultureInfo.InvariantCulture)
+                ?? string.Empty;
 
             return new GetOppFinderApprovedStandardDetailsResponse
             {
@@ -64,9 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 TotalCompletedAssessments = result.OverviewResult?.TotalCompletedAssessments ?? 0,
                 Sector = result.OverviewResult?.Sector,
                 TypicalDuration = result.OverviewResult?.TypicalDuration,
-                ApprovedForDelivery = approvedForDeliveryValidDate
-                    ? approvedForDelivery.ToString("d MMMM yyyy")
-                    : string.Empty,
+                ApprovedForDelivery = formattedApprovedForDelivery,
                 MaxFunding = result.OverviewResult?.MaxFunding != null
                     ? int.Parse(result.OverviewResult?.MaxFunding).ToString("C", CultureInfo.CreateSpecificCulture("en-GB"))
                     : null,
