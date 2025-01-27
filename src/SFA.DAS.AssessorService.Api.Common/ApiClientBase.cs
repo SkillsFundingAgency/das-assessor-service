@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Polly;
-using Polly.Extensions.Http;
 using Polly.Retry;
 using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using System;
@@ -16,7 +15,7 @@ namespace SFA.DAS.AssessorService.Api.Common
     {
         private readonly ILogger<ApiClientBase> _logger;
         private readonly HttpClient _httpClient;
-        private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
+        private IAsyncPolicy<HttpResponseMessage> _retryPolicy;
 
         protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
         {
@@ -29,10 +28,13 @@ namespace SFA.DAS.AssessorService.Api.Common
             _logger = logger;
             _httpClient = httpClient;
 
-            _retryPolicy = HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
-                    retryAttempt)));
+            _retryPolicy = Policy
+                .Handle<HttpRequestException>() 
+                .OrResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode) 
+                .WaitAndRetryAsync(
+                    retryCount: 3,
+                    sleepDurationProvider: retryAttempt =>
+                        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)

@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review
 {
-    public class ReturnFinancialReviewRequest : IRequest
+    public class ReturnFinancialReviewRequest : IRequest<Unit>
     {
         public Guid Id { get; }
         public Domain.Entities.FinancialGrade UpdatedGrade { get; }

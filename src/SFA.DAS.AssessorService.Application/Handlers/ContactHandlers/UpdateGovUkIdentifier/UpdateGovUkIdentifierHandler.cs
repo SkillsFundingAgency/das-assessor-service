@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateGovUkidentifier
 {
-    public class UpdateGovUkidentifierHandler : IRequestHandler<UpdateGovUkIdentifierRequest>
+    public class UpdateGovUkidentifierHandler :IRequestHandler<UpdateGovUkIdentifierRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IContactQueryRepository _contactQueryRepository;

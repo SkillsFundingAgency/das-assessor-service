@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class DeleteContactHandler : IRequestHandler<DeleteContactRequest>
+    public class DeleteContactHandler : IRequestHandler<DeleteContactRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
 

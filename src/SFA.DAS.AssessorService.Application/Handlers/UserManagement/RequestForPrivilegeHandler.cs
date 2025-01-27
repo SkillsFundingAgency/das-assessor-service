@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class RequestForPrivilegeHandler : IRequestHandler<RequestForPrivilegeRequest>
+    public class RequestForPrivilegeHandler : IRequestHandler<RequestForPrivilegeRequest, Unit>
     {
         private readonly IMediator _mediator;
         private readonly IContactQueryRepository _contactQueryRepository;

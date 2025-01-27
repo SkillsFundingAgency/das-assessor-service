@@ -30,9 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             var actual = await controller.GetEpaosByStandard(0);
 
             //Assert
-            Assert.IsNotNull(actual);
+            actual.Should().NotBeNull();
             var actualResult = actual as BadRequestResult;
-            Assert.IsNotNull(actualResult);
+            actualResult.Should().NotBeNull();
         }
 
         [Test, MoqAutoData]
@@ -55,9 +55,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             var actual = await controller.GetEpaosByStandard(standardCode);
 
             //Assert
-            Assert.IsNotNull(actual);
+            actual.Should().NotBeNull();
             var actualResult = actual as NotFoundResult;
-            Assert.IsNotNull(actualResult);
+            actualResult.Should().NotBeNull();
         }
 
         [Test, RecursiveMoqAutoData]
@@ -65,16 +65,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             int standardCode,
             List<Organisation> epaOrganisations,
             [Frozen] Mock<IMediator> mediator,
-            [Greedy] StandardQueryController controller)
+            [Greedy] StandardQueryController controller,
+            IMapper mapper)
         {
             //Arrange
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<OrganisationWithStandardResponseMapper>();
-                cfg.AddProfile<OrganisationStandardDeliveryAreaMapper>();
-                cfg.AddProfile<OrganisationStandardMapper>();
-            });
             mediator
                 .Setup(x => x.Send(
                     It.Is<GetEpaOrganisationsByStandardQuery>(c => c.Standard.Equals(standardCode)),
@@ -88,11 +82,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             var actual = await controller.GetEpaosByStandard(standardCode);
 
             //Assert
-            Assert.IsNotNull(actual);
+            actual.Should().NotBeNull();
             var actualResult = actual as OkObjectResult;
-            Assert.IsNotNull(actualResult);
+            actualResult.Should().NotBeNull();
             var actualModel = actualResult.Value as List<OrganisationStandardResponse>;
-            actualModel.Should().BeEquivalentTo(epaOrganisations.Select(Mapper.Map<OrganisationStandardResponse>).ToList());
+            actualModel.Should().BeEquivalentTo(epaOrganisations.Select(mapper.Map<OrganisationStandardResponse>).ToList());
         }
     }
 }

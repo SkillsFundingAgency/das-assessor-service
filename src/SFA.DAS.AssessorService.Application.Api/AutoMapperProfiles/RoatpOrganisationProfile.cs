@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
 using System;
 
@@ -10,6 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         public RoatpOrganisationProfile()
         {
             CreateMap<Organisation, OrganisationSearchResult>()
+                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)
@@ -21,8 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.ResolveUsing(source => string.IsNullOrEmpty(source.TradingName) || "NULL".Equals(source.TradingName, StringComparison.InvariantCultureIgnoreCase) ? null : source.TradingName))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanyNumber))
-                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber));
         }
     }
 }

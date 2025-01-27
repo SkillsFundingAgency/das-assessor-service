@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Web.ViewModels.Standard;
@@ -24,13 +26,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ViewModelTests
 
             var result = sut.DistinctResults;
 
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
-                Assert.That(result.Count, Is.EqualTo(3));
-                Assert.That(result.Any(r => r.StandardUId == "ST0001_1.0"), Is.True);
-                Assert.That(result.Any(r => r.StandardUId == "ST0001_1.1"), Is.True);
-                Assert.That(result.Any(r => r.StandardUId == "ST0001_1.2"), Is.True);
-            });
+                result.Count.Should().Be(3);
+                result.Should().Contain(r => r.StandardUId == "ST0001_1.0");
+                result.Should().Contain(r => r.StandardUId == "ST0001_1.1");
+                result.Should().Contain(r => r.StandardUId == "ST0001_1.2");
+            };
         }
 
         [Test]
@@ -38,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ViewModelTests
         {
             var sut = new ApplyStandardConfirmViewModel() { Results = null };
 
-            Assert.That(sut.DistinctResults, Is.Null);
+            sut.DistinctResults.Should().BeNull();
         }
 
         [Test]

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
 {
-    public class InvitationCheckRequest : IRequest
+    public class InvitationCheckRequest : IRequest<Unit>
     {
         public Guid ContactId { get; }
 

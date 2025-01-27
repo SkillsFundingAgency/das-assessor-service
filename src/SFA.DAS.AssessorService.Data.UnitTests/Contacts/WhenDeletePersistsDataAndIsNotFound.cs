@@ -21,8 +21,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
         [SetUp]
         public async Task Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             var userNameToFind = "NotFoundUser";
            
             var contacts = new List<Contact>

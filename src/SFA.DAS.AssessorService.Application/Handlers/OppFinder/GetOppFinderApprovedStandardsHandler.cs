@@ -10,11 +10,12 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class GetOppFinderApprovedStandardsHandler : IRequestHandler<GetOppFinderApprovedStandardsRequest, GetOppFinderApprovedStandardsResponse>
+    public class GetOppFinderApprovedStandardsHandler : BaseHandler, IRequestHandler<GetOppFinderApprovedStandardsRequest, GetOppFinderApprovedStandardsResponse>
     {
         private readonly ILogger<GetOppFinderApprovedStandardsHandler> _logger;
         private readonly IOppFinderRepository _oppFinderRepository;
-        public GetOppFinderApprovedStandardsHandler(ILogger<GetOppFinderApprovedStandardsHandler> logger, IOppFinderRepository oppFinderRepository)
+        public GetOppFinderApprovedStandardsHandler(ILogger<GetOppFinderApprovedStandardsHandler> logger, IOppFinderRepository oppFinderRepository, IMapper mapper)
+            :base(mapper)
         {
             _logger = logger;
             _oppFinderRepository = oppFinderRepository;
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
             var standards = standardResult.PageOfResults
                 .ToList()
-                .ConvertAll(p => Mapper.Map<OppFinderApprovedSearchResult>(p));
+                .ConvertAll(p => _mapper.Map<OppFinderApprovedSearchResult>(p));
 
             return new GetOppFinderApprovedStandardsResponse
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string ukprn, int expectedCount)
         {
             var organisationsReturned = _repository.GetAssessmentOrganisationsByUkprn(ukprn).Result.ToList();
-            Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
+            organisationsReturned.Count.Should().Be(expectedCount, $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count}");
         }
 
         [OneTimeTearDown]

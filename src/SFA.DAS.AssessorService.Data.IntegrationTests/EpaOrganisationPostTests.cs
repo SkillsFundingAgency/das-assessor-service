@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -78,16 +79,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var returnedOrganisationByGetByOrganisationId = _queryRepository.GetEpaOrganisationByOrganisationId(_organisationIdCreated).Result;
             var maxOrgWithData = _queryRepository.EpaOrganisationIdCurrentMaximum().Result;
 
-            Assert.IsFalse(isOrgByOrgIdPresentBeforeInsert);
-            Assert.IsFalse(isOrgByUkprnPresentBeforeInsert);
+            isOrgByOrgIdPresentBeforeInsert.Should().BeFalse();
+            isOrgByUkprnPresentBeforeInsert.Should().BeFalse();
 
-            Assert.AreEqual(_organisation.Ukprn, returnedOrganisationByGetById.Ukprn);
-            Assert.IsTrue(isOrgByOrgIdPresentAfterInsert);
+            returnedOrganisationByGetById.Ukprn.Should().Be(_organisation.Ukprn);
+            isOrgByOrgIdPresentAfterInsert.Should().BeTrue();
 
-            Assert.IsTrue(isOrgByUkprnPresentAfterInsert);
-            Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetById.Ukprn);
-            Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetByOrganisationId.Ukprn);
-            StringAssert.Contains(maxOrgWithData, _organisationIdCreated);
+            isOrgByUkprnPresentAfterInsert.Should().BeTrue();
+            returnedOrganisationByGetById.Ukprn.Should().Be(_ukprnCreated);
+            returnedOrganisationByGetByOrganisationId.Ukprn.Should().Be(_ukprnCreated);
+            _organisationIdCreated.Should().Contain(maxOrgWithData);
         }
 
         [OneTimeTearDown]

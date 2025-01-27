@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
@@ -17,6 +18,6 @@ public class EpaoOrgFinderTests
 
         var result = EpaOrgIdFinder.GetFromClaim(accessor.Object);
 
-        Assert.That(result, Is.EqualTo("some value"));
+        result.Should().Be("some value");
     }
 }

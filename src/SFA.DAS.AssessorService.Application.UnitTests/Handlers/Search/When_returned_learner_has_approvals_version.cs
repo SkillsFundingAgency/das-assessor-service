@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             result.Count.Should().Be(1);
             result[0].Version.Should().Be("1.0");
-            result[0].Option.Should().BeEmpty();
+            result[0].Option.Should().BeNullOrEmpty();
             result[0].Versions.Count.Should().Be(1);
             result[0].Versions[0].Title.Should().Be("Standard Name 12");
             result[0].Versions[0].StandardUId.Should().Be("ST012_1.0");

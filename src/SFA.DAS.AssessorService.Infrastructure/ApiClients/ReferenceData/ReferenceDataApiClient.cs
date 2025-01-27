@@ -13,11 +13,13 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ReferenceDataApiClient> _logger;
+        private readonly IMapper _mapper;
 
-        public ReferenceDataApiClient(IReferenceDataApiClientFactory clientFactory, ILogger<ReferenceDataApiClient> logger)
+        public ReferenceDataApiClient(IReferenceDataApiClientFactory clientFactory, ILogger<ReferenceDataApiClient> logger, IMapper mapper)
         {
             _httpClient = clientFactory.CreateHttpClient();
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrgansiation(string searchTerm, bool exactMatch)
@@ -30,7 +32,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.ReferenceData
                 apiResponse = apiResponse?.Where(r => r.Name.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
             }
 
-            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.ReferenceData.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse);
+            return _mapper.Map<IEnumerable<AssessorService.Api.Types.Models.ReferenceData.Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

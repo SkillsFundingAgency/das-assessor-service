@@ -19,12 +19,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Applications.Ge
         [SetUp]
         public void Setup()
         {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<ApplySummary, ApplicationResponse>();
-            });
-
             _mockApplyRepository = new Mock<IApplyRepository>();
             
             _sut = new GetLatestWithdrawalDateForStandardHandler(_mockApplyRepository.Object);

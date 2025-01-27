@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class GetApplicationsHandler : IRequestHandler<GetApplicationsRequest, List<ApplicationResponse>>
+    public class GetApplicationsHandler : BaseHandler, IRequestHandler<GetApplicationsRequest, List<ApplicationResponse>>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public GetApplicationsHandler(IApplyRepository applyRepository)
+        public GetApplicationsHandler(IApplyRepository applyRepository, IMapper mapper)
+            :base(mapper)
         {
             _applyRepository = applyRepository;
         }
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
 
             return result != null
-                ? Mapper.Map<List<ApplySummary>, List<ApplicationResponse>>(result)
+                ? _mapper.Map<List<ApplySummary>, List<ApplicationResponse>>(result)
                 : null;
         }
     }

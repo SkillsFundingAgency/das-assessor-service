@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+using Azure;
+using Azure.Data.Tables;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Settings
@@ -26,26 +26,25 @@ namespace SFA.DAS.AssessorService.Settings
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
 
-            var conn = CloudStorageAccount.Parse(storageConnectionString);
-            var tableClient = conn.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("Configuration");
+            var tableServiceClient = new TableServiceClient(storageConnectionString);
+            var tableClient = tableServiceClient.GetTableClient("Configuration");
 
-            var operation = TableOperation.Retrieve(environment, $"{serviceName}_{version}");
-            TableResult result;
+            var rowKey = $"{serviceName}_{version}";
             try
             {
-                result = await table.ExecuteAsync(operation);
+                var response = await tableClient.GetEntityAsync<TableEntity>(environment, rowKey);
+                var data = response.Value.GetString("Data");
+                var webConfig = JsonConvert.DeserializeObject<T>(data);
+                return webConfig;
+            }
+            catch (RequestFailedException e) when (e.Status == 404)
+            {
+                throw new Exception("The specified configuration was not found.", e);
             }
             catch (Exception e)
             {
                 throw new Exception("Could not connect to Storage to retrieve settings.", e);
             }
-
-            var dynResult = result.Result as DynamicTableEntity;
-            var data = dynResult.Properties["Data"].StringValue;
-
-            var webConfig = JsonConvert.DeserializeObject<T>(data);
-            return webConfig;
         }
     }
 }
