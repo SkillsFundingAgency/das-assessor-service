@@ -20,8 +20,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [SetUp]
         public void Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             var organisationUpdateDomainModel = Builder<Organisation>
                 .CreateNew()
                 .With(q => q.PrimaryContact = _primaryContact)

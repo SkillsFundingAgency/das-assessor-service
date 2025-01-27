@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -68,10 +69,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationSearchControllerTest
             var actual = await _controller.Results(orgSearchViewModel,0);
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
-            Assert.AreEqual("Index",actualViewResult.ActionName);
-            Assert.AreEqual("Home", actualViewResult.ControllerName);
+            actualViewResult.ActionName.Should().Be("Index");
+            actualViewResult.ControllerName.Should().Be("Home");
         }
 
         

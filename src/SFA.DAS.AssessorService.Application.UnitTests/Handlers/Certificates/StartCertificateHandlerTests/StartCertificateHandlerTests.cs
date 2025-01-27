@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -366,11 +367,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var response = await _sut.Handle(request, new CancellationToken());
 
             // Assertions
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Once);
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Once);
-            });
+            }
         }
 
         [Test, RecursiveMoqAutoData]
@@ -404,11 +405,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var certData = JsonConvert.DeserializeObject<CertificateData>(createdCertificate.CertificateData);
 
             // Assertions
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, false), Times.Once);
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Once);
-            });
+            }
         }
 
         [Test, RecursiveMoqAutoData]
@@ -441,11 +442,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var certData = JsonConvert.DeserializeObject<CertificateData>(createdCertificate.CertificateData);
 
             // Assertions
-            Assert.Multiple(() =>
+            using (new AssertionScope())
             {
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.GivenNames, It.IsAny<bool>()), Times.Never);
                 _mockCertificateNameCapitalisationService.Verify(c => c.ProperCase(learnerRecord.FamilyName, true), Times.Never);
-            });
+            }
         }
 
         private void SetupCertificateNameCapitalisationService(string name)

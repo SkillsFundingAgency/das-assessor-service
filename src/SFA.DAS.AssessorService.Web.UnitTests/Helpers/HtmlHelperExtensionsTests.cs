@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Extensions;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
@@ -16,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
             var actual = HtmlHelperExtensions.SetZenDeskLabels(null, labels).ToString();
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            actual.Should().Be(expected);
         }
 
         private static readonly object[] LabelCases =

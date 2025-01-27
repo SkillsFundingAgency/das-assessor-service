@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas
 {
-    public class DeleteBatchEpaRequest : IRequest
+    public class DeleteBatchEpaRequest : IRequest<Unit>
     {
         public long Uln { get; set; }
         public string FamilyName { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Financial.Review
 {
-    public class StartFinancialReviewHandler : IRequestHandler<StartFinancialReviewRequest>
+    public class StartFinancialReviewHandler : IRequestHandler<StartFinancialReviewRequest, Unit>
     {
         private readonly IApplyRepository _applyRepository;
 

@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("Applications");
             actualViewResult.ControllerName.Should().Be("Application");
@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("Applications");
             actualViewResult.ControllerName.Should().Be("Application");
@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("InvitePending");
             actualViewResult.ControllerName.Should().Be("Home");
@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("NotRegistered");
             actualViewResult.ControllerName.Should().Be("Home");
@@ -189,7 +189,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("Applications");
             actualViewResult.ControllerName.Should().Be("Application");
@@ -204,7 +204,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.DashboardControllerTests
             var actual = await _controller.Index();
 
             var actualViewResult = actual as RedirectToActionResult;
-            Assert.IsNotNull(actualViewResult);
+            actualViewResult.Should().NotBeNull();
 
             actualViewResult.ActionName.Should().Be("Index");
             actualViewResult.ControllerName.Should().Be("OrganisationSearch");

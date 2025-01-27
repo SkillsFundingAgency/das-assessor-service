@@ -15,7 +15,7 @@ using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
-    public class SearchHandler : IRequestHandler<SearchQuery, List<SearchResult>>
+    public class SearchHandler : BaseHandler, IRequestHandler<SearchQuery, List<SearchResult>>
     {
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly ILearnerRepository _learnerRepository;
@@ -26,7 +26,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         private Dictionary<char, char[]> _alternates;
 
         public SearchHandler(IOrganisationQueryRepository organisationRepository,
-            ILearnerRepository learnerRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService)
+            ILearnerRepository learnerRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository, IStandardService standardService, IMapper mapper)
+            :base(mapper)
         {
             _organisationRepository = organisationRepository;
             _learnerRepository = learnerRepository;
@@ -96,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             _logger.LogInformation((learnerResults != null && learnerResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = Mapper.Map<List<SearchResult>>(learnerResults)
+            var searchResults = _mapper.Map<List<SearchResult>>(learnerResults)
                 .MatchUpExistingCompletedStandards(request, likedSurname, approvedStandards, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
 

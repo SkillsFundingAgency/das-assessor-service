@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -98,9 +99,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var isContactPresenAfterInsert =
                 _validationRepository.ContactIdIsValidForOrganisationId(_contactId, _contact.EndPointAssessorOrganisationId).Result;
          
-            Assert.IsFalse(isContactPresentBeforeInsert);
-            Assert.IsTrue(isContactPresenAfterInsert);
-            Assert.AreEqual(returnedContactId, _contactId.ToString());
+            isContactPresentBeforeInsert.Should().BeFalse();
+            isContactPresenAfterInsert.Should().BeTrue();
+            returnedContactId.Should().Be(_contactId.ToString());
         }
 
         [OneTimeTearDown]
