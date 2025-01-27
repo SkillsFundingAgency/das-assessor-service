@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.DataSync
 {
-    public class RebuildExternalApiSandboxHandler : IRequestHandler<RebuildExternalApiSandboxRequest>
+    public class RebuildExternalApiSandboxHandler : IRequestHandler<RebuildExternalApiSandboxRequest, Unit>
     {
         private readonly ILogger<RebuildExternalApiSandboxHandler> _logger;
         private readonly ISandboxDbRepository _sandboxDbRepository;

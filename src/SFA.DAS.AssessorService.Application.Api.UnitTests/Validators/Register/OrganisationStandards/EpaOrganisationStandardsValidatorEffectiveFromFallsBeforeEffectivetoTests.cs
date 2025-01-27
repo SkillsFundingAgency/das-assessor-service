@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 testData.EffectiveFrom,
                 testData.EffectiveTo);
 
-            Assert.AreEqual(results.Length==0, testData.IsValid);
+            testData.IsValid.Should().Be(results.Length==0);
         }
 
 

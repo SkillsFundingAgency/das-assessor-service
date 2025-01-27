@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class UpdateContactWithOrgAndStatus : IRequestHandler<UpdateContactWithOrgAndStausRequest>
+    public class UpdateContactWithOrgAndStatus : IRequestHandler<UpdateContactWithOrgAndStausRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IOrganisationRepository _organisationRepository;

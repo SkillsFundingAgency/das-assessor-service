@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -36,9 +37,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
                                                a.StandardReference.Equals("ST9999", StringComparison.InvariantCultureIgnoreCase) &&
                                                a.ApplyData.Apply.Versions == null);
 
-            Assert.NotNull(result);
-            Assert.That(result.StandardReference, Is.EqualTo("ST9999"));
-            Assert.That(result.ApplicationStatus, Is.EqualTo(applicationStatus));
+            result.Should().NotBeNull();
+            result.StandardReference.Should().Be("ST9999");
+            result.ApplicationStatus.Should().Be(applicationStatus);
 
         }
 

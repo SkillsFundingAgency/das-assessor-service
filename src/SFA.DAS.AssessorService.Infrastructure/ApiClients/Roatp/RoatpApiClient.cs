@@ -16,11 +16,13 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
     {
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
+        private readonly IMapper _mapper;
 
-        public RoatpApiClient(IRoatpApiClientFactory roatpApiClientFactory, ILogger<RoatpApiClient> logger)
+        public RoatpApiClient(IRoatpApiClientFactory roatpApiClientFactory, ILogger<RoatpApiClient> logger, IMapper mapper)
         {
             _client = roatpApiClientFactory.CreateHttpClient();
             _logger = logger;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
         {
@@ -32,7 +34,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
                 apiResponse.SearchResults = apiResponse.SearchResults.Where(r => r.LegalName.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
 
-            return Mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+            return _mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
         }
 
         public async Task<OrganisationSearchResult> GetOrganisationByUkprn(long ukprn)
@@ -61,7 +63,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
             _logger.LogInformation($"Searching UKRLP. Ukprn: {ukprn}");
             var apiResponse = await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
 
-            return Mapper.Map<IEnumerable<ProviderDetails>, IEnumerable<OrganisationSearchResult>>(apiResponse?.Results);
+            return _mapper.Map<IEnumerable<ProviderDetails>, IEnumerable<OrganisationSearchResult>>(apiResponse?.Results);
         }
 
         private async Task<T> Get<T>(string uri)
@@ -92,7 +94,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
             }
 
             var organisationSearchResults =
-                Mapper
+                _mapper
                     .Map<IEnumerable<Organisation>,
                         IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
             return organisationSearchResults;

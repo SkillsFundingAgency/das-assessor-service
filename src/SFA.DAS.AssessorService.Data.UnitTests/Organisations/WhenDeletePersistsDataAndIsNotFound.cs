@@ -21,8 +21,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [SetUp]
         public async Task Arrange()
         {
-            MappingBootstrapper.Initialize();
-           
             var organisations = new List<Organisation>
             {
                 Builder<Organisation>.CreateNew()

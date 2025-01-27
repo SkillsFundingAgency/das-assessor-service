@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
                 .ForMember(dest => dest.StandardName, opt => opt.MapFrom(source => source.StandardName))
                 .ForMember(dest => dest.Versions, opt => opt.MapFrom(source => source.Versions))
                 .ForMember(dest => dest.ActiveApprentices, opt => opt.MapFrom(source => source.ActiveApprentices))
-                .ForMember(dest => dest.RegisteredEPAOs, opt => opt.MapFrom(source => source.RegisteredEPAOs));
+                .ForMember(dest => dest.ActiveEPAOs, opt => opt.MapFrom(source => source.RegisteredEPAOs));
 
             CreateMap<OppFinderNonApprovedStandard, OppFinderSearchResult>()
                 .ForMember(dest => dest.StandardCode, opt => opt.Ignore())

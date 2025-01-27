@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Addresses
 {
     [TestFixture]
-    public class WhenHandlingGetAddressesRequest
+    public class WhenHandlingGetAddressesRequest : MapperBase
     {
         private Mock<ILogger<GetAddressesHandler>> _loggerMock;
         private Mock<IOuterApiService> _outerApiServiceMock;
@@ -35,13 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Addresses
                 }
             });
 
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<AddressResponse, GetAddressResponse>();
-            });
-
-            _sut = new GetAddressesHandler(_loggerMock.Object, _outerApiServiceMock.Object);
+            _sut = new GetAddressesHandler(_loggerMock.Object, _outerApiServiceMock.Object, Mapper);
         }
 
         [Test]

@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Handlers.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -44,6 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
                 {
                     StandardCode = 999,
                     StandardReference = "ST0001",
+                    ApprovedForDelivery = new DateTime(2021, 12, 15)
                 },
                 RegionResults = new List<OppFinderApprovedStandardRegionResult>()
                 {
@@ -90,6 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OppFinder
             {
                 result.StandardCode.Should().Be(999);
                 result.StandardReference.Should().Be("ST0001");
+                result.ApprovedForDelivery.Should().Be("15 December 2021");
             }
         }
 

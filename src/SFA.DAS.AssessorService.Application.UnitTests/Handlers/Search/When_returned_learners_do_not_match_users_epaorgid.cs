@@ -15,15 +15,11 @@ using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
     [TestFixture]
-    public class When_returned_learners_do_not_match_users_epaorgid
+    public class When_returned_learners_do_not_match_users_epaorgid : MapperBase
     {
         [Test]
         public void Then_non_matching_are_not_returned_if_not_valid_for_epao()
         {
-            Mapper.Reset();
-            Mapper.Initialize(m => m.CreateMap<Domain.Entities.Learner, SearchResult>());
-
-
             var learnerRepository = new Mock<ILearnerRepository>();
 
             learnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
@@ -51,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
 
             var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
-                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
+                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object, Mapper);
 
             var result = handler.Handle(new SearchQuery { Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name" }, new CancellationToken()).Result;
 
@@ -61,10 +57,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         [Test]
         public void Then_non_matching_are_returned_if_valid_for_epao()
         {
-            Mapper.Reset();
-            Mapper.Initialize(m => m.CreateMap<Domain.Entities.Learner, SearchResult>());
-
-
             var learnerRepository = new Mock<ILearnerRepository>();
 
             learnerRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
@@ -96,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
 
             var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
-                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
+                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object, Mapper);
 
             var result = handler.Handle(new SearchQuery { Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name" }, new CancellationToken()).Result;
 
