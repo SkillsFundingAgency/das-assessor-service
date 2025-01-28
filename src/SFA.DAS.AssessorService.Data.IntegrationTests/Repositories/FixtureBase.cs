@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
-using SFA.DAS.AssessorService.Domain.Consts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 {
@@ -13,6 +13,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
     {
         private readonly List<ApprovalsExtractModel> _approvalsExtracts = new List<ApprovalsExtractModel>();
         private readonly List<IlrModel> _ilrs = new List<IlrModel>();
+        private readonly List<LearnerModel> _learners = new List<LearnerModel>();
+        private readonly List<CertificateModel> _certificates = new List<CertificateModel>();
         private readonly List<OrganisationModel> _organisations = new List<OrganisationModel>();
         private readonly List<ProviderModel> _providers = new List<ProviderModel>();
         private readonly List<ContactModel> _contacts = new List<ContactModel>();
@@ -111,7 +113,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
             return this as T;
         }
-        
+
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
             DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
             DateTime? versionApprovedForDelivery, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
@@ -146,11 +148,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         }
 
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
-            DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate, 
+            DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
             DateTime? versionApprovedForDelivery)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                versionEarliestStartDate, versionLatestStartDate, versionLatestEndDate, versionApprovedForDelivery, 
+                versionEarliestStartDate, versionLatestStartDate, versionLatestEndDate, versionApprovedForDelivery,
                 false, string.Empty, false);
         }
 
@@ -166,15 +168,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             DateTime? effectiveTo, bool epaChanged, string eqaProviderName)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date), 
+                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
                 epaChanged, eqaProviderName, false);
         }
 
-        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom, 
+        public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
             DateTime? effectiveTo)
         {
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
-                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date), 
+                null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
                 false, string.Empty, false);
         }
 
@@ -359,6 +361,49 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return WithIlr(id, uln, null, null, ukprn, stdCode, null, source, createdOn, completionStatus, null);
         }
 
+        public T WithLearner(
+            Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, string epaOrgId, int? fundingModel, long? apprenticeshipId,
+                string source, string learnRefNumber, int completionStatus, DateTime? plannedEndDate, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate,
+                string outGrade, string version, int versionConfirmed, string courseOption, string standardUId, string standardReference, string standardName, DateTime? lastUpdated, DateTime? estimatedEndDate,
+                DateTime? approvalsStopDate, DateTime? approvalsPauseDate, DateTime? approvalsCompletionDate, short? approvalsPaymentStatus,
+                DateTime? latestIlrs, DateTime? latestApprovals, long? employerAccountId, string employerName, int isTransfer, DateTime?  dateTransferIdentified)
+        {
+            var learner = LearnerHandler.Create(id, uln, givenNames, familyName, ukprn, stdCode, learnStartDate, epaOrgId, fundingModel, apprenticeshipId, 
+                source, learnRefNumber, completionStatus, plannedEndDate, delLocPostCode, learnActEndDate, withdrawReason, outcome, achDate,
+                outGrade, version, versionConfirmed, courseOption, standardUId, standardReference, standardName, lastUpdated, estimatedEndDate, 
+                approvalsStopDate, approvalsPauseDate, approvalsCompletionDate, approvalsPaymentStatus,
+                latestIlrs, latestApprovals, employerAccountId, employerName, isTransfer, dateTransferIdentified);
+            _learners.Add(learner);
+            LearnerHandler.InsertRecord(learner);
+
+            return this as T;
+        }
+
+        public T WithLearner(
+            Guid id, long uln, string givenNames, string familyName, int? ukprn, int stdCode, long? apprenticeshipId, string source)
+        {
+            var learner = LearnerHandler.Create(id, uln, givenNames, familyName, ukprn, stdCode, null, null, null, apprenticeshipId,
+                source, null, null, null, null, null, null, null, null,
+                null, null, 1, null, null, null, null, null, null,
+                null, null, null, null,
+                null, null, null, null, 0, null);
+            _learners.Add(learner);
+            LearnerHandler.InsertRecord(learner);
+
+            return this as T;
+        }
+
+        public T WithCertificate(Guid id, DateTime createdAt, long uln, int stdCode, string endPointAssessorOrganisationId)
+        {
+            var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+
+            var certificate = CertificateHandler.Create(id, "{}", null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, 12345,
+                string.Empty, null, string.Empty, createdAt.Date);
+            _certificates.Add(certificate);
+            CertificateHandler.InsertRecord(certificate);
+            return this as T;
+        }
+
         public T WithOfsOrganisation(
             Guid id, int ukprn, DateTime createdAt)
         {
@@ -471,6 +516,22 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public async Task<T> VerifyIlrRowCount(int count)
+        {
+            var result = await IlrHandler.QueryCountAllAsync();
+            result.Should().Be(count);
+
+            return this as T;
+        }
+
+        public async Task<T> VerifyIlrExists(IlrModel ilr)
+        {
+            var result = await IlrHandler.QueryFirstOrDefaultAsync(ilr);
+            result.Should().NotBeNull();
+
+            return this as T;
+        }
+
         public async Task<T> VerifyLearnerRowCount(int count)
         {
             var result = await LearnerHandler.QueryCountAllAsync();
@@ -487,7 +548,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             DeleteAllRecords();
         }
@@ -504,6 +565,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             OrganisationStandardVersionHandler.DeleteAllRecords();
             OrganisationStandardHandler.DeleteAllRecords();
             ContactsHandler.DeleteAllRecords();
+            CertificateHandler.DeleteAllRecords();
             OrganisationHandler.DeleteAllRecords();
             ProviderHandler.DeleteAllRecords();
             StandardsHandler.DeleteAllRecords();

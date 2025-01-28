@@ -12,7 +12,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         public static void InsertRecord(LearnerModel learner)
         {
             var sql =
-            "SET IDENTITY_INSERT [Learner] ON; " +
             "INSERT INTO [dbo].[Learner] " +
                 "([Id]" +
                 ", [Uln]" +
@@ -23,6 +22,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", [LearnStartDate]" +
                 ", [EpaOrgId]" +
                 ", [FundingModel]" +
+                ", [ApprenticeshipId]" +
                 ", [Source]" +
                 ", [LearnRefNumber]" +
                 ", [CompletionStatus]" +
@@ -61,6 +61,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", @learnStartDate" +
                 ", @epaOrgId" +
                 ", @fundingModel" +
+                ", @apprenticeshipId" +
                 ", @source" +
                 ", @learnRefNumber" +
                 ", @completionStatus" +
@@ -88,10 +89,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", @employerAccountId" +
                 ", @employerName" +
                 ", @isTransfer" +
-                ", @dateTransferIdentified); " +
-            "SET IDENTITY_INSERT [Learner] OFF;";
+                ", @dateTransferIdentified); ";
 
             DatabaseService.Execute(sql, learner);
+        }
+
+        public static LearnerModel Create(Guid id, long uln, string givenNames, string familyName, int? ukprn, int stdCode, long? apprenticeshipId, string source)
+        {
+            return Create(id, uln, givenNames, familyName, ukprn, stdCode, null, null, null, apprenticeshipId,
+                source, null, null, null, null, null, null, null, null, null, null, 1, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, 0, null);
         }
 
         public static LearnerModel Create(
@@ -162,6 +169,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", [LearnStartDate]" +
                 ", [EpaOrgId]" +
                 ", [FundingModel]" +
+                ", [ApprenticeshipId]" +
                 ", [Source]" +
                 ", [LearnRefNumber]" +
                 ", [CompletionStatus]" +
@@ -200,6 +208,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 $"AND {NullQueryParam(learner, p => p.LearnStartDate)} " +
                 $"AND {NullQueryParam(learner, p => p.EpaOrgId)} " +
                 $"AND {NullQueryParam(learner, p => p.FundingModel)} " +
+                $"AND {NullQueryParam(learner, p => p.ApprenticeshipId)} " +
                 $"AND {NullQueryParam(learner, p => p.Source)} " +
                 $"AND {NullQueryParam(learner, p => p.LearnRefNumber)} " +
                 $"AND {NullQueryParam(learner, p => p.CompletionStatus)} " +

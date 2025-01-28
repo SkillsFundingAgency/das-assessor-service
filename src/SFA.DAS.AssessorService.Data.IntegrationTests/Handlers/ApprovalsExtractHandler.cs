@@ -69,9 +69,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             }
         }
 
-        public static ApprovalsExtractModel Create(int apprenticeshipId, string firstName, string lastName, string uln, int trainingCode, string trainingCourseVersion, bool trainingCourseVersionConfirmed, 
+        public static ApprovalsExtractModel Create(int? apprenticeshipId, string firstName, string lastName, string uln, int? trainingCode, string trainingCourseVersion, bool trainingCourseVersionConfirmed, 
             string trainingCourseOption, string standardUId, DateTime? startDate, DateTime? endDate, DateTime? createdOn, DateTime? updatedOn, DateTime? stopDate, DateTime? pauseDate, DateTime? completionDate,
-            int ukprn, string learnRefNumber, int paymentStatus, long employerAccountId, string employerName)
+            int? ukprn, string learnRefNumber, int? paymentStatus, long? employerAccountId, string employerName)
         {
             return new ApprovalsExtractModel
             {
@@ -131,7 +131,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                    $"AND {NullQueryParam(approvalsExtract, p => p.ULN)} " +
                    $"AND {NullQueryParam(approvalsExtract, p => p.TrainingCode)} " +
                    $"AND {NullQueryParam(approvalsExtract, p => p.TrainingCourseVersion)} " +
-                    "AND TrainingCourseVersionConfirmed = @trainingCourseVersionConfirmed " +
+                   $"AND {NotNullQueryParam(approvalsExtract, p => p.TrainingCourseVersionConfirmed)} " +
                    $"AND {NullQueryParam(approvalsExtract, p => p.TrainingCourseOption)} " +
                    $"AND {NullQueryParam(approvalsExtract, p => p.StandardUId)} " +
                    $"AND {NullQueryParam(approvalsExtract, p => p.StartDate)} " +

@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             using (var connection = new SqlConnection(SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
-                    connection.Open();
+                    await connection.OpenAsync();
 
                 var comm = new SqlCommand
                 {
@@ -50,8 +50,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                         @"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); " + 
                          "ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
                 };
-                var reader = comm.ExecuteReader();
-                reader.Close();
+                var reader = await comm.ExecuteReaderAsync();
+                await reader.CloseAsync();
             }
 
             await LookupDataHelper.AddLookupData();
@@ -62,6 +62,37 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
                 connection.Execute(sql);
+            }
+        }
+
+        public void Execute<T>(string sql, T model)
+        {
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
+            {
+                connection.Execute(sql, model);
+            }
+        }
+
+        public object ExecuteScalar(string sql)
+        {
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
+            {
+                var result = connection.ExecuteScalar(sql);
+                return result;
+            }
+        }
+
+        public async Task<List<T>> ExecuteStoredProcedure<T>(string name, object parameters = null)
+        {
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
+            {
+                var results = await connection.QueryAsync<T>(
+                    name,
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return results.AsList();
             }
         }
 
@@ -96,23 +127,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
                 return await connection.QueryFirstOrDefaultAsync<T>(sql);
-            }
-        }
-
-        public object ExecuteScalar(string sql)
-        {
-            using (var connection = new SqlConnection(SqlConnectionStringTest))
-            {
-                var result = connection.ExecuteScalar(sql);
-                return result;
-            }
-        }
-
-        public void Execute<T>(string sql, T model)
-        {
-            using (var connection = new SqlConnection(SqlConnectionStringTest))
-            {
-                connection.Execute(sql, model);
             }
         }
 
