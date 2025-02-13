@@ -4,12 +4,11 @@ using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
-    public class SubmitBatchCertificateRequestProfile : Profile
+    public class SubmitBatchCertificateRequestProfile : ExplicitMappingProfileBase
     {
         public SubmitBatchCertificateRequestProfile()
         {
             CreateMap<SubmitBatchCertificateRequest, AssessorService.Api.Types.Models.ExternalApi.Certificates.SubmitBatchCertificateRequest>()
-            .IgnoreUnmappedMembers()
             .ForMember(dest => dest.RequestId, opt => opt.MapFrom(source => source.RequestId))
             .ForMember(dest => dest.Uln, opt => opt.MapFrom(source => source.Uln))
             .ForMember(dest => dest.FamilyName, opt => opt.MapFrom(source => source.FamilyName))

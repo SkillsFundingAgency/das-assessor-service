@@ -106,7 +106,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return NotFound();
             }
 
-            var result = epaOrganisationResponse.EpaOrganisations.Select(_mapper.Map<OrganisationStandardResponse>).ToList();
+            var result = epaOrganisationResponse.EpaOrganisations.Select(org => 
+            { 
+                var mappedResult = _mapper.Map<OrganisationStandardResponse>(org);
+                return mappedResult;
+            }).ToList();
 
             return Ok(result);
 

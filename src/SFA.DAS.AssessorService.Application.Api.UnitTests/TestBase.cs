@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests
             var services = new ServiceCollection();
 
             services.AddAutoMapper(
-                typeof(ApplicationListProfile).Assembly,
+                typeof(AssessorServiceOrganisationProfile).Assembly,
                 typeof(ApplicationResponseProfile).Assembly
             );
 

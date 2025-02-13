@@ -5,13 +5,12 @@ using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
 {
-    public class EpaOrganisationProfile : Profile
+    public class EpaOrganisationProfile : ExplicitMappingProfileBase
     {
         public EpaOrganisationProfile()
         {
             // Request going to Int API
             CreateMap<EpaOrganisation, UpdateEpaOrganisationRequest>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.LegalName, opt => opt.MapFrom(source => source.OrganisationData.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => source.OrganisationData.TradingName))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.OrganisationData.ProviderName))
