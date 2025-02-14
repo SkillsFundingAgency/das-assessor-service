@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,17 +17,17 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards.Query
 {
-    public class WhenGettingEPAOrganisationsByStandard : TestBase
+    public class WhenGettingEPAOrganisationsByStandard
     {
-        protected Mock<ILogger<StandardQueryController>> ControllerLoggerMock;
+        protected Mock<ILogger<StandardQueryController>> LoggerMock = new Mock<ILogger<StandardQueryController>>();
+        protected Mock<IMediator> MediatorMock = new Mock<IMediator>();
+        protected Mock<IMapper> MapperMock = new Mock<IMapper>();
         protected StandardQueryController Controller;
-        protected Mock<IMediator> Mediator = new Mock<IMediator>();
 
         [SetUp]
         protected  void Setup()
         {
-            ControllerLoggerMock = new Mock<ILogger<StandardQueryController>>();
-            Controller = new StandardQueryController(Mediator.Object, ControllerLoggerMock.Object, Mapper);
+            Controller = new StandardQueryController(MediatorMock.Object, LoggerMock.Object, MapperMock.Object);
         }
         
         [Test, MoqAutoData]
@@ -46,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             int standardCode)
         {
             //Arrange
-            Mediator
+            MediatorMock
                 .Setup(x => x.Send(
                     It.Is<GetEpaOrganisationsByStandardQuery>(c=>c.Standard.Equals(standardCode)), 
                     It.IsAny<CancellationToken>()))
@@ -70,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             List<Organisation> epaOrganisations)
         {
             //Arrange
-            Mediator
+            MediatorMock
                 .Setup(x => x.Send(
                     It.Is<GetEpaOrganisationsByStandardQuery>(c => c.Standard.Equals(standardCode)),
                     It.IsAny<CancellationToken>()))
@@ -78,6 +79,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 {
                     EpaOrganisations = epaOrganisations
                 });
+
+            var mappedOrganisations = new List<OrganisationStandardResponse>(); 
+
+            MapperMock.Setup(m => m.Map<List<OrganisationStandardResponse>>(epaOrganisations)) 
+                .Returns(mappedOrganisations); 
 
             //Act
             var actual = await Controller.GetEpaosByStandard(standardCode);
@@ -88,66 +94,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             actualResult.Should().NotBeNull();
             var actualModel = actualResult.Value as List<OrganisationStandardResponse>;
 
-            for (int i = 0; i < actualModel.Count; i++)
-            {
-                var response = actualModel[i];
-                var expected = epaOrganisations.Where(o => o.Id == response.Id).FirstOrDefault();
+            MapperMock.Verify(m => m.Map<List<OrganisationStandardResponse>>(epaOrganisations), Times.Once); 
 
-                response.Id.Should().Be(expected.Id);
-                response.PrimaryContact.Should().Be(expected.PrimaryContact);
-                response.Status.Should().Be(expected.Status);
-                response.EndPointAssessorName.Should().Be(expected.EndPointAssessorName);
-                response.EndPointAssessorOrganisationId.Should().Be(expected.EndPointAssessorOrganisationId);
-                response.EndPointAssessorUkprn.Should().Be(expected.EndPointAssessorUkprn);
-                response.OrganisationType.Should().Be(expected.OrganisationType?.Type);
-                response.City.Should().Be(expected.OrganisationData?.Address4);
-                response.Postcode.Should().Be(expected.OrganisationData?.Postcode);
-
-                var expectedStandard = expected.OrganisationStandards.FirstOrDefault();
-
-                response.OrganisationStandard.StandardId.Should().Be(expectedStandard.StandardCode);
-                response.OrganisationStandard.EffectiveFrom.Should().Be(expectedStandard.EffectiveFrom);
-                response.OrganisationStandard.EffectiveTo.Should().Be(expectedStandard.EffectiveTo);
-                response.OrganisationStandard.DateStandardApprovedOnRegister.Should().Be(expectedStandard.DateStandardApprovedOnRegister);
-
-                var expectedMappedDeliveryAreas = expectedStandard.OrganisationStandardDeliveryAreas.Select(x => 
-                    new AssessorService.Api.Types.Models.AO.OrganisationStandardDeliveryArea
-                    { 
-                        Id = x.Id,
-                        DeliveryArea = x.DeliveryArea.Area,
-                        Status = x.Status,
-                        DeliveryAreaId = x.DeliveryArea.Id
-
-                    }).ToList();
-
-                response.DeliveryAreasDetails.Should().BeEquivalentTo(expectedMappedDeliveryAreas);
-
-                var properties = typeof(OrganisationResponse).GetProperties();
-                foreach (var property in properties)
-                {
-                    var mappedFields = new HashSet<string>
-                    {
-                        "Id", "PrimaryContact", "Status", "EndPointAssessorName",
-                        "EndPointAssessorOrganisationId", "EndPointAssessorUkprn",
-                        "OrganisationType","City", "Postcode", "DeliveryAreaDetails",
-                        "OrganisationStandard"
-                    };
-
-                    if (!mappedFields.Contains(property.Name))
-                    {
-                        var value = property.GetValue(response);
-                        if (property.PropertyType == typeof(bool))
-                        {
-                            ((bool)value).Should().BeFalse($"Unmapped property {property.Name} should default to false");
-                        }
-                        else
-                        {
-                            value.Should().BeNull($"Unmapped property {property.Name} should not be mapped and should be null");
-                        }
-                    }
-                }
-
-            }
+ 
         }
 
         

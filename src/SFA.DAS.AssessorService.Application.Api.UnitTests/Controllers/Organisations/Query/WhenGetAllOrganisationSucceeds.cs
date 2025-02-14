@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using Models = SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
+using Moq;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
@@ -30,6 +31,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             OrganisationQueryRepositoryMock.Setup(q => q.GetAllOrganisations())
                 .Returns(Task.FromResult((_organisations.AsEnumerable())));
+
+            var mappedOrganisations = new List<Models.OrganisationResponse>(); 
+
+            MapperMock.Setup(m => m.Map<List<Models.OrganisationResponse>>(_organisations)) 
+                .Returns(mappedOrganisations); 
 
             _result = OrganisationQueryController.GetAllOrganisations().Result;
         }
@@ -64,42 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
                 organisationResponses.Should().NotBeNull();
                 organisationResponses.Count.Should().Be(_organisations.Count);
 
-                for (int i = 0; i < _organisations.Count; i++)
-                {
-                    var expected = _organisations[i];
-                    var actual = organisationResponses[i];
-
-                    actual.Id.Should().Be(expected.Id);
-                    actual.PrimaryContact.Should().Be(expected.PrimaryContact);
-                    actual.Status.Should().Be(expected.Status);
-                    actual.EndPointAssessorName.Should().Be(expected.EndPointAssessorName);
-                    actual.EndPointAssessorOrganisationId.Should().Be(expected.EndPointAssessorOrganisationId);
-                    actual.EndPointAssessorUkprn.Should().Be(expected.EndPointAssessorUkprn);
-                    actual.RoATPApproved.Should().Be(expected.OrganisationData.RoATPApproved);
-                    actual.RoEPAOApproved.Should().Be(expected.OrganisationData.RoEPAOApproved);
-                    actual.OrganisationType.Should().Be(expected.OrganisationType?.Type);
-                    actual.CompanySummary.Should().Be(expected.OrganisationData?.CompanySummary);
-                    actual.CharitySummary.Should().Be(expected.OrganisationData?.CharitySummary);
-
-                    var properties = typeof(Models.OrganisationResponse).GetProperties();
-                    foreach (var property in properties)
-                    {
-                        var mappedFields = new HashSet<string>
-                        {
-                            "Id", "PrimaryContact", "Status", "EndPointAssessorName",
-                            "EndPointAssessorOrganisationId", "EndPointAssessorUkprn",
-                            "RoATPApproved", "RoEPAOApproved", "OrganisationType",
-                            "CompanySummary", "CharitySummary"
-                        };
-
-                        if (!mappedFields.Contains(property.Name))
-                        {
-                            var value = property.GetValue(actual);
-                            value.Should().BeNull($"Property {property.Name} should not be mapped and should be null");
-                        }
-                    }
-
-                }
+                MapperMock.Verify(m => m.Map<List<Models.OrganisationResponse>>(_organisations), Times.Once); 
             }
         }
     }

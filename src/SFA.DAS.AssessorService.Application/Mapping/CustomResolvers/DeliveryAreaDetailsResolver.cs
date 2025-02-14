@@ -3,29 +3,31 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using System.Collections.Generic;
 using System.Linq;
-using Domain = SFA.DAS.AssessorService.Domain.Entities;
 
-public class DeliveryAreasDetailsResolver : IValueResolver<Domain.Organisation, OrganisationStandardResponse, List<OrganisationStandardDeliveryArea>>
+namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
 {
-    public List<OrganisationStandardDeliveryArea> Resolve(
-        Domain.Organisation source, 
-        OrganisationStandardResponse destination, 
-        List<OrganisationStandardDeliveryArea> destMember, 
-        ResolutionContext context)
+    public class DeliveryAreasDetailsResolver : IValueResolver<Domain.Entities.Organisation, OrganisationStandardResponse, List<OrganisationStandardDeliveryArea>>
     {
-        if (source.OrganisationStandards != null && source.OrganisationStandards.Any())
+        public List<OrganisationStandardDeliveryArea> Resolve(
+            Domain.Entities.Organisation source,
+            OrganisationStandardResponse destination,
+            List<OrganisationStandardDeliveryArea> destMember,
+            ResolutionContext context)
         {
-            var firstStandard = source.OrganisationStandards.First();
+            if (source.OrganisationStandards != null && source.OrganisationStandards.Any())
+            {
+                var firstStandard = source.OrganisationStandards.First();
 
-            var mappedDeliveryAreas = firstStandard.OrganisationStandardDeliveryAreas
-                .Select(area => context.Mapper.Map<Domain.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>(area))
-                .ToList();
+                var mappedDeliveryAreas = firstStandard.OrganisationStandardDeliveryAreas
+                    .Select(area => context.Mapper.Map<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>(area))
+                    .ToList();
 
-            return mappedDeliveryAreas;
-        }
-        else
-        {
-            return new List<OrganisationStandardDeliveryArea>();
+                return mappedDeliveryAreas;
+            }
+            else
+            {
+                return new List<OrganisationStandardDeliveryArea>();
+            }
         }
     }
 }
