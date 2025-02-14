@@ -5,9 +5,9 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using Models = SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Moq;
+using Models = SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
@@ -32,7 +32,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             OrganisationQueryRepositoryMock.Setup(q => q.GetAllOrganisations())
                 .Returns(Task.FromResult((_organisations.AsEnumerable())));
 
-            var mappedOrganisations = new List<Models.OrganisationResponse>(); 
+            var mappedOrganisations = Builder<Models.OrganisationResponse>
+                .CreateListOfSize(3)
+                .Build()
+                .ToList();
 
             MapperMock.Setup(m => m.Map<List<Models.OrganisationResponse>>(_organisations)) 
                 .Returns(mappedOrganisations); 
