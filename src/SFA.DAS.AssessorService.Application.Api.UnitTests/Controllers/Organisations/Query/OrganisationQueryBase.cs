@@ -29,6 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
+        protected Mock<IMapper> MapperMock ;
+
         protected  void Setup()
         {
             Mediator = new Mock<IMediator>();
@@ -36,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             SetupControllerMocks();
 
             OrganisationQueryController = new OrganisationQueryController(
-                ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, Mapper);
+                ControllerLoggerMock.Object, Mediator.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, MapperMock.Object);
         }
 
         private void SetupControllerMocks()
@@ -60,6 +62,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             UkPrnValidator = new UkPrnValidator(ukPrnStringLocalizer.Object);
 
             ControllerLoggerMock = new Mock<ILogger<OrganisationQueryController>>();
+
+            MapperMock = new Mock<IMapper>();
         }
         
     }

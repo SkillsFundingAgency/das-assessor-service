@@ -5,12 +5,11 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
 {
-    public class CompaniesHouseSummaryProfile : Profile
+    public class CompaniesHouseSummaryProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseSummaryProfile()
         {
             CreateMap<Company, Domain.Entities.CompaniesHouseSummary>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -37,12 +36,11 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         }
     }
 
-    public class DirectorInformationProfile : Profile
+    public class DirectorInformationProfile : ExplicitMappingProfileBase
     {
         public DirectorInformationProfile()
         {
             CreateMap<Officer, Domain.Entities.DirectorInformation>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))
@@ -51,12 +49,11 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         }
     }
 
-    public class PersonSignificantControlInformationProfile : Profile
+    public class PersonSignificantControlInformationProfile : ExplicitMappingProfileBase
     {
         public PersonSignificantControlInformationProfile()
         {
             CreateMap<PersonWithSignificantControl, Domain.Entities.PersonWithSignificantControlInformation>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(source => source.DateOfBirth.ToString("MM,yyyy")))

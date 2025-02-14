@@ -7,12 +7,11 @@ using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
 
 namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
 {
-    public class OrganisationSearchViewModelProfile : Profile
+    public class OrganisationSearchViewModelProfile : ExplicitMappingProfileBase
     {
         public OrganisationSearchViewModelProfile()
         {
             CreateMap<OrganisationSearchViewModel, RequestAccessOrgSearchViewModel>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Address, x => x.Ignore())
                 .ForMember(dest => dest.CompanyNumber, x => x.Ignore())
                 .ForMember(dest => dest.CompanyOrCharityDisplayText, x => x.Ignore())

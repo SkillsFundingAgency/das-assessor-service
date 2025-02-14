@@ -6,12 +6,11 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class RoatpOrganisationProfile : Profile
+    public class RoatpOrganisationProfile : ExplicitMappingProfileBase
     {
         public RoatpOrganisationProfile()
         {
             CreateMap<Organisation, OrganisationSearchResult>()
-                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)

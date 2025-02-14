@@ -5,12 +5,11 @@ using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
-    public class UpdateBatchEpaRequestProfile : Profile
+    public class UpdateBatchEpaRequestProfile : ExplicitMappingProfileBase
     {
         public UpdateBatchEpaRequestProfile()
         {
             CreateMap<UpdateBatchEpaRequest, AssessorService.Api.Types.Models.ExternalApi.Epas.UpdateBatchEpaRequest>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Uln, opt => opt.MapFrom(source => source.Learner.Uln))
                 .ForMember(dest => dest.FamilyName, opt => opt.MapFrom(source => source.Learner.FamilyName))
                 .ForMember(dest => dest.StandardCode, opt => opt.MapFrom(source => source.Standard.StandardCode ?? 0))

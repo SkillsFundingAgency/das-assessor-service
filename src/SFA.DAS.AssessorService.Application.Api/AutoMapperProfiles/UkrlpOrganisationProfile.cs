@@ -7,12 +7,11 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class UkrlpOrganisationProfile : Profile
+    public class UkrlpOrganisationProfile : ExplicitMappingProfileBase
     {
         public UkrlpOrganisationProfile()
         {
             CreateMap<ProviderDetails, OrganisationSearchResult>()
-                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "UKRLP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.EasApiOrganisationType = null)
@@ -27,12 +26,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class UkrlpOrganisationAddressProfile : Profile
+    public class UkrlpOrganisationAddressProfile : ExplicitMappingProfileBase
     {
         public UkrlpOrganisationAddressProfile()
         {
             CreateMap<ContactAddress, OrganisationAddress>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Address1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Address2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Address3))

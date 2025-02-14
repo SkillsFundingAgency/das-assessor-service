@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Web.AutoMapperProfiles
         public StandardVersionViewModelProfile()
         {
             CreateMap<StandardVersionViewModel, StandardVersion>()
-                    .IgnoreUnmappedMembers()
                     .ReverseMap();
         }
     }

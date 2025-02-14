@@ -6,12 +6,11 @@ using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class CompaniesHouseCompanyProfile : Profile
+    public class CompaniesHouseCompanyProfile : ExplicitMappingProfileBase    
     {
         public CompaniesHouseCompanyProfile()
         {
             CreateMap<CompanyDetails, AssessorService.Api.Types.CompaniesHouse.Company>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.company_number))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.company_name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.company_status))
@@ -26,23 +25,21 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class CompaniesHouseAccountsProfile : Profile
+    public class CompaniesHouseAccountsProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseAccountsProfile()
         {
             CreateMap<CompanyDetails, AssessorService.Api.Types.CompaniesHouse.Accounts>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.LastConfirmationStatementDate, opt => opt.ResolveUsing(source => source.confirmation_statement?.last_made_up_to))
                 .ForMember(dest => dest.LastAccountsDate, opt => opt.ResolveUsing(source => source.accounts?.last_accounts?.made_up_to));
         }
     }
 
-    public class CompaniesHouseRegisteredOfficeAddressProfile : Profile
+    public class CompaniesHouseRegisteredOfficeAddressProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseRegisteredOfficeAddressProfile()
         {
             CreateMap<RegisteredOfficeAddress, AssessorService.Api.Types.CompaniesHouse.Address>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
@@ -52,12 +49,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class CompaniesHouseOfficerAddressProfile : Profile
+    public class CompaniesHouseOfficerAddressProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseOfficerAddressProfile()
         {
             CreateMap<OfficerAddress, AssessorService.Api.Types.CompaniesHouse.Address>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
@@ -67,12 +63,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class CompaniesHouseOfficerProfile : Profile
+    public class CompaniesHouseOfficerProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseOfficerProfile()
         {
             CreateMap<Officer, AssessorService.Api.Types.CompaniesHouse.Officer>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.ResolveUsing(source => source.links?.officer?.appointments?.Replace("/officers/", string.Empty).Replace("/appointments", string.Empty)))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(source => source.officer_role))
@@ -83,12 +78,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class CompaniesHouseOfficerDisqualificationProfile : Profile
+    public class CompaniesHouseOfficerDisqualificationProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseOfficerDisqualificationProfile()
         {
             CreateMap<Disqualification, AssessorService.Api.Types.CompaniesHouse.Disqualification>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.DisqualifiedFrom, opt => opt.MapFrom(source => source.disqualified_from))
                 .ForMember(dest => dest.DisqualifiedUntil, opt => opt.MapFrom(source => source.disqualified_until))
                 .ForMember(dest => dest.CaseIdentifier, opt => opt.MapFrom(source => source.case_identifier))
@@ -97,12 +91,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class CompaniesHousePersonWithSignificantControlProfile : Profile
+    public class CompaniesHousePersonWithSignificantControlProfile : ExplicitMappingProfileBase
     {
         public CompaniesHousePersonWithSignificantControlProfile()
         {
             CreateMap<PersonWithSignificantControl, AssessorService.Api.Types.CompaniesHouse.PersonWithSignificantControl>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.ResolveUsing(source => source.links?.self))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.year, source.date_of_birth.month, source.date_of_birth.day ?? 1)))
@@ -113,12 +106,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class CompaniesHousePersonWithSignificantControlAddressProfile : Profile
+    public class CompaniesHousePersonWithSignificantControlAddressProfile : ExplicitMappingProfileBase
     {
         public CompaniesHousePersonWithSignificantControlAddressProfile()
         {
             CreateMap<PersonWithSignificantControlAddress, AssessorService.Api.Types.CompaniesHouse.Address>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
