@@ -100,9 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.DeliveryArea, opt => opt.MapFrom(source => source.DeliveryArea.Area))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
-                .ForMember(dest => dest.DeliveryAreaId, opt => opt.MapFrom(source => source.DeliveryArea.Id))
-                .ForMember(dest => dest.Comments, opt => opt.Ignore())
-                .ForMember(dest => dest.OrganisationStandardId, opt => opt.Ignore());
+                .ForMember(dest => dest.DeliveryAreaId, opt => opt.MapFrom(source => source.DeliveryArea.Id));
         }
     }
 

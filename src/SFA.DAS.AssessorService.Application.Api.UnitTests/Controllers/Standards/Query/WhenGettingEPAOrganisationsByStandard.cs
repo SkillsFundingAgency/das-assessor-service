@@ -2,32 +2,38 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
-using AutoMapper;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
-using OrganisationStandard = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandard;
-using OrganisationStandardDeliveryArea = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardDeliveryArea;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards.Query
 {
-    public class WhenGettingEPAOrganisationsByStandard
+    public class WhenGettingEPAOrganisationsByStandard : TestBase
     {
+        protected Mock<ILogger<StandardQueryController>> ControllerLoggerMock;
+        protected StandardQueryController Controller;
+        protected Mock<IMediator> Mediator = new Mock<IMediator>();
+
+        [SetUp]
+        protected  void Setup()
+        {
+            ControllerLoggerMock = new Mock<ILogger<StandardQueryController>>();
+            Controller = new StandardQueryController(Mediator.Object, ControllerLoggerMock.Object, Mapper);
+        }
+        
         [Test, MoqAutoData]
-        public async Task Then_If_The_Standard_Id_Is_Not_Supplied_A_Bad_Request_Is_Returned(
-            [Greedy] StandardQueryController controller)
+        public async Task Then_If_The_Standard_Id_Is_Not_Supplied_A_Bad_Request_Is_Returned()
         {
             //Act
-            var actual = await controller.GetEpaosByStandard(0);
+            var actual = await Controller.GetEpaosByStandard(0);
 
             //Assert
             actual.Should().NotBeNull();
@@ -37,12 +43,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
         [Test, MoqAutoData]
         public async Task Then_If_There_Is_No_Data_Returned_A_Not_Found_Result_Is_Returned(
-            int standardCode,
-            [Frozen] Mock<IMediator> mediator,
-            [Greedy] StandardQueryController controller)
+            int standardCode)
         {
             //Arrange
-            mediator
+            Mediator
                 .Setup(x => x.Send(
                     It.Is<GetEpaOrganisationsByStandardQuery>(c=>c.Standard.Equals(standardCode)), 
                     It.IsAny<CancellationToken>()))
@@ -52,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 });
 
             //Act
-            var actual = await controller.GetEpaosByStandard(standardCode);
+            var actual = await Controller.GetEpaosByStandard(standardCode);
 
             //Assert
             actual.Should().NotBeNull();
@@ -63,13 +67,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
         [Test, RecursiveMoqAutoData]
         public async Task Then_If_There_Is_Data_It_Is_Returned_In_Response(
             int standardCode,
-            List<Organisation> epaOrganisations,
-            [Frozen] Mock<IMediator> mediator,
-            [Greedy] StandardQueryController controller,
-            IMapper mapper)
+            List<Organisation> epaOrganisations)
         {
             //Arrange
-            mediator
+            Mediator
                 .Setup(x => x.Send(
                     It.Is<GetEpaOrganisationsByStandardQuery>(c => c.Standard.Equals(standardCode)),
                     It.IsAny<CancellationToken>()))
@@ -79,14 +80,76 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
                 });
 
             //Act
-            var actual = await controller.GetEpaosByStandard(standardCode);
+            var actual = await Controller.GetEpaosByStandard(standardCode);
 
             //Assert
             actual.Should().NotBeNull();
             var actualResult = actual as OkObjectResult;
             actualResult.Should().NotBeNull();
             var actualModel = actualResult.Value as List<OrganisationStandardResponse>;
-            actualModel.Should().BeEquivalentTo(epaOrganisations.Select(mapper.Map<OrganisationStandardResponse>).ToList());
+
+            for (int i = 0; i < actualModel.Count; i++)
+            {
+                var response = actualModel[i];
+                var expected = epaOrganisations.Where(o => o.Id == response.Id).FirstOrDefault();
+
+                response.Id.Should().Be(expected.Id);
+                response.PrimaryContact.Should().Be(expected.PrimaryContact);
+                response.Status.Should().Be(expected.Status);
+                response.EndPointAssessorName.Should().Be(expected.EndPointAssessorName);
+                response.EndPointAssessorOrganisationId.Should().Be(expected.EndPointAssessorOrganisationId);
+                response.EndPointAssessorUkprn.Should().Be(expected.EndPointAssessorUkprn);
+                response.OrganisationType.Should().Be(expected.OrganisationType?.Type);
+                response.City.Should().Be(expected.OrganisationData?.Address4);
+                response.Postcode.Should().Be(expected.OrganisationData?.Postcode);
+
+                var expectedStandard = expected.OrganisationStandards.FirstOrDefault();
+
+                response.OrganisationStandard.StandardId.Should().Be(expectedStandard.StandardCode);
+                response.OrganisationStandard.EffectiveFrom.Should().Be(expectedStandard.EffectiveFrom);
+                response.OrganisationStandard.EffectiveTo.Should().Be(expectedStandard.EffectiveTo);
+                response.OrganisationStandard.DateStandardApprovedOnRegister.Should().Be(expectedStandard.DateStandardApprovedOnRegister);
+
+                var expectedMappedDeliveryAreas = expectedStandard.OrganisationStandardDeliveryAreas.Select(x => 
+                    new AssessorService.Api.Types.Models.AO.OrganisationStandardDeliveryArea
+                    { 
+                        Id = x.Id,
+                        DeliveryArea = x.DeliveryArea.Area,
+                        Status = x.Status,
+                        DeliveryAreaId = x.DeliveryArea.Id
+
+                    }).ToList();
+
+                response.DeliveryAreasDetails.Should().BeEquivalentTo(expectedMappedDeliveryAreas);
+
+                var properties = typeof(OrganisationResponse).GetProperties();
+                foreach (var property in properties)
+                {
+                    var mappedFields = new HashSet<string>
+                    {
+                        "Id", "PrimaryContact", "Status", "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId", "EndPointAssessorUkprn",
+                        "OrganisationType","City", "Postcode", "DeliveryAreaDetails",
+                        "OrganisationStandard"
+                    };
+
+                    if (!mappedFields.Contains(property.Name))
+                    {
+                        var value = property.GetValue(response);
+                        if (property.PropertyType == typeof(bool))
+                        {
+                            ((bool)value).Should().BeFalse($"Unmapped property {property.Name} should default to false");
+                        }
+                        else
+                        {
+                            value.Should().BeNull($"Unmapped property {property.Name} should not be mapped and should be null");
+                        }
+                    }
+                }
+
+            }
         }
+
+        
     }
 }
