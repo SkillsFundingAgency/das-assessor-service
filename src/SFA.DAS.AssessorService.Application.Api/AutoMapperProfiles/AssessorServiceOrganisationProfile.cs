@@ -46,11 +46,13 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.Postcode));
         }
     }
-    public class AssessorServiceOrganisationTypeProfile : Profile
+    public class AssessorServiceOrganisationTypeProfile : ExplicitMappingProfileBase
     {
         public AssessorServiceOrganisationTypeProfile()
         {
-            CreateMap<AssessorService.Api.Types.Models.AO.OrganisationType, OrganisationType>();
+            CreateMap<AssessorService.Api.Types.Models.AO.OrganisationType, OrganisationType>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
+                .ForMember(dest => dest.TypeDescription, opt => opt.MapFrom(source => source.TypeDescription));
         }
     }
 
