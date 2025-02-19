@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
@@ -30,6 +31,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> Search([FromBody]SearchQuery searchQuery)
         {
             return Ok(await _mediator.Send(searchQuery));
+        }
+
+        [HttpPost("frameworks", Name = "SearchFrameworks")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<FrameworkSearchResult>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> FrameworkSearch([FromBody]FrameworkSearchQuery frameworkSearchQuery)
+        {
+            return Ok(await _mediator.Send(frameworkSearchQuery));
         }
     }
 }
