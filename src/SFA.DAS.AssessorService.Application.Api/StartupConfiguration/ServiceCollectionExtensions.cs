@@ -253,6 +253,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddSingleton<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
             services.AddSingleton<IOrganisationsApiClient, OrganisationsApiClient>();
             services.AddSingleton<IContactsApiClient, ContactsApiClient>();
+            services.AddSingleton<IFrameworkSearchApiClient, FrameworkSearchApiClient>();
 
             return services;
         }
@@ -290,6 +291,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddTransient<ILearnerRepository, LearnerRepository>();
             services.AddTransient<IStaffReportRepository, StaffReportRepository>();
             services.AddTransient<IApplyRepository, ApplyRepository>();
+            services.AddTransient<IFrameworkLearnerRepository, FrameworkLearnerRepository>();
             return services;
         }
 
