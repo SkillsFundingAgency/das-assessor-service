@@ -181,6 +181,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchQuery.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchQuery.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchResult.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" />
@@ -332,12 +334,14 @@
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ContactsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ContactsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\DashboardApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\DashboardApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\EmailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\EmailApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\FrameworkSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\FrameworkSearchApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IApplicationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IApplicationApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IApprovalsLearnerApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IApprovalsLearnerApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ICertificateApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ICertificateApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IContactsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IContactsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IDashboardApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IDashboardApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IEmailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IEmailApiClient.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IFrameworkSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IFrameworkSearchApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" />
