@@ -23,6 +23,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<long>()))
                 .Returns(Task.FromResult((_organisation)));
 
+            MapperMock.Setup(q => q.Map<OrganisationResponse>(_organisation)).Returns(
+                new OrganisationResponse());
+
             _result = OrganisationQueryController.SearchOrganisation(10000000).Result;
         }
 

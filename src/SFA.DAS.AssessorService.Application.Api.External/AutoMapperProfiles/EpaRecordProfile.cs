@@ -3,13 +3,12 @@ using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
-    public class EpaRecordProfile : Profile
+    public class EpaRecordProfile : ExplicitMappingProfileBase
     {
         public EpaRecordProfile()
         {
             // Request going to Int API
             CreateMap<Models.Request.Epa.EpaRecord, Domain.JsonData.EpaRecord>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.EpaDate, opt => opt.MapFrom(source => source.EpaDate))
                 .ForMember(dest => dest.EpaOutcome, opt => opt.MapFrom(source => source.EpaOutcome))
                 .ForMember(dest => dest.Resit, opt => opt.MapFrom(source => source.Resit))
@@ -17,7 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
             // Response from Int API
             CreateMap<Domain.JsonData.EpaRecord, Models.Response.Epa.EpaRecord>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.EpaDate, opt => opt.MapFrom(source => source.EpaDate))
                 .ForMember(dest => dest.EpaOutcome, opt => opt.MapFrom(source => source.EpaOutcome))
                 .ForMember(dest => dest.Resit, opt => opt.MapFrom(source => source.Resit))

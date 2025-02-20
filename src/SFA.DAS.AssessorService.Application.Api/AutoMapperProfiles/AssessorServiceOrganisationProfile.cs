@@ -6,15 +6,16 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.OrganisationType;
 using SFA.DAS.AssessorService.AutoMapperExtensions;
+using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
+using Polly;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class AssessorServiceOrganisationProfile : Profile
+    public class AssessorServiceOrganisationProfile : ExplicitMappingProfileBase
     {
         public AssessorServiceOrganisationProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.AssessmentOrganisationSummary, OrganisationSearchResult>()
-                .IgnoreUnmappedMembers()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoEPAO")
                 .BeforeMap((source, dest) => dest.RoEPAOApproved = true)
                 .BeforeMap((source, dest) => dest.EasApiOrganisationType = null)
@@ -33,12 +34,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class AssessorServiceOrganisationAddressProfile : Profile
+    public class AssessorServiceOrganisationAddressProfile : ExplicitMappingProfileBase
     {
         public AssessorServiceOrganisationAddressProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.OrganisationData, OrganisationAddress>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Address1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Address2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Address3))
@@ -46,21 +46,21 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.Postcode));
         }
     }
-    public class AssessorServiceOrganisationTypeProfile : Profile
+    public class AssessorServiceOrganisationTypeProfile : ExplicitMappingProfileBase
     {
         public AssessorServiceOrganisationTypeProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.AO.OrganisationType, OrganisationType>()
-                .IgnoreUnmappedMembers();
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
+                .ForMember(dest => dest.TypeDescription, opt => opt.MapFrom(source => source.TypeDescription));
         }
     }
 
-    public class AssessorServiceOrganisationResponse : Profile
+    public class AssessorServiceOrganisationResponse : ExplicitMappingProfileBase
     {
         public AssessorServiceOrganisationResponse()
         {
             CreateMap<Domain.Entities.Organisation, OrganisationResponse>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -75,43 +75,30 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class OrganisationWithStandardResponseMapper : Profile
+    public class OrganisationWithStandardResponseMapper : ExplicitMappingProfileBase
     {
         public OrganisationWithStandardResponseMapper()
         {
             CreateMap<Domain.Entities.Organisation, OrganisationStandardResponse>()
-                .IgnoreUnmappedMembers()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
-                .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
-                .ForMember(dest => dest.EndPointAssessorName, opt => opt.MapFrom(source => source.EndPointAssessorName))
-                .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.MapFrom(source => source.EndPointAssessorOrganisationId))
-                .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
-                .ForMember(dest => dest.OrganisationType, opt => opt.ResolveUsing(source => source.OrganisationType?.Type))
-                .ForMember(dest => dest.City, opt => opt.ResolveUsing(source => source.OrganisationData?.Address4))
-                .ForMember(dest => dest.Postcode, opt => opt.ResolveUsing(source => source.OrganisationData?.Postcode))
-                .ForMember(dest => dest.DeliveryAreasDetails, opt => opt.MapFrom((src, dest, destMember, context) =>
-                {
-                    var firstStandard = src.OrganisationStandards.FirstOrDefault();
-                    if (firstStandard != null)
-                    {
-                        return firstStandard.OrganisationStandardDeliveryAreas
-                            .Select(area => context.Mapper.Map<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>(area))
-                            .ToList();
-                    }
-                    return new List<OrganisationStandardDeliveryArea>(); 
-                }))
-                .ForMember(dest =>dest.OrganisationStandard,
-                        opt=>opt.MapFrom(src=>src.OrganisationStandards.FirstOrDefault()));
-        }
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
+            .ForMember(dest => dest.PrimaryContact, opt => opt.MapFrom(source => source.PrimaryContact))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+            .ForMember(dest => dest.EndPointAssessorName, opt => opt.MapFrom(source => source.EndPointAssessorName))
+            .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.MapFrom(source => source.EndPointAssessorOrganisationId))
+            .ForMember(dest => dest.EndPointAssessorUkprn, opt => opt.MapFrom(source => source.EndPointAssessorUkprn))
+            .ForMember(dest => dest.OrganisationType, opt => opt.ResolveUsing(source => source.OrganisationType?.Type))
+            .ForMember(dest => dest.City, opt => opt.ResolveUsing(source => source.OrganisationData?.Address4))
+            .ForMember(dest => dest.Postcode, opt => opt.ResolveUsing(source => source.OrganisationData?.Postcode))
+            .ForMember(dest => dest.DeliveryAreasDetails, opt => opt.MapFrom<DeliveryAreasDetailsResolver>())
+            .ForMember(dest => dest.OrganisationStandard, opt => opt.MapFrom<OrganisationStandardResolver>());
+         }
     }
 
-    public class OrganisationStandardDeliveryAreaMapper : Profile
+    public class OrganisationStandardDeliveryAreaMapper : ExplicitMappingProfileBase
     {
         public OrganisationStandardDeliveryAreaMapper()
         {
             CreateMap<Domain.Entities.OrganisationStandardDeliveryArea, OrganisationStandardDeliveryArea>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.DeliveryArea, opt => opt.MapFrom(source => source.DeliveryArea.Area))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
@@ -119,12 +106,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
         }
     }
 
-    public class OrganisationStandardMapper : Profile
+    public class OrganisationStandardMapper : ExplicitMappingProfileBase
     {
         public OrganisationStandardMapper ()
         {
             CreateMap<Domain.Entities.OrganisationStandard, OrganisationStandard>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.StandardId, opt=> opt.MapFrom(source =>source.StandardCode))
                 .ForMember(dest => dest.EffectiveFrom, opt=> opt.MapFrom(source =>source.EffectiveFrom))
                 .ForMember(dest => dest.EffectiveTo, opt=> opt.MapFrom(source =>source.EffectiveTo))
