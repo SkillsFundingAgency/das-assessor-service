@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<List<SearchResult>> Search(SearchQuery searchQuery)
+        public async Task<List<SearchResult>> SearchStandards(SearchQuery searchQuery)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search"))
             {

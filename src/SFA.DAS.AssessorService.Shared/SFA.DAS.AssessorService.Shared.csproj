@@ -523,6 +523,7 @@
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Certificates\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\AO\" />
+    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\CharityCommission\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Setting\" />
