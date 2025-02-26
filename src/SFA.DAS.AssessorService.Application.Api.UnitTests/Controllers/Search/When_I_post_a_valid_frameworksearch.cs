@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
 
             var controller = new SearchController(mediator.Object);
 
-            _result = controller.FrameworkSearch(new FrameworkSearchQuery
+            _result = controller.SearchFrameworks(new FrameworkSearchQuery
             {
                 FirstName = "Ilya",
                 LastName = "Vogel",

@@ -15,9 +15,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<List<FrameworkSearchResult>> FrameworkSearch(FrameworkSearchQuery frameworkSearchQuery)
+        public async Task<List<FrameworkSearchResult>> SearchFrameworks(FrameworkSearchQuery frameworkSearchQuery)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search/framework"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search/frameworks"))
             {
                 return await PostPutRequestWithResponseAsync<FrameworkSearchQuery, List<FrameworkSearchResult>>(request, frameworkSearchQuery);
             }

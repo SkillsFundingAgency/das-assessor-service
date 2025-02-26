@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<FrameworkSearchResult>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> FrameworkSearch([FromBody]FrameworkSearchQuery frameworkSearchQuery)
+        public async Task<IActionResult> SearchFrameworks([FromBody]FrameworkSearchQuery frameworkSearchQuery)
         {
             return Ok(await _mediator.Send(frameworkSearchQuery));
         }
