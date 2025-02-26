@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface IFrameworkSearchApiClient
     {
-        Task<List<FrameworkSearchResult>> FrameworkSearch(FrameworkSearchQuery searchQuery);
+        Task<List<FrameworkSearchResult>> SearchFrameworks(FrameworkSearchQuery searchQuery);
     }
 }
