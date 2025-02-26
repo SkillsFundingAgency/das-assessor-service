@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             var mappedResults = learners.Select(l =>
                 new FrameworkSearchResult
                 { 
-                    ApprenticeshipLevel = l.ApprenticeshipLevel,
+                    ApprenticeshipLevelName = l.ApprenticeshipLevelName,
                     CertificationYear = l.CertificationYear,
                     FrameworkName = l.FrameworkName,
                     Id = l.Id

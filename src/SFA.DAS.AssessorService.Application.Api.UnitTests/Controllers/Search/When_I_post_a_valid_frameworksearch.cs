@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 
@@ -19,8 +18,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
         private IActionResult _result;
         private Guid _guid = Guid.NewGuid();
         private string _frameworkName = "BEng Biochemical";
-        private string _apprenticeshipLevel = "Advanced";
-        private int _certificationYear = 2002;
+        private string _apprenticeshipLevelName = "Advanced";
+        private string _certificationYear = "2002";
 
         [SetUp]
         public void Arrange()
@@ -31,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
                 m.Send(It.IsAny<FrameworkSearchQuery>(),
                     new CancellationToken())).ReturnsAsync(new List<FrameworkSearchResult>
             {
-                new FrameworkSearchResult(){Id = _guid, FrameworkName = _frameworkName, ApprenticeshipLevel= _apprenticeshipLevel, CertificationYear = _certificationYear }
+                new FrameworkSearchResult(){Id = _guid, FrameworkName = _frameworkName, ApprenticeshipLevelName= _apprenticeshipLevelName, CertificationYear = _certificationYear }
             });
 
             var controller = new SearchController(mediator.Object);
@@ -63,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
             searchResults.Count.Should().Be(1);
             searchResults.First().Id.Should().Be(_guid);
             searchResults.First().FrameworkName.Should().Be(_frameworkName);
-            searchResults.First().ApprenticeshipLevel.Should().Be(_apprenticeshipLevel);
+            searchResults.First().ApprenticeshipLevelName.Should().Be(_apprenticeshipLevelName);
             searchResults.First().CertificationYear.Should().Be(_certificationYear);
         }
     }
