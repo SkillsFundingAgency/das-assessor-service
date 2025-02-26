@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping
             response.Should().NotBeNull();
             response.Id.Should().Be(frameworkLearner.Id);
             response.FrameworkName.Should().Be(frameworkLearner.FrameworkName);
-            response.ApprenticeshipLevel.Should().Be(frameworkLearner.ApprenticeshipLevel);
+            response.ApprenticeshipLevelName.Should().Be(frameworkLearner.ApprenticeshipLevelName);
             response.CertificationYear.Should().Be(frameworkLearner.CertificationYear);
         }
 
