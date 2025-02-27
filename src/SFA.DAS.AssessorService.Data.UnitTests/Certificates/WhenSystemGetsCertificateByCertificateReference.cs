@@ -1,42 +1,41 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
     public class WhenSystemGetsCertificateByCertificateReference
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
-
 
         [SetUp]
         public void Arrange()
         {
-            
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockDbContext = CreateMockDbContext();
+            var unitOfWork = new Mock<IAssessorUnitOfWork>();
+            unitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            _certificateRepository = new CertificateRepository(unitOfWork.Object);
         }
 
         [Test]
         public async Task ItShouldReturnResult()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292");
+            var result = await _certificateRepository.GetCertificate("0283839292") as Certificate;
             
             result.Uln.Should().Be(2222222222);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private static Mock<AssessorDbContext> CreateMockDbContext()
         {
             var mockDbContext = new Mock<AssessorDbContext>();
 
@@ -56,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

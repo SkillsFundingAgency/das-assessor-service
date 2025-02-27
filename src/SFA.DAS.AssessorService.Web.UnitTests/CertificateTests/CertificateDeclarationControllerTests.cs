@@ -44,13 +44,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateOptionsTests
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Returns(new Claim("", Username));
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")).Returns(new Claim("", EpaoId));
             _mockContextAccessor.Setup(s => s.HttpContext.Request.Query).Returns(Mock.Of<IQueryCollection>());
-            var certData = new CertificateData();
-            var certDataString = JsonConvert.SerializeObject(certData);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
                     Id = CertificateId,
-                    CertificateData = certDataString
+                    CertificateData = new CertificateData()
                 });
 
             _certificateDeclarationController = new CertificateDeclarationController(Mock.Of<ILogger<CertificateController>>(),

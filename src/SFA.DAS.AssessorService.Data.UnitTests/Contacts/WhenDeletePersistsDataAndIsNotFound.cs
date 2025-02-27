@@ -1,16 +1,16 @@
-﻿using FizzWare.NBuilder;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FizzWare.NBuilder;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
 {

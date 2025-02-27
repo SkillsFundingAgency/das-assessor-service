@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         private ValidationResponse _response;
 
         private const string CertificateReference = "00123456";
+        private Guid CertificateId = Guid.NewGuid();
+
         private const int BatchNumber = 111;
         
         private static readonly DateTime StatusAt = DateTime.Parse("01/01/2021 12:00:00");
@@ -26,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Arrange
             _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
-                .WithCertificate(CertificateReference, CertificateStatus.NotDelivered, StatusAt, BatchNumber, StatusAt.AddMinutes(-5))
+                .WithCertificate(CertificateId, CertificateReference, CertificateStatus.NotDelivered, StatusAt, BatchNumber, StatusAt.AddMinutes(-5))
                 .WithCertificateBatchLog(BatchNumber, CertificateReference, CertificateStatus.NotDelivered, StatusAt, "Original Reason", StatusAt.AddMinutes(5))
                 .WithBatchLog(BatchNumber);
         }
@@ -71,11 +73,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             // Assert
             if(updateCertificateBatchLog)
             {
-                _fixture.VerifyUpdatePrintStatusCalled(CertificateReference, BatchNumber, request.Status, request.StatusAt, request.ReasonForChange, updateCertificateStatus, updateCertificateBatchLog);
+                _fixture.VerifyUpdatePrintStatusCalled(CertificateId, BatchNumber, request.Status, request.StatusAt, request.ReasonForChange, updateCertificateStatus, updateCertificateBatchLog);
             }
             else
             {
-                _fixture.VerifyUpdatePrintStatusNotCalled(CertificateReference, BatchNumber);
+                _fixture.VerifyUpdatePrintStatusNotCalled(CertificateId, BatchNumber);
             }
         }
 

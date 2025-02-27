@@ -1,12 +1,12 @@
-﻿using FizzWare.NBuilder;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.ContactHandlers.UpdateEmail;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Threading;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
 {

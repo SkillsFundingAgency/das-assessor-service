@@ -5,11 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Application.Handlers.Staff;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -30,7 +28,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             var results = new List<Learner>();
             
-            var cert = await _context.Certificates.Include(q => q.Organisation).FirstOrDefaultAsync(c => c.CertificateReference == certRef);
+            var cert = await _context.StandardCertificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c => c.CertificateReference == certRef);
 
             if(cert != null)
             {
@@ -38,16 +38,14 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
                 if (learner is null)
                 {
-                    var certData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
-
                     learner = new Learner
                     {
                         Uln = cert.Uln,
-                        GivenNames = certData.LearnerGivenNames,
-                        FamilyName = certData.LearnerFamilyName,
+                        GivenNames = cert.CertificateData.LearnerGivenNames,
+                        FamilyName = cert.CertificateData.LearnerFamilyName,
                         StdCode = cert.StandardCode,
                         LearnRefNumber = cert.LearnRefNumber,
-                        LearnStartDate = certData.LearningStartDate ?? DateTime.MinValue,
+                        LearnStartDate = cert.CertificateData.LearningStartDate ?? DateTime.MinValue,
                         EpaOrgId = cert.Organisation?.EndPointAssessorOrganisationId,
                         UkPrn = cert.Organisation?.EndPointAssessorUkprn ?? int.MinValue
                     };

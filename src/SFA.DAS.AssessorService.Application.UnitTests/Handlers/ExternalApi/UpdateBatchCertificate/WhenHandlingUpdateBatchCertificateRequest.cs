@@ -1,20 +1,20 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.UpdateBatchCertificate
 {
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
                 .ReturnsAsync(new Certificate()
                 {
                     Status = CertificateStatus.Approved,
-                    CertificateData = @"{}"
+                    CertificateData = new CertificateData()
                 });
 
             _request = new UpdateBatchCertificateRequest()
@@ -84,13 +84,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
             var result = await _handler.Handle(_request, CancellationToken.None);
 
             // Assert
-            _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
+            _certificateRepository.Verify(m => m.UpdateStandardCertificate(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
 
             result.StandardUId.Should().Be(_stdUId);
             result.Status.Should().Be(CertificateStatus.Approved);
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(result.CertificateData);
-            certData.EpaDetails.LatestEpaDate.Should().Be(_achievementDate);
+            result.CertificateData.EpaDetails.LatestEpaDate.Should().Be(_achievementDate);
         }
 
         [Test]
@@ -109,10 +107,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
             var result = await _handler.Handle(request, CancellationToken.None);
 
             // Assert
-            _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(result.CertificateData);
-            certData.EpaDetails.LatestEpaDate.Should().BeNull();
+            _certificateRepository.Verify(m => m.UpdateStandardCertificate(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
+            result.CertificateData.EpaDetails.LatestEpaDate.Should().BeNull();
         }
 
         [Test]

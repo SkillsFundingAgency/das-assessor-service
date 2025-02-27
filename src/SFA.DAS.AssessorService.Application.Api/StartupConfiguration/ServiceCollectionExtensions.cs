@@ -1,12 +1,36 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Api.Services.Validation;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.Apply;
-using SFA.DAS.AssessorService.Data.Staff;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Data.Apply;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Data.Staff;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CharityCommission;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.CompaniesHouse;
@@ -17,31 +41,7 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
-using System;
-using System.Net.Http.Headers;
-using SFA.DAS.AssessorService.Application.Api.Validators;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Localization;
-using System.Globalization;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using System.IO;
-using SFA.DAS.AssessorService.Application.Api.TaskQueue;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using Microsoft.AspNetCore.Hosting;
-using SFA.DAS.AssessorService.Domain.Helpers;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Razor;
-using SFA.DAS.AssessorService.Application.Interfaces.Validation;
-using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using static CharityCommissionService.SearchCharitiesV1SoapClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
@@ -171,7 +171,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddHostedService<TaskQueueHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             return services;
@@ -264,6 +263,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
         public static IServiceCollection RegisterRepositories(this IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAssessorUnitOfWork, AssessorUnitOfWork>();
+
             services.AddTransient<IRegisterRepository, RegisterRepository>();
             services.AddTransient<IStaffLearnerRepository, StaffLearnerRepository>();
             services.AddTransient<IStandardRepository, StandardRepository>();

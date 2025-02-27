@@ -1,32 +1,32 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.TestHelper;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.TestHelper;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
     public class WhenSystemGetsCertificateByCertificateReferenceAndFamilyNameAndAchievementDate
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
         private DateTime _achievementDate;
-
 
         [SetUp]
         public void Arrange()
         {
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockDbContext = CreateMockDbContext();
+            var unitOfWork = new Mock<IAssessorUnitOfWork>();
+            unitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            _certificateRepository = new CertificateRepository(unitOfWork.Object);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

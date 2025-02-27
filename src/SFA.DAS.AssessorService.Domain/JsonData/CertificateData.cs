@@ -34,8 +34,6 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string FullName { get; set; }
         public string IncidentNumber { get; set; }
         public EpaDetails EpaDetails { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
         public CertificateSendTo SendTo { get; set; }
         public List<string> ReprintReasons { get; set; }
         public List<string> AmendReasons { get; set; }
@@ -62,16 +60,5 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         None,
         Apprentice,
         Employer
-    }
-
-    public class CertificateSendToEnumConverter : StringEnumConverter
-    {
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            if (string.IsNullOrEmpty(reader.Value.ToString()))
-                return CertificateSendTo.None;
-
-            return base.ReadJson(reader, objectType, existingValue, serializer);
-        }
     }
 }

@@ -1,21 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificateWithAmendReasonCommandHandlerTests
 {
@@ -129,13 +128,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             public UpdateCertificateWithAmendReasonCommandHandlerTestsFixture WithCertificate(string reference)
             {
                 _certificateRepository.Setup(r => r.GetCertificate(reference))
-                    .Returns(Task.FromResult(
+                    .ReturnsAsync(
                         new Certificate
                         {
                             Id = Guid.NewGuid(),
                             CertificateReference = reference,
-                            CertificateData = JsonConvert.SerializeObject(new CertificateData() { FullName = "Joe Bloggs" })
-                        }));
+                            CertificateData = new CertificateData { FullName = "Joe Bloggs" }
+                        });
 
                 return this;
             }
@@ -155,10 +154,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 var amendReasons = reasons?.ToString().Split(',').Select(p => p.Trim()).ToList() ?? new List<string>();
                 
-                _certificateRepository.Verify(r => r.Update(
+                _certificateRepository.Verify(r => r.UpdateStandardCertificate(
                     It.Is<Certificate>(c => c.CertificateReference == certificateReference
-                        && JsonConvert.DeserializeObject<CertificateData>(c.CertificateData).IncidentNumber == incidentNumber
-                        && JsonConvert.DeserializeObject<CertificateData>(c.CertificateData).AmendReasons.SequenceEqual(amendReasons)), userName,
+                        && c.CertificateData.IncidentNumber == incidentNumber
+                        && c.CertificateData.AmendReasons.SequenceEqual(amendReasons)), userName,
                     action, true, reasonForChange), Times.Once);
             }
         }

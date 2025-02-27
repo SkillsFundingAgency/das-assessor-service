@@ -4,8 +4,9 @@ using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.TestHelper;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
@@ -13,16 +14,17 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     public class WhenSystemsGetsCertificateByUlnAndStandardCodeAndFamilyNameAndOrgId
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
 
         [SetUp]
         public void Arrange()
         {
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockDbContext = CreateMockDbContext();
+            var unitOfWork = new Mock<IAssessorUnitOfWork>();
+            unitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            _certificateRepository = new CertificateRepository(unitOfWork.Object);
         }
 
         [Test]
@@ -44,29 +46,38 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 1111111111)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0001")
-                .With(x => x.CertificateData = "{'LearnerFamilyName':'Mirkwood'}")
+                .With(x => x.CertificateData = GetCertificateData("Mirkwood"))
                 .WithPrivate(x => x.LearnerFamilyName, "Mirkwood")
                 .With(x => x.StandardCode = 1)
                 .TheNext(1)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 2222222222)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0002")
-                .With(x => x.CertificateData = "{'LearnerFamilyName':'Hawkins'}")
+                .With(x => x.CertificateData = GetCertificateData("Hawkins"))
                 .WithPrivate(x => x.LearnerFamilyName, "Hawkins")
                 .With(x => x.StandardCode = 2)
                 .TheNext(8)
                 .With(x => x.Organisation = Builder<Organisation>.CreateNew().Build())
                 .With(x => x.Uln = 3333333333)
                 .With(x => x.Organisation.EndPointAssessorOrganisationId = "EPA0003")
-                .With(x => x.CertificateData = "{'LearnerFamilyName':'Cornwallis'}")
+                .With(x => x.CertificateData = GetCertificateData("Cornwallis"))
                 .WithPrivate(x => x.LearnerFamilyName, "Cornwallis")
                 .With(x => x.StandardCode = 3)
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(c => c.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(c => c.StandardCertificates).ReturnsDbSet(certificates);
             
             return mockDbContext;
+        }
+
+        private CertificateData GetCertificateData(string learnerFamilyName)
+        {
+            var certData = new CertificateData
+            {
+                LearnerFamilyName = learnerFamilyName
+            };
+            return certData;
         }
     }
 }

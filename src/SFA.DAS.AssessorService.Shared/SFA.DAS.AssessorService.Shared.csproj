@@ -406,7 +406,9 @@
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\ApplySummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\ApplySummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\CertificateHistoryModel.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\CertificateHistoryModel.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\CertificatePrintSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\CertificatePrintSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\CertificatePrintSummaryBase.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\CertificatePrintSummaryBase.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\EmailTemplateSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\EmailTemplateSummary.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\FrameworkCertificatePrintSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\FrameworkCertificatePrintSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\BatchLogSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\BatchLogSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateBatchLogSummary.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateBatchLogSummary.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateForSearch.cs" Link="SFA.DAS.AssessorService.Domain\DTOs\Staff\CertificateForSearch.cs" />
@@ -429,6 +431,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\BatchLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\BatchLog.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Certificate.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Certificate.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateAddress.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateAddress.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateBase.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateBase.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateBatchLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateBatchLog.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CertificateLog.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CertificateLog.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\CharityCommissionSummary.cs" Link="SFA.DAS.AssessorService.Domain\Entities\CharityCommissionSummary.cs" />

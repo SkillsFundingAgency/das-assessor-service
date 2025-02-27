@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         public CertificateProfile()
         {
             CreateMap<Domain.Entities.Certificate, Certificate>()
-                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData ?? "")))
+                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => source.CertificateData ?? new Domain.JsonData.CertificateData()))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source))
                 .ForMember(dest => dest.Created, opt => opt.MapFrom(source => source))
                 .ForMember(dest => dest.Submitted, opt => opt.MapFrom(source => source))

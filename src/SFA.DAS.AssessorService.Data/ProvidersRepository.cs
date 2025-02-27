@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data
 {

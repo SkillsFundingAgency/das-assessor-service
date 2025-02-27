@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             Logger.LogDebug($"Save View Model for CertificateOptionViewModel for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = certificate.CertificateData;
             SessionService.RemoveRedirectedFromVersion();
 
             var sessionString = SessionService.Get(nameof(CertificateSession));

@@ -1,16 +1,16 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Threading;
+using FizzWare.NBuilder;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Threading;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.StartCertificateHandlerTests
@@ -44,16 +44,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             {
                 CertificateReferenceId = 10000,
                 Status = CertificateStatus.Deleted,
-                CertificateData = JsonConvert.SerializeObject(_certificateData)
+                CertificateData = _certificateData
             });
 
-            _certificateRepository.Setup(r => r.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(),
+            _certificateRepository.Setup(r => r.UpdateStandardCertificate(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(),
             It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(new Certificate()
             {
                 CertificateReferenceId = 10000,
                 Status = CertificateStatus.Deleted,
                 OrganisationId = _organisationId,
-                CertificateData = JsonConvert.SerializeObject(_certificateData)
+                CertificateData = _certificateData
             });
 
             var learnerRepository = new Mock<ILearnerRepository>();
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         public void Then_certificate_is_updated()
         {
             //Assert
-            _certificateRepository.Verify(v => v.Update(
+            _certificateRepository.Verify(v => v.UpdateStandardCertificate(
             It.Is<Certificate>(c => c.CertificateReferenceId == 10000 && c.OrganisationId == _organisationId),
             It.IsAny<string>(),
             It.IsAny<string>(),

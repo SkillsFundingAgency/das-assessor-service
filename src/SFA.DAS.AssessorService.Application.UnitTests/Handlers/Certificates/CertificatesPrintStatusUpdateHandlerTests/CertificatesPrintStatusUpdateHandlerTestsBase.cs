@@ -1,15 +1,15 @@
-﻿using MediatR;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
 {
@@ -34,19 +34,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 _sut = new CertificatePrintStatusUpdateHandler(_certificateRepository.Object, _batchLogQueryRepository.Object, _mediator.Object, _logger.Object);
             }
 
-            public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificate(string reference, string status, DateTime statusAt, int batchNumber,  DateTime toBePrinted)
+            public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificate(Guid id, string reference, string status, DateTime statusAt, int batchNumber,  DateTime toBePrinted)
             {
                 _certificateRepository.Setup(r => r.GetCertificate(reference))
-                    .Returns(Task.FromResult(
+                    .ReturnsAsync(
                         new Certificate
                         {
-                            Id = Guid.NewGuid(),
+                            Id = id,
                             CertificateReference = reference,
                             Status = status,
                             UpdatedAt = statusAt,
                             BatchNumber = batchNumber,
                             ToBePrinted = toBePrinted
-                        }));
+                        });
 
                 return this;
             }
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificateBatchLog(int batchNumber, string certificateReference, string status, DateTime statusAt, string reasonForChange, DateTime updatedAt )
             {
                 _batchLogQueryRepository.Setup(r => r.GetCertificateBatchLog(batchNumber, certificateReference))
-                    .Returns(Task.FromResult(
+                    .ReturnsAsync(
                         new CertificateBatchLog
                         {
                             Id = Guid.NewGuid(),
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                             StatusAt = statusAt,
                             ReasonForChange = reasonForChange,
                             UpdatedAt = updatedAt
-                        }));
+                        });
 
                 return this;
             }
@@ -86,21 +86,21 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 return await _sut.Handle(request, new CancellationToken());
             }
 
-            public void VerifyUpdatePrintStatusCalled(string certificateReference, int batchNumber, 
+            public void VerifyUpdatePrintStatusCalled(Guid certificateId, int batchNumber, 
                 string status, DateTime statusAt, string reasonForChange, 
                 bool updateCertificate, bool updateCertificateLog)
             {
                 _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                    It.Is<Certificate>(c => c.CertificateReference == certificateReference), 
+                    It.Is<Guid>(c => c == certificateId), 
                     batchNumber, 
                     status, statusAt, reasonForChange, updateCertificate, updateCertificateLog),
                     Times.Once);
             }
 
-            public void VerifyUpdatePrintStatusNotCalled(string certificateReference, int batchNumber)
+            public void VerifyUpdatePrintStatusNotCalled(Guid certificateId, int batchNumber)
             {
                 _certificateRepository.Verify(r => r.UpdatePrintStatus(
-                    It.Is<Certificate>(c => c.CertificateReference == certificateReference),
+                    It.Is<Guid>(c => c == certificateId),
                     batchNumber,
                     It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()),
                     Times.Never);

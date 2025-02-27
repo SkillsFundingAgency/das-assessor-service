@@ -4,7 +4,7 @@ using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
@@ -12,19 +12,20 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     public class WhenSystemGetsCertificateByUlnAndStandardCode
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
         private Certificate _result;
 
         [SetUp]
         public void Arrange()
         {
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockDbContext = CreateMockDbContext();
+            var unitOfWork = new Mock<IAssessorUnitOfWork>();
+            unitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            _certificateRepository = new CertificateRepository(unitOfWork.Object);
         
-          _result = _certificateRepository.GetCertificate(22222222222, 93).Result;
+            _result = _certificateRepository.GetCertificate(22222222222, 93).Result;
         }
 
         [Test]
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _result.StandardCode.Should().Be(93);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private static Mock<AssessorDbContext> CreateMockDbContext()
         {
             var mockDbContext = new Mock<AssessorDbContext>();
 
@@ -60,7 +61,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(c => c.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(c => c.StandardCertificates).ReturnsDbSet(certificates);
             return mockDbContext;
         }
     }
