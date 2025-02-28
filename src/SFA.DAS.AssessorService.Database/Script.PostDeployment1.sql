@@ -25,3 +25,4 @@
 
 :r .\PostDeploymentScripts\TemporaryPatches\ON-613_Patch_standard_reference.sql
 :r .\PostDeploymentScripts\TemporaryPatches\P2-2241_Drop_apar_tables.sql
+:r .\PostDeploymentScripts\TemporaryPatches\P2-2340_Create_framework_tables.sql
