@@ -51,6 +51,8 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ApplyEF> Applications { get; set; }
         public virtual DbSet<MergeApply> MergeApplications { get; set; }
 
+        public virtual DbSet<FrameworkLearner> FrameworkLearners { get; set; }
+
 
         public override int SaveChanges()
         {
@@ -168,14 +170,10 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<MergeOrganisationStandard>()
                 .ToTable("MergeOrganisationStandard");
 
-
-
-
             modelBuilder.Entity<MergeOrganisationStandardVersion>()
                 .ToTable("MergeOrganisationStandardVersion")
                 //.HasKey(e => new { e.OrganisationStandardId, e.StandardUid, e.Version })
                 ;
-
 
             modelBuilder.Entity<MergeOrganisationStandardDeliveryArea>()
                 .ToTable("MergeOrganisationStandardDeliveryArea")
@@ -186,6 +184,9 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<MergeApply>()
                 .ToTable("MergeApply");
+
+            modelBuilder.Entity<FrameworkLearner>()
+                .ToTable("FrameworkLearner");
 
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }

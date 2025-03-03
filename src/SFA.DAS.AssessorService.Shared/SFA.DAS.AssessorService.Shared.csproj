@@ -183,6 +183,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchQuery.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchQuery.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkCertificateQuery.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkCertificateQuery.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkCertificateResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkCertificateResult.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" />
