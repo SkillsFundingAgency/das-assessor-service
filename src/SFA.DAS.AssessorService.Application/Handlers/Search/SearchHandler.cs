@@ -15,7 +15,7 @@ using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
-    public class SearchHandler : BaseHandler, IRequestHandler<SearchQuery, List<SearchResult>>
+    public class SearchHandler : BaseHandler, IRequestHandler<CertificateSearchRequest, List<CertificateSearchResponse>>
     {
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly ILearnerRepository _learnerRepository;
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             };
         }
 
-        public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
+        public async Task<List<CertificateSearchResponse>> Handle(CertificateSearchRequest request, CancellationToken cancellationToken)
         {
             var searchResults = await Search(request, cancellationToken);
 
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        private async Task<List<SearchResult>> Search(SearchQuery request, CancellationToken cancellationToken)
+        private async Task<List<CertificateSearchResponse>> Search(CertificateSearchRequest request, CancellationToken cancellationToken)
         { 
             _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             if (thisEpao == null)
             {
                 _logger.LogInformation($"{LoggingConstants.SearchFailure} - Invalid EpaOrgId", request.EpaOrgId);
-                return new List<SearchResult>();
+                return new List<CertificateSearchResponse>();
             }
 
             var approvedStandards = await GetEpaoApprovedStandardsWithAtLeastOneVersion(thisEpao);
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             _logger.LogInformation((learnerResults != null && learnerResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = _mapper.Map<List<SearchResult>>(learnerResults)
+            var searchResults = _mapper.Map<List<CertificateSearchResponse>>(learnerResults)
                 .MatchUpExistingCompletedStandards(request, likedSurname, approvedStandards, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
 
@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return approvedStandardCodes;
         }
 
-        private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Domain.Entities.Learner> learnerResults)
+        private string DealWithSpecialCharactersAndSpaces(CertificateSearchRequest request, string likedSurname, IEnumerable<Domain.Entities.Learner> learnerResults)
         {
             foreach (var learnerResult in learnerResults)
             {

@@ -22,15 +22,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
             var mediator = new Mock<IMediator>();
 
             mediator.Setup(m =>
-                m.Send(It.IsAny<SearchQuery>(),
-                    new CancellationToken())).ReturnsAsync(new List<SearchResult>
+                m.Send(It.IsAny<CertificateSearchRequest>(),
+                    new CancellationToken())).ReturnsAsync(new List<CertificateSearchResponse>
             {
-                new SearchResult(){FamilyName = "Smith", Standard = "Standard Name 20"}
+                new CertificateSearchResponse(){FamilyName = "Smith", Standard = "Standard Name 20"}
             });
 
             var controller = new SearchController(mediator.Object);
 
-            _result = controller.Search(new SearchQuery
+            _result = controller.SearchCertificates(new CertificateSearchRequest
             {
                 Surname = "Smith",
                 EpaOrgId = "EPA0001",
@@ -48,13 +48,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
         [Test]
         public void Then_model_should_contain_search_results()
         {
-            ((OkObjectResult) _result).Value.Should().BeOfType<List<SearchResult>>();
+            ((OkObjectResult) _result).Value.Should().BeOfType<List<CertificateSearchResponse>>();
         }
 
         [Test]
         public void Then_search_results_should_be_correct()
         {
-            var searchResults = ((OkObjectResult) _result).Value as List<SearchResult>;
+            var searchResults = ((OkObjectResult) _result).Value as List<CertificateSearchResponse>;
             searchResults.Count.Should().Be(1);
             searchResults.First().FamilyName.Should().Be("Smith");
             searchResults.First().Standard.Should().Be("Standard Name 20");
