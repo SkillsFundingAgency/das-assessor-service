@@ -181,8 +181,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchQuery.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchQuery.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\FrameworkSearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsIncludePrivilegesRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAllContactsRequest.cs" />
@@ -283,8 +283,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchQuery.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchQuery.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchResult.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchResult.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchStandardsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" />
@@ -334,14 +334,12 @@
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ContactsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ContactsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\DashboardApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\DashboardApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\EmailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\EmailApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\FrameworkSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\FrameworkSearchApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IApplicationApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IApplicationApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IApprovalsLearnerApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IApprovalsLearnerApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ICertificateApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ICertificateApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IContactsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IContactsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IDashboardApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IDashboardApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IEmailApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IEmailApiClient.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\IFrameworkSearchApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\IFrameworkSearchApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILearnerDetailsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILocationsApiClient.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" Link="SFA.DAS.AssessorService.Application.Api.Client\Clients\ILoginApiClient.cs" />
@@ -523,7 +521,6 @@
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\BatchLogs\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Certificates\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\AO\" />
-    <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\CharityCommission\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\" />
     <Folder Include="SFA.DAS.AssessorService.Api.Types\Models\Setting\" />

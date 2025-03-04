@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
             var username = _contextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var results = await _searchApiClient.SearchStandards(new SearchQuery()
+            var results = await _searchApiClient.SearchCertificates(new CertificateSearchRequest()
             {
                 Surname = vm.Surname,
                 Uln = long.Parse(vm.Uln),

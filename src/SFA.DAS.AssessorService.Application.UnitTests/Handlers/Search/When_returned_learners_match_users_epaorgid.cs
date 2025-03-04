@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             var handler = new SearchHandler(organisationRepository.Object, learnerRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object, Mapper);
 
-            var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;
+            var result = handler.Handle(new CertificateSearchRequest{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;
 
             result.Count.Should().Be(3);
         }

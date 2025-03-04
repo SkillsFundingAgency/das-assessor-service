@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class FrameworkSearchResult
+    public class FrameworkLearnerSearchResponse
     {
         public Guid Id { get; set; }
         public string FrameworkName { get; set; }

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class SearchQuery : IRequest<List<SearchResult>>
+    public class CertificateSearchRequest : IRequest<List<CertificateSearchResponse>>
     {
         public long Uln { get; set; }
         public string Surname { get; set; }

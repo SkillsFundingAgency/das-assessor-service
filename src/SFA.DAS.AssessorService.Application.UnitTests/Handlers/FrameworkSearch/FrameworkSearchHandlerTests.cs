@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using AutoMapper;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
-using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using FluentAssertions;
 using System.Linq;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
 {
@@ -30,11 +27,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             _frameworkLearnerRepository = new Mock<IFrameworkLearnerRepository>();
             _mapperMock = new Mock<IMapper>();
 
-            _frameworkSearchHandler = new FrameworkSearchHandler(_frameworkLearnerRepository.Object, new Mock<ILogger<FrameworkSearchHandler>>().Object, _mapperMock.Object);
+            _frameworkSearchHandler = new FrameworkSearchHandler(_frameworkLearnerRepository.Object, _mapperMock.Object);
         }
 
         [Test, MoqAutoData]
-        public async Task ThenRequestSentToFrameworkLearnerRepository(FrameworkSearchQuery query)
+        public async Task ThenRequestSentToFrameworkLearnerRepository(FrameworkLearnerSearchRequest query)
         {
             // Arrange
             _frameworkLearnerRepository
@@ -49,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         }
 
         [Test, MoqAutoData]
-        public async Task ThenMapperIsCalled(FrameworkSearchQuery query, List<FrameworkLearner> learners)
+        public async Task ThenMapperIsCalled(FrameworkLearnerSearchRequest query, List<FrameworkLearner> learners)
         {
             // Arrange
             _frameworkLearnerRepository
@@ -60,11 +57,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             var result = await _frameworkSearchHandler.Handle(query, new CancellationToken());
 
             // Assert
-            _mapperMock.Verify(m => m.Map<List<FrameworkSearchResult>>(learners), Times.Once());
+            _mapperMock.Verify(m => m.Map<List<FrameworkLearnerSearchResponse>>(learners), Times.Once());
         }
 
         [Test, MoqAutoData]
-        public async Task AndNoFrameworkLearnersFoundThenEmptyListIsReturned(FrameworkSearchQuery query)
+        public async Task AndNoFrameworkLearnersFoundThenEmptyListIsReturned(FrameworkLearnerSearchRequest query)
         {
             // Arrange
             _frameworkLearnerRepository
@@ -72,8 +69,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
                 .ReturnsAsync(new List<FrameworkLearner>());
 
             _mapperMock
-                .Setup(m => m.Map<List<FrameworkSearchResult>>(It.IsAny<List<FrameworkLearner>>()))
-                .Returns(new List<FrameworkSearchResult>());
+                .Setup(m => m.Map<List<FrameworkLearnerSearchResponse>>(It.IsAny<List<FrameworkLearner>>()))
+                .Returns(new List<FrameworkLearnerSearchResponse>());
 
             // Act
             var result = await _frameworkSearchHandler.Handle(query, new CancellationToken());
@@ -83,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         }
 
         [Test, MoqAutoData]
-        public async Task ThenLearnersAreReturnedAsTheCorrectType(FrameworkSearchQuery query, List<FrameworkLearner> learners)
+        public async Task ThenLearnersAreReturnedAsTheCorrectType(FrameworkLearnerSearchRequest query, List<FrameworkLearner> learners)
         {
             // Arrange
             _frameworkLearnerRepository
@@ -91,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
                 .ReturnsAsync(learners);
 
             var mappedResults = learners.Select(l =>
-                new FrameworkSearchResult
+                new FrameworkLearnerSearchResponse
                 { 
                     ApprenticeshipLevelName = l.ApprenticeshipLevelName,
                     CertificationYear = l.CertificationYear,
@@ -100,14 +97,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
                 }).ToList();
 
             _mapperMock
-                .Setup(m => m.Map<List<FrameworkSearchResult>>(learners))
+                .Setup(m => m.Map<List<FrameworkLearnerSearchResponse>>(learners))
                 .Returns(mappedResults);
 
             // Act
             var result = await _frameworkSearchHandler.Handle(query, new CancellationToken());
 
             // Assert
-            result.Should().BeOfType<List<FrameworkSearchResult>>();
+            result.Should().BeOfType<List<FrameworkLearnerSearchResponse>>();
             result.Should().HaveCount(learners.Count);
         }
     }

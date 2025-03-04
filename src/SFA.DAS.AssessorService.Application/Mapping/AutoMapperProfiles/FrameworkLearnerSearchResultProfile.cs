@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
     {
         public FrameworkLearnerSearchResultProfile()
         {
-            CreateMap<FrameworkLearner, FrameworkSearchResult>();
+            CreateMap<FrameworkLearner, FrameworkLearnerSearchResponse>();
         }
     }
 }

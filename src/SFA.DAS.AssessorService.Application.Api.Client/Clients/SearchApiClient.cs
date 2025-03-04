@@ -14,11 +14,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<List<SearchResult>> SearchStandards(SearchQuery searchQuery)
+        public async Task<List<CertificateSearchResponse>> SearchCertificates(CertificateSearchRequest searchQuery)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search/certificates"))
             {
-                return await PostPutRequestWithResponseAsync<SearchQuery, List<SearchResult>>(request, searchQuery);
+                return await PostPutRequestWithResponseAsync<CertificateSearchRequest, List<CertificateSearchResponse>>(request, searchQuery);
             }
         }
     }

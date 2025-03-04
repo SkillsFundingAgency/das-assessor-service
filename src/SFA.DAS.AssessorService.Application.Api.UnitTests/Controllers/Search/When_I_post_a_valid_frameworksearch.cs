@@ -7,8 +7,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.Controllers.Staff;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
 {
@@ -27,15 +28,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
             var mediator = new Mock<IMediator>();
 
             mediator.Setup(m =>
-                m.Send(It.IsAny<FrameworkSearchQuery>(),
-                    new CancellationToken())).ReturnsAsync(new List<FrameworkSearchResult>
+                m.Send(It.IsAny<FrameworkLearnerSearchRequest>(),
+                    new CancellationToken())).ReturnsAsync(new List<FrameworkLearnerSearchResponse>
             {
-                new FrameworkSearchResult(){Id = _guid, FrameworkName = _frameworkName, ApprenticeshipLevelName= _apprenticeshipLevelName, CertificationYear = _certificationYear }
+                new FrameworkLearnerSearchResponse(){Id = _guid, FrameworkName = _frameworkName, ApprenticeshipLevelName= _apprenticeshipLevelName, CertificationYear = _certificationYear }
             });
 
-            var controller = new SearchController(mediator.Object);
+            var controller = new StaffSearchController(mediator.Object);
 
-            _result = controller.SearchFrameworks(new FrameworkSearchQuery
+            _result = controller.StaffFrameworkSearch(new FrameworkLearnerSearchRequest
             {
                 FirstName = "Ilya",
                 LastName = "Vogel",
@@ -52,13 +53,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
         [Test]
         public void Then_model_should_contain_framework_search_results()
         {
-            ((OkObjectResult) _result).Value.Should().BeOfType<List<FrameworkSearchResult>>();
+            ((OkObjectResult) _result).Value.Should().BeOfType<List<FrameworkLearnerSearchResponse>>();
         }
 
         [Test]
         public void Then_framework_search_results_should_be_correct()
         {
-            var searchResults = ((OkObjectResult) _result).Value as List<FrameworkSearchResult>;
+            var searchResults = ((OkObjectResult) _result).Value as List<FrameworkLearnerSearchResponse>;
             searchResults.Count.Should().Be(1);
             searchResults.First().Id.Should().Be(_guid);
             searchResults.First().FrameworkName.Should().Be(_frameworkName);

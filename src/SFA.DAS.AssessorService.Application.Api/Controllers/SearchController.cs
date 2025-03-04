@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using Swashbuckle.AspNetCore.Annotations;
@@ -24,22 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost(Name = "Search")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
+        [HttpPost("certificates", Name = "SearchCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateSearchResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Search([FromBody]SearchQuery searchQuery)
+        public async Task<IActionResult> SearchCertificates([FromBody]CertificateSearchRequest certificateSearchRequest)
         {
-            return Ok(await _mediator.Send(searchQuery));
-        }
-
-        [HttpPost("frameworks", Name = "SearchFrameworks")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<FrameworkSearchResult>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SearchFrameworks([FromBody]FrameworkSearchQuery frameworkSearchQuery)
-        {
-            return Ok(await _mediator.Send(frameworkSearchQuery));
+            return Ok(await _mediator.Send(certificateSearchRequest));
         }
     }
 }

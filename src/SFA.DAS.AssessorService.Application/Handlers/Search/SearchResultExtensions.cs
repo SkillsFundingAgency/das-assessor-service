@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
     public static class SearchResultExtensions
     {
-        public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
+        public static List<CertificateSearchResponse> PopulateStandards(this List<CertificateSearchResponse> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
             var allStandards = standardService.GetAllStandardVersions().Result;
             var allOptions = standardService.GetAllStandardOptions().Result;
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        private static void PopulateMultipleVersionResults(IEnumerable<StandardOptions> allOptions, SearchResult searchResult, IOrderedEnumerable<Standard> standards)
+        private static void PopulateMultipleVersionResults(IEnumerable<StandardOptions> allOptions, CertificateSearchResponse searchResult, IOrderedEnumerable<Standard> standards)
         {
             var firstStandard = standards.First();
             searchResult.Standard = firstStandard.Title;
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             }).ToList();
         }
 
-        private static void PopulateSingleVersionResult(Standard learnerStandard, IEnumerable<StandardOptions> allOptions, SearchResult searchResult)
+        private static void PopulateSingleVersionResult(Standard learnerStandard, IEnumerable<StandardOptions> allOptions, CertificateSearchResponse searchResult)
         {
             bool optionValid = false;
 
@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         }
 
-        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, string likedSurname, IEnumerable<int> approvedStandards, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
+        public static List<CertificateSearchResponse> MatchUpExistingCompletedStandards(this List<CertificateSearchResponse> searchResults, CertificateSearchRequest request, string likedSurname, IEnumerable<int> approvedStandards, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, IOrganisationQueryRepository _organisationRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
             var certificates = certificateRepository.GetDraftAndCompletedCertificatesFor(request.Uln).Result;
@@ -140,7 +140,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                         continue;
 
                     // Create a new search result as it would be when returned by the Learner record
-                    var searchResult = new SearchResult
+                    var searchResult = new CertificateSearchResponse
                     {
                         Uln = certificate.Uln,
                         FamilyName = certificateData.LearnerFamilyName,
@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        public static SearchResult PopulateCertificateBasicInformation(this SearchResult searchResult, Certificate certificate)
+        public static CertificateSearchResponse PopulateCertificateBasicInformation(this CertificateSearchResponse searchResult, Certificate certificate)
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
@@ -188,8 +188,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResult;
         }
 
-        public static SearchResult PopulateCertificateExtraInformationDependingOnPermission(this SearchResult searchResult,
-            SearchQuery request, IContactQueryRepository contactRepository,
+        public static CertificateSearchResponse PopulateCertificateExtraInformationDependingOnPermission(this CertificateSearchResponse searchResult,
+            CertificateSearchRequest request, IContactQueryRepository contactRepository,
             Certificate certificate, Organisation searchingEpao, ILogger<SearchHandler> logger)
         {
 

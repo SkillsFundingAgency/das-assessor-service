@@ -254,7 +254,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddSingleton<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
             services.AddSingleton<IOrganisationsApiClient, OrganisationsApiClient>();
             services.AddSingleton<IContactsApiClient, ContactsApiClient>();
-            services.AddSingleton<IFrameworkSearchApiClient, FrameworkSearchApiClient>();
 
             return services;
         }

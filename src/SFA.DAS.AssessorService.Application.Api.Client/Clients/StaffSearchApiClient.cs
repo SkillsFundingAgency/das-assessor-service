@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -36,6 +37,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/staffsearch/batchlog?page={page}"))
             {
                 return await RequestAndDeserialiseAsync<PaginatedList<StaffBatchLogResult>>(request, $"Could not retrieve batch search result");
+            }
+        }
+
+        public async Task<List<FrameworkLearnerSearchResponse>> SearchFrameworkLearners(FrameworkLearnerSearchRequest frameworkLearnerSearchRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/staffsearch/frameworks"))
+            {
+                return await PostPutRequestWithResponseAsync<FrameworkLearnerSearchRequest, List<FrameworkLearnerSearchResponse>>(request, frameworkLearnerSearchRequest);
             }
         }
     }
