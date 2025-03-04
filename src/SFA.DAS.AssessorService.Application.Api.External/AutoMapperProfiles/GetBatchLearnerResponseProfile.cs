@@ -9,23 +9,21 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
-    public class GetBatchLearnerResponseProfile : Profile
+    public class GetBatchLearnerResponseProfile : ExplicitMappingProfileBase
     {
         public GetBatchLearnerResponseProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearnerResponse>()
-            .IgnoreUnmappedMembers()
             .ForMember(dest => dest.Learner, opt => opt.MapFrom(source => source))
             .ForMember(dest => dest.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors));
         }
     }
 
-    public class GetLearnerProfile : Profile
+    public class GetLearnerProfile : ExplicitMappingProfileBase
     {
         public GetLearnerProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ExternalApi.Learners.GetBatchLearnerResponse, GetLearner>()
-                .IgnoreUnmappedMembers()
                 .ForMember(dest => dest.Certificate, opt => opt.MapFrom(source => source.Certificate))
                 .ForMember(dest => dest.EpaDetails, opt => opt.MapFrom(source => source.EpaDetails))
                 .AfterMap<MapStatusAction>()

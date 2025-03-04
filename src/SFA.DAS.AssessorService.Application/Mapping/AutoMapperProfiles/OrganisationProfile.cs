@@ -20,12 +20,4 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
             CreateMap<UpdateOrganisationRequest, Organisation>();
         }
     }
-
-    public class OrganisationResponseProfile : Profile
-    {
-        public OrganisationResponseProfile()
-        {
-            CreateMap<Organisation, OrganisationResponse>();
-        }
-    }
 }
