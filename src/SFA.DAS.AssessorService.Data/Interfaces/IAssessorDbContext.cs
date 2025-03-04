@@ -1,6 +1,9 @@
-﻿using System.Threading;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.Interfaces
@@ -32,9 +35,11 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         DbSet<SearchLog> SearchLogs { get; set; }
         DbSet<StaffReport> StaffReports { get; set; }
         DbSet<Certificate> StandardCertificates { get; set; }
+        DbSet<T> Set<T>() where T : class;
 
         void MarkAsModified<T>(T item) where T : class;
-        int SaveChanges();
-        Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+        DatabaseFacade Database { get; }
     }
 }

@@ -9,12 +9,12 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class AssessorUnitOfWork : IAssessorUnitOfWork
     {
-        private readonly AssessorDbContext _context;
+        private readonly IAssessorDbContext _context;
         private IDbContextTransaction _transaction;
 
-        public AssessorDbContext AssessorDbContext => _context;
+        public IAssessorDbContext AssessorDbContext => _context;
 
-        public AssessorUnitOfWork(AssessorDbContext context)
+        public AssessorUnitOfWork(IAssessorDbContext context)
         {
             _context = context;
         }

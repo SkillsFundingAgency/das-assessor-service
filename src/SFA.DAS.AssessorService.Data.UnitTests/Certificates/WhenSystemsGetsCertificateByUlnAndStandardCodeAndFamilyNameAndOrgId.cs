@@ -19,12 +19,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         public void Arrange()
         {
             var mockDbContext = CreateMockDbContext();
-            var unitOfWork = new Mock<IAssessorUnitOfWork>();
-            unitOfWork
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
                 .SetupGet(x => x.AssessorDbContext)
                 .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(unitOfWork.Object);
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
         }
 
         [Test]
@@ -37,9 +37,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             result.LearnerFamilyName.Should().Be("Hawkins");
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private Mock<IAssessorDbContext> CreateMockDbContext()
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             var certificates = Builder<Certificate>.CreateListOfSize(10)
                 .TheFirst(1)

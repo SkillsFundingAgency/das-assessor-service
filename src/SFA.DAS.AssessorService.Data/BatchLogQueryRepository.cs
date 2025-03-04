@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<BatchLog> Get(int batchNumber)
         {
-            return await _unitOfWork.AssessorDbContext.Set<BatchLog>()
+            return await _unitOfWork.AssessorDbContext.BatchLogs
                 .Where(bl => bl.BatchNumber == batchNumber)
                 .OrderBy(bl => bl.Id) 
                 .FirstOrDefaultAsync();
@@ -27,14 +27,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<CertificateBatchLog> GetCertificateBatchLog(int batchNumber, string certificateReference)
         {
-            return await _unitOfWork.AssessorDbContext.Set<CertificateBatchLog>()
+            return await _unitOfWork.AssessorDbContext.CertificateBatchLogs
                 .Where(cbl => cbl.BatchNumber == batchNumber && cbl.CertificateReference == certificateReference)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<BatchLog> GetLastBatchLog()
         {
-            var batchLog = await _unitOfWork.AssessorDbContext.Set<BatchLog>()
+            var batchLog = await _unitOfWork.AssessorDbContext.BatchLogs
                 .OrderByDescending(bl => bl.BatchCreated)
                 .FirstOrDefaultAsync();
 
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int?> GetBatchNumberReadyToPrint()
         {
-            return await _unitOfWork.AssessorDbContext.Set<BatchLog>()
+            return await _unitOfWork.AssessorDbContext.BatchLogs
                 .Where(bl => bl.FileUploadEndTime == null)
                 .OrderBy(bl => bl.BatchNumber)
                 .Select(bl => (int?)bl.BatchNumber)

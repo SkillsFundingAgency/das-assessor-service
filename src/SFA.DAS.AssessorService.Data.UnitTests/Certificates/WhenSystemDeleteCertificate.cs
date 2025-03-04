@@ -30,12 +30,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _reasonForChange = "Test Text Reason For Change";
 
             var mockDbContext = CreateMockDbContext();
-            var unitOfWork = new Mock<IAssessorUnitOfWork>();
-            unitOfWork
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
                 .SetupGet(p => p.AssessorDbContext)
                 .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(unitOfWork.Object);
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
         }
 
         [Test]
@@ -61,9 +61,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _incidentNumber.Should().Be(certificate.Result.CertificateData.IncidentNumber);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private Mock<IAssessorDbContext> CreateMockDbContext()
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             var certificates = Builder<Certificate>.CreateListOfSize(2)
                 .TheFirst(1)
@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .AsQueryable();
 
             mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
-            mockDbContext.Setup(c => c.Set<Certificate>()).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             var certificateLogs = Builder<CertificateLog>.CreateListOfSize(1)
                 .TheFirst(1)

@@ -22,12 +22,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _certificateId = Guid.NewGuid();
             
             var mockDbContext = CreateMockDbContext();
-            var unitOfWork = new Mock<IAssessorUnitOfWork>();
-            unitOfWork
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
                 .SetupGet(x => x.AssessorDbContext)
                 .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(unitOfWork.Object);
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
 
             _result = _certificateRepository.GetCertificate<Certificate>(_certificateId).Result;
         }
@@ -38,9 +38,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _result.Uln.Should().Be(1111111111);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private Mock<IAssessorDbContext> CreateMockDbContext()
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             var certificates = Builder<Certificate>.CreateListOfSize(10)
                 .TheFirst(1)
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .AsQueryable();
 
             mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
-            mockDbContext.Setup(c => c.Set<Certificate>()).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

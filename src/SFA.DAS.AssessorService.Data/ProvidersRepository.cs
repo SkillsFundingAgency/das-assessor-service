@@ -7,16 +7,16 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class ProvidersRepository : IProvidersRepository
     {
-        private readonly AssessorDbContext _assessorDbContext;
+        private readonly IAssessorUnitOfWork _assessorUnitOfWork;
 
-        public ProvidersRepository(AssessorDbContext assessorDbContext)
+        public ProvidersRepository(IAssessorUnitOfWork assessorUnitOfWork)
         {
-            _assessorDbContext = assessorDbContext;
+            _assessorUnitOfWork = assessorUnitOfWork;
         }
 
         public async Task<Provider> GetProvider(long ukprn)
         {
-            return await _assessorDbContext.Providers.FirstOrDefaultAsync(p => p.Ukprn == ukprn);
+            return await _assessorUnitOfWork.AssessorDbContext.Providers.FirstOrDefaultAsync(p => p.Ukprn == ukprn);
         }
     }
 }

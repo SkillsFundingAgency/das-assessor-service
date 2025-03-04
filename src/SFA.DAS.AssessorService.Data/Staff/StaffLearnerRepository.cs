@@ -13,13 +13,13 @@ namespace SFA.DAS.AssessorService.Data.Staff
 {
     public class StaffLearnerRepository : IStaffLearnerRepository
     {
-        private readonly AssessorDbContext _context;
+        private readonly IAssessorUnitOfWork _assessorUnitOfWork;
         private readonly ILearnerRepository _learnerRepository;
         private readonly IDbConnection _connection;
 
-        public StaffLearnerRepository(AssessorDbContext context, ILearnerRepository learnerRepository, IDbConnection connection)
+        public StaffLearnerRepository(IAssessorUnitOfWork assessorUnitOfWork, ILearnerRepository learnerRepository, IDbConnection connection)
         {
-            _context = context;
+            _assessorUnitOfWork = assessorUnitOfWork;
             _learnerRepository = learnerRepository;
             _connection = connection;
         }
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             var results = new List<Learner>();
             
-            var cert = await _context.StandardCertificates
+            var cert = await _assessorUnitOfWork.AssessorDbContext.StandardCertificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c => c.CertificateReference == certRef);
 

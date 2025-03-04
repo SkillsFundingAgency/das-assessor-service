@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
             return response;
         }
 
-        public async Task UpsertCertificatesReadyToPrintInBatch(int batchNumber, Guid[] certificateIds)
+        public async Task UpsertCertificatesReadyToPrintInBatch(Guid[] certificateIds, int batchNumber)
         {
             var certificateReferencesToUpdate = await _unitOfWork.AssessorDbContext.Set<CertificateBase>()
                 .Where(c => certificateIds.Contains(c.Id))

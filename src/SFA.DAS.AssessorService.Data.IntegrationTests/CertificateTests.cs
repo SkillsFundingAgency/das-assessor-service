@@ -31,12 +31,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public async Task SetupCertificateTests()
         {
-            var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            var sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
-            var assessorDbContext = new AssessorDbContext(sqlConnection, option.Options);
-            var assessorUnitOfWork = new AssessorUnitOfWork(assessorDbContext);
-
-            _repository = new CertificateRepository(assessorUnitOfWork);
+            _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext));
 
             OrganisationTypeHandler.InsertRecord(
                 new OrganisationTypeModel

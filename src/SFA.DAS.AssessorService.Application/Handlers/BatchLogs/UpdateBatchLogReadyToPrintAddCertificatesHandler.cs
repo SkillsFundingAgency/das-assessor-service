@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
                     if (certificateIds.Length > 0)
                     {
                         await _batchLogRepository
-                            .UpsertCertificatesReadyToPrintInBatch(request.BatchNumber, certificateIds);
+                            .UpsertCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);
 
                         await _certificateRepository.
                             UpdateCertificatesReadyToPrintInBatch(certificateIds, request.BatchNumber);

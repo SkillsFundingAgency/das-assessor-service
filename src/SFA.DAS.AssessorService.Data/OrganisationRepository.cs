@@ -10,17 +10,17 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class OrganisationRepository : IOrganisationRepository
     {
-        private readonly AssessorDbContext _assessorDbContext;
+        private readonly IAssessorUnitOfWork _assessorUnitOfWork;
 
-        public OrganisationRepository(AssessorDbContext assessorDbContext)
+        public OrganisationRepository(IAssessorUnitOfWork assessorUnitOfWork)
         {
-            _assessorDbContext = assessorDbContext;
+            _assessorUnitOfWork = assessorUnitOfWork;
         }
 
         public async Task<Organisation> CreateNewOrganisation(Organisation organisation)
         {
-            _assessorDbContext.Organisations.Add(organisation);
-            await _assessorDbContext.SaveChangesAsync();
+            _assessorUnitOfWork.AssessorDbContext.Organisations.Add(organisation);
+            await _assessorUnitOfWork.SaveChangesAsync();
 
             return organisation;
         }
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Organisation> UpdateOrganisation(
             Organisation organisation)
         {
-            var organisationEntity = _assessorDbContext.Organisations.First(q =>
+            var organisationEntity = _assessorUnitOfWork.AssessorDbContext.Organisations.First(q =>
                 q.EndPointAssessorOrganisationId == organisation.EndPointAssessorOrganisationId);
             if (string.IsNullOrEmpty(organisation.PrimaryContact))
             {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Data
             else
             {
                 var contact =
-                    _assessorDbContext.Contacts.First(q => q.Username == organisation.PrimaryContact);
+                    _assessorUnitOfWork.AssessorDbContext.Contacts.First(q => q.Username == organisation.PrimaryContact);
                 organisationEntity.PrimaryContact = contact.Username;
             }
 
@@ -59,16 +59,16 @@ namespace SFA.DAS.AssessorService.Data
             organisationEntity.ApiUser = organisation.ApiUser;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(organisationEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(organisationEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
             
             return organisationEntity;
         }
 
         public async Task Delete(string endPointAssessorOrganisationId)
         {
-            var organisationEntity = _assessorDbContext.Organisations
+            var organisationEntity = _assessorUnitOfWork.AssessorDbContext.Organisations
                 .FirstOrDefault(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
@@ -82,9 +82,9 @@ namespace SFA.DAS.AssessorService.Data
             organisationEntity.DeletedAt = DateTime.Now;
             organisationEntity.Status = OrganisationStatus.Deleted;
 
-            _assessorDbContext.MarkAsModified(organisationEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(organisationEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
     }
 }

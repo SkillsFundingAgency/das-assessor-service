@@ -54,23 +54,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ApplyEF> Applications { get; set; }
         public virtual DbSet<MergeApply> MergeApplications { get; set; }
 
-        public override int SaveChanges()
-        {
-            var saveTime = DateTime.UtcNow;
-            foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added && e.Entity is BaseEntity))
-                if (entry.Property("CreatedAt").CurrentValue == null ||
-                    (DateTime)entry.Property("CreatedAt").CurrentValue == DateTime.MinValue)
-                    entry.Property("CreatedAt").CurrentValue = saveTime;
-
-            foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity))
-                entry.Property("UpdatedAt").CurrentValue = saveTime;
-            return base.SaveChanges();
-        }
-
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added && e.Entity is BaseEntity).ToList();
             addedEntities.ForEach(e => { e.Property("CreatedAt").CurrentValue = DateTime.UtcNow; });
@@ -78,7 +62,7 @@ namespace SFA.DAS.AssessorService.Data
             var editedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity).ToList();
             editedEntities.ForEach(e => { e.Property("UpdatedAt").CurrentValue = DateTime.UtcNow; });
 
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         public virtual void MarkAsModified<T>(T item) where T : class

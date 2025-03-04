@@ -20,12 +20,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         public void Arrange()
         {
             var mockDbContext = CreateMockDbContext();
-            var unitOfWork = new Mock<IAssessorUnitOfWork>();
-            unitOfWork
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
                 .SetupGet(x => x.AssessorDbContext)
                 .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(unitOfWork.Object);
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
 
             _result = _certificateRepository.GetCertificate(22222222222, "Hawkins").Result;
         }
