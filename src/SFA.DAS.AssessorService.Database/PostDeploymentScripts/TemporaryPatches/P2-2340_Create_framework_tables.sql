@@ -560,3 +560,45 @@ CREATE TABLE [frameworks].[super_centre]
 --INDEX [name] ([name])
 );
 GO
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'map_apprenticeships' AND schema_id = SCHEMA_ID('frameworks'))
+CREATE TABLE [frameworks].[map_apprenticeships]
+(
+[appr_id] BIGINT PRIMARY KEY,
+[FrameworkCode] INT NULL,
+[FrameworkName] NVARCHAR(200)
+);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'map_advroutes' AND schema_id = SCHEMA_ID('frameworks'))
+CREATE TABLE [frameworks].[map_advroutes_backup]
+(
+[r_id] bigint primary key,
+[TrainingCode] varchar(15),
+[PathwayName] nvarchar(200)
+);
+GO
+
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'map_ULN' AND schema_id = SCHEMA_ID('frameworks'))
+CREATE TABLE [frameworks].[map_ULN]
+(
+[ULN] bigint,
+[ApprenticeshipId] bigint,
+[TrainingType] int,
+[TrainingCode] nvarchar(20)
+);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID('[frameworks].[map_ULN]') AND name = 'IX_map_ULN')
+BEGIN
+    CREATE INDEX IX_map_ULN
+    ON [frameworks].[map_ULN] ([Uln], [TrainingCode])
+    INCLUDE ([ApprenticeshipId], [TrainingType]);
+END
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID('[frameworks].[map_ULN]') AND name = 'IXU_map_ULN')
+BEGIN
+    CREATE UNIQUE INDEX IXU_map_ULN
+    ON [frameworks].[map_ULN] ([Uln], [ApprenticeshipId]);
+END
