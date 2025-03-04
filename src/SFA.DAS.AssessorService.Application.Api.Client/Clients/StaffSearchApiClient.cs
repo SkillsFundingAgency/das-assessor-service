@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<List<FrameworkLearnerSearchResponse>> SearchFrameworkLearners(FrameworkLearnerSearchRequest frameworkLearnerSearchRequest)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/staffsearch/frameworks"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/staffsearch/framework-learners"))
             {
                 return await PostPutRequestWithResponseAsync<FrameworkLearnerSearchRequest, List<FrameworkLearnerSearchResponse>>(request, frameworkLearnerSearchRequest);
             }
