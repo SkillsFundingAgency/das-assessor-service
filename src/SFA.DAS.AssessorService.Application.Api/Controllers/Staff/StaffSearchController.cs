@@ -53,5 +53,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         {
             return Ok(await _mediator.Send(new StaffBatchLogRequest(page.Value)));
         }
+
+        [HttpPost("framework-learners", Name = "StaffFrameworkSearch")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<FrameworkLearnerSearchResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> StaffFrameworkSearch([FromBody]FrameworkLearnerSearchRequest frameworkLearnerSearchRequest)
+        {
+            return Ok(await _mediator.Send(frameworkLearnerSearchRequest));
+        }
     }
 }

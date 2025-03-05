@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
     {
         public LearnerSearchResultProfile()
         {
-            CreateMap<Learner, SearchResult>()
+            CreateMap<Learner, LearnerSearchResponse>()
                 .ForMember(dest => dest.Option, source => source.MapFrom(learner => learner.CourseOption))
                 .ForMember(dest => dest.UpdatedAt, source => source.MapFrom(learner => learner.LastUpdated));
         }
