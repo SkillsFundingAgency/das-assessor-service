@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<List<LearnerSearchResponse>> SearchLearners(LearnerSearchRequest searchQuery)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search/certificates"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search/learners"))
             {
                 return await PostPutRequestWithResponseAsync<LearnerSearchRequest, List<LearnerSearchResponse>>(request, searchQuery);
             }
