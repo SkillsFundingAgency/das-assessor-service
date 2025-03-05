@@ -283,8 +283,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\LastRunStatus.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ScheduleRun\UpdateLastRunStatusRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchAssessmentOrganisationsRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CertificateSearchResponse.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\LearnerSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\LearnerSearchRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\LearnerSearchResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\LearnerSearchResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\SearchStandardsRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\SearchStandardsRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\GetSettingRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Setting\SetSettingRequest.cs" />

@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new CertificateSearchRequest() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new LearnerSearchRequest() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
             result.Count.Should().Be(1);
             result[0].Level.Should().Be(2);
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var result =
                 SearchHandler.Handle(
-                    new CertificateSearchRequest() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
+                    new LearnerSearchRequest() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
 
             result.Count.Should().Be(0);

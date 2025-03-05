@@ -18,10 +18,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 {
     public class SearchResultExtensionsTests
     {
-        private List<CertificateSearchResponse> _searchResults;
-        private CertificateSearchResponse _searchResult;
+        private List<LearnerSearchResponse> _searchResults;
+        private LearnerSearchResponse _searchResult;
         private List<Certificate> _certificates;
-        private CertificateSearchRequest _searchQuery;
+        private LearnerSearchRequest _searchQuery;
 
         private Contact _searchingContact;
         private Organisation _searchingOrganisation;
@@ -35,10 +35,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
         [SetUp]
         public void Arrange()
         {
-            _searchQuery = new CertificateSearchRequest { Uln = 1111111111 };
+            _searchQuery = new LearnerSearchRequest { Uln = 1111111111 };
 
-            _searchResults = new List<CertificateSearchResponse>();
-            _searchResult = new CertificateSearchResponse();
+            _searchResults = new List<LearnerSearchResponse>();
+            _searchResult = new LearnerSearchResponse();
             _searchingOrganisation = Builder<Organisation>.CreateNew().Build();
 
             _mockCertificateRepository = new Mock<ICertificateRepository>();
@@ -215,7 +215,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 
         private void SetUpLearnerRecord()
         {
-            _searchResults = Builder<CertificateSearchResponse>.CreateListOfSize(1)
+            _searchResults = Builder<LearnerSearchResponse>.CreateListOfSize(1)
                 .All()
                     .With(r => r.Uln = 1111111111)
                     .With(r => r.AchDate = null)

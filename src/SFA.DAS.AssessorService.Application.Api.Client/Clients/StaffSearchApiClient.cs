@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<StaffSearchResult> SearchCertificates(string searchString, int page)
+        public async Task<StaffSearchResult> Search(string searchString, int page)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/staffsearch?searchQuery={searchString}&page={page}"))
             {

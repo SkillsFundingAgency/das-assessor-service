@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page);
         Task<StaffBatchSearchResponse> BatchSearch(int batchNumber, int page);
-        Task<StaffSearchResult> SearchCertificates(string searchString, int page);
+        Task<StaffSearchResult> Search(string searchString, int page);
         Task<List<FrameworkLearnerSearchResponse>> SearchFrameworkLearners(FrameworkLearnerSearchRequest frameworkSearchRequest);
     }
 }

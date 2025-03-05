@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Application.Api.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
-    public class SearchQueryValidator : AbstractValidator<CertificateSearchRequest>
+    public class SearchQueryValidator : AbstractValidator<LearnerSearchRequest>
     {
         public SearchQueryValidator(IStringLocalizer<SearchQueryValidator> localizer)
         {

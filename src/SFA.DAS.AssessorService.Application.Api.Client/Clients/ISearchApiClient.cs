@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface ISearchApiClient
     {
-        Task<List<CertificateSearchResponse>> SearchCertificates(CertificateSearchRequest request);
+        Task<List<LearnerSearchResponse>> SearchLearners(LearnerSearchRequest request);
     }
 }
