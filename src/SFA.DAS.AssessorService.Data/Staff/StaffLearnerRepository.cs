@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             [LearnRefNumber],
                             1 [CompletionStatus],
                             NULL [PlannedEndDate]
-                            FROM [Certificates] ce 
+                            FROM [StandardCertificates] ce 
                             JOIN [Organisations] og ON ce.OrganisationId = og.Id
                             WHERE ce.[Status] <> 'Deleted'
                             AND [Uln] = @uln 
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                                     SELECT [Id] ,[Uln], [StdCode], 2 choice
                                     FROM (
                                     SELECT Row_number() OVER (ORDER BY CertificateReferenceId DESC) rownumber, ce.id, Uln, StandardCode StdCode
-                                    FROM [Certificates] ce 
+                                    FROM [StandardCertificates] ce 
                                     JOIN [Organisations] og ON ce.OrganisationId = og.Id
                                     WHERE ce.[Status] <> 'Deleted'
                                     AND [Uln] = @uln 
@@ -152,7 +152,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             {
                 PageOfResults = (await _connection.QueryAsync<Learner>(
                         @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt as LastUpdatedAt 
-                            FROM Certificates cert
+                            FROM StandardCertificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                             WHERE org.EndPointAssessorOrganisationId = @epaOrgId
                             ORDER BY cert.UpdatedAt DESC                     
@@ -161,12 +161,10 @@ namespace SFA.DAS.AssessorService.Data.Staff
                         new { epaOrgId = searchRequest.SearchQuery.ToLower(), skip = (searchRequest.Page - 1) * 10, take = 10 }))
                     .ToList(),
                 TotalCount = await _connection.ExecuteScalarAsync<int>(@"SELECT COUNT(1)
-                    FROM Certificates cert
+                    FROM StandardCertificates cert
                         INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                     WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new { epaOrgId = searchRequest.SearchQuery.ToLower() })
             };
-
-
 
             return searchResult;
         }

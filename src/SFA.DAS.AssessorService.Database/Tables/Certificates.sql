@@ -60,7 +60,15 @@ ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_CertificateBa
 REFERENCES [dbo].[CertificateBatchLogs] ([CertificateReference], [BatchNumber])
 GO
 
-ALTER TABLE [dbo].[Certficates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+ALTER TABLE [dbo].[Certificates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+GO
+
+ALTER TABLE [dbo].[Certificates] ADD CONSTRAINT [CHK_Type]
+CHECK (
+    (Type = 'Standard' AND Uln IS NOT NULL AND StandardCode IS NOT NULL AND FrameworkLearnerId IS NULL)
+    OR 
+    (Type = 'Framework' AND FrameworkLearnerId IS NOT NULL AND Uln IS NULL AND StandardCode IS NULL)
+)
 GO
 
 CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
@@ -84,5 +92,3 @@ GO
 CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId]) INCLUDE ([StandardName], [StandardReference],
 [StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
 GO
-
-      

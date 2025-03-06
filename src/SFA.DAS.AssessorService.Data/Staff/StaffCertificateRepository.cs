@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 		            cert.Status,
 		            cert.UpdatedAt AS LastUpdatedAt
                 FROM 
-                    Certificates cert INNER JOIN Organisations org
+                    StandardCertificates cert INNER JOIN Organisations org
                     ON cert.OrganisationId = org.Id
                 WHERE Uln IN @ulns";
 
