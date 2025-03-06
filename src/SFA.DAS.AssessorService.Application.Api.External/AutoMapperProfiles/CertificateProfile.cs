@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             {
                 if (destination.CertificateData.LearningDetails != null)
                 {
-                    destination.CertificateData.LearningDetails.ProviderUkPrn = source.ProviderUkPrn;
+                    destination.CertificateData.LearningDetails.ProviderUkPrn = source.ProviderUkPrn.GetValueOrDefault();
                 }
             }
         }

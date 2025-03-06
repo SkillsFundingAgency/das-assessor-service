@@ -71,6 +71,7 @@ namespace SFA.DAS.AssessorService.Data
                 EndPointAssessorOrganisationId = sc.Organisation?.EndPointAssessorOrganisationId,
                 EndPointAssessorOrganisationName = sc.Organisation?.EndPointAssessorName,
                 CertificateReference = sc.CertificateReference,
+                Type = sc.Type,
                 BatchNumber = sc.BatchNumber?.ToString(),
                 LearnerGivenNames = sc.CertificateData.LearnerGivenNames,
                 LearnerFamilyName = sc.CertificateData.LearnerFamilyName,
@@ -94,18 +95,24 @@ namespace SFA.DAS.AssessorService.Data
 
             var frameworkSummaries = frameworkCertificates.Select(fc => new FrameworkCertificatePrintSummary
             {
+                ProviderUkPrn = fc.ProviderUkPrn,
                 CertificateReference = fc.CertificateReference,
+                Type = fc.Type,
+                ApprenticeReference = fc.CertificateData.ApprenticeReference,
                 BatchNumber = fc.BatchNumber?.ToString(),
                 LearnerGivenNames = fc.CertificateData.LearnerGivenNames,
                 LearnerFamilyName = fc.CertificateData.LearnerFamilyName,
+                FullName = fc.CertificateData.FullName,
                 ContactName = fc.CertificateData.ContactName,
                 ContactAddLine1 = fc.CertificateData.ContactAddLine1,
                 ContactAddLine2 = fc.CertificateData.ContactAddLine2,
                 ContactAddLine3 = fc.CertificateData.ContactAddLine3,
                 ContactAddLine4 = fc.CertificateData.ContactAddLine4,
                 ContactPostCode = fc.CertificateData.ContactPostCode,
+                PathwayName = fc.CertificateData.PathwayName,
+                FrameworkName = fc.CertificateData.FrameworkName,
+                FrameworkLevelName = fc.CertificateData.FrameworkLevelName,
                 AchievementDate = fc.CertificateData.AchievementDate,
-                FullName = fc.CertificateData.FullName,
                 Status = fc.Status
             }).ToList();
 

@@ -9,8 +9,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class CertificateBase : BaseEntity
     {
         public Guid Id { get; set; }
+        public string Type { get; set; }
 
         public string CertificateReference { get; set; }
+        public int? ProviderUkPrn { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? CertificateReferenceId { get; set; }

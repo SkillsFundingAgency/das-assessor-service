@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                         FamilyName = certificate.CertificateData.LearnerFamilyName,
                         GivenNames = certificate.CertificateData.LearnerGivenNames,
                         StdCode = certificate.StandardCode,
-                        UkPrn = certificate.ProviderUkPrn,
+                        UkPrn = certificate.ProviderUkPrn.GetValueOrDefault(),
                         CreatedAt = certificate.CreatedAt,
                         LearnStartDate = certificate.CertificateData.LearningStartDate
                     };

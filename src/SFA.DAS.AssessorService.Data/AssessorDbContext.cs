@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
         public virtual DbSet<CertificateBatchLog> CertificateBatchLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
+        public virtual DbSet<FrameworkLearner> FrameworkLearners { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
         public virtual DbSet<OrganisationStandardVersion> OrganisationStandardVersion { get; set; }
@@ -104,6 +105,9 @@ namespace SFA.DAS.AssessorService.Data
                 .HasOne<Contact>(sc => sc.Contact)
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
+
+            modelBuilder.Entity<FrameworkLearner>()
+                .ToTable("FrameworkLearner");
 
             modelBuilder.Entity<OrganisationStandard>()
                 .ToTable("OrganisationStandard");

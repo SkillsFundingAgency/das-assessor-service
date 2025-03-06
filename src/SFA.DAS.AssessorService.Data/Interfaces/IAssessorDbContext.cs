@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         DbSet<EMailTemplate> EMailTemplates { get; set; }
         DbSet<FrameworkCertificate> FrameworkCertificates { get; set; }
+        DbSet<FrameworkLearner> FrameworkLearners { get; set; }
         DbSet<Ilr> Ilrs { get; set; }
         DbSet<MergeApply> MergeApplications { get; set; }
         DbSet<MergeOrganisation> MergeOrganisations { get; set; }

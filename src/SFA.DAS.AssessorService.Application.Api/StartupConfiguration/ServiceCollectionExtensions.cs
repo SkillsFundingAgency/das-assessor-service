@@ -292,6 +292,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddTransient<ILearnerRepository, LearnerRepository>();
             services.AddTransient<IStaffReportRepository, StaffReportRepository>();
             services.AddTransient<IApplyRepository, ApplyRepository>();
+            services.AddTransient<IFrameworkLearnerRepository, FrameworkLearnerRepository>();
             return services;
         }
 

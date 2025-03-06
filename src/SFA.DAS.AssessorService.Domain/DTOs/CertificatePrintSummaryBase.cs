@@ -4,8 +4,10 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
 {
     public class CertificatePrintSummaryBase
     {
+        public string Type { get; set; }
         public string CertificateReference { get; set; }
         public string BatchNumber { get; set; }
+        public int? ProviderUkPrn { get; set; }
         public string LearnerGivenNames { get; set; }
         public string LearnerFamilyName { get; set; }
         public string ContactName { get; set; }

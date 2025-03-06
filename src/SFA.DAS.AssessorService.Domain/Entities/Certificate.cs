@@ -9,7 +9,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public int StandardCode { get; set; }
         public string StandardUId { get; set; }
-        public int ProviderUkPrn { get; set; }
         public Guid OrganisationId {get; set;}
 
         [JsonIgnore]

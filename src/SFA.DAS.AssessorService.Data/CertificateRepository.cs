@@ -284,7 +284,7 @@ namespace SFA.DAS.AssessorService.Data
                      OrganisationId = q.OrganisationId,
                      OverallGrade = q.OverallGrade,
                      ProviderName = q.ProviderName,
-                     ProviderUkPrn = q.ProviderUkPrn,
+                     ProviderUkPrn = q.ProviderUkPrn.GetValueOrDefault(),
                      StandardCode = q.StandardCode,
                      StandardLevel = q.StandardLevel,
                      StandardName = q.StandardName,

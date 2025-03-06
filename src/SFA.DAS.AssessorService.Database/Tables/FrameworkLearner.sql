@@ -60,6 +60,6 @@ GO
 
 CREATE UNIQUE INDEX [IXU_FrameworkLearner_NameMatch] ON [dbo].[FrameworkLearner] 
 ([ApprenticeNameMatch], [ApprenticeDoB], [CertificationYear], [Framework], [Pathway], [ApprenticeshipLevelName], [ApprenticeshipLevel]
-,[CompetenceQualificationId], [KnowledgeQualificationId], [CombinedQualificationId], [UlnConfirmed])
+,[CompetenceQualificationId], [KnowledgeQualificationId], [CombinedQualificationId], [ULNConfirmed])
 INCLUDE ([Id],[ApprenticeSurname],[ApprenticeForename]);
 GO
