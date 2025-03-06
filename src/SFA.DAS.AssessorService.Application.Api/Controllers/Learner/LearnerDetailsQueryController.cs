@@ -6,8 +6,11 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections.Generic;
+using System;
 using System.Net;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -54,6 +57,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetApprenticeLearner(long apprenticeshipId)
         {
             return Ok(await _mediator.Send(new GetApprenticeLearnerRequest(apprenticeshipId)));
+        }
+
+        [HttpGet("framework-learner/{id}", Name = "GetFrameworkLearner")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetFrameworkLearnerResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetFrameworkLearner(Guid id)
+        {
+            return Ok(await _mediator.Send(new GetFrameworkLearnerRequest() { Id = id}));
         }
     }
 }
