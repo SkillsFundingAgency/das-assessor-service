@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
     {
         private IActionResult _result;
         private Guid _guid = Guid.NewGuid();
-        private GetFrameworkCertificateResult certificate;
+        private GetFrameworkLearnerResponse certificate;
 
         [SetUp]
         [MoqAutoData]
@@ -28,15 +28,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
         {
             var mediator = new Mock<IMediator>();
 
-            certificate = Builder<GetFrameworkCertificateResult>.CreateNew().With(c => c.Id = _guid).Build();
+            certificate = Builder<GetFrameworkLearnerResponse>.CreateNew().With(c => c.Id = _guid).Build();
 
             mediator.Setup(m =>
-                m.Send(It.IsAny<GetFrameworkCertificateQuery>(),
+                m.Send(It.IsAny<GetFrameworkLearnerRequest>(),
                     new CancellationToken())).ReturnsAsync(certificate);
 
-            var controller = new SearchController(mediator.Object);
+            var controller = new LearnerDetailsQueryController(mediator.Object);
 
-            _result = controller.GetFrameworkCertificate(_guid).Result;
+            _result = controller.GetFrameworkLearner(_guid).Result;
         }
 
         [Test]
@@ -48,13 +48,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
         [Test]
         public void Then_model_should_contain_framework_certificate()
         {
-            ((OkObjectResult) _result).Value.Should().BeOfType<GetFrameworkCertificateResult>();
+            ((OkObjectResult) _result).Value.Should().BeOfType<GetFrameworkLearnerResponse>();
         }
 
         [Test]
         public void Then_framework_certificate_details_should_be_correct()
         {
-            var certificateResult = ((OkObjectResult) _result).Value as GetFrameworkCertificateResult;
+            var certificateResult = ((OkObjectResult) _result).Value as GetFrameworkLearnerResponse;
             certificateResult.Should().BeEquivalentTo(certificate);
         }
 

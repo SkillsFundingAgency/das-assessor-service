@@ -33,14 +33,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(learnerSearchRequest));
         }
-
-        [HttpGet("framework-certificate/{id}", Name = "GetFrameworkCertificate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetFrameworkCertificateResult))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetFrameworkCertificate(Guid id)
-        {
-            return Ok(await _mediator.Send(new GetFrameworkCertificateQuery { Id = id}));
-        }
     }
 }
