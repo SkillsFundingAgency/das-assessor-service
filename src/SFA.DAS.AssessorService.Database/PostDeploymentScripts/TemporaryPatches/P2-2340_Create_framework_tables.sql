@@ -570,15 +570,18 @@ CREATE TABLE [frameworks].[map_apprenticeships]
 );
 GO
 
+IF EXISTS (SELECT * FROM sys.tables WHERE name = 'map_advroutes_backup' AND schema_id = SCHEMA_ID('frameworks'))
+DROP TABLE [frameworks].[map_advroutes_backup]
+GO
+
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'map_advroutes' AND schema_id = SCHEMA_ID('frameworks'))
-CREATE TABLE [frameworks].[map_advroutes_backup]
+CREATE TABLE [frameworks].[map_advroutes]
 (
 [r_id] bigint primary key,
 [TrainingCode] varchar(15),
 [PathwayName] nvarchar(200)
 );
 GO
-
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'map_ULN' AND schema_id = SCHEMA_ID('frameworks'))
 CREATE TABLE [frameworks].[map_ULN]
