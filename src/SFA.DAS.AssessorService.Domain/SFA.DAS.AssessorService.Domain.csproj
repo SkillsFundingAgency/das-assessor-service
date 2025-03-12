@@ -5,12 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-    <PackageReference Include="newtonsoft.json" Version="13.0.3" />
+    <Compile Remove="DTOs\Register\**" />
+    <EmbeddedResource Remove="DTOs\Register\**" />
+    <None Remove="DTOs\Register\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Register\" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="newtonsoft.json" Version="13.0.3" />
   </ItemGroup>
 
  

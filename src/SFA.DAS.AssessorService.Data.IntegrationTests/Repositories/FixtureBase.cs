@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 {
@@ -399,6 +401,23 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
             var certificate = CertificateHandler.Create(id, "{}", null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, 12345,
                 string.Empty, null, string.Empty, createdAt.Date);
+            _certificates.Add(certificate);
+            CertificateHandler.InsertRecord(certificate);
+            return this as T;
+        }
+
+        public T WithCertificate(Guid id, DateTime createdAt, long uln, int stdCode, string endPointAssessorOrganisationId, string status, int providerUkprn, string standardReference, DateTime achievementDate, bool isPrivatelyFunded = false)
+        {
+            var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+
+            var certificateData = new CertificateData
+            {
+                AchievementDate = achievementDate,
+                StandardReference = standardReference
+            };
+
+            var certificate = CertificateHandler.Create(id, JsonConvert.SerializeObject(certificateData), null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, providerUkprn,
+                status, null, string.Empty, createdAt.Date, isPrivatelyFunded: isPrivatelyFunded);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
             return this as T;
