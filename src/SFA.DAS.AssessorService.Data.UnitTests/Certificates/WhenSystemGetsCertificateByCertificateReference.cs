@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task ItShouldReturnResult()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292") as Certificate;
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292");
             
             result.Uln.Should().Be(2222222222);
         }
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

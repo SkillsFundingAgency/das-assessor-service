@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public CertificateSendTo SendTo { get; set; }
         public List<string> ReprintReasons { get; set; }
         public List<string> AmendReasons { get; set; }
-        public string ApprenticeReference { get; set; }
+        public string FrameworkCertificateNumber { get; set; }
         public string FrameworkName { get; set; }
         public string FrameworkLevelName { get; set; }
         public string PathwayName { get; set; }

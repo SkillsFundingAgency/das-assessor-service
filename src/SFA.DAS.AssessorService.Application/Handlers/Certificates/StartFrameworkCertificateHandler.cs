@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     PathwayName = frameworkLearner.PathwayName,
                     FrameworkName = frameworkLearner.FrameworkName,
                     FrameworkLevelName = frameworkLearner.ApprenticeshipLevelName,
-                    ApprenticeReference = frameworkLearner.ApprenticeReference,
+                    FrameworkCertificateNumber = frameworkLearner.FrameworkCertificateNumber,
                     ReprintReasons = request.Reasons.ToFlagsList(),
                     IncidentNumber = request.IncidentNumber,
                     ContactName = request.ContactName,

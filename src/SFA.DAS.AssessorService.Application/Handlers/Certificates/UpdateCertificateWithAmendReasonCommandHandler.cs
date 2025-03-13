@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Unit> Handle(UpdateCertificateWithAmendReasonCommand request, CancellationToken cancellationToken)
         {
-            var certificate = await _certificateRepository.GetCertificate(request.CertificateReference) as Certificate;
+            var certificate = await _certificateRepository.GetCertificate<Certificate>(request.CertificateReference) as Certificate;
             if (certificate == null)
                 throw new NotFoundException();
 

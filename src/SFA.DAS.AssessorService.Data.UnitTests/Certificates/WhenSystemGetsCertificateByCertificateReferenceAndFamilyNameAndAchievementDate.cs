@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task ItShouldReturnResult()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292", "Hawkins", _achievementDate);
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292", "Hawkins", _achievementDate);
             
             result.Uln.Should().Be(2222222222);
         }
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_FamilyNameIsNotCorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292", "Incorrect", _achievementDate);
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292", "Incorrect", _achievementDate);
 
             result.Should().BeNull();
         }
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_CertificateReferenceIsIncorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate("09999999999", "Hawkins", _achievementDate);
+            var result = await _certificateRepository.GetCertificate<Certificate>("09999999999", "Hawkins", _achievementDate);
 
             result.Should().BeNull();
         }
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_AchievementDateIsIncorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292", "Hawkins", DateTime.Now.AddDays(-9).Date);
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292", "Hawkins", DateTime.Now.AddDays(-9).Date);
 
             result.Should().BeNull();
         }
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

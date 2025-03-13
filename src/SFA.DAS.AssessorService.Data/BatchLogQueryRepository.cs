@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Data
                 ProviderUkPrn = fc.ProviderUkPrn,
                 CertificateReference = fc.CertificateReference,
                 Type = fc.Type,
-                ApprenticeReference = fc.CertificateData.ApprenticeReference,
+                FrameworkCertificateNumber = fc.CertificateData.FrameworkCertificateNumber,
                 BatchNumber = fc.BatchNumber?.ToString(),
                 LearnerGivenNames = fc.CertificateData.LearnerGivenNames,
                 LearnerFamilyName = fc.CertificateData.LearnerFamilyName,

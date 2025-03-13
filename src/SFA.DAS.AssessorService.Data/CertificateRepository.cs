@@ -132,20 +132,22 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<Certificate> GetCertificate(string certificateReference, string familyName, DateTime? achievementDate)
+        public async Task<T> GetCertificate<T>(string certificateReference, string familyName, DateTime? achievementDate) where T : CertificateBase
         {
-            return await _unitOfWork.AssessorDbContext.StandardCertificates
-                .FirstOrDefaultAsync(c =>
-                    c.CertificateReference == certificateReference &&
-                    c.LearnerFamilyName.Equals(familyName) &&
-                    c.AchievementDate.Equals(achievementDate));
+            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+
+            return await query.OfType<T>().FirstOrDefaultAsync(c =>
+                c.CertificateReference == certificateReference &&
+                c.LearnerFamilyName.Equals(familyName) &&
+                c.AchievementDate.Equals(achievementDate));
         }
 
-        public async Task<CertificateBase> GetCertificate(string certificateReference)
+        public async Task<T> GetCertificate<T>(string certificateReference) where T : CertificateBase
         {
-            return await _unitOfWork.AssessorDbContext.StandardCertificates
-                .FirstOrDefaultAsync(c => 
-                    c.CertificateReference == certificateReference);
+            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+
+            return await query.OfType<T>().FirstOrDefaultAsync(c => 
+                c.CertificateReference == certificateReference);
         }
 
         public async Task<bool> CertificateExistsForUln(long uln)

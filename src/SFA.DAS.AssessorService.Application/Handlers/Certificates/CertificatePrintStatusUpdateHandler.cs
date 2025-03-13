@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
@@ -35,7 +36,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var validatedCertificatePrintStatus = await Validate(request, validationResult);
             if (validatedCertificatePrintStatus != null)
             {
-                var certificate = await _certificateRepository.GetCertificate(validatedCertificatePrintStatus.CertificateReference);
+                var certificate = await _certificateRepository.GetCertificate<Certificate>(validatedCertificatePrintStatus.CertificateReference) as CertificateBase
+                    ?? await _certificateRepository.GetCertificate<FrameworkCertificate>(validatedCertificatePrintStatus.CertificateReference);
+
                 if (certificate == null)
                 {
                     validationResult.Errors.Add(
@@ -100,16 +103,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                     if (updateCertificate)
                     {
-                        _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber}");
+                        _logger.LogInformation("Certificate {CertificateReference} updated to status {CertificateStatus} in batch {CertificateBatchNumber}", 
+                            validatedCertificatePrintStatus.CertificateReference,
+                            validatedCertificatePrintStatus.Status,
+                            validatedCertificatePrintStatus.BatchNumber);
                     }
                     else
                     {
-                        _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} not updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber} because it was not the latest change");
+                        _logger.LogInformation("Certificate {CertificateReference} not updated to status {CertificateStatus} in batch {CertificateBatchNumber} because it was not the latest change",
+                            validatedCertificatePrintStatus.CertificateReference,
+                            validatedCertificatePrintStatus.Status,
+                            validatedCertificatePrintStatus.BatchNumber);
                     }
                 }
                 else
                 {
-                    _logger.LogInformation($"Certificate {validatedCertificatePrintStatus.CertificateReference} not updated to status {validatedCertificatePrintStatus.Status} in batch {validatedCertificatePrintStatus.BatchNumber} because it was a duplicate update");
+                    _logger.LogInformation("Certificate {CertificateReference} not updated to status {CertificateStatus} in batch {CertificateBatchNumber} because it was a duplicate update",
+                        validatedCertificatePrintStatus.CertificateReference,
+                            validatedCertificatePrintStatus.Status,
+                            validatedCertificatePrintStatus.BatchNumber);
                 }
             }
 

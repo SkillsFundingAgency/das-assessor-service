@@ -48,7 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             else
             {
                 _logger.LogError($"Cannot send email template {emailTemplateSummary.TemplateName} to '{message.Email}'");
-            };
+            }
+
             return Unit.Value;
         }      
 

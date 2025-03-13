@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             public CertificatePrintStatusUpdateHandlerTestsFixture WithCertificate(Guid id, string reference, string status, DateTime statusAt, int batchNumber,  DateTime toBePrinted)
             {
-                _certificateRepository.Setup(r => r.GetCertificate(reference))
+                _certificateRepository.Setup(r => r.GetCertificate<Certificate>(reference))
                     .ReturnsAsync(
                         new Certificate
                         {

@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             public UpdateCertificateWithAmendReasonCommandHandlerTestsFixture WithCertificate(string reference)
             {
-                _certificateRepository.Setup(r => r.GetCertificate(reference))
+                _certificateRepository.Setup(r => r.GetCertificate<Certificate>(reference))
                     .ReturnsAsync(
                         new Certificate
                         {
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             public void VerifyGetCertificateCalled(string certificateReference)
             {
-                _certificateRepository.Verify(r => r.GetCertificate(certificateReference), Times.Once);
+                _certificateRepository.Verify(r => r.GetCertificate<Certificate>(certificateReference), Times.Once);
             }
 
             public void VerifyUpdateCalled(string certificateReference, string incidentNumber, AmendReasons? reasons, string userName, 

@@ -22,9 +22,9 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<Certificate> GetCertificate(long uln, string familyName);
 
-        Task<CertificateBase> GetCertificate(string certificateReference);
+        Task<T> GetCertificate<T>(string certificateReference) where T : CertificateBase;
 
-        Task<Certificate> GetCertificate(string certificateReference, string familyName, DateTime? achievementDate);
+        Task<T> GetCertificate<T>(string certificateReference, string familyName, DateTime? achievementDate) where T : CertificateBase;
 
         Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
         Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId, bool includeLogs = false);
