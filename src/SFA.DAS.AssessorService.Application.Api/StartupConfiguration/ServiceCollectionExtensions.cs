@@ -192,6 +192,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             services.AddTransient<CacheService>();
             services.AddTransient<IStandardService, StandardService>();
+            services.AddTransient<IStandardImportService, StandardImportService>();
             services.AddTransient<IAzureTokenService, AzureTokenService>();
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<ICertificateNameCapitalisationService, CertificateNameCapitalisationService>();
