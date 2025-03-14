@@ -218,6 +218,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(results.Select(s => (StandardVersion)s).ToList());
         }
+
+        [HttpGet("assessments")]
+        public async Task<IActionResult> GetAssessments([FromQuery] string standard, [FromQuery] long ukprn)
+        {
+            _logger.LogInformation("Get assessments for Ukprn {Ukprn} with IfATE reference number {Standard}", ukprn, standard ?? "not specified");
+
+            var result = await _mediator.Send(new GetAssessmentsRequest { Ukprn = ukprn, StandardReference = standard });
+
+            return Ok(result);
+        }
     }
 }
 
