@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
-using FluentAssertions;
+using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Schedule.Command
 {

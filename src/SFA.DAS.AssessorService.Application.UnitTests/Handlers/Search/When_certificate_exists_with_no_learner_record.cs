@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificate = Builder<Certificate>.CreateNew()
                 .With(x => x.StandardCode = standardCode)
-                .With(x => x.CertificateData = JsonConvert.SerializeObject(certificateData))
+                .With(x => x.CertificateData = certificateData)
                 .Build();
 
             var certificatesResponse = new List<Certificate> { certificate };

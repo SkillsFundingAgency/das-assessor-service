@@ -1,17 +1,16 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Enums;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Exceptions;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Enums;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
@@ -29,18 +28,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Unit> Handle(UpdateCertificateWithAmendReasonCommand request, CancellationToken cancellationToken)
         {
-            var certificate = await _certificateRepository.GetCertificate(request.CertificateReference);
+            var certificate = await _certificateRepository.GetCertificate<Certificate>(request.CertificateReference) as Certificate;
             if (certificate == null)
                 throw new NotFoundException();
 
             try
             {
-                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                certificateData.AmendReasons = AmendReasonsToList(request.Reasons);
-                certificateData.IncidentNumber = request.IncidentNumber;
-                certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+                certificate.CertificateData.AmendReasons = AmendReasonsToList(request.Reasons);
+                certificate.CertificateData.IncidentNumber = request.IncidentNumber;
 
-                await _certificateRepository.Update(certificate, request.Username, CertificateActions.AmendReason, true, request.OtherReason);
+                await _certificateRepository.UpdateStandardCertificate(certificate, request.Username, CertificateActions.AmendReason, true, request.OtherReason);
             }
             catch (Exception ex)
             {

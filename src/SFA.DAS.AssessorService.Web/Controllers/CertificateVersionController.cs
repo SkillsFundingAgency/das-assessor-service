@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             Logger.LogDebug($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = certificate.CertificateData;
 
             if (!TryGetCertificateSession("CertificateVersionViewModel", username, out var certSession))
             {

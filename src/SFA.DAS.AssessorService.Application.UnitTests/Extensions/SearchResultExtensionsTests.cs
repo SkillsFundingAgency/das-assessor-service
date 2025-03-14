@@ -1,18 +1,17 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
 {
@@ -97,12 +96,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             SetUpLearnerRecord();
 
             var certificate = _certificates.FirstOrDefault(c => c.Uln == _searchResults.First().Uln);
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
+            
             // Rework such that certificate data is populatedwhen it's a fail for option and version
-            certificateData.OverallGrade = CertificateGrade.Fail;
+            certificate.CertificateData.OverallGrade = CertificateGrade.Fail;
             certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             // End
 
             _searchResult = _searchResults.FirstOrDefault();
@@ -112,9 +109,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             _searchResult.CertificateId.Should().Be(certificate.Id);
             _searchResult.CertificateReference.Should().Be(certificate.CertificateReference);
             _searchResult.CertificateStatus.Should().Be(certificate.Status);
-            _searchResult.LearnStartDate.Should().Be(certificateData.LearningStartDate);
-            _searchResult.Version.Should().Be(certificateData.Version);
-            _searchResult.Option.Should().Be(certificateData.CourseOption);
+            _searchResult.LearnStartDate.Should().Be(certificate.CertificateData.LearningStartDate);
+            _searchResult.Version.Should().Be(certificate.CertificateData.Version);
+            _searchResult.Option.Should().Be(certificate.CertificateData.CourseOption);
         }
 
         [Test]
@@ -236,7 +233,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
                 .Build();
 
             _certificate = Builder<Certificate>.CreateNew()
-                .With(x => x.CertificateData = JsonConvert.SerializeObject(_certificateData))
+                .With(x => x.CertificateData = _certificateData)
                 .With(x => x.StandardCode = 27)
                 .With(r => r.Uln = 1111111111)
                 .With(x => x.CreatedBy = createByApi ? "API" : "username@epao.co.uk")
@@ -253,7 +250,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Extensions
             if (includeSubmitted)
             {
                 certificateLogEntries.Add(Builder<CertificateLog>.CreateNew()
-                    .With(x => x.CertificateData = JsonConvert.SerializeObject(_certificate))
+                    .With(x => x.CertificateData = _certificateData)
                     .With(x => x.Status = CertificateStatus.Submitted)
                     .With(x => x.Action = CertificateActions.Submit)
                     .With(x => x.Username = createByApi ? "API" : "username@epao.co.uk")

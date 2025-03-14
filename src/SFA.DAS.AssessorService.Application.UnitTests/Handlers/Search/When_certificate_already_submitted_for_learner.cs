@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateReference = "00010001",
                         StandardCode = 12,
                         CertificateData =
-                            JsonConvert.SerializeObject(new CertificateData {OverallGrade = "Distinction"}),
+                            new CertificateData { OverallGrade = "Distinction" },
                         CertificateLogs = GetCertificateLogs()
                     }
                 });
@@ -58,11 +58,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             {
                 new CertificateLog
                 {
-                    CertificateData = JsonConvert.SerializeObject(new CertificateData
+                    CertificateData = new CertificateData
                     {
                         OverallGrade = "Distinction",
                         AchievementDate = DateTime.UtcNow.AddDays(-2)
-                    }),
+                    },
                     Action = CertificateActions.Submit,
                     EventTime = DateTime.UtcNow.AddDays(-1)
                 }

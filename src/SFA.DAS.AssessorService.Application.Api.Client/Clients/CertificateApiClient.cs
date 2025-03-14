@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?epaOrgId={epaOrgId}&employerAccountId={employerAccountId}"))
             {

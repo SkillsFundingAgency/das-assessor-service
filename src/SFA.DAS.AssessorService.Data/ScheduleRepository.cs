@@ -1,10 +1,10 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dapper;
+using SFA.DAS.AssessorService.Api.Types.Models.ScheduleRun;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using LastRunStatus = SFA.DAS.AssessorService.Domain.Entities.LastRunStatus;
 
 namespace SFA.DAS.AssessorService.Data

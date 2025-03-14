@@ -1,14 +1,14 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
 {
@@ -56,8 +56,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
         private async Task<LearnerDetailForExternalApi> GetLearnerDetails(GetBatchLearnerRequest request, Standard standard, Certificate certFromRepository)
         {
             LearnerDetailForExternalApi learnerDetail = null;
-            
-            var certData = GetCertificateDataFromCertificate(certFromRepository);
 
             if (standard != null)
             {
@@ -80,8 +78,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
                         EndPointAssessorOrganisationId = epao?.EndPointAssessorOrganisationId ?? learner.EpaOrgId,
                         UkPrn = epao?.EndPointAssessorUkprn ?? learner.UkPrn,
                         OrganisationName = epao?.EndPointAssessorName ?? "Unknown",
-                        Version = certData?.Version,
-                        CourseOption = certData?.CourseOption
+                        Version = certFromRepository?.CertificateData?.Version,
+                        CourseOption = certFromRepository?.CertificateData?.CourseOption
                     };
                 }
                 else
@@ -120,24 +118,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners
 
             if (certificate != null && certificate.Status != CertificateStatus.Deleted)
             {
-                var certificateData = GetCertificateDataFromCertificate(certificate);
-
-                epaDetails = certificateData.EpaDetails;
+                epaDetails = certificate.CertificateData?.EpaDetails;
             }
 
             return epaDetails;
-        }
-
-        private CertificateData GetCertificateDataFromCertificate(Certificate certificate)
-        {
-            CertificateData certificateData = null;
-
-            if (certificate != null)
-            {
-                certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            }
-
-            return certificateData;
         }
     }
 }

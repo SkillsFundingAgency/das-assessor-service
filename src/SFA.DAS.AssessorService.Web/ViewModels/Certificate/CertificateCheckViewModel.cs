@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certificate = base.GetCertificateFromViewModel(certificate, certData);
 
             certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
 
             return certificate;
         }

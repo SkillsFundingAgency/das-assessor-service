@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -7,11 +10,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.CreateBatchCertificate
 {
@@ -78,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync(new Certificate()
             {
                 ProviderUkPrn = ukPrn,
-                CertificateData = @"{}"
+                CertificateData = new Domain.JsonData.CertificateData()
             });
 
             // Act
@@ -86,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
 
 
             //Assert
-            _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Start, true, null));
+            _certificateRepository.Verify(m => m.UpdateStandardCertificate(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Start, true, null));
 
             result.StandardUId.Should().Be(stdUId);
             result.Status.Should().Be(CertificateStatus.Draft);
@@ -101,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
 
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync((Certificate)null);
 
-            _certificateRepository.Setup(m => m.New(It.Is<Certificate>(c => c.Uln == uln &&
+            _certificateRepository.Setup(m => m.NewStandardCertificate(It.Is<Certificate>(c => c.Uln == uln &&
                        c.ProviderUkPrn == learnerUkprn &&
                        c.StandardCode == stdCode &&
                        c.CreatedBy == ExternalApiConstants.ApiUserName &&
@@ -112,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             var result = await _handler.Handle(_request, CancellationToken.None);
 
             //Assert
-            _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null), Times.Never);
+            _certificateRepository.Verify(m => m.UpdateStandardCertificate(It.IsAny<Certificate>(), It.IsAny<string>(), It.IsAny<string>(), true, null), Times.Never);
 
             result.Id.Should().Be(id);
             result.ProviderUkPrn.Should().Be(learnerUkprn);
@@ -125,7 +126,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync(new Certificate()
             {
                 ProviderUkPrn = ukPrn,
-                CertificateData = @"{}"
+                CertificateData = new Domain.JsonData.CertificateData()
             });
 
             _mockProvidersRepository.Setup(m => m.GetProvider(ukPrn)).ReturnsAsync((Provider)null);

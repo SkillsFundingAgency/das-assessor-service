@@ -82,7 +82,7 @@ BEGIN
 				-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
 				SELECT le1.StandardReference, le1.DelLocPostCode
 				FROM Learner le1 
-				LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
+				LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
 				WHERE ce1.Uln IS NULL
 				AND le1.FundingModel != 99
 				AND le1.CompletionStatus = 1
@@ -139,7 +139,7 @@ BEGIN
 		FROM (
 
 			SELECT JSON_VALUE(ce1.CertificateData,'$.StandardReference') StandardReference,  ISNULL(ISNULL(le1.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
-			  FROM Certificates ce1
+			  FROM StandardCertificates ce1
 			LEFT JOIN Learner le1 ON le1.StdCode = ce1.StandardCode AND le1.Uln = ce1.Uln
 			WHERE  ce1.Status NOT IN ('Deleted','Draft')
 			  AND IsPrivatelyFunded = 0
@@ -189,7 +189,7 @@ BEGIN
 			
 			-- Assessments
 			SELECT StandardUId, 0 EndPointAssessors, COUNT(*) AS CompletedAssessments, 0 ActiveApprentices
-			FROM Certificates 
+			FROM StandardCertificates 
 			WHERE IsPrivatelyFunded = 0
 			  AND Status NOT IN ('Deleted','Draft')
 			GROUP BY StandardUId
@@ -199,7 +199,7 @@ BEGIN
 			-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
 			SELECT le1.StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, COUNT(*) AS ActiveApprentices
 			FROM Learner le1
-			LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
+			LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
 			WHERE ce1.Uln IS NULL
 			  AND le1.FundingModel != 99
 			  AND le1.CompletionStatus = 1

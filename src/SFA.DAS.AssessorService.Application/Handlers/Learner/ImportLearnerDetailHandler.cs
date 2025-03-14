@@ -1,14 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 {
@@ -108,8 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                     }
                     else
                     {
-                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                        if (certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
+                        if (certificate.Status == CertificateStatus.Submitted && certificate.CertificateData.OverallGrade == CertificateGrade.Fail)
                         {
                             ignore = false;
                         }

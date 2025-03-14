@@ -29,8 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
                     // but if existing certificate is not null, Prioritise those values
                     if (existingCertificate != null)
                     {
-                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-                        request.Version = certificateData.Version;
+                        request.Version = existingCertificate.CertificateData.Version;
                         request.StandardUId = existingCertificate.StandardUId;
                     }
 

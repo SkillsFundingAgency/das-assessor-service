@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 
@@ -15,7 +16,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {  
     public class WhenDeletePersistsDataAndIsNotFound
     {
-        private OrganisationRepository _organisationRepository;       
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
+        private OrganisationRepository _organisationRepository;
         private Exception _exception;
 
         [SetUp]
@@ -28,10 +30,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
                     .Build()
             }.AsQueryable();
 
-            var mockSet = organisations.CreateMockSet(organisations);
-            var mockDbContext = CreateMockDbContext(mockSet);
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _mockAssessorUnitOfWork.Setup(p => p.AssessorDbContext).Returns(CreateMockDbContext(organisations.CreateMockSet()).Object);
 
-            _organisationRepository = new OrganisationRepository(mockDbContext.Object);
+            _organisationRepository = new OrganisationRepository(_mockAssessorUnitOfWork.Object);
 
             try
             {
@@ -47,18 +49,19 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [Test]
         public void ThenNotFoundExceptionSHouldBeThrown()
         {
-            _exception.Should().BeOfType<NotFoundException>();            
+            _exception.Should().BeOfType<NotFoundException>();
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext(IMock<DbSet<Organisation>> mockSet)
+        private Mock<IAssessorDbContext> CreateMockDbContext(IMock<DbSet<Organisation>> mockSet)
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             mockDbContext.Setup(c => c.Organisations).Returns(mockSet.Object);
             mockDbContext.Setup(x => x.MarkAsModified(It.IsAny<Organisation>()));
 
             mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult(It.IsAny<int>()));
+            
             return mockDbContext;
         }
     }
