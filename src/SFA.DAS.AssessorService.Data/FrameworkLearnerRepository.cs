@@ -30,5 +30,10 @@ namespace SFA.DAS.AssessorService.Data
                 l.ApprenticeDoB == dateOfBirth)
                     .ToListAsync();
         }
+
+        public async Task<FrameworkLearner> GetById(Guid frameworklearnerId)
+        {
+            return await _assessorDbContext.FrameworkLearners.FirstOrDefaultAsync(l => l.Id == frameworklearnerId);
+        }
     }
 }

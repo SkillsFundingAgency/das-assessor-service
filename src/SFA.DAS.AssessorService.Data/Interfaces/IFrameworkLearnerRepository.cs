@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
     {
         Task<FrameworkLearner> GetFrameworkLearner(Guid frameworkLearnerId);
         Task<IEnumerable<FrameworkLearner>> Search(string firstName, string lastName, DateTime dateOfBirth);
+        Task<FrameworkLearner> GetById(Guid id);
     }
 }
