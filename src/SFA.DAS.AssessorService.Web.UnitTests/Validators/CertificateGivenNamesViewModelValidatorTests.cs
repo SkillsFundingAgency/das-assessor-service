@@ -36,8 +36,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             result.IsValid.Should().Be(true);
         }
 
-        [Test, RecursiveMoqAutoData]
-        public async Task WhenGivenNamesFieldIsEmpty_ThenReturnsInvalid(CertificateBaseViewModel _baseViewModel)
+        [Test]
+        public async Task WhenGivenNamesFieldIsEmpty_ThenReturnsInvalid()
         {
             var _viewModel = SetupInvalidViewModel(string.Empty);
 
@@ -50,8 +50,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             }
         }
 
-        [Test, RecursiveMoqAutoData]
-        public async Task WhenGivenNamesFieldIsNotEqualToPreviousGivenNamesValue_ThenReturnsInvalid(CertificateBaseViewModel _baseViewModel)
+        [Test]
+        public async Task WhenGivenNamesFieldIsNotEqualToPreviousGivenNamesValue_ThenReturnsInvalid()
         {
             var _viewModel = SetupInvalidViewModel("NotOriginalGivenNamesValue");
 
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
-                    Id = new Guid(),
+                    Id = Guid.NewGuid(),
                     CertificateData = new CertificateData() { LearnerGivenNames = "GivenNames" },
                 });
 
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
-                    Id = new Guid(),
+                    Id = Guid.NewGuid(),
                     CertificateData = new CertificateData() { LearnerGivenNames = "GivenNames" },
                 });
 
