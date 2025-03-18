@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class SearchResult
+    public class LearnerSearchResponse
     {
         public long Uln { get; set; }
         public string GivenNames { get; set; }

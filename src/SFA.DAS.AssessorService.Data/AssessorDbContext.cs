@@ -173,6 +173,9 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<MergeApply>()
                 .ToTable("MergeApply");
 
+            modelBuilder.Entity<FrameworkLearner>()
+                .ToTable("FrameworkLearner");
+
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }
 

@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost(Name = "Search")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
+        [HttpPost("learners", Name = "SearchLearners")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<LearnerSearchResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Search([FromBody]SearchQuery searchQuery)
+        public async Task<IActionResult> SearchLearners([FromBody]LearnerSearchRequest learnerSearchRequest)
         {
-            return Ok(await _mediator.Send(searchQuery));
+            return Ok(await _mediator.Send(learnerSearchRequest));
         }
     }
 }
