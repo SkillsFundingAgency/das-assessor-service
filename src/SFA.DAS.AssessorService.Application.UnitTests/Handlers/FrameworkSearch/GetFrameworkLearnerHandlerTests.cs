@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Threading;
 using AutoMapper;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
 using FluentAssertions;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
 {
@@ -36,14 +33,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         {
             // Arrange
             _frameworkLearnerRepository
-                .Setup(r => r.GetById(query.Id))
+                .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync(learner);
 
             // Act
             var result = await _handler.Handle(query, new CancellationToken());
 
             // Assert
-            _frameworkLearnerRepository.Verify(r => r.GetById(query.Id), Times.Once());
+            _frameworkLearnerRepository.Verify(r => r.GetFrameworkLearner(query.Id), Times.Once());
         }
 
         [Test, MoqAutoData]
@@ -51,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         {
             // Arrange
             _frameworkLearnerRepository
-                .Setup(r => r.GetById(query.Id))
+                .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync(learner);
 
             // Act
@@ -66,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         {
             // Arrange
             _frameworkLearnerRepository
-                .Setup(r => r.GetById(query.Id))
+                .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync((FrameworkLearner)null);
 
             // Act
@@ -84,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         {
             // Arrange
             _frameworkLearnerRepository
-                .Setup(r => r.GetById(query.Id))
+                .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync(learner);
 
             _mapperMock

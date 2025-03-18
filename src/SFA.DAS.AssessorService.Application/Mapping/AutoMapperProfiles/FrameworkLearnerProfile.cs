@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
             CreateMap<FrameworkLearner, FrameworkLearnerSearchResponse>();
 
             CreateMap<FrameworkLearner, GetFrameworkLearnerResponse>()
-                .ForMember(dest => dest.CertificateNumber, opt => opt.MapFrom(src => src.ApprenticeReference))
+                .ForMember(dest => dest.CertificateNumber, opt => opt.MapFrom(src => src.FrameworkCertificateNumber))
                 .ForMember(dest => dest.QualificationsAndAwardingBodies, opts => opts.MapFrom<QualificationDetailsResolver>());
         }
     }

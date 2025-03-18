@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
 {
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
 
         public async Task<GetFrameworkLearnerResponse> Handle(GetFrameworkLearnerRequest request, CancellationToken cancellationToken)
         {
-            var returnValue =  await _frameworkLearnerRepository.GetById(request.Id);
+            var returnValue =  await _frameworkLearnerRepository.GetFrameworkLearner(request.Id);
             return _mapper.Map<GetFrameworkLearnerResponse>(returnValue);
         }
     }
