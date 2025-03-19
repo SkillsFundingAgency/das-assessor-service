@@ -129,6 +129,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithAmendReasonCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithAmendReasonCommand.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithReprintReasonCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithReprintReasonCommand.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateGradeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateGradeRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartFrameworkCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartFrameworkCertificateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CheckIfOfsOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CheckIfOfsOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Charge.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Charge.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\SicCodeDictionary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\SicCodeDictionary.cs" />
@@ -452,6 +453,7 @@
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\EPORegisteredStandards.cs" Link="SFA.DAS.AssessorService.Domain\Entities\EPORegisteredStandards.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FHADetails.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FHADetails.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FinancialGrade.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FinancialGrade.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\FrameworkCertificate.cs" Link="SFA.DAS.AssessorService.Domain\Entities\FrameworkCertificate.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Ilr.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Ilr.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\Learner.cs" Link="SFA.DAS.AssessorService.Domain\Entities\Learner.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Domain\Entities\MergeApply.cs" Link="SFA.DAS.AssessorService.Domain\Entities\MergeApply.cs" />
