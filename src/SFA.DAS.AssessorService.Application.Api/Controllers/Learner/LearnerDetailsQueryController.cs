@@ -63,9 +63,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetFrameworkLearnerResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetFrameworkLearner(Guid id)
+        public async Task<IActionResult> GetFrameworkLearner(Guid id, bool allLogs)
         {
-            return Ok(await _mediator.Send(new GetFrameworkLearnerRequest() { Id = id}));
+            return Ok(await _mediator.Send(new GetFrameworkLearnerRequest(id, allLogs)));
         }
     }
 }

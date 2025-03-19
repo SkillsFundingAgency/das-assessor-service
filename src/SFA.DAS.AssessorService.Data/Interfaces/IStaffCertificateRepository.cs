@@ -15,5 +15,6 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<GetCertificateLogsForBatchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize);
         Task<GetBatchLogsResult> GetBatchLogs(int page, int pageSize);
+        Task<List<CertificateLogSummary>> GetLatestCertificateLogs(Guid certificateId, int count);
     }
 }

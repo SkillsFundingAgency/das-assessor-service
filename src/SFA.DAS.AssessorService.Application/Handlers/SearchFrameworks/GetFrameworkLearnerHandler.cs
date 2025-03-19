@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Application.Extensions;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -12,11 +14,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
     public class GetFrameworkLearnerHandler : BaseHandler, IRequestHandler<GetFrameworkLearnerRequest, GetFrameworkLearnerResponse>
     {
         private readonly IFrameworkLearnerRepository _frameworkLearnerRepository;
+        private readonly ICertificateRepository _certificateRepository;
+        private readonly IStaffCertificateRepository _staffCertificateRepository;
 
-        public GetFrameworkLearnerHandler(IMapper mapper, IFrameworkLearnerRepository frameworkLearnerRepository)
-            :base(mapper)
+        public GetFrameworkLearnerHandler(IMapper mapper, IFrameworkLearnerRepository frameworkLearnerRepository, ICertificateRepository certificateRepository, IStaffCertificateRepository staffCertificateRepository)
+            : base(mapper)
         {
             _frameworkLearnerRepository = frameworkLearnerRepository;
+            _certificateRepository = certificateRepository;
         }
 
         public async Task<GetFrameworkLearnerResponse> Handle(GetFrameworkLearnerRequest request, CancellationToken cancellationToken)
@@ -42,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
                     }
                 }
 
-                if (logs.Count() > 1)
+                if (logs.Count > 1)
                 {
                     logs.CalculateDifferences();
                 }

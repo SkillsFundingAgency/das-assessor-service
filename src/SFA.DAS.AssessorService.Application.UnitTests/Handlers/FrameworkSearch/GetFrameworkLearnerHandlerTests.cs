@@ -17,15 +17,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
     {
         private GetFrameworkLearnerHandler _handler;
         private Mock<IFrameworkLearnerRepository> _frameworkLearnerRepository;
+        private Mock<ICertificateRepository> _certificateRepository;
+        private Mock<IStaffCertificateRepository> _staffCertificateRepository;
         private Mock<IMapper> _mapperMock;
 
         [SetUp]
         public void Setup()
         {
             _frameworkLearnerRepository = new Mock<IFrameworkLearnerRepository>();
+            _certificateRepository = new Mock<ICertificateRepository>();
+            _staffCertificateRepository = new Mock<IStaffCertificateRepository>();
             _mapperMock = new Mock<IMapper>();
 
-            _handler = new GetFrameworkLearnerHandler(_mapperMock.Object, _frameworkLearnerRepository.Object);
+            _handler = new GetFrameworkLearnerHandler(_mapperMock.Object, 
+                _frameworkLearnerRepository.Object, _certificateRepository.Object, _staffCertificateRepository.Object);
         }
 
         [Test, MoqAutoData]
