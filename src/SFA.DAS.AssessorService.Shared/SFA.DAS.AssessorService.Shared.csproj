@@ -181,6 +181,8 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\GetBatchLearnerResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\ExternalApi\Learners\LearnerDetailForExternalApi.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkLearnerRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkLearnerRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkLearnerResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkSearch\GetFrameworkLearnerResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\FrameworkLearnerSearchResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\GetAddressesRequest.cs" />
