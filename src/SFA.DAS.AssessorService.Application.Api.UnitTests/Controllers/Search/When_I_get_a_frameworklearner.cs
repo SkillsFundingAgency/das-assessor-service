@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
 
             var controller = new LearnerDetailsQueryController(mediator.Object);
 
-            _result = controller.GetFrameworkLearner(_guid, true).Result;
+            _result = controller.GetFrameworkLearner(_guid).Result;
         }
 
         [Test]

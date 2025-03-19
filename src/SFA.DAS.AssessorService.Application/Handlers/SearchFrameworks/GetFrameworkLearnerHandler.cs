@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
         {
             _frameworkLearnerRepository = frameworkLearnerRepository;
             _certificateRepository = certificateRepository;
+            _staffCertificateRepository = staffCertificateRepository;
         }
 
         public async Task<GetFrameworkLearnerResponse> Handle(GetFrameworkLearnerRequest request, CancellationToken cancellationToken)
@@ -36,7 +37,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
 
                 if (request.AllLogs)
                 {
-                    logs.AddRange(await _staffCertificateRepository.GetAllCertificateLogs(certificate.Id));
+                    var allLogs = await _staffCertificateRepository.GetAllCertificateLogs(certificate.Id);
+                    if (allLogs != null)
+                    {
+                        logs.AddRange(allLogs);
+                    }
                 }
                 else
                 {

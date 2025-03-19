@@ -59,13 +59,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetApprenticeLearnerRequest(apprenticeshipId)));
         }
 
-        [HttpGet("framework-learner/{id}", Name = "GetFrameworkLearner")]
+        [HttpGet("framework-learner/{frameworkLearnerId}", Name = "GetFrameworkLearner")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetFrameworkLearnerResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetFrameworkLearner(Guid id, bool allLogs)
+        public async Task<IActionResult> GetFrameworkLearner(Guid frameworkLearnerId, bool allLogs = false)
         {
-            return Ok(await _mediator.Send(new GetFrameworkLearnerRequest(id, allLogs)));
+            return Ok(await _mediator.Send(new GetFrameworkLearnerRequest(frameworkLearnerId, allLogs)));
         }
     }
 }

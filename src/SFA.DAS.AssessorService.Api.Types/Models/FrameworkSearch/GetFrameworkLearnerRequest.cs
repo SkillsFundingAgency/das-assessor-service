@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch
         public Guid Id { get; set; }
         public bool AllLogs { get; set; }
 
-        public GetFrameworkLearnerRequest(Guid id, bool allLogs = false)
+        public GetFrameworkLearnerRequest(Guid id, bool allLogs)
         {
             Id = id;
             AllLogs = allLogs;
