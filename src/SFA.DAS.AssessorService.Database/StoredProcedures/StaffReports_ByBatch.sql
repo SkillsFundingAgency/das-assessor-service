@@ -13,7 +13,7 @@ AS
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS 'Submitted',
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Draft' THEN 1 ELSE 0 END) AS 'Draft',
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS 'Deleted'
-	FROM [dbo].[Certificates] ce
+	FROM [dbo].[StandardCertificates] ce
 	GROUP BY ce.[BatchNumber], CONVERT(CHAR(16), ce.[ToBePrinted])
 	ORDER BY 3 DESC, 2
 RETURN 0

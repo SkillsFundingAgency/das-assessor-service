@@ -6,7 +6,7 @@ using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.FrameworkLearners
@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.FrameworkLearners
     public class WhenSystemSearchesFrameworkLearnersByFirstNameAndSurnameAndDateOfBirth
     {
         private FrameworkLearnerRepository _frameworkLearnerRepository;
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
         private Mock<AssessorDbContext> _mockDbContext;
         private List<FrameworkLearner> _results;
         private string _firstName = "Jamal";
@@ -24,8 +25,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.FrameworkLearners
         public void Arrange()
         {            
             _mockDbContext = CreateMockDbContext();
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _mockAssessorUnitOfWork
+                .SetupGet(p => p.AssessorDbContext)
+                .Returns(_mockDbContext.Object);
 
-            _frameworkLearnerRepository = new FrameworkLearnerRepository(_mockDbContext.Object);
+            _frameworkLearnerRepository = new FrameworkLearnerRepository(_mockAssessorUnitOfWork.Object);
 
             _results = _frameworkLearnerRepository.Search(_firstName, _lastName, _dateOfBirth).Result.ToList();
         }

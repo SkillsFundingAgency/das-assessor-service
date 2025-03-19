@@ -1,15 +1,14 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
 {
@@ -42,10 +41,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
             else
             {
                 _logger.LogInformation("DeleteEpaDetails Before Removing EpaDetails CertificateData");
-                var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                certData.EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() };
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
-                await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
+                certificate.CertificateData.EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() };
+                await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Epa);
             }
 
             _logger.LogInformation("DeleteEpaDetails Before set Certificate to Deleted in db");

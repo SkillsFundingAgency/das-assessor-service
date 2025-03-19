@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
@@ -132,23 +132,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     // Don't return certficate if the EPAO isn't able to assess that standard
                     if (!approvedStandards.Contains(certificate.StandardCode))
                         continue;
-
-                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                     
                     // Don't return certificate if the name does not match.
-                    if (!string.Equals(certificateData.LearnerFamilyName.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
+                    if (!string.Equals(certificate.CertificateData.LearnerFamilyName.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase))
                         continue;
 
                     // Create a new search result as it would be when returned by the Learner record
                     var searchResult = new LearnerSearchResponse
                     {
                         Uln = certificate.Uln,
-                        FamilyName = certificateData.LearnerFamilyName,
-                        GivenNames = certificateData.LearnerGivenNames,
+                        FamilyName = certificate.CertificateData.LearnerFamilyName,
+                        GivenNames = certificate.CertificateData.LearnerGivenNames,
                         StdCode = certificate.StandardCode,
-                        UkPrn = certificate.ProviderUkPrn,
+                        UkPrn = certificate.ProviderUkPrn.GetValueOrDefault(),
                         CreatedAt = certificate.CreatedAt,
-                        LearnStartDate = certificateData.LearningStartDate
+                        LearnStartDate = certificate.CertificateData.LearningStartDate
                     };
 
                     searchResult.PopulateCertificateBasicInformation(certificate);
@@ -163,24 +161,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         public static LearnerSearchResponse PopulateCertificateBasicInformation(this LearnerSearchResponse searchResult, Certificate certificate)
         {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
             searchResult.CertificateReference = certificate.CertificateReference;
             searchResult.CertificateId = certificate.Id;
             searchResult.CertificateStatus = certificate.Status;
-            searchResult.LearnStartDate = certificateData.LearningStartDate;
+            searchResult.LearnStartDate = certificate.CertificateData.LearningStartDate;
             
             // If the Certificate was a fail, maintain the original details of the certificate version and option
             // even if Learner has changed under the hood
             // Otherwise prioritise Learner information which takes precedence
-            if(certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
+            if(certificate.Status == CertificateStatus.Submitted && certificate.CertificateData.OverallGrade == CertificateGrade.Fail)
             {
-                searchResult.Version = certificateData.Version;
-                searchResult.Option = certificateData.CourseOption;
+                searchResult.Version = certificate.CertificateData.Version;
+                searchResult.Option = certificate.CertificateData.CourseOption;
             } else
             {
-                searchResult.Version = string.IsNullOrWhiteSpace(searchResult.Version) ? certificateData.Version : searchResult.Version;
-                searchResult.Option = string.IsNullOrWhiteSpace(searchResult.Option) ? certificateData.CourseOption : searchResult.Option;
+                searchResult.Version = string.IsNullOrWhiteSpace(searchResult.Version) ? certificate.CertificateData.Version : searchResult.Version;
+                searchResult.Option = string.IsNullOrWhiteSpace(searchResult.Option) ? certificate.CertificateData.CourseOption : searchResult.Option;
             }
 
             searchResult.IsPrivatelyFunded = certificate.IsPrivatelyFunded;
@@ -214,37 +210,33 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var searchingContact = contactRepository.GetContact(request.Username).Result;
 
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            var submittedCertificateData = JsonConvert.DeserializeObject<CertificateData>(submittedLogEntry.CertificateData);
-
             if (submittingContact != null && searchingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificateData, submittedCertificateData);
+                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificate.CertificateData, submittedLogEntry.CertificateData);
                 searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
                 searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificateData, submittedCertificateData);
+                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificate.CertificateData, submittedLogEntry.CertificateData);
                 searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                 searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
             }
             else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
             {
                 searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificateData, submittedCertificateData);
+                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificate.CertificateData, submittedLogEntry.CertificateData);
                 searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
                 searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificateData, submittedCertificateData);
+                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificate.CertificateData, submittedLogEntry.CertificateData);
                 searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                 searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
             }
             else if (certificate.OrganisationId == searchingEpao?.Id)
             {
                 searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificateData, submittedCertificateData);
+                searchResult.OverallGrade = GetSubmittedOrPreviousGrade(certificate, certificate.CertificateData, submittedLogEntry.CertificateData);
                 searchResult.SubmittedBy = submittedLogEntry.Username ?? certificate.UpdatedBy;
                 searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
-                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificateData, submittedCertificateData);
+                searchResult.AchDate = GetSubmittedOrPreviousAchievementDate(certificate, certificate.CertificateData, submittedLogEntry.CertificateData);
                 searchResult.UpdatedBy = lastUpdatedLogEntry.Username ?? certificate.UpdatedBy;
                 searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
             }

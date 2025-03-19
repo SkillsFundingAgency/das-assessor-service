@@ -74,6 +74,7 @@
     <Folder Include="Security\Schemas" />
     <Folder Include="StoredProcedures\DashboardReporting" />
     <Folder Include="PostDeploymentScripts\TemporaryPatches" />
+    <Folder Include="Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -197,6 +198,7 @@
     <Build Include="StoredProcedures\PopulateLearner_RemoveSupersededLearners.sql" />
     <Build Include="StoredProcedures\PopulateLearner_WithdrawOverlappingIlrsAndLearners.sql" />
     <Build Include="Tables\FrameworkLearner.sql" />
+    <Build Include="Views\StandardCertificates.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

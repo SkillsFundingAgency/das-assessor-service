@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
         public async Task<ValidationResult> Validate(CertificateFamilyNameViewModel viewModel)
         {
             var certificate = await _certificateApiClient.GetCertificate(viewModel.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = certificate.CertificateData;
             var originalFamilyName = certData.LearnerFamilyName;
             var validationResult = new ValidationResult();
 

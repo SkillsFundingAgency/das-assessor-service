@@ -1,17 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class AssessorDbContext : DbContext
+    public class AssessorDbContext : DbContext, IAssessorDbContext
     {
         private readonly IDbConnection _connection;
 
@@ -25,10 +27,12 @@ namespace SFA.DAS.AssessorService.Data
             _connection = connection;
         }
 
-        public virtual DbSet<Certificate> Certificates { get; set; }
+        public virtual DbSet<Certificate> StandardCertificates { get; set; }
+        public virtual DbSet<FrameworkCertificate> FrameworkCertificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
         public virtual DbSet<CertificateBatchLog> CertificateBatchLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
+        public virtual DbSet<FrameworkLearner> FrameworkLearners { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<OrganisationStandard> OrganisationStandard { get; set; }
         public virtual DbSet<OrganisationStandardVersion> OrganisationStandardVersion { get; set; }
@@ -51,26 +55,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ApplyEF> Applications { get; set; }
         public virtual DbSet<MergeApply> MergeApplications { get; set; }
 
-        public virtual DbSet<FrameworkLearner> FrameworkLearners { get; set; }
-
-
-        public override int SaveChanges()
-        {
-            var saveTime = DateTime.UtcNow;
-            foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added && e.Entity is BaseEntity))
-                if (entry.Property("CreatedAt").CurrentValue == null ||
-                    (DateTime)entry.Property("CreatedAt").CurrentValue == DateTime.MinValue)
-                    entry.Property("CreatedAt").CurrentValue = saveTime;
-
-            foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity))
-                entry.Property("UpdatedAt").CurrentValue = saveTime;
-            return base.SaveChanges();
-        }
-
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added && e.Entity is BaseEntity).ToList();
             addedEntities.ForEach(e => { e.Property("CreatedAt").CurrentValue = DateTime.UtcNow; });
@@ -78,7 +63,7 @@ namespace SFA.DAS.AssessorService.Data
             var editedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity).ToList();
             editedEntities.ForEach(e => { e.Property("UpdatedAt").CurrentValue = DateTime.UtcNow; });
 
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         public virtual void MarkAsModified<T>(T item) where T : class
@@ -94,19 +79,25 @@ namespace SFA.DAS.AssessorService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Certificate>()
+            modelBuilder.Entity<CertificateBase>()
+                .ToTable("Certificates")
+                .HasDiscriminator<string>("Type")
+                .HasValue<Certificate>("Standard")
+                .HasValue<FrameworkCertificate>("Framework");
+
+            modelBuilder.Entity<CertificateBase>()
                 .HasOne(c => c.CertificateBatchLog)
                 .WithOne(s => s.Certificate)
                 .HasForeignKey<CertificateBatchLog>(sc => new { sc.CertificateReference, sc.BatchNumber });
-                
+
             modelBuilder.Entity<CertificateBatchLog>()
                 .HasKey(c => new { c.CertificateReference, c.BatchNumber });
 
             modelBuilder.Entity<CertificateBatchLog>()
                 .HasOne(c => c.Certificate)
                 .WithOne(c => c.CertificateBatchLog)
-                .HasForeignKey<Certificate>(c => new { c.CertificateReference, c.BatchNumber });
-            
+                .HasForeignKey<CertificateBase>(c => new { c.CertificateReference, c.BatchNumber });
+
             modelBuilder.Entity<ContactsPrivilege>()
                 .HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
 
@@ -115,15 +106,18 @@ namespace SFA.DAS.AssessorService.Data
                 .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
 
+            modelBuilder.Entity<FrameworkLearner>()
+                .ToTable("FrameworkLearner");
+
             modelBuilder.Entity<OrganisationStandard>()
                 .ToTable("OrganisationStandard");
-            
+
             modelBuilder.Entity<OrganisationStandard>()
                 .HasOne(c => c.Organisation)
                 .WithMany(c => c.OrganisationStandards)
                 .HasPrincipalKey(c => c.EndPointAssessorOrganisationId)
                 .HasForeignKey(c => c.EndPointAssessorOrganisationId);
-            
+
             modelBuilder.Entity<OrganisationStandardVersion>()
                 .ToTable("OrganisationStandardVersion")
                 .HasKey(c => new { c.OrganisationStandardId, c.StandardUId });
@@ -136,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data
 
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .ToTable("OrganisationStandardDeliveryArea");
-            
+
             modelBuilder.Entity<OrganisationStandardDeliveryArea>()
                 .HasOne(c => c.OrganisationStandard)
                 .WithMany(c => c.OrganisationStandardDeliveryAreas)
@@ -155,8 +149,6 @@ namespace SFA.DAS.AssessorService.Data
                 .ToTable("Providers")
                 .HasKey(c => new { c.Ukprn });
 
-
-
             modelBuilder.Entity<MergeOrganisation>()
                 .ToTable("MergeOrganisations")
                 .HasMany(e => e.MergeOrganisationStandards)
@@ -166,18 +158,14 @@ namespace SFA.DAS.AssessorService.Data
                 .HasMany(e => e.MergeSecondaryApplications)
                 .WithOne(e => e.MergeOrganisation);
 
-
             modelBuilder.Entity<MergeOrganisationStandard>()
                 .ToTable("MergeOrganisationStandard");
 
             modelBuilder.Entity<MergeOrganisationStandardVersion>()
-                .ToTable("MergeOrganisationStandardVersion")
-                //.HasKey(e => new { e.OrganisationStandardId, e.StandardUid, e.Version })
-                ;
+                .ToTable("MergeOrganisationStandardVersion");
 
             modelBuilder.Entity<MergeOrganisationStandardDeliveryArea>()
-                .ToTable("MergeOrganisationStandardDeliveryArea")
-                ;
+                .ToTable("MergeOrganisationStandardDeliveryArea");
 
             modelBuilder.Entity<ApplyEF>()
                 .ToTable("Apply");
@@ -191,8 +179,67 @@ namespace SFA.DAS.AssessorService.Data
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }
 
-        private void SetUpJsonToEntityTypeHandlers(ModelBuilder modelBuilder)
+        private static void SetUpJsonToEntityTypeHandlers(ModelBuilder modelBuilder)
         {
+            // EF8+ style which sets the owning entity property as modified
+            modelBuilder.Entity<CertificateBase>()
+                .OwnsOne(certificate => certificate.CertificateData, on =>
+                {
+                    on.Property(a => a.SendTo)
+                        .HasConversion(
+                        v => v.ToString(),
+                        v => (CertificateSendTo)Enum.Parse(typeof(CertificateSendTo), v)
+                    );
+
+                    on.ToJson();
+
+                    on.OwnsOne(certificateData => certificateData.EpaDetails, on =>
+                    {
+                        on.OwnsMany(epaDetails => epaDetails.Epas, on => { });
+                    });
+                });
+
+            modelBuilder.Entity<BatchLog>()
+                .OwnsOne(batchLog => batchLog.BatchData, on =>
+                {
+                    on.ToJson();
+                });
+
+            modelBuilder.Entity<CertificateBatchLog>()
+                .OwnsOne(certificateBatchLog => certificateBatchLog.CertificateData, on =>
+                {
+                    on.Property(a => a.SendTo)
+                        .HasConversion(
+                        v => v.ToString(),
+                        v => (CertificateSendTo)Enum.Parse(typeof(CertificateSendTo), v)
+                    );
+
+                    on.ToJson();
+
+                    on.OwnsOne(certificateData => certificateData.EpaDetails, on =>
+                    {
+                        on.OwnsMany(epaDetails => epaDetails.Epas, on => { });
+                    });
+                });
+
+            modelBuilder.Entity<CertificateLog>()
+                .OwnsOne(certificateLog => certificateLog.CertificateData, on =>
+                {
+                    on.Property(a => a.SendTo)
+                        .HasConversion(
+                        v => v.ToString(),
+                        v => (CertificateSendTo)Enum.Parse(typeof(CertificateSendTo), v)
+                    );
+
+                    on.ToJson();
+
+                    on.OwnsOne(certificateData => certificateData.EpaDetails, on =>
+                    {
+                        on.OwnsMany(epaDetails => epaDetails.Epas, on => { });
+                    });
+                });
+
+            // EF2 style which requires the owning entity property to be overwritten
             modelBuilder.Entity<SearchLog>()
                 .Property(e => e.SearchData)
                 .HasConversion(
@@ -204,18 +251,12 @@ namespace SFA.DAS.AssessorService.Data
                 .HasConversion(
                     c => JsonConvert.SerializeObject(c),
                     c => JsonConvert.DeserializeObject<PrivilegeData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
-            
+
             modelBuilder.Entity<Organisation>()
                .Property(e => e.OrganisationData)
                .HasConversion(
                    c => JsonConvert.SerializeObject(c),
                    c => JsonConvert.DeserializeObject<OrganisationData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
-
-            modelBuilder.Entity<BatchLog>()
-                 .Property(e => e.BatchData)
-                 .HasConversion(
-                     c => JsonConvert.SerializeObject(c),
-                     c => JsonConvert.DeserializeObject<BatchData>(string.IsNullOrWhiteSpace(c) ? "{}" : c));
         }
     }
 }

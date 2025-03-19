@@ -1,11 +1,11 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 		            cert.Status,
 		            cert.UpdatedAt AS LastUpdatedAt
                 FROM 
-                    Certificates cert INNER JOIN Organisations org
+                    StandardCertificates cert INNER JOIN Organisations org
                     ON cert.OrganisationId = org.Id
                 WHERE Uln IN @ulns";
 

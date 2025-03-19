@@ -1,16 +1,16 @@
-﻿using MediatR;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -50,18 +50,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             {
                 return null;
             }
-            
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             certificate = await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
 
-            if ((certificate.Status == CertificateStatus.Submitted || CertificateStatus.HasPrintProcessStatus(certificate.Status)) && certData.OverallGrade == CertificateGrade.Fail)
+            if ((certificate.Status == CertificateStatus.Submitted || CertificateStatus.HasPrintProcessStatus(certificate.Status)) && 
+                certificate.CertificateData.OverallGrade == CertificateGrade.Fail)
             {
                 return null;
             }
             else if (certificate.Status == CertificateStatus.Draft && 
-                EpaOutcome.Pass.Equals(certData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase) && 
-                certData.OverallGrade == null)
+                EpaOutcome.Pass.Equals(certificate.CertificateData.EpaDetails?.LatestEpaOutcome, StringComparison.InvariantCultureIgnoreCase) &&
+                certificate.CertificateData.OverallGrade == null)
             {
                 return null;
             }
@@ -89,20 +88,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             // certificate is track-able entity. So we have to do this in order to stop it from updating in the database
             var json = JsonConvert.SerializeObject(certificate);
             var cert = JsonConvert.DeserializeObject<Certificate>(json);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             CertificateData redactedData = new CertificateData
             {
-                LearnerGivenNames = certData.LearnerGivenNames,
-                LearnerFamilyName = certData.LearnerFamilyName,
-                StandardReference = certData.StandardReference,
-                StandardName = certData.StandardName,
-                StandardLevel = certData.StandardLevel,
-                StandardPublicationDate = certData.StandardPublicationDate,
-                EpaDetails = showEpaDetails ? certData.EpaDetails : null
+                LearnerGivenNames = certificate.CertificateData.LearnerGivenNames,
+                LearnerFamilyName = certificate.CertificateData.LearnerFamilyName,
+                StandardReference = certificate.CertificateData.StandardReference,
+                StandardName = certificate.CertificateData.StandardName,
+                StandardLevel = certificate.CertificateData.StandardLevel,
+                StandardPublicationDate = certificate.CertificateData.StandardPublicationDate,
+                EpaDetails = showEpaDetails ? certificate.CertificateData.EpaDetails : null
             };
 
-            cert.CertificateData = JsonConvert.SerializeObject(redactedData);
+            cert.CertificateData = redactedData;
             cert.CertificateReference = null;
             cert.CertificateReferenceId = null;
             cert.CreateDay = DateTime.MinValue;

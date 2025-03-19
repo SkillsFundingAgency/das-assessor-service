@@ -117,10 +117,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private Certificate SetupValidCertificate()
         {
             return _builder.CreateNew<Certificate>()
-                .With(q => q.CertificateData = JsonConvert.SerializeObject(_builder.CreateNew<CertificateData>()
+                .With(q => q.CertificateData = _builder.CreateNew<CertificateData>()
                     .With(x => x.OverallGrade = CertificateGrade.Pass)
                     .With(x => x.AchievementDate = DateTime.Now)
-                    .Build()))
+                    .Build())
                 .Build();
         }
     }

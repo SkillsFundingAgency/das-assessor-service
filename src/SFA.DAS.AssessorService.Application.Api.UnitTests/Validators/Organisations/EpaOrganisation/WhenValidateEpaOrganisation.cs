@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
@@ -6,8 +7,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
-using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisations.EpaOrganisation
 {

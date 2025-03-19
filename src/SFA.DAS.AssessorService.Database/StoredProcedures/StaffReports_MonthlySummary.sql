@@ -3,11 +3,11 @@ AS
 	SELECT 
 		CAST(DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, [FirstSubmitOrPrintedPassEvent].[EventTime])), 0) AS DATE) ToDate, 
 		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' THEN 1 ELSE 0 END) Submitted,
-		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' AND [Certificates].[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) EPASubmitted,
-		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' AND [Certificates].[CreatedBy] = 'manual' THEN 1 ELSE 0 END) ManualSubmitted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' AND [StandardCertificates].[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) EPASubmitted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Submit' AND [StandardCertificates].[CreatedBy] = 'manual' THEN 1 ELSE 0 END) ManualSubmitted,
 		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' THEN 1 ELSE 0 END) Printed,
-		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' AND [Certificates].[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) EPAPrinted,
-		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' AND [Certificates].[CreatedBy] = 'manual' THEN 1 ELSE 0 END) ManualPrinted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' AND [StandardCertificates].[CreatedBy] <> 'manual' THEN 1 ELSE 0 END) EPAPrinted,
+		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Printed' AND [StandardCertificates].[CreatedBy] = 'manual' THEN 1 ELSE 0 END) ManualPrinted,
 		SUM(CASE WHEN [FirstSubmitOrPrintedPassEvent].[Action] = 'Reprint' THEN 1 ELSE 0 END) Reprint
 	INTO
 		#MonthlySummary
@@ -27,8 +27,8 @@ AS
 		) [SubmitOrPrintedPassEvents]
 		WHERE [SubmitOrPrintedPassEvents].RowNumber = 1
 	) 
-	[FirstSubmitOrPrintedPassEvent] JOIN [dbo].[Certificates] [Certificates] 
-		ON [Certificates].[Id] = [FirstSubmitOrPrintedPassEvent].[CertificateId]
+	[FirstSubmitOrPrintedPassEvent] JOIN [dbo].[StandardCertificates] 
+		ON [StandardCertificates].[Id] = [FirstSubmitOrPrintedPassEvent].[CertificateId]
 	GROUP BY 
 		-- the week ending date (Friday)??
 		CAST(DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, [FirstSubmitOrPrintedPassEvent].[EventTime])), 0) AS DATE)

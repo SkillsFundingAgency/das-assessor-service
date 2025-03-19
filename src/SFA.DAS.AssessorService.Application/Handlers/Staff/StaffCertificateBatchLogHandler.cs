@@ -1,12 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Logging;
-using SFA.DAS.AssessorService.Domain.Paging;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {

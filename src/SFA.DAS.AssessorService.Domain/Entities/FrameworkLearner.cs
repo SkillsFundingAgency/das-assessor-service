@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? ApprenticeLastdateInLearning { get; set; }
         public string ApprenticeMiddlename { get; set; }
         public string ApprenticeNameMatch { get; set; }
-        public string ApprenticeReference { get; set; }
+        public string FrameworkCertificateNumber { get; set; }
         public DateTime? ApprenticeStartdate { get; set; }
         public string ApprenticeSurname { get; set; }
         public string ApprenticeTitle { get; set; }

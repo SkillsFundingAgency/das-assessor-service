@@ -11,6 +11,7 @@ using SFA.DAS.Testing.AutoFixture;
 using FluentAssertions;
 using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
 {

@@ -45,7 +45,7 @@ RETURN
 					AND ( os1.StandardCode = @stdCode OR @stdCode IS NULL ) 
 				) os2 on os2.Standardcode = le2.StdCode
 		LEFT JOIN 
-			( SELECT DISTINCT Uln, StandardCode FROM Certificates ) [ExistingCertificate] ON [ExistingCertificate].Uln = le2.Uln AND [ExistingCertificate].StandardCode = le2.StdCode
+			( SELECT DISTINCT Uln, StandardCode FROM StandardCertificates ) [ExistingCertificate] ON [ExistingCertificate].Uln = le2.Uln AND [ExistingCertificate].StandardCode = le2.StdCode
 		WHERE 1=1
 			-- exclude already created certificates (by uln and standardcode)
 			AND [ExistingCertificate].Uln IS NULL	  -- only include learner data for the given EPAO which is Active, or completed

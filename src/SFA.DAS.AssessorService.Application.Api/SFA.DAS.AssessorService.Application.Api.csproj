@@ -45,6 +45,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.AutoMapperExtensions\SFA.DAS.AssessorService.AutoMapperExtensions.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Infrastructure\SFA.DAS.AssessorService.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
