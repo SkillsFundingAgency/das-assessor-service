@@ -1,0 +1,99 @@
+﻿using System.Threading.Tasks;
+using System.Threading;
+using AutoMapper;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.Testing.AutoFixture;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Data.Interfaces;
+
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
+{
+    [TestFixture]
+    public class GetFrameworkLearnerHandlerTests : MapperBase
+    {
+        private GetFrameworkLearnerHandler _handler;
+        private Mock<IFrameworkLearnerRepository> _frameworkLearnerRepository;
+        private Mock<IMapper> _mapperMock;
+
+        [SetUp]
+        public void Setup()
+        {
+            _frameworkLearnerRepository = new Mock<IFrameworkLearnerRepository>();
+            _mapperMock = new Mock<IMapper>();
+
+            _handler = new GetFrameworkLearnerHandler(_mapperMock.Object, _frameworkLearnerRepository.Object);
+        }
+
+        [Test, MoqAutoData]
+        public async Task ThenRequestSentToFrameworkLearnerRepository(GetFrameworkLearnerRequest query, FrameworkLearner learner)
+        {
+            // Arrange
+            _frameworkLearnerRepository
+                .Setup(r => r.GetFrameworkLearner(query.Id))
+                .ReturnsAsync(learner);
+
+            // Act
+            var result = await _handler.Handle(query, new CancellationToken());
+
+            // Assert
+            _frameworkLearnerRepository.Verify(r => r.GetFrameworkLearner(query.Id), Times.Once());
+        }
+
+        [Test, MoqAutoData]
+        public async Task ThenMapperIsCalled(GetFrameworkLearnerRequest query, FrameworkLearner learner)
+        {
+            // Arrange
+            _frameworkLearnerRepository
+                .Setup(r => r.GetFrameworkLearner(query.Id))
+                .ReturnsAsync(learner);
+
+            // Act
+            var result = await _handler.Handle(query, new CancellationToken());
+
+            // Assert
+            _mapperMock.Verify(m => m.Map<GetFrameworkLearnerResponse>(learner), Times.Once());
+        }
+
+        [Test, MoqAutoData]
+        public async Task AndTheFrameworkLearnerIsNullThenDefaultIsReturned(GetFrameworkLearnerRequest query)
+        {
+            // Arrange
+            _frameworkLearnerRepository
+                .Setup(r => r.GetFrameworkLearner(query.Id))
+                .ReturnsAsync((FrameworkLearner)null);
+
+            // Act
+            var result = await _handler.Handle(query, new CancellationToken());
+
+            // Assert
+            result.Should().Be(default);
+        }
+
+        [Test, MoqAutoData]
+        public async Task ThenFrameworkLearnerIsReturnedAsTheCorrectType(
+            GetFrameworkLearnerRequest query, 
+            FrameworkLearner learner,
+            GetFrameworkLearnerResponse frameworkResult)
+        {
+            // Arrange
+            _frameworkLearnerRepository
+                .Setup(r => r.GetFrameworkLearner(query.Id))
+                .ReturnsAsync(learner);
+
+            _mapperMock
+                .Setup(m => m.Map<GetFrameworkLearnerResponse>(learner))
+                .Returns(frameworkResult);
+
+            // Act
+            var result = await _handler.Handle(query, new CancellationToken());
+
+            // Assert
+            result.Should().BeOfType<GetFrameworkLearnerResponse>();
+            result.Should().BeEquivalentTo(frameworkResult);
+        }
+    }
+}

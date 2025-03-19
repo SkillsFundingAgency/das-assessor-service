@@ -92,5 +92,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await PostPutRequestAsync(httpRequest, command);
             }
         }
+
+        public async Task<Certificate> StartFramework(StartFrameworkCertificateRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start-framework"))
+            {
+                return await PostPutRequestWithResponseAsync<StartFrameworkCertificateRequest, Certificate>(httpRequest, request);
+            }
+        }
     }
 }
