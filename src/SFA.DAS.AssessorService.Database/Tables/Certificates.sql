@@ -72,6 +72,7 @@ CHECK (
 GO
 
 CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
+WHERE [Uln] IS NOT NULL AND [StandardCode] IS NOT NULL;
 GO
 
 CREATE INDEX [IX_Certificates_CreateDay] ON [Certificates] ([CreateDay]) INCLUDE ([Status], [CertificateData])
