@@ -11,6 +11,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<LearnerDetailResult> GetLearnerDetail(int stdCode, long uln, bool allLogs);
         Task<ImportLearnerDetailResponse> ImportLearnerDetail(ImportLearnerDetailRequest importLearnerDetailRequest);
         Task <int> GetPipelinesCount(string epaOrgId, int? stdCode);
-        Task<GetFrameworkLearnerResponse> GetFrameworkLearner(Guid id);
+        Task<GetFrameworkLearnerResponse> GetFrameworkLearner(Guid frameworkLearnerId, bool allLogs);
     }
 }

@@ -135,6 +135,34 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return result;
         }
 
+        public async Task<List<CertificateLogSummary>> GetLatestCertificateLogs(Guid certificateId, int count)
+        {
+            var sql = @"
+                SELECT TOP(@count) 
+                    EventTime, 
+                    Action, 
+                    ISNULL(c.DisplayName, logs.Username) AS ActionBy, 
+                    ISNULL(c.Email, '') AS ActionByEmail, 
+                    logs.Status, 
+                    logs.CertificateData, 
+                    logs.BatchNumber, 
+                    logs.ReasonForChange 
+                FROM 
+                    CertificateLogs logs LEFT OUTER JOIN Contacts c 
+                    ON c.Username = logs.Username
+                WHERE 
+                    CertificateId = @certificateId
+                ORDER BY 
+                    EventTime DESC";
+
+            var results = await _unitOfWork.Connection.QueryAsync<CertificateLogSummary>(
+                sql,
+                param: new { count, certificateId },
+                transaction: _unitOfWork.Transaction);
+
+            return results.ToList();
+        }
+
         public async Task<GetCertificateLogsForBatchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
         {
             var results = new GetCertificateLogsForBatchResult();

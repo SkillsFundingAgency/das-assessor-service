@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch
     public class GetFrameworkLearnerResponse
     {
         public Guid Id { get; set; }
-        public string CertificateNumber { get; set; }
+        public string FrameworkCertificateNumber { get; set; }
         public string ApprenticeForename { get; set; }
         public string ApprenticeSurname { get; set; }
         public DateTime ApprenticeDoB { get; set; }
@@ -23,7 +24,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch
         public DateTime? ApprenticeStartdate { get; set; }
         public DateTime? ApprenticeLastdateInLearning { get; set; }
         public DateTime CertificationDate { get; set; }
-        
+        public string CertificateStatus { get; set; }
+        public DateTime? CertificateStatusDate { get; set; }
+        public string CertificateReference { get; set; }
+        public List<CertificateLogSummary> CertificateLogs{ get; set; }
     }
 
     public class QualificationDetails

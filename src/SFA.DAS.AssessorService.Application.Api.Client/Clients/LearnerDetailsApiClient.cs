@@ -52,9 +52,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<GetFrameworkLearnerResponse> GetFrameworkLearner(Guid id)
+        public async Task<GetFrameworkLearnerResponse> GetFrameworkLearner(Guid frameworkLearnerId, bool allLogs)
         { 
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/learnerdetails/framework-learner/{id}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/learnerdetails/framework-learner/{frameworkLearnerId}?allLogs={allLogs}"))
             {
                 return await RequestAndDeserialiseAsync<GetFrameworkLearnerResponse>(request, $"Could not retrieve framework learner");
             }
