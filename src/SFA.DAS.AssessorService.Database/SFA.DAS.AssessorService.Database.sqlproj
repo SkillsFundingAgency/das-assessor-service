@@ -197,6 +197,8 @@
     <Build Include="StoredProcedures\PopulateLearner_WithdrawSupersededIlrs.sql" />
     <Build Include="StoredProcedures\PopulateLearner_RemoveSupersededLearners.sql" />
     <Build Include="StoredProcedures\PopulateLearner_WithdrawOverlappingIlrsAndLearners.sql" />
+    <Build Include="Security\Schemas\Frameworks.sql" />
+    <None Include="PostDeploymentScripts\TemporaryPatches\P2-2340_Create_framework_tables.sql" />
     <Build Include="Tables\FrameworkLearner.sql" />
     <Build Include="Views\StandardCertificates.sql" />
   </ItemGroup>
