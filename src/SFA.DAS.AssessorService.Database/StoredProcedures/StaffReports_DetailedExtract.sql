@@ -6,24 +6,24 @@ AS
 
 	SELECT 
 		CAST(@FromTime AS DATE) [Month], 
-		[Certificates].[Uln] [Apprentice ULN],
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.FullName')) [Apprentice Names],
-		CAST(JSON_VALUE([Certificates].[CertificateData], '$.AchievementDate') AS DATE) [Achievement Date],
-		TRIM(UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardName'))) [Standard Name],
-		[Certificates].[StandardCode] [Standard Code],
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.StandardReference')) [Standard Reference],
-		ISNULL(JSON_VALUE([Certificates].[CertificateData], '$.Version'),'') [Standard Version],
+		[StandardCertificates].[Uln] [Apprentice ULN],
+		UPPER(JSON_VALUE([StandardCertificates].[CertificateData], '$.FullName')) [Apprentice Names],
+		CAST(JSON_VALUE([StandardCertificates].[CertificateData], '$.AchievementDate') AS DATE) [Achievement Date],
+		TRIM(UPPER(JSON_VALUE([StandardCertificates].[CertificateData], '$.StandardName'))) [Standard Name],
+		[StandardCertificates].[StandardCode] [Standard Code],
+		UPPER(JSON_VALUE([StandardCertificates].[CertificateData], '$.StandardReference')) [Standard Reference],
+		ISNULL(JSON_VALUE([StandardCertificates].[CertificateData], '$.Version'),'') [Standard Version],
 		[Organisations].[EndPointAssessorOrganisationId] [EPAO ID],
 		[Organisations].[EndPointAssessorName] [EPAO Name],
-		[Certificates].[ProviderUkPrn] [Provider UkPrn],
-		UPPER(JSON_VALUE([Certificates].[CertificateData], '$.ProviderName')) [Provider Name],
+		[StandardCertificates].[ProviderUkPrn] [Provider UkPrn],
+		UPPER(JSON_VALUE([StandardCertificates].[CertificateData], '$.ProviderName')) [Provider Name],
 		CASE
-			WHEN [LatestSubmittedPassesBetweenReportDates].[EventTime] IS NULL THEN [Certificates].[Status]
+			WHEN [LatestSubmittedPassesBetweenReportDates].[EventTime] IS NULL THEN [StandardCertificates].[Status]
 			ELSE [LatestSubmittedPassesBetweenReportDates].[Status]
 			END AS [Status]
 	FROM
-		[Certificates] INNER JOIN [Organisations]
-		ON [Certificates].OrganisationId = [Organisations].Id INNER JOIN
+		[StandardCertificates] INNER JOIN [Organisations]
+		ON [StandardCertificates].OrganisationId = [Organisations].Id INNER JOIN
 		(
 			-- take the latest certificate submission from the logs within the report period which is not a fail
 			SELECT
@@ -48,10 +48,10 @@ AS
 			WHERE 
 				[SubmittedPassesBetweenReportDates].RowNumber = 1
 		) [LatestSubmittedPassesBetweenReportDates] 
-		ON [LatestSubmittedPassesBetweenReportDates].[CertificateId] = [Certificates].[Id] AND [Certificates].[CertificateReferenceId] >= 10000 AND [Certificates].[CreatedBy] <> 'manual'
+		ON [LatestSubmittedPassesBetweenReportDates].[CertificateId] = [StandardCertificates].[Id] AND [StandardCertificates].[CertificateReferenceId] >= 10000 AND [StandardCertificates].[CreatedBy] <> 'manual'
 	WHERE
 		-- any later certificate submission has not been rescinded
-		ISNULL(JSON_VALUE([Certificates].[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
+		ISNULL(JSON_VALUE([StandardCertificates].[CertificateData],'$.EpaDetails.LatestEpaOutcome'),'Pass') != 'Fail'
 	ORDER BY
 		[Month], [Status], [Provider Name], Uln, [Apprentice Names]
 RETURN 0

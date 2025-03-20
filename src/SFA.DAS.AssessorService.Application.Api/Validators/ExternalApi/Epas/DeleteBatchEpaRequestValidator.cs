@@ -1,13 +1,12 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
@@ -80,14 +79,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     }
                     else
                     {
-                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
                         switch (existingCertificate.Status)
                         {
                             case CertificateStatus.Deleted:
                             case CertificateStatus.Draft:
                                 break;
                             default:
-                                if (!string.IsNullOrEmpty(certData.OverallGrade) && certData.OverallGrade != CertificateGrade.Fail)
+                                if (!string.IsNullOrEmpty(existingCertificate.CertificateData.OverallGrade) && 
+                                    existingCertificate.CertificateData.OverallGrade != CertificateGrade.Fail)
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot delete EPA record"));
                                 }

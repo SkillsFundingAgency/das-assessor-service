@@ -1,50 +1,54 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using System.Linq;
-using System;
+using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
+using SFA.DAS.AssessorService.Application.UnitTests.Fakes;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.DeleteCertificateHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.UpdateBatchLogReadyToPrinterAddCertificatesHandlerTests
 {
     [TestFixture]
     class When_called_to_add_certificates_to_batch
     {
-        private Mock<IBatchLogRepository> _mockBatchLogRepository;
         private Mock<ICertificateRepository> _mockCertificateRepository;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
+        private Mock<IBatchLogRepository> _mockBatchLogRepository;
         private Mock<ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler>> _mockLogger;
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
+        private UpdateBatchLogReadyToPrintAddCertificatesHandler _sut;  // Replace with your actual handler class name
+
+        private readonly Guid[] _certificateIds = [Guid.NewGuid(), Guid.NewGuid()];
+        private readonly int _batchNumber = 10;
         
-        private UpdateBatchLogReadyToPrintAddCertificatesHandler _sut;
-
-        private Guid[] _certificateIds;
-        private int _batchNumber = 10;
-
         [SetUp]
-        public void Arrange()
+        public void SetUp()
         {
             _mockBatchLogRepository = new Mock<IBatchLogRepository>();
-            
             _mockCertificateRepository = new Mock<ICertificateRepository>();
-            _mockCertificateRepository.Setup(c => c.Delete(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>(), CertificateActions.Delete, true, It.IsAny<string>(), It.IsAny<string>()))
-               .Returns(() => Task.Run(() => { })).Verifiable();
-
-            _certificateIds = Enumerable.Range(0, 10).Select(x => Guid.NewGuid()).ToArray();
-            _mockCertificateRepository.Setup(s => s.GetCertificatesReadyToPrint(It.IsAny<int>(), It.IsAny<string[]>(), It.IsAny<string[]>()))
+            _mockCertificateRepository
+                .Setup(s => s.GetCertificatesReadyToPrint(It.IsAny<int>(), It.IsAny<string[]>(), It.IsAny<string[]>()))
                 .ReturnsAsync(_certificateIds);
 
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
             _mockLogger = new Mock<ILogger<UpdateBatchLogReadyToPrintAddCertificatesHandler>>();
 
+            var fakeExecutionStrategy = new FakeExecutionStrategy();
+            _mockAssessorUnitOfWork.Setup(s => s.ExecuteInTransactionAsync(It.IsAny<Func<Task<int>>>(), It.IsAny<CancellationToken>()))
+                .Returns<Func<Task<int>>, CancellationToken>((func, cancellationToken) =>
+                {
+                    return fakeExecutionStrategy.ExecuteAsync(func);
+                });
+
+            // Set up the handler
             _sut = new UpdateBatchLogReadyToPrintAddCertificatesHandler(
                 _mockBatchLogRepository.Object,
                 _mockCertificateRepository.Object,
-                _mockUnitOfWork.Object,
+                _mockAssessorUnitOfWork.Object,
                 _mockLogger.Object);
         }
 
@@ -54,23 +58,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
         public async Task Then_next_certificates_ready_to_print_are_collected(int maxCertificatesToBeAdded)
         {
             // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { MaxCertificatesToBeAdded = maxCertificatesToBeAdded }, new CancellationToken());
-
-            // Assert
-            _mockCertificateRepository.Verify(v => v.GetCertificatesReadyToPrint(maxCertificatesToBeAdded, It.IsAny<string[]>(), It.IsAny<string[]>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Then_next_certificates_ready_to_print_valid_included_status()
-        {
-            // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { MaxCertificatesToBeAdded = 1 }, new CancellationToken());
+            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { MaxCertificatesToBeAdded = maxCertificatesToBeAdded }, CancellationToken.None);
 
             // Assert
             _mockCertificateRepository.Verify(v => v.GetCertificatesReadyToPrint(
-                It.IsAny<int>(), 
-                It.IsAny<string[]>(),
-                It.Is<string[]>(s => s.Contains("Submitted") && s.Contains("Reprint") && s.Length == 2)), 
+                maxCertificatesToBeAdded, 
+                It.IsAny<string[]>(), 
+                It.IsAny<string[]>()), 
                 Times.Once);
         }
 
@@ -78,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
         public async Task Then_next_certificates_ready_to_print_valid_excluded_overall_grades()
         {
             // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, new CancellationToken());
+            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, CancellationToken.None);
 
             // Assert
             _mockCertificateRepository.Verify(v => v.GetCertificatesReadyToPrint(
@@ -89,20 +83,34 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
         }
 
         [Test]
+        public async Task Then_next_certificates_ready_to_print_valid_included_status()
+        {
+            // Act
+            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { MaxCertificatesToBeAdded = 1 }, CancellationToken.None);
+
+            // Assert
+            _mockCertificateRepository.Verify(v => v.GetCertificatesReadyToPrint(
+                It.IsAny<int>(),
+                It.IsAny<string[]>(),
+                It.Is<string[]>(s => s.Contains("Submitted") && s.Contains("Reprint") && s.Length == 2)),
+                Times.Once);
+        }
+
+        [Test]
         public async Task Then_certifcate_batch_logs_are_updated()
         {
             // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, new CancellationToken());
+            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, CancellationToken.None);
 
             // Assert
-            _mockBatchLogRepository.Verify(v => v.UpsertCertificatesReadyToPrintInBatch(_batchNumber, _certificateIds));
+            _mockBatchLogRepository.Verify(v => v.UpsertCertificatesReadyToPrintInBatch(_certificateIds, _batchNumber));
         }
 
         [Test]
         public async Task Then_certifcates_are_updated()
         {
             // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, new CancellationToken());
+            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, CancellationToken.None);
 
             // Assert
             _mockCertificateRepository.Verify(v => v.UpdateCertificatesReadyToPrintInBatch(_certificateIds, _batchNumber));
@@ -111,13 +119,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.De
         [Test]
         public async Task Then_unit_of_work_is_used()
         {
+            // Arrange
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _sut = new UpdateBatchLogReadyToPrintAddCertificatesHandler(
+                _mockBatchLogRepository.Object,
+                _mockCertificateRepository.Object,
+                mockAssessorUnitOfWork.Object,
+                _mockLogger.Object);
+
             // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, new CancellationToken());
+            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { BatchNumber = _batchNumber, MaxCertificatesToBeAdded = 1 }, CancellationToken.None);
 
             // Assert
-            _mockUnitOfWork.Verify(v => v.Begin());
-            _mockUnitOfWork.Verify(v => v.Commit());
+            mockAssessorUnitOfWork.Verify(v => v.ExecuteInTransactionAsync(It.IsAny<Func<Task<int>>>(), CancellationToken.None));
         }
-
     }
 }

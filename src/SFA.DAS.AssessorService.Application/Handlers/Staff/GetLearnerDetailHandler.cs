@@ -1,20 +1,20 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.Api.Types.Enums;
 using EnumsNET;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Enums;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     CalculateDifferences(logs);
                 }
 
-                certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData) ?? new CertificateData();
+                certificateData = certificate.CertificateData ?? new CertificateData();
                 epao = await _organisationRepository.Get(certificate.OrganisationId) ?? new Organisation();
             }
 

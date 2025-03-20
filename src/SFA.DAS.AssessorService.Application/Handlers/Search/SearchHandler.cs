@@ -1,21 +1,22 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using SearchData = SFA.DAS.AssessorService.Domain.Entities.SearchData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
-    public class SearchHandler : BaseHandler, IRequestHandler<SearchQuery, List<SearchResult>>
+    public class SearchHandler : BaseHandler, IRequestHandler<LearnerSearchRequest, List<LearnerSearchResponse>>
     {
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly ILearnerRepository _learnerRepository;
@@ -53,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             };
         }
 
-        public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
+        public async Task<List<LearnerSearchResponse>> Handle(LearnerSearchRequest request, CancellationToken cancellationToken)
         {
             var searchResults = await Search(request, cancellationToken);
 
@@ -70,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        private async Task<List<SearchResult>> Search(SearchQuery request, CancellationToken cancellationToken)
+        private async Task<List<LearnerSearchResponse>> Search(LearnerSearchRequest request, CancellationToken cancellationToken)
         { 
             _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.EpaOrgId}");
 
@@ -78,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             if (thisEpao == null)
             {
                 _logger.LogInformation($"{LoggingConstants.SearchFailure} - Invalid EpaOrgId", request.EpaOrgId);
-                return new List<SearchResult>();
+                return new List<LearnerSearchResponse>();
             }
 
             var approvedStandards = await GetEpaoApprovedStandardsWithAtLeastOneVersion(thisEpao);
@@ -97,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             _logger.LogInformation((learnerResults != null && learnerResults.Any())? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = _mapper.Map<List<SearchResult>>(learnerResults)
+            var searchResults = _mapper.Map<List<LearnerSearchResponse>>(learnerResults)
                 .MatchUpExistingCompletedStandards(request, likedSurname, approvedStandards, _certificateRepository, _contactRepository, _organisationRepository, _logger)
                 .PopulateStandards(_standardService, _logger);
 
@@ -113,7 +114,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return approvedStandardCodes;
         }
 
-        private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Domain.Entities.Learner> learnerResults)
+        private string DealWithSpecialCharactersAndSpaces(LearnerSearchRequest request, string likedSurname, IEnumerable<Domain.Entities.Learner> learnerResults)
         {
             foreach (var learnerResult in learnerResults)
             {

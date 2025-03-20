@@ -1,13 +1,13 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                                 if (existingCertificate != null)
                                 {
-                                    var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData ?? "{}");
+                                    var certData = existingCertificate.CertificateData ?? new CertificateData();
 
                                     if (!certData.LearnerFamilyName.Equals(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                                     {

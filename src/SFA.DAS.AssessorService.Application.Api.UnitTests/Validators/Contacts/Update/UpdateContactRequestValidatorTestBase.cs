@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Contacts.Update
 {

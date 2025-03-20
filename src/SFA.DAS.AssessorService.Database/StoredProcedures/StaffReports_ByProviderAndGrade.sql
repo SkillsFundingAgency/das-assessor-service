@@ -31,8 +31,8 @@ AS
   FROM 
 	(
 		SELECT a1.*,
-		(SELECT MAX(UPPER(c.ProviderName)) FROM [dbo].[Certificates] c WHERE c.[ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderOrganisationName]
-		FROM  [dbo].[Certificates] a1
+		(SELECT MAX(UPPER(c.ProviderName)) FROM [dbo].[StandardCertificates] c WHERE c.[ProviderUkPrn] = a1.[ProviderUkPrn]) [ProviderOrganisationName]
+		FROM  [dbo].[StandardCertificates] a1
 	) ce
   GROUP BY 
 	CASE ce.[ProviderUkPrn] 
@@ -68,7 +68,7 @@ AS
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS 'EPA Submitted',
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS 'EPA Printed',
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS 'Deleted'
-  FROM [dbo].[Certificates] ce
+  FROM [dbo].[StandardCertificates] ce
 
   ORDER BY 1, 3 DESC, 2
 RETURN 0

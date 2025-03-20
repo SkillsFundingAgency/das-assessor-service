@@ -1,4 +1,8 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -6,16 +10,12 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificatesHistoryHandlerTests
 {

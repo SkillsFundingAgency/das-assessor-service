@@ -1,14 +1,14 @@
-﻿using Dapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Data
 {

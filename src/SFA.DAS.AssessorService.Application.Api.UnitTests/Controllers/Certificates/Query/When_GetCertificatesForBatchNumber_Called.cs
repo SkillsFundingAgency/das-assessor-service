@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             var certificateResponses = new CertificatesForBatchNumberResponse()
             {
-                Certificates = Builder<CertificatePrintSummary>.CreateListOfSize(10).Build().ToList()
+                Certificates = Builder<CertificatePrintSummaryBase>.CreateListOfSize(10).Build().ToList()
             };
 
             mediator.Setup(q => q.Send(Moq.It.IsAny<GetCertificatesForBatchNumberRequest>(), new CancellationToken()))

@@ -7,20 +7,22 @@
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](256) NULL,
 	[CertificateReference] NVARCHAR(50) NOT NULL,
-	[OrganisationId] [uniqueidentifier] NOT NULL,
+	[OrganisationId] [uniqueidentifier] NULL,
 	[BatchNumber] [int] NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[UpdatedBy] [nvarchar](256) NULL, 
-    [Uln] BIGINT NOT NULL, 
-    [StandardCode] INT NOT NULL, 
-    [ProviderUkPrn] INT NOT NULL, 
+    [Uln] BIGINT NULL, 
+    [StandardCode] INT NULL, 
+    [ProviderUkPrn] INT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
 	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
-    [StandardUId] VARCHAR(20)  NULL ,
+    [StandardUId] VARCHAR(20) NULL,
+	[Type] VARCHAR(9) NOT NULL DEFAULT 'Standard',
+	[FrameworkLearnerId] UNIQUEIDENTIFIER NULL,
 	
 	[LearnerFamilyName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.LearnerFamilyName')),
 	[LearnerGivenNames] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.LearnerGivenNames')),
@@ -58,10 +60,19 @@ ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_CertificateBa
 REFERENCES [dbo].[CertificateBatchLogs] ([CertificateReference], [BatchNumber])
 GO
 
-ALTER TABLE [dbo].[Certficates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+ALTER TABLE [dbo].[Certificates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+GO
+
+ALTER TABLE [dbo].[Certificates] ADD CONSTRAINT [CHK_Type]
+CHECK (
+    (Type = 'Standard' AND Uln IS NOT NULL AND StandardCode IS NOT NULL AND FrameworkLearnerId IS NULL)
+    OR 
+    (Type = 'Framework' AND FrameworkLearnerId IS NOT NULL AND Uln IS NULL AND StandardCode IS NULL)
+)
 GO
 
 CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
+WHERE [Uln] IS NOT NULL AND [StandardCode] IS NOT NULL;
 GO
 
 CREATE INDEX [IX_Certificates_CreateDay] ON [Certificates] ([CreateDay]) INCLUDE ([Status], [CertificateData])
@@ -82,5 +93,3 @@ GO
 CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId]) INCLUDE ([StandardName], [StandardReference],
 [StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
 GO
-
-      

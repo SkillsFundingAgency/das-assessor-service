@@ -1,19 +1,19 @@
-﻿using MediatR;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -72,12 +72,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            var certData = CombineCertificateData(request.CertificateData, coronationEmblem, learner, standard, provider, options, certificate);
+            var certificateData = CombineCertificateData(request.CertificateData, coronationEmblem, learner, standard, provider, options, certificate);
 
             if (certificate == null)
             {
                 _logger.LogInformation("CreateNewCertificate Before create new Certificate");
-                certificate = await _certificateRepository.New(
+                certificate = await _certificateRepository.NewStandardCertificate(
                    new Certificate()
                    {
                        Uln = request.Uln,
@@ -86,9 +86,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                        ProviderUkPrn = learner.UkPrn,
                        OrganisationId = organisation.Id,
                        CreatedBy = ExternalApiConstants.ApiUserName,
-                       CertificateData = JsonConvert.SerializeObject(certData),
+                       CertificateData = certificateData,
                        Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
-                        CertificateReference = string.Empty,
+                       CertificateReference = string.Empty,
                        LearnRefNumber = learner.LearnRefNumber,
                        CreateDay = DateTime.UtcNow.Date
                    });
@@ -96,11 +96,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             else
             {
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
-                certData.EpaDetails.EpaReference = certificate.CertificateReference;
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificateData.EpaDetails.EpaReference = certificate.CertificateReference;
+                certificate.CertificateData = certificateData;
                 certificate.StandardUId = request.StandardUId;
                 certificate.Status = CertificateStatus.Draft;
-                await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
+                await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
@@ -119,11 +119,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             var epaDetails = new EpaDetails();
             if (certificate != null)
             {
-                var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-                if (certData.EpaDetails != null)
+                if (certificate.CertificateData.EpaDetails != null)
                 {
-                    epaDetails = certData.EpaDetails;
+                    epaDetails = certificate.CertificateData.EpaDetails;
                 }
             }
             
