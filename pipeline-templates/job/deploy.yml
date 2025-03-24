@@ -1,4 +1,4 @@
-parameters:  
+parameters:
   Environment:
   ServiceConnection:
   ApimServiceConnection:
@@ -101,7 +101,6 @@ jobs:
             AzureSubscription: ${{ parameters.ServiceConnection }}
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
-            SqlPassword: $(SharedSQLServerPassword)
             DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/SFA.DAS.AssessorService.Database/bin/Output/SFA.DAS.AssessorService.Database.dacpac
             DatabaseName: $(DatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
@@ -185,7 +184,6 @@ jobs:
             AzureSubscription: ${{ parameters.ServiceConnection }}
             ServerName: $(SharedSQLServerFQDN)
             SqlUsername: $(SharedSQLServerUsername)
-            SqlPassword: $(SharedSQLServerPassword)
             DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/SFA.DAS.AssessorService.Database/bin/Output/SFA.DAS.AssessorService.Database.dacpac
             DatabaseName: $(SandboxDatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
