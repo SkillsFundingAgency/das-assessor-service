@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EnumsNET;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Extensions;
 using SFA.DAS.AssessorService.Data.Interfaces;
@@ -63,10 +60,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     }
                     else
                     {
-                        var latestCertificateLog = await _staffCertificateRepository.GetLatestCertificateLog(certificate.Id);
-                        if (latestCertificateLog != null)
+                        var latestCertificateLogs = await _staffCertificateRepository.GetLatestCertificateLogs(certificate.Id);
+                        if (latestCertificateLogs!= null && latestCertificateLogs.Count > 0)
                         {
-                            logs.Add(latestCertificateLog);
+                            logs.Add(latestCertificateLogs.First());
                         }
                     }
                 }
