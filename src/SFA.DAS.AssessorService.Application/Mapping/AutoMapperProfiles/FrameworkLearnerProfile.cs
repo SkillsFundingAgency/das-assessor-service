@@ -3,7 +3,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
 {
@@ -14,7 +13,6 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
             CreateMap<FrameworkLearner, FrameworkLearnerSearchResponse>();
 
             CreateMap<FrameworkLearner, GetFrameworkLearnerResponse>()
-                .ForMember(dest => dest.CertificateNumber, opt => opt.MapFrom(src => src.FrameworkCertificateNumber))
                 .ForMember(dest => dest.QualificationsAndAwardingBodies, opts => opts.MapFrom<QualificationDetailsResolver>());
         }
     }

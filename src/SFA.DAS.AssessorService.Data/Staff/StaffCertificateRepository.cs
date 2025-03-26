@@ -107,10 +107,10 @@ namespace SFA.DAS.AssessorService.Data.Staff
             return results.ToList();
         }
 
-        public async Task<CertificateLogSummary> GetLatestCertificateLog(Guid certificateId)
+        public async Task<List<CertificateLogSummary>> GetLatestCertificateLogs(Guid certificateId, int count = 1)
         {
             var sql = @"
-                SELECT TOP(1) 
+                SELECT TOP(@count) 
                     EventTime, 
                     Action, 
                     ISNULL(c.DisplayName, logs.Username) AS ActionBy, 
@@ -127,12 +127,12 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 ORDER BY 
                     EventTime DESC";
 
-            var result = await _unitOfWork.Connection.QueryFirstOrDefaultAsync<CertificateLogSummary>(
+            var results = await _unitOfWork.Connection.QueryAsync<CertificateLogSummary>(
                 sql,
-                param: new { certificateId },
+                param: new { count, certificateId },
                 transaction: _unitOfWork.Transaction);
 
-            return result;
+            return results.ToList();
         }
 
         public async Task<GetCertificateLogsForBatchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
@@ -155,7 +155,8 @@ namespace SFA.DAS.AssessorService.Data.Staff
                     cbl.CertificateData,
                     cbl.CertificateReference,
                     c.Uln,
-                    c.StandardCode
+                    c.StandardCode,
+                    c.FrameworkLearnerId
                 FROM 
                     [CertificateBatchLogs] cbl INNER JOIN [Certificates] c
                     ON cbl.CertificateReference = c.CertificateReference
