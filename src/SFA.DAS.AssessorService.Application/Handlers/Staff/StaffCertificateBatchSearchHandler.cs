@@ -40,7 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                         CertificateData = JsonConvert.DeserializeObject<CertificateData>(sr.CertificateData),
                         CertificateReference = sr.CertificateReference,
                         Uln = sr.Uln,
-                        StandardCode = sr.StandardCode
+                        StandardCode = sr.StandardCode,
+                        FrameworkLearnerId = sr.FrameworkLearnerId,
                     }).ToList();
 
             return new StaffBatchSearchResponse

@@ -155,7 +155,8 @@ namespace SFA.DAS.AssessorService.Data.Staff
                     cbl.CertificateData,
                     cbl.CertificateReference,
                     c.Uln,
-                    c.StandardCode
+                    c.StandardCode,
+                    c.FrameworkLearnerId
                 FROM 
                     [CertificateBatchLogs] cbl INNER JOIN [Certificates] c
                     ON cbl.CertificateReference = c.CertificateReference
