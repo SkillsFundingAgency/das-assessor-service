@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 
@@ -53,5 +54,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task<bool> CertificateExistsForUln(long uln);
 
         Task<Certificate> GetCertificateDeletedByUln(long uln);
+
+        Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference);
     }
 }

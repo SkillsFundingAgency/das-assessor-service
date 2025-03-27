@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -545,6 +546,27 @@ namespace SFA.DAS.AssessorService.Data
                 .Select(c => c.CertificateData.ProviderName);
 
             return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference)
+        {
+            var query = _unitOfWork.AssessorDbContext.StandardCertificates
+                .Where(c => !c.IsPrivatelyFunded &&
+                            !(c.Status == CertificateStatus.Deleted || c.Status == CertificateStatus.Draft) &&
+                            c.ProviderUkPrn == ukprn &&
+                            (standardReference == null || c.StandardReference == standardReference))
+                .GroupBy(c => 1)
+                .Select(g => new AssessmentsResult
+                {
+                    EarliestAssessment = g.Min(c => c.AchievementDate ?? DateTime.MaxValue),
+                    EndpointAssessmentCount = g.Count()
+                });
+
+            return await query.FirstOrDefaultAsync() ?? new AssessmentsResult
+            {
+                EarliestAssessment = null,
+                EndpointAssessmentCount = 0
+            };
         }
 
         private void AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, CertificateData certificateData, string username, int? batchNumber, string reasonForChange = null)
