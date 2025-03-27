@@ -1,16 +1,16 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -18,15 +18,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class ApprovalsExtractRepositoryTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        private UnitOfWork _unitOfWork;
+        private IUnitOfWork _unitOfWork;
         private ApprovalsExtractRepository _repository;
 
         [OneTimeSetUp]
         public void SetupApprovalsExtractTests()
         {
-            var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            option.UseSqlServer(_databaseService.SqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
-
             _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.SqlConnectionStringTest));
 
             _repository = new ApprovalsExtractRepository(_unitOfWork, new Mock<IRoatpApiClient>().Object, new Mock<ILogger<ApprovalsExtractRepository>>().Object);
@@ -36,7 +33,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task When_Empty_Then_NewExtractIsInserted()
         {
             // Arrange
-
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             var approvalsExtractInput = new List<ApprovalsExtract>()

@@ -1,7 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading.Tasks;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -9,8 +10,6 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.Testing.AutoFixture;
-using System;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 {
@@ -37,10 +36,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         }
 
 
-        [Test, RecursiveMoqAutoData]
-        public async Task WhenFamilyNameFieldIsEmpty_ThenReturnsInvalid(CertificateBaseViewModel _baseViewModel)
+        [Test]
+        public async Task WhenFamilyNameFieldIsEmpty_ThenReturnsInvalid()
         {
-            var _viewModel = SetupInvalidViewModel(string.Empty, _baseViewModel);
+            var _viewModel = SetupInvalidViewModel(string.Empty);
 
             var result = await _validator.Validate(_viewModel);
 
@@ -51,10 +50,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             }
         }
 
-        [Test, RecursiveMoqAutoData]
-        public async Task WhenFamilyNameFieldIsNotEqualToPreviousFamilyNameValue_ThenReturnsInvalid(string invalidFamilyName, CertificateBaseViewModel _baseViewModel)
+        [Test]
+        public async Task WhenFamilyNameFieldIsNotEqualToPreviousFamilyNameValue_ThenReturnsInvalid()
         {
-            var _viewModel = SetupInvalidViewModel("NotOriginalFamilyNameValue", _baseViewModel);
+            var _viewModel = SetupInvalidViewModel("NotOriginalFamilyNameValue");
 
             var result = await _validator.Validate(_viewModel);
 
@@ -67,28 +66,24 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
 
         private CertificateFamilyNameViewModel SetupValidViewModel(CertificateBaseViewModel _baseViewModel)
         {
-            var certData = new CertificateData() { LearnerFamilyName = "FamilyName" };
-            var certDataString = JsonConvert.SerializeObject(certData);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
-                    Id = new Guid(),
-                    CertificateData = certDataString,
+                    Id = Guid.NewGuid(),
+                    CertificateData = new CertificateData() { LearnerFamilyName = "FamilyName" },
                 });
 
-            _baseViewModel.FamilyName = certData.LearnerFamilyName;
+            _baseViewModel.FamilyName = "FamilyName";
             return new CertificateFamilyNameViewModel() { FamilyName = _baseViewModel.FamilyName };
         }
 
-        private CertificateFamilyNameViewModel SetupInvalidViewModel(string invalidFamilyName, CertificateBaseViewModel _baseViewModel)
+        private CertificateFamilyNameViewModel SetupInvalidViewModel(string invalidFamilyName)
         {
-            var certData = new CertificateData() { LearnerFamilyName = "FamilyName" };
-            var certDataString = JsonConvert.SerializeObject(certData);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
-                    Id = new Guid(),
-                    CertificateData = certDataString,
+                    Id = Guid.NewGuid(),
+                    CertificateData = new CertificateData() { LearnerFamilyName = "FamilyName" },
                 });
 
             return new CertificateFamilyNameViewModel() { FamilyName = invalidFamilyName };

@@ -47,13 +47,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Returns(new Claim("", Username));
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")).Returns(new Claim("", EpaoId));
             _mockContextAccessor.Setup(s => s.HttpContext.Request.Query).Returns(Mock.Of<IQueryCollection>());
-            var certData = new CertificateData() { LearnerFamilyName = "FamilyName" };
-            var certDataString = JsonConvert.SerializeObject(certData);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), false)).ReturnsAsync(
                 new Certificate
                 {
                     Id = CertificateId,
-                    CertificateData = certDataString
+                    CertificateData = new CertificateData() { LearnerFamilyName = "FamilyName" }
                 });
 
             _controller = new CertificateFamilyNameController(Mock.Of<ILogger<CertificateController>>(), _mockContextAccessor.Object, _mockCertificateApiClient.Object, _mockSessionService.Object, _validator.Object);
@@ -123,7 +121,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private CertificateFamilyNameViewModel PrepareValidViewModel(CertificateFamilyNameViewModel viewModel)
         {
             var certData = _mockCertificateApiClient.Object.GetCertificate(viewModel.Id).Result.CertificateData;
-            viewModel.FamilyName = JsonConvert.DeserializeObject<CertificateData>(certData).LearnerFamilyName;
+            viewModel.FamilyName = certData.LearnerFamilyName;
             return viewModel;
         }
 

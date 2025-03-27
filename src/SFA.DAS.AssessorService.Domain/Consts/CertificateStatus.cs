@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
                     return "Sent to printer";
 
                 case NotDelivered:
-                    return "Not delivered";
+                    return "Delivery attempted";
 
                 case Reprint:
                     return "Reprint requested";
@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
                     return "Date sent to printer";
 
                 case NotDelivered:
-                    return "Date not delivered";
+                    return "Date delivery attempted";
 
                 case Reprint:
                     return "Date reprint requested";

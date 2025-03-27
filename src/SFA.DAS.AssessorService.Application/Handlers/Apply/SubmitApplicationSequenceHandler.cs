@@ -1,15 +1,15 @@
-﻿using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Consts;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Domain.Consts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Consts;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {

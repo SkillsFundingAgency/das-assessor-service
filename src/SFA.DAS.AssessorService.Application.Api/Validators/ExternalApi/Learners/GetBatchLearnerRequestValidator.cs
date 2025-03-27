@@ -1,10 +1,11 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
-using System.Linq;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Learners
 {

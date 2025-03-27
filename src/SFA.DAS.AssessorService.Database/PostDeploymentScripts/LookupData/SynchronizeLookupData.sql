@@ -23,6 +23,9 @@
 :r .\DeliveryAreaDelete.sql
 :r .\DeliveryAreaInsertOrUpdate.sql
 
+:r .\FrameworkDelete.sql
+:r .\FrameworkInsertOrUpdate.sql
+
 :r .\OrganisationTypeDelete.sql
 :r .\OrganisationTypeInsertOrUpdate.sql
 

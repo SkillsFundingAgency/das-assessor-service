@@ -1,16 +1,16 @@
-﻿using Dapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.Apply
 {

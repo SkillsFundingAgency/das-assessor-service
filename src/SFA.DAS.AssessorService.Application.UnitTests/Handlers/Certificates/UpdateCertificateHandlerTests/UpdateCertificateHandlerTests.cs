@@ -1,4 +1,8 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -6,14 +10,10 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificateHandlerTests
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     .With(c => c.CertificateReference = certficateReference)
                     .With(c => c.Status = status)
                     .With(c => c.CreatedBy = createdBy)
-                    .With(c => c.CertificateData = JsonConvert.SerializeObject(certificateData))
+                    .With(c => c.CertificateData = certificateData)
                     .Build();
 
                 return certificate;
@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     .With(c => c.Id = id)
                     .With(c => c.CertificateReference = certficateReference)
                     .With(c => c.Status = status)
-                    .With(c => c.CertificateData = JsonConvert.SerializeObject(certificateData))
+                    .With(c => c.CertificateData = certificateData)
                     .Build();
 
                 return certificate;
@@ -189,11 +189,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 var updateCertificate = CloneCertificate(_certificate);
                 updateCertificate.Status = updatedStatus;
-
-                var updateCertificateData = JsonConvert.DeserializeObject<CertificateData>(updateCertificate.CertificateData);
-                updateCertificateData.OverallGrade = updatedOverallGrade;
-                updateCertificateData.AchievementDate = updatedAchievementDate;
-                updateCertificate.CertificateData = JsonConvert.SerializeObject(updateCertificateData);
+                updateCertificate.CertificateData.OverallGrade = updatedOverallGrade;
+                updateCertificate.CertificateData.AchievementDate = updatedAchievementDate;
 
                 _updatedCertificate = await _sut.Handle(new UpdateCertificateRequest(updateCertificate) { Username = "user" }, new CancellationToken());
                 return _updatedCertificate;
@@ -203,10 +200,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 var updateCertificate = CloneCertificate(_certificate);
                 updateCertificate.Status = updatedStatus;
-
-                var updateCertificateData = JsonConvert.DeserializeObject<CertificateData>(updateCertificate.CertificateData);
-                updateCertificateData.SendTo = updatedSendTo;
-                updateCertificate.CertificateData = JsonConvert.SerializeObject(updateCertificateData);
+                updateCertificate.CertificateData.SendTo = updatedSendTo;
 
                 _updatedCertificate = await _sut.Handle(new UpdateCertificateRequest(updateCertificate) { Username = "user" }, new CancellationToken());
                 return _updatedCertificate;
@@ -215,19 +209,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             public void VerifyUpdatedAchievementDate(DateTime? achievenmentDate)
             {
-                _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
-                    GetCertificateData(updatedCertificate).AchievementDate == achievenmentDate), "user", null, true, null));
+                _certificateRepository.Verify(r => r.UpdateStandardCertificate(It.Is<Certificate>(updatedCertificate =>
+                    updatedCertificate.CertificateData.AchievementDate == achievenmentDate), "user", null, true, null));
             }
 
             public void VerifyUpdatedOverallGrade(string updatedOverallGrade)
             {
-                _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
-                    GetCertificateData(updatedCertificate).OverallGrade == updatedOverallGrade), "user", null, true, null));
+                _certificateRepository.Verify(r => r.UpdateStandardCertificate(It.Is<Certificate>(updatedCertificate =>
+                    updatedCertificate.CertificateData.OverallGrade == updatedOverallGrade), "user", null, true, null));
             }
 
             public void VerifyUpdatedEpaDetails(string expectedLatestEpaOutcome, DateTime? expectedLatestEpaDate, int expectedEpasCount)
             {
-                _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
+                _certificateRepository.Verify(r => r.UpdateStandardCertificate(It.Is<Certificate>(updatedCertificate =>
                     MatchCertificate(updatedCertificate, expectedLatestEpaOutcome, expectedLatestEpaDate, expectedEpasCount)), "user", null, true, null));
             }
 
@@ -235,9 +229,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             {
                 if (addressDetailsCleared)
                 {
-                    _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
+                    _certificateRepository.Verify(r => r.UpdateStandardCertificate(It.Is<Certificate>(updatedCertificate =>
                         MatchCertificateOnContactAddressDetails(updatedCertificate,
-                        fullNameTransferred ? GetCertificateData(_certificate).FullName.ToUpper() : null,
+                        fullNameTransferred ? _certificate.CertificateData.FullName.ToUpper() : null,
                         null, 
                         null, 
                         null, 
@@ -248,35 +242,33 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 }
                 else
                 {
-                    _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(updatedCertificate =>
+                    _certificateRepository.Verify(r => r.UpdateStandardCertificate(It.Is<Certificate>(updatedCertificate =>
                         MatchCertificateOnContactAddressDetails(updatedCertificate,
-                            fullNameTransferred ? GetCertificateData(_certificate).FullName.ToUpper() : GetCertificateData(_certificate).ContactName.ToUpper(),
-                            GetCertificateData(_certificate).Department,
-                            GetCertificateData(_certificate).ContactOrganisation,
-                            GetCertificateData(_certificate).ContactAddLine1,
-                            GetCertificateData(_certificate).ContactAddLine2,
-                            GetCertificateData(_certificate).ContactAddLine3,
-                            GetCertificateData(_certificate).ContactAddLine4,
-                            GetCertificateData(_certificate).ContactPostCode)), "user", null, true, null), Times.Once);
+                            fullNameTransferred ? _certificate.CertificateData.FullName.ToUpper() : _certificate.CertificateData.ContactName.ToUpper(),
+                            _certificate.CertificateData.Department,
+                            _certificate.CertificateData.ContactOrganisation,
+                            _certificate.CertificateData.ContactAddLine1,
+                            _certificate.CertificateData.ContactAddLine2,
+                            _certificate.CertificateData.ContactAddLine3,
+                            _certificate.CertificateData.ContactAddLine4,
+                            _certificate.CertificateData.ContactPostCode)), "user", null, true, null), Times.Once);
                 }
             }
 
             private bool MatchCertificate(Certificate certificate, string expectedLatestEpaOutcome, DateTime? expectedLatestEpaDate, int expectedEpasCount)
-            {
-                var certificateData = GetCertificateData(certificate);
-                
-                bool numberOfEpaDetailsMatched = (certificateData.EpaDetails?.Epas?.Count ?? 0) == expectedEpasCount;
-                bool latestEpaDateMatched = certificateData.EpaDetails?.LatestEpaDate == expectedLatestEpaDate;
-                bool latestEpaOutcomeMatched = (certificateData.EpaDetails?.LatestEpaOutcome ?? string.Empty).Equals(expectedLatestEpaOutcome ?? string.Empty, StringComparison.InvariantCultureIgnoreCase);
+            {   
+                bool numberOfEpaDetailsMatched = (certificate.CertificateData.EpaDetails?.Epas?.Count ?? 0) == expectedEpasCount;
+                bool latestEpaDateMatched = certificate.CertificateData.EpaDetails?.LatestEpaDate == expectedLatestEpaDate;
+                bool latestEpaOutcomeMatched = (certificate.CertificateData.EpaDetails?.LatestEpaOutcome ?? string.Empty).Equals(expectedLatestEpaOutcome ?? string.Empty, StringComparison.InvariantCultureIgnoreCase);
 
                 string failureMessage = "Certificate.CertificateData.EpaDetails.{0} did not match; expected {1} actual value {2}";
 
                 if (!numberOfEpaDetailsMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, $"{nameof(CertificateData.EpaDetails.Epas)}.{nameof(CertificateData.EpaDetails.Epas.Count)}", expectedEpasCount, certificateData.EpaDetails?.Epas?.Count ?? 0));
+                    TestContext.WriteLine(string.Format(failureMessage, $"{nameof(CertificateData.EpaDetails.Epas)}.{nameof(CertificateData.EpaDetails.Epas.Count)}", expectedEpasCount, certificate.CertificateData.EpaDetails?.Epas?.Count ?? 0));
                 else if (!latestEpaDateMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.EpaDetails.LatestEpaDate), expectedLatestEpaDate, certificateData.EpaDetails?.LatestEpaDate));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.EpaDetails.LatestEpaDate), expectedLatestEpaDate, certificate.CertificateData.EpaDetails?.LatestEpaDate));
                 else if (!latestEpaOutcomeMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.EpaDetails.LatestEpaOutcome), expectedLatestEpaOutcome, certificateData.EpaDetails?.LatestEpaOutcome));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.EpaDetails.LatestEpaOutcome), expectedLatestEpaOutcome, certificate.CertificateData.EpaDetails?.LatestEpaOutcome));
 
                 return numberOfEpaDetailsMatched &&
                     latestEpaDateMatched &&
@@ -287,35 +279,33 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 string expectedDepartment, string expectedContactOrganisation, string expectedContactAddLine1, string expectedContactAddLine2,
                 string expectedContactAddLine3, string expectedContactAddLine4, string expectedPostCode)
             {
-                var certificateData = GetCertificateData(certificate);
-
-                var contactNameMatched = certificateData.ContactName == expectedContactName;
-                var departmentMatched = certificateData.Department == expectedDepartment;
-                var contactOrganisationMatched = certificateData.ContactOrganisation == expectedContactOrganisation;
-                var contactAddLine1Matched = certificateData.ContactAddLine1 == expectedContactAddLine1;
-                var contactAddLine2Matched = certificateData.ContactAddLine2 == expectedContactAddLine2;
-                var contactAddLine3Matched = certificateData.ContactAddLine3 == expectedContactAddLine3;
-                var contactAddLine4Matched = certificateData.ContactAddLine4 == expectedContactAddLine4;
-                var contactPostCodeMatched = certificateData.ContactPostCode == expectedPostCode;
+                var contactNameMatched = certificate.CertificateData.ContactName == expectedContactName;
+                var departmentMatched = certificate.CertificateData.Department == expectedDepartment;
+                var contactOrganisationMatched = certificate.CertificateData.ContactOrganisation == expectedContactOrganisation;
+                var contactAddLine1Matched = certificate.CertificateData.ContactAddLine1 == expectedContactAddLine1;
+                var contactAddLine2Matched = certificate.CertificateData.ContactAddLine2 == expectedContactAddLine2;
+                var contactAddLine3Matched = certificate.CertificateData.ContactAddLine3 == expectedContactAddLine3;
+                var contactAddLine4Matched = certificate.CertificateData.ContactAddLine4 == expectedContactAddLine4;
+                var contactPostCodeMatched = certificate.CertificateData.ContactPostCode == expectedPostCode;
 
                 string failureMessage = "Certificate.CertificateData.{0} did not match; expected {1} actual value {2}";
 
                 if (!contactNameMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactName), expectedContactName, certificateData.ContactName));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactName), expectedContactName, certificate.CertificateData.ContactName));
                 else if (!departmentMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.Department), expectedDepartment, certificateData.Department));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.Department), expectedDepartment, certificate.CertificateData.Department));
                 else if (!contactOrganisationMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactOrganisation), expectedContactOrganisation, certificateData.ContactOrganisation));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactOrganisation), expectedContactOrganisation, certificate.CertificateData.ContactOrganisation));
                 else if (!contactAddLine1Matched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine1), expectedContactAddLine1, certificateData.ContactAddLine1));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine1), expectedContactAddLine1, certificate.CertificateData.ContactAddLine1));
                 else if (!contactAddLine2Matched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine2), expectedContactAddLine2, certificateData.ContactAddLine2));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine2), expectedContactAddLine2, certificate.CertificateData.ContactAddLine2));
                 else if (!contactAddLine3Matched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine3), expectedContactAddLine3, certificateData.ContactAddLine3));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine3), expectedContactAddLine3, certificate.CertificateData.ContactAddLine3));
                 else if (!contactAddLine4Matched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine4), expectedContactAddLine4, certificateData.ContactAddLine4));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactAddLine4), expectedContactAddLine4, certificate.CertificateData.ContactAddLine4));
                 else if (!contactPostCodeMatched)
-                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactPostCode), expectedPostCode, certificateData.ContactPostCode));
+                    TestContext.WriteLine(string.Format(failureMessage, nameof(CertificateData.ContactPostCode), expectedPostCode, certificate.CertificateData.ContactPostCode));
 
                 return contactNameMatched &&
                     departmentMatched &&
@@ -330,11 +320,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             private Certificate CloneCertificate(Certificate certificate)
             {
                 return JsonConvert.DeserializeObject<Certificate>(JsonConvert.SerializeObject(certificate));
-            }
-
-            private CertificateData GetCertificateData(Certificate certificate)
-            {
-                return JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             }
         }
     }

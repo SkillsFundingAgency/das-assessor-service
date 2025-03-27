@@ -1,18 +1,16 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-
-using SFA.DAS.AssessorService.Api.Types.Consts;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Consts;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
+namespace SFA.DAS.AssessorService.Handlers.EpaOrganisationHandlers
 {
     public class UpdateEpaOrganisationPrimaryContactHandler : IRequestHandler<UpdateEpaOrganisationPrimaryContactRequest, List<ContactResponse>>
     { 

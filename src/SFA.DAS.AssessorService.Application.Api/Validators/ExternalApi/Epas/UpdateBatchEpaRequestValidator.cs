@@ -1,12 +1,11 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
@@ -33,26 +32,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
                     }
                     else
                     {
-                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
                         switch (existingCertificate.Status)
                         {
                             case CertificateStatus.Deleted:
                                 context.AddFailure(new ValidationFailure("EpaReference", $"EPA not found"));
                                 break;
                             case CertificateStatus.Draft:
-                                if(!string.IsNullOrWhiteSpace(certData.OverallGrade))
+                                if(!string.IsNullOrWhiteSpace(existingCertificate.CertificateData.OverallGrade))
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot update EPA record"));
                                 }
-                                if (string.IsNullOrWhiteSpace(certData.EpaDetails?.LatestEpaOutcome))
+                                if (string.IsNullOrWhiteSpace(existingCertificate.CertificateData.EpaDetails?.LatestEpaOutcome))
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"EPA not found"));
                                 }
                                 break;
                             default:
                                 // Submitted but a fail, can be updated.
-                                if (certData.OverallGrade != EpaOutcome.Fail)
+                                if (existingCertificate.CertificateData.OverallGrade != EpaOutcome.Fail)
                                 {
                                     context.AddFailure(new ValidationFailure("EpaReference", $"Certificate already exists, cannot update EPA record"));
                                 }

@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
 
             SearchHandler
-                .Handle(new SearchQuery() {Surname = "smith", EpaOrgId = "99999", Uln = 12345, Username = "dave"},
+                .Handle(new LearnerSearchRequest() {Surname = "smith", EpaOrgId = "99999", Uln = 12345, Username = "dave"},
                     new CancellationToken()).Wait();
         }
     }

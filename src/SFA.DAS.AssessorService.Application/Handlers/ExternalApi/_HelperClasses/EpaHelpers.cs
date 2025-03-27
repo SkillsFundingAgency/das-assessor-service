@@ -18,25 +18,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasse
 
         public static Certificate ResetCertificateData(Certificate certificate)
         {
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
             // We need to clear out any old information (as it could be a deleted certificate, or the OverallGrade is no long correct)
-            certificate.CertificateData = JsonConvert.SerializeObject(
+            certificate.CertificateData =
                 new CertificateData()
                 {
-                    LearnerGivenNames = certData.LearnerGivenNames,
-                    LearnerFamilyName = certData.LearnerFamilyName,
-                    LearningStartDate = certData.LearningStartDate,
-                    StandardReference = certData.StandardReference,
-                    Version = certData.Version,
-                    CourseOption = certData.CourseOption,
-                    StandardName = certData.StandardName,
-                    StandardLevel = certData.StandardLevel,
-                    StandardPublicationDate = certData.StandardPublicationDate,
-                    FullName = certData.FullName,
-                    ProviderName = certData.ProviderName,
+                    LearnerGivenNames = certificate.CertificateData.LearnerGivenNames,
+                    LearnerFamilyName = certificate.CertificateData.LearnerFamilyName,
+                    LearningStartDate = certificate.CertificateData.LearningStartDate,
+                    StandardReference = certificate.CertificateData.StandardReference,
+                    Version = certificate.CertificateData.Version,
+                    CourseOption = certificate.CertificateData.CourseOption,
+                    StandardName = certificate.CertificateData.StandardName,
+                    StandardLevel = certificate.CertificateData.StandardLevel,
+                    StandardPublicationDate = certificate.CertificateData.StandardPublicationDate,
+                    FullName = certificate.CertificateData.FullName,
+                    ProviderName = certificate.CertificateData.ProviderName,
                     EpaDetails = new EpaDetails { EpaReference = certificate.CertificateReference, Epas = new List<EpaRecord>() }
-                });
+                };
 
             return certificate;
         }

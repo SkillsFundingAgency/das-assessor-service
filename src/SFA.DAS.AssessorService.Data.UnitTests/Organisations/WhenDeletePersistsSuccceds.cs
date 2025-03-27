@@ -6,6 +6,7 @@ using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -13,8 +14,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
     public class WhenDeletePersistsSuccceds
     {
-        private OrganisationRepository _organisationRepository;    
-        private Mock<AssessorDbContext> _mockDbContext = new Mock<AssessorDbContext>();
+        private OrganisationRepository _organisationRepository;
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
 
         [SetUp]
         public async Task Arrange()
@@ -28,10 +29,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
                     .Build()
             }.AsQueryable();
 
-            var mockSet = organisations.CreateMockSet(organisations);
-            _mockDbContext = CreateMockDbContext(mockSet);
-                                
-            _organisationRepository = new OrganisationRepository(_mockDbContext.Object);
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _mockAssessorUnitOfWork.Setup(p => p.AssessorDbContext).Returns(CreateMockDbContext(organisations.CreateMockSet()).Object);
+
+            _organisationRepository = new OrganisationRepository(_mockAssessorUnitOfWork.Object);
            
             await _organisationRepository.Delete("123456");
         }
@@ -39,12 +40,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [Test]
         public void ThenDeleteOrganisationShouldSucceed()
         {
-            _mockDbContext.Verify(q => q.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockAssessorUnitOfWork.Verify(q => q.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Organisation>> mockSet)
+        private Mock<IAssessorDbContext> CreateMockDbContext(Mock<DbSet<Organisation>> mockSet)
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             mockDbContext.Setup(c => c.Organisations).Returns(mockSet.Object);
             mockDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Organisation>()));

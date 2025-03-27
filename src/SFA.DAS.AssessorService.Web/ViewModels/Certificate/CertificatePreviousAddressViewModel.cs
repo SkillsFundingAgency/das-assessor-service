@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
                 certData.ContactPostCode = string.Empty;
             }
             
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
 
             return certificate;
         }

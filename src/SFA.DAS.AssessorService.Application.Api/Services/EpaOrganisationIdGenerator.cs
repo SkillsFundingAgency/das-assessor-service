@@ -1,5 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {

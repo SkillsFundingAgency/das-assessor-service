@@ -1,10 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts.Query
 {

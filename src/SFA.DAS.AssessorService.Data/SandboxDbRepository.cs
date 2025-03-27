@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data

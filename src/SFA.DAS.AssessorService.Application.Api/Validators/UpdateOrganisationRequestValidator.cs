@@ -4,7 +4,7 @@ using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
