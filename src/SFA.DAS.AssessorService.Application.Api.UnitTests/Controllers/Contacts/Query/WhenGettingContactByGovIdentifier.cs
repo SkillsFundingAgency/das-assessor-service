@@ -41,8 +41,15 @@ public class WhenGettingContactByGovIdentifier : ContactsQueryBase
     }
 
     [Test]
-    public void Then_If_Null_Returned_Exception_Thrown()
+    public async Task Then_If_Null_Returned_NotFoundResult()
     {
-        Assert.ThrowsAsync<ResourceNotFoundException>(()=> ContactQueryController.SearchContactByGovIdentifier("some-other-value"));
+        var missingGovIdentifier = "Test";
+        ContactQueryRepositoryMock
+            .Setup(q => q.GetContactByGovIdentifier(missingGovIdentifier))
+            .ReturnsAsync((Contact)null);
+
+        var result = await ContactQueryController.SearchContactByGovIdentifier(missingGovIdentifier);
+
+        result.Should().BeOfType<NotFoundResult>();
     }
 }
