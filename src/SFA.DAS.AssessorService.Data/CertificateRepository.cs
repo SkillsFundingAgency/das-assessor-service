@@ -416,6 +416,27 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
+        public async Task<FrameworkCertificate> UpdateFrameworkCertificate(FrameworkCertificate updatedCertificate, string username, string action)
+        {
+            var certificate = await GetCertificate<FrameworkCertificate>(updatedCertificate.Id)
+                ?? throw new NotFoundException();
+
+            certificate.CertificateData = updatedCertificate.CertificateData;
+            certificate.Status = updatedCertificate.Status;
+            certificate.UpdatedBy = username;
+            certificate.UpdatedAt = DateTime.UtcNow;
+
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
+
+            AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
+                certificate.CertificateData, certificate.UpdatedBy, certificate.BatchNumber, null);
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
+            return certificate;
+        }
+
         public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true, string reasonForChange = null, string incidentNumber = null)
         {
             var certificate = await GetCertificate(uln, standardCode);

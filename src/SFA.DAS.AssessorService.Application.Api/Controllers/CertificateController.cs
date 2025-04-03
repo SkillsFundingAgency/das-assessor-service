@@ -36,11 +36,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPost("start-framework", Name = "StartFramework")]
+        [HttpPost("reprint-framework", Name = "ReprintFramework")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StartFramework([FromBody] StartFrameworkCertificateRequest request)
+        public async Task<IActionResult> ReprintFramework([FromBody] ReprintFrameworkCertificateRequest request)
         {
             return Ok(await _mediator.Send(request));
         }

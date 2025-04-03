@@ -123,13 +123,13 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesForBatchNumberRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesForBatchNumberRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesReadyToPrintCountRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesReadyToPrintCountRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetContacttPreviousAddressesRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetContacttPreviousAddressesRequest.cs" />
+    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\ReprintFrameworkCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\ReprintFrameworkCertificateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartCertificateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequestReprintCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateRequestReprintCommand.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithAmendReasonCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithAmendReasonCommand.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithReprintReasonCommand.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateCertificateWithReprintReasonCommand.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateGradeRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\UpdateGradeRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartFrameworkCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\StartFrameworkCertificateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CheckIfOfsOrganisationRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CheckIfOfsOrganisationRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Charge.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Charge.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\SicCodeDictionary.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\CompaniesHouse\Collections\SicCodeDictionary.cs" />

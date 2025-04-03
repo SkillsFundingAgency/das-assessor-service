@@ -93,11 +93,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Certificate> StartFramework(StartFrameworkCertificateRequest request)
+        public async Task<FrameworkCertificate> ReprintFramework(ReprintFrameworkCertificateRequest request)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start-framework"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/reprint-framework"))
             {
-                return await PostPutRequestWithResponseAsync<StartFrameworkCertificateRequest, Certificate>(httpRequest, request);
+                return await PostPutRequestWithResponseAsync<ReprintFrameworkCertificateRequest, FrameworkCertificate>(httpRequest, request);
             }
         }
     }

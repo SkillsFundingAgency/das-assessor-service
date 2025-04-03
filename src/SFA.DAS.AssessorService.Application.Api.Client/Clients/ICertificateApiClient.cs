@@ -17,6 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> UpdateCertificateRequestReprint(UpdateCertificateRequestReprintCommand command);
         Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command);
         Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command);
-        Task<Certificate> StartFramework(StartFrameworkCertificateRequest request);
+        Task<FrameworkCertificate> ReprintFramework(ReprintFrameworkCertificateRequest request);
     }
 }

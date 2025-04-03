@@ -38,6 +38,8 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<Certificate> UpdateStandardCertificate(Certificate updatedCertificate, string username, string action, bool updateLog = true, string reasonForChange = null);
 
+        Task<FrameworkCertificate> UpdateFrameworkCertificate(FrameworkCertificate updatedCertificate, string username, string action);
+
         Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true, string reasonForChange = null, string incidentNumber = null);
 
         Task<CertificateBase> UpdateProviderName(Guid certificateId, string providerName);
