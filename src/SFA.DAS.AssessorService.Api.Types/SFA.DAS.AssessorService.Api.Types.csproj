@@ -6,6 +6,7 @@
     <PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Types</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SkillsFundingAgency/das-assessor-service/tree/master/src/SFA.DAS.AssessorService.Application.Api.Types</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>$(VersionPrefix)</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -8,7 +9,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid Id { get; set; }
         public string CertificateReference { get; set; }
         public int BatchNumber { get; set; }
-        public string CertificateData { get; set; }
+        public CertificateData CertificateData { get; set; }
         public string Status { get; set; }
         public DateTime StatusAt { get; set; }
         public string ReasonForChange { get; set; }
@@ -16,6 +17,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
         [JsonIgnore]
-        public Certificate Certificate { get; set; }
+        public CertificateBase Certificate { get; set; }
     }
 }

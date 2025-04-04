@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.BatchLogs;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
+namespace SFA.DAS.AssessorService.Handlers.BatchLogs
 {
     public class GetBatchNumberReadyToPrintHandler : IRequestHandler<GetBatchNumberReadyToPrintRequest, int?>
     {

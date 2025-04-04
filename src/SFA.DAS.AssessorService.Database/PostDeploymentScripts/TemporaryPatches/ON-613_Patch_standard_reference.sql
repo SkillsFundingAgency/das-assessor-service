@@ -7,10 +7,10 @@
 WITH Standards_CTE AS(
 SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
 
-MERGE INTO certificates ma1
+MERGE INTO Certificates ma1
 USING (
 SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference', st1.IFateReferenceNumber) newData
-  FROM [Certificates] ce1 
+  FROM [StandardCertificates] ce1 
   JOIN Standards_CTE st1 ON ce1.StandardCode = st1.LarsCode and st1.seq = 1
   WHERE st1.IFateReferenceNumber IS NOT NULL 
   AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1

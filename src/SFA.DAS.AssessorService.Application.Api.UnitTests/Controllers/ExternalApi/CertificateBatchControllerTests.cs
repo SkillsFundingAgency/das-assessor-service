@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
          CreateBatchCertificateRequest request)
         {
             //Arrange
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
             request.StandardCode = 0;
             request.CertificateData.Version = null;
 
@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
          UpdateBatchCertificateRequest request)
         {
             //Arrange
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
             request.StandardCode = 0;
             request.CertificateData.Version = null;
             _mockMediator.Setup(s => s.Send(It.IsAny<GetCalculatedStandardVersionForApprenticeshipRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);

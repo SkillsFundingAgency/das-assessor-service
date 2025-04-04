@@ -1,7 +1,7 @@
-﻿using Dapper;
+﻿using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data
 {

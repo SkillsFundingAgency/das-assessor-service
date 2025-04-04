@@ -1,47 +1,46 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data
 {
     public class ContactRepository : Repository, IContactRepository
     {
-        private readonly AssessorDbContext _assessorDbContext;
+        private readonly IAssessorUnitOfWork _assessorUnitOfWork;
 
-        public ContactRepository(AssessorDbContext assessorDbContext, IUnitOfWork unitOfWork)
+        public ContactRepository(IAssessorUnitOfWork assessorUnitOfWork, IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
-            _assessorDbContext = assessorDbContext;
+            _assessorUnitOfWork = assessorUnitOfWork;
         }
 
         public async Task<Contact> CreateNewContact(Contact newContact)
         {
-            _assessorDbContext.Contacts.Add(newContact);
-            await _assessorDbContext.SaveChangesAsync();
+            _assessorUnitOfWork.AssessorDbContext.Contacts.Add(newContact);
+            await _assessorUnitOfWork.SaveChangesAsync();
 
             return newContact;
         }
         
         public async Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges)
         {
-            
             foreach (var privilege in privileges)
             {
                 var contactPrivilegeEntity =
-                    await _assessorDbContext.ContactsPrivileges.FirstOrDefaultAsync(q =>
+                    await _assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.FirstOrDefaultAsync(q =>
                         q.ContactId == contactId && q.PrivilegeId == privilege.Id);
                 if (contactPrivilegeEntity == null)
                 {
-                    _assessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
+                    _assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
                     {
                         ContactId = contactId,
                         PrivilegeId = privilege.Id
@@ -49,36 +48,36 @@ namespace SFA.DAS.AssessorService.Data
                 }
             }
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public bool CheckIfAnyPrivelegesSet(Guid contactId)
         {
             var result = false;
-            if (_assessorDbContext.ContactsPrivileges != null)
-                result = _assessorDbContext.ContactsPrivileges.Any(x =>
+            if (_assessorUnitOfWork.AssessorDbContext.ContactsPrivileges != null)
+                result = _assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.Any(x =>
                     x.ContactId == contactId);
             return result;
         }
 
         public async Task RemoveAllPrivileges(Guid contactId)
         {
-            _assessorDbContext.ContactsPrivileges.RemoveRange(_assessorDbContext.ContactsPrivileges.Where(cp => cp.ContactId == contactId));
-            await _assessorDbContext.SaveChangesAsync();
+            _assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.RemoveRange(_assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.Where(cp => cp.ContactId == contactId));
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task AddPrivilege(Guid contactId, Guid privilegeId)
         {
-            await _assessorDbContext.ContactsPrivileges.AddAsync(new ContactsPrivilege() {ContactId = contactId, PrivilegeId = privilegeId});
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.AddAsync(new ContactsPrivilege() {ContactId = contactId, PrivilegeId = privilegeId});
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task<bool> IsOnlyContactWithPrivilege(Guid contactId, Guid privilegeId)
         {
-            var contact = await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.Id == contactId);
-            var orgContacts = _assessorDbContext.Contacts.Where(c => c.OrganisationId == contact.OrganisationId).Select(c => c.Id);
+            var contact = await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstOrDefaultAsync(c => c.Id == contactId);
+            var orgContacts = _assessorUnitOfWork.AssessorDbContext.Contacts.Where(c => c.OrganisationId == contact.OrganisationId).Select(c => c.Id);
 
-            var orgContactPrivileges = await _assessorDbContext.ContactsPrivileges.Where(cp => orgContacts.Contains(cp.ContactId)).ToListAsync();
+            var orgContactPrivileges = await _assessorUnitOfWork.AssessorDbContext.ContactsPrivileges.Where(cp => orgContacts.Contains(cp.ContactId)).ToListAsync();
 
             return orgContactPrivileges.Count(ocp => ocp.PrivilegeId == privilegeId) == 1;
         }
@@ -108,28 +107,28 @@ namespace SFA.DAS.AssessorService.Data
         public async Task AddContactInvitation(Guid invitorContactId, Guid inviteeContactId, Guid organisationId)
         {
             var contactInvitation = new ContactInvitation() {InvitationDate = DateTime.UtcNow, OrganisationId = organisationId, InvitorContactId = invitorContactId, InviteeContactId = inviteeContactId};
-            await _assessorDbContext.ContactInvitations.AddAsync(contactInvitation);
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.AssessorDbContext.ContactInvitations.AddAsync(contactInvitation);
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task<ContactInvitation> GetContactInvitation(Guid inviteeContactId)
         {
-            return await _assessorDbContext.ContactInvitations.SingleOrDefaultAsync(ci => ci.InviteeContactId == inviteeContactId);
+            return await _assessorUnitOfWork.AssessorDbContext.ContactInvitations.SingleOrDefaultAsync(ci => ci.InviteeContactId == inviteeContactId);
         }
 
         public async Task SetInvitationAccepted(ContactInvitation contactInvitation)
         {
             contactInvitation.IsAccountCreated = true;
             contactInvitation.AccountCreatedDate = DateTime.UtcNow;
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {
-            var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == updateContactRequest.UserName);
+            var contactEntity = await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == updateContactRequest.UserName);
 
             if(contactEntity == null)
-                contactEntity = await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == updateContactRequest.Email);
+                contactEntity = await _assessorUnitOfWork.AssessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == updateContactRequest.Email);
 
             if (contactEntity == null)
                 throw new NotFoundException();
@@ -139,70 +138,70 @@ namespace SFA.DAS.AssessorService.Data
             contactEntity.Email = updateContactRequest.Email;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == updateContactStatusRequest.Id);
+                await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(q => q.Id == updateContactStatusRequest.Id);
 
             contactEntity.Status = updateContactStatusRequest.Status;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateStatus(Guid contactId, string status)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(c => c.Id == contactId);
+                await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(c => c.Id == contactId);
 
             contactEntity.Status = status;
             
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task<Contact> UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
+                await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
             contactEntity.Status = updateContactWithOrgAndStaus.Status;
             contactEntity.OrganisationId = Guid.Parse(updateContactWithOrgAndStaus.OrgId);
             contactEntity.EndPointAssessorOrganisationId = updateContactWithOrgAndStaus.EpaOrgId;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
 
             //return updated contact
-            return await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
+            return await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
         }
 
         public async Task LinkOrganisation(string endPointAssessorOrganisationId, string userName)
         {
-            var organisationEntity = await _assessorDbContext.Organisations.FirstAsync(q =>
+            var organisationEntity = await _assessorUnitOfWork.AssessorDbContext.Organisations.FirstAsync(q =>
                 q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == userName);
+                await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(q => q.Username == userName);
 
             contactEntity.OrganisationId = organisationEntity.Id;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task Delete(string userName)
         {
-            var contactEntity = _assessorDbContext.Contacts
+            var contactEntity = _assessorUnitOfWork.AssessorDbContext.Contacts
                 .FirstOrDefault(q => q.Username == userName);
 
             if (contactEntity == null)
@@ -215,15 +214,15 @@ namespace SFA.DAS.AssessorService.Data
             contactEntity.DeletedAt = DateTime.Now;
             contactEntity.Status = ContactStatus.Deleted;
 
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task<Contact> UpdateGovUkIdentifier(Guid contactId, string govIdentifier)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
+                await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
             if (!string.IsNullOrEmpty(govIdentifier))
             {
@@ -235,33 +234,33 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
             return contactEntity;
         }
 
         public async Task<Contact> GetContact(string email)
         {
-            return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
+            return  await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
         }
 
         public async Task UpdateUserName(Guid contactId, string userName)
         {
             var contactEntity =
-               await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
+               await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
             contactEntity.Username=userName;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateEmail(UpdateEmailRequest request)
         {
-            var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.GovUkIdentifier == request.GovUkIdentifier);
+            var contactEntity = await _assessorUnitOfWork.AssessorDbContext.Contacts.FirstOrDefaultAsync(q => q.GovUkIdentifier == request.GovUkIdentifier);
 
             if (contactEntity == null || contactEntity.Email == request.NewEmail)
             {
@@ -272,9 +271,9 @@ namespace SFA.DAS.AssessorService.Data
             contactEntity.Username = request.NewEmail;
 
             // Workaround for Mocking
-            _assessorDbContext.MarkAsModified(contactEntity);
+            _assessorUnitOfWork.AssessorDbContext.MarkAsModified(contactEntity);
 
-            await _assessorDbContext.SaveChangesAsync();
+            await _assessorUnitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
@@ -80,9 +79,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     }
                     else if (existingCertificate.Status == CertificateStatus.Draft)
                     {
-                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
-                        if (string.IsNullOrEmpty(certData.OverallGrade) && !certData.AchievementDate.HasValue && string.IsNullOrEmpty(certData.ContactPostCode))
+                        if (string.IsNullOrEmpty(existingCertificate.CertificateData.OverallGrade) && 
+                            !existingCertificate.CertificateData.AchievementDate.HasValue 
+                            && string.IsNullOrEmpty(existingCertificate.CertificateData.ContactPostCode))
                         {
                             // EPA created, but not gotten to Draft Certificate status as of yet.
                             context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found."));

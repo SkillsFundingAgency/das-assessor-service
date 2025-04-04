@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certData.ContactAddLine4 = City;
             certData.ContactPostCode = Postcode;
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
 
             return certificate;
         }

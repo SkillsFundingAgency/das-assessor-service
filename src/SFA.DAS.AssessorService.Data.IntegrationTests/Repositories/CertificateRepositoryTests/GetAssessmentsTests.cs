@@ -124,17 +124,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.Certificate
         private class GetAssessmentsTestsFixture : FixtureBase<GetAssessmentsTestsFixture>, IDisposable
         {
             private readonly DatabaseService _databaseService = new DatabaseService();
-            private readonly SqlConnection _sqlConnection;
             private readonly CertificateRepository _repository;
 
             private AssessmentsResult _result;
 
             public GetAssessmentsTestsFixture()
             {
-                _sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
-                _repository = new CertificateRepository(
-                    new UnitOfWork(_sqlConnection), 
-                    new AssessorDbContext(_sqlConnection, new DbContextOptionsBuilder<AssessorDbContext>().Options));
+                _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext));
             }
 
             public async Task<GetAssessmentsTestsFixture> GetAssessments(long ukprn, string standardReference)

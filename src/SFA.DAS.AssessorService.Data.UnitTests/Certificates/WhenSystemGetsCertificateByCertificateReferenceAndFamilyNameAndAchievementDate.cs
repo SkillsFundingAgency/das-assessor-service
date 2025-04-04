@@ -1,38 +1,38 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.TestHelper;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.TestHelper;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
     public class WhenSystemGetsCertificateByCertificateReferenceAndFamilyNameAndAchievementDate
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
         private DateTime _achievementDate;
-
 
         [SetUp]
         public void Arrange()
         {
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockDbContext = CreateMockDbContext();
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
         }
 
         [Test]
         public async Task ItShouldReturnResult()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292", "Hawkins", _achievementDate);
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292", "Hawkins", _achievementDate);
             
             result.Uln.Should().Be(2222222222);
         }
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_FamilyNameIsNotCorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292", "Incorrect", _achievementDate);
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292", "Incorrect", _achievementDate);
 
             result.Should().BeNull();
         }
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_CertificateReferenceIsIncorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate("09999999999", "Hawkins", _achievementDate);
+            var result = await _certificateRepository.GetCertificate<Certificate>("09999999999", "Hawkins", _achievementDate);
 
             result.Should().BeNull();
         }
@@ -56,14 +56,14 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         [Test]
         public async Task And_AchievementDateIsIncorrect_Then_ReturnNull()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292", "Hawkins", DateTime.Now.AddDays(-9).Date);
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292", "Hawkins", DateTime.Now.AddDays(-9).Date);
 
             result.Should().BeNull();
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private Mock<IAssessorDbContext> CreateMockDbContext()
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             _achievementDate = DateTime.Now.Date;
 
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

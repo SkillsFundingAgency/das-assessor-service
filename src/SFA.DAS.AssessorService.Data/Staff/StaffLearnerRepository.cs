@@ -5,23 +5,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Application.Handlers.Staff;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
     public class StaffLearnerRepository : IStaffLearnerRepository
     {
-        private readonly AssessorDbContext _context;
+        private readonly IAssessorUnitOfWork _assessorUnitOfWork;
         private readonly ILearnerRepository _learnerRepository;
         private readonly IDbConnection _connection;
 
-        public StaffLearnerRepository(AssessorDbContext context, ILearnerRepository learnerRepository, IDbConnection connection)
+        public StaffLearnerRepository(IAssessorUnitOfWork assessorUnitOfWork, ILearnerRepository learnerRepository, IDbConnection connection)
         {
-            _context = context;
+            _assessorUnitOfWork = assessorUnitOfWork;
             _learnerRepository = learnerRepository;
             _connection = connection;
         }
@@ -30,7 +28,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             var results = new List<Learner>();
             
-            var cert = await _context.Certificates.Include(q => q.Organisation).FirstOrDefaultAsync(c => c.CertificateReference == certRef);
+            var cert = await _assessorUnitOfWork.AssessorDbContext.StandardCertificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c => c.CertificateReference == certRef);
 
             if(cert != null)
             {
@@ -38,16 +38,14 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
                 if (learner is null)
                 {
-                    var certData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
-
                     learner = new Learner
                     {
                         Uln = cert.Uln,
-                        GivenNames = certData.LearnerGivenNames,
-                        FamilyName = certData.LearnerFamilyName,
+                        GivenNames = cert.CertificateData.LearnerGivenNames,
+                        FamilyName = cert.CertificateData.LearnerFamilyName,
                         StdCode = cert.StandardCode,
                         LearnRefNumber = cert.LearnRefNumber,
-                        LearnStartDate = certData.LearningStartDate ?? DateTime.MinValue,
+                        LearnStartDate = cert.CertificateData.LearningStartDate ?? DateTime.MinValue,
                         EpaOrgId = cert.Organisation?.EndPointAssessorOrganisationId,
                         UkPrn = cert.Organisation?.EndPointAssessorUkprn ?? int.MinValue
                     };
@@ -89,7 +87,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             [LearnRefNumber],
                             1 [CompletionStatus],
                             NULL [PlannedEndDate]
-                            FROM [Certificates] ce 
+                            FROM [StandardCertificates] ce 
                             JOIN [Organisations] og ON ce.OrganisationId = og.Id
                             WHERE ce.[Status] <> 'Deleted'
                             AND [Uln] = @uln 
@@ -117,7 +115,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                                     SELECT [Id] ,[Uln], [StdCode], 2 choice
                                     FROM (
                                     SELECT Row_number() OVER (ORDER BY CertificateReferenceId DESC) rownumber, ce.id, Uln, StandardCode StdCode
-                                    FROM [Certificates] ce 
+                                    FROM [StandardCertificates] ce 
                                     JOIN [Organisations] og ON ce.OrganisationId = og.Id
                                     WHERE ce.[Status] <> 'Deleted'
                                     AND [Uln] = @uln 
@@ -154,7 +152,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             {
                 PageOfResults = (await _connection.QueryAsync<Learner>(
                         @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt as LastUpdatedAt 
-                            FROM Certificates cert
+                            FROM StandardCertificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                             WHERE org.EndPointAssessorOrganisationId = @epaOrgId
                             ORDER BY cert.UpdatedAt DESC                     
@@ -163,12 +161,10 @@ namespace SFA.DAS.AssessorService.Data.Staff
                         new { epaOrgId = searchRequest.SearchQuery.ToLower(), skip = (searchRequest.Page - 1) * 10, take = 10 }))
                     .ToList(),
                 TotalCount = await _connection.ExecuteScalarAsync<int>(@"SELECT COUNT(1)
-                    FROM Certificates cert
+                    FROM StandardCertificates cert
                         INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                     WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new { epaOrgId = searchRequest.SearchQuery.ToLower() })
             };
-
-
 
             return searchResult;
         }

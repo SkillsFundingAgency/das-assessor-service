@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.Extensions;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
@@ -14,42 +14,42 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class OrganisationQueryRepository : IOrganisationQueryRepository
     {
-        private readonly AssessorDbContext _assessorDbContext;
+        private readonly IAssessorUnitOfWork _assessorUnitOfWork;
 
-        public OrganisationQueryRepository(AssessorDbContext assessorDbContext)
+        public OrganisationQueryRepository(IAssessorUnitOfWork assessorUnitOfWork)
         {
-            _assessorDbContext = assessorDbContext;
+            _assessorUnitOfWork = assessorUnitOfWork;
         }
 
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
-            return await _assessorDbContext.Organisations.ToListAsync();
+            return await _assessorUnitOfWork.AssessorDbContext.Organisations.ToListAsync();
         }
 
         public async Task<Organisation> GetByUkPrn(long ukprn)
         {
-            return await _assessorDbContext.Organisations
+            return await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);
         }
         
 
         public async Task<Organisation> Get(string endPointAssessorOrganisationId)
         {
-            return await _assessorDbContext.Organisations
+            return await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .Include(o => o.OrganisationType)
                 .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
         }
 
         public async Task<Organisation> Get(Guid id)
         {
-            return await _assessorDbContext.Organisations
+            return await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .Include(o => o.OrganisationType)
                 .SingleOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
-            var organisation = await _assessorDbContext.Organisations
+            var organisation = await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .FirstOrDefaultAsync(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
             return organisation != null;
@@ -57,14 +57,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> CheckIfAlreadyExists(Guid id)
         {
-            var organisation = await _assessorDbContext.Organisations
+            var organisation = await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .FirstOrDefaultAsync(q => q.Id == id);
             return organisation != null;
         }
 
         public async Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId)
         {
-            var organisation = await _assessorDbContext.Organisations
+            var organisation = await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .Include(q => q.Contacts)
                 .FirstOrDefaultAsync(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> CheckIfOrganisationHasContactsWithGovUkIdentifier(string endPointAssessorOrganisationId, Guid contactId)
         {
-            var organisation = await _assessorDbContext.Organisations
+            var organisation = await _assessorUnitOfWork.AssessorDbContext.Organisations
                 .Include(q => q.Contacts)
                 .FirstOrDefaultAsync(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
@@ -83,12 +83,12 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<bool> IsOfsOrganisation(int ukprn)
         {
-            return await _assessorDbContext.OfsOrganisation.AnyAsync(o => o.Ukprn == ukprn);
+            return await _assessorUnitOfWork.AssessorDbContext.OfsOrganisation.AnyAsync(o => o.Ukprn == ukprn);
         }
 
         public async Task<IEnumerable<Organisation>> GetOrganisationsByStandard(int standard)
         {
-            var organisations = await _assessorDbContext
+            var organisations = await _assessorUnitOfWork.AssessorDbContext
                 .OrganisationStandard
                 .Include(c => c.Organisation)
                 .Include(c=>c.OrganisationStandardDeliveryAreas)
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Organisation> GetOrganisationByContactId(Guid contactId)
         {
-            var contact = await _assessorDbContext
+            var contact = await _assessorUnitOfWork.AssessorDbContext
                 .Contacts
                 .Include(c => c.Organisation)
                 .Include(c => c.Organisation.OrganisationType)
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<PaginatedList<MergeLogEntry>> GetOrganisationMergeLogs(int pageSize, int pageIndex, string orderBy, string orderDirection, string primaryEPAOId, string secondaryEPAOId, string status)
         {
-            IQueryable<MergeOrganisation> queryable = _assessorDbContext.MergeOrganisations;
+            IQueryable<MergeOrganisation> queryable = _assessorUnitOfWork.AssessorDbContext.MergeOrganisations;
             if (!string.IsNullOrWhiteSpace(status))
             {
                 queryable = queryable.Where(mo => mo.Status == status);
@@ -163,7 +163,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<MergeLogEntry> GetOrganisationMergeLogById(int id)
         {
-            var o = await _assessorDbContext.MergeOrganisations.FirstOrDefaultAsync(mo => mo.Id == id);
+            var o = await _assessorUnitOfWork.AssessorDbContext.MergeOrganisations.FirstOrDefaultAsync(mo => mo.Id == id);
             if (null == o) return null;
             return new MergeLogEntry()
             {
