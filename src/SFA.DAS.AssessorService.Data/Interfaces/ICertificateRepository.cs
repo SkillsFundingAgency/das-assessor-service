@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task<T> GetCertificate<T>(string certificateReference, string familyName, DateTime? achievementDate) where T : CertificateBase;
 
         Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
-        Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId, bool includeLogs = false);
+
+        Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId);
 
         Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus);
 

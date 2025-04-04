@@ -1,21 +1,21 @@
-﻿using System.Threading.Tasks;
-using System.Threading;
-using AutoMapper;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.Testing.AutoFixture;
-using FluentAssertions;
-using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
-using SFA.DAS.AssessorService.Data.Interfaces;
+﻿using System;
 using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using System;
 using System.Linq;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Domain.JsonData;
+using System.Threading;
+using System.Threading.Tasks;
 using AutoFixture;
+using AutoMapper;
+using FluentAssertions;
+using Moq;
+using Newtonsoft.Json;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
 {
@@ -125,7 +125,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             // Arrange
             frameworkResult.CertificateReference = null;
             frameworkResult.CertificateStatus = null;
-            frameworkResult.CertificateStatusDate = null;
+            frameworkResult.CertificatePrintStatusAt = null;
+            frameworkResult.CertificatePrintReasonForChange = null;
+            frameworkResult.CertificateLastUpdatedAt = null;
             frameworkResult.CertificateLogs = null;
 
             _frameworkLearnerRepository
@@ -133,7 +135,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             .ReturnsAsync(learner);
 
             _certificateRepository
-                .Setup(r => r.GetFrameworkCertificate(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .Setup(r => r.GetFrameworkCertificate(It.IsAny<Guid>()))
                 .ReturnsAsync((FrameworkCertificate)null);
 
             _mapperMock
@@ -144,10 +146,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             var result = await _handler.Handle(query, new CancellationToken());
 
             // Assert
-            result.CertificateLogs.Should().BeNull();
             result.CertificateReference.Should().BeNull();
             result.CertificateStatus.Should().BeNull();
-            result.CertificateStatusDate.Should().BeNull();
+            result.CertificatePrintStatusAt.Should().BeNull();
+            result.CertificatePrintReasonForChange.Should().BeNull();
+            result.CertificateLastUpdatedAt.Should().BeNull();
+            result.CertificateLogs.Should().BeNull();
         }
 
         [Test, MoqAutoData]
@@ -155,16 +159,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         {
             var query = _fixture.Create<GetFrameworkLearnerRequest>();
             var learner = _fixture.Create<FrameworkLearner>();
-            var certificate = _fixture.Create<FrameworkCertificate>();
             var frameworkResult = _fixture.Create<GetFrameworkLearnerResponse>();
-            
+            var certificateBatchLog = _fixture.Create<CertificateBatchLog>();
+            var certificate = _fixture.Create<FrameworkCertificate>();
+            certificate.DeletedAt = null;
+            certificate.UpdatedAt = null;
+            certificate.CertificateBatchLog = certificateBatchLog;
+
             // Arrange
             _frameworkLearnerRepository
                 .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync(learner);
 
              _certificateRepository
-                .Setup(r => r.GetFrameworkCertificate(query.Id, It.IsAny<bool>()))
+                .Setup(r => r.GetFrameworkCertificate(query.Id))
                 .ReturnsAsync(certificate);
 
             _mapperMock
@@ -177,7 +185,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             // Assert
             result.CertificateReference.Should().Be(certificate.CertificateReference);
             result.CertificateStatus.Should().Be(certificate.Status);
-            result.CertificateStatusDate.Should().Be(certificate.UpdatedAt);
+            result.CertificatePrintStatusAt.Should().Be(certificateBatchLog.StatusAt);
+            result.CertificatePrintReasonForChange.Should().Be(certificateBatchLog.ReasonForChange);
+            result.CertificateLastUpdatedAt.Should().Be(certificate.CreatedAt);
         }
 
         [Test, MoqAutoData]
@@ -185,23 +195,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
         {
             // Arrange
             var query = _fixture.Create<GetFrameworkLearnerRequest>();
+            query.AllLogs = true;
+
             var learner = _fixture.Create<FrameworkLearner>();
             var certificate = _fixture.Create<FrameworkCertificate>();
             var frameworkResult = _fixture.Create<GetFrameworkLearnerResponse>();
-            List<CertificateLogSummary> allLogs = CreateCertificateLogs();
-            query.AllLogs = true;
-
+            var certificateAllLogs = CreateCertificateLogs();
+            
             _frameworkLearnerRepository
                 .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync(learner);
 
             _certificateRepository
-                .Setup(r => r.GetFrameworkCertificate(query.Id, query.AllLogs))
+                .Setup(r => r.GetFrameworkCertificate(query.Id))
                 .ReturnsAsync(certificate);
 
             _staffCertificateRepository
                 .Setup(r => r.GetAllCertificateLogs(certificate.Id))
-                .ReturnsAsync(allLogs);
+                .ReturnsAsync(certificateAllLogs);
 
             _mapperMock
                 .Setup(m => m.Map<GetFrameworkLearnerResponse>(learner))
@@ -211,7 +222,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             var result = await _handler.Handle(query, new CancellationToken());
 
             // Assert
-            result.CertificateLogs.Should().BeEquivalentTo(allLogs);
+            result.CertificateLogs.Should().BeEquivalentTo(certificateAllLogs);
         }
 
         [Test, MoqAutoData]
@@ -222,7 +233,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             var learner = _fixture.Create<FrameworkLearner>();
             var certificate = _fixture.Create<FrameworkCertificate>();
             var frameworkResult = _fixture.Create<GetFrameworkLearnerResponse>();
-            var latestLogs = CreateCertificateLogs();
+            var certificateLatestLogs = CreateCertificateLogs();
 
             query.AllLogs = false;
 
@@ -231,12 +242,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
                 .ReturnsAsync(learner);
 
             _certificateRepository
-                .Setup(r => r.GetFrameworkCertificate(query.Id, query.AllLogs))
+                .Setup(r => r.GetFrameworkCertificate(query.Id))
                 .ReturnsAsync(certificate);
 
             _staffCertificateRepository
                 .Setup(r => r.GetLatestCertificateLogs(certificate.Id, 3))
-                .ReturnsAsync(latestLogs);
+                .ReturnsAsync(certificateLatestLogs);
 
             _mapperMock
                 .Setup(m => m.Map<GetFrameworkLearnerResponse>(learner))
@@ -246,47 +257,46 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.FrameworkSearch
             var result = await _handler.Handle(query, new CancellationToken());
 
             // Assert
-            result.CertificateLogs.Should().BeEquivalentTo(latestLogs);
+            result.CertificateLogs.Should().BeEquivalentTo(certificateLatestLogs);
         }
 
         [Test]
         public async Task AndLogsCountGreaterThanOneThenDifferencesAreCalculated()
         {
             // Arrange
-            var logs = CreateCertificateLogs();
-
             var query = _fixture.Create<GetFrameworkLearnerRequest>();
             var learner = _fixture.Create<FrameworkLearner>();
             var certificate = _fixture.Create<FrameworkCertificate>();
             var frameworkResult = _fixture.Create<GetFrameworkLearnerResponse>();
+            var certificateLatestLogs = CreateCertificateLogs();
 
             _frameworkLearnerRepository
                 .Setup(r => r.GetFrameworkLearner(query.Id))
                 .ReturnsAsync(learner);
 
             _certificateRepository
-                .Setup(r => r.GetFrameworkCertificate(query.Id, query.AllLogs))
+                .Setup(r => r.GetFrameworkCertificate(query.Id))
                 .ReturnsAsync(certificate);
 
             _staffCertificateRepository
                 .Setup(r => r.GetLatestCertificateLogs(certificate.Id, 3))
-                .ReturnsAsync(logs);
+                .ReturnsAsync(certificateLatestLogs);
 
             _mapperMock
                 .Setup(m => m.Map<GetFrameworkLearnerResponse>(learner))
                 .Returns(frameworkResult);
 
             // Act
-            var result = await _handler.Handle(query, new CancellationToken());
+            await _handler.Handle(query, new CancellationToken());
 
             // Assert
-            logs.Should().NotBeNullOrEmpty();
+            certificateLatestLogs.Should().NotBeNullOrEmpty();
 
             // Check that one log has no differences
-            logs.Count(log => log.DifferencesToPrevious.Count == 0).Should().Be(1);
+            certificateLatestLogs.Count(log => log.DifferencesToPrevious.Count == 0).Should().Be(1);
 
             // Check that two logs have more than one difference
-            logs.Count(log => log.DifferencesToPrevious.Count > 1).Should().Be(2);
+            certificateLatestLogs.Count(log => log.DifferencesToPrevious.Count > 1).Should().Be(2);
         }
 
         private static List<CertificateLogSummary> CreateCertificateLogs()

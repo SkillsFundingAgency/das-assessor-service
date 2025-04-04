@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Application.Extensions;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using SFA.DAS.AssessorService.Domain.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
 {
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
             var frameworkLearner =  await _frameworkLearnerRepository.GetFrameworkLearner(request.Id);
             var frameworkLearnerResponse = _mapper.Map<GetFrameworkLearnerResponse>(frameworkLearner);
 
-            var certificate = await _certificateRepository.GetFrameworkCertificate(request.Id, request.AllLogs);
+            var certificate = await _certificateRepository.GetFrameworkCertificate(request.Id);
             if (certificate != null)
             { 
                 var logs = new List<CertificateLogSummary>();
@@ -56,10 +57,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
                     logs.CalculateDifferences();
                 }
 
-                frameworkLearnerResponse.CertificateLogs = logs;
                 frameworkLearnerResponse.CertificateReference = certificate.CertificateReference;
                 frameworkLearnerResponse.CertificateStatus = certificate.Status;
-                frameworkLearnerResponse.CertificateStatusDate = certificate.UpdatedAt;
+                frameworkLearnerResponse.CertificatePrintStatusAt = certificate.CertificateBatchLog?.StatusAt;
+                frameworkLearnerResponse.CertificatePrintReasonForChange = certificate.CertificateBatchLog?.ReasonForChange;
+                frameworkLearnerResponse.CertificateLastUpdatedAt = certificate.LatestChange();
+                frameworkLearnerResponse.CertificateLogs = logs;
             }
 
             return frameworkLearnerResponse;

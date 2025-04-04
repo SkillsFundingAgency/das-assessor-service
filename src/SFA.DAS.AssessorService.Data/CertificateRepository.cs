@@ -175,16 +175,11 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
-        public async Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId, bool includeLogs = false)
+        public async Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId)
         {
-            IQueryable<FrameworkCertificate> query = _unitOfWork.AssessorDbContext.FrameworkCertificates;
-
-            if (includeLogs)
-            {
-                query = query.Include(c => c.CertificateLogs);
-            }
-
-            return await query.SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
+            return await _unitOfWork.AssessorDbContext.FrameworkCertificates
+                 .Include(q => q.CertificateBatchLog)
+                 .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
