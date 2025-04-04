@@ -112,6 +112,19 @@
         "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
         }
     },
     "variables": {
@@ -125,7 +138,11 @@
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
         "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "serviceBusName": "[concat(variables('resourceNamePrefix'), '-ns')]",
-        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn"
+        "configNames": "SFA.DAS.AssessorService.Web,SFA.DAS.Assessor.GovSignIn",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
+        },
+        "emptyObject": {}
     },
     "resources": [
         {
