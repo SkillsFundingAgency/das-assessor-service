@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -596,7 +597,7 @@ namespace SFA.DAS.AssessorService.Data
                     Action = action,
                     Status = status,
                     EventTime = eventTime,
-                    CertificateData = certificateData,
+                    CertificateData = CloneCertificateData(certificateData),
                     Username = username,
                     BatchNumber = batchNumber,
                     ReasonForChange = reasonForChange
@@ -619,7 +620,7 @@ namespace SFA.DAS.AssessorService.Data
                 CertificateId = c.Id,
                 EventTime = c.UpdatedAt.Value,
                 Status = c.Status,
-                CertificateData = c.CertificateData,
+                CertificateData = CloneCertificateData(c.CertificateData),
                 Username = username,
                 BatchNumber = batchNumber,
                 ReasonForChange = reasonForChange
@@ -627,5 +628,12 @@ namespace SFA.DAS.AssessorService.Data
 
             await _unitOfWork.AssessorDbContext.CertificateLogs.AddRangeAsync(logs);
         }
+
+        private static CertificateData CloneCertificateData(CertificateData original)
+        {
+            var serialized = JsonConvert.SerializeObject(original);
+            return JsonConvert.DeserializeObject<CertificateData>(serialized);
+        }
+
     }
 }
