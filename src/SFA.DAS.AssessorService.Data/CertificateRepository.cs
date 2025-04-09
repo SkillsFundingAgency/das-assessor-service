@@ -525,6 +525,9 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId)
         {
+            if (string.IsNullOrEmpty(epaOrgId) || employerAccountId == null)
+                return null;
+            
             var statuses = new[] { CertificateStatus.Submitted }
                 .Concat(CertificateStatus.PrintProcessStatus)
                 .ToList();
