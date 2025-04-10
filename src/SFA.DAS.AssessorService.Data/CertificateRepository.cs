@@ -378,7 +378,7 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.Uln = updatedCertificate.Uln;
             certificate.StandardUId = updatedCertificate.StandardUId;
-            certificate.CertificateData = updatedCertificate.CertificateData;
+            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
             certificate.Status = updatedCertificate.Status;
             certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;
             certificate.StandardCode = updatedCertificate.StandardCode;
@@ -417,7 +417,7 @@ namespace SFA.DAS.AssessorService.Data
             var certificate = await GetCertificate<FrameworkCertificate>(updatedCertificate.Id)
                 ?? throw new NotFoundException();
 
-            certificate.CertificateData = updatedCertificate.CertificateData;
+            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
             certificate.Status = updatedCertificate.Status;
             certificate.UpdatedBy = username;
             certificate.UpdatedAt = DateTime.UtcNow;
