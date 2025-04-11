@@ -1,18 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 {
- public class WhenCreateOrganisationHandlerSucceeds : MapperBase
+    public class WhenCreateOrganisationHandlerSucceeds : MapperBase
     {
         private Mock<IOrganisationRepository> _organisationRepositoryMock;
         private Mock<IContactRepository> _contactRepositoryMock;

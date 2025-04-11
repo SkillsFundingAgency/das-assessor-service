@@ -1,9 +1,11 @@
-﻿using Dapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
@@ -11,155 +13,108 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class CertificateRepository : Repository, ICertificateRepository
+    public class CertificateRepository : ICertificateRepository
     {
-        private readonly AssessorDbContext _context;
+        private readonly IAssessorUnitOfWork _unitOfWork;
 
-        public CertificateRepository(IUnitOfWork unitOfWork, AssessorDbContext context)
-            : base(unitOfWork)
+        public CertificateRepository(IAssessorUnitOfWork unitOfWork)
         {
-            _context = context;
-
-            SqlMapper.AddTypeHandler(typeof(CertificateData), new CertificateDataHandler());
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<Certificate> New(Certificate certificate)
+        public async Task<Certificate> NewStandardCertificate(Certificate certificate)
         {
-            // cannot create a New certificate for same uln / std code on the same day - return existing
-            var existingCert = await _context.Certificates
-                .FirstOrDefaultAsync(c =>
+            var query = _unitOfWork.AssessorDbContext.StandardCertificates
+                .Where(c =>
                     c.Uln == certificate.Uln &&
-                    c.StandardCode == certificate.StandardCode &&
-                    c.CreateDay == certificate.CreateDay);
+                    c.StandardCode == certificate.StandardCode);
 
-            if (existingCert != null) return existingCert;
-
-            try
-            {
-                return await CreateCertificate(certificate);
-            }
-            catch (Exception e)
-            {
-                if (!(e.InnerException is SqlException sqlException)) throw;
-
-                if (sqlException.Number == 2601 || sqlException.Number == 2627)
-                {
-                    // cannot create a New certificate for same uln / std code on the same day - return existing
-                    return await _context.Certificates.FirstOrDefaultAsync(c =>
-                        c.Uln == certificate.Uln &&
-                        c.StandardCode == certificate.StandardCode &&
-                        c.CreateDay == certificate.CreateDay);
-                }
-
-                throw;
-            }
+            var existingCertificate = await query.FirstOrDefaultAsync();
+            return existingCertificate == null ? await CreateCertificate(certificate) : existingCertificate;
         }
 
-        private async Task<Certificate> CreateCertificate(Certificate certificate)
+        public async Task<FrameworkCertificate> NewFrameworkCertificate(FrameworkCertificate certificate)
         {
-            var strategy = _context.Database.CreateExecutionStrategy();
+            var query = _unitOfWork.AssessorDbContext.FrameworkCertificates
+                .Where(c =>
+                    c.FrameworkLearnerId == certificate.FrameworkLearnerId);
 
-            await strategy.ExecuteAsync(async () =>
+            var existingCertificate = await query.FirstOrDefaultAsync();
+            return existingCertificate == null ? await CreateCertificate(certificate) : existingCertificate;
+        }
+
+        private async Task<T> CreateCertificate<T>(T certificate) where T : CertificateBase
+        {
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        certificate.Id = Guid.NewGuid();
-                        await _context.Certificates.AddAsync(certificate);
+                certificate.Id = Guid.NewGuid();
+                await _unitOfWork.AssessorDbContext.Set<CertificateBase>().AddAsync(certificate);
 
-                        // generate the IDENTITY value from the CertificateReferenceId
-                        await _context.SaveChangesAsync();
+                // generate the IDENTITY value from the CertificateReferenceId
+                await _unitOfWork.AssessorDbContext.SaveChangesAsync();
 
-                        // format the IDENITY value into the CertificateReference - note that this is not using a sequence
-                        // or a computed column because doing so at this stage would require a large amount of rework in the
-                        // database schema
-                        certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
+                // format the IDENITY value into the CertificateReference - note that this is not using a sequence
+                // or a computed column because doing so at this stage would require a large amount of rework in the
+                // database schema
+                certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
 
-                        // ensure the EpaDetails are kept in sychronization with the certificate reference
-                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                        certificateData.EpaDetails.EpaReference = certificate.CertificateReference;
-                        certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+                // ensure the EpaDetails are kept in sychronization with the certificate reference
+                certificate.CertificateData.EpaDetails.EpaReference = certificate.CertificateReference;
 
-                        AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
-                            certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
-
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
-                }
+                AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
+                    certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
             });
 
             return certificate;
         }
 
-        public async Task<Certificate> GetCertificate(Guid id, 
-            bool includeLogs = false)
+        public async Task<T> GetCertificate<T>(Guid id, bool includeLogs = false) where T : CertificateBase
         {
-            if (!includeLogs)
+            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+
+            if (includeLogs)
             {
-                return await _context.Certificates
-                    .SingleOrDefaultAsync(c => c.Id == id);
+                query = query.Include(c => c.CertificateLogs);
             }
 
-            return await _context.Certificates
-                .Include(l => l.CertificateLogs)
-                .SingleOrDefaultAsync(c => c.Id == id);
+            return await query.OfType<T>().SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Certificate> GetCertificate(long uln, 
-            int standardCode)
+
+        public async Task<Certificate> GetCertificate(long uln, int standardCode)
         {
-            return await _context.Certificates
+            return await _unitOfWork.AssessorDbContext.StandardCertificates
                  .Include(q => q.CertificateBatchLog)
                  .SingleOrDefaultAsync(c =>
                     c.Uln == uln && 
                     c.StandardCode == standardCode);
         }
 
-        public async Task<Certificate> GetCertificate(long uln, 
-            int standardCode, string familyName, bool includeLogs = false)
+        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, bool includeLogs = false)
         {
-            if (!includeLogs)
+            var query = _unitOfWork.AssessorDbContext.StandardCertificates
+                .Include(q => q.CertificateBatchLog)
+                .AsQueryable();
+
+            if (includeLogs)
             {
-                return await _context.Certificates
-                 .Include(q => q.CertificateBatchLog)
-                 .SingleOrDefaultAsync(c =>
+                query = query.Include(c => c.CertificateLogs);
+            }
+
+            return await query
+                .SingleOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.StandardCode == standardCode &&
                     c.LearnerFamilyName.Equals(familyName));
-            }
-            else
-            {
-                return await _context.Certificates
-                   .Include(q => q.CertificateBatchLog)
-                   .Include(q => q.CertificateLogs)
-                   .SingleOrDefaultAsync(c =>
-                        c.Uln == uln &&
-                        c.StandardCode == standardCode &&
-                        c.LearnerFamilyName.Equals(familyName));
-                
-            }
         }
 
-        public async Task<Certificate> GetCertificate(long uln,
-            int standardCode, string familyName, string endpointOrganisationId)
+        public async Task<Certificate> GetCertificate(long uln, int standardCode, string familyName, string endpointOrganisationId)
         {
-            return await _context.Certificates
+            return await _unitOfWork.AssessorDbContext.StandardCertificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
@@ -168,10 +123,9 @@ namespace SFA.DAS.AssessorService.Data
                     c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId);
         }
 
-        public async Task<Certificate> GetCertificate(long uln,
-            string familyName)
+        public async Task<Certificate> GetCertificate(long uln, string familyName)
         {
-            var certificate = await _context.Certificates
+            var certificate = await _unitOfWork.AssessorDbContext.StandardCertificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
@@ -180,103 +134,99 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<bool> CertifciateExistsForUln(long uln)
+        public async Task<T> GetCertificate<T>(string certificateReference, string familyName, DateTime? achievementDate) where T : CertificateBase
         {
-            return await _context.Certificates
-                .AnyAsync(c =>
-                    c.Uln == uln);
+            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+
+            return await query.OfType<T>().FirstOrDefaultAsync(c =>
+                c.CertificateReference == certificateReference &&
+                c.LearnerFamilyName.Equals(familyName) &&
+                c.AchievementDate.Equals(achievementDate));
+        }
+
+        public async Task<T> GetCertificate<T>(string certificateReference) where T : CertificateBase
+        {
+            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+
+            return await query.OfType<T>().FirstOrDefaultAsync(c => 
+                c.CertificateReference == certificateReference);
+        }
+
+        public async Task<bool> CertificateExistsForUln(long uln)
+        {
+            return await _unitOfWork.AssessorDbContext.StandardCertificates
+                .AnyAsync(c => c.Uln == uln);
         }
 
         public async Task<Certificate> GetCertificateDeletedByUln(long uln)
         {
-            return await _context.Certificates
+            return await _unitOfWork.AssessorDbContext.StandardCertificates
                 .Include(q => q.Organisation)
                 .FirstOrDefaultAsync(c =>
                     c.Uln == uln &&
                     c.Status == CertificateStatus.Deleted);
         }
 
-        public async Task<Certificate> GetCertificate(string certificateReference,
-            string familyName,  DateTime? achievementDate)
-        {
-            return await _context.Certificates
-                .FirstOrDefaultAsync(c =>
-                    c.CertificateReference == certificateReference &&
-                    c.LearnerFamilyName.Equals(familyName) &&
-                    c.AchievementDate.Equals(achievementDate));
-        }
-
-        public async Task<Certificate> GetCertificate(string certificateReference)
-        {
-            return await _context.Certificates
-                .FirstOrDefaultAsync(c => 
-                    c.CertificateReference == certificateReference);
-        }
 
         public async Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln)
         {
             var statuses = new[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.ToBeApproved }.Concat(CertificateStatus.PrintProcessStatus).ToList();
-            return await _context.Certificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
+            return await _unitOfWork.AssessorDbContext.StandardCertificates.Where(c => c.Uln == uln && statuses.Contains(c.Status))
                 .Include(c => c.CertificateLogs)
                 .ToListAsync();
         }
 
+        public async Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId)
+        {
+            return await _unitOfWork.AssessorDbContext.FrameworkCertificates
+                 .Include(q => q.CertificateBatchLog)
+                 .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
+        }
+
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
         {
-            var sql =
-              @"SELECT COUNT(1)
-                FROM
-                    [Certificates] c
-                WHERE
-                    JSON_VALUE(CertificateData, '$.ContactAddLine1') IS NOT NULL
-                    AND JSON_VALUE(CertificateData, '$.ContactPostCode') IS NOT NULL
-                    AND JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades
-                    AND c.Status IN @includedStatus
-                    AND c.BatchNumber IS NULL";
+            var query = _unitOfWork.AssessorDbContext
+                .Set<CertificateBase>()
+                .Where(c => c.CertificateData.ContactAddLine1 != null &&
+                            c.CertificateData.ContactPostCode != null &&
+                            !excludedOverallGrades.Contains(c.CertificateData.OverallGrade) &&
+                            includedStatus.Contains(c.Status) &&
+                            c.BatchNumber == null);
 
-            var count = await _unitOfWork.Connection.QueryFirstAsync<int>(
-                sql,
-                param: new { excludedOverallGrades, includedStatus },
-                transaction: _unitOfWork.Transaction);
-
-            return count;
+            return await query.CountAsync();
         }
 
         public async Task<Guid[]> GetCertificatesReadyToPrint(int numberOfCertificates, string[] excludedOverallGrades, string[] includedStatus)
         {
-            var certificateIds = await _unitOfWork.Connection.QueryAsync<Guid>(
-              @"SELECT TOP(@numberOfCertificates)
-                    c.[Id]
-                FROM
-                    [Certificates] c
-                WHERE
-                    JSON_VALUE(CertificateData, '$.ContactAddLine1') IS NOT NULL
-                    AND JSON_VALUE(CertificateData, '$.ContactPostCode') IS NOT NULL
-                    AND JSON_VALUE(CertificateData, '$.OverallGrade') NOT IN @excludedOverallGrades
-                    AND c.Status IN @includedStatus
-                    AND BatchNumber IS NULL",
-                param: new { numberOfCertificates, excludedOverallGrades, includedStatus },
-                transaction: _unitOfWork.Transaction);
+            var query = _unitOfWork.AssessorDbContext
+                .Set<CertificateBase>()
+                .Where(c => c.CertificateData.ContactAddLine1 != null &&
+                            c.CertificateData.ContactPostCode != null &&
+                            !excludedOverallGrades.Contains(c.OverallGrade) &&
+                            includedStatus.Contains(c.Status) &&
+                            c.BatchNumber == null)
+                .OrderBy(c => c.Id)
+                .Take(numberOfCertificates)
+                .Select(c => c.Id);
 
-            return certificateIds.ToArray();
+            return await query.ToArrayAsync();
         }
 
         public async Task UpdateCertificatesReadyToPrintInBatch(Guid[] certificateIds, int batchNumber)
         {
-            var sql =
-              @"UPDATE [Certificates] SET
-                    UpdatedAt = GETUTCDATE(),
-                    UpdatedBy = @updatedBy,
-                    BatchNumber = @batchNumber
-                WHERE
-                    Id IN @certificateIds";
+            var certificates = await _unitOfWork.AssessorDbContext.Set<CertificateBase>()
+                .Where(c => certificateIds.Contains(c.Id))
+                .ToListAsync();
 
-            await _unitOfWork.Connection.ExecuteAsync(
-                sql,
-                param: new { certificateIds, batchNumber, updatedBy = SystemUsers.PrintFunction },
-                transaction: _unitOfWork.Transaction);
+            foreach (var certificate in certificates)
+            {
+                certificate.UpdatedAt = DateTime.UtcNow;
+                certificate.UpdatedBy = SystemUsers.PrintFunction;
+                certificate.BatchNumber = batchNumber;
+            }
 
             await AddMultipleCertificateLogs(certificateIds, CertificateActions.Status, SystemUsers.PrintFunction, batchNumber, null);
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
         }
 
         public async Task<PaginatedList<CertificateHistoryModel>> GetCertificateHistory(string endPointAssessorOrganisationId,
@@ -287,11 +237,11 @@ namespace SFA.DAS.AssessorService.Data
                 bool sortDescending,
                 List<string> statuses)
         {
-            var certificatesQuery = _context.Certificates
-                                    .Include(q => q.CertificateLogs)
-                                    .Include(q => q.CertificateBatchLog)
-                                    .Include(q => q.Organisation)
-                                    .Where(o => o.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && !statuses.Contains(o.Status));
+            var certificatesQuery = _unitOfWork.AssessorDbContext.StandardCertificates
+                .Include(q => q.CertificateLogs)
+                .Include(q => q.CertificateBatchLog)
+                .Include(q => q.Organisation)
+                .Where(o => o.Organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && !statuses.Contains(o.Status));
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -333,7 +283,7 @@ namespace SFA.DAS.AssessorService.Data
                      OrganisationId = q.OrganisationId,
                      OverallGrade = q.OverallGrade,
                      ProviderName = q.ProviderName,
-                     ProviderUkPrn = q.ProviderUkPrn,
+                     ProviderUkPrn = q.ProviderUkPrn.GetValueOrDefault(),
                      StandardCode = q.StandardCode,
                      StandardLevel = q.StandardLevel,
                      StandardName = q.StandardName,
@@ -356,7 +306,7 @@ namespace SFA.DAS.AssessorService.Data
             return new PaginatedList<CertificateHistoryModel>(certificates, count, pageIndex, pageSize);
         }
 
-        private IQueryable<Certificate> GetSortedCertificateInfo(bool sortDescending, GetCertificateHistoryRequest.SortColumns sort, IQueryable<Certificate> certificatesQuery)
+        private static IQueryable<Certificate> GetSortedCertificateInfo(bool sortDescending, GetCertificateHistoryRequest.SortColumns sort, IQueryable<Certificate> certificatesQuery)
         {
             switch (sort)
             {
@@ -421,45 +371,66 @@ namespace SFA.DAS.AssessorService.Data
             return certificatesQuery;
         }
 
-        public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
+        public async Task<Certificate> UpdateStandardCertificate(Certificate updatedCertificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
-            var cert = await GetCertificate(certificate.Id)
+            var certificate = await GetCertificate<Certificate>(updatedCertificate.Id)
                 ?? throw new NotFoundException();
 
-            cert.Uln = certificate.Uln;
-            cert.StandardUId = certificate.StandardUId;
-            cert.CertificateData = certificate.CertificateData;
-            cert.Status = certificate.Status;
-            cert.ProviderUkPrn = certificate.ProviderUkPrn;
-            cert.StandardCode = certificate.StandardCode;
-            cert.UpdatedBy = username;
-            cert.UpdatedAt = DateTime.UtcNow;
-            cert.IsPrivatelyFunded = certificate.IsPrivatelyFunded;
-            cert.StandardUId = certificate.StandardUId;
+            certificate.Uln = updatedCertificate.Uln;
+            certificate.StandardUId = updatedCertificate.StandardUId;
+            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
+            certificate.Status = updatedCertificate.Status;
+            certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;
+            certificate.StandardCode = updatedCertificate.StandardCode;
+            certificate.UpdatedBy = username;
+            certificate.UpdatedAt = DateTime.UtcNow;
+            certificate.IsPrivatelyFunded = updatedCertificate.IsPrivatelyFunded;
+            certificate.StandardUId = updatedCertificate.StandardUId;
 
-            if (cert.IsPrivatelyFunded)
+            if (certificate.IsPrivatelyFunded)
             {
-                cert.PrivatelyFundedStatus = certificate.PrivatelyFundedStatus;
+                certificate.PrivatelyFundedStatus = updatedCertificate.PrivatelyFundedStatus;
             }
 
             if (certificate.Status != CertificateStatus.Deleted)
             {
-                cert.DeletedBy = null;
-                cert.DeletedAt = null;
+                certificate.DeletedBy = null;
+                certificate.DeletedAt = null;
             }
 
-            cert.ToBePrinted = null;
-            cert.BatchNumber = null;
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
 
             if (updateLog)
             {
-                AddSingleCertificateLog(cert.Id, action, cert.Status, cert.UpdatedAt.Value,
-                    cert.CertificateData, cert.UpdatedBy, cert.BatchNumber, reasonForChange);
+                AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
+                    certificate.CertificateData, certificate.UpdatedBy, certificate.BatchNumber, reasonForChange);
             }
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
 
-            return cert;
+            return certificate;
+        }
+
+        public async Task<FrameworkCertificate> UpdateFrameworkCertificate(FrameworkCertificate updatedCertificate, string username, string action)
+        {
+            var certificate = await GetCertificate<FrameworkCertificate>(updatedCertificate.Id)
+                ?? throw new NotFoundException();
+
+            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
+            certificate.Status = updatedCertificate.Status;
+            certificate.UpdatedBy = username;
+            certificate.UpdatedAt = DateTime.UtcNow;
+
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
+
+            AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
+                certificate.CertificateData, certificate.UpdatedBy, certificate.BatchNumber, null);
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
+            return certificate;
         }
 
         public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true, string reasonForChange = null, string incidentNumber = null)
@@ -478,7 +449,7 @@ namespace SFA.DAS.AssessorService.Data
 
             if (incidentNumber != null)
             {
-                UpdateIncidentNumber(incidentNumber, certificate);
+                certificate.CertificateData.IncidentNumber = incidentNumber;
             }
 
             if (updateLog)
@@ -487,34 +458,29 @@ namespace SFA.DAS.AssessorService.Data
                     certificate.CertificateData, certificate.DeletedBy, certificate.BatchNumber, reasonForChange);
             }
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
         }
 
-        private static void UpdateIncidentNumber(string incidentNumber, Certificate cert)
+        public async Task<CertificateBase> UpdateProviderName(Guid certificateId, string providerName)
         {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
-            certificateData.IncidentNumber = incidentNumber;
-            cert.CertificateData = JsonConvert.SerializeObject(certificateData);
-        }
+            var certificate = await GetCertificate<Certificate>(certificateId)
+                ?? throw new NotFoundException();
 
-        public async Task<Certificate> UpdateProviderName(Guid id, string providerName)
-        {
-            var certificate = await GetCertificate(id);
+            certificate.CertificateData.ProviderName = providerName;
 
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            certificateData.ProviderName = providerName;
-
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
 
             return certificate;
         }
 
-        public async Task UpdatePrintStatus(Certificate certificate, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,
+        public async Task UpdatePrintStatus(Guid certificateId, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,
             bool updateCertificate, bool updateCertificateBatchLog)
         {
+            var certificate = await GetCertificate<CertificateBase>(certificateId)
+                ?? throw new NotFoundException();
+
             var certificateBatchLog =
-                await _context.CertificateBatchLogs.FirstOrDefaultAsync(
+                await _unitOfWork.AssessorDbContext.CertificateBatchLogs.FirstOrDefaultAsync(
                     q => q.CertificateReference == certificate.CertificateReference && q.BatchNumber == batchNumber);
 
             if (certificateBatchLog == null)
@@ -545,71 +511,66 @@ namespace SFA.DAS.AssessorService.Data
                 certificateBatchLog.CertificateData, SystemUsers.PrintFunction,
                 certificateBatchLog.BatchNumber, reasonForChange);
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
         }
 
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
         {
-            return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime)
+            return await _unitOfWork.AssessorDbContext.CertificateLogs
+                .Where(l => l.CertificateId == certificateId)
+                .OrderByDescending(l => l.EventTime)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId)
         {
-            var statuses = new[] { CertificateStatus.Submitted }.Concat(CertificateStatus.PrintProcessStatus).ToList();
-            var sendToEmployer = nameof(CertificateSendTo.Employer);
+            if (string.IsNullOrEmpty(epaOrgId) || employerAccountId == null)
+                return null;
+            
+            var statuses = new[] { CertificateStatus.Submitted }
+                .Concat(CertificateStatus.PrintProcessStatus)
+                .ToList();
 
-            var sql = @"
-                SELECT
-                    c.OrganisationId,
-                    JSON_VALUE(CertificateData, '$.ContactOrganisation') ContactOrganisation,
-                    JSON_VALUE(CertificateData, '$.ContactName') ContactName,
-                    JSON_VALUE(CertificateData, '$.Department') Department,
-                    JSON_VALUE(CertificateData, '$.ContactAddLine1') AddressLine1 ,
-                    JSON_VALUE(CertificateData, '$.ContactAddLine2') AddressLine2,
-                    JSON_VALUE(CertificateData, '$.ContactAddLine3') AddressLine3,
-                    JSON_VALUE(CertificateData, '$.ContactAddLine4') City,
-                    JSON_VALUE(CertificateData, '$.ContactPostCode') PostCode
-                FROM
-                    Certificates c INNER JOIN Organisations o
-                    ON c.OrganisationId = o.Id
-                WHERE
-                    o.EndPointAssessorOrganisationId = @epaOrgId
-                    AND JSON_VALUE(CertificateData, '$.EmployerAccountId') = @employerAccountId
-                    AND JSON_VALUE(CertificateData, '$.SendTo') = @sendToEmployer
-                    AND c.Status IN @statuses
-                ORDER BY
-                   ISNULL(c.UpdatedBy, c.CreatedAt) DESC";
+            var query = _unitOfWork.AssessorDbContext.StandardCertificates
+                .Include(c => c.Organisation)
+                .Where(c =>
+                    c.Organisation.EndPointAssessorOrganisationId == epaOrgId &&
+                    c.CertificateData.EmployerAccountId == employerAccountId &&
+                    c.CertificateData.SendTo == CertificateSendTo.Employer &&
+                    statuses.Contains(c.Status))
+                .OrderByDescending(c => c.UpdatedBy != null ? c.UpdatedAt : c.CreatedAt)
 
-            return await _unitOfWork.Connection.QueryFirstOrDefaultAsync<CertificateAddress>(
-                sql,
-                param: new { epaOrgId, employerAccountId, sendToEmployer, statuses },
-                transaction: _unitOfWork.Transaction);
+                .Select(c => new CertificateAddress
+                {
+                    OrganisationId = c.OrganisationId,
+                    ContactOrganisation = c.CertificateData.ContactOrganisation,
+                    ContactName = c.CertificateData.ContactName,
+                    Department = c.CertificateData.Department,
+                    AddressLine1 = c.CertificateData.ContactAddLine1,
+                    AddressLine2 = c.CertificateData.ContactAddLine2,
+                    AddressLine3 = c.CertificateData.ContactAddLine3,
+                    City = c.CertificateData.ContactAddLine4,
+                    PostCode = c.CertificateData.ContactPostCode
+                });
+
+            return await query.FirstOrDefaultAsync();
         }
 
-        public Task<string> GetPreviousProviderName(int providerUkPrn)
+        public async Task<string> GetPreviousProviderName(int providerUkPrn)
         {
-            var sql =
-              @"SELECT
-                   TOP(1) JSON_VALUE(CertificateData, '$.ProviderName')
-                FROM
-                   Certificates
-                WHERE
-                   ProviderUkPrn = @providerUkPrn
-                   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL
-                ORDER BY
-                   CreatedAt DESC";
+            var query = _unitOfWork.AssessorDbContext.StandardCertificates
+                .Where(c => c.ProviderUkPrn == providerUkPrn &&
+                            c.CertificateData.ProviderName != null)
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(c => c.CertificateData.ProviderName);
 
-            return _unitOfWork.Connection.QueryFirstOrDefaultAsync<string>(
-                sql,
-                param: new { providerUkPrn },
-                transaction: _unitOfWork.Transaction);
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference)
         {
-            var query = _context.Certificates
+            var query = _unitOfWork.AssessorDbContext.StandardCertificates
                 .Where(c => !c.IsPrivatelyFunded &&
                             !(c.Status == CertificateStatus.Deleted || c.Status == CertificateStatus.Draft) &&
                             c.ProviderUkPrn == ukprn &&
@@ -628,7 +589,7 @@ namespace SFA.DAS.AssessorService.Data
             };
         }
 
-        private void AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, string certificateData, string username, int? batchNumber, string reasonForChange = null)
+        private void AddSingleCertificateLog(Guid certificateId, string action, string status, DateTime eventTime, CertificateData certificateData, string username, int? batchNumber, string reasonForChange = null)
         {
             if (action != null)
             {
@@ -639,50 +600,43 @@ namespace SFA.DAS.AssessorService.Data
                     Action = action,
                     Status = status,
                     EventTime = eventTime,
-                    CertificateData = certificateData,
+                    CertificateData = CloneCertificateData(certificateData),
                     Username = username,
                     BatchNumber = batchNumber,
                     ReasonForChange = reasonForChange
                 };
 
-                _context.CertificateLogs.Add(certLog);
+                _unitOfWork.AssessorDbContext.CertificateLogs.Add(certLog);
             }
         }
 
         private async Task AddMultipleCertificateLogs(Guid[] certificateIds, string action, string username, int? batchNumber, string reasonForChange = null)
         {
-            var sql =
-                $@"INSERT INTO [CertificateLogs]
-                   (
-                       Id,
-                       Action,
-                       CertificateId,
-                       EventTime,
-                       Status,
-                       CertificateData,
-                       Username,
-                       BatchNumber,
-                       ReasonForChange
-                   )
-                   SELECT
-                       NEWID(), 
-                       @action,
-                       c.Id,
-                       c.UpdatedAt,
-                       c.Status,
-                       c.CertificateData,
-                       @username,
-                       @batchNumber,
-                       @reasonForChange
-                  FROM
-                       [Certificates] c
-                  WHERE
-                       c.Id IN @certificateIds";
+            var certificates = await _unitOfWork.AssessorDbContext.Set<CertificateBase>()
+                .Where(c => certificateIds.Contains(c.Id))
+                .ToListAsync();
 
-            await _unitOfWork.Connection.ExecuteAsync(
-                   sql,
-                   param: new { certificateIds, action, username, batchNumber, reasonForChange },
-                   transaction: _unitOfWork.Transaction);
+            var logs = certificates.Select(c => new CertificateLog
+            {
+                Id = Guid.NewGuid(),
+                Action = action,
+                CertificateId = c.Id,
+                EventTime = c.UpdatedAt.Value,
+                Status = c.Status,
+                CertificateData = CloneCertificateData(c.CertificateData),
+                Username = username,
+                BatchNumber = batchNumber,
+                ReasonForChange = reasonForChange
+            }).ToList();
+
+            await _unitOfWork.AssessorDbContext.CertificateLogs.AddRangeAsync(logs);
         }
+
+        private static CertificateData CloneCertificateData(CertificateData original)
+        {
+            var serialized = JsonConvert.SerializeObject(original);
+            return JsonConvert.DeserializeObject<CertificateData>(serialized);
+        }
+
     }
 }

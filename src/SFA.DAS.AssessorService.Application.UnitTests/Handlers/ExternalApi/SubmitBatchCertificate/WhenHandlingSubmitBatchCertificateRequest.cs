@@ -1,17 +1,17 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.SubmitBatchCertificate
 {
@@ -38,18 +38,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
 
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode))
                 .ReturnsAsync(new Certificate()
-            {
-                Id = certId,
-                Status = CertificateStatus.Approved,
-                CertificateData = @"{}"
-            });
+                {
+                    Id = certId,
+                    Status = CertificateStatus.Approved,
+                    CertificateData = new Domain.JsonData.CertificateData()
+                });
 
-            _certificateRepository.Setup(m => m.Update(It.Is<Certificate>(x => x.Id == certId), ExternalApiConstants.ApiUserName, CertificateActions.Submit, true, null))
+            _certificateRepository.Setup(m => m.UpdateStandardCertificate(It.Is<Certificate>(x => x.Id == certId), ExternalApiConstants.ApiUserName, CertificateActions.Submit, true, null))
             .ReturnsAsync(new Certificate()
             {
                 Id = certId,
                 Status = CertificateStatus.Submitted,
-                CertificateData = @"{}"
+                CertificateData = new Domain.JsonData.CertificateData()
             });
 
 

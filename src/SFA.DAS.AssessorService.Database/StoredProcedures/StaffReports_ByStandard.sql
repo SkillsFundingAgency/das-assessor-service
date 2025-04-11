@@ -30,7 +30,7 @@ FROM (
         SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS [EPA Submitted],
         SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS [EPA Printed],
         SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted]
-  FROM [dbo].[Certificates] ce
+  FROM [dbo].[StandardCertificates] ce
   WHERE JSON_VALUE(ce.CertificateData, '$.StandardReference') IS NOT NULL
   GROUP BY TRIM(REPLACE(UPPER(REPLACE(JSON_VALUE(ce.[CertificateData], '$.StandardName'), NCHAR(0x00A0), ' ')), 'Á', ' ')),
         JSON_VALUE(ce.CertificateData, '$.StandardReference'),ISNULL(JSON_VALUE(ce.CertificateData, '$.Version'),''), ce.StandardCode
@@ -51,7 +51,7 @@ FROM (
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Submitted' THEN 1 ELSE 0 END) AS [EPA Submitted],
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS [EPA Printed],
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted]
-  FROM [dbo].[Certificates] ce
+  FROM [dbo].[StandardCertificates] ce
   WHERE JSON_VALUE(ce.CertificateData, '$.StandardReference') IS NOT NULL
 ) st
 

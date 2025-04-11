@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         private CertificatePrintStatusUpdateHandlerTestsFixture _fixture;
         private ValidationResponse _response;
 
+        private Guid Id = Guid.NewGuid();
         private const string CertificateReference = "00123456";
         private const int BatchNumber = 111;
 
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Arrange
             _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
-                .WithCertificate(CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
+                .WithCertificate(Id, CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
                 .WithCertificateBatchLog(BatchNumber, CertificateReference, CertificateStatus.SentToPrinter, SentToPrinterAt, null, SentToPrinterAt.AddMinutes(5))
                 .WithBatchLog(BatchNumber);
         }

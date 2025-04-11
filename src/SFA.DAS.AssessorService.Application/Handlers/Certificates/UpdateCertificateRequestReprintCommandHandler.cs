@@ -1,11 +1,11 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
@@ -20,14 +20,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Certificate> Handle(UpdateCertificateRequestReprintCommand request, CancellationToken cancellationToken)
         {
-            var certificate = await _certificateRepository.GetCertificate(request.CertificateId);
+            var certificate = await _certificateRepository.GetCertificate<Certificate>(request.CertificateId);
             if (certificate == null)
                 throw new NotFoundException();
 
             if (certificate.Status != CertificateStatus.Reprint && CertificateStatus.CanRequestReprintCertificate(certificate.Status))
             {
                 certificate.Status = CertificateStatus.Reprint;
-                await _certificateRepository.Update(certificate, request.Username, CertificateActions.Reprint);
+                await _certificateRepository.UpdateStandardCertificate(certificate, request.Username, CertificateActions.Reprint);
             }
 
             return certificate;

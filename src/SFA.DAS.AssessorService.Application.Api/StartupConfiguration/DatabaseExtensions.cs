@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using System;
 using System.Configuration;
@@ -31,10 +32,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     };
             });
 
-            services.AddScoped<AssessorDbContext>(sp =>
+            services.AddScoped<IAssessorDbContext>(sp =>
             {
                 var dbConnection = sp.GetRequiredService<IDbConnection>();
                 var optionsBuilder = new DbContextOptionsBuilder<AssessorDbContext>();
+
                 return new AssessorDbContext(dbConnection, optionsBuilder.Options);
             });
         }

@@ -40,7 +40,7 @@ FROM (
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted],
 	  MIN(UPPER(ISNULL([StandardName],''))) OVER (PARTITION BY ISNULL([StandardReference],'')) [sequenceForOrderBy]
 
-  FROM [dbo].[Certificates] ce
+  FROM [dbo].[StandardCertificates] ce
   JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
   WHERE org.EndPointAssessorOrganisationId != 'EPA0000'
   GROUP BY 
@@ -75,7 +75,7 @@ FROM (
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NULL AND ce.[Status] = 'Printed' THEN 1 ELSE 0 END) AS [EPA Printed],
 	  SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 AND ce.[DeletedAt] IS NOT NULL THEN 1 ELSE 0 END) AS [Deleted],
 	  null sequenceForOrderBy
-  FROM [dbo].[Certificates] ce
+  FROM [dbo].[StandardCertificates] ce
   JOIN [dbo].[Organisations] org ON ce.[OrganisationId] = org.[Id]
   WHERE org.EndPointAssessorOrganisationId != 'EPA0000'
 ) st

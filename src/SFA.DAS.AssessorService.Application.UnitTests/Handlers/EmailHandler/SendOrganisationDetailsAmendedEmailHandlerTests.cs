@@ -1,20 +1,20 @@
 ﻿using System;
-using NUnit.Framework;
-using System.Threading;
-using Moq;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Entities;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Handlers.EmailHandlers;
-using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Handlers.EmailHandlers;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.EmailHandler
 {

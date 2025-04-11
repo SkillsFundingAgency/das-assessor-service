@@ -1,15 +1,14 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Learner;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 {
@@ -170,7 +169,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Uln = LearnerWithCertificate.Uln,
             StandardCode = LearnerWithCertificate.StdCode,
             Status = CertificateStatus.Submitted,
-            CertificateData = JsonConvert.SerializeObject(new CertificateData { OverallGrade = CertificateGrade.Pass })
+            CertificateData = new CertificateData { OverallGrade = CertificateGrade.Pass }
         };
 
         protected static Certificate DeletedCertificateForLearner = new Certificate
@@ -178,7 +177,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Uln = LearnerWithDeletedCertificate.Uln,
             StandardCode = LearnerWithDeletedCertificate.StdCode,
             Status = CertificateStatus.Deleted,
-            CertificateData = JsonConvert.SerializeObject(new CertificateData { OverallGrade = CertificateGrade.Pass })
+            CertificateData = new CertificateData { OverallGrade = CertificateGrade.Pass }
         };
 
         protected static Certificate DraftCertificateForLearner = new Certificate
@@ -186,7 +185,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Uln = LearnerWithDraftCertificate.Uln,
             StandardCode = LearnerWithDraftCertificate.StdCode,
             Status = CertificateStatus.Draft,
-            CertificateData = JsonConvert.SerializeObject(new CertificateData { OverallGrade = CertificateGrade.Pass })
+            CertificateData = new CertificateData { OverallGrade = CertificateGrade.Pass }
         };
 
         protected static Certificate FailCertificateForLearner = new Certificate
@@ -194,7 +193,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             Uln = LearnerWithDraftCertificate.Uln,
             StandardCode = LearnerWithDraftCertificate.StdCode,
             Status = CertificateStatus.Submitted,
-            CertificateData = JsonConvert.SerializeObject(new CertificateData { OverallGrade = CertificateGrade.Fail })
+            CertificateData = new CertificateData { OverallGrade = CertificateGrade.Fail }
         };
 
         protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode,

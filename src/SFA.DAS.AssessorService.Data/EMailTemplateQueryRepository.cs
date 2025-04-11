@@ -1,8 +1,8 @@
-﻿using Dapper;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using Dapper;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Data
 {

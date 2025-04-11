@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
                 certData.CourseOption = null;
             }
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
             certificate.StandardUId = StandardUId;
             return certificate;
         }
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             var submitLogs = cert.CertificateLogs.Where(log => log.Action == "Submit");
 
-            var submittedCertificates = submitLogs.Select(log => JsonConvert.DeserializeObject<CertificateData>(log.CertificateData));
+            var submittedCertificates = submitLogs.Select(log => log.CertificateData);
 
             var latestSubmittedFailCertificate = submittedCertificates.Where(submittedCert => submittedCert.OverallGrade == CertificateGrade.Fail)
                 .OrderByDescending(submittedCert => submittedCert.AchievementDate)

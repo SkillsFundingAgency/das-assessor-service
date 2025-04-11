@@ -5,10 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -40,27 +39,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 throw new ArgumentException($"Certificate with ID: {request.Certificate.Id} was not found");
             }
 
-            var currentData = JsonConvert.DeserializeObject<CertificateData>(currentCertificate.CertificateData);
-            var updatedData = JsonConvert.DeserializeObject<CertificateData>(request.Certificate.CertificateData);
-
             if (request.Certificate.Status == CertificateStatus.Submitted ||
                 request.Certificate.Status == CertificateStatus.ToBeApproved)
             {
                 _logger.LogInformation(LoggingConstants.CertificateSubmitted);
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Submitted with reference of {request.Certificate.CertificateReference}");
 
-                updatedData = HandleEpaDetailsUpdate(updatedData, request.Certificate.CertificateReference);
+                request.Certificate.CertificateData = HandleEpaDetailsUpdate(request.Certificate.CertificateData, request.Certificate.CertificateReference);
             }
             else
             {
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Updated with reference of {request.Certificate.CertificateReference}");
             }
 
-            updatedData = CertificateDataSendToUpdater.HandleSendToUpdate(currentCertificate, currentData, updatedData);
+            request.Certificate.CertificateData = CertificateDataSendToUpdater.HandleSendToUpdate(currentCertificate, currentCertificate.CertificateData, request.Certificate.CertificateData);
 
-            updatedData = await CertificateDataVersionChangeUpdater.UpdateCoronationEmblemAndStandardIfNeeded(currentData, updatedData, _standardRepository);
-
-            request.Certificate.CertificateData = JsonConvert.SerializeObject(updatedData);
+            request.Certificate.CertificateData = await CertificateDataVersionChangeUpdater.UpdateCoronationEmblemAndStandardIfNeeded(currentCertificate.CertificateData, request.Certificate.CertificateData, _standardRepository);
 
             return await Update(request);
         }
@@ -110,10 +104,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             if (latestLogEntry != null && latestLogEntry.Action == request.Action && latestLogEntry.CertificateData == request.Certificate.CertificateData && string.IsNullOrWhiteSpace(request.ReasonForChange))
             {
-                return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog: false);
+                return await _certificateRepository.UpdateStandardCertificate(request.Certificate, request.Username, request.Action, updateLog: false);
             }
 
-            return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog: true, reasonForChange: request.ReasonForChange);
+            return await _certificateRepository.UpdateStandardCertificate(request.Certificate, request.Username, request.Action, updateLog: true, reasonForChange: request.ReasonForChange);
         }
     }
 }
