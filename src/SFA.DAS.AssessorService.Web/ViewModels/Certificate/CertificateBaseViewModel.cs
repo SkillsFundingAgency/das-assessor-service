@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
+using System.Runtime.ConstrainedExecution;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
@@ -10,19 +11,19 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public abstract Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData);
         
-        public virtual void FromCertificate(Domain.Entities.Certificate cert)
+        public virtual void FromCertificate(Domain.Entities.Certificate certificate)
         {
-            CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
-           
-            Id = cert.Id;
+            CertificateData = certificate.CertificateData;
+
+            Id = certificate.Id;
             GivenNames = CertificateData.LearnerGivenNames;
             FamilyName = CertificateData.LearnerFamilyName;
             FullName = CertificateData.FullName;
             StandardReference = CertificateData.StandardReference;
             Standard = CertificateData.StandardName;
             Level = CertificateData.StandardLevel;
-            Uln = cert.Uln.ToString();
-            StandardUId = cert.StandardUId;
+            Uln = certificate.Uln.ToString();
+            StandardUId = certificate.StandardUId;
         }
 
         public Guid Id { get; set; }

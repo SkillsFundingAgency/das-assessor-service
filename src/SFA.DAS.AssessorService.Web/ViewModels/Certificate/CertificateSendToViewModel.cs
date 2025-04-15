@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             certData.SendTo = SendTo;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
             
             return certificate;
         }

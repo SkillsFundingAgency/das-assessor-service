@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             "[CertificateReference], [OrganisationId], [BatchNumber], [Status], [UpdatedAt], [UpdatedBy], " +
             "[Uln], [StandardCode], [ProviderUkPrn], [CertificateReferenceId], [LearnRefNumber], [CreateDay], " +
             "[IsPrivatelyFunded], [PrivatelyFundedStatus], [StandardUId] " +
-            "FROM [Certificates] " +
+            "FROM [StandardCertificates] " +
             $"WHERE (Id = @id OR @id IS NULL) " +
             $"AND {NullQueryParam(certificate, p => p.CertificateData)} " +
             $"AND {NullQueryParam(certificate, p => p.ToBePrinted)} " +
@@ -109,19 +109,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
         public static async Task<int> QueryCountAllAsync()
         {
-            var sqlToQuery = "SELECT COUNT(1) FROM [Certificates]";
+            var sqlToQuery = "SELECT COUNT(1) FROM [StandardCertificates]";
             return await DatabaseService.QueryFirstOrDefaultAsync<int>(sqlToQuery);
         }
 
         public static void DeleteRecord(Guid id)
         {
-            var sql = "DELETE FROM [Certificates] WHERE [Id] = @id";
+            var sql = "DELETE FROM [StandardCertificates] WHERE [Id] = @id";
             DatabaseService.Execute(sql, new { id });
         }
 
         public static void DeleteAllRecords()
         {
-            var sql = "DELETE FROM [Certificates]";
+            var sql = "DELETE FROM [StandardCertificates]";
             DatabaseService.Execute(sql);
         }
     }

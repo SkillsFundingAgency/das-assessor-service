@@ -1,18 +1,18 @@
-﻿using FizzWare.NBuilder;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.GetBatchLearner
 {
@@ -38,14 +38,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         public void Arrange()
         {
             _request = Builder<GetBatchLearnerRequest>.CreateNew()
-                .With(r => r.IncludeCertificate = true).Build();
+                .With(r => r.IncludeCertificate = true).Build();    
 
             _certificateData = Builder<CertificateData>.CreateNew().Build();
 
             _learnerResponse = Builder<Domain.Entities.Learner>.CreateNew().Build();
             _epaoResponse = Builder<Organisation>.CreateNew().Build();
             _certificateResponse = Builder<Certificate>.CreateNew()
-                .With(cr => cr.CertificateData = JsonConvert.SerializeObject(_certificateData))
+                .With(cr => cr.CertificateData = _certificateData)
                 .Build();
             _standardResponse = Builder<Standard>.CreateNew().Build();
 

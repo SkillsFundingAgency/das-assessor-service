@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.UserManagement
+namespace SFA.DAS.AssessorService.Handlers.UserManagement
 {
     public class RequestForPrivilegeHandler : IRequestHandler<RequestForPrivilegeRequest, Unit>
     {

@@ -41,7 +41,7 @@ BEGIN
     (
         SELECT 
             [Ilrs].[Id],
-            [Certificates].Id AS CertificateId,
+            [StandardCertificates].Id AS CertificateId,
             LEAD([Ilrs].[UkPrn]) OVER (PARTITION BY [Ilrs].[Uln] ORDER BY [Source], [Ilrs].[CreatedAt], [LearnStartDate]) AS Next_Ukprn,
             CONVERT(DATE, [LearnStartDate]) AS [LearnStartDate],
             CONVERT(DATE, LEAD([LearnStartDate]) OVER (PARTITION BY [Ilrs].[Uln] ORDER BY [Source], [Ilrs].[CreatedAt], [LearnStartDate])) AS Next_LearnStartDate,
@@ -65,7 +65,7 @@ BEGIN
             HAVING 
                 COUNT(*) > 1
         ) AS [IlrsDuplicatedByUln] ON [IlrsDuplicatedByUln].Uln = [Ilrs].Uln
-        LEFT JOIN [Certificates] ON [Certificates].[Uln] = [Ilrs].[Uln] AND [Certificates].[StandardCode] = [Ilrs].[StdCode]
+        LEFT JOIN [StandardCertificates] ON [StandardCertificates].[Uln] = [Ilrs].[Uln] AND [StandardCertificates].[StandardCode] = [Ilrs].[StdCode]
     ) AS [IlrsDuplicatedByUlnWithNextRecord]
     
     SELECT [Overlapping].[Id] 

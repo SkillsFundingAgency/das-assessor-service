@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             SetUpCertificateAndLogEntries(12);
 
-            var result = SearchHandler.Handle(new SearchQuery { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
+            var result = SearchHandler.Handle(new LearnerSearchRequest { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
 
             result.Count.Should().Be(1); 
         }
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             SetUpCertificateAndLogEntries(12);
 
-            var result = SearchHandler.Handle(new SearchQuery { Surname = "UnknownName", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
+            var result = SearchHandler.Handle(new LearnerSearchRequest { Surname = "UnknownName", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
 
             result.Count.Should().Be(0);
         }
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             SetUpCertificateAndLogEntries(27);
 
-            var result = SearchHandler.Handle(new SearchQuery { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
+            var result = SearchHandler.Handle(new LearnerSearchRequest { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" }, CancellationToken.None).Result;
 
             result.Count.Should().Be(0);
         }
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificate = Builder<Certificate>.CreateNew()
                 .With(x => x.StandardCode = standardCode)
-                .With(x => x.CertificateData = JsonConvert.SerializeObject(certificateData))
+                .With(x => x.CertificateData = certificateData)
                 .Build();
 
             var certificatesResponse = new List<Certificate> { certificate };
