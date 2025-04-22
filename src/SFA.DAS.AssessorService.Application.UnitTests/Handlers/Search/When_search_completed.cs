@@ -32,23 +32,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateReference = "00010001",
                         StandardCode = 12,
                         CertificateData =
-                            JsonConvert.SerializeObject(new CertificateData
+                            new CertificateData
                             {
                                 OverallGrade = CertificateGrade.Distinction,
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
-                            }),
+                            },
                         IsPrivatelyFunded = false,
                         CreatedBy = "username",
                         CertificateLogs = new List<CertificateLog>
                         {
                             new CertificateLog
                             {
-                                CertificateData = JsonConvert.SerializeObject(new CertificateData
+                                CertificateData = new CertificateData
                                 {
                                     OverallGrade = CertificateGrade.Distinction,
                                     AchievementDate = new DateTime(2018, 06, 01)
-                                }),
+                                },
                                 Action = CertificateActions.Submit
                             }
                         }
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new LearnerSearchRequest() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
             result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         public void Then_a_Search_Log_entry_is_created()
         {
             SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
+                    new LearnerSearchRequest() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Wait();
 
             LearnerRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>

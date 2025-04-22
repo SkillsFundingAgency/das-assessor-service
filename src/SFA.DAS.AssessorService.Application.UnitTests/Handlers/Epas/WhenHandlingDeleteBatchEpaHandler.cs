@@ -1,22 +1,18 @@
-﻿using FluentAssertions;
-using MediatR;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
 {
@@ -53,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             Certificate certificate)
         {
             //Arrange
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+            certificate.CertificateData = certificateData;
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(certificate);
             var certificateAction = CertificateActions.Epa;
 
@@ -61,9 +57,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
             var result = await _sut.Handle(request, new CancellationToken());
 
             //Assert
-            _mockCertificateRepository.Verify(s => s.Update(It.IsAny<Certificate>(), "API", certificateAction, true, null), Times.Once);
-            var modifiedCertificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-            modifiedCertificateData.EpaDetails.Should().BeEquivalentTo(new EpaDetails { Epas = new System.Collections.Generic.List<EpaRecord>() });
+            _mockCertificateRepository.Verify(s => s.UpdateStandardCertificate(It.IsAny<Certificate>(), "API", certificateAction, true, null), Times.Once);
+            certificate.CertificateData.EpaDetails.Should().BeEquivalentTo(new EpaDetails { Epas = new System.Collections.Generic.List<EpaRecord>() });
 
             _mockCertificateRepository.Verify(v => v.Delete(request.Uln, request.StandardCode, "API", CertificateActions.Delete, true, null, null));
         }

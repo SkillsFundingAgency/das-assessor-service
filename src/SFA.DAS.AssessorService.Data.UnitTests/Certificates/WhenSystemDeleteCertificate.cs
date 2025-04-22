@@ -7,9 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using Moq.EntityFrameworkCore;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -19,8 +18,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     public class WhenSystemDeleteCertificate
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
         private Guid _certificateId;
         private string _incidentNumber;
         private string _reasonForChange;
@@ -32,10 +29,13 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _incidentNumber = "INC12345";
             _reasonForChange = "Test Text Reason For Change";
 
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
-            
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            var mockDbContext = CreateMockDbContext();
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
+                .SetupGet(p => p.AssessorDbContext)
+                .Returns(mockDbContext.Object);
+
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
         }
 
         [Test]
@@ -57,14 +57,13 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             await _certificateRepository.Delete(1111111111, 93, "UserName", CertificateActions.Delete, incidentNumber: _incidentNumber);
 
             // Assert
-            var certificate =  _certificateRepository.GetCertificate(_certificateId);            
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.Result.CertificateData);
-            _incidentNumber.Should().Be(certificateData.IncidentNumber);
+            var certificate =  _certificateRepository.GetCertificate<Certificate>(_certificateId);
+            _incidentNumber.Should().Be(certificate.Result.CertificateData.IncidentNumber);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private Mock<IAssessorDbContext> CreateMockDbContext()
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             var certificates = Builder<Certificate>.CreateListOfSize(2)
                 .TheFirst(1)
@@ -84,7 +83,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.StandardCertificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             var certificateLogs = Builder<CertificateLog>.CreateListOfSize(1)
                 .TheFirst(1)
@@ -106,13 +106,13 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             return mockDbContext;
         }
 
-        private string GetCertificateData()
+        private CertificateData GetCertificateData()
         {
             var certData = new CertificateData
             {
                 ContactName = "ContactName"
             };
-            return JsonConvert.SerializeObject(certData);
+            return certData;
         }
     }
 }

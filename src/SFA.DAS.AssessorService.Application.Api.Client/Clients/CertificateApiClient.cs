@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, string employerAccountId)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?epaOrgId={epaOrgId}&employerAccountId={employerAccountId}"))
             {
@@ -90,6 +90,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/update-with-reprint-reason"))
             {
                 await PostPutRequestAsync(httpRequest, command);
+            }
+        }
+
+        public async Task<FrameworkCertificate> ReprintFramework(ReprintFrameworkCertificateRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/reprint-framework"))
+            {
+                return await PostPutRequestWithResponseAsync<ReprintFrameworkCertificateRequest, FrameworkCertificate>(httpRequest, request);
             }
         }
     }

@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
@@ -15,7 +16,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
     public class WhenUpdateOrganisationPersistsData
     {
         private static Organisation _result;
-        private string _primaryContact = "TestUser";
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
+        
+        private readonly string _primaryContact = "TestUser";
 
         [SetUp]
         public void Arrange()
@@ -25,22 +28,21 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
                 .With(q => q.PrimaryContact = _primaryContact)
                 .Build();
 
-
             var primaryContactId = Guid.NewGuid();
-            var organisationMockDbSet = CreateOrganisationMockDbSet(primaryContactId);
             var contactsMockDbSet = CreateContactsMockDbSet(primaryContactId);
+            var organisationMockDbSet = CreateOrganisationMockDbSet();
 
-            var mockDbContext = CreateMockDbContext(organisationMockDbSet, contactsMockDbSet);
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _mockAssessorUnitOfWork.Setup(p => p.AssessorDbContext).Returns(CreateMockDbContext(organisationMockDbSet, contactsMockDbSet).Object);
 
-            var organisationRepository = new OrganisationRepository(mockDbContext.Object);
+            var organisationRepository = new OrganisationRepository(_mockAssessorUnitOfWork.Object);
             _result = organisationRepository.UpdateOrganisation(organisationUpdateDomainModel).Result;
         }
 
         [Test]
         public void ItShouldReturnResult()
         {
-            var result = (_result as Organisation);
-            result.Should().NotBeNull();
+            _result.Should().NotBeNull();
         }
 
         private Mock<DbSet<Contact>> CreateContactsMockDbSet(Guid primaryContactId)
@@ -53,11 +55,11 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
                     .Build()
             }.AsQueryable();
 
-            var contactsMockDbSet = contacts.CreateMockSet(contacts);
+            var contactsMockDbSet = contacts.CreateMockSet();
             return contactsMockDbSet;
         }
 
-        private Mock<DbSet<Organisation>> CreateOrganisationMockDbSet(Guid primaryContactId)
+        private Mock<DbSet<Organisation>> CreateOrganisationMockDbSet()
         {
             var organisations = new List<Organisation>
             {
@@ -66,13 +68,13 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
                     .Build()
             }.AsQueryable();
 
-            var organisationMockDbSet = organisations.CreateMockSet(organisations);
+            var organisationMockDbSet = organisations.CreateMockSet();
             return organisationMockDbSet;
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Organisation>> organisationMockDbSet, Mock<DbSet<Contact>> contactsMockDbSet)
+        private Mock<IAssessorDbContext> CreateMockDbContext(Mock<DbSet<Organisation>> organisationMockDbSet, Mock<DbSet<Contact>> contactsMockDbSet)
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
             mockDbContext.Setup(c => c.Organisations).Returns(organisationMockDbSet.Object);
             mockDbContext.Setup(c => c.Contacts).Returns(contactsMockDbSet.Object);
 
@@ -82,6 +84,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 
             mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult((It.IsAny<int>())));
+            
             return mockDbContext;
         }
     }

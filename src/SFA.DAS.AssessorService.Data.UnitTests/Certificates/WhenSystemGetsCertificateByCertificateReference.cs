@@ -1,44 +1,43 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
     public class WhenSystemGetsCertificateByCertificateReference
     {
         private CertificateRepository _certificateRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
-
 
         [SetUp]
         public void Arrange()
         {
-            
-            _mockDbContext = CreateMockDbContext();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockDbContext = CreateMockDbContext();
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDbContext.Object);
+            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
         }
 
         [Test]
         public async Task ItShouldReturnResult()
         {
-            var result = await _certificateRepository.GetCertificate("0283839292");
+            var result = await _certificateRepository.GetCertificate<Certificate>("0283839292");
             
             result.Uln.Should().Be(2222222222);
         }
 
-        private Mock<AssessorDbContext> CreateMockDbContext()
+        private static Mock<IAssessorDbContext> CreateMockDbContext()
         {
-            var mockDbContext = new Mock<AssessorDbContext>();
+            var mockDbContext = new Mock<IAssessorDbContext>();
 
             var certificates = Builder<Certificate>.CreateListOfSize(3)
                 .TheFirst(1)
@@ -56,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .Build()
                 .AsQueryable();
 
-            mockDbContext.Setup(x => x.Certificates).ReturnsDbSet(certificates);
+            mockDbContext.Setup(x => x.Set<Certificate>()).ReturnsDbSet(certificates);
 
             return mockDbContext;
         }

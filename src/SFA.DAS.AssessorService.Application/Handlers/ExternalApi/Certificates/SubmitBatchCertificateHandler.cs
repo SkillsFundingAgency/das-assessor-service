@@ -1,12 +1,12 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 certificate.Status = CertificateStatus.Submitted;
 
                 _logger.LogInformation("SubmitCertificate Before Update Cert in db");
-                var submittedCertificate = await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Submit);
+                var submittedCertificate = await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Submit);
 
                 return await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, submittedCertificate);
             }
