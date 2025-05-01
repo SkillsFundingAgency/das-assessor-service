@@ -205,6 +205,8 @@
     <None Include="PostDeploymentScripts\LookupData\FrameworkDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\FrameworkInsertOrUpdate.sql" />
     <Build Include="Tables\Framework.sql" />
+    <Build Include="Tables\AssessmentsSummary.sql" />
+    <Build Include="StoredProcedures\AssessmentsSummaryUpdate.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
