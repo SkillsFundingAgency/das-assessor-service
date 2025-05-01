@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,9 @@ using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
+
+
+
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -632,7 +636,16 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.AssessorDbContext.CertificateLogs.AddRangeAsync(logs);
         }
 
-        private static CertificateData CloneCertificateData(CertificateData original)
+		public async Task UpdateAssessmentsSummary()
+		{
+			await _unitOfWork.AssessorDbContext.ExecuteStoredProcedureAsync(
+				"AssessmentsSummaryUpdate",
+				param: null,
+				commandTimeout: 0,
+				commandType: CommandType.StoredProcedure);
+		}
+
+		private static CertificateData CloneCertificateData(CertificateData original)
         {
             var serialized = JsonConvert.SerializeObject(original);
             return JsonConvert.DeserializeObject<CertificateData>(serialized);

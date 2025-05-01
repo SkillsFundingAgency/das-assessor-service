@@ -59,5 +59,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task<Certificate> GetCertificateDeletedByUln(long uln);
 
         Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference);
-    }
+
+		Task UpdateAssessmentsSummary();
+	}
 }
