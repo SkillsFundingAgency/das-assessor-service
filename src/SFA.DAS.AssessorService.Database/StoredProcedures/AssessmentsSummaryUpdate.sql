@@ -19,7 +19,7 @@ BEGIN
 		SELECT [ProviderUkPrn] Ukprn ,[StandardReference] IfateReferenceNumber
 			   ,MIN([AchievementDate]) EarliestAssessment
 			   ,COUNT(*) EndpointAssessmentCount
-		FROM [dbo].[Certificates]
+		FROM [dbo].[StandardCertificates] 
 		WHERE [IsPrivatelyFunded] = 0
 		AND [Status] NOT IN ('Deleted','Draft')
 	GROUP BY [ProviderUkPrn],[StandardReference]
