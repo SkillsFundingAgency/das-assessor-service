@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var contact = await _contactQueryRepository.GetContactByGovIdentifier(govIdentifier);
             if (contact == null)
-                throw new ResourceNotFoundException();
+                return NotFound();
             return Ok(_mapper.Map<ContactResponse>(contact));
         }
         
