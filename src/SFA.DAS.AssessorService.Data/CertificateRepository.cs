@@ -16,9 +16,6 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
-
-
-
 namespace SFA.DAS.AssessorService.Data
 {
     public class CertificateRepository : ICertificateRepository

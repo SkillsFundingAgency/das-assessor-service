@@ -36,8 +36,8 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         DbSet<SearchLog> SearchLogs { get; set; }
         DbSet<StaffReport> StaffReports { get; set; }
         DbSet<Certificate> StandardCertificates { get; set; }
-		DbSet<AssessmentsSummary> AssessmentsSummary { get; set; }
-		DbSet<T> Set<T>() where T : class;
+        DbSet<AssessmentsSummary> AssessmentsSummary { get; set; }
+        DbSet<T> Set<T>() where T : class;
 
         void MarkAsModified<T>(T item) where T : class;
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

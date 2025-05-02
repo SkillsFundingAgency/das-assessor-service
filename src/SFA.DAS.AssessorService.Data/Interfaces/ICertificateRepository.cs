@@ -60,6 +60,6 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference);
 
-		Task UpdateAssessmentsSummary();
-	}
+        Task UpdateAssessmentsSummary();
+    }
 }

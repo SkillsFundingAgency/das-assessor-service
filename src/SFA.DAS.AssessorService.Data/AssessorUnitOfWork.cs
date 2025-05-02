@@ -75,34 +75,34 @@ namespace SFA.DAS.AssessorService.Data
             });
         }
 
-		public async Task<int> ExecuteStoredProcedureAsync(string procName, DynamicParameters parameters = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
-		{
-			var connection = _context.Database.GetDbConnection();
-			var transaction = _transaction?.GetDbTransaction();
-			if (connection.State != ConnectionState.Open)
-				await connection.OpenAsync(cancellationToken);
-			return await connection.ExecuteAsync(
-			  procName,
-			  param: parameters,
-			  transaction: transaction,
-			  commandTimeout: commandTimeout,
-			  commandType: CommandType.StoredProcedure);
-		}
-		public async Task<IEnumerable<T>> QueryStoredProcedureAsync<T>(string procName, DynamicParameters parameters = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
-		{
-			var connection = _context.Database.GetDbConnection();
-			var transaction = _transaction?.GetDbTransaction();
-			if (connection.State != ConnectionState.Open)
-				await connection.OpenAsync(cancellationToken);
-			return await connection.QueryAsync<T>(
-			  sql: procName,
-			  param: parameters,
-			  transaction: transaction,
-			  commandTimeout: commandTimeout,
-			  commandType: CommandType.StoredProcedure);
-		}
+        public async Task<int> ExecuteStoredProcedureAsync(string procName, DynamicParameters parameters = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
+        {
+            var connection = _context.Database.GetDbConnection();
+            var transaction = _transaction?.GetDbTransaction();
+            if (connection.State != ConnectionState.Open)
+                await connection.OpenAsync(cancellationToken);
+            return await connection.ExecuteAsync(
+              procName,
+              param: parameters,
+              transaction: transaction,
+              commandTimeout: commandTimeout,
+              commandType: CommandType.StoredProcedure);
+        }
+        public async Task<IEnumerable<T>> QueryStoredProcedureAsync<T>(string procName, DynamicParameters parameters = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
+        {
+            var connection = _context.Database.GetDbConnection();
+            var transaction = _transaction?.GetDbTransaction();
+            if (connection.State != ConnectionState.Open)
+                await connection.OpenAsync(cancellationToken);
+            return await connection.QueryAsync<T>(
+              sql: procName,
+              param: parameters,
+              transaction: transaction,
+              commandTimeout: commandTimeout,
+              commandType: CommandType.StoredProcedure);
+        }
 
-		private async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
+        private async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (_transaction == null)
             {
