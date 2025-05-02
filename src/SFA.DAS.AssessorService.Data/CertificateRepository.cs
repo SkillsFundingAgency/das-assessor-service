@@ -636,16 +636,15 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.AssessorDbContext.CertificateLogs.AddRangeAsync(logs);
         }
 
-		public async Task UpdateAssessmentsSummary()
-		{
-			await _unitOfWork.AssessorDbContext.ExecuteStoredProcedureAsync(
-				"AssessmentsSummaryUpdate",
-				param: null,
-				commandTimeout: 0,
-				commandType: CommandType.StoredProcedure);
-		}
+        public async Task UpdateAssessmentsSummary()
+        {
+            await _unitOfWork.ExecuteStoredProcedureAsync(
+                "AssessmentsSummaryUpdate",
+                parameters: null,
+                commandTimeout: 0);
+        }
 
-		private static CertificateData CloneCertificateData(CertificateData original)
+        private static CertificateData CloneCertificateData(CertificateData original)
         {
             var serialized = JsonConvert.SerializeObject(original);
             return JsonConvert.DeserializeObject<CertificateData>(serialized);
