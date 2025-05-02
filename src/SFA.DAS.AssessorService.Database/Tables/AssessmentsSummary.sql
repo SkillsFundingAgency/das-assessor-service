@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[AssessmentsSummary]
-([Ukprn] bigint NOT NULL,
+([Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
+ [Ukprn] bigint NOT NULL,
  [IfateReferenceNumber] nvarchar(10) NOT NULL,
  [EarliestAssessment] datetime2  NOT NULL, 
  [EndpointAssessmentCount] int NOT NULL, 

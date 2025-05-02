@@ -54,8 +54,9 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
         public virtual DbSet<ApplyEF> Applications { get; set; }
         public virtual DbSet<MergeApply> MergeApplications { get; set; }
+		public virtual DbSet<AssessmentsSummary> AssessmentsSummary { get; set; }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+		public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added && e.Entity is BaseEntity).ToList();
             addedEntities.ForEach(e => { e.Property("CreatedAt").CurrentValue = DateTime.UtcNow; });

@@ -574,16 +574,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference)
         {
-            var query = _unitOfWork.AssessorDbContext.StandardCertificates
-                .Where(c => !c.IsPrivatelyFunded &&
-                            !(c.Status == CertificateStatus.Deleted || c.Status == CertificateStatus.Draft) &&
-                            c.ProviderUkPrn == ukprn &&
-                            (standardReference == null || c.StandardReference == standardReference))
+            var query = _unitOfWork.AssessorDbContext.AssessmentsSummary
+                .Where(c =>  c.Ukprn == ukprn &&
+                            (standardReference == null || c.IfateReferenceNumber == standardReference))
                 .GroupBy(c => 1)
                 .Select(g => new AssessmentsResult
                 {
-                    EarliestAssessment = g.Min(c => c.AchievementDate ?? DateTime.MaxValue),
-                    EndpointAssessmentCount = g.Count()
+                    EarliestAssessment = g.Min(c => c.EarliestAssessment),
+                    EndpointAssessmentCount = g.Sum(c => c.EndpointAssessmentCount)
                 });
 
             return await query.FirstOrDefaultAsync() ?? new AssessmentsResult
