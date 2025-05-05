@@ -4,6 +4,6 @@
   "dependencies": {
     "jquery": "~3.6.4",
     "jquery-ui": "~1.13.2",
-    "jquery-validation": "~1.19.5"
+    "jquery-validation": "~1.21.0"
   }
 }
