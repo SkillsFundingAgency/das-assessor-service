@@ -242,11 +242,8 @@ namespace SFA.DAS.AssessorService.Data
 
         private void BulkCopyData(SqlTransaction transaction, List<string> tablesToCopy)
         {
-            // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlbulkcopy
             if (transaction is null) throw new ArgumentNullException(nameof(transaction));
             if (tablesToCopy is null) throw new ArgumentNullException(nameof(tablesToCopy));
-
-
 
             foreach (var table in tablesToCopy)
             {

@@ -1,13 +1,12 @@
-﻿using Microsoft.Azure.Services.AppAuthentication;
+﻿using System;
+using System.Data;
+using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
-using System;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {

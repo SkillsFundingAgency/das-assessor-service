@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;

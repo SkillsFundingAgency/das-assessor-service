@@ -1,7 +1,7 @@
 ﻿{
   "ConnectionStrings": {
-    "SqlConnectionString": "Data Source={Local db server};Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True;",
-    "SqlConnectionStringTest": "Data Source={local db server};Initial Catalog=SFA.DAS.AssessorService.Database.ApiTest;Integrated Security=True;"
+    "SqlConnectionString": "Data Source={Local db server};Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True;TrustServerCertificate=True;",
+    "SqlConnectionStringTest": "Data Source={local db server};Initial Catalog=SFA.DAS.AssessorService.Database.ApiTest;Integrated Security=True;TrustServerCertificate=True;"
   }
 }
 // Instructions

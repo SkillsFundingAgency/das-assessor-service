@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRepositoryTests
 {

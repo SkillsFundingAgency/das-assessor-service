@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Data.Interfaces;

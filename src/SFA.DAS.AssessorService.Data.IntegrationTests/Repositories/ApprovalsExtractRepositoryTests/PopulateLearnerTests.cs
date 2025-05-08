@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -6,9 +9,6 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AssessorService.TestHelper;
-using System;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsExtractRepositoryTests
 {

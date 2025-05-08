@@ -1,6 +1,7 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
@@ -8,10 +9,6 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {

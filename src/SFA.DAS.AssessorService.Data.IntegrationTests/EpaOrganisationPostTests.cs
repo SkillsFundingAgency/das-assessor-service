@@ -1,14 +1,13 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System;
-using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
