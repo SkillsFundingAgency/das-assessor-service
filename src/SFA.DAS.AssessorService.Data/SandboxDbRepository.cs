@@ -235,7 +235,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _logger.LogInformation("Step 7: Populating learner data");
 
-            transaction.Connection.Execute("EXEC PopulateLearner", transaction: transaction, commandTimeout: 180);
+            transaction.Connection.Execute("EXEC PopulateLearner", transaction: transaction, commandTimeout: 900);
 
             _logger.LogInformation("Step 7: Completed");
         }
