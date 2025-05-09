@@ -181,10 +181,8 @@ namespace SFA.DAS.AssessorService.Data
                 SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
 
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
-                        SELECT
-                          NEWID() AS Id,
-                          GETDATE() AS CreatedAt,
-                          CONVERT(BIGINT, ab1.Uln) AS Uln,
+                        SELECT 
+                          '1'+ SUBSTRING(ogs.EndPointAssessorOrganisationId,4,4) + RIGHT('000'+CAST(ogs.StandardCode AS VARCHAR(3)),3) +RIGHT('00'+CAST(CTE.Number AS VARCHAR(2)),2) AS Uln, 
                           ab1.Uln AS FamilyName,
                           'Test' AS GivenNames,
                           ab1.UkPrn AS UkPrn,
