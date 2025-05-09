@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using System;
 using System.Threading;
+using Dapper;
+using System.Data;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -70,6 +73,33 @@ namespace SFA.DAS.AssessorService.Data
                     throw;
                 }
             });
+        }
+
+        public async Task<int> ExecuteStoredProcedureAsync(string procName, DynamicParameters parameters = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
+        {
+            var connection = _context.Database.GetDbConnection();
+            var transaction = _transaction?.GetDbTransaction();
+            if (connection.State != ConnectionState.Open)
+                await connection.OpenAsync(cancellationToken);
+            return await connection.ExecuteAsync(
+              procName,
+              param: parameters,
+              transaction: transaction,
+              commandTimeout: commandTimeout,
+              commandType: CommandType.StoredProcedure);
+        }
+        public async Task<IEnumerable<T>> QueryStoredProcedureAsync<T>(string procName, DynamicParameters parameters = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
+        {
+            var connection = _context.Database.GetDbConnection();
+            var transaction = _transaction?.GetDbTransaction();
+            if (connection.State != ConnectionState.Open)
+                await connection.OpenAsync(cancellationToken);
+            return await connection.QueryAsync<T>(
+              sql: procName,
+              param: parameters,
+              transaction: transaction,
+              commandTimeout: commandTimeout,
+              commandType: CommandType.StoredProcedure);
         }
 
         private async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
