@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<MergeOrganisationStandardDeliveryArea> MergeOrganisationStandardDeliveryAreas { get; set; }
         public virtual DbSet<ApplyEF> Applications { get; set; }
         public virtual DbSet<MergeApply> MergeApplications { get; set; }
+        public virtual DbSet<AssessmentsSummary> AssessmentsSummary { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {

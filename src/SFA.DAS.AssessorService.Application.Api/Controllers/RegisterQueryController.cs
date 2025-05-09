@@ -228,6 +228,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("assessments/update-assessments-summary", Name = "UpdateAssessmentsSummary")]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public IActionResult UpdateStandardSummary()
+        {
+            var requestName = "update assessments summary";
+            return QueueBackgroundRequest(new UpdateAssessmentsSummaryRequest(), requestName, (response, duration, log) =>
+            {
+                log.LogInformation($"Completed request to {requestName} in {duration.ToReadableString()}");
+            });
+        }
     }
 }
 
