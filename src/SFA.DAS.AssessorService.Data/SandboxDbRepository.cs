@@ -201,7 +201,7 @@ namespace SFA.DAS.AssessorService.Data
                           GETDATE() AS PlannedEndDate
                         FROM (
                           SELECT 
-                            '1'+ SUBSTRING(ogs.EndPointAssessorOrganisationId,4,4) + RIGHT('000'+CAST(ogs.StandardCode AS VARCHAR(3)),3) + RIGHT('00'+CAST(CTE.Number AS VARCHAR(2)),2) + RIGHT('0000' + CAST(ROW_NUMBER() OVER (PARTITION BY ogs.StandardCode ORDER BY ogs.EndPointAssessorOrganisationId) AS VARCHAR), 4) AS Uln, 
+                            CAST((ROW_NUMBER() OVER (PARTITION BY ogs.StandardCode ORDER BY ogs.EndPointAssessorOrganisationId) % 9 + 1) AS VARCHAR) + SUBSTRING(ogs.EndPointAssessorOrganisationId, 4, 4) + RIGHT('000' + CAST(ogs.StandardCode AS VARCHAR(3)), 3) + RIGHT('00' + CAST(CTE.Number AS VARCHAR(2)), 2) AS Uln, 
                             og1.EndPointAssessorUkprn AS UkPrn,
                             ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
                             ogs.StandardCode,
