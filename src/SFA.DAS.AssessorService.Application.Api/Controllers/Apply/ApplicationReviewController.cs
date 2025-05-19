@@ -29,6 +29,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         [HttpGet("Review/ApplicationReviewStatusCounts")]
         public async Task<ActionResult> ApplicationReviewStatusCounts()
         {
+            _logger.LogInformation("LogInformation");
+            _logger.LogCritical("LogCritical");
+            _logger.LogDebug("LogDebug");
+            _logger.LogError("LogError");
+            _logger.LogTrace("LogTrace");
+            _logger.LogWarning("LogWarning");
+
+            try
+            {
+                // Simulate error
+                throw new InvalidOperationException("Something went wrong in the function!");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while executing the function.");
+            }
             var applicationReviewStatusCounts = await _mediator.Send(new ApplicationReviewStatusCountsRequest());
             return Ok(applicationReviewStatusCounts);
         }
