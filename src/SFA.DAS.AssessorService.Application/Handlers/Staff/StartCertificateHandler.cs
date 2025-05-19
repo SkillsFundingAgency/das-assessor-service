@@ -42,7 +42,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Starting new certificate for EPAO UkPrn:{request.UkPrn}");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
@@ -60,7 +59,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Certificate> UpdateExistingCertificate(StartCertificateRequest request, Organisation organisation, Certificate certificate)
         {
-            _logger.LogDebug($"Updating existing certificate for Uln:{request.Uln} StandardCode:{request.StandardCode} StandardUId{request.StandardUId}");
             if(certificate.Status == CertificateStatus.Deleted)
             {
                 // Rehydrate cert data when the certificate is deleted
@@ -87,8 +85,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)
         {
-            _logger.LogDebug($"Creating new certificate for Uln:{request.Uln} StandardCode:{request.StandardCode} StandardUId{request.StandardUId}");
-
             var certificate = new Certificate
             {
                 CertificateData = new CertificateData
@@ -106,8 +102,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certificate = await PopulateCertificateData(certificate, request, organisation);
             var newCertificate = await _certificateRepository.NewStandardCertificate(certificate);
 
-            _logger.LogDebug($"Created new certificate with Id:{newCertificate.Id} CertificateReference:{newCertificate.CertificateReference}");
-            
             return newCertificate;
         }
 
@@ -122,10 +116,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         /// <returns></returns>
         private async Task<Certificate> PopulateCertificateData(Certificate certificate, StartCertificateRequest request, Organisation organisation)
         {
-            _logger.LogDebug($"Populating certificate data for Uln:{request.Uln} StandardCode:{request.StandardCode}");
             var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
             
-            _logger.LogDebug($"Populating certificate data with provider UkPrn:{learner.UkPrn}");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
             if ((learner.GivenNames.ToLower() == learner.GivenNames) || (learner.GivenNames.ToUpper() == learner.GivenNames))
@@ -184,7 +176,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
             else
             {
-                _logger.LogDebug($"Populating certificate data for standard versions of StdCode:{learner.StdCode}");
+                _logger.LogInformation($"Populating certificate data for standard versions of StdCode:{learner.StdCode}");
                 var standardVersions = await _standardService.GetStandardVersionsByLarsCode(learner.StdCode);
                 var latestStandardVersion = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First();
                 

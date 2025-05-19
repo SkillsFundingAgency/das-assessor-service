@@ -49,8 +49,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         private async Task<FrameworkCertificate> CreateNewFrameworkCertificate(ReprintFrameworkCertificateRequest request, FrameworkLearner frameworkLearner)
         {
-            _logger.LogDebug("Creating new framework certificate for: {FrameworkLearnerId}", request.FrameworkLearnerId);
-
             var certificate = new FrameworkCertificate
             {
                 CertificateData = new CertificateData
@@ -86,15 +84,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             certificate = await _certificateRepository.NewFrameworkCertificate(certificate);
 
-            _logger.LogDebug("Created new framework certificate {CertificateReference} for: {FrameworkLearnerId}", certificate.CertificateReference, certificate.FrameworkLearnerId);
-
             return certificate;
         }
 
         private async Task<FrameworkCertificate> ReprintFrameworkCertificate(ReprintFrameworkCertificateRequest request, FrameworkCertificate certificate)
         {
-            _logger.LogDebug("Reprinting framework certificate for: {FrameworkLearnerId}", request.FrameworkLearnerId);
-
             certificate.Status = CertificateStatus.Reprint;
             certificate.CertificateData.ReprintReasons = request.Reasons.ToFlagsList();
             certificate.CertificateData.IncidentNumber = request.IncidentNumber;
@@ -106,8 +100,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             certificate.CertificateData.ContactPostCode = request.ContactPostcode;
 
             certificate = await _certificateRepository.UpdateFrameworkCertificate(certificate, request.Username, CertificateActions.Reprint);
-
-            _logger.LogDebug("Reprinting framework certificate {CertificateReference} for: {FrameworkLearnerId}", certificate.CertificateReference, certificate.FrameworkLearnerId);
 
             return certificate;
         }
