@@ -23,8 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<EpaoPipelineStandardsFiltersResponse> Handle(EpaoPipelineStandardsFiltersRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"GetEpaoPipelineStandardsFilterHandler: EpaoId = {request.EpaoId}");
-            
             EpaoPipelineStandardsFiltersResponse response = new EpaoPipelineStandardsFiltersResponse();
 
             var standards = await _standardRepository.GetEpaoPipelineStandardsStandardFilter(request.EpaoId, _config.PipelineCutoff);

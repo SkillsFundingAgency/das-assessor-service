@@ -32,8 +32,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
             foreach (var importLearnerDetail in request.ImportLearnerDetails)
             {
-                _logger.LogDebug($"Handling Import Learner Detail Request Uln:{importLearnerDetail.Uln}, StdCode:{importLearnerDetail.StdCode}");
-
                 response.LearnerDetailResults.Add(
                     CheckMissingMandatoryFields(importLearnerDetail) ?? new ImportLearnerDetailResult
                     {
@@ -134,8 +132,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private async Task<string> CreateIlrRecord(ImportLearnerDetail importLearnerDetail)
         {
-            _logger.LogDebug("Handling Import Learner Detail Request - Create Ilr");
-
             await _ilrRepository.Create(new Ilr
             {
                 Source = importLearnerDetail.Source,
@@ -163,8 +159,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private async Task<string> UpdateIlrRecord(ImportLearnerDetail importLearnerDetail, bool isUpdate, Ilr currentLearner = null)
         {
-            _logger.LogDebug("Handling Import Learner Detail Request - Update Ilr");
-
             // for an update to certain fields if the request is null then the currrent value will be
             // retained, otherwise the request value will be used
             var updatedIlr = new Ilr
@@ -201,8 +195,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private ImportLearnerDetailResult CheckMissingMandatoryFields(ImportLearnerDetail request)
         {
-            _logger.LogDebug("Handling Import Learner Detail Request - Checking for missing mandatory fields");
-
             var result = new ImportLearnerDetailResult
             {
                 Uln = request.Uln,

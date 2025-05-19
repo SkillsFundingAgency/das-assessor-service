@@ -247,7 +247,7 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var table in tablesToCopy)
             {
-                _logger.LogDebug($"\tSyncing table: {table}");
+                _logger.LogInformation($"\tSyncing table: {table}");
 
                 using (var commandSourceData = new SqlCommand(
                     @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 

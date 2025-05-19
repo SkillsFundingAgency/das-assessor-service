@@ -21,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         public async Task<GetApprenticeLearnerResponse> Handle(GetApprenticeLearnerRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Retrieving Learner with Apprentice Commitments Id = {request.ApprenticeshipId}");
             var learner = await _learnerRepository.Get(request.ApprenticeshipId);
 
             if (learner == null)
