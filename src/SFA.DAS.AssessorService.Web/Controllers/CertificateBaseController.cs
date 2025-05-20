@@ -62,8 +62,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogDebug($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
-
             var certificate = await GetCertificate(vm.Id);
             var certData = certificate.CertificateData;
 
@@ -71,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 vm.FamilyName = certData.LearnerFamilyName;
                 vm.GivenNames = certData.LearnerGivenNames;
-                Logger.LogDebug($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
 
@@ -93,15 +91,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
-
             if(SessionService.GetRedirectToCheck())
             {
-                Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 

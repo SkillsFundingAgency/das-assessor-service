@@ -53,12 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> Index()
         {
-            _logger.LogInformation("LogInformation");
-            _logger.LogCritical("LogCritical");
-            _logger.LogDebug("LogDebug");
-            _logger.LogError("LogError");
-            _logger.LogTrace("LogTrace");
-            _logger.LogWarning("LogWarning");
+            _logger.LogInformation("Index called");
 
             var user = await GetUserAndUpdateEmail();
             var organisation = await _organisationApiClient.GetEpaOrganisationById(user?.OrganisationId?.ToString());
