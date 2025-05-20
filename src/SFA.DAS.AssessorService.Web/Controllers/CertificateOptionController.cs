@@ -41,8 +41,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogDebug($"Load View Model for CertificateOptionViewModel for {username}");
-
             var viewModel = new CertificateOptionViewModel();
 
             CheckAndSetRedirectToCheck(viewModel);
@@ -64,12 +62,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Declare", "CertificateDeclaration");
             }
 
-            Logger.LogDebug($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
-
             viewModel.FromCertificate(certificate, certSession.Options);
             
-            Logger.LogDebug($"Got View Model of type CertificateOptionViewModel requested by {username}");
-
             return View(view, viewModel);
         }
 
@@ -85,8 +79,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogDebug($"Save View Model for CertificateOptionViewModel for {username} with values: {GetModelValues(vm)}");
-
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
             var certData = certificate.CertificateData;
             SessionService.RemoveRedirectedFromVersion();
@@ -94,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
             {
-                Logger.LogDebug($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
+                Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
@@ -102,7 +94,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 vm.Options = certSession.Options;
-                Logger.LogDebug($"Model State not valid for CertificateOptionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogInformation($"Model State not valid for CertificateOptionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
 
@@ -118,15 +110,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
                   
-            Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} updated.");
-
             if (SessionService.GetRedirectToCheck())
             {
-                Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            Logger.LogDebug($"Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 
