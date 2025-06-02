@@ -23,8 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Dashboard
 
         public async Task<GetEpaoDashboardResponse> Handle(GetEpaoDashboardRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"GetEpaoDashboardHandler: EpaoId = {request.EpaoId}");
-
             var result = await _dashboardRespository.GetEpaoDashboard(request.EpaoId, _config.PipelineCutoff);
 
             return new GetEpaoDashboardResponse { StandardsCount = result.Standards, PipelinesCount = result.Pipeline, AssessmentsCount = result.Assessments };
