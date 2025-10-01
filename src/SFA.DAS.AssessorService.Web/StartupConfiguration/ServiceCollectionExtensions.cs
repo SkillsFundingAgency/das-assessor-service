@@ -74,17 +74,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             IConfiguration config,
             IWebConfiguration configuration)
         {
-            var isLocal = string.IsNullOrEmpty(config["ResourceEnvironmentName"]) ||
-                          config["ResourceEnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+            var isLocal = string.IsNullOrEmpty(config["EnvironmentName"]) ||
+                          config["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
 
             var cookieDomain = isLocal ? "" : configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
-            var loginRedirect = isLocal ? "" : $"{configuration.ServiceLink}/service/account-details";
 
             services.AddAndConfigureGovUkAuthentication(config, 
                 new AuthRedirects
                 { 
                     CookieDomain = cookieDomain,
-                    LoginRedirect = loginRedirect,
+                    LocalStubLoginPath = "/service/account-details",
                     SignedOutRedirectUrl = "/account/signedout"
 
                 },
