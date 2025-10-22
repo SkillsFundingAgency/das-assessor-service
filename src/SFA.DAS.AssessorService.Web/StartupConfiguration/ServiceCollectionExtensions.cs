@@ -36,6 +36,7 @@ using System.Linq;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.GovUK.Auth.Models;
 using SFA.DAS.AssessorService.Web.Validators;
+using System.Net.NetworkInformation;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
@@ -171,8 +172,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
             services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<Startup>();
-            services.AddScoped<CertificateFamilyNameViewModelValidator>();
-            services.AddScoped<CertificateGivenNamesViewModelValidator>();
+            services.AddValidation();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 AppDomain.CurrentDomain.GetAssemblies()
@@ -254,6 +254,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         {
             services.AddTransient<IAssessorApiClientFactory, AssessorApiClientFactory>();
             services.AddTransient<IQnaApiClientFactory, QnaApiClientFactory>();
+            return services;
+        }
+
+        public static IServiceCollection AddValidation(this IServiceCollection services)
+        {
+            services.AddScoped<CertificateFamilyNameViewModelValidator>();
+            services.AddScoped<CertificateGivenNamesViewModelValidator>();
             return services;
         }
     }
