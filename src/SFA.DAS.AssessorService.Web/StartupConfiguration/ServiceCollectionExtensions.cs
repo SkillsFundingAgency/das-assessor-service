@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,6 +35,7 @@ using SFA.DAS.AssessorService.Web.Extensions;
 using System.Linq;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.GovUK.Auth.Models;
+using SFA.DAS.AssessorService.Web.Validators;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
@@ -171,6 +171,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
             services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<Startup>();
+            services.AddScoped<CertificateFamilyNameViewModelValidator>();
+            services.AddScoped<CertificateGivenNamesViewModelValidator>();
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
                 AppDomain.CurrentDomain.GetAssemblies()
