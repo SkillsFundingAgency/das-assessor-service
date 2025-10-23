@@ -36,7 +36,6 @@ using System.Linq;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.GovUK.Auth.Models;
 using SFA.DAS.AssessorService.Web.Validators;
-using System.Net.NetworkInformation;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
