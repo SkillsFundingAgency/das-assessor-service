@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Standards]
 (
 	[StandardUId] VARCHAR(20) NOT NULL PRIMARY KEY, 
-	[IFateReferenceNumber] VARCHAR(10) NOT NULL,
+	[IFateReferenceNumber] VARCHAR(32) NOT NULL,
 	[LarsCode] INT NULL,
 	[Title] VARCHAR(1000) NOT NULL,
 	[Version] VARCHAR(20) NULL,
