@@ -114,7 +114,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 // Get Existing Certificate if it exists
                 if (standard != null)
                 {
-                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    var existingCertificate = await _mediator.Send(new GetCertificateUlnAndStandardCodeRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
                     request.PopulateMissingFields(standard, existingCertificate);
                 }
 

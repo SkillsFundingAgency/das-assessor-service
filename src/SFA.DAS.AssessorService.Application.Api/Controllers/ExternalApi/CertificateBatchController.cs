@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 if (standard != null)
                 {
                     //Certificate may alraedy exist from EPA creation record, use as fallback for version information
-                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    var existingCertificate = await _mediator.Send(new GetCertificateUlnAndStandardCodeRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
                     request.PopulateMissingFields(standard, existingCertificate);
                 }
 
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
                 if (standard != null)
                 {
                     //Certificate should already exist, populate version information
-                    var existingCertificate = await _mediator.Send(new GetCertificateForUlnRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
+                    var existingCertificate = await _mediator.Send(new GetCertificateUlnAndStandardCodeRequest { StandardCode = standard.LarsCode, Uln = request.Uln });
                     request.PopulateMissingFields(standard, existingCertificate);
                 }
 
