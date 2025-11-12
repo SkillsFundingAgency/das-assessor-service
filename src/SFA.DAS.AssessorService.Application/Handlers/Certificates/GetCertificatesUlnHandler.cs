@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
-using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificatesUlnHandler : IRequestHandler<GetCertificatesUlnRequest, List<ApprenticeCertificateSummary>>
+    public class GetCertificatesUlnHandler : IRequestHandler<GetCertificatesUlnRequest, GetCertificatesUlnResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
 
@@ -17,9 +15,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _certificateRepository = certificateRepository;
         }
 
-        public async Task<List<ApprenticeCertificateSummary>> Handle(GetCertificatesUlnRequest request, CancellationToken cancellationToken)
+        public async Task<GetCertificatesUlnResponse> Handle(GetCertificatesUlnRequest request, CancellationToken cancellationToken)
         {
-            return await _certificateRepository.GetPrintableCertificates(request.Uln);
+            return new GetCertificatesUlnResponse
+            {
+                Certificates = await _certificateRepository.GetPrintableCertificates(request.Uln)
+            };
         }
     }
 }

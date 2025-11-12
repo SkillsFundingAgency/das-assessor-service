@@ -169,8 +169,8 @@ namespace SFA.DAS.AssessorService.Data
                 .Where(c => c.Uln == uln && !statusesToExclude.Contains(c.Status) && c.AchievementDate != null)
                 .Select(c => new ApprenticeCertificateSummary
                 {
-                    Id = c.Id,
-                    CourseType = "Standard",
+                    CertificateId = c.Id,
+                    CertificateType = "Standard",
                     CourseCode = c.StandardCode.ToString(),
                     CourseName = c.StandardName,
                     CourseLevel = c.StandardLevel.ToString(),
@@ -182,8 +182,8 @@ namespace SFA.DAS.AssessorService.Data
                 .Where(c => c.ApprenticeULN == uln)
                 .Select(c => new ApprenticeCertificateSummary
                 {
-                    Id = c.Id,
-                    CourseType = "Framework",
+                    CertificateId = c.Id,
+                    CertificateType = "Framework",
                     CourseCode = c.TrainingCode,
                     CourseName = c.FrameworkName,
                     CourseLevel = c.ApprenticeshipLevelName,

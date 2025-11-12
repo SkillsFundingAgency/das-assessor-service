@@ -32,10 +32,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
         {
             // Arrange
             var uln = 1234567890L;
-            var expectedList = new List<ApprenticeCertificateSummary>
+            var expectedList = new GetCertificatesUlnResponse
             {
-                new() { Id = Guid.NewGuid(), CourseType = "Standard", CourseCode = "123" },
-                new() { Id = Guid.NewGuid(), CourseType = "Standard", CourseCode = "456" }
+                Certificates = new List<ApprenticeCertificateSummary>
+                {
+                    new() { CertificateId = Guid.NewGuid(), CertificateType = "Standard", CourseCode = "123" },
+                    new() { CertificateId = Guid.NewGuid(), CertificateType = "Standard", CourseCode = "456" }
+                }
             };
 
             _mediatorMock
@@ -44,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
                 .ReturnsAsync(expectedList);
 
             // Act
-            var result = await _sut.GetCertificatesForUln(uln) as OkObjectResult;
+            var result = await _sut.GetCertificatesUln(uln) as OkObjectResult;
 
             // Assert
             result.Should().NotBeNull();

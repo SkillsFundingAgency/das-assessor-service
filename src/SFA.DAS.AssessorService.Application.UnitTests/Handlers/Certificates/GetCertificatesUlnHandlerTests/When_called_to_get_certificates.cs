@@ -31,8 +31,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             var uln = 1234567890L;
             var expectedList = new List<ApprenticeCertificateSummary>
             {
-                new ApprenticeCertificateSummary { Id = Guid.NewGuid(), CourseType = "Standard", CourseCode = "99" },
-                new ApprenticeCertificateSummary { Id = Guid.NewGuid(), CourseType = "Standard", CourseCode = "100" }
+                new ApprenticeCertificateSummary { CertificateId = Guid.NewGuid(), CertificateType = "Standard", CourseCode = "99" },
+                new ApprenticeCertificateSummary { CertificateId = Guid.NewGuid(), CertificateType = "Standard", CourseCode = "100" }
             };
 
             _certificateRepository
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             var result = await _sut.Handle(request, CancellationToken.None);
 
             // Assert
-            result.Should().BeEquivalentTo(expectedList);
+            result.Certificates.Should().BeEquivalentTo(expectedList);
             _certificateRepository.Verify(r => r.GetPrintableCertificates(uln), Times.Once);
         }
 
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             var result = await _sut.Handle(request, CancellationToken.None);
 
             // Assert
-            result.Should().BeEmpty();
+            result.Certificates.Should().BeEmpty();
             _certificateRepository.Verify(r => r.GetPrintableCertificates(uln), Times.Once);
         }
     }

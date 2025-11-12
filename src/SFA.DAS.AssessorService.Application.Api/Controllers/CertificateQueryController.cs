@@ -45,11 +45,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetCertificateUlnAndStandardCodeRequest { Uln = uln, StandardCode = standardCode }));
         }
 
-        [HttpGet("uln/{uln}", Name = "GetCertificatesForUln")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ApprenticeCertificateSummary>))]
+        [HttpGet("uln/{uln}", Name = "GetCertificatesUln")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetCertificatesUlnResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificatesForUln(long uln)
+        public async Task<IActionResult> GetCertificatesUln(long uln)
         {
             return Ok(await _mediator.Send(new GetCertificatesUlnRequest { Uln = uln }));
         }

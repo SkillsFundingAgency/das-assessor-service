@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using MediatR;
-using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class GetCertificatesUlnRequest : IRequest<List<ApprenticeCertificateSummary>>
+    public class GetCertificatesUlnRequest : IRequest<GetCertificatesUlnResponse>
     {
         public long Uln { get; set; }
     }

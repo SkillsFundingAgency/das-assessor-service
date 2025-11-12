@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 })
                 .With(x => x.Status = CertificateStatus.Submitted)
                 .TheNext(1)
-                .With(x => x.Uln = 9999999999) // different ULN
+                .With(x => x.Uln = 7777777777) // different ULN
                 .With(x => x.CertificateData = new CertificateData
                 {
                     StandardName = "Metalwork",
@@ -106,11 +106,11 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             result.Should().NotBeNull();
             result.Should().HaveCount(2);
 
-            var framework = result.Single(x => x.CourseType == "Framework");
+            var framework = result.Single(x => x.CertificateType == "Framework");
             framework.CourseName.Should().Be("Advanced Framework");
             framework.DateAwarded.Should().Be(new DateTime(2024, 7, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
-            var standard = result.Single(x => x.CourseType == "Standard");
+            var standard = result.Single(x => x.CertificateType == "Standard");
             standard.CourseName.Should().Be("Plumbing");
             standard.CourseLevel.Should().Be("2");
             standard.DateAwarded.Should().Be(new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Unspecified));
