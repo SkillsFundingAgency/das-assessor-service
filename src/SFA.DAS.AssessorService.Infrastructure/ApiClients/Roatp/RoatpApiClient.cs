@@ -1,14 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
 
 namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
 {
@@ -27,20 +25,19 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
         {
             _logger.LogInformation($"Searching RoATP. Search Term: {searchTerm}");
-            var apiResponse = await Get<OrganisationSearchResults>($"/api/v1/search?searchTerm={searchTerm}");
+            var apiResponse = await Get<OrganisationSearchResults>($"/organisations?searchTerm={searchTerm}");
 
-            if (exactMatch && apiResponse?.SearchResults != null)
+            if (exactMatch && apiResponse?.Organisations != null)
             {
-                apiResponse.SearchResults = apiResponse.SearchResults.Where(r => r.LegalName.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                apiResponse.Organisations = apiResponse.Organisations.Where(r => r.LegalName.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
 
-            return _mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+            return _mapper.Map<IEnumerable<Organisation>, IEnumerable<OrganisationSearchResult>>(apiResponse?.Organisations);
         }
 
         public async Task<OrganisationSearchResult> GetOrganisationByUkprn(long ukprn)
         {
-            var organisationSearchResults = await GetOrganisationSearchResultsFromRoatp(Convert.ToInt32(ukprn));
-            return organisationSearchResults.FirstOrDefault();
+            return await GetOrganisationSearchResultsFromRoatp(Convert.ToInt32(ukprn));
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByUkprn(int ukprn)
@@ -54,21 +51,22 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
             }
             else
             {
-                return await GetOrganisationSearchResultsFromRoatp(ukprn);
+                var org = await GetOrganisationSearchResultsFromRoatp(ukprn);
+                return [org];
             }
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationInUkrlp(int ukprn)
         {
-            _logger.LogInformation($"Searching UKRLP. Ukprn: {ukprn}");
-            var apiResponse = await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
+            _logger.LogInformation("Searching UKRLP. Ukprn: {Ukprn}", ukprn);
+            var apiResponse = await Get<UkprnLookupResponse>($"/organisations/{ukprn}/ukrlp-data");
 
             return _mapper.Map<IEnumerable<ProviderDetails>, IEnumerable<OrganisationSearchResult>>(apiResponse?.Results);
         }
 
         private async Task<T> Get<T>(string uri)
         {
-            
+
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 if (response.IsSuccessStatusCode)
@@ -80,23 +78,16 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
             }
         }
 
-        private async Task<IEnumerable<OrganisationSearchResult>> GetOrganisationSearchResultsFromRoatp(int ukprn)
+        private async Task<OrganisationSearchResult> GetOrganisationSearchResultsFromRoatp(int ukprn)
         {
-            _logger.LogInformation($"Searching RoATP. UKPRN: {ukprn}");
+            _logger.LogInformation("Searching RoATP. UKPRN: {Ukprn}", ukprn);
             var apiResponse =
-                await Get<OrganisationSearchResults>(
-                    $"/api/v1/search?searchTerm={ukprn}");
-
-            if (apiResponse?.SearchResults != null)
-            {
-                apiResponse.SearchResults = apiResponse.SearchResults
-                    .Where(r => r.UKPRN.Equals(ukprn.ToString(), StringComparison.InvariantCultureIgnoreCase)).ToList();
-            }
+                await Get<Organisation>(
+                    $"/organisations/{ukprn}");
 
             var organisationSearchResults =
                 _mapper
-                    .Map<IEnumerable<Organisation>,
-                        IEnumerable<OrganisationSearchResult>>(apiResponse?.SearchResults);
+                    .Map<Organisation, OrganisationSearchResult>(apiResponse);
             return organisationSearchResults;
         }
     }
