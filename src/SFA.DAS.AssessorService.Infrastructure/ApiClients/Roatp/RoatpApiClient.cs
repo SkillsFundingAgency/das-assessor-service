@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp
         }
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisationByName(string searchTerm, bool exactMatch)
         {
-            _logger.LogInformation($"Searching RoATP. Search Term: {searchTerm}");
+            _logger.LogInformation("Searching RoATP. Search Term: {SearchTerm}", searchTerm);
             var apiResponse = await Get<OrganisationSearchResults>($"/organisations?searchTerm={searchTerm}");
 
             if (exactMatch && apiResponse?.Organisations != null)
