@@ -1,8 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
@@ -21,8 +20,8 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.UKPRN))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.ResolveUsing(source => string.IsNullOrEmpty(source.TradingName) || "NULL".Equals(source.TradingName, StringComparison.InvariantCultureIgnoreCase) ? null : source.TradingName))
-                .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanyNumber))
-                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber));
+                .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.CompanyNumber))
+                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.CharityNumber));
         }
     }
 }
