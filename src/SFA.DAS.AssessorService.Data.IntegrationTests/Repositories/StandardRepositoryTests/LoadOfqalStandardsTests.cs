@@ -140,6 +140,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
@@ -234,6 +236,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber, currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate.AddDays(operationalStartDateOffsetDays), operationalEndDate, ifateReferenceNumber))
@@ -265,6 +269,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber, currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate.AddDays(5), operationalEndDate?.AddDays(operationalEndDateOffsetDays), ifateReferenceNumber))
