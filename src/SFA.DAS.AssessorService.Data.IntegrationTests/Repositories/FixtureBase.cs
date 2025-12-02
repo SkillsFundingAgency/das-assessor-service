@@ -347,6 +347,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public async Task<T> VerifyOfqualStandardDoesNotExist(OfqualStandardModel ofqualStandard)
+        {
+            var result = await OfqualStandardHandler.QueryFirstOrDefaultAsync(ofqualStandard);
+            result.Should().BeNull();
+
+            return this as T;
+        }
+
         public T WithIlr(
             Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, string source, DateTime? createdOn, int completionStatus, DateTime? plannedEndDate)
         {
