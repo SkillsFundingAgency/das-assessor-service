@@ -1,12 +1,18 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,22 +26,15 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.Services;
 using SFA.DAS.GovUK.Auth.AppStart;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Web.Extensions;
-using System.Linq;
-using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.GovUK.Auth.Models;
+using SFA.DAS.GovUK.Auth.Services;
+using StackExchange.Redis;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 {
@@ -74,18 +73,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             IConfiguration config,
             IWebConfiguration configuration)
         {
-            var isLocal = string.IsNullOrEmpty(config["EnvironmentName"]) ||
-                          config["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase);
+            var serviceLinkUri = new Uri(configuration.ServiceLink);
 
-            var cookieDomain = isLocal ? "" : configuration.ServiceLink.Replace("https://", "", StringComparison.CurrentCultureIgnoreCase);
-
-            services.AddAndConfigureGovUkAuthentication(config, 
+            services.AddAndConfigureGovUkAuthentication(config,
                 new AuthRedirects
-                { 
-                    CookieDomain = cookieDomain,
+                {
+                    CookieDomain = serviceLinkUri.Host,
                     LocalStubLoginPath = "/service/account-details",
+                    LoginRedirect = serviceLinkUri.AbsolutePath + "/service/account-details",
                     SignedOutRedirectUrl = "/account/signedout"
-
                 },
                 typeof(AssessorServiceAccountPostAuthenticationClaimsHandler));
 
