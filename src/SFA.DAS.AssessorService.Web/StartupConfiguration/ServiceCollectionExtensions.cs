@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     CookieDomain = serviceLinkUri.Host,
                     LocalStubLoginPath = "/service/account-details",
-                    LoginRedirect = serviceLinkUri.AbsolutePath + "/service/account-details",
+                    LoginRedirect = serviceLinkUri.AbsoluteUri + "service/account-details",
                     SignedOutRedirectUrl = "/account/signedout"
                 },
                 typeof(AssessorServiceAccountPostAuthenticationClaimsHandler));
