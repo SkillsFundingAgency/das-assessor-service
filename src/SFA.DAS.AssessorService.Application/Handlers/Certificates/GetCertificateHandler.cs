@@ -20,26 +20,7 @@ namespace SFA.DAS.AssessorService.Handlers.Certificates
 
         public async Task<Certificate> Handle(GetCertificateRequest request, CancellationToken cancellationToken)
         {
-            var certificate = await _certificateRepository.GetCertificate<Certificate>(request.CertificateId, request.IncludeLogs);
-
-            if (certificate == null)
-                return null;
-
-            if (certificate.PrintRequestedAt == null || string.IsNullOrEmpty(certificate.PrintRequestedBy))
-            {
-                var printRequestLog = certificate.CertificateLogs?
-                    .Where(l => l.Action == CertificateActions.PrintRequest)
-                    .OrderByDescending(l => l.EventTime)
-                    .FirstOrDefault();
-
-                if (printRequestLog != null)
-                {
-                    certificate.PrintRequestedAt ??= printRequestLog.EventTime;
-                    certificate.PrintRequestedBy ??= printRequestLog.Username;
-                }
-            }
-
-            return certificate;
+            return await _certificateRepository.GetCertificate<Certificate>(request.CertificateId, request.IncludeLogs);
         }
     }
 }
