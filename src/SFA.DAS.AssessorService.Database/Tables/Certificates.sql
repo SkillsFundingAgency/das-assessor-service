@@ -23,6 +23,8 @@
     [StandardUId] VARCHAR(20) NULL,
 	[Type] VARCHAR(9) NOT NULL DEFAULT 'Standard',
 	[FrameworkLearnerId] UNIQUEIDENTIFIER NULL,
+	[PrintRequestedAt] [datetime2](7) NULL,
+	[PrintRequestedBy] [nvarchar](256) NULL,
 	
 	[LearnerFamilyName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.LearnerFamilyName')),
 	[LearnerGivenNames] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.LearnerGivenNames')),

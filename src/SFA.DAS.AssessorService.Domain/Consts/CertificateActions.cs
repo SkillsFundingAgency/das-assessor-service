@@ -18,6 +18,7 @@
         public const string StandardCode = "StandardCode";
         public const string Declaration = "Declaration";
         public const string Printed = "Printed";
+        public const string PrintRequest = "PrintRequest";
 
         public const string Recipient = "Recipient";
         public const string Name = "Name";

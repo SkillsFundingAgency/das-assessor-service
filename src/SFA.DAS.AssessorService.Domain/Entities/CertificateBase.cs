@@ -30,7 +30,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string DeletedBy { get; set; }
 
         public DateTime CreateDay { get; set; }
-        
+
+        public DateTime? PrintRequestedAt { get; set; }
+        public string PrintRequestedBy { get; set; }
+
         public virtual ICollection<CertificateLog> CertificateLogs { get; set; } = new List<CertificateLog>();
 
         [JsonIgnore]
@@ -95,7 +98,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string ContactPostCode { get; private set; }
-        
+
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string LatestEPAOutcome { get; private set; }
     }

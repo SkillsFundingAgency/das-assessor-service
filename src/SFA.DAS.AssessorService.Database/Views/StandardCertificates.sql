@@ -19,6 +19,8 @@ SELECT
     CertificateReferenceId,
     LearnRefNumber,
     CreateDay,
+    PrintRequestedAt,
+    PrintRequestedBy,
     IsPrivatelyFunded,
     PrivatelyFundedStatus,
     StandardUId,
