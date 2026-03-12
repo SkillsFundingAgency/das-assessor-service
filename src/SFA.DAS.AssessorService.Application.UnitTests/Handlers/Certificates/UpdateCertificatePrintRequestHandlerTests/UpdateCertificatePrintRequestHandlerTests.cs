@@ -44,6 +44,30 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             fixture.VerifyUpdated(request);
         }
 
+        [TestCase(EpaOutcome.Fail, CertificateStatus.Submitted, null, TestName = "WhenEpaOutcomeIsNotPass_ThenThrowsArgumentException")]
+        [TestCase(EpaOutcome.Pass, CertificateStatus.Draft, null, TestName = "WhenStatusIsNotSubmitted_ThenThrowsArgumentException")]
+        public void WhenCertificateIsNotInValidState_ThenThrowsArgumentException(string epaOutcome, string status, string printRequestedAt)
+        {
+            // Arrange
+            var fixture = new TheFixture().WithCertificate(CertificateId, epaOutcome, status, printRequestedAt != null ? DateTime.Parse(printRequestedAt) : (DateTime?)null);
+            var request = new UpdateCertificatePrintRequestCommand
+            {
+                CertificateId = CertificateId,
+                PrintRequestedAt = new DateTime(2021, 1, 1),
+                PrintRequestedBy = "Apprentice",
+                Address = new CertificatePrintAddress
+                {
+                    ContactName = "Contact Name",
+                    ContactOrganisation = "Org",
+                    ContactAddLine1 = "Line1",
+                    ContactPostCode = "PC"
+                }
+            };
+
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(() => fixture.Handle(request));
+        }
+
         private class TheFixture
         {
             private Mock<IMediator> _mediator;
@@ -59,17 +83,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 _sut = new UpdateCertificatePrintRequestHandler(_mediator.Object, _certificateRepository.Object, new Mock<ILogger<UpdateCertificatePrintRequestHandler>>().Object);
             }
 
-            public TheFixture WithCertificate(Guid id, string latestEpaOutcome, string status)
+            public TheFixture WithCertificate(Guid id, string latestEpaOutcome, string status, DateTime? printRequestedAt = null)
             {
                 _certificate = new Certificate
                 {
                     Id = id,
                     Status = status,
+                    PrintRequestedAt = printRequestedAt,
                     CertificateData = new Domain.JsonData.CertificateData
                     {
                         EpaDetails = new Domain.JsonData.EpaDetails { LatestEpaOutcome = latestEpaOutcome }
                     }
                 };
+
+                typeof(CertificateBase)
+                    .GetProperty(nameof(CertificateBase.LatestEPAOutcome))
+                    .SetValue(_certificate, latestEpaOutcome);
 
                 _mediator.Setup(m => m.Send(It.Is<GetCertificateRequest>(r => r.CertificateId == id), It.IsAny<CancellationToken>())).ReturnsAsync(_certificate);
                 return this;
