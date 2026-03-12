@@ -38,7 +38,8 @@ CREATE TABLE [dbo].[Learner]
     [EmployerName] NVARCHAR(100) NULL,
     [LearnerFullNameNoSpaces] AS CONVERT(NVARCHAR(255),REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ','')),
     [IsTransfer] BIT NOT NULL DEFAULT 0,
-    [DateTransferIdentified] DATETIME NULL
+    [DateTransferIdentified] DATETIME NULL,
+    [DateOfBirth] DATE NULL,
 )
 GO
 
