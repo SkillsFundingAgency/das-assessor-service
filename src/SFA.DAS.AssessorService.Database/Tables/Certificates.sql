@@ -2,6 +2,8 @@
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[CertificateData] [nvarchar](max) NOT NULL,
 	[ToBePrinted] [datetime2](7) NULL,
+	[PrintRequestedAt] [datetime2](7) NULL,
+	[PrintRequestedBy] [nvarchar](256) NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](256) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,

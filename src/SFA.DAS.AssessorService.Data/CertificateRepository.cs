@@ -422,6 +422,9 @@ namespace SFA.DAS.AssessorService.Data
             certificate.ToBePrinted = null;
             certificate.BatchNumber = null;
 
+            certificate.PrintRequestedAt = updatedCertificate.PrintRequestedAt;
+            certificate.PrintRequestedBy = updatedCertificate.PrintRequestedBy;
+
             if (updateLog)
             {
                 AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
