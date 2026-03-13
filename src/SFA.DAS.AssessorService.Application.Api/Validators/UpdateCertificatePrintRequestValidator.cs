@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators

@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Unit> Handle(UpdateCertificatePrintRequestCommand request, CancellationToken cancellationToken)
         {
-            var certificate = await _mediator.Send(new GetCertificateRequest(request.CertificateId, false));
+            var certificate = await _mediator.Send(new GetCertificateRequest(request.CertificateId, false), cancellationToken);
 
             if (certificate == null)
             {
@@ -51,9 +51,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             certificate.PrintRequestedBy = request.PrintRequestedBy;
             certificate.Status = CertificateStatus.PrintRequested;
 
-            var actor = certificate.CertificateData?.ContactName ?? request.Address?.ContactName ?? "";
+            var actor = certificate.CertificateData?.ContactName ?? request.Address?.ContactName ?? string.Empty;
 
-            _logger.LogInformation($"Print requested for certificate {certificate.Id} by {actor}");
+            _logger.LogInformation("Print requested for certificate {CertificateId} by {Actor}", certificate.Id, actor);
 
             await _certificateRepository.UpdateStandardCertificate(certificate, actor, "PrintRequest", updateLog: true);
 
