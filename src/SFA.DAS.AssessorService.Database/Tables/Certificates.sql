@@ -24,6 +24,8 @@
 	[Type] VARCHAR(9) NOT NULL DEFAULT 'Standard',
 	[FrameworkLearnerId] UNIQUEIDENTIFIER NULL,
 	[DateOfBirth] date NULL,
+	[PrintRequestedAt] [datetime2](7) NOT NULL, 
+	[PrintRequestedBy] [nvarchar](256) NULL,
 	[OverrideFamilyName] NVARCHAR(100) NULL,
 	[OverrideGivenNames] NVARCHAR(100) NULL,
 	
