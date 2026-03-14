@@ -8,9 +8,9 @@
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Enums.NET" Version="5.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.210" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.304-prerelease-3" />
   </ItemGroup>
