@@ -23,8 +23,8 @@
     [StandardUId] VARCHAR(20) NULL,
 	[Type] VARCHAR(9) NOT NULL DEFAULT 'Standard',
 	[FrameworkLearnerId] UNIQUEIDENTIFIER NULL,
-	[DateOfBirth] date NULL,
-	[PrintRequestedAt] [datetime2](7) NOT NULL, 
+	[DateOfBirth] DATE NULL,
+	[PrintRequestedAt] [datetime2](7) NULL,
 	[PrintRequestedBy] [nvarchar](256) NULL,
 	[OverrideFamilyName] NVARCHAR(100) NULL,
 	[OverrideGivenNames] NVARCHAR(100) NULL,
@@ -50,8 +50,8 @@
 	[ContactAddLine4] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine4')) PERSISTED,
 	[ContactPostCode] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactPostCode')) PERSISTED,
 	[LatestEPAOutcome] as CONVERT(NVARCHAR(15),JSON_VALUE(CertificateData, '$.EpaDetails.LatestEpaOutcome')) PERSISTED,
-	[CertificateFamilyName] AS ISNULL([OverrideFamilyName],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName'))) PERSISTED,
-	[CertificateGivenNames] AS ISNULL([OverrideGivenNames],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames'))) PERSISTED,
+	[CertificateFamilyName] AS CONVERT(NVARCHAR(255),ISNULL([OverrideFamilyName],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName')))) PERSISTED,
+	[CertificateGivenNames] AS CONVERT(NVARCHAR(255),ISNULL([OverrideGivenNames],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')))) PERSISTED,
 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
