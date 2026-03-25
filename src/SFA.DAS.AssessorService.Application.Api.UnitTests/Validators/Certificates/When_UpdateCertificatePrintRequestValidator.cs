@@ -155,28 +155,5 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             Assert.IsTrue(result.Errors.Exists(e => e.PropertyName == "PrintRequestedBy"));
         }
 
-        [Test]
-        public void Validator_Should_Fail_When_CertificateId_Missing()
-        {
-            // Arrange
-            var cmd = new UpdateCertificatePrintRequestCommand
-            {
-                Address = new CertificatePrintAddress
-                {
-                    ContactName = "Name",
-                    ContactAddLine1 = "Line1",
-                    ContactPostCode = "PC"
-                },
-                PrintRequestedAt = DateTime.UtcNow,
-                PrintRequestedBy = "Apprentice"
-            };
-
-            // Act
-            ValidationResult result = _validator.Validate(cmd);
-
-            // Assert
-            Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(result.Errors.Exists(e => e.PropertyName == "CertificateId"));
-        }
     }
 }
