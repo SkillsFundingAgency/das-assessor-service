@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests
             Set(nameof(CertificateBase.ContactAddLine3), data.ContactAddLine3);
             Set(nameof(CertificateBase.ContactAddLine4), data.ContactAddLine4);
             Set(nameof(CertificateBase.ContactPostCode), data.ContactPostCode);
+            Set(nameof(CertificateBase.LatestEPAOutcome), data.EpaDetails?.LatestEpaOutcome);
 
             return certificate;
         }

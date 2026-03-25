@@ -166,7 +166,7 @@ namespace SFA.DAS.AssessorService.Data
             var statusesToExclude = new[] { CertificateStatus.Draft, CertificateStatus.Deleted };
 
             var standardCertificates = await _unitOfWork.AssessorDbContext.StandardCertificates
-                .Where(c => c.Uln == uln && !statusesToExclude.Contains(c.Status) && c.AchievementDate != null)
+                .Where(c => c.Uln == uln && !statusesToExclude.Contains(c.Status) && c.AchievementDate != null && c.LatestEPAOutcome == EpaOutcome.Pass)
                 .Select(c => new ApprenticeCertificateSummary
                 {
                     CertificateId = c.Id,
@@ -199,9 +199,9 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId)
         {
-            return await _unitOfWork.AssessorDbContext.FrameworkCertificates
-                 .Include(q => q.CertificateBatchLog)
-                 .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
+                return await _unitOfWork.AssessorDbContext.FrameworkCertificates
+                     .Include(q => q.CertificateBatchLog)
+                     .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)

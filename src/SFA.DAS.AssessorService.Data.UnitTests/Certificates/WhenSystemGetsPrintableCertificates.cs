@@ -36,7 +36,8 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 {
                     StandardName = "Plumbing",
                     StandardLevel = 2,
-                    AchievementDate = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Unspecified)
+                    AchievementDate = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Unspecified),
+                    EpaDetails = new EpaDetails { LatestEpaOutcome = EpaOutcome.Pass }
                 })
                 .With(x => x.Status = CertificateStatus.Submitted)
                 .TheNext(1)
