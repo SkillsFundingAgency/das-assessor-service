@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     {
         public UpdateCertificatePrintRequestValidator()
         {
-            RuleFor(r => r.CertificateId).NotEmpty().WithMessage("CertificateId must not be empty");
             RuleFor(r => r.PrintRequestedAt).NotEmpty().WithMessage("PrintRequestedAt must not be empty");
             RuleFor(r => r.PrintRequestedBy).NotEmpty().WithMessage("PrintRequestedBy must not be empty");
             RuleFor(r => r.Address).NotNull().WithMessage("Address must be supplied");

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
     public class UpdateCertificatePrintRequestCommand : IRequest<Unit>
     {
+        [JsonIgnore]
         public Guid CertificateId { get; set; }
 
         public CertificatePrintAddress Address { get; set; }
