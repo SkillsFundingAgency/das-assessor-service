@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task<T> GetCertificate<T>(string certificateReference, string familyName, DateTime? achievementDate) where T : CertificateBase;
 
         Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
+        Task<List<ApprenticeCertificateSummary>> GetPrintableCertificates(long uln);
 
         Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId);
 
@@ -54,9 +55,6 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId);
-        Task<bool> CertificateExistsForUln(long uln);
-
-        Task<Certificate> GetCertificateDeletedByUln(long uln);
 
         Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference);
 
