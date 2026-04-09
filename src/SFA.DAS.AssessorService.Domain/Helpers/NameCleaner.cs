@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Domain.Helpers
     public static class NameCleaner
     {
         // NOTE: This cleansing logic mirrors database cleansing rules.
-        // Keep this method in sync with CleanseName.sql and update callers/tests
+        // Keep this method in sync with CleanseName.sql and update tests
         // whenever the rules here are changed.
         public static string CleanseName(string name)
         {

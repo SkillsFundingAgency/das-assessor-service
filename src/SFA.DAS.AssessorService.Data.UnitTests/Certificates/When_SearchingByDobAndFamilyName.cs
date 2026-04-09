@@ -17,11 +17,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         private CertificateRepository _certificateRepository;
 
-        [SetUp]
-        public void Arrange()
-        {
-        }
-
         [Test]
         public async Task Returns_Standard_And_Framework_Matches_And_Respects_Exclude()
         {
