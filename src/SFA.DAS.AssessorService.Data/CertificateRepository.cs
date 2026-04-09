@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -202,6 +203,55 @@ namespace SFA.DAS.AssessorService.Data
                 return await _unitOfWork.AssessorDbContext.FrameworkCertificates
                      .Include(q => q.CertificateBatchLog)
                      .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
+        }
+
+        public async Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns)
+        {
+            var cleansed = NameCleaner.CleanseName(familyName);
+            var excludeList = excludeUlns?.ToList() ?? new List<long>();
+
+            var frameworkMatches = await _unitOfWork.AssessorDbContext.FrameworkLearners
+                .Where(l => l.ApprenticeULN > 0
+                            && l.CertificateFamilyName == cleansed
+                            && l.ApprenticeDoB == dateOfBirth
+                            && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
+                .Select(l => new SearchCertificatesResponse
+                {
+                    Uln = l.ApprenticeULN.Value,
+                    CertificateType = CertificateTypes.Framework,
+                    CourseCode = l.TrainingCode,
+                    CourseName = l.FrameworkName,
+                    CourseLevel = l.ApprenticeshipLevelName,
+                    DateAwarded = l.CertificationDate,
+                    ProviderName = l.ProviderName,
+                    Ukprn = l.Ukprn
+                })
+                .ToListAsync();
+
+            var statusesToExclude = new[] { CertificateStatus.Draft, CertificateStatus.Deleted };
+
+            var standardMatches = await _unitOfWork.AssessorDbContext.StandardCertificates
+                .Where(c => !statusesToExclude.Contains(c.Status)
+                            && c.LatestEPAOutcome == EpaOutcome.Pass
+                            && c.DateOfBirth == dateOfBirth
+                            && c.Uln > 0
+                            && c.CertificateFamilyName == cleansed)
+                .Select(c => new SearchCertificatesResponse
+                {
+                    Uln = c.Uln,
+                    CertificateType = c.Type,
+                    CourseCode = c.StandardCode.ToString(),
+                    CourseName = c.StandardName,
+                    CourseLevel = c.StandardLevel.ToString(),
+                    DateAwarded = c.AchievementDate,
+                    ProviderName = c.ProviderName,
+                    Ukprn = c.ProviderUkPrn != null ? c.ProviderUkPrn.ToString() : null
+                })
+                .ToListAsync();
+
+            return frameworkMatches.Concat(standardMatches)
+                .OrderByDescending(x => x.DateAwarded)
+                .ToList();
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
