@@ -208,6 +208,8 @@
     <Build Include="Tables\AssessmentsSummary.sql" />
     <Build Include="StoredProcedures\AssessmentsSummaryUpdate.sql" />
     <Build Include="Functions\Scalar-valued Functions\CleanseName.sql" />
+    <Build Include="StoredProcedures\Certificates_GetFrameworkMasks.sql" />
+    <Build Include="StoredProcedures\Certificates_GetStandardMasks.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
