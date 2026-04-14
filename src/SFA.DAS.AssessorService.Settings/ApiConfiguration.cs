@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string SandboxSqlConnectionString { get; set; }
 
         [JsonRequired] public int PipelineCutoff { get; set; }
+        [JsonRequired] public int MasksMaxCount { get; set; }
         [JsonRequired] public string ServiceLink { get; set; }
         [JsonRequired] public EmailTemplatesConfig EmailTemplatesConfig { get; set; }
     }

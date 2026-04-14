@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Settings
         string SandboxSqlConnectionString { get; set; }
 
         int PipelineCutoff { get; set; }
+        int MasksMaxCount { get; set; }
         string ServiceLink { get; set; }
         EmailTemplatesConfig EmailTemplatesConfig { get; set; }
     }

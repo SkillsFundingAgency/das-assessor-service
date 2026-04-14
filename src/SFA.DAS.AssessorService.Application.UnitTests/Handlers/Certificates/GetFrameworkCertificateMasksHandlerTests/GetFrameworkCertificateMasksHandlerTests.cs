@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 {
@@ -13,13 +14,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
     public class GetFrameworkCertificateMasksHandlerTests
     {
         private Mock<ICertificateRepository> _certificateRepository;
+        private Mock<IApiConfiguration> _config;
         private GetFrameworkCertificateMasksHandler _handler;
 
         [SetUp]
         public void Setup()
         {
             _certificateRepository = new Mock<ICertificateRepository>();
-            _handler = new GetFrameworkCertificateMasksHandler(_certificateRepository.Object);
+            _config = new Mock<IApiConfiguration>();
+            _config.Setup(c => c.MasksMaxCount).Returns(5);
+            _handler = new GetFrameworkCertificateMasksHandler(_certificateRepository.Object, _config.Object);
         }
 
         [Test]
