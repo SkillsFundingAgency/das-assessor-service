@@ -235,11 +235,13 @@ namespace SFA.DAS.AssessorService.Data
                             && c.LatestEPAOutcome == EpaOutcome.Pass
                             && c.DateOfBirth == dateOfBirth
                             && c.Uln > 0
-                            && c.CertificateFamilyName == cleansed)
+                            && c.CertificateFamilyName == cleansed
+                            && c.Type == CertificateTypes.Standard
+                            && (excludeList.Count == 0 || !excludeList.Contains(c.Uln)))
                 .Select(c => new SearchCertificatesResponse
                 {
                     Uln = c.Uln,
-                    CertificateType = c.Type,
+                    CertificateType = CertificateTypes.Standard,
                     CourseCode = c.StandardCode.ToString(),
                     CourseName = c.StandardName,
                     CourseLevel = c.StandardLevel.ToString(),

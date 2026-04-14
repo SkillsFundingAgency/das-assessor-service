@@ -8,6 +8,7 @@ using Moq.EntityFrameworkCore;
 using FizzWare.NBuilder;
 using SFA.DAS.AssessorService.TestHelper;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Data.Interfaces;
 
@@ -61,7 +62,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                     .With(c => c.StandardCode = 100)
                     .WithPrivate(c => c.StandardName, "Standard A")
                     .WithPrivate(c => c.StandardLevel, 3)
-                    .With(c => c.Type = "Standard")
+                    .With(c => c.Type = CertificateTypes.Standard)
                     .WithPrivate(c => c.CertificateFamilyName, "Smith")
                 .TheNext(1)
                     .With(c => c.Uln = 0)
@@ -74,7 +75,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                     .With(c => c.StandardCode = 200)
                     .WithPrivate(c => c.StandardName, "Standard B")
                     .WithPrivate(c => c.StandardLevel, 2)
-                    .With(c => c.Type = "Standard")
+                    .With(c => c.Type = CertificateTypes.Standard)
                     .WithPrivate(c => c.CertificateFamilyName, "Smith")
                 .Build().ToList();
 
@@ -150,6 +151,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                     .With(c => c.DateOfBirth = dob)
                     .WithPrivate(c => c.LatestEPAOutcome, "Pass")
                     .WithPrivate(c => c.CertificateFamilyName, "Smith")
+                    .With(c => c.Type = CertificateTypes.Standard)
                 .Build().ToList();
 
             var mockDbContext = new Mock<AssessorDbContext>();
