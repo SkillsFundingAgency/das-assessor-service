@@ -1,0 +1,46 @@
+{
+  "info": {
+    "_postman_id": "04b7e05d-7854-41c6-98bc-a47e54aa2533",
+    "name": "digital-certification-Assessor-Api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "21174429"
+  },
+  "item": [
+    {
+      "name": "GetCertificatesUln",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://test-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/uln/2945031578",
+          "protocol": "https",
+          "host": [
+            "test-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "uln",
+            "2945031578"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
