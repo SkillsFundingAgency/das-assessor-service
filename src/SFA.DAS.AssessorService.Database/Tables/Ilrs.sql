@@ -24,7 +24,8 @@
 	[Outcome] [int] NULL,
 	[AchDate] [datetime] NULL,
 	[OutGrade] [nvarchar](50) NULL,
-    [LastUpdated] AS ISNULL([UpdatedAt],[CreatedAt])
+    [LastUpdated] AS ISNULL([UpdatedAt],[CreatedAt]),
+    [DateOfBirth] DATE NULL
 )
 
 GO
