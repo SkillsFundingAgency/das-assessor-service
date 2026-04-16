@@ -49,6 +49,11 @@
     [CreatedOn] DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     [ApprenticeNameMatch] NVARCHAR(70) NOT NULL,
     [ULNConfirmed] BIT NOT NULL DEFAULT 0,-- if Unique_number matched to ULN in Approvals
+    [OverrideFamilyName] NVARCHAR(100) NULL,
+    [OverrideGivenNames]  NVARCHAR(100) NULL,
+    [CertificateFamilyName] AS ISNULL([OverrideFamilyName],[dbo].[CleanseName]([ApprenticeSurname])) PERSISTED,
+    [CertificateGivenNames] AS ISNULL([OverrideGivenNames],[dbo].[CleanseName]([ApprenticeForename]+CASE WHEN ISNULL([ApprenticeMiddleName],'') NOT IN ('','''') THEN ' '+[ApprenticeMiddleName] ELSE '' END)) PERSISTED,
+
     CONSTRAINT [PK_FrameworkLearner] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
