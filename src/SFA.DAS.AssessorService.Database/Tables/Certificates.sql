@@ -23,28 +23,35 @@
     [StandardUId] VARCHAR(20) NULL,
 	[Type] VARCHAR(9) NOT NULL DEFAULT 'Standard',
 	[FrameworkLearnerId] UNIQUEIDENTIFIER NULL,
+	[DateOfBirth] DATE NULL,
+	[PrintRequestedAt] [datetime2](7) NULL,
+	[PrintRequestedBy] [nvarchar](256) NULL,
+	[OverrideFamilyName] NVARCHAR(100) NULL,
+	[OverrideGivenNames] NVARCHAR(100) NULL,
 	
-	[LearnerFamilyName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.LearnerFamilyName')),
-	[LearnerGivenNames] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.LearnerGivenNames')),
-	[LearnerFullNameNoSpaces] as CONVERT(NVARCHAR(255),REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','')),
-	[FullName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.FullName')),
-	[ContactOrganisation] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactOrganisation')),
-	[ProviderName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ProviderName')),
-	[ContactName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactName')),
-	[CourseOption] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.CourseOption')),
-	[OverallGrade] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.OverallGrade')),
-	[StandardReference] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.StandardReference')),
-	[StandardName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.StandardName')),
-	[Version] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.Version')),
-	[StandardLevel] as CONVERT(INT,JSON_VALUE(CertificateData, '$.StandardLevel')),
-	[AchievementDate] as CONVERT([datetime2](7),JSON_VALUE(CertificateData, '$.AchievementDate')),
-	[LearningStartDate] as CONVERT([datetime2](7),JSON_VALUE(CertificateData, '$.LearningStartDate')),
-	[ContactAddLine1] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine1')),
-	[ContactAddLine2] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine2')),
-	[ContactAddLine3] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine3')),
-	[ContactAddLine4] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine4')),
-	[ContactPostCode] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactPostCode')),
-	[LatestEPAOutcome] as CONVERT(NVARCHAR(15),JSON_VALUE(CertificateData, '$.EpaDetails.LatestEpaOutcome')),
+	[LearnerFamilyName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName'))) PERSISTED,
+	[LearnerGivenNames] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames'))) PERSISTED,
+	[LearnerFullNameNoSpaces] as CONVERT(NVARCHAR(255),REPLACE([dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')+JSON_VALUE(CertificateData, '$.LearnerFamilyName')),' ','')) PERSISTED,
+	[FullName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.FullName'))) PERSISTED,
+	[ContactOrganisation] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactOrganisation')) PERSISTED,
+	[ProviderName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ProviderName')) PERSISTED,
+	[ContactName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactName')) PERSISTED,
+	[CourseOption] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.CourseOption')) PERSISTED,
+	[OverallGrade] as CONVERT(NVARCHAR(20),JSON_VALUE(CertificateData, '$.OverallGrade')) PERSISTED,
+	[StandardReference] as CONVERT(NVARCHAR(20),JSON_VALUE(CertificateData, '$.StandardReference')) PERSISTED,
+	[StandardName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.StandardName')) PERSISTED,
+	[Version] as CONVERT(NVARCHAR(5),JSON_VALUE(CertificateData, '$.Version')) PERSISTED,
+	[StandardLevel] as CONVERT(INT,JSON_VALUE(CertificateData, '$.StandardLevel')) PERSISTED,
+	[AchievementDate] as CONVERT(date,JSON_VALUE(CertificateData, '$.AchievementDate'),121) PERSISTED,
+	[LearningStartDate] as CONVERT(date,JSON_VALUE(CertificateData, '$.LearningStartDate'),121) PERSISTED,
+	[ContactAddLine1] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine1')) PERSISTED,
+	[ContactAddLine2] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine2')) PERSISTED,
+	[ContactAddLine3] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine3')) PERSISTED,
+	[ContactAddLine4] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine4')) PERSISTED,
+	[ContactPostCode] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactPostCode')) PERSISTED,
+	[LatestEPAOutcome] as CONVERT(NVARCHAR(15),JSON_VALUE(CertificateData, '$.EpaDetails.LatestEpaOutcome')) PERSISTED,
+	[CertificateFamilyName] AS CONVERT(NVARCHAR(255),ISNULL([OverrideFamilyName],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName')))) PERSISTED,
+	[CertificateGivenNames] AS CONVERT(NVARCHAR(255),ISNULL([OverrideGivenNames],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')))) PERSISTED,
 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
@@ -90,6 +97,7 @@ GO
 CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
 GO
 
-CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId]) INCLUDE ([StandardName], [StandardReference],
-[StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
+CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId]) 
+INCLUDE ([StandardName], [StandardReference], [StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
+WHERE Type = 'Standard'
 GO
