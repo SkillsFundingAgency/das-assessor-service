@@ -14,13 +14,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
     public class When_Search_Is_Called
     {
         private Mock<IMediator> _mediator;
-        private CertificateController _controller;
+        private CertificateQueryController _controller;
 
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
-            _controller = new CertificateController(_mediator.Object);
+            _controller = new CertificateQueryController(_mediator.Object);
         }
 
         [Test]

@@ -135,5 +135,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("search", Name = "SearchCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<SearchCertificatesResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        public async Task<IActionResult> Search([FromQuery] DateTime dob, [FromQuery] string name, [FromQuery(Name = "exclude")] long[] exclude)
+        {
+            if (dob == default)
+                return BadRequest(new Dictionary<string, string> { ["DateOfBirth"] = "DateOfBirth must not be empty" });
+
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new Dictionary<string, string> { ["Name"] = "Name must not be empty" });
+
+            var request = new SearchCertificatesRequest
+            {
+                DateOfBirth = dob,
+                Name = name,
+                Exclude = exclude
+            };
+
+            var results = await _mediator.Send(request);
+            return Ok(new { matches = results });
+        }
     }
 }
