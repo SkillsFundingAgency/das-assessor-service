@@ -27,8 +27,8 @@ SELECT ce1.[Id]
   WHERE 1=1
   AND ce1.[Status] NOT IN ('draft','deleted')
   AND (
-			@ExcludeUlns IS NULL
-			OR ce1.[ULN] IN
+			@ExcludeUlns IS NOT NULL
+			AND ce1.[ULN] IN
                 (
                     SELECT TRY_CAST(value AS BIGINT)
                     FROM STRING_SPLIT(@ExcludeUlns, ',')
@@ -57,10 +57,10 @@ SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
 	  SELECT NULL FROM MatchCerts m1 
 	  WHERE 1=1
 	  AND ce1.Id = m1.Id
-	  AND ce1.StandardCode = m1.StandardCode
-	  AND ce1.ProviderUkPrn = m1.UkPrn
-	  AND ce1.Uln = m1.Uln
-	  AND st1.[Route] = m1.Sector
+	  AND ISNULL(ce1.StandardCode, -1) = ISNULL(m1.StandardCode, -1)
+	  AND ISNULL(ce1.ProviderUkPrn, -1) = ISNULL(m1.UkPrn, -1)
+      AND ISNULL(ce1.Uln, '') = ISNULL(m1.Uln, '')
+      AND ISNULL(st1.[Route], '') = ISNULL(m1.Sector, '')
   )
 )
 

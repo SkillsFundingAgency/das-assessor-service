@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }));
         }
 
-        [HttpGet("standard/masks", Name = "GetStandardCertificateMasks")]
+        [HttpGet("masks", Name = "GetStandardCertificateMasks")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(object))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetStandardCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)

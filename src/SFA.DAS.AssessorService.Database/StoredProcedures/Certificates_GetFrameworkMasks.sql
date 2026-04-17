@@ -24,8 +24,8 @@ SELECT fl1.[Id]
    FROM [dbo].[FrameworkLearner] fl1
   WHERE 1=1
   AND (
-			@ExcludeUlns IS NULL
-			OR fl1.[ApprenticeULN] IN
+			@ExcludeUlns IS NOT NULL
+			AND fl1.[ApprenticeULN] IN
                 (
                     SELECT TRY_CAST(value AS BIGINT)
                     FROM STRING_SPLIT(@ExcludeUlns, ',')
@@ -51,9 +51,9 @@ SELECT CONVERT(char(10),fl1.[CreatedOn],121) CreatedDate
   AND NOT EXISTS (
 	  SELECT NULL FROM MatchCerts m1 WHERE 1=1
 	  AND fl1.Id = m1.Id
-	  AND fl1.[ApprenticeUln] = m1.[Uln]
-	  AND fl1.TrainingCode = m1.TrainingCode
-	  AND fl1.ProviderName = m1.ProviderName
+  	  AND ISNULL(fl1.ApprenticeUln, -1) = ISNULL(m1.Uln, -1)
+	  AND ISNULL(fl1.TrainingCode, -1) = ISNULL(m1.TrainingCode, -1)
+      AND ISNULL(fl1.ProviderName, '') = ISNULL(m1.ProviderName, '')
   )
 )
 

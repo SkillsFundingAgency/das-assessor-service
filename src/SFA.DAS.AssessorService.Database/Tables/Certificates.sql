@@ -57,6 +57,11 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+CREATE NONCLUSTERED INDEX [IX_Certificates_Matching]
+ON [dbo].[Certificates] ([Type],[Status],[Uln],[CreateDay])
+INCLUDE ([StandardCode],[ProviderUkPrn],[StandardUId],[ProviderName],[StandardName],[StandardLevel],[LearningStartDate])
+GO
+
 ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
 REFERENCES [dbo].[Organisations] ([Id]);
 GO
