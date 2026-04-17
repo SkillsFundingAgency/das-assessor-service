@@ -1,0 +1,80 @@
+{
+  "info": {
+    "_postman_id": "65cdd55c-6150-4e48-bcd9-3c03c7618640",
+    "name": "DigitalCertificates Assessor Inner API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1033522"
+  },
+  "item": [
+    {
+      "name": "GetCertificatesUln",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/uln/{{Uln}}",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "uln",
+            "{{Uln}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "Environment",
+      "value": "pp"
+    },
+    {
+      "key": "Uln",
+      "value": "1000809110"
+    }
+  ]
+}
