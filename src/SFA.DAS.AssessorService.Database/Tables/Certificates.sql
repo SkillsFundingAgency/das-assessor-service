@@ -102,5 +102,3 @@ CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId])
 INCLUDE ([StandardName], [StandardReference], [StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
 WHERE Type = 'Standard'
 GO
-
-
