@@ -91,7 +91,8 @@ GO
 CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId]) INCLUDE ([CreatedAt], [UpdatedAt], [CertificateData], [Status])
 GO
 
-CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
+CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([Type], [Uln], [Status],[LearnerFamilyName], [LearnerFullNameNoSpaces], [LearnerGivenNames], [IsPrivatelyFunded]) 
+INCLUDE ([id], [StandardCode], [StandardReference], [AchievementDate], [OrganisationId],  [ProviderUkPrn], [CertificateData])
 GO
 
 CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
@@ -101,3 +102,5 @@ CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId])
 INCLUDE ([StandardName], [StandardReference], [StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
 WHERE Type = 'Standard'
 GO
+
+

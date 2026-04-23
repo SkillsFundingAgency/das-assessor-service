@@ -70,3 +70,9 @@ GO
 --Added new index for Update to IsTransfer
 CREATE NONCLUSTERED INDEX [IX_Learner_Transfer] ON [Learner] ([DateTransferIdentified],[IsTransfer]) INCLUDE ([WithdrawReason])
 GO
+
+-- Add new index to facilitate apprentice search
+CREATE NONCLUSTERED INDEX [IX_Learner_Uln_Standards] ON [dbo].[Learner] ([StandardUId],[Uln],[StdCode])
+INCLUDE ([GivenNames],[FamilyName],[LearnStartDate],[EpaOrgId],[FundingModel],[ApprenticeshipId],[Source],[LearnRefNumber],[LearnerFullNameNoSpaces])
+GO
+
