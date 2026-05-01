@@ -49,11 +49,11 @@ SELECT CONVERT(char(10),fl1.[CreatedOn],121) CreatedDate
   AND fl1.[CreatedOn] > @CutoffDay 
   AND fl1.Ukprn IS NOT NULL 
   AND NOT EXISTS (
-	  SELECT NULL FROM MatchCerts m1 WHERE 1=1
-	  AND fl1.Id = m1.Id
-  	  AND ISNULL(fl1.ApprenticeUln, -1) = ISNULL(m1.Uln, -1)
-	  AND ISNULL(fl1.TrainingCode, -1) = ISNULL(m1.TrainingCode, -1)
-      AND ISNULL(fl1.ProviderName, '') = ISNULL(m1.ProviderName, '')
+	  SELECT NULL FROM MatchCerts m1 
+	  WHERE 1=0
+	  OR fl1.[ApprenticeUln] = m1.[Uln]
+	  OR fl1.TrainingCode = m1.TrainingCode
+	  OR fl1.ProviderName = m1.ProviderName
   )
 )
 

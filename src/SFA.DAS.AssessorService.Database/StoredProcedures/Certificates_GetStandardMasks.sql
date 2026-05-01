@@ -55,12 +55,11 @@ SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
   AND ce1.[CreateDay] >= @CutoffDay  -- for performance
   AND NOT EXISTS (
 	  SELECT NULL FROM MatchCerts m1 
-	  WHERE 1=1
-	  AND ce1.Id = m1.Id
-	  AND ISNULL(ce1.StandardCode, -1) = ISNULL(m1.StandardCode, -1)
-	  AND ISNULL(ce1.ProviderUkPrn, -1) = ISNULL(m1.UkPrn, -1)
-      AND ISNULL(ce1.Uln, '') = ISNULL(m1.Uln, '')
-      AND ISNULL(st1.[Route], '') = ISNULL(m1.Sector, '')
+	  WHERE 1=0
+	  OR ce1.StandardCode = m1.StandardCode
+	  OR ce1.ProviderUkPrn = m1.UkPrn
+	  OR ce1.Uln = m1.Uln
+	  OR st1.[Route] = m1.Sector
   )
 )
 
