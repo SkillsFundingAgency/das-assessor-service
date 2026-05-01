@@ -62,5 +62,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task UpdateAssessmentsSummary();
 
         Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns);
+        Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5);
+        Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5);
     }
 }

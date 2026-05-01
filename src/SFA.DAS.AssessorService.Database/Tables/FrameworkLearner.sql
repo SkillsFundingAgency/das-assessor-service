@@ -68,3 +68,9 @@ CREATE UNIQUE INDEX [IXU_FrameworkLearner_NameMatch] ON [dbo].[FrameworkLearner]
     [CompetenceQualificationId], [KnowledgeQualificationId], [CombinedQualificationId], [ULNConfirmed])
 INCLUDE ([Id],[ApprenticeSurname],[ApprenticeForename]);
 GO
+
+CREATE NONCLUSTERED INDEX IX_FrameworkLearner_Matching
+ON [dbo].[FrameworkLearner] ([Ukprn],[CreatedOn])
+INCLUDE ([ApprenticeULN],[TrainingCode],[FrameworkName],[PathwayName],[ProviderName],[ApprenticeStartdate],[ApprenticeshipLevelName])
+GO
+

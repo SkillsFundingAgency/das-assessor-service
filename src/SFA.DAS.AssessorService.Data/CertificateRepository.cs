@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.AssessorDbContext.StandardCertificates
                  .Include(q => q.CertificateBatchLog)
                  .SingleOrDefaultAsync(c =>
-                    c.Uln == uln && 
+                    c.Uln == uln &&
                     c.StandardCode == standardCode);
         }
 
@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
 
-            return await query.OfType<T>().FirstOrDefaultAsync(c => 
+            return await query.OfType<T>().FirstOrDefaultAsync(c =>
                 c.CertificateReference == certificateReference);
         }
 
@@ -200,9 +200,9 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId)
         {
-                return await _unitOfWork.AssessorDbContext.FrameworkCertificates
-                     .Include(q => q.CertificateBatchLog)
-                     .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
+            return await _unitOfWork.AssessorDbContext.FrameworkCertificates
+                 .Include(q => q.CertificateBatchLog)
+                 .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
         }
 
         public async Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns)
@@ -254,6 +254,32 @@ namespace SFA.DAS.AssessorService.Data
             return frameworkMatches.Concat(standardMatches)
                 .OrderByDescending(x => x.DateAwarded)
                 .ToList();
+        }
+
+        public async Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5)
+        {
+            var excludeList = excludeUlns.ToList();
+            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+
+            var parameters = new Dapper.DynamicParameters();
+            parameters.Add("@ExcludeUlns", excludes);
+            parameters.Add("@Top", top);
+
+            var results = await _unitOfWork.QueryStoredProcedureAsync<CertificateMask>("Certificates_GetStandardMasks", parameters);
+            return results.ToList();
+        }
+
+        public async Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5)
+        {
+            var excludeList = excludeUlns.ToList();
+            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+
+            var parameters = new Dapper.DynamicParameters();
+            parameters.Add("@ExcludeUlns", excludes);
+            parameters.Add("@Top", top);
+
+            var results = await _unitOfWork.QueryStoredProcedureAsync<CertificateMask>("Certificates_GetFrameworkMasks", parameters);
+            return results.ToList();
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
@@ -603,7 +629,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             if (string.IsNullOrEmpty(epaOrgId) || employerAccountId == null)
                 return null;
-            
+
             var statuses = new[] { CertificateStatus.Submitted }
                 .Concat(CertificateStatus.PrintProcessStatus)
                 .ToList();
