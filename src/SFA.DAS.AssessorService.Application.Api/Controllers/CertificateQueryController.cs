@@ -1,16 +1,17 @@
-﻿using MediatR;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -35,13 +36,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetCertificateRequest(id, includeLogs)));
         }
 
-        [HttpGet("{uln}/{standardCode}", Name = "GetCertificateForUln")]
+        [HttpGet("{uln}/{standardCode}", Name = "GetCertificateUlnAndStandardCode")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificateForUln(long uln, int standardCode)
+        public async Task<IActionResult> GetCertificateUlnAndStandardCode(long uln, int standardCode)
         {
-            return Ok(await _mediator.Send(new GetCertificateForUlnRequest { Uln = uln, StandardCode = standardCode }));
+            return Ok(await _mediator.Send(new GetCertificateUlnAndStandardCodeRequest { Uln = uln, StandardCode = standardCode }));
+        }
+
+        [HttpGet("uln/{uln}", Name = "GetCertificatesUln")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetCertificatesUlnResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificatesUln(long uln)
+        {
+            return Ok(await _mediator.Send(new GetCertificatesUlnRequest { Uln = uln }));
         }
 
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]

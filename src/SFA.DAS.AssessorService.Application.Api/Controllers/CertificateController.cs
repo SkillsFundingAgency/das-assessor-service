@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -61,6 +62,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> UpdatePrintStatus([FromBody] CertificatePrintStatusUpdateRequest request)
         {
             return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPut("{id}/printrequest", Name = "RequestPrint")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> RequestPrint([FromRoute] Guid id, [FromBody] UpdateCertificatePrintRequestCommand command)
+        {
+            try
+            {
+                command.CertificateId = id;
+                await _mediator.Send(command);
+                return NoContent();
+            }
+            catch (NotFoundException)
+            {
+                throw new ResourceNotFoundException();
+            }
         }
 
         [HttpPost("request-reprint", Name = "RequestReprint")]
