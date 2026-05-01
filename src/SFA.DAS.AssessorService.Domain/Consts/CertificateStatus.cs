@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
         public const string NoCertificate = "NoCertificate";
         public const string Deleted = "Deleted";
         public const string Reprint = "Reprint";
+        public const string PrintRequested = "PrintRequested";
         public const string Error = "Error";
 
         public static string[] PrintProcessStatus = new[] { SentToPrinter, Printed, Delivered, NotDelivered, Reprint };
