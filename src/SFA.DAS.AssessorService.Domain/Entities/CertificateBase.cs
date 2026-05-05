@@ -102,5 +102,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string LatestEPAOutcome { get; private set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string CertificateFamilyName { get; private set; }
     }
 }
