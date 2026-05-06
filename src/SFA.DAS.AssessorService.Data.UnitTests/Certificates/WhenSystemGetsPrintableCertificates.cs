@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             _mockDbContext = new Mock<IAssessorDbContext>();
 
-            var standardCertificates = Builder<Certificate>.CreateListOfSize(4)
+            var standardCertificates = Builder<Certificate>.CreateListOfSize(6)
                 .TheFirst(1)
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.Uln = _uln)
@@ -58,6 +58,28 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                     StandardName = "Carpentry",
                     StandardLevel = 3,
                     AchievementDate = null
+                })
+                .With(x => x.Status = CertificateStatus.Submitted)
+                .TheNext(1)
+                .With(x => x.Uln = _uln)
+                .With(x => x.StandardCode = 4)
+                .With(x => x.CertificateData = new CertificateData
+                {
+                    StandardName = "NullOutcomeStandard",
+                    StandardLevel = 2,
+                    AchievementDate = new DateTime(2024, 5, 1, 0, 0, 0, DateTimeKind.Unspecified),
+                    EpaDetails = null
+                })
+                .With(x => x.Status = CertificateStatus.Submitted)
+                .TheNext(1)
+                .With(x => x.Uln = _uln)
+                .With(x => x.StandardCode = 5)
+                .With(x => x.CertificateData = new CertificateData
+                {
+                    StandardName = "FailOutcomeStandard",
+                    StandardLevel = 2,
+                    AchievementDate = new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Unspecified),
+                    EpaDetails = new EpaDetails { LatestEpaOutcome = EpaOutcome.Fail }
                 })
                 .With(x => x.Status = CertificateStatus.Submitted)
                 .TheNext(1)
@@ -115,6 +137,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             standard.CourseName.Should().Be("Plumbing");
             standard.CourseLevel.Should().Be("2");
             standard.DateAwarded.Should().Be(new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Unspecified));
+
+            result.Should().NotContain(x => x.CertificateType == "Standard" && x.CourseName == "NullOutcomeStandard");
+            result.Should().NotContain(x => x.CertificateType == "Standard" && x.CourseName == "FailOutcomeStandard");
 
             result.Should().BeInDescendingOrder(x => x.DateAwarded);
         }

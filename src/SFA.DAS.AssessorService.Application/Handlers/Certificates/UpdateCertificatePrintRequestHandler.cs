@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             certificate.PrintRequestedBy = request.PrintRequestedBy;
             certificate.Status = CertificateStatus.PrintRequested;
 
-            var actor = certificate.CertificateData?.ContactName ?? request.Address?.ContactName ?? string.Empty;
+            var actor = certificate.CertificateData.ContactName;
 
             _logger.LogInformation("Print requested for certificate {CertificateId} by {Actor}", certificate.Id, actor);
 
