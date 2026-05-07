@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             // Assert
             Assert.IsNotNull(actionResult);
-            _mediator.Verify(m => m.Send(It.Is<SearchCertificatesRequest>(r => r.DateOfBirth == dob && r.Name == name && r.Exclude == exclude), It.IsAny<CancellationToken>()), Times.Once);
+            _mediator.Verify(m => m.Send(It.Is<SearchCertificatesRequest>(r => r.DateOfBirth == dob && r.FamilyName == name && r.Exclude == exclude), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             // Assert
             Assert.IsNotNull(actionResult);
             var value = actionResult.Value as IDictionary<string, string>;
-            Assert.IsTrue(value.ContainsKey("Name"));
+            Assert.IsTrue(value.ContainsKey("FamilyName"));
             _mediator.Verify(m => m.Send(It.IsAny<IRequest<List<SearchCertificatesResponse>>>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }

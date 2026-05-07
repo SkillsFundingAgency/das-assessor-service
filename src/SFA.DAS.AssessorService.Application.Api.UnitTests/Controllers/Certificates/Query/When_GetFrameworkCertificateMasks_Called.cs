@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             result.Should().NotBeNull();
             result.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            result.Value.Should().BeEquivalentTo(new { masks = expectedResponse.Masks });
+            result.Value.Should().BeEquivalentTo(new { Masks = expectedResponse.Masks });
         }
 
         [Test]

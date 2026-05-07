@@ -150,8 +150,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
 
             return Ok();
-        }
-
-        
+        }       
     }
 }

@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             _certificateRepository.Setup(r => r.SearchByDobAndFamilyName(dob, name, It.IsAny<IEnumerable<long>>()))
                 .ReturnsAsync(repoResults);
 
-            var request = new SearchCertificatesRequest { DateOfBirth = dob, Name = name, Exclude = exclude };
+            var request = new SearchCertificatesRequest { DateOfBirth = dob, FamilyName = name, Exclude = exclude };
 
             var result = await _handler.Handle(request, CancellationToken.None);
 

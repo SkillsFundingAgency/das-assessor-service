@@ -25,9 +25,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Certificates
                 .WithCertificateForStoredProcedure(
                     Guid.NewGuid(), certificateData, currentDateTime,
                     20000000, 1234, 99999999, "EPA_TEST", "Submitted", "IFATE_REF_1.0")
+                .WithOrganisation("Other Org", "EPA_OTHER", 88888888, null)
                 .WithCertificateForStoredProcedure(
                     Guid.NewGuid(), certificateData, currentDateTime,
-                    20000001, 1235, 99999999, "EPA_TEST", "Submitted", "IFATE_REF_1.0"))
+                    20000001, 1235, 88888888, "EPA_OTHER", "Submitted", "IFATE_REF_1.0"))
             {
 
                 var results = await fixture.ExecGetStandardMasks(excludeUlns: "20000000");
@@ -54,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Certificates
                 .WithFrameworkLearner(
                     Guid.NewGuid(), "FCN2", "2024", currentDateTime.Date, "John Smith", "Smith", "John",
                     currentDateTime.Date.AddYears(-22), 40000000, "FW100", "Test Framework", "Pathway",
-                    2, "ProvF", "12345678", "Test Framework", "Pathway", "Level 2", 2, currentDateTime, "john smith"))
+                    2, "ProvG", "87654321", "Test Framework", "Pathway", "Level 2", 2, currentDateTime, "john smith"))
             {
                 var results = await fixture.ExecGetFrameworkMasks(excludeUlns: "30000000");
 

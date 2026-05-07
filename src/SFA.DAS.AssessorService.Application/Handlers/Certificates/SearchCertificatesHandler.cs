@@ -23,9 +23,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<List<SearchCertificatesResponse>> Handle(SearchCertificatesRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Certificate search requested: dob={Dob}, name={Name}, excludeCount={ExcludeCount}", request.DateOfBirth, request.Name, request.Exclude?.Count() ?? 0);
+            _logger.LogInformation("Certificate search requested: excludeCount={ExcludeCount}", request.Exclude?.Count() ?? 0);
 
-            var results = await _certificateRepository.SearchByDobAndFamilyName(request.DateOfBirth, request.Name, request.Exclude ?? Enumerable.Empty<long>());
+            var results = await _certificateRepository.SearchByDobAndFamilyName(request.DateOfBirth, request.FamilyName, request.Exclude ?? Enumerable.Empty<long>());
 
             return results;
         }

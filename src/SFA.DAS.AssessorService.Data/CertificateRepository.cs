@@ -208,11 +208,13 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns)
         {
             var cleansed = NameCleaner.CleanseName(familyName);
+            var cleansedUpper = cleansed != null ? cleansed.ToUpperInvariant() : null;
             var excludeList = excludeUlns?.ToList() ?? new List<long>();
 
             var frameworkMatches = await _unitOfWork.AssessorDbContext.FrameworkLearners
                 .Where(l => l.ApprenticeULN > 0
-                            && l.CertificateFamilyName == cleansed
+                            && l.CertificateFamilyName != null
+                            && l.CertificateFamilyName.ToUpper() == cleansedUpper
                             && l.ApprenticeDoB == dateOfBirth
                             && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
                 .Select(l => new SearchCertificatesResponse
@@ -235,8 +237,8 @@ namespace SFA.DAS.AssessorService.Data
                             && c.LatestEPAOutcome == EpaOutcome.Pass
                             && c.DateOfBirth == dateOfBirth
                             && c.Uln > 0
-                            && c.CertificateFamilyName == cleansed
-                            && c.Type == CertificateTypes.Standard
+                            && c.CertificateFamilyName != null
+                            && c.CertificateFamilyName.ToUpper() == cleansedUpper
                             && (excludeList.Count == 0 || !excludeList.Contains(c.Uln)))
                 .Select(c => new SearchCertificatesResponse
                 {
@@ -258,7 +260,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5)
         {
-            var excludeList = excludeUlns.ToList();
+            var excludeList = excludeUlns?.ToList() ?? new List<long>();
             var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
 
             var parameters = new Dapper.DynamicParameters();
@@ -271,7 +273,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5)
         {
-            var excludeList = excludeUlns.ToList();
+            var excludeList = excludeUlns?.ToList() ?? new List<long>();
             var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
 
             var parameters = new Dapper.DynamicParameters();
