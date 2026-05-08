@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AssessorService.Data.Interfaces
 {
@@ -59,5 +60,9 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference);
 
         Task UpdateAssessmentsSummary();
+
+        Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns);
+        Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5);
+        Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5);
     }
 }

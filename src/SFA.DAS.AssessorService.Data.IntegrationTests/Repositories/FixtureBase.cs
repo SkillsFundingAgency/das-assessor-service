@@ -414,6 +414,54 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public T WithCertificateForStoredProcedure(Guid id, string certificateData, DateTime createdAt, long uln, int standardCode,
+            int providerUkPrn, string endPointAssessorOrganisationId, string status, string standardUId, int certificateReferenceId = 10001)
+        {
+            var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+
+            var certificate = CertificateHandler.Create(id, certificateData, null, createdAt, string.Empty, string.Empty,
+                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty, createdAt.Date,
+                certificateReferenceId: certificateReferenceId, standardUId: standardUId);
+            _certificates.Add(certificate);
+            CertificateHandler.InsertRecord(certificate);
+            return this as T;
+        }
+
+        public T WithFrameworkLearner(Guid id, string frameworkCertificateNumber, string certificationYear,
+            DateTime certificationDate, string apprenticeFullname, string apprenticeSurname, string apprenticeForename,
+            DateTime apprenticeDoB, long apprenticeULN, string trainingCode, string frameworkName, string pathwayName,
+            int apprenticeshipLevel, string providerName, string ukprn, string framework, string pathway,
+            string apprenticeshipLevelName, long apprenticeId, DateTime createdOn, string apprenticeNameMatch)
+        {
+            var frameworkLearner = new FrameworkLearnerModel
+            {
+                Id = id,
+                FrameworkCertificateNumber = frameworkCertificateNumber,
+                CertificationYear = certificationYear,
+                CertificationDate = certificationDate,
+                ApprenticeFullname = apprenticeFullname,
+                ApprenticeSurname = apprenticeSurname,
+                ApprenticeForename = apprenticeForename,
+                ApprenticeDoB = apprenticeDoB,
+                ApprenticeULN = apprenticeULN,
+                TrainingCode = trainingCode,
+                FrameworkName = frameworkName,
+                PathwayName = pathwayName,
+                ApprenticeshipLevel = apprenticeshipLevel,
+                ProviderName = providerName,
+                Ukprn = ukprn,
+                Framework = framework,
+                Pathway = pathway,
+                ApprenticeshipLevelName = apprenticeshipLevelName,
+                ApprenticeId = apprenticeId,
+                CreatedOn = createdOn,
+                ApprenticeNameMatch = apprenticeNameMatch
+            };
+
+            FrameworkLearnerHandler.InsertRecord(frameworkLearner);
+            return this as T;
+        }
+
         public T WithCertificate(Guid id, DateTime createdAt, long uln, int stdCode, string endPointAssessorOrganisationId, string status, int providerUkprn, string standardReference, DateTime achievementDate, bool isPrivatelyFunded = false)
         {
             var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
@@ -599,6 +647,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             StagingOfqualOrganisationHandler.DeleteAllRecords();
             StagingOfqualStandardHandler.DeleteAllRecords();
             StagingOfsOrganisationHandler.DeleteAllRecords();
+            FrameworkLearnerHandler.DeleteAllRecords();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -80,6 +80,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }));
         }
 
+        [HttpGet("masks", Name = "GetStandardCertificateMasks")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetStandardCertificateMasksResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)
+        {
+            if (exclude != null && exclude.Any(e => e <= 0))
+            {
+                return BadRequest(new { error = "Exclude ULN values must be positive integers." });
+            }
+            var request = new GetStandardCertificateMasksRequest { Exclude = exclude ?? Array.Empty<long>() };
+            var response = await _mediator.Send(request);
+            return Ok(response);
+        }
+
+        [HttpGet("framework/masks", Name = "GetFrameworkCertificateMasks")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetFrameworkCertificateMasksResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetFrameworkCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)
+        {
+            if (exclude != null && exclude.Any(e => e <= 0))
+            {
+                return BadRequest(new { error = "Exclude ULN values must be positive integers." });
+            }
+            var request = new GetFrameworkCertificateMasksRequest { Exclude = exclude ?? Array.Empty<long>() };
+            var response = await _mediator.Send(request);
+            return Ok(response);
+        }
+
         [HttpGet("ready-to-print/count", Name = "GetCertificatesReadyToPrintCount")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificatesForBatchNumberResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -106,6 +134,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpGet("search", Name = "SearchCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(SearchCertificatesMatchesResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        public async Task<IActionResult> Search([FromQuery] DateTime dob, [FromQuery] string name, [FromQuery(Name = "exclude")] long[] exclude)
+        {
+            if (dob == default)
+                return BadRequest(new Dictionary<string, string> { ["DateOfBirth"] = "DateOfBirth must not be empty" });
+
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new Dictionary<string, string> { ["FamilyName"] = "FamilyName must not be empty" });
+
+            if (exclude != null && exclude.Any(e => e <= 0))
+            {
+                return BadRequest(new { error = "Exclude ULN values must be positive integers." });
+            }
+
+            var request = new SearchCertificatesRequest
+            {
+                DateOfBirth = dob.Date,
+                FamilyName = name,
+                Exclude = exclude
+            };
+
+            var results = await _mediator.Send(request);
+            return Ok(new SearchCertificatesMatchesResponse { Matches = results });
         }
     }
 }
