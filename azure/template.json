@@ -237,8 +237,8 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('uiAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -548,6 +548,9 @@
                 "parameters": {
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "storageKind": {
+                        "value": "StorageV2"
                     },
                     "allowSharedKeyAccess": {
                         "value": true
