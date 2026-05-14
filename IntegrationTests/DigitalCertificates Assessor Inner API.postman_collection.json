@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "65cdd55c-6150-4e48-bcd9-3c03c7618640",
+    "_postman_id": "3258e40c-e547-4891-84c3-eae8cb12042e",
     "name": "DigitalCertificates Assessor Inner API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "1033522"
+    "_exporter_id": "21174429"
   },
   "item": [
     {
@@ -27,6 +27,128 @@
             "certificates",
             "uln",
             "{{Uln}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetStandardCertificateMasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates//masks",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "",
+            "masks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetFrameworkCertificateMasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/framework/masks",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "framework",
+            "masks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/search?dob=1999-08-08&name=Smith",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "dob",
+              "value": "1999-08-08"
+            },
+            {
+              "key": "name",
+              "value": "Smith"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RequestPrint",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"address\": {\r\n    \"contactName\": \"contactName\",\r\n    \"contactOrganisation\": \"contactOrganisation\",\r\n    \"contactAddLine1\": \"contactAddLine1\",\r\n    \"contactAddLine2\": \"contactAddLine2\",\r\n    \"contactAddLine3\": \"contactAddLine3\",\r\n    \"contactAddLine4\": \"contactAddLine4\",\r\n    \"contactPostCode\": \"NG85AN\"\r\n  },\r\n  \"printRequestedAt\": \"2026-05-14T09:35:33.358Z\",\r\n  \"printRequestedBy\": \"Abc\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/{{StandardCertificateId}}/printrequest",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "{{StandardCertificateId}}",
+            "printrequest"
           ]
         }
       },
@@ -75,6 +197,10 @@
     {
       "key": "Uln",
       "value": "1000809110"
+    },
+    {
+      "key": "StandardCertificateId",
+      "value": "127FED64-57D9-4279-AE59-69532DA4B1AF"
     }
   ]
 }
