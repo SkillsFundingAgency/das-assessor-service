@@ -51,8 +51,10 @@ SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
   JOIN [dbo].[Standards] st1 on st1.[StandardUId] = ce1.[StandardUId]
   WHERE 1=1
   AND ce1.[Status] NOT IN ('draft','deleted')
+  AND ce1.[ProviderUkPrn] > 0
   AND ce1.[ULN] > 10000000     -- there are invalid ULNs (these should be fixed if possible)
   AND ce1.[CreateDay] >= @CutoffDay  -- for performance
+  AND NULLIF(LTRIM(RTRIM(ce1.ProviderName)), '') IS NOT NULL
   AND NOT EXISTS (
 	  SELECT NULL FROM MatchCerts m1 
 	  WHERE 1=0
