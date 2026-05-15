@@ -69,7 +69,6 @@ WHERE 1=1
 AND TcSeqn = 1
 AND PrSeqn <= 1
 AND StSeqn <= 3
+
 END
 GO
-
-

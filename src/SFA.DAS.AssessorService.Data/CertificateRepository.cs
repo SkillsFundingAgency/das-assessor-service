@@ -262,8 +262,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5)
         {
-            var excludeList = excludeUlns?.ToList() ?? new List<long>();
-            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+            var excludeList = excludeUlns?.ToArray() ?? Array.Empty<long>();
+            var excludes = string.Join(',', excludeList);
 
             var parameters = new Dapper.DynamicParameters();
             parameters.Add("@ExcludeUlns", excludes);
@@ -275,8 +275,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5)
         {
-            var excludeList = excludeUlns?.ToList() ?? new List<long>();
-            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+            var excludeList = excludeUlns?.ToArray() ?? Array.Empty<long>();
+            var excludes = string.Join(',', excludeList);
 
             var parameters = new Dapper.DynamicParameters();
             parameters.Add("@ExcludeUlns", excludes);
