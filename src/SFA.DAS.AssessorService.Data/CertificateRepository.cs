@@ -216,7 +216,6 @@ namespace SFA.DAS.AssessorService.Data
                             && !string.IsNullOrEmpty(l.CertificateFamilyName)
                             && l.CertificateFamilyName.ToUpper() == cleansedUpper
                             && l.ApprenticeDoB == dateOfBirth
-                            && !string.IsNullOrEmpty(l.ProviderName)
                             && !string.IsNullOrEmpty(l.Ukprn)
                             && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
                 .Select(l => new SearchCertificatesResponse
@@ -241,7 +240,6 @@ namespace SFA.DAS.AssessorService.Data
                             && c.Uln > 0
                             && c.ProviderUkPrn != null && c.ProviderUkPrn > 0
                             && !string.IsNullOrEmpty(c.CertificateFamilyName)
-                            && !string.IsNullOrEmpty(c.ProviderName)
                             && c.CertificateFamilyName.ToUpper() == cleansedUpper
                             && (excludeList.Count == 0 || !excludeList.Contains(c.Uln)))
                 .Select(c => new SearchCertificatesResponse

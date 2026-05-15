@@ -54,7 +54,6 @@ SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
   AND ce1.[ProviderUkPrn] > 0
   AND ce1.[ULN] > 10000000     -- there are invalid ULNs (these should be fixed if possible)
   AND ce1.[CreateDay] >= @CutoffDay  -- for performance
-  AND NULLIF(LTRIM(RTRIM(ce1.ProviderName)), '') IS NOT NULL
   AND NOT EXISTS (
 	  SELECT NULL FROM MatchCerts m1 
 	  WHERE 1=0
@@ -74,7 +73,7 @@ SELECT TOP (@Top) 'masks' Result
 FROM AllCerts a1
 WHERE 1=1 
 AND StSeqn = 1 -- unique Standard
-AND PrSeqn <= 2 -- unique Provider
+AND PrSeqn <= 1 -- unique Provider
 AND LsSeqn <= 3 -- unique Start
 
 END
