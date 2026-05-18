@@ -74,3 +74,8 @@ ON [dbo].[FrameworkLearner] ([Ukprn],[CreatedOn])
 INCLUDE ([ApprenticeULN],[TrainingCode],[FrameworkName],[PathwayName],[ProviderName],[ApprenticeStartdate],[ApprenticeshipLevelName])
 GO
 
+CREATE NONCLUSTERED INDEX IX_FrameworkLearner_Matching_DobFamily
+ON [dbo].[FrameworkLearner] ([CertificateFamilyName],[ApprenticeDoB],[ApprenticeULN])
+INCLUDE ([Ukprn],[TrainingCode],[FrameworkName],[ProviderName],[ApprenticeshipLevelName],[CertificationDate])
+GO
+

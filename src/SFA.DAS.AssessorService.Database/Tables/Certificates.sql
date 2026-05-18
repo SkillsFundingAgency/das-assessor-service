@@ -62,6 +62,12 @@ ON [dbo].[Certificates] ([Type],[Status],[Uln],[CreateDay])
 INCLUDE ([StandardCode],[ProviderUkPrn],[StandardUId],[ProviderName],[StandardName],[StandardLevel],[LearningStartDate])
 GO
 
+CREATE NONCLUSTERED INDEX [IX_Certificates_Matching_DobFamily]
+ON [dbo].[Certificates] ([Status],[LatestEPAOutcome],[DateOfBirth],[CertificateFamilyName],[Uln])
+INCLUDE ([StandardCode],[ProviderUkPrn],[ProviderName],[StandardName],[StandardLevel],[AchievementDate])
+WHERE [Type] = 'Standard'
+GO
+
 ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
 REFERENCES [dbo].[Organisations] ([Id]);
 GO
