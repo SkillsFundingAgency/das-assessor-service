@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "3258e40c-e547-4891-84c3-eae8cb12042e",
+    "_postman_id": "e39e67f2-ab17-4516-81a9-789a157f43f0",
     "name": "DigitalCertificates Assessor Inner API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "21174429"
+    "_exporter_id": "1033522"
   },
   "item": [
     {
@@ -38,7 +38,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates//masks",
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/masks",
           "protocol": "https",
           "host": [
             "{{Environment}}-assessors-api",
@@ -51,7 +51,6 @@
             "api",
             "v1",
             "certificates",
-            "",
             "masks"
           ]
         }
@@ -90,7 +89,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/search?dob=1999-08-08&name=Smith",
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/search?dob={{DateOfBirth}}&name={{FamilyName}}",
           "protocol": "https",
           "host": [
             "{{Environment}}-assessors-api",
@@ -108,11 +107,11 @@
           "query": [
             {
               "key": "dob",
-              "value": "1999-08-08"
+              "value": "{{DateOfBirth}}"
             },
             {
               "key": "name",
-              "value": "Smith"
+              "value": "{{FamilyName}}"
             }
           ]
         }
@@ -196,11 +195,20 @@
     },
     {
       "key": "Uln",
-      "value": "1000809110"
+      "value": "3088888192"
     },
     {
       "key": "StandardCertificateId",
-      "value": "127FED64-57D9-4279-AE59-69532DA4B1AF"
+      "value": "D61A7AD4-261E-436E-8E6D-12A822B0DC38"
+    },
+    {
+      "key": "DateOfBirth",
+      "value": ""
+    },
+    {
+      "key": "FamilyName",
+      "value": "",
+      "type": "default"
     }
   ]
 }
