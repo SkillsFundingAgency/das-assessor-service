@@ -72,9 +72,9 @@ SELECT TOP (@Top) 'masks' Result
       ,ProviderName
 FROM AllCerts a1
 WHERE 1=1 
-AND StSeqn = 1 -- unique Standard
-AND PrSeqn <= 1 -- unique Provider
-AND LsSeqn <= 3 -- unique Start
+AND StSeqn = 1 
+AND PrSeqn <= 2 
+AND LsSeqn <= 3 
 
 END
 GO

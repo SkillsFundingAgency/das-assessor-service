@@ -216,7 +216,6 @@ namespace SFA.DAS.AssessorService.Data
                             && !string.IsNullOrEmpty(l.CertificateFamilyName)
                             && l.CertificateFamilyName.ToUpper() == cleansedUpper
                             && l.ApprenticeDoB == dateOfBirth
-                            && !string.IsNullOrEmpty(l.Ukprn)
                             && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
                 .Select(l => new SearchCertificatesResponse
                 {
