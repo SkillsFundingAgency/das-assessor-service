@@ -67,7 +67,7 @@ SELECT TOP (@Top) 'masks' Result
 FROM AllCerts a1
 WHERE 1=1 
 AND TcSeqn = 1
-AND PrSeqn <= 2 
+AND PrSeqn <= 2
 AND StSeqn <= 3
 
 END
