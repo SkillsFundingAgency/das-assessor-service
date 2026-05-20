@@ -7,16 +7,16 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificateForUlnHandler : IRequestHandler<GetCertificateForUlnRequest, Certificate>
+    public class GetCertificateUlnAndStandardCodeHandler : IRequestHandler<GetCertificateUlnAndStandardCodeRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
 
-        public GetCertificateForUlnHandler(ICertificateRepository certificateRepository)
+        public GetCertificateUlnAndStandardCodeHandler(ICertificateRepository certificateRepository)
         {
             _certificateRepository = certificateRepository;
         }
 
-        public async Task<Certificate> Handle(GetCertificateForUlnRequest request, CancellationToken cancellationToken)
+        public async Task<Certificate> Handle(GetCertificateUlnAndStandardCodeRequest request, CancellationToken cancellationToken)
         {
             return await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
         }
