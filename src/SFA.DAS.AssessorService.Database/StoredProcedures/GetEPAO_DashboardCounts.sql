@@ -36,7 +36,6 @@ BEGIN
 		-- limit Pipeline to the Estimated End Date is no more than the configurable pipeline cut off.
 		AND EstimatedEndDate >= DATEADD(month, -@pipelineCutOff, GETDATE())
 		AND EndPointAssessorOrganisationId = @epaOrgId
-		GROUP BY EndPointAssessorOrganisationId
 		-- 
 		UNION ALL
 		-- add in the created certificates (by epaOrgId)
@@ -45,13 +44,11 @@ BEGIN
 		JOIN Organisations os2 ON ce2.OrganisationId = os2.Id
 		WHERE ce2.[Status] NOT IN ('Deleted','Draft')
 		AND EndPointAssessorOrganisationId = @epaOrgId
-		GROUP BY EndPointAssessorOrganisationId
 		--
 		UNION ALL
 		-- add in the org standards (by epaOrgId)
 		SELECT 0 Assessments, 0 Pipeline, COUNT(*) Standards
 		FROM #LiveStandards
-		GROUP BY EndPointAssessorOrganisationId
 	) [DashboardCounts];
 
 	DROP TABLE  #LiveStandards;
