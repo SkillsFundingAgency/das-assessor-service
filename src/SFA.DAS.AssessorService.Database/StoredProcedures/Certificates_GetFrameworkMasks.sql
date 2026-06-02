@@ -19,7 +19,7 @@ SELECT fl1.[Id]
       ,fl1.[ApprenticeULN] [Uln]
       ,fl1.[TrainingCode] 
 	  ,fl1.[FrameworkName]
-      ,fl1.[ApprenticeshipLevel] 
+      ,fl1.[ApprenticeshipLevelName] 
       ,fl1.[ProviderName]
    FROM [dbo].[FrameworkLearner] fl1
   WHERE 1=1
@@ -42,7 +42,7 @@ SELECT CONVERT(char(10),fl1.[CreatedOn],121) CreatedDate
       ,ROW_NUMBER() OVER (PARTITION BY fl1.[ApprenticeStartDate] ORDER BY fl1.createdOn DESC) StSeqn
       ,fl1.[TrainingCode] CourseCode
       ,fl1.[FrameworkName] CourseName
-      ,fl1.[ApprenticeshipLevel] CourseLevel
+      ,fl1.[ApprenticeshipLevelName] CourseLevel
       ,fl1.[ProviderName]
   FROM [dbo].[FrameworkLearner] fl1
   WHERE 1=1

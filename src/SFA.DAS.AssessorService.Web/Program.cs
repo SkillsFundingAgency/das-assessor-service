@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using NLog.Web;
+using SFA.DAS.AssessorService.Web.Extensions;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -11,18 +9,7 @@ namespace SFA.DAS.AssessorService.Web
     {
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-            try
-            {
-                logger.Info("Starting up host");
-                CreateWebHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                //NLog: catch setup errors
-                logger.Error(ex, "Stopped program because of exception");
-                throw;
-            }
+            CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
@@ -30,17 +17,15 @@ namespace SFA.DAS.AssessorService.Web
             IWebHostEnvironment hostingEnvironment = null;
 
             return WebHost.CreateDefaultBuilder(args)
-                .ConfigureServices(
-                    services =>
+                .ConfigureServices((context, services) =>
                     {
                         hostingEnvironment = services
                             .Where(x => x.ServiceType == typeof(IWebHostEnvironment))
-                            .Select(x => (IWebHostEnvironment) x.ImplementationInstance)
+                            .Select(x => (IWebHostEnvironment)x.ImplementationInstance)
                             .First();
-                        services.AddApplicationInsightsTelemetry();
+                        services.AddOpenTelemetryRegistration(context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
                     })
-                .UseStartup<Startup>()
-                .UseNLog();
+                .UseStartup<Startup>();
         }
     }
 }
