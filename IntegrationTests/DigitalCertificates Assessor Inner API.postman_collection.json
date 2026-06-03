@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "65cdd55c-6150-4e48-bcd9-3c03c7618640",
+    "_postman_id": "e39e67f2-ab17-4516-81a9-789a157f43f0",
     "name": "DigitalCertificates Assessor Inner API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "1033522"
@@ -27,6 +27,127 @@
             "certificates",
             "uln",
             "{{Uln}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetStandardCertificateMasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/masks",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "masks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetFrameworkCertificateMasks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/framework/masks",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "framework",
+            "masks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/search?dob={{DateOfBirth}}&name={{FamilyName}}",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "dob",
+              "value": "{{DateOfBirth}}"
+            },
+            {
+              "key": "name",
+              "value": "{{FamilyName}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RequestPrint",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"address\": {\r\n    \"contactName\": \"contactName\",\r\n    \"contactOrganisation\": \"contactOrganisation\",\r\n    \"contactAddLine1\": \"contactAddLine1\",\r\n    \"contactAddLine2\": \"contactAddLine2\",\r\n    \"contactAddLine3\": \"contactAddLine3\",\r\n    \"contactAddLine4\": \"contactAddLine4\",\r\n    \"contactPostCode\": \"NG85AN\"\r\n  },\r\n  \"printRequestedAt\": \"2026-05-14T09:35:33.358Z\",\r\n  \"printRequestedBy\": \"Abc\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://{{Environment}}-assessors-api.apprenticeships.education.gov.uk/api/v1/certificates/{{StandardCertificateId}}/printrequest",
+          "protocol": "https",
+          "host": [
+            "{{Environment}}-assessors-api",
+            "apprenticeships",
+            "education",
+            "gov",
+            "uk"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "certificates",
+            "{{StandardCertificateId}}",
+            "printrequest"
           ]
         }
       },
@@ -74,7 +195,20 @@
     },
     {
       "key": "Uln",
-      "value": "1000809110"
+      "value": "3088888192"
+    },
+    {
+      "key": "StandardCertificateId",
+      "value": "D61A7AD4-261E-436E-8E6D-12A822B0DC38"
+    },
+    {
+      "key": "DateOfBirth",
+      "value": ""
+    },
+    {
+      "key": "FamilyName",
+      "value": "",
+      "type": "default"
     }
   ]
 }
