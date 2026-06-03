@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         {
             _certificateRepository = certificateRepository;
             _frameworkLearnerRepository = frameworkLearnerRepository;
-            _logger = logger;
         }
 
         public async Task<FrameworkCertificate> Handle(ReprintFrameworkCertificateRequest request, CancellationToken cancellationToken)
