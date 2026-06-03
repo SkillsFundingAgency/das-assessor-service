@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IFrameworkLearnerRepository _frameworkLearnerRepository;
-        private readonly ILogger<ReprintFrameworkCertificateHandler> _logger;
 
         public ReprintFrameworkCertificateHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, 
             ILogger<ReprintFrameworkCertificateHandler> logger)
@@ -79,6 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 CreatedBy = request.Username,
                 CertificateReference = string.Empty,
                 FrameworkLearnerId = request.FrameworkLearnerId,
+                DateOfBirth = frameworkLearner.ApprenticeDoB,
                 ProviderUkPrn = int.TryParse(frameworkLearner.Ukprn, out int result ) ? result : null
             };
 

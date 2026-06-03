@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
@@ -83,6 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                        Uln = request.Uln,
                        StandardCode = request.StandardCode,
                        StandardUId = request.StandardUId,
+                       DateOfBirth = learner.DateOfBirth,
                        ProviderUkPrn = learner.UkPrn,
                        OrganisationId = organisation.Id,
                        CreatedBy = ExternalApiConstants.ApiUserName,
