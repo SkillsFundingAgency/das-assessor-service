@@ -82,7 +82,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Status = CertificateStatus.Draft,
                 CertificateReference = string.Empty,
                 LearnRefNumber = "1234567890",
-                CreateDay = DateTime.UtcNow.Date
             };
 
             _createdCertificate = await _repository.NewStandardCertificate(certificate);

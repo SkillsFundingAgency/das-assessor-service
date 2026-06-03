@@ -95,8 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 StandardCode = request.StandardCode,
                 Status = CertificateStatus.Draft,
                 CreatedBy = request.Username,
-                CertificateReference = string.Empty,
-                CreateDay = DateTime.UtcNow.Date
+                CertificateReference = string.Empty
             };
 
             certificate = await PopulateCertificateData(certificate, request, organisation);

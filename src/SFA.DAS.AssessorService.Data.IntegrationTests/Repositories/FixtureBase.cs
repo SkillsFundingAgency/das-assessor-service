@@ -530,7 +530,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             var certificate = CertificateHandler.Create(id, "{}", null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, 12345,
-                string.Empty, null, string.Empty, createdAt.Date);
+                string.Empty, null, string.Empty);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
             return this as T;
@@ -547,7 +547,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             };
 
             var certificate = CertificateHandler.Create(id, JsonConvert.SerializeObject(certificateData), null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, providerUkprn,
-                status, null, string.Empty, createdAt.Date, isPrivatelyFunded: isPrivatelyFunded);
+                status, null, string.Empty, isPrivatelyFunded: isPrivatelyFunded);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
             return this as T;
@@ -559,7 +559,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             var certificate = CertificateHandler.Create(id, certificateData, null, createdAt, string.Empty, string.Empty,
-                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty, createdAt.Date,
+                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty,
                 certificateReferenceId: certificateReferenceId, standardUId: standardUId);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
