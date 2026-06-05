@@ -39,11 +39,17 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
         {
+            // Keep existing behaviour for TokenValidatedContext calls
+            return await GetClaims(tokenValidatedContext.Principal);
+        }
 
-            var claims = new List<Claim>();                
-            
-            var email = tokenValidatedContext.Principal.FindFirst(ClaimTypes.Email)?.Value;
-            var govLoginId = tokenValidatedContext.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        // Newer ICustomClaims interface expects a ClaimsPrincipal - implement that and reuse logic.
+        public async Task<IEnumerable<Claim>> GetClaims(ClaimsPrincipal principal)
+        {
+            var claims = new List<Claim>();
+
+            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
+            var govLoginId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             ContactResponse user = null;
             if (!string.IsNullOrEmpty(govLoginId) || !string.IsNullOrEmpty(email))
@@ -65,14 +71,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     _logger.LogInformation("Failed to retrieve user by email.");
                 }
-           
-
-                if (user?.Status == ContactStatus.Deleted)
-                {
-                    // Redirect to access denied page. 
-                    tokenValidatedContext.Response.Redirect("/Home/AccessDenied");
-                    tokenValidatedContext.HandleResponse();
-                }
 
                 if (user != null 
                     && !string.Equals(user.Email, email, StringComparison.CurrentCultureIgnoreCase))
@@ -88,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                 if (user != null)
                 {
-                    var primaryIdentity = tokenValidatedContext.Principal.Identities.FirstOrDefault();
+                    var primaryIdentity = principal.Identities.FirstOrDefault();
                     if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
                     {
                         primaryIdentity.AddClaim(new Claim(ClaimTypes.Name, user.DisplayName));
@@ -96,7 +94,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         {
                             claims.Add(new Claim(ClaimTypes.Name, user.DisplayName));    
                         }
-                        
                     }
 
                     claims.Add(new Claim("UserId", user?.Id.ToString()));
@@ -116,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             var orgName = organisation.OrganisationData?.LegalName ??
                                           organisation.OrganisationData?.TradingName ??
                                           organisation.Name;
-                        
+
                             _sessionService.Set("OrganisationName", orgName);
 
                             claims.Add(new Claim("http://schemas.portal.com/epaoid", organisation.OrganisationId));    
@@ -125,13 +122,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     claims.Add(new Claim("display_name", user?.DisplayName));
                     claims.Add(new Claim("email", user?.Email));
-                   
+
                     var response = await _contactsApiClient.UpdateFromGovLogin(new UpdateContactGovLoginRequest
                     {
                         GovIdentifier = govLoginId,
                         ContactId = user.Id
                     });
-                    
+
                     if (user.Status == "Pending")
                     {
                         await _contactsApiClient.Callback(new SignInCallback

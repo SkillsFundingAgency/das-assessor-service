@@ -10,7 +10,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
-using FluentAssertions.Equivalency;
+using DomainStandard = SFA.DAS.AssessorService.Domain.Entities.Standard;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
@@ -24,9 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private RegisterQueryController _queryController;
         private object _result;
 
-        private List<Standard> _expectedStandards;
-        private Standard _standard1;
-        private Standard _standard2;
+        private List<DomainStandard> _expectedStandards;
+        private DomainStandard _standard1;
+        private DomainStandard _standard2;
         private string _searchTerm = "Test";
         
         
@@ -76,32 +76,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             var standards = ((OkObjectResult)_result).Value as List<StandardVersion>;
             standards.Count.Should().Be(2);
-            standards[0].Should().BeEquivalentTo(_standard1, StandardEquivalencyAssertionOptions);
-            standards[1].Should().BeEquivalentTo(_standard2, StandardEquivalencyAssertionOptions);
+            standards[0].Should().BeEquivalentTo(_standard1, options => options.Excluding(s => s.IfateReferenceNumber));
+            standards[1].Should().BeEquivalentTo(_standard2, options => options.Excluding(s => s.IfateReferenceNumber));
         }
 
-        private EquivalencyAssertionOptions<Standard> StandardEquivalencyAssertionOptions(EquivalencyAssertionOptions<Standard> options)
-        {
-            return options.Excluding(x => x.IfateReferenceNumber)
-                          .Excluding(x => x.VersionMajor)
-                          .Excluding(x => x.VersionMinor)
-                          .Excluding(x => x.Status)
-                          .Excluding(x => x.TypicalDuration)
-                          .Excluding(x => x.MaxFunding)
-                          .Excluding(x => x.IsActive)
-                          .Excluding(x => x.LastDateStarts)
-                          .Excluding(x => x.VersionApprovedForDelivery)
-                          .Excluding(x => x.ProposedMaxFunding)
-                          .Excluding(x => x.ProposedTypicalDuration)
-                          .Excluding(x => x.TrailBlazerContact)
-                          .Excluding(x => x.Route)
-                          .Excluding(x => x.IntegratedDegree)
-                          .Excluding(x => x.EqaProviderName)
-                          .Excluding(x => x.EqaProviderContactName)
-                          .Excluding(x => x.EqaProviderContactEmail)
-                          .Excluding(x => x.OverviewOfRole)
-                          .Excluding(x => x.CoronationEmblem)
-                          .Excluding(x => x.EpaoMustBeApprovedByRegulatorBody);
-        }
+
     }
 }

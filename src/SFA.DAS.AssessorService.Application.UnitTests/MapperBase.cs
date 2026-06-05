@@ -13,9 +13,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
         public MapperBase()
         {
             var services = new ServiceCollection();
-            services.AddAutoMapper(
-                typeof(ApplicationResponseProfile).Assembly
-            );
+            // Register AutoMapper profiles from the assembly containing ApplicationResponseProfile
+            services.AddAutoMapper(cfg => { }, typeof(ApplicationResponseProfile).Assembly);
 
             var serviceProvider = services.BuildServiceProvider();
             Mapper = serviceProvider.GetRequiredService<IMapper>();

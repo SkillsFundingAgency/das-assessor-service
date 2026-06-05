@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         [Test]
         public void Then_certificates_are_returned()
         {
-            _result.Items.Count().Should().BeGreaterOrEqualTo(ResultPageSize);
+            _result.Items.Count().Should().BeGreaterThanOrEqualTo(ResultPageSize);
         }
 
         [Test]
