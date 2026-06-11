@@ -84,4 +84,3 @@ CREATE NONCLUSTERED INDEX IX_FrameworkLearner_Search
 ON dbo.FrameworkLearner (CertificateFamilyName, ApprenticeDoB, ApprenticeULN)
 INCLUDE (TrainingCode, FrameworkName, ApprenticeshipLevelName, CertificationDate, ProviderName, Ukprn)
 GO
-
