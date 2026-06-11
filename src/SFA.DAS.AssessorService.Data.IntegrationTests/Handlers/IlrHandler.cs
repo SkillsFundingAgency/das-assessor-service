@@ -25,7 +25,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [Source]" +
                     ", [CreatedAt]" +
                     ", [CompletionStatus]" +
-                    ", [PlannedEndDate])" +
+                    ", [PlannedEndDate]" +
+                    ", [DateOfBirth])" +
                 "VALUES " +
                     "(@id" +
                     ", @uln" +
@@ -38,7 +39,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @source" +
                     ", @createdAt" +
                     ", @completionStatus" +
-                    ", @plannedEndDate); ";
+                    ", @plannedEndDate" +
+                    ", @dateofBirth); ";
 
             DatabaseService.Execute(sql, ilr);
         }
@@ -53,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
         public static IlrModel Create(
             Guid? id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, int? fundingModel, 
-            string source, DateTime? createdAt, int completionStatus, DateTime? plannedEndDate)
+            string source, DateTime? createdAt, int completionStatus, DateTime? plannedEndDate, DateTime? dateOfBirth)
         {
             return new IlrModel
             {
@@ -68,7 +70,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 Source = source ?? HandlerBase.GetAcademicYear(DateTime.UtcNow),
                 CreatedAt = createdAt ?? DateTime.UtcNow,
                 CompletionStatus = completionStatus,
-                PlannedEndDate = plannedEndDate
+                PlannedEndDate = plannedEndDate,
+                DateOfBirth = dateOfBirth
             };
         }
 
@@ -88,6 +91,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", [CreatedAt]" +
                 ", [CompletionStatus]" +
                 ", [PlannedEndDate] " +
+                ", [DateOfBirth] " +
              "FROM [Ilrs] " +
             $"WHERE (Id = @id OR @id IS NULL) " + // when @id is null then Id is not predicated
                 $"AND {NullQueryParam(ilr, p => p.Uln)} " +
@@ -100,7 +104,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 $"AND {NullQueryParam(ilr, p => p.Source)} " +
                 $"AND {NotNullQueryParam(ilr, p => p.CreatedAt)} " +
                 $"AND {NullQueryParam(ilr, p => p.CompletionStatus)} " +
-                $"AND {NullQueryParam(ilr, p => p.PlannedEndDate)} ";
+                $"AND {NullQueryParam(ilr, p => p.PlannedEndDate)} " +
+                $"AND {NullQueryParam(ilr, p => p.DateOfBirth)} ";
 
             return await DatabaseService.QueryFirstOrDefaultAsync<IlrModel>(sqlToQuery, ilr);
         }

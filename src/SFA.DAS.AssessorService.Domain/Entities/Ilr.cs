@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         [NotMapped]
         public string FamilyNameForSearch { get; set; }
