@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Factories;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
@@ -68,6 +70,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
                 EmployerName = employerName,
             };
 
+            return WithApprovalsExtract(approvalsExtract);
+        }
+
+        public T WithApprovalsExtract(ApprovalsExtractModel approvalsExtract)
+        {
             _approvalsExtracts.Add(approvalsExtract);
             ApprovalsExtractHandler.InsertRecord(approvalsExtract);
 
@@ -120,25 +127,18 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             DateTime? effectiveTo, DateTime? versionEarliestStartDate, DateTime? versionLatestStartDate, DateTime? versionLatestEndDate,
             DateTime? versionApprovedForDelivery, bool epaChanged, string eqaProviderName, bool epaoMustBeApprovedByRegulatorBody)
         {
-            var standard = StandardsHandler.Create(
-                title,
-                referenceNumber,
-                larsCode,
-                version,
-                effectiveFrom,
-                effectiveTo,
-                versionEarliestStartDate,
-                versionLatestStartDate,
-                versionLatestEndDate,
-                versionApprovedForDelivery,
-                epaChanged,
-                eqaProviderName,
-                epaoMustBeApprovedByRegulatorBody);
+            var standard = StandardFactory.Create(title, referenceNumber, larsCode, version)
+                .WithEffectiveFrom(effectiveFrom)
+                .WithEffectiveTo(effectiveTo)
+                .WithVersionEarliestStartDate(versionEarliestStartDate)
+                .WithVersionLatestStartDate(versionLatestStartDate)
+                .WithVersionLatestEndDate(versionLatestEndDate)
+                .WithVersionApprovedForDelivery(versionApprovedForDelivery)
+                .WithEPAChanged(epaChanged)
+                .WithEqaProviderName(eqaProviderName)
+                .WithEpaoMustBeApprovedByRegulatorBody(epaoMustBeApprovedByRegulatorBody);
 
-            _standards.Add(standard);
-            StandardsHandler.InsertRecord(standard);
-
-            return this as T;
+            return WithStandard(standard);
         }
 
         public T WithStandard(string title, string referenceNumber, int larsCode, string version, DateTime? effectiveFrom,
@@ -180,6 +180,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return WithStandard(title, referenceNumber, larsCode, version, effectiveFrom, effectiveTo,
                 null, null, null, effectiveFrom.GetValueOrDefault(DateTime.Now.Date),
                 false, string.Empty, false);
+        }
+
+        public T WithStandard(StandardModel standard)
+        {
+            _standards.Add(standard);
+            StandardsHandler.InsertRecord(standard);
+
+            return this as T;
         }
 
         public T WithOrganisationStandard(int id, string endPointAssessorOrganisationId, int larsCode, string standardReference,
@@ -356,47 +364,161 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
         }
 
         public T WithIlr(
-            Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, string source, DateTime? createdOn, int completionStatus, DateTime? plannedEndDate)
+            Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate,
+            string source, DateTime? createdOn, int completionStatus, DateTime? plannedEndDate, DateTime? dateOfBirth)
         {
-            var ilr = IlrHandler.Create(id, uln, givenNames, familyName, ukprn, stdCode, learnStartDate, null, source, createdOn, completionStatus, plannedEndDate);
+            var ilr = new IlrModel
+            {
+                Id = id,
+                Uln = uln,
+                GivenNames = givenNames ?? "Alice",
+                FamilyName = familyName ?? "Bobdotter",
+                Ukprn = ukprn,
+                StdCode = stdCode,
+                LearnStartDate = learnStartDate,
+                FundingModel = 36,
+                Source = source ?? HandlerBase.GetAcademicYear(DateTime.UtcNow),
+                CreatedAt = createdOn ?? DateTime.UtcNow,
+                CompletionStatus = completionStatus,
+                PlannedEndDate = plannedEndDate,
+                DateOfBirth = dateOfBirth
+            };
+
+            return WithIlr(ilr);
+        }
+
+        public T WithIlr(
+            Guid id, long uln, int ukprn, int stdCode, string source, DateTime? createdOn, int completionStatus)
+        {
+            var ilr = new IlrModel
+            {
+                Id = id,
+                Uln = uln,
+                GivenNames = "Alice",
+                FamilyName = "Bobdotter",
+                Ukprn = ukprn,
+                StdCode = stdCode,
+                FundingModel = 36,
+                Source = source ?? HandlerBase.GetAcademicYear(DateTime.UtcNow),
+                CreatedAt = createdOn ?? DateTime.UtcNow,
+                CompletionStatus = completionStatus
+            };
+
+            return WithIlr(ilr);
+        }
+
+        public T WithIlr(IlrModel ilr)
+        {
             _ilrs.Add(ilr);
             IlrHandler.InsertRecord(ilr);
 
             return this as T;
         }
 
-        public T WithIlr(
-            Guid id, long uln, int ukprn, int stdCode, string source, DateTime? createdOn, int completionStatus)
-        {
-            return WithIlr(id, uln, null, null, ukprn, stdCode, null, source, createdOn, completionStatus, null);
-        }
-
         public T WithLearner(
             Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, string epaOrgId, int? fundingModel, long? apprenticeshipId,
-                string source, string learnRefNumber, int completionStatus, DateTime? plannedEndDate, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate,
-                string outGrade, string version, int versionConfirmed, string courseOption, string standardUId, string standardReference, string standardName, DateTime? lastUpdated, DateTime? estimatedEndDate,
-                DateTime? approvalsStopDate, DateTime? approvalsPauseDate, DateTime? approvalsCompletionDate, short? approvalsPaymentStatus,
-                DateTime? latestIlrs, DateTime? latestApprovals, long? employerAccountId, string employerName, int isTransfer, DateTime?  dateTransferIdentified)
+            string source, string learnRefNumber, int completionStatus, DateTime? plannedEndDate, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason, int? outcome, DateTime? achDate,
+            string outGrade, string version, int versionConfirmed, string courseOption, string standardUId, string standardReference, string standardName, DateTime? lastUpdated, DateTime? estimatedEndDate,
+            DateTime? approvalsStopDate, DateTime? approvalsPauseDate, DateTime? approvalsCompletionDate, short? approvalsPaymentStatus,
+            DateTime? latestIlrs, DateTime? latestApprovals, long? employerAccountId, string employerName, int isTransfer, DateTime? dateTransferIdentified, DateTime? dateOfBirth)
         {
-            var learner = LearnerHandler.Create(id, uln, givenNames, familyName, ukprn, stdCode, learnStartDate, epaOrgId, fundingModel, apprenticeshipId, 
-                source, learnRefNumber, completionStatus, plannedEndDate, delLocPostCode, learnActEndDate, withdrawReason, outcome, achDate,
-                outGrade, version, versionConfirmed, courseOption, standardUId, standardReference, standardName, lastUpdated, estimatedEndDate, 
-                approvalsStopDate, approvalsPauseDate, approvalsCompletionDate, approvalsPaymentStatus,
-                latestIlrs, latestApprovals, employerAccountId, employerName, isTransfer, dateTransferIdentified);
-            _learners.Add(learner);
-            LearnerHandler.InsertRecord(learner);
+            var learner = new LearnerModel
+            {
+                Id = id,
+                Uln = uln,
+                GivenNames = givenNames,
+                FamilyName = familyName,
+                UkPrn = ukprn,
+                StdCode = stdCode,
+                LearnStartDate = learnStartDate,
+                EpaOrgId = epaOrgId,
+                FundingModel = fundingModel,
+                ApprenticeshipId = apprenticeshipId,
+                Source = source,
+                LearnRefNumber = learnRefNumber,
+                CompletionStatus = completionStatus,
+                PlannedEndDate = plannedEndDate,
+                DelLocPostCode = delLocPostCode,
+                LearnActEndDate = learnActEndDate,
+                WithdrawReason = withdrawReason,
+                Outcome = outcome,
+                AchDate = achDate,
+                OutGrade = outGrade,
+                Version = version,
+                VersionConfirmed = versionConfirmed,
+                CourseOption = courseOption,
+                StandardUId = standardUId,
+                StandardReference = standardReference,
+                StandardName = standardName,
+                LastUpdated = lastUpdated,
+                EstimatedEndDate = estimatedEndDate,
+                ApprovalsStopDate = approvalsStopDate,
+                ApprovalsPauseDate = approvalsPauseDate,
+                ApprovalsCompletionDate = approvalsCompletionDate,
+                ApprovalsPaymentStatus = approvalsPaymentStatus,
+                LatestIlrs = latestIlrs,
+                LatestApprovals = latestApprovals,
+                EmployerAccountId = employerAccountId,
+                EmployerName = employerName,
+                IsTransfer = isTransfer,
+                DateTransferIdentified = dateTransferIdentified,
+                DateOfBirth = dateOfBirth
+            };
 
-            return this as T;
+            return WithLearner(learner);
         }
 
         public T WithLearner(
             Guid id, long uln, string givenNames, string familyName, int? ukprn, int stdCode, long? apprenticeshipId, string source)
         {
-            var learner = LearnerHandler.Create(id, uln, givenNames, familyName, ukprn, stdCode, null, null, null, apprenticeshipId,
-                source, null, null, null, null, null, null, null, null,
-                null, null, 1, null, null, null, null, null, null,
-                null, null, null, null,
-                null, null, null, null, 0, null);
+            var learner = new LearnerModel
+            {
+                Id = id,
+                Uln = uln,
+                GivenNames = givenNames,
+                FamilyName = familyName,
+                UkPrn = ukprn,
+                StdCode = stdCode,
+                LearnStartDate = null,
+                EpaOrgId = null,
+                FundingModel = null,
+                ApprenticeshipId = apprenticeshipId,
+                Source = source,
+                LearnRefNumber = null,
+                CompletionStatus = null,
+                PlannedEndDate = null,
+                DelLocPostCode = null,
+                LearnActEndDate = null,
+                WithdrawReason = null,
+                Outcome = null,
+                AchDate = null,
+                OutGrade = null,
+                Version = null,
+                VersionConfirmed = 1,
+                CourseOption = null,
+                StandardUId = null,
+                StandardReference = null,
+                StandardName = null,
+                LastUpdated = null,
+                EstimatedEndDate = null,
+                ApprovalsStopDate = null,
+                ApprovalsPauseDate = null,
+                ApprovalsCompletionDate = null,
+                ApprovalsPaymentStatus = null,
+                LatestIlrs = null,
+                LatestApprovals = null,
+                EmployerAccountId = null,
+                EmployerName = null,
+                IsTransfer = 0,
+                DateTransferIdentified = null,
+                DateOfBirth = null
+            };
+
+            return WithLearner(learner);
+        }
+
+        public T WithLearner(LearnerModel learner)
+        {
             _learners.Add(learner);
             LearnerHandler.InsertRecord(learner);
 
@@ -408,7 +530,24 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             var certificate = CertificateHandler.Create(id, "{}", null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, 12345,
-                string.Empty, null, string.Empty, createdAt.Date);
+                string.Empty, null, string.Empty);
+            _certificates.Add(certificate);
+            CertificateHandler.InsertRecord(certificate);
+            return this as T;
+        }
+
+        public T WithCertificate(Guid id, DateTime createdAt, long uln, int stdCode, string endPointAssessorOrganisationId, string status, int providerUkprn, string standardReference, DateTime achievementDate, bool isPrivatelyFunded = false)
+        {
+            var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+
+            var certificateData = new CertificateData
+            {
+                AchievementDate = achievementDate,
+                StandardReference = standardReference
+            };
+
+            var certificate = CertificateHandler.Create(id, JsonConvert.SerializeObject(certificateData), null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, providerUkprn,
+                status, null, string.Empty, isPrivatelyFunded: isPrivatelyFunded);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
             return this as T;
@@ -420,7 +559,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             var certificate = CertificateHandler.Create(id, certificateData, null, createdAt, string.Empty, string.Empty,
-                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty, createdAt.Date,
+                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty,
                 certificateReferenceId: certificateReferenceId, standardUId: standardUId);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
@@ -459,23 +598,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             };
 
             FrameworkLearnerHandler.InsertRecord(frameworkLearner);
-            return this as T;
-        }
-
-        public T WithCertificate(Guid id, DateTime createdAt, long uln, int stdCode, string endPointAssessorOrganisationId, string status, int providerUkprn, string standardReference, DateTime achievementDate, bool isPrivatelyFunded = false)
-        {
-            var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
-
-            var certificateData = new CertificateData
-            {
-                AchievementDate = achievementDate,
-                StandardReference = standardReference
-            };
-
-            var certificate = CertificateHandler.Create(id, JsonConvert.SerializeObject(certificateData), null, createdAt, string.Empty, string.Empty, organisation.Id, uln, stdCode, providerUkprn,
-                status, null, string.Empty, createdAt.Date, isPrivatelyFunded: isPrivatelyFunded);
-            _certificates.Add(certificate);
-            CertificateHandler.InsertRecord(certificate);
             return this as T;
         }
 

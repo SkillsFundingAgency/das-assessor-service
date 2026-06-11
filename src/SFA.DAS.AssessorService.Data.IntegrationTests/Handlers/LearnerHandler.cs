@@ -50,7 +50,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", [EmployerAccountId]" +
                 ", [EmployerName]" +
                 ", [IsTransfer]" +
-                ", [DateTransferIdentified]) " +
+                ", [DateTransferIdentified]" +
+                ", [DateOfBirth]) " +
             "VALUES " +
                 "(@id" +
                 ", @uln" +
@@ -89,16 +90,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", @employerAccountId" +
                 ", @employerName" +
                 ", @isTransfer" +
-                ", @dateTransferIdentified); ";
+                ", @dateTransferIdentified" +
+                ", @dateOfBirth); ";
 
             DatabaseService.Execute(sql, learner);
         }
 
-        public static LearnerModel Create(Guid id, long uln, string givenNames, string familyName, int? ukprn, int stdCode, long? apprenticeshipId, string source)
+        public static LearnerModel Create(Guid id, long uln, string givenNames, string familyName, int? ukprn, int stdCode, long? apprenticeshipId, string source, DateTime? dateOfBirth)
         {
             return Create(id, uln, givenNames, familyName, ukprn, stdCode, null, null, null, apprenticeshipId,
                 source, null, null, null, null, null, null, null, null, null, null, 1, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, 0, null);
+                null, null, null, null, null, null, null, null, 0, null, dateOfBirth);
         }
 
         public static LearnerModel Create(
@@ -110,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             string standardName, DateTime? lastUpdated, DateTime? estimatedEndDate, DateTime? approvalsStopDate,
             DateTime? approvalsPauseDate, DateTime? approvalsCompletionDate, short? approvalsPaymentStatus,
             DateTime? latestIlrs, DateTime? latestApprovals, long? employerAccountId, string employerName,
-            int isTransfer, DateTime? dateTransferIdentified)
+            int isTransfer, DateTime? dateTransferIdentified, DateTime? dateOfBirth)
         {
             return new LearnerModel
             {
@@ -151,7 +153,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 EmployerAccountId = employerAccountId,
                 EmployerName = employerName,
                 IsTransfer = isTransfer,
-                DateTransferIdentified = dateTransferIdentified
+                DateTransferIdentified = dateTransferIdentified,
+                DateOfBirth = dateOfBirth
             };
         }
 
@@ -198,6 +201,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 ", [EmployerName]" +
                 ", [IsTransfer]" +
                 ", [DateTransferIdentified] " +
+                ", [DateOfBirth] " +
              "FROM [Learner] " +
             $"WHERE (Id = @id OR @id IS NULL) " + // when @id is null then Id is not predicated
                 $"AND {NullQueryParam(learner, p => p.Uln)} " +
@@ -236,7 +240,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 $"AND {NullQueryParam(learner, p => p.EmployerAccountId)} " +
                 $"AND {NullQueryParam(learner, p => p.EmployerName)} " +
                 $"AND {NotNullQueryParam(learner, p => p.IsTransfer)} " +
-                $"AND {NullQueryParam(learner, p => p.DateTransferIdentified)} ";
+                $"AND {NullQueryParam(learner, p => p.DateTransferIdentified)} " +
+                $"AND {NullQueryParam(learner, p => p.DateOfBirth)} ";
 
             return await DatabaseService.QueryFirstOrDefaultAsync<LearnerModel>(sqlToQuery, learner);
         }

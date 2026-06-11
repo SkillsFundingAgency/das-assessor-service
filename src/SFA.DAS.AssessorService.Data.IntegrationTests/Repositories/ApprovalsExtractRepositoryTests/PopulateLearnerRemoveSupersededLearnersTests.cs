@@ -40,15 +40,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
             using (var fixture = new PopulateLearnerRemoveSupersededLearnerTestsFixture()
                 .WithStandard(standards[firstStdCode].title, standards[firstStdCode].referenceNumber, firstStdCode, standards[firstStdCode].version, currentDateTime.AddYears(-1).Date, null, null, null, null)
                 .WithStandard(standards[secondStdCode].title, standards[secondStdCode].referenceNumber, secondStdCode, standards[secondStdCode].version, currentDateTime.AddYears(-1).Date, null, null, null, null)
-                .WithIlr(ilrId[firstStdCode], uln, givenNames, familyName, ukprn, firstStdCode, learnStartDateTime, HandlerBase.GetAcademicYear(DateTime.UtcNow), currentDateTime, 2, plannedEndDateTime)
-                .WithIlr(ilrId[secondStdCode], uln, givenNames, familyName, ukprn, secondStdCode, learnStartDateTime, HandlerBase.GetAcademicYear(DateTime.UtcNow), currentDateTime, 2, plannedEndDateTime)
+                .WithIlr(ilrId[firstStdCode], uln, givenNames, familyName, ukprn, firstStdCode, learnStartDateTime, HandlerBase.GetAcademicYear(DateTime.UtcNow), currentDateTime, 2, plannedEndDateTime, null)
+                .WithIlr(ilrId[secondStdCode], uln, givenNames, familyName, ukprn, secondStdCode, learnStartDateTime, HandlerBase.GetAcademicYear(DateTime.UtcNow), currentDateTime, 2, plannedEndDateTime, null)
                 .WithLearner(ilrId[firstStdCode], uln, givenNames, familyName, ukprn, firstStdCode, apprenticeshipId, HandlerBase.GetAcademicYear(DateTime.UtcNow))
                 .WithLearner(ilrId[secondStdCode], uln, givenNames, familyName, ukprn, secondStdCode, apprenticeshipId, HandlerBase.GetAcademicYear(DateTime.UtcNow))
                 .WithApprovalsExtract(apprenticeshipId, givenNames, familyName, uln.ToString(), approvalExtractStdCode, standards[approvalExtractStdCode].version, false, null, standards[approvalExtractStdCode].standardUid, currentDateTime, null, currentDateTime, currentDateTime, null, null, null, ukprn, "LEARN123", 1, 12345, "Bob"))
             {
                 var results = fixture.ExecPopulateLearner_RemoveSupersededLearners();
 
-                var expectedLearner = LearnerHandler.Create(ilrId[expectedStdCode], uln, givenNames, familyName, ukprn, expectedStdCode, apprenticeshipId, HandlerBase.GetAcademicYear(DateTime.UtcNow));
+                var expectedLearner = LearnerHandler.Create(ilrId[expectedStdCode], uln, givenNames, familyName, ukprn, expectedStdCode, apprenticeshipId, HandlerBase.GetAcademicYear(DateTime.UtcNow), null);
 
                 await results.VerifyLearnerRowCount(1);
                 await results.VerifyLearnerExists(expectedLearner);

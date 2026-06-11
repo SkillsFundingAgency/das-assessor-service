@@ -39,7 +39,7 @@ SELECT ce1.[Id]
 ,AllCerts
 AS
 (
-SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
+SELECT ce1.[CreateDay] CreatedDate
       ,ROW_NUMBER() OVER (PARTITION BY ce1.[StandardCode] ORDER BY ce1.[CreateDay] DESC) Stseqn
       ,ROW_NUMBER() OVER (PARTITION BY ce1.[ProviderUkPrn] ORDER BY ce1.[CreateDay] DESC) Prseqn
       ,ROW_NUMBER() OVER (PARTITION BY ce1.[LearningStartDate] ORDER BY ce1.[CreateDay] DESC) LsSeqn

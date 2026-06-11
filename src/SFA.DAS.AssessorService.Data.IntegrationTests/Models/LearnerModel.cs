@@ -42,5 +42,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public string EmployerName { get; set; }
         public int IsTransfer { get; set; }
         public DateTime? DateTransferIdentified { get; set; }
+        public DateTime? DateOfBirth { get; set; }
     }
 }

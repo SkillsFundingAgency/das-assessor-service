@@ -17,7 +17,6 @@
     [ProviderUkPrn] INT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
     [StandardUId] VARCHAR(20) NULL,
@@ -28,7 +27,8 @@
 	[PrintRequestedBy] [nvarchar](256) NULL,
 	[OverrideFamilyName] NVARCHAR(100) NULL,
 	[OverrideGivenNames] NVARCHAR(100) NULL,
-	
+
+	[CreateDay] as CONVERT(DATE, CreatedAt) PERSISTED,
 	[LearnerFamilyName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName'))) PERSISTED,
 	[LearnerGivenNames] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames'))) PERSISTED,
 	[LearnerFullNameNoSpaces] as CONVERT(NVARCHAR(255),REPLACE([dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')+JSON_VALUE(CertificateData, '$.LearnerFamilyName')),' ','')) PERSISTED,
@@ -57,17 +57,6 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX [IX_Certificates_Matching]
-ON [dbo].[Certificates] ([Type],[Status],[Uln],[CreateDay])
-INCLUDE ([StandardCode],[ProviderUkPrn],[StandardUId],[ProviderName],[StandardName],[StandardLevel],[LearningStartDate])
-GO
-
-CREATE NONCLUSTERED INDEX [IX_Certificates_Matching_DobFamily]
-ON [dbo].[Certificates] ([Status],[LatestEPAOutcome],[DateOfBirth],[CertificateFamilyName],[Uln])
-INCLUDE ([StandardCode],[ProviderUkPrn],[ProviderName],[StandardName],[StandardLevel],[AchievementDate])
-WHERE [Type] = 'Standard'
-GO
-
 ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
 REFERENCES [dbo].[Organisations] ([Id]);
 GO
@@ -93,7 +82,22 @@ CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
 WHERE [Uln] IS NOT NULL AND [StandardCode] IS NOT NULL;
 GO
 
-CREATE INDEX [IX_Certificates_CreateDay] ON [Certificates] ([CreateDay]) INCLUDE ([Status], [CertificateData])
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardMasks_Uln
+ON [dbo].[Certificates] (Uln)
+INCLUDE (Id, Status, StandardCode, StandardName, StandardLevel, ProviderUkPrn, ProviderName, StandardUId)
+WHERE [Type] = 'Standard'
+GO
+
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardMasks_CreateDay
+ON dbo.Certificates (CreateDay DESC)
+INCLUDE (Status, Uln, StandardCode, ProviderUkPrn, StandardUId, ProviderName, StandardName, StandardLevel, LearningStartDate)
+WHERE [Type] = 'Standard'
+GO
+
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardSearch
+ON dbo.Certificates (CertificateFamilyName, DateOfBirth, Uln)
+INCLUDE (LatestEPAOutcome, Status, StandardCode, StandardName, StandardLevel, AchievementDate, ProviderName, ProviderUkPrn)
+WHERE [Type] = 'Standard'
 GO
 
 CREATE INDEX [IX_Certificates_CertificateReference] ON [Certificates] ([CertificateReference]) INCLUDE ([Id])

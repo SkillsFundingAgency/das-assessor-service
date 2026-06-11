@@ -26,10 +26,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         
         protected static Ilr LearnerWithCertificate = new Ilr
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Source = "1920",
             Uln = 11111111111,
             StdCode = 10,
+            DateOfBirth = DateTime.Now.AddYears(-21),
             GivenNames = "GivenLearnerOne",
             FamilyName = "FamilyLearnerOne",
             UkPrn = 1111,
@@ -54,10 +55,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         protected static Ilr LearnerWithoutCertificate = new Ilr
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Source = "1920",
             Uln = 22222222222,
             StdCode = 20,
+            DateOfBirth = DateTime.Now.AddYears(-21),
             GivenNames = "GivenLearnerTwo",
             FamilyName = "FamilyLearnerTwo",
             UkPrn = 2222,
@@ -82,10 +84,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         protected static Ilr LearnerWithDeletedCertificate = new Ilr
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Source = "2021",
             Uln = 33333333333,
             StdCode = 30,
+            DateOfBirth = DateTime.Now.AddYears(-21),
             GivenNames = "GivenLearnerThree",
             FamilyName = "FamilyLearnerThree",
             UkPrn = 33333,
@@ -110,10 +113,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         protected static Ilr LearnerWithDraftCertificate = new Ilr
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Source = "2021",
             Uln = 444444444444,
             StdCode = 30,
+            DateOfBirth = DateTime.Now.AddYears(-21),
             GivenNames = "GivenLearnerFour",
             FamilyName = "FamilyLearnerFour",
             UkPrn = 33333,
@@ -138,10 +142,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         protected static Ilr LearnerWithFailCertificate = new Ilr
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Source = "2021",
             Uln = 444444444444,
             StdCode = 30,
+            DateOfBirth = DateTime.Now.AddYears(-21),
             GivenNames = "GivenLearnerFive",
             FamilyName = "FamilyLearnerFive",
             UkPrn = 33333,
@@ -196,7 +201,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             CertificateData = new CertificateData { OverallGrade = CertificateGrade.Fail }
         };
 
-        protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode,
+        protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
             int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
@@ -206,6 +211,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 Ukprn = ukprn,
                 Uln = uln,
                 StdCode = stdCode,
+                DateOfBirth = dateOfBirth,
                 FundingModel = fundingModel,
                 GivenNames = givenNames,
                 FamilyName = familyName,
@@ -217,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             };
         }
 
-        protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode,
+        protected ImportLearnerDetail CreateImportLearnerDetail(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
             int? fundingModel, string givenNames, string familyName, string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason,
             int? outcome, DateTime? achDate, string outGrade)
@@ -228,6 +234,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 Ukprn = ukprn,
                 Uln = uln,
                 StdCode = stdCode,
+                DateOfBirth = dateOfBirth,
                 FundingModel = fundingModel,
                 GivenNames = givenNames,
                 FamilyName = familyName,
@@ -253,6 +260,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 Ukprn = ilr.UkPrn,
                 Uln = ilr.Uln,
                 StdCode = ilr.StdCode,
+                DateOfBirth = ilr.DateOfBirth,
                 FundingModel = ilr.FundingModel,
                 GivenNames = ilr.GivenNames,
                 FamilyName = ilr.FamilyName,
@@ -278,6 +286,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 Ukprn = ukprn,
                 Uln = uln,
                 StdCode = stdCode,
+                DateOfBirth = DateTime.Now.AddYears(-21),
                 FundingModel = 99,
                 GivenNames = "Other",
                 FamilyName = "Other",
@@ -316,7 +325,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
                 new Mock<ILogger<ImportLearnerDetailHandler>>().Object);
         }
 
-        protected void VerifyIlrUpdated(string source, int? ukprn, long? uln, int? stdCode,
+        protected void VerifyIlrUpdated(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
             int? fundingModel, string givenNames, string familyName, string epaOrgId, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, DateTime? learnActEndDate, int? withdrawReason,
             int? outcome, DateTime? achDate, string outGrade, Func<Times> times)
@@ -327,6 +336,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             ModifiedIlr.UkPrn.Should().Be(ukprn.Value);
             ModifiedIlr.Uln.Should().Be(uln.Value);
             ModifiedIlr.StdCode.Should().Be(stdCode.Value);
+            ModifiedIlr.DateOfBirth.Should().Be(dateOfBirth.Value);
             ModifiedIlr.FundingModel.Should().Be(fundingModel);
             ModifiedIlr.GivenNames.Should().Be(givenNames);
             ModifiedIlr.FamilyName.Should().Be(familyName);
@@ -351,6 +361,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
             ModifiedIlr.UkPrn.Should().Be(importLearnerDetail.Ukprn.Value);
             ModifiedIlr.Uln.Should().Be(importLearnerDetail.Uln.Value);
             ModifiedIlr.StdCode.Should().Be(importLearnerDetail.StdCode.Value);
+            ModifiedIlr.DateOfBirth.Should().Be(importLearnerDetail.DateOfBirth.Value);
             ModifiedIlr.FundingModel.Should().Be(importLearnerDetail.FundingModel);
             ModifiedIlr.GivenNames.Should().Be(importLearnerDetail.GivenNames);
             ModifiedIlr.FamilyName.Should().Be(importLearnerDetail.FamilyName);
