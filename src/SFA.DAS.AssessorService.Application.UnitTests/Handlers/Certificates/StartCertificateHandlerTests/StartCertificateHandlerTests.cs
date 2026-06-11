@@ -89,7 +89,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 Status = CertificateStatus.Draft,
                 CertificateReference = string.Empty,
                 learnerRecord.LearnRefNumber,
-                CreateDay = DateTime.UtcNow.Date,
                 IsPrivatelyFunded = false
             });
 
@@ -146,7 +145,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 Status = CertificateStatus.Draft,
                 CertificateReference = string.Empty,
                 learnerRecord.LearnRefNumber,
-                CreateDay = DateTime.UtcNow.Date,
                 IsPrivatelyFunded = true
             });
 
@@ -227,7 +225,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 Status = CertificateStatus.Draft,
                 CertificateReference = string.Empty,
                 learnerRecord.LearnRefNumber,
-                CreateDay = DateTime.UtcNow.Date,
                 IsPrivatelyFunded = false,
                 StandardUId = standard.StandardUId
             });

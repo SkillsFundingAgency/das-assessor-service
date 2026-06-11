@@ -89,8 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                        CertificateData = certificateData,
                        Status = CertificateStatus.Draft, // NOTE: Web & Staff always creates Draft first
                        CertificateReference = string.Empty,
-                       LearnRefNumber = learner.LearnRefNumber,
-                       CreateDay = DateTime.UtcNow.Date
+                       LearnRefNumber = learner.LearnRefNumber
                    });
             }
             else
