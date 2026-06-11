@@ -138,6 +138,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 UkPrn = importLearnerDetail.Ukprn.Value,
                 Uln = importLearnerDetail.Uln.Value,
                 StdCode = importLearnerDetail.StdCode.Value,
+                DateOfBirth = importLearnerDetail.DateOfBirth,
                 FundingModel = importLearnerDetail.FundingModel,
                 GivenNames = importLearnerDetail.GivenNames,
                 FamilyName = importLearnerDetail.FamilyName,
@@ -167,6 +168,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 UkPrn = importLearnerDetail.Ukprn.Value,
                 Uln = importLearnerDetail.Uln.Value,
                 StdCode = importLearnerDetail.StdCode.Value,
+                DateOfBirth = importLearnerDetail.DateOfBirth,
                 FundingModel = importLearnerDetail.FundingModel,
                 GivenNames = importLearnerDetail.GivenNames,
                 FamilyName = importLearnerDetail.FamilyName,
@@ -188,7 +190,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             return $"{(isUpdate ? "Updated" : "Replaced")}LearnerDetail";
         }
 
-        private T RetainCurrentValueForNullUpdate<T>(T currentValue, T newValue, bool isUpdate)
+        private static  T RetainCurrentValueForNullUpdate<T>(T currentValue, T newValue, bool isUpdate)
         {
             return isUpdate && newValue == null ? currentValue : newValue;
         }
@@ -206,6 +208,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             AddMissingMandatoryFieldError(result, request.Source, nameof(request.Source));
             AddMissingMandatoryFieldError(result, request.Ukprn, nameof(request.Ukprn));
             AddMissingMandatoryFieldError(result, request.Uln, nameof(request.Uln));
+            AddMissingMandatoryFieldError(result, request.DateOfBirth, nameof(request.DateOfBirth));
             AddMissingMandatoryFieldError(result, request.StdCode, nameof(request.StdCode));
             AddMissingMandatoryFieldError(result, request.FundingModel, nameof(request.FundingModel));
             AddMissingMandatoryFieldError(result, request.GivenNames, nameof(request.GivenNames));
@@ -219,7 +222,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
             return result.Errors.Count > 0 ? result : null;
         }
 
-        private void AddMissingMandatoryFieldError<T>(ImportLearnerDetailResult result, T fieldValue, string fieldName)
+        private static void AddMissingMandatoryFieldError<T>(ImportLearnerDetailResult result, T fieldValue, string fieldName)
         {
             if(fieldValue == null)
             {

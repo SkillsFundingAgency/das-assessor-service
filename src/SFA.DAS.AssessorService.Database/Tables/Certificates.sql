@@ -17,7 +17,6 @@
     [ProviderUkPrn] INT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
     [StandardUId] VARCHAR(20) NULL,
@@ -28,7 +27,8 @@
 	[PrintRequestedBy] [nvarchar](256) NULL,
 	[OverrideFamilyName] NVARCHAR(100) NULL,
 	[OverrideGivenNames] NVARCHAR(100) NULL,
-	
+
+	[CreateDay] as CONVERT(DATE, CreatedAt) PERSISTED,
 	[LearnerFamilyName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName'))) PERSISTED,
 	[LearnerGivenNames] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames'))) PERSISTED,
 	[LearnerFullNameNoSpaces] as CONVERT(NVARCHAR(255),REPLACE([dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')+JSON_VALUE(CertificateData, '$.LearnerFamilyName')),' ','')) PERSISTED,

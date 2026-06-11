@@ -43,10 +43,12 @@ CREATE TABLE [dbo].[Learner]
 )
 GO
 
-CREATE UNIQUE INDEX [IXU_Learner_Uln_StdCode] ON [Learner] ([Uln], [StdCode]) INCLUDE ([FamilyName])
+CREATE UNIQUE INDEX [IXU_Learner_Uln_StdCode] ON [Learner] ([Uln], [StdCode]) 
+INCLUDE ([FamilyName])
 GO
 
-CREATE NONCLUSTERED INDEX [IX_Learner_EpaOrgId_StdCode_Uln_CompletionStatus] ON [Learner] ( [StdCode], [Uln], [CompletionStatus], [EpaOrgId]) INCLUDE ([DelLocPostCode], [LearnStartDate], [PlannedEndDate])
+CREATE NONCLUSTERED INDEX [IX_Learner_EpaOrgId_StdCode_Uln_CompletionStatus] ON [Learner] ( [StdCode], [Uln], [CompletionStatus], [EpaOrgId]) 
+INCLUDE ([DelLocPostCode], [LearnStartDate], [PlannedEndDate])
 GO
 
 CREATE NONCLUSTERED INDEX [IX_Learner_LatestIlrs] ON [Learner] ([LatestIlrs], [Uln], [StdCode]) 
@@ -58,15 +60,19 @@ GO
 CREATE NONCLUSTERED INDEX [IX_Learner_Source] ON [Learner] ([Source], [EstimatedEndDate], [CompletionStatus], [LastUpdated]) 
 GO
 
-CREATE NONCLUSTERED INDEX [IX_ApprovalsApprenticeId] ON [Learner] ([ApprenticeshipId]) INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
+CREATE NONCLUSTERED INDEX [IX_ApprovalsApprenticeId] ON [Learner] ([ApprenticeshipId]) 
+INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
 [StandardName],[CompletionStatus],[ApprovalsStopDate],[ApprovalsPauseDate],[EstimatedEndDate],[Uln],[GivenNames],[FamilyName])
 GO
 
---Added as a new index to include Learn Act End date, to not cause deployment issue modifying existing index.
-CREATE NONCLUSTERED INDEX [IX_ApprovalsLearner] ON [Learner] ([ApprenticeshipId]) INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
+CREATE NONCLUSTERED INDEX [IX_ApprovalsLearner] ON [Learner] ([ApprenticeshipId]) 
+INCLUDE ([UkPrn],[LearnStartDate],[PlannedEndDate],[StdCode],[StandardUId],[StandardReference],
 [StandardName],[CompletionStatus],[ApprovalsStopDate],[ApprovalsPauseDate],[EstimatedEndDate],[Uln],[GivenNames],[FamilyName],[LearnActEndDate])
 GO
 
---Added new index for Update to IsTransfer
-CREATE NONCLUSTERED INDEX [IX_Learner_Transfer] ON [Learner] ([DateTransferIdentified],[IsTransfer]) INCLUDE ([WithdrawReason])
+CREATE NONCLUSTERED INDEX [IX_Learner_Transfer] ON [Learner] ([DateTransferIdentified],[IsTransfer]) 
+INCLUDE ([WithdrawReason])
 GO
+
+CREATE NONCLUSTERED INDEX [IX_Learner_PipelineInfo] ON [Learner] (EpaOrgId, CompletionStatus, StdCode, EstimatedEndDate, LastUpdated)
+INCLUDE (Uln, UkPrn, StandardReference, StandardName, [Version]);

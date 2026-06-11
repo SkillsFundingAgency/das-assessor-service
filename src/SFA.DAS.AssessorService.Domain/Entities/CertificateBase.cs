@@ -33,12 +33,13 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
 
-        public DateTime CreateDay { get; set; }
-        
         public virtual ICollection<CertificateLog> CertificateLogs { get; set; } = new List<CertificateLog>();
 
         [JsonIgnore]
         public virtual CertificateBatchLog CertificateBatchLog { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime CreateDay { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string LearnerFamilyName { get; private set; }

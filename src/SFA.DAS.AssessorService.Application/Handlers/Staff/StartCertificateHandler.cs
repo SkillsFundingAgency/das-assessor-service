@@ -43,21 +43,33 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
+
+            if (organisation == null)
+            {
+                throw new InvalidOperationException($"Organisation:{request.UkPrn} not found, unable to create or update certificate");
+            }
+
+            if (learner == null)
+            {
+                throw new InvalidOperationException($"Learner:{request.Uln}, {request.StandardCode} not found, unable to create or update certificate");
+            }
+
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
             if (certificate == null)
             {
-                certificate = await CreateNewCertificate(request, organisation);
+                certificate = await CreateNewCertificate(request, organisation, learner);
             }
             else
             {
-                certificate = await UpdateExistingCertificate(request, organisation, certificate);
+                certificate = await ReuseExistingCertificate(request, organisation, learner, certificate);
             }
 
             return certificate;
         }
 
-        private async Task<Certificate> UpdateExistingCertificate(StartCertificateRequest request, Organisation organisation, Certificate certificate)
+        private async Task<Certificate> ReuseExistingCertificate(StartCertificateRequest request, Organisation organisation, Domain.Entities.Learner learner, Certificate certificate)
         {
             if(certificate.Status == CertificateStatus.Deleted)
             {
@@ -65,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 certificate.CertificateData = new CertificateData();
             }
 
-            certificate = await PopulateCertificateData(certificate, request, organisation);
+            certificate = await PopulateCertificateDetails(request, organisation, learner, certificate);
             
             // If the certificate was a fail, reset back to draft and reset achievement date and grade
             if (certificate.Status == CertificateStatus.Submitted && certificate.CertificateData.OverallGrade == CertificateGrade.Fail)
@@ -83,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return certificate;
         }
 
-        private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)
+        private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation, Domain.Entities.Learner learner)
         {
             var certificate = new Certificate
             {
@@ -93,31 +105,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 },
                 Uln = request.Uln,
                 StandardCode = request.StandardCode,
+                DateOfBirth = learner.DateOfBirth,
                 Status = CertificateStatus.Draft,
                 CreatedBy = request.Username,
-                CertificateReference = string.Empty,
-                CreateDay = DateTime.UtcNow.Date
+                CertificateReference = string.Empty
             };
 
-            certificate = await PopulateCertificateData(certificate, request, organisation);
+            certificate = await PopulateCertificateDetails(request, organisation, learner, certificate);
             var newCertificate = await _certificateRepository.NewStandardCertificate(certificate);
 
             return newCertificate;
         }
 
         /// <summary>
-        /// This method can be used to create a new certificate where learner and provider information is populated
+        /// This method is used when creating a new certificate where learner and provider information is populated
         /// or to populate an existing certificate when resuming the journey.
         /// </summary>
-        /// <param name="certificate"></param>
-        /// <param name="certData"></param>
-        /// <param name="request"></param>
-        /// <param name="organisation"></param>
-        /// <returns></returns>
-        private async Task<Certificate> PopulateCertificateData(Certificate certificate, StartCertificateRequest request, Organisation organisation)
+        private async Task<Certificate> PopulateCertificateDetails(StartCertificateRequest request, Organisation organisation, Domain.Entities.Learner learner, Certificate certificate)
         {
-            var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
-            
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
             if ((learner.GivenNames.ToLower() == learner.GivenNames) || (learner.GivenNames.ToUpper() == learner.GivenNames))
@@ -149,11 +154,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;
             certificate.LearnRefNumber = learner.LearnRefNumber;
-            certificate.IsPrivatelyFunded = learner?.FundingModel == PrivateFundingModelNumber;
+            certificate.IsPrivatelyFunded = learner.FundingModel == PrivateFundingModelNumber;
 
             if (!string.IsNullOrWhiteSpace(request.StandardUId))
             {
-                _logger.LogInformation($"Populating certificate data for StandardUId:{request.StandardUId}");
+                _logger.LogInformation("Populating certificate data for {StandardUId}", request.StandardUId);
                 
                 var standardVersion = await _standardService.GetStandardVersionById(request.StandardUId);
                 if (standardVersion == null)
@@ -176,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
             else
             {
-                _logger.LogInformation($"Populating certificate data for standard versions of StdCode:{learner.StdCode}");
+                _logger.LogInformation("Populating certificate data for latest version of {StdCode}", learner.StdCode);
                 var standardVersions = await _standardService.GetStandardVersionsByLarsCode(learner.StdCode);
                 var latestStandardVersion = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First();
                 

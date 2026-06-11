@@ -224,8 +224,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
         {
             result.CertificateReference.Should().BeNull();
             result.CertificateReferenceId.Should().BeNull();
-            result.CreateDay.Should().Be(DateTime.MinValue);
             result.CreatedAt.Should().Be(DateTime.MinValue);
+            result.CreateDay.Should().Be(DateTime.MinValue);
             result.CreatedBy.Should().BeNull();
             result.UpdatedAt.Should().BeNull();
             result.UpdatedBy.Should().BeNull();
