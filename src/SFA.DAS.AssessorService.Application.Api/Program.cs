@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
-using SFA.DAS.AssessorService.Application.Api.Extensions;
+using SFA.DAS.Telemetry.Startup;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -17,7 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Api
             return WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddOpenTelemetryRegistration(context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
+                    services
+                        .AddApplicationInsightsTelemetry()
+                        .AddTelemetryUriRedaction("dob,name");
                 })
                 .UseStartup<Startup>();
         }

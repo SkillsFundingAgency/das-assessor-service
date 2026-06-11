@@ -16,5 +16,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public DateTime CreatedAt { get; set; }
         public int? CompletionStatus { get; set; }
         public DateTime? PlannedEndDate { get; set; }
+        public DateTime? DateOfBirth { get; set;  }
     }
 }

@@ -1,4 +1,9 @@
-﻿using MediatR;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -7,10 +12,6 @@ using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -35,13 +36,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetCertificateRequest(id, includeLogs)));
         }
 
-        [HttpGet("{uln}/{standardCode}", Name = "GetCertificateForUln")]
+        [HttpGet("{uln}/{standardCode}", Name = "GetCertificateUlnAndStandardCode")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificateForUln(long uln, int standardCode)
+        public async Task<IActionResult> GetCertificateUlnAndStandardCode(long uln, int standardCode)
         {
-            return Ok(await _mediator.Send(new GetCertificateForUlnRequest { Uln = uln, StandardCode = standardCode }));
+            return Ok(await _mediator.Send(new GetCertificateUlnAndStandardCodeRequest { Uln = uln, StandardCode = standardCode }));
+        }
+
+        [HttpGet("uln/{uln}", Name = "GetCertificatesUln")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetCertificatesUlnResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificatesUln(long uln)
+        {
+            return Ok(await _mediator.Send(new GetCertificatesUlnRequest { Uln = uln }));
         }
 
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
@@ -70,6 +80,40 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 }));
         }
 
+        [HttpGet("masks", Name = "GetStandardCertificateMasks")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetStandardCertificateMasksResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetStandardCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)
+        {
+            var excludedUlns = exclude ?? Array.Empty<long>();
+
+            if (excludedUlns.Any(e => e <= 0))
+            {
+                return BadRequest(new { error = "Exclude ULN values must be positive integers." });
+            }
+
+            var request = new GetStandardCertificateMasksRequest { Exclude = excludedUlns };
+            var response = await _mediator.Send(request);
+            return Ok(response);
+        }
+
+        [HttpGet("framework/masks", Name = "GetFrameworkCertificateMasks")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetFrameworkCertificateMasksResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetFrameworkCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)
+        {
+            var excludedUlns = exclude ?? Array.Empty<long>();
+
+            if (excludedUlns.Any(e => e <= 0))
+            {
+                return BadRequest(new { error = "Exclude ULN values must be positive integers." });
+            }
+
+            var request = new GetFrameworkCertificateMasksRequest { Exclude = excludedUlns };
+            var response = await _mediator.Send(request);
+            return Ok(response);
+        }
+
         [HttpGet("ready-to-print/count", Name = "GetCertificatesReadyToPrintCount")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificatesForBatchNumberResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -96,6 +140,35 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpGet("search", Name = "SearchCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(SearchCertificatesMatchesResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        public async Task<IActionResult> Search([FromQuery] DateTime dob, [FromQuery] string name, [FromQuery(Name = "exclude")] long[] exclude)
+        {
+            if (dob == default)
+                return BadRequest(new Dictionary<string, string> { ["DateOfBirth"] = "DateOfBirth must not be empty" });
+
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new Dictionary<string, string> { ["FamilyName"] = "FamilyName must not be empty" });
+
+            var excludedUlns = exclude ?? Array.Empty<long>();
+
+            if (excludedUlns.Any(e => e <= 0))
+            {
+                return BadRequest(new { error = "Exclude ULN values must be positive integers." });
+            }
+
+            var request = new SearchCertificatesRequest
+            {
+                DateOfBirth = dob.Date,
+                FamilyName = name,
+                Exclude = excludedUlns
+            };
+
+            var results = await _mediator.Send(request);
+            return Ok(new SearchCertificatesMatchesResponse { Matches = results });
         }
     }
 }

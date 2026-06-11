@@ -27,12 +27,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
 
         public async Task<GetFrameworkLearnerResponse> Handle(GetFrameworkLearnerRequest request, CancellationToken cancellationToken)
         {
-            var frameworkLearner =  await _frameworkLearnerRepository.GetFrameworkLearner(request.Id);
+            var frameworkLearner = await _frameworkLearnerRepository.GetFrameworkLearner(request.Id);
             var frameworkLearnerResponse = _mapper.Map<GetFrameworkLearnerResponse>(frameworkLearner);
 
             var certificate = await _certificateRepository.GetFrameworkCertificate(request.Id);
             if (certificate != null)
-            { 
+            {
                 var logs = new List<CertificateLogSummary>();
 
                 if (request.AllLogs)
@@ -56,6 +56,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
                 {
                     logs.CalculateDifferences();
                 }
+
+                frameworkLearnerResponse.ApprenticeForename =
+                    string.IsNullOrWhiteSpace(certificate.LearnerGivenNames)
+                        ? frameworkLearnerResponse.ApprenticeForename
+                        : certificate.LearnerGivenNames;
+
+                frameworkLearnerResponse.ApprenticeSurname =
+                    string.IsNullOrWhiteSpace(certificate.LearnerFamilyName)
+                        ? frameworkLearnerResponse.ApprenticeSurname
+                        : certificate.LearnerFamilyName;
+
 
                 frameworkLearnerResponse.CertificateReference = certificate.CertificateReference;
                 frameworkLearnerResponse.CertificateStatus = certificate.Status;
