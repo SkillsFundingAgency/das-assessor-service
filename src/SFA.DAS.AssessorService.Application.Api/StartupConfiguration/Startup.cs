@@ -46,6 +46,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             try
             {
                 services.AddMappings(_logger);
+                services.AddHsts(options =>
+                {
+                    options.MaxAge = TimeSpan.FromDays(90);
+                });
 
                 Configuration = ConfigurationService
                     .GetConfigApi(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], VERSION, SERVICE_NAME).Result;
@@ -94,6 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 }
                 else
                 {
+                    // HSTS configured to 90 days in ConfigureServices.
                     app.UseHsts();
                 }
 
