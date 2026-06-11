@@ -85,11 +85,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetStandardCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)
         {
-            if (exclude != null && exclude.Any(e => e <= 0))
+            var excludedUlns = exclude ?? Array.Empty<long>();
+
+            if (excludedUlns.Any(e => e <= 0))
             {
                 return BadRequest(new { error = "Exclude ULN values must be positive integers." });
             }
-            var request = new GetStandardCertificateMasksRequest { Exclude = exclude ?? Array.Empty<long>() };
+
+            var request = new GetStandardCertificateMasksRequest { Exclude = excludedUlns };
             var response = await _mediator.Send(request);
             return Ok(response);
         }
@@ -99,11 +102,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetFrameworkCertificateMasks([FromQuery(Name = "exclude")] long[] exclude)
         {
-            if (exclude != null && exclude.Any(e => e <= 0))
+            var excludedUlns = exclude ?? Array.Empty<long>();
+
+            if (excludedUlns.Any(e => e <= 0))
             {
                 return BadRequest(new { error = "Exclude ULN values must be positive integers." });
             }
-            var request = new GetFrameworkCertificateMasksRequest { Exclude = exclude ?? Array.Empty<long>() };
+
+            var request = new GetFrameworkCertificateMasksRequest { Exclude = excludedUlns };
             var response = await _mediator.Send(request);
             return Ok(response);
         }
@@ -147,7 +153,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (string.IsNullOrWhiteSpace(name))
                 return BadRequest(new Dictionary<string, string> { ["FamilyName"] = "FamilyName must not be empty" });
 
-            if (exclude != null && exclude.Any(e => e <= 0))
+            var excludedUlns = exclude ?? Array.Empty<long>();
+
+            if (excludedUlns.Any(e => e <= 0))
             {
                 return BadRequest(new { error = "Exclude ULN values must be positive integers." });
             }
@@ -156,7 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 DateOfBirth = dob.Date,
                 FamilyName = name,
-                Exclude = exclude
+                Exclude = excludedUlns
             };
 
             var results = await _mediator.Send(request);

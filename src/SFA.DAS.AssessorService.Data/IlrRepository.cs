@@ -23,10 +23,10 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Create(Ilr ilr)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                @"INSERT INTO [Ilrs] (Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, 
+                @"INSERT INTO [Ilrs] (Uln, GivenNames, FamilyName, UkPrn, StdCode, DateOfBirth, LearnStartDate, EpaOrgId, FundingModel, 
                   ApprenticeshipId, EmployerAccountId, Source, CreatedAt, UpdatedAt, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate, DelLocPostCode, 
                   LearnActEndDate, WithdrawReason, Outcome, AchDate, OutGrade) 
-                  VALUES (@uln, @givenNames, @familyName, @ukprn, @stdCode, @learnStartDate, @epaOrgId, @fundingModel, null, null,
+                  VALUES (@uln, @givenNames, @familyName, @ukprn, @stdCode, @dateOfBirth, @learnStartDate, @epaOrgId, @fundingModel, null, null,
                         @source, @createdAt, null, @learnRefNumber, @completionStatus, null, @plannedEndDate, @delLocPostCode, 
                         @learnActEndDate, @withdrawReason, @outcome, @achDate, @outGrade )",
                   param: new
@@ -36,6 +36,7 @@ namespace SFA.DAS.AssessorService.Data
                       ilr.FamilyName,
                       ilr.UkPrn,
                       ilr.StdCode,
+                      ilr.DateOfBirth,
                       ilr.LearnStartDate,
                       ilr.EpaOrgId,
                       ilr.FundingModel,
@@ -57,7 +58,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Update(Ilr ilr)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                @"UPDATE [Ilrs] SET [GivenNames] = @givenNames, [FamilyName] = @familyName, [UkPrn] = @ukprn, 
+                @"UPDATE [Ilrs] SET [GivenNames] = @givenNames, [FamilyName] = @familyName, [UkPrn] = @ukprn, [DateOfBirth] = @dateOfBirth,
                                     [LearnStartDate] = @learnStartDate, [EpaOrgId] = @epaOrgId, [FundingModel] = @fundingModel,
                                     [ApprenticeshipId] = null, [EmployerAccountId] = null, [Source] = @source, [CreatedAt] = [CreatedAt], [UpdatedAt] = @updatedAt,
                                     [LearnRefNumber] = @learnRefNumber, [CompletionStatus] = @completionStatus, [EventId] = null, [PlannedEndDate] = @plannedEndDate, 
@@ -72,6 +73,7 @@ namespace SFA.DAS.AssessorService.Data
                       ilr.FamilyName,
                       ilr.UkPrn,
                       ilr.StdCode,
+                      ilr.DateOfBirth,
                       ilr.LearnStartDate,
                       ilr.EpaOrgId,
                       ilr.FundingModel,

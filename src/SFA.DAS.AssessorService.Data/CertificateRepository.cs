@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.Data
 
             var frameworkMatches = await _unitOfWork.AssessorDbContext.FrameworkLearners
                 .Where(l => l.ApprenticeULN > 0
-                            && l.CertificateFamilyName != null
+                            && !string.IsNullOrEmpty(l.CertificateFamilyName)
                             && l.CertificateFamilyName.ToUpper() == cleansedUpper
                             && l.ApprenticeDoB == dateOfBirth
                             && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
@@ -237,7 +237,8 @@ namespace SFA.DAS.AssessorService.Data
                             && c.LatestEPAOutcome == EpaOutcome.Pass
                             && c.DateOfBirth == dateOfBirth
                             && c.Uln > 0
-                            && c.CertificateFamilyName != null
+                            && c.ProviderUkPrn != null && c.ProviderUkPrn > 0
+                            && !string.IsNullOrEmpty(c.CertificateFamilyName)
                             && c.CertificateFamilyName.ToUpper() == cleansedUpper
                             && (excludeList.Count == 0 || !excludeList.Contains(c.Uln)))
                 .Select(c => new SearchCertificatesResponse
@@ -260,8 +261,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5)
         {
-            var excludeList = excludeUlns?.ToList() ?? new List<long>();
-            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+            var excludeList = excludeUlns?.ToArray() ?? Array.Empty<long>();
+            var excludes = string.Join(',', excludeList);
 
             var parameters = new Dapper.DynamicParameters();
             parameters.Add("@ExcludeUlns", excludes);
@@ -273,8 +274,8 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5)
         {
-            var excludeList = excludeUlns?.ToList() ?? new List<long>();
-            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+            var excludeList = excludeUlns?.ToArray() ?? Array.Empty<long>();
+            var excludes = string.Join(',', excludeList);
 
             var parameters = new Dapper.DynamicParameters();
             parameters.Add("@ExcludeUlns", excludes);

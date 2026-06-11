@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using FluentAssertions;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
@@ -16,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
     [TestFixture]
     public class UpdateCertificatePrintRequestHandlerTests
     {
-        private Guid CertificateId = Guid.NewGuid();
+        private readonly Guid CertificateId = Guid.NewGuid();
 
         [Test]
         public async Task WhenValidRequest_ThenUpdatesCertificateAndLogs()
@@ -111,15 +112,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
             public void VerifyUpdated(UpdateCertificatePrintRequestCommand request)
             {
-                var expectedActor = request.Address.ContactName;
-
-                Assert.IsNotNull(_certificate);
-                Assert.AreEqual(request.PrintRequestedAt, _certificate.PrintRequestedAt);
-                Assert.AreEqual(request.PrintRequestedBy, _certificate.PrintRequestedBy);
-                Assert.AreEqual(CertificateStatus.PrintRequested, _certificate.Status);
-                Assert.AreEqual(request.Address.ContactName, _certificate.CertificateData.ContactName);
-                Assert.AreEqual(request.Address.ContactAddLine1, _certificate.CertificateData.ContactAddLine1);
-                Assert.AreEqual(request.Address.ContactPostCode, _certificate.CertificateData.ContactPostCode);
+                _certificate.Should().NotBeNull();
+                _certificate.PrintRequestedAt.Should().Be(request.PrintRequestedAt);
+                _certificate.PrintRequestedBy.Should().Be(request.PrintRequestedBy);
+                _certificate.Status.Should().Be(CertificateStatus.PrintRequested);
+                _certificate.CertificateData.ContactName.Should().Be(request.Address.ContactName);
+                _certificate.CertificateData.ContactAddLine1.Should().Be(request.Address.ContactAddLine1);
+                _certificate.CertificateData.ContactPostCode.Should().Be(request.Address.ContactPostCode);
             }
         }
     }

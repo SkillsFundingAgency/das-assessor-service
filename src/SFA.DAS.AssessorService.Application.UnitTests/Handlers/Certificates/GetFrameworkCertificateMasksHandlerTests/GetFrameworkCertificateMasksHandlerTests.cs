@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -37,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             _certificateRepository.Setup(r => r.GetFrameworkMasks(It.IsAny<IEnumerable<long>>(), It.IsAny<int>()))
                 .ReturnsAsync(repoResults);
 
-            var request = new GetFrameworkCertificateMasksRequest { Exclude = new long[] { } };
+            var request = new GetFrameworkCertificateMasksRequest { Exclude = Array.Empty<long>() };
 
             var result = await _handler.Handle(request, CancellationToken.None);
 

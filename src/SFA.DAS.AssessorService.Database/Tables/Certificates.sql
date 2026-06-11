@@ -17,7 +17,6 @@
     [ProviderUkPrn] INT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
     [StandardUId] VARCHAR(20) NULL,
@@ -28,7 +27,8 @@
 	[PrintRequestedBy] [nvarchar](256) NULL,
 	[OverrideFamilyName] NVARCHAR(100) NULL,
 	[OverrideGivenNames] NVARCHAR(100) NULL,
-	
+
+	[CreateDay] as CONVERT(DATE, CreatedAt) PERSISTED,
 	[LearnerFamilyName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName'))) PERSISTED,
 	[LearnerGivenNames] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames'))) PERSISTED,
 	[LearnerFullNameNoSpaces] as CONVERT(NVARCHAR(255),REPLACE([dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')+JSON_VALUE(CertificateData, '$.LearnerFamilyName')),' ','')) PERSISTED,
@@ -106,7 +106,8 @@ GO
 CREATE INDEX [IX_Certificates_OrganisationId] ON [Certificates] ([OrganisationId]) INCLUDE ([CreatedAt], [UpdatedAt], [CertificateData], [Status])
 GO
 
-CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyName],[LearnerGivenNames],[LearnerFullNameNoSpaces])
+CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([Type], [Uln], [Status],[LearnerFamilyName], [LearnerFullNameNoSpaces], [LearnerGivenNames], [IsPrivatelyFunded]) 
+INCLUDE ([id], [StandardCode], [StandardReference], [AchievementDate], [OrganisationId],  [ProviderUkPrn], [CertificateData])
 GO
 
 CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
