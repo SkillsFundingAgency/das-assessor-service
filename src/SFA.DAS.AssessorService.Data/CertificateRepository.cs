@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -91,7 +92,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _unitOfWork.AssessorDbContext.StandardCertificates
                  .Include(q => q.CertificateBatchLog)
                  .SingleOrDefaultAsync(c =>
-                    c.Uln == uln && 
+                    c.Uln == uln &&
                     c.StandardCode == standardCode);
         }
 
@@ -149,25 +150,9 @@ namespace SFA.DAS.AssessorService.Data
         {
             IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
 
-            return await query.OfType<T>().FirstOrDefaultAsync(c => 
+            return await query.OfType<T>().FirstOrDefaultAsync(c =>
                 c.CertificateReference == certificateReference);
         }
-
-        public async Task<bool> CertificateExistsForUln(long uln)
-        {
-            return await _unitOfWork.AssessorDbContext.StandardCertificates
-                .AnyAsync(c => c.Uln == uln);
-        }
-
-        public async Task<Certificate> GetCertificateDeletedByUln(long uln)
-        {
-            return await _unitOfWork.AssessorDbContext.StandardCertificates
-                .Include(q => q.Organisation)
-                .FirstOrDefaultAsync(c =>
-                    c.Uln == uln &&
-                    c.Status == CertificateStatus.Deleted);
-        }
-
 
         public async Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln)
         {
@@ -177,11 +162,126 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
+        public async Task<List<ApprenticeCertificateSummary>> GetPrintableCertificates(long uln)
+        {
+            var statusesToExclude = new[] { CertificateStatus.Draft, CertificateStatus.Deleted };
+
+            var standardCertificates = await _unitOfWork.AssessorDbContext.StandardCertificates
+                .Where(c => c.Uln == uln && !statusesToExclude.Contains(c.Status) && c.AchievementDate != null && c.LatestEPAOutcome == EpaOutcome.Pass)
+                .Select(c => new ApprenticeCertificateSummary
+                {
+                    CertificateId = c.Id,
+                    CertificateType = "Standard",
+                    CourseCode = c.StandardCode.ToString(),
+                    CourseName = c.StandardName,
+                    CourseLevel = c.StandardLevel.ToString(),
+                    DateAwarded = c.AchievementDate.Value
+                })
+                .ToListAsync();
+
+            var frameworkCertificates = await _unitOfWork.AssessorDbContext.FrameworkLearners
+                .Where(c => c.ApprenticeULN == uln)
+                .Select(c => new ApprenticeCertificateSummary
+                {
+                    CertificateId = c.Id,
+                    CertificateType = "Framework",
+                    CourseCode = c.TrainingCode,
+                    CourseName = c.FrameworkName,
+                    CourseLevel = c.ApprenticeshipLevelName,
+                    DateAwarded = c.CertificationDate,
+                })
+                .ToListAsync();
+
+            return standardCertificates.Concat(frameworkCertificates)
+                .OrderByDescending(x => x.DateAwarded)
+                .ToList();
+        }
+
+
         public async Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId)
         {
             return await _unitOfWork.AssessorDbContext.FrameworkCertificates
                  .Include(q => q.CertificateBatchLog)
                  .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
+        }
+
+        public async Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns)
+        {
+            var cleansed = NameCleaner.CleanseName(familyName);
+            var cleansedUpper = cleansed != null ? cleansed.ToUpperInvariant() : null;
+            var excludeList = excludeUlns?.ToList() ?? new List<long>();
+
+            var frameworkMatches = await _unitOfWork.AssessorDbContext.FrameworkLearners
+                .Where(l => l.ApprenticeULN > 0
+                            && l.CertificateFamilyName != null
+                            && l.CertificateFamilyName.ToUpper() == cleansedUpper
+                            && l.ApprenticeDoB == dateOfBirth
+                            && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
+                .Select(l => new SearchCertificatesResponse
+                {
+                    Uln = l.ApprenticeULN.Value,
+                    CertificateType = CertificateTypes.Framework,
+                    CourseCode = l.TrainingCode,
+                    CourseName = l.FrameworkName,
+                    CourseLevel = l.ApprenticeshipLevelName,
+                    DateAwarded = l.CertificationDate,
+                    ProviderName = l.ProviderName,
+                    Ukprn = l.Ukprn
+                })
+                .ToListAsync();
+
+            var statusesToExclude = new[] { CertificateStatus.Draft, CertificateStatus.Deleted };
+
+            var standardMatches = await _unitOfWork.AssessorDbContext.StandardCertificates
+                .Where(c => !statusesToExclude.Contains(c.Status)
+                            && c.LatestEPAOutcome == EpaOutcome.Pass
+                            && c.DateOfBirth == dateOfBirth
+                            && c.Uln > 0
+                            && c.CertificateFamilyName != null
+                            && c.CertificateFamilyName.ToUpper() == cleansedUpper
+                            && (excludeList.Count == 0 || !excludeList.Contains(c.Uln)))
+                .Select(c => new SearchCertificatesResponse
+                {
+                    Uln = c.Uln,
+                    CertificateType = CertificateTypes.Standard,
+                    CourseCode = c.StandardCode.ToString(),
+                    CourseName = c.StandardName,
+                    CourseLevel = c.StandardLevel.ToString(),
+                    DateAwarded = c.AchievementDate,
+                    ProviderName = c.ProviderName,
+                    Ukprn = c.ProviderUkPrn != null ? c.ProviderUkPrn.ToString() : null
+                })
+                .ToListAsync();
+
+            return frameworkMatches.Concat(standardMatches)
+                .OrderByDescending(x => x.DateAwarded)
+                .ToList();
+        }
+
+        public async Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5)
+        {
+            var excludeList = excludeUlns?.ToList() ?? new List<long>();
+            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+
+            var parameters = new Dapper.DynamicParameters();
+            parameters.Add("@ExcludeUlns", excludes);
+            parameters.Add("@Top", top);
+
+            var results = await _unitOfWork.QueryStoredProcedureAsync<CertificateMask>("Certificates_GetStandardMasks", parameters);
+            return results.ToList();
+        }
+
+        public async Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5)
+        {
+            var excludeList = excludeUlns?.ToList() ?? new List<long>();
+            var excludes = excludeList.Any() ? string.Join(',', excludeList) : string.Empty;
+
+            var parameters = new Dapper.DynamicParameters();
+            parameters.Add("@ExcludeUlns", excludes);
+            parameters.Add("@Top", top);
+
+            var results = await _unitOfWork.QueryStoredProcedureAsync<CertificateMask>("Certificates_GetFrameworkMasks", parameters);
+            return results.ToList();
         }
 
         public async Task<int> GetCertificatesReadyToPrintCount(string[] excludedOverallGrades, string[] includedStatus)
@@ -402,6 +502,9 @@ namespace SFA.DAS.AssessorService.Data
             certificate.ToBePrinted = null;
             certificate.BatchNumber = null;
 
+            certificate.PrintRequestedAt = updatedCertificate.PrintRequestedAt;
+            certificate.PrintRequestedBy = updatedCertificate.PrintRequestedBy;
+
             if (updateLog)
             {
                 AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
@@ -528,7 +631,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             if (string.IsNullOrEmpty(epaOrgId) || employerAccountId == null)
                 return null;
-            
+
             var statuses = new[] { CertificateStatus.Submitted }
                 .Concat(CertificateStatus.PrintProcessStatus)
                 .ToList();

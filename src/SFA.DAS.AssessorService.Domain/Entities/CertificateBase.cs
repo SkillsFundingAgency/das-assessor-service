@@ -25,6 +25,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public DateTime? ToBePrinted { get; set; }
 
+        public DateTime? PrintRequestedAt { get; set; }
+
+        public string PrintRequestedBy { get; set; }
+
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
@@ -98,5 +102,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string LatestEPAOutcome { get; private set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string CertificateFamilyName { get; private set; }
     }
 }

@@ -112,6 +112,10 @@
         "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false
         }
     },
     "variables": {
@@ -282,6 +286,9 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('frontEndAccessRestrictions')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             }
@@ -412,6 +419,9 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('backEndAccessRestrictions')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             }
@@ -530,6 +540,9 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('externalApiAppServiceAllowedIPs')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             }
@@ -548,6 +561,9 @@
                 "parameters": {
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "storageKind": {
+                        "value": "StorageV2"
                     },
                     "allowSharedKeyAccess": {
                         "value": true

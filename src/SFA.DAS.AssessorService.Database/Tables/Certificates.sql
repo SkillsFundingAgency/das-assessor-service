@@ -82,7 +82,22 @@ CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
 WHERE [Uln] IS NOT NULL AND [StandardCode] IS NOT NULL;
 GO
 
-CREATE INDEX [IX_Certificates_CreateDay] ON [Certificates] ([CreateDay]) INCLUDE ([Status], [CertificateData])
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardMasks_Uln
+ON [dbo].[Certificates] (Uln)
+INCLUDE (Id, Status, StandardCode, StandardName, StandardLevel, ProviderUkPrn, ProviderName, StandardUId)
+WHERE [Type] = 'Standard'
+GO
+
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardMasks_CreateDay
+ON dbo.Certificates (CreateDay DESC)
+INCLUDE (Status, Uln, StandardCode, ProviderUkPrn, StandardUId, ProviderName, StandardName, StandardLevel, LearningStartDate)
+WHERE [Type] = 'Standard'
+GO
+
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardSearch
+ON dbo.Certificates (CertificateFamilyName, DateOfBirth, Uln)
+INCLUDE (LatestEPAOutcome, Status, StandardCode, StandardName, StandardLevel, AchievementDate, ProviderName, ProviderUkPrn)
+WHERE [Type] = 'Standard'
 GO
 
 CREATE INDEX [IX_Certificates_CertificateReference] ON [Certificates] ([CertificateReference]) INCLUDE ([Id])
