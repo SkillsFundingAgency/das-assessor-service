@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         public void Arrange()
         {
             _mockUnitOfWork = new Mock<IAssessorUnitOfWork>();
-
             _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object);
         }
 
