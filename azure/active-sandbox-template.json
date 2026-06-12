@@ -324,10 +324,7 @@
                         "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
             "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-', parameters('utcValue'))]",
