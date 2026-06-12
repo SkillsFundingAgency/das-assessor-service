@@ -189,7 +189,6 @@
         {
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
-
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
