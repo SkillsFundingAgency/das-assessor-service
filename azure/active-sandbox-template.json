@@ -87,6 +87,12 @@
         "subnetDelegations": {
             "type": "array"
         },
+        "sharedBackEndAppServicePlanName": {
+            "type": "string"
+        },
+        "sharedBackEndSubnetResourceId": {
+            "type": "string"
+        },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
@@ -248,13 +254,13 @@
                         "value": "[variables('externalApiActiveSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('activeSandboxAppServicePlanName')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[variables('resourceGroupName')]"
+                        "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference(concat(parameters('activeSandboxSubnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
@@ -325,13 +331,13 @@
                         "value": "[variables('internalApiActiveSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('activeSandboxAppServicePlanName')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[variables('resourceGroupName')]"
+                        "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference(concat(parameters('activeSandboxSubnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
@@ -389,10 +395,7 @@
                         "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-service-plan-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-10-01",
