@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
-    public class OrganisationTypeHandler
+    public static class OrganisationTypeHandler
     {
         private static readonly DatabaseService DatabaseService = new DatabaseService();
       

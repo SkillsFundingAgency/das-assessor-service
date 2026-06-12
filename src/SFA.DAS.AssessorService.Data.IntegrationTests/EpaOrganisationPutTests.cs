@@ -1,14 +1,13 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System;
-using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -32,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterRepository(unitOfWork, new Mock<ILogger<RegisterRepository>>().Object);
@@ -43,8 +42,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _organisationTypeIdBefore = 5;
             _organisationTypeIdAfter = 6;
             _updatedAt = DateTime.Today.Date.AddHours(9);
-            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeIdBefore, Status = "new", Type = "organisation type 1" });
-            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeIdAfter, Status = "new", Type = "organisation type 2" });
             _nameUpdated = "name 2";
             _createdAt = DateTime.Today.Date.AddHours(8);
 

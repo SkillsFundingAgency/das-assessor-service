@@ -1,5 +1,5 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data
 {

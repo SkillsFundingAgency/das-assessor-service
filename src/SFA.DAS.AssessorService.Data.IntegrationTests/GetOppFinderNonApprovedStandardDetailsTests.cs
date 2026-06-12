@@ -1,12 +1,13 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpStandardsTable()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _repository = new OppFinderRepository(_unitOfWork);
 
@@ -77,9 +78,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     TrailblazerContact = "Contact name",
                     StandardPageUrl = "www.standard.com",
-                    OverviewOfRole = "Explanation of apprenticeship job role"
+                    OverviewOfRole = "Explanation of apprenticeship job role",
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
-            };          
+            };
         }
     }
 }

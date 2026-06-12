@@ -1,9 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models
-{
-    using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-    using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
-    using System;
+﻿using System;
 
+namespace SFA.DAS.AssessorService.Api.Types.Models
+{
     public class OrganisationResponse
     {
         public Guid Id { get; set; }
@@ -19,7 +17,7 @@
         public string City { get; set; }
         public string Postcode { get; set; }
 
-        public CompaniesHouseSummary CompanySummary { get; set; }
-        public CharityCommissionSummary CharitySummary { get; set; }
+        public Domain.Entities.CompaniesHouseSummary CompanySummary { get; set; }
+        public Domain.Entities.CharityCommissionSummary CharitySummary { get; set; }
     }
 }

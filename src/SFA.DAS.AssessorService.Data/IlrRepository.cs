@@ -1,9 +1,9 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {

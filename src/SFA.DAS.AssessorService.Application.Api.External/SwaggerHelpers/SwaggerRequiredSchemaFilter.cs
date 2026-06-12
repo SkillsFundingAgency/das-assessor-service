@@ -1,4 +1,4 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 {
     public class SwaggerRequiredSchemaFilter : ISchemaFilter
     {
-        public void Apply(Schema schema, SchemaFilterContext context)
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
             if (schema.Properties is null) return;
 
             foreach (var schemaProperty in schema.Properties)
             {
-                var property = context.SystemType.GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var property = context.GetType().GetProperty(schemaProperty.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                 if (property != null)
                 {
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers
 
                     if (attributes != null && attributes.Any(attr => attr is Attributes.SwaggerRequiredAttribute))
                     {
-                        if (schema.Required is null) schema.Required = new List<string>();
+                        if (schema.Required is null) schema.Required = new HashSet<string>();
                         schema.Required.Add(schemaProperty.Key);
                     }
                 }

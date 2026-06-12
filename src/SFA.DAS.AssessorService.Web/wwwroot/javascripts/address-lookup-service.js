@@ -186,13 +186,17 @@
         }
     }
 
+    function encodeHtml(possiblyUnsafeString) { 
+        return $('<div>').text(possiblyUnsafeString).html();
+    }
+
     function restorePreviousAddress() {
         var hasPreviousValues = false;
         var showAddressSelectionPanel = !$(".js-address-panel").hasClass("js-address-panel-never-show");
 
         $.each(addressFields, function (index, value) {
             if ($(index).length && !($(index).val().length === 0)) {
-                $(".js-address-panel ul").append("<li>" + $(index).val() + "</li>");
+                $(".js-address-panel ul").append("<li>" + encodeHtml($(index).val()) + "</li>");
 
                 if ($("#postcode-search").length > 0 && $("#postcode-search").val().length > 0) {
                     $("#postcode-search").val($("#postcode-search").val() + ', ');

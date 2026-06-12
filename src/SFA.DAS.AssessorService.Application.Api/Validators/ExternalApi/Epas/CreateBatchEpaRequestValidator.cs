@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 {
@@ -23,13 +22,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Epas
 
                     if (existingCertificate != null)
                     {
-                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
                         var submittedCertificate = !(existingCertificate.Status == CertificateStatus.Draft || existingCertificate.Status == CertificateStatus.Deleted);
-                        var outcomeIsAFail = certData.OverallGrade == CertificateGrade.Fail;
+                        var outcomeIsAFail = existingCertificate.CertificateData.OverallGrade == CertificateGrade.Fail;
                         var outcomeIsAPass = !outcomeIsAFail;
                         var isDraftCertificate = existingCertificate.Status == CertificateStatus.Draft;
-                        var canUpdateDraftCertificate = string.IsNullOrEmpty(certData.EpaDetails?.LatestEpaOutcome);
+                        var canUpdateDraftCertificate = string.IsNullOrEmpty(existingCertificate.CertificateData.EpaDetails?.LatestEpaOutcome);
 
                         if (submittedCertificate && outcomeIsAPass)
                         {

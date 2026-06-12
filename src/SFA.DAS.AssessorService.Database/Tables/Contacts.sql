@@ -14,6 +14,7 @@
 	[GivenNames] [NVARCHAR](120) NOT NULL DEFAULT '',
 	[FamilyName] [NVARCHAR](120) NOT NULL DEFAULT '',
 	[SignInType] [NVARCHAR](20) NOT NULL DEFAULT '',
+    [GovUkIdentifier] [NVARCHAR](100) NULL,
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -34,3 +35,7 @@ GO
 GO
 
 CREATE INDEX [ixu_contacts_signinid] ON [Contacts] (SignInId);
+
+GO
+
+CREATE INDEX [IX_Contacts_GovUkIdentifier] ON [Contacts] (GovUkIdentifier);

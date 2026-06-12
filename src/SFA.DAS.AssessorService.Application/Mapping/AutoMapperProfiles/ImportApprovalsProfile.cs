@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
 {
@@ -6,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
     {
         public ImportApprovalsProfile()
         {
-            CreateMap<Infrastructure.OuterApi.Learner, Domain.Entities.ApprovalsExtract>();
+            CreateMap<Learner, Domain.Entities.ApprovalsExtract>();
         }
     }
 }

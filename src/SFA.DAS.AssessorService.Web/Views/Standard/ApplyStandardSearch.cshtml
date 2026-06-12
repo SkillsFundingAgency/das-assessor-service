@@ -1,0 +1,60 @@
+@using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@model ApplyStandardSearchViewModel
+
+@{
+    ViewBag.Title = "Apply standard search";
+    Layout = "_Layout";
+}
+
+<a asp-route="@ApplicationController.StandardApplicationsRouteGet" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="Search"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form asp-route="@StandardController.ApplyStandardSearchRoutePost">
+                <div class="govuk-form-group">
+                    <div class="govuk-form-group" sfa-validation-for="Search" sfa-validationerror-class="govuk-form-group--error">
+                        <h1 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--xl" for="Search">
+                                What standard are you applying for?
+                            </label>
+                        </h1>
+                        <span id="standard-hint" class="govuk-hint">
+                            Enter 3 or more characters to search.<br />For example, financial adviser
+                        </span>
+                        <sfa-validationerror-detail sfa-validation-for="Search" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+                        <input class="govuk-input govuk-input--width-20 ui-autocomplete-input"
+                               name="Search"
+                               sfa-validation-for="Search"
+                               sfa-validationerror-class="govuk-input--error"
+                               asp-for="Search"
+                               type="text"
+                               autocomplete="off" maxlength="10000" />
+                    </div>
+                </div>
+                
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button js-choose-standard-button">
+                        Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

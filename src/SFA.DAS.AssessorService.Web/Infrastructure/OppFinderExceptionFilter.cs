@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.AssessorService.Web.Controllers.OppFinder;
 using SFA.DAS.AssessorService.Web.Extensions;
 
@@ -8,9 +9,9 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 {
     public class OppFinderExceptionFilterAttribute : ExceptionFilterAttribute
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public OppFinderExceptionFilterAttribute(IHostingEnvironment hostingEnvironment)
+        public OppFinderExceptionFilterAttribute(IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }

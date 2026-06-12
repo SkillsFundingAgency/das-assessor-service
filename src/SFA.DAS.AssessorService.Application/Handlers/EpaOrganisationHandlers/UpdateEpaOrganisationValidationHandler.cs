@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -39,7 +36,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Address4 = request.Address4,
                 Postcode = request.Postcode,
                 CompanyNumber = request.CompanyNumber,
-                CharityNumber = request.CharityNumber
+                CharityNumber = request.CharityNumber,
+                RecognitionNumber = request.RecognitionNumber
             });
 
             return await Task.FromResult(result);

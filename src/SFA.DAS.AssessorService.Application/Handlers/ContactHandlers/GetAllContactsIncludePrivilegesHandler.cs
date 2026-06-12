@@ -4,16 +4,17 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class GetAllContactsIncludePrivilegesHandler : IRequestHandler<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>
+    public class GetAllContactsIncludePrivilegesHandler : BaseHandler, IRequestHandler<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
 
-        public GetAllContactsIncludePrivilegesHandler(IContactQueryRepository contactQueryRepository)
+        public GetAllContactsIncludePrivilegesHandler(IContactQueryRepository contactQueryRepository, IMapper mapper)
+            : base(mapper)
         {
             _contactQueryRepository = contactQueryRepository;
         }
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             {
                 var contactsWithPrivilegesResponse = new ContactIncludePrivilegesResponse
                 {
-                    Contact = Mapper.Map<ContactResponse>(result)
+                    Contact = _mapper.Map<ContactResponse>(result)
                 };
                 contactsWithPrivilegesResponse.Contact.Status = result.Status == ContactStatus.Live
                     ? ContactStatus.Active

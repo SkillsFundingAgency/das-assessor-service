@@ -12,7 +12,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
@@ -153,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.Version = "1.0";
             request.StandardCode = 0;
             _mockMediator.Setup(s => s.Send(It.IsAny<GetStandardVersionRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
-            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateForUlnRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
+            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateUlnAndStandardCodeRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
             _mockUpdateBatchValidator.Setup(s => s.ValidateAsync(request, new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult());
 
             //Act
@@ -177,7 +176,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             request.Version = null;
             request.StandardReference = null;
             _mockMediator.Setup(s => s.Send(It.IsAny<GetCalculatedStandardVersionForApprenticeshipRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
-            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateForUlnRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
+            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateUlnAndStandardCodeRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
             _mockUpdateBatchValidator.Setup(s => s.ValidateAsync(request, new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult());
 
             //Act
@@ -202,9 +201,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             //Arrange
             request.Version = "1.0";
             request.StandardCode = 0;
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+            certificate.CertificateData = certificateData;
             _mockMediator.Setup(s => s.Send(It.IsAny<GetStandardVersionRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
-            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateForUlnRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync(certificate);
+            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateUlnAndStandardCodeRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync(certificate);
             _mockUpdateBatchValidator.Setup(s => s.ValidateAsync(request, new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult());
 
             //Act
@@ -230,9 +229,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             //Arrange
             request.Version = null;
             request.StandardReference = null;
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+            certificate.CertificateData = certificateData;
             _mockMediator.Setup(s => s.Send(It.IsAny<GetCalculatedStandardVersionForApprenticeshipRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
-            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateForUlnRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync(certificate);
+            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateUlnAndStandardCodeRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync(certificate);
             _mockUpdateBatchValidator.Setup(s => s.ValidateAsync(request, new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult());
 
             //Act
@@ -255,7 +254,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             //Arrange
             var validationResult = new ValidationResult(failures);
             _mockMediator.Setup(s => s.Send(It.IsAny<GetStandardVersionRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
-            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateForUlnRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
+            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateUlnAndStandardCodeRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
             _mockUpdateBatchValidator.Setup(s => s.ValidateAsync(request, new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult(failures));
 
             //Act
@@ -284,7 +283,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.External
             //Arrange
             var validationResult = new ValidationResult();
             _mockMediator.Setup(s => s.Send(It.IsAny<GetStandardVersionRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(standard);
-            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateForUlnRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
+            _mockMediator.Setup(t => t.Send(It.Is<GetCertificateUlnAndStandardCodeRequest>(s => s.Uln == request.Uln && s.StandardCode == standard.LarsCode), new System.Threading.CancellationToken())).ReturnsAsync((Certificate)null);
             _mockMediator.Setup(s => s.Send(It.IsAny<UpdateBatchEpaRequest>(), new System.Threading.CancellationToken())).ReturnsAsync(epaDetails);
             _mockUpdateBatchValidator.Setup(s => s.ValidateAsync(request, new System.Threading.CancellationToken())).ReturnsAsync(new ValidationResult());
 

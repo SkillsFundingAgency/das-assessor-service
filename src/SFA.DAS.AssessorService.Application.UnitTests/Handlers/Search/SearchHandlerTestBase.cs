@@ -2,16 +2,16 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
-    public class SearchHandlerTestBase
+    public class SearchHandlerTestBase : MapperBase
     {
         protected SearchHandler SearchHandler;
         protected Mock<ICertificateRepository> CertificateRepository;
@@ -22,8 +22,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
         public void Setup()
         {
-            MappingBootstrapper.Initialize();
-
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             StandardService = new Mock<IStandardService>();
 
@@ -56,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             ContactRepository = new Mock<IContactQueryRepository>();
             SearchHandler = new SearchHandler(orgQueryRepo.Object, LearnerRepository.Object,
-                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object, StandardService.Object);
+                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object, StandardService.Object, Mapper);
         }
     }
 }

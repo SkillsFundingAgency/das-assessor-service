@@ -8,8 +8,9 @@
   {
     "outputFileName": "wwwroot/javascripts/application.min.js",
     "inputFiles": [
-      "wwwroot/javascripts/lib/jquery/jquery-3.6.0.min.js",
+      "wwwroot/javascripts/lib/node_modules/jquery/dist/jquery.min.js",
       "wwwroot/javascripts/das-cookie-banner.js",
+      "wwwroot/javascripts/user-navigation.js",
       "wwwroot/javascripts/das-expandable-table.js",
       "wwwroot/javascripts/application.js"
     ],
@@ -22,6 +23,7 @@
   {
     "outputFileName": "wwwroot/javascripts/epao-validation.min.js",
     "inputFiles": [
+      "wwwroot/javascripts/lib/node_modules/jquery-validation/dist/jquery.validate.min.js",
       "wwwroot/javascripts/epao-validation.js"
     ],
     "minify": {
@@ -32,7 +34,7 @@
   {
     "outputFileName": "wwwroot/javascripts/address-lookup-service.min.js",
     "inputFiles": [
-      "wwwroot/javascripts/lib/jquery-ui/dist/jquery-ui.min.js",
+      "wwwroot/javascripts/lib/node_modules/jquery-ui/dist/jquery-ui.min.js",
       "wwwroot/javascripts/address-lookup-service.js"
     ],
     "minify": {

@@ -6,7 +6,6 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -35,12 +34,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateReference = "00010001",
                         StandardCode = 12,
                         CertificateData =
-                            JsonConvert.SerializeObject(new CertificateData
+                            new CertificateData
                             {
                                 OverallGrade = CertificateGrade.Distinction,
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
-                            }),
+                            },
                         CreatedBy = "differentuser",
                         OrganisationId = submittingEpaoOrgId
                     }
@@ -69,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username"},
+                    new LearnerSearchRequest() {Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
             result[0].SubmittedAt.Should().BeNull();

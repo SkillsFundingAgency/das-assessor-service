@@ -1,12 +1,12 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Data
         public RegisterQueryRepository(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
-            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
+            SqlMapper.AddTypeHandler(typeof(Domain.Entities.ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var sql =
                 "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
-                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser, O.RecognitionNumber " +
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.Id = @id";
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var sql =
                 "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
-                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser, O.RecognitionNumber " +
                     " FROM [Organisations] O " +
                     "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE O.EndPointAssessorOrganisationId = @organisationId";
@@ -258,10 +258,10 @@ namespace SFA.DAS.AssessorService.Data
                         SELECT ab1.*, og1.EndPointAssessorOrganisationId FROM(
                         SELECT ap1.Id ApplyId, ap1.ApplicationStatus, ap1.DeletedAt, ap1.OrganisationId, StandardReference, StandardReference + '_' + TRIM(version) StandardUId, ap1.ApplyData FROM Apply ap1
                         CROSS APPLY OPENJSON(ApplyData, '$.Apply.Versions') WITH(version VARCHAR(10) '$')
-                        CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
-                        WHERE 1=1
-                          AND sequence.NotRequired = 0
-                          AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
+                                CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT) sequence
+                            WHERE 1=1
+                            AND sequence.NotRequired = 0
+                            AND sequence.sequenceNo = [dbo].[ApplyConst_STANDARD_SEQUENCE_NO]() 
                         ) ab1
                         JOIN Organisations og1 on og1.id = ab1.OrganisationId
                         WHERE ab1.standardreference IS NOT NULL
@@ -282,10 +282,10 @@ namespace SFA.DAS.AssessorService.Data
                         va1.ApplyId AS ApplicationId,
                         va1.ApplicationStatus,
                         so1.StandardUId, so1.title, so1.EffectiveFrom LarsEffectiveFrom, so1.EffectiveTo LarsEffectiveTo, so1.IFateReferenceNumber, so1.VersionEarliestStartDate, so1.VersionLatestStartDate, so1.VersionLatestEndDate, 
-                        so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode,
+                        so1.version, so1.level,so1.status , so1.EPAChanged, so1.StandardPageUrl, so1.LarsCode, so1.EpaoMustBeApprovedByRegulatorBody,
                         os1.EffectiveFrom StdEffectiveFrom, os1.EffectiveTo StdEffectiveTo,
                         osv.EffectiveFrom StdVersionEffectiveFrom, osv.EffectiveTo StdVersionEffectiveTo,
-                        va1.ApplyData
+                        va1.ApplyData, so1.EqaProviderName, so1.EqaProviderContactName, so1.EqaProviderContactEmail
                         FROM standards so1 
                         LEFT JOIN organisationstandard os1 on so1.IFateReferenceNumber = os1.StandardReference AND os1.EndPointAssessorOrganisationId = @organisationId
 						LEFT JOIN OrganisationStandardVersion osv on osv.standardUid = so1.standardUid AND osv.OrganisationStandardId = os1.Id 
@@ -368,7 +368,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<EpaContact> GetContactByContactId(Guid contactId)
         {
             var sql =
-                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, GovUkIdentifier, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Id = @contactId";
 
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
@@ -377,19 +377,19 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<EpaContact> GetContactByEmail(string email)
         {
             var sql =
-                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, GovUkIdentifier, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Email = @email";
 
             return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { email });
         }
 
-        public async Task<EpaContact> GetContactBySignInId(string signinId)
+        public async Task<EpaContact> GetContactByGovUkIdentifier(string govUKIdentifier)
         {
             var sql =
-                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
-                    " from Contacts where SigninId = @signinId";
+                "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, GovUkIdentifier, SigninType, Email, Status, PhoneNumber " +
+                    " from Contacts where GovUkIdentifier = @govUKIdentifier";
 
-            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { signinId });
+            return await _unitOfWork.Connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { govUKIdentifier });
         }
 
         public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(

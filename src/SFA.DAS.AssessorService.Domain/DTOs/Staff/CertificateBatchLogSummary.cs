@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.DTOs.Staff
 {
@@ -13,5 +11,6 @@ namespace SFA.DAS.AssessorService.Domain.DTOs.Staff
         public string CertificateReference { get; set; }
         public long Uln { get; set; }
         public int StandardCode { get; set; }
+        public Guid? FrameworkLearnerId { get; set; }
     }
 }

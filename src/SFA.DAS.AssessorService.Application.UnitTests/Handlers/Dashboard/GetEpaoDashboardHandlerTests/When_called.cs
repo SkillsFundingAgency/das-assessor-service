@@ -1,13 +1,13 @@
-﻿using FluentAssertions;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Dashboard;
 using SFA.DAS.AssessorService.Application.Handlers.Dashboard;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Dashboard.GetEpaoDashboardHandlerTests
 {
@@ -15,14 +15,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Dashboard.GetEp
     public class When_called
     {
         private GetEpaoDashboardHandler _sut;
-        private Mock<IWebConfiguration> _mockConfig;
+        private Mock<IApiConfiguration> _mockConfig;
         private Mock<IDashboardRepository> _mockRepository;
         private Mock<ILogger<GetEpaoDashboardHandler>> _mockLogger;
         
         [SetUp]
         public void Arrange()
         {
-            _mockConfig = new Mock<IWebConfiguration>();
+            _mockConfig = new Mock<IApiConfiguration>();
             _mockRepository = new Mock<IDashboardRepository>();
             _mockLogger = new Mock<ILogger<GetEpaoDashboardHandler>>();
             

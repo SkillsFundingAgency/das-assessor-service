@@ -1,7 +1,4 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
@@ -21,5 +18,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Status { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }

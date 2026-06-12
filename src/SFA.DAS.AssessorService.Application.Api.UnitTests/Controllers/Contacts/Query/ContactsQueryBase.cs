@@ -6,12 +6,12 @@ using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts.Query
 {
-    public class ContactsQueryBase
+    public class ContactsQueryBase : TestBase
     {
         protected ContactQueryController ContactQueryController;
         protected UkPrnValidator UkPrnValidator;
@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         
         private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
 
+
         protected void Setup()
         {
             SetupOrchestratorMocks();
@@ -42,7 +43,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
                 ContactQueryRepositoryMock.Object,
                 _searchOrganisationForContactsValidator,
                 MediatorMock.Object,
-                ControllerLoggerMock.Object, new Mock<IWebConfiguration>().Object);
+                ControllerLoggerMock.Object, new Mock<IApiConfiguration>().Object,
+                Mapper);
         }
 
         private void SetupControllerMocks()

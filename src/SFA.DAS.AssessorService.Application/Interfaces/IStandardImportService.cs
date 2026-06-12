@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
+﻿using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

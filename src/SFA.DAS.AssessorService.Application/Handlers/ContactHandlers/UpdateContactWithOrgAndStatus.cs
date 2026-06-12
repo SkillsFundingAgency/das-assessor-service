@@ -2,13 +2,13 @@
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class UpdateContactWithOrgAndStatus : IRequestHandler<UpdateContactWithOrgAndStausRequest>
+    public class UpdateContactWithOrgAndStatus : IRequestHandler<UpdateContactWithOrgAndStausRequest, Unit>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IOrganisationRepository _organisationRepository;

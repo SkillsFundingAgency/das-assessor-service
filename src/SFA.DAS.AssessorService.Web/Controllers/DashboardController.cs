@@ -10,40 +10,52 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Dashboard;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Api.Common.Exceptions;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
     [CheckSession]
-    public class DashboardController : Controller
+    public class DashboardController : BaseController
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IContactsApiClient _contactsApiClient;
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IDashboardApiClient _dashboardApiClient;
+        private readonly IWebConfiguration _configuration;
         private readonly ILogger<DashboardController> _logger;
+
+        #region Routes
+        public const string DashboardIndexRouteGet = nameof(DashboardIndexRouteGet);
+        #endregion
 
         public DashboardController(
             IHttpContextAccessor contextAccessor,
+            IApplicationApiClient applicationApiClient,
             IContactsApiClient contactsApiClient,
             IOrganisationsApiClient organisationApiClient,
             IDashboardApiClient dashboardApiClient,
+            IWebConfiguration configuration,
             ILogger<DashboardController> logger)
+            :base(applicationApiClient, contactsApiClient, contextAccessor)
         {
             _contextAccessor = contextAccessor;
-            _contactsApiClient = contactsApiClient;
             _organisationApiClient = organisationApiClient;
             _dashboardApiClient = dashboardApiClient;
+            _configuration = configuration;
             _logger = logger;
         }
 
         [HttpGet]
-        [Route("Dashboard")]
+        [Route("Dashboard", Name = DashboardIndexRouteGet)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Dashboard })]
         public async Task<IActionResult> Index()
         {
-            var user = await GetUser();
+            _logger.LogInformation("Index called");
+
+            var user = await GetUserAndUpdateEmail();
             var organisation = await _organisationApiClient.GetEpaOrganisationById(user?.OrganisationId?.ToString());
 
             if (user is null)
@@ -65,7 +77,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             else if (user.EndPointAssessorOrganisationId is null)
             {
                 return RedirectToAction("NotRegistered", "Home");
-            }else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
+            }
+            else if( user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live && organisation.Status != OrganisationStatus.Live)
             {
                 return RedirectToAction("NotActivated", "Home");
             }
@@ -87,10 +100,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(dashboardViewModel);
         }
 
-        private async Task<ContactResponse> GetUser()
+        private async Task<ContactResponse> GetUserAndUpdateEmail()
         {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            return await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
+           
+            ContactResponse contact = null;
+            try
+            {
+                contact = await GetUser();
+            }
+            catch (EntityNotFoundException)
+            {
+                _logger.LogInformation("Failed to retrieve user by Sign In Id.");
+            }
+            
+            if (contact != null)
+            {
+                var email = _contextAccessor.HttpContext.User.Claims
+                    .FirstOrDefault(c => c.Type == "email")?.Value;
+                await _contactsApiClient.UpdateEmail(new UpdateEmailRequest
+                {
+                    NewEmail = email,
+                    GovUkIdentifier = contact.GovUkIdentifier
+                });    
+            }
+            
+            return contact;
         }
     }
 }

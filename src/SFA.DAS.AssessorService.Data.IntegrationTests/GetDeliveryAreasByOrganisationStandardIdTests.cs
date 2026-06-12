@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
@@ -29,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterQueryRepository(unitOfWork);

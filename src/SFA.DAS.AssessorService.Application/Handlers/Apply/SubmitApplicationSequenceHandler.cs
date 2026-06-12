@@ -1,22 +1,22 @@
-﻿using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Consts;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Domain.Consts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Consts;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
     public class SubmitApplicationSequenceHandler : IRequestHandler<SubmitApplicationSequenceRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
-        private readonly IContactQueryRepository _contactQueryRepository;     
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IMediator _mediator;
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 {
                     if (application.ApplyData.Apply == null)
                     {
-                        application.ApplyData.Apply = new ApplyTypes.Apply();
+                        application.ApplyData.Apply = new Domain.Entities.ApplyInfo();
                     }
 
                     if (string.IsNullOrWhiteSpace(application.ApplyData.Apply.ReferenceNumber))
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return false;
         }
 
-        private void UpdateSequenceAndSectionStatus(ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
+        private void UpdateSequenceAndSectionStatus(Domain.Entities.ApplyData applyData, int sequenceNo, Dictionary<int,bool?> dictOfRequestedFeedbackAnswered)
         {
             if (applyData.Sequences != null)
             {
@@ -97,9 +97,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private void AddSubmissionInfoToApplyData(ApplyData applyData, int sequenceNo, Domain.Entities.Contact submittingContact)
+        private void AddSubmissionInfoToApplyData(Domain.Entities.ApplyData applyData, int sequenceNo, Domain.Entities.Contact submittingContact)
         {
-            var submission = new Submission
+            var submission = new Domain.Entities.Submission
             {
                 SubmittedAt = DateTime.UtcNow,
                 SubmittedBy = submittingContact.Id,
@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
         }
 
-        private string GetFinancialStatus(ApplyData applyData)
+        private string GetFinancialStatus(Domain.Entities.ApplyData applyData)
         {
             if (applyData.Sequences != null)
             {
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return referenceNumber;
         }
 
-        private async Task NotifyContact(Domain.Entities.Contact contactToNotify, ApplyData applyData, int sequenceNo, CancellationToken cancellationToken)
+        private async Task NotifyContact(Domain.Entities.Contact contactToNotify, Domain.Entities.ApplyData applyData, int sequenceNo, CancellationToken cancellationToken)
         {
             var email = contactToNotify.Email;
             var contactname = contactToNotify.DisplayName;
@@ -211,7 +211,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOInitialSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
 
-                var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);               
+                var emailTemplateAlert = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.ApplyEPAOAlertSubmission);
                 await _mediator.Send(new SendEmailRequest(string.Empty, emailTemplateAlert, new { contactname, reference }), cancellationToken);
             }
             else if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
             else if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.WithdrawalEPAOSubmission);
+                var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalSubmission);
                 await _mediator.Send(new SendEmailRequest(email, emailTemplate, new { contactname, reference }), cancellationToken);
             }
 

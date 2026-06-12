@@ -234,11 +234,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
             applicationType.Should().Be(ApplicationTypes.StandardWithdrawal);
         }
 
-        private IEnumerable<ApplyTypes.ApplySection> GetSections(params (bool notRequired, int sectionNo)[] sections)
+        private IEnumerable<Domain.Entities.ApplySection> GetSections(params (bool notRequired, int sectionNo)[] sections)
         {
             foreach(var section in sections)
             {
-                yield return new ApplyTypes.ApplySection
+                yield return new Domain.Entities.ApplySection
                 {
                     NotRequired = section.notRequired,
                     SectionNo = section.sectionNo
@@ -246,11 +246,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
             }
         }
 
-        private IEnumerable<ApplyTypes.ApplySequence> GetSequences(params (bool notRequired, int sequenceNo, IEnumerable<ApplyTypes.ApplySection> sections)[] sequences)
+        private IEnumerable<Domain.Entities.ApplySequence> GetSequences(params (bool notRequired, int sequenceNo, IEnumerable<Domain.Entities.ApplySection> sections)[] sequences)
         {
             foreach(var sequence in sequences)
             {
-                yield return new ApplyTypes.ApplySequence
+                yield return new Domain.Entities.ApplySequence
                 {
                     NotRequired = sequence.notRequired,
                     SequenceNo = sequence.sequenceNo,
@@ -259,11 +259,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Mapping.CustomResolvers.
             }
         }
 
-        private ApplySummary GetApplySummary(IEnumerable<ApplyTypes.ApplySequence> applySequences)
+        private ApplySummary GetApplySummary(IEnumerable<Domain.Entities.ApplySequence> applySequences)
         {
             return new ApplySummary
             {
-                ApplyData = new ApplyTypes.ApplyData
+                ApplyData = new Domain.Entities.ApplyData
                 {
                     Sequences = applySequences.ToList()
                 }

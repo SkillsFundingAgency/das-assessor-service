@@ -11,8 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Mapping.AutoMapperProfiles
         public ApplicationSummaryItemProfile()
         {
             CreateMap<ApplicationListItem, ApplicationSummaryItem>()
-                .ForMember(dest => dest.Versions, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.Versions)))
-                ;
+                .ForMember(dest => dest.Versions, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.Versions)));
         }
 
     }

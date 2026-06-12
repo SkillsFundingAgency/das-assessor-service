@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
     public class GetContactPreviousAddressesRequest : IRequest<CertificateAddress>
     {
         public string EpaOrgId { get; set; }
-        public string EmployerAccountId { get; set; }
+        public long? EmployerAccountId { get; set; }
     }
 }

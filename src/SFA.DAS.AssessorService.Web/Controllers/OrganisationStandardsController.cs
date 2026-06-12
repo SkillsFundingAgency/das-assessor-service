@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +30,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IStandardsApiClient _standardsApiClient;
         private const int PageSize = 10;
 
+        #region Routes
+        public const string OrganisationStandardsIndexGetRoute = nameof(OrganisationStandardsIndexGetRoute);
+        #endregion
+
         public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger, 
             ISessionService sessionService,
             IOrganisationsApiClient organisationsApiClient,
@@ -45,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("/[controller]/")]
+        [Route("/[controller]/", Name = OrganisationStandardsIndexGetRoute)]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
@@ -57,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
                 {
-                    model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, pageIndex ?? 1, PageSize);
+                    model.ApprovedStandardsWithVersions = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.OrganisationId, false, pageIndex ?? 1, PageSize);
                     if (organisation.FinancialReviewStatus != ApplyTypes.FinancialReviewStatus.Exempt)
                     {
                         model.FinancialInfoStage1Expired = true;

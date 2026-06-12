@@ -4,15 +4,16 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class GetAllContactsHandler : IRequestHandler<GetAllContactsRequest, List<ContactResponse>>
+    public class GetAllContactsHandler : BaseHandler, IRequestHandler<GetAllContactsRequest, List<ContactResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
 
-        public GetAllContactsHandler(IContactQueryRepository contactQueryRepository)
+        public GetAllContactsHandler(IContactQueryRepository contactQueryRepository, IMapper mapper)
+            :base(mapper)
         {
             _contactQueryRepository = contactQueryRepository;
         }
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             if (results == null)
                 return response;
 
-            return Mapper
+            return _mapper
                 .Map<List<ContactResponse>>(results);
         }
     }

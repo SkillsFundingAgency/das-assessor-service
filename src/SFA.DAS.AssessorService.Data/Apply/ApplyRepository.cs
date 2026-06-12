@@ -1,16 +1,16 @@
-﻿using Dapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.Apply
 {
@@ -91,34 +91,42 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 transaction: _unitOfWork.Transaction)).ToList();
         }
 
-        public async Task<List<ApplySummary>> GetAllWithdrawnApplicationsForStandard(Guid orgId, int? standardCode)
+        /// <summary>
+        /// Gets the latest withdrawal date for the given standard by the given organisation.
+        /// </summary>
+        /// <remarks>
+        /// This does not include where the standard is withdrawn because the organisation has withdrawn
+        /// and the standard was assessed by the organisation at the time the organisation withdrew as
+        /// the database does not hold a complete enough audit trail to be able to determine that reliably.
+        /// 
+        /// This method is subject to Tech Debt QF-1607 in which the database may store the date of the
+        /// approval of withdrawal for a standard or the EffectiveTo date may be used instead
+        /// </remarks>
+        /// <param name="organisationId">The organisation from which the standard has been withdrawn</param>
+        /// <param name="standardCode">The standard which was withdrawn</param>
+        /// <returns></returns>
+        public async Task<DateTime?> GetLatestWithdrawalDateForStandard(Guid organisationId, int? standardCode)
         {
-            var query = $@"SELECT * from [dbo].[Apply] 
-                        WHERE organisationId = @orgId 
-                        AND StandardCode = @standardCode 
-                        AND ReviewStatus = '{ApplicationStatus.Approved}' 
-                        AND (standardApplicationType = '{StandardApplicationTypes.StandardWithdrawal}' 
-                        OR standardApplicationType = '{StandardApplicationTypes.VersionWithdrawal}') 
-                        ORDER BY CreatedAt DESC";
+            var query = @"SELECT MAX(ApprovedDate) 
+                FROM [dbo].[Apply]
+                CROSS APPLY OPENJSON(ApplyData,'$.Sequences') WITH (SequenceNo INT, NotRequired BIT, ApprovedDate Date) sequence
+                WHERE OrganisationId = @organisationId
+                    AND StandardCode = @standardCode
+                    AND ReviewStatus = @applicationStatusApproved 
+                    AND StandardApplicationType = @standardApplicationTypeStandardWithdrawal
+                    AND sequence.SequenceNo = @standardWithdrawalSequenceNumber AND sequence.NotRequired = 0";
 
-            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
+            return (await _unitOfWork.Connection.QueryFirstOrDefaultAsync<DateTime?>(
                 sql: query,
-                param: new { orgId, standardCode },
-                transaction: _unitOfWork.Transaction)).ToList();
-        }
-
-        public async Task<List<ApplySummary>> GetPreviousApplicationsForStandard(Guid orgId, string standardReference)
-        {
-            var query = $@"SELECT *
-                          FROM [dbo].[Apply]
-                          where organisationId = @orgId 
-                          AND StandardReference = @standardReference 
-                          ORDER BY createdAt DESC";
-
-            return (await _unitOfWork.Connection.QueryAsync<ApplySummary>(
-                sql: query,
-                param: new { orgId, standardReference },
-                transaction: _unitOfWork.Transaction)).ToList();
+                param: new 
+                { 
+                    organisationId, 
+                    standardCode,
+                    applicationStatusApproved = ApplicationStatus.Approved,
+                    standardApplicationTypeStandardWithdrawal = StandardApplicationTypes.StandardWithdrawal, // only consider withdrawals of complete standards
+                    standardWithdrawalSequenceNumber = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO
+                },
+                transaction: _unitOfWork.Transaction));
         }
 
         public async Task<List<ApplySummary>> GetOrganisationApplications(Guid userId)
@@ -207,7 +215,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 if (applyData.Apply == null)
                 {
-                    applyData.Apply = new ApplyTypes.Apply();
+                    applyData.Apply = new ApplyInfo();
                 }
 
                 applyData.Apply.StandardCode = standardCode;
@@ -285,7 +293,7 @@ namespace SFA.DAS.AssessorService.Data.Apply
 
                 if (applyData.Apply == null)
                 {
-                    applyData.Apply = new ApplyTypes.Apply();
+                    applyData.Apply = new ApplyInfo();
                 }
 
                 applyData.Apply.StandardCode = null;
@@ -595,10 +603,13 @@ namespace SFA.DAS.AssessorService.Data.Apply
                 application.ReviewStatus = ApplicationReviewStatus.Deleted;
                 application.DeletedBy = deletedBy;
 
-                foreach (var sequence in application.ApplyData?.Sequences)
+                if (application?.ApplyData?.Sequences != null)
                 {
-                    sequence.IsActive = false;
-                    sequence.Status = ApplicationSequenceStatus.Declined;
+                    foreach (var sequence in application?.ApplyData?.Sequences)
+                    {
+                        sequence.IsActive = false;
+                        sequence.Status = ApplicationSequenceStatus.Declined;
+                    }
                 }
 
                 await _unitOfWork.Connection.ExecuteAsync(

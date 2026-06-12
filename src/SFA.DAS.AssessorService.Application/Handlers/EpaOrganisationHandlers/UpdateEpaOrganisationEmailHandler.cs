@@ -1,22 +1,21 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Application.Interfaces;
-
 using AutoMapper;
 using MediatR;
-using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationEmailHandler : IRequestHandler<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>
+    public class UpdateEpaOrganisationEmailHandler : BaseHandler, IRequestHandler<UpdateEpaOrganisationEmailRequest, List<ContactResponse>>
     { 
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public UpdateEpaOrganisationEmailHandler(IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public UpdateEpaOrganisationEmailHandler(IContactQueryRepository contactQueryRepository, IMediator mediator, IMapper mapper)
+            :base(mapper)
         {
             _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
@@ -26,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var organisation = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = request.OrganisationId });
 
-            var updateEpaOrganisationRequest = Mapper.Map<UpdateEpaOrganisationRequest>(organisation);
+            var updateEpaOrganisationRequest = _mapper.Map<UpdateEpaOrganisationRequest>(organisation);
             updateEpaOrganisationRequest.Email = request.Email;
 
             await _mediator.Send(updateEpaOrganisationRequest);

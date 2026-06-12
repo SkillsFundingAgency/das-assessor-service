@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
+using SFA.DAS.AssessorService.Api.Common.Exceptions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Extensions;
@@ -25,6 +18,11 @@ using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using SFA.DAS.AssessorService.Web.ViewModels;
 using SFA.DAS.AssessorService.Web.ViewModels.Account;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -43,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         public OrganisationController(IHttpContextAccessor contextAccessor, 
             IOrganisationsApiClient organisationsApiClient, IAzureApiClient externalApiClient, IContactsApiClient contactsApiClient,
-            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger, 
+            IEmailApiClient emailApiClient, IValidationApiClient validationApiClient, ILogger<OrganisationController> logger,
             IWebConfiguration webConfiguration)
         {
             _contextAccessor = contextAccessor;
@@ -106,6 +104,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 var viewModel = MapOrganisationModel(organisation);
                 viewModel.ExternalApiSubscriptions = await GetExternalApiSubscriptions(_webConfiguration.AzureApiAuthentication.ProductId, ukprn);
+                viewModel.FindAnEPAOUrl = _webConfiguration.FindAnEPAOUrl;
 
                 var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
                 var userPrivileges = await _contactsApiClient.GetContactPrivileges(Guid.Parse(userId));
@@ -262,6 +261,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ? await _contactsApiClient.GetByUsername(vm.PrimaryContact)
                     : null;
 
+                if (primaryContact == null)
+                {
+                    ModelState.AddModelError(nameof(SelectOrChangeContactNameViewModel.PrimaryContact), "The primary contact could not be found");
+                    return RedirectToAction(nameof(SelectOrChangeContactName));
+                }
+
                 if (vm.ActionChoice == "Save")
                 {
                     if (ModelState.IsValid)
@@ -286,7 +291,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     {
                         Contacts = null,
                         PrimaryContact = vm.PrimaryContact,
-                        PrimaryContactName = primaryContact.DisplayName
+                        PrimaryContactName = primaryContact?.DisplayName ?? String.Empty
                     };
 
                     return View("SelectOrChangeContactNameConfirm", vm);
@@ -296,7 +301,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     var userId = _contextAccessor.HttpContext.User.FindFirst("UserId").Value;
                     var request = new UpdateEpaOrganisationPrimaryContactRequest
                     {
-                        PrimaryContactId = primaryContact.Id,
+                        PrimaryContactId = primaryContact?.Id ?? Guid.NewGuid(),
                         OrganisationId = organisation.OrganisationId,
                         UpdatedBy = Guid.Parse(userId)
                     };
@@ -308,7 +313,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         {
                             Contacts = notifiedContacts,
                             PrimaryContact = vm.PrimaryContact,
-                            PrimaryContactName = primaryContact.DisplayName
+                            PrimaryContactName = primaryContact?.DisplayName ?? String.Empty
                         };
 
                         return View("SelectOrChangeContactNameUpdated", vm);
@@ -714,7 +719,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                         // only check if an web site link has been entered - model has required validator
                         
-                        var encodedWebsiteUrl = HttpUtility.UrlEncode(vm.WebsiteLink);
+                        var encodedWebsiteUrl = WebUtility.UrlEncode(vm.WebsiteLink);
                         _logger.LogInformation($"VALIDATEWEBSITELINK - OrganisationController.ChangeWebsite: {vm.WebsiteLink}, {encodedWebsiteUrl}");
                         if (await _validationApiClient.ValidateWebsiteLink(encodedWebsiteUrl) == false)
                         {

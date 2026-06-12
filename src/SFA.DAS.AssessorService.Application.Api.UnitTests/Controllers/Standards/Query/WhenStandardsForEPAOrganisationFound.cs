@@ -10,12 +10,12 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standards.Query
 {
-    public class WhenStandardsForEpaOrganisationFound
+    public class WhenStandardsForEpaOrganisationFound: TestBase
     {
         private IActionResult _result;
 
@@ -39,9 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
 
             var controllerLoggerMock = new Mock<ILogger<StandardQueryController>>();
             var standardQueryController =
-                new StandardQueryController(mediator.Object, controllerLoggerMock.Object);
+                new StandardQueryController(mediator.Object, controllerLoggerMock.Object, Mapper);
 
-            _result = standardQueryController.GetEpaoRegisteredStandards("EPA0008", 1).Result;
+            _result = standardQueryController.GetEpaoRegisteredStandards("EPA0008").Result;
         }
 
 

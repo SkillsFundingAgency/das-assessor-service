@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -9,13 +9,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<ValidationApiClient> _logger;
 
-        public ValidationApiClient(string baseUri, ITokenService tokenService, ILogger<ValidationApiClient> logger) : base(baseUri, tokenService, logger)
+        public ValidationApiClient(IAssessorApiClientFactory clientFactory, ILogger<ValidationApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
             _logger = logger;
-        }
-
-        public ValidationApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
-        {
         }
 
         public async Task<bool> ValidatePhoneNumber(string phoneNumberToValidate)

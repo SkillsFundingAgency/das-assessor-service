@@ -14,7 +14,6 @@ CREATE TABLE #EMailTemplates(
     [TemplateName] [nvarchar](100) NOT NULL,
     [TemplateId] [nvarchar](100) NOT NULL
 ) 
-GO
 
 INSERT INTO #EmailTemplates VALUES('075C643E-BEEF-4BB3-A279-3FB24C144755', 'EPAOPermissionsAmended', 'c1ba00d9-81b6-46d8-9b70-3d89d51aa9c1')
 INSERT INTO #EmailTemplates VALUES('EB20EE3C-516E-4E44-97EA-3FD8F70039EF', 'ApplyEPAOResponse', '84174eab-f3c1-4274-8670-2fb5b21cbd77')
@@ -31,14 +30,17 @@ INSERT INTO #EmailTemplates VALUES('DA7603D3-87B1-4040-B272-EDE806538BE8', 'EPAO
 INSERT INTO #EmailTemplates VALUES('CA7C8BE2-A6F1-479B-A77D-F0614F7E8924', 'PrintAssessorCoverLetters', '5b171b91-d406-402a-a651-081cce820acb')
 INSERT INTO #EmailTemplates VALUES('F5A787F4-0276-4C23-A125-F6D4C1AE0650', 'EPAOUserApproveConfirm', '68506adb-7e17-45c9-ad54-45ef9a2cad15')
 INSERT INTO #EmailTemplates VALUES('76DE4F5E-0B82-4729-AD80-DE0C0F54FEEF', 'PrintSasToken', '83b79354-4d2b-476d-b02d-cdb9c016911e')
-INSERT INTO #EmailTemplates VALUES('01A8A975-3E19-4B13-A45E-8BA4868957BA', 'WithdrawalEPAOSubmission', '629451a3-ae87-4213-b93a-f8f5c8828ff3')
-INSERT INTO #EmailTemplates VALUES('A38B1DF3-F990-4D8B-A0D4-2272449CC27A', 'EPAOWithdrawalFeedbackNotification', 'b0c12344-62d7-4435-aa36-299307f5f8d8')
+INSERT INTO #EmailTemplates VALUES('01A8A975-3E19-4B13-A45E-8BA4868957BA', 'EPAOWithdrawalSubmission', '629451a3-ae87-4213-b93a-f8f5c8828ff3')
+INSERT INTO #EmailTemplates VALUES('A38B1DF3-F990-4D8B-A0D4-2272449CC27A', 'EPAOWithdrawalFeedback', 'b0c12344-62d7-4435-aa36-299307f5f8d8')
 INSERT INTO #EmailTemplates VALUES('706A53FF-BA54-448C-A994-89B953A15BDB', 'EPAOCancelApplication', 'dd5fd888-8552-4855-8411-b34f0d1f82f4')
 INSERT INTO #EmailTemplates VALUES('037E5136-83F2-46BF-A4CC-A3753DF69769', 'EPAOStandardWithdrawalApproval', '30ea8a72-ed58-4e52-8322-9767f94265bd')
-INSERT INTO #EmailTemplates VALUES('F1D63871-8DF3-4595-9454-C129E07CC580', 'EPAORegisterWithdrawalApproval', '1872e2bd-cf13-42c7-a120-5829c36d5afc')
+INSERT INTO #EmailTemplates VALUES('F1D63871-8DF3-4595-9454-C129E07CC580', 'EPAOOrganisationWithdrawalApproval', '1872e2bd-cf13-42c7-a120-5829c36d5afc')
 INSERT INTO #EmailTemplates VALUES('E3FA3DD7-81D5-48A8-B96A-A9D941EEEBF4', 'ApplyEPAOStandardOptin', '68a076ed-1240-41fa-af90-d4b4c85a5eeb')
-INSERT INTO #EMailTemplates VALUES ('15dabcf7-2542-4c94-8cc4-3f15b2afe84f', 'MergeConfirmationForPrimaryEpao', '972ebfa7-c996-45fa-b2e9-63a73ddd9049')
-INSERT INTO #EMailTemplates VALUES ('7caf6bf6-2e0a-4a84-b475-75fe45eedd26', 'MergeConfirmationForSecondaryEpao', 'ee2c3edd-fa8c-4676-a7fc-92036f8bc80a')
+INSERT INTO #EMailTemplates VALUES('15dabcf7-2542-4c94-8cc4-3f15b2afe84f', 'MergeConfirmationForPrimaryEpao', '972ebfa7-c996-45fa-b2e9-63a73ddd9049')
+INSERT INTO #EMailTemplates VALUES('7caf6bf6-2e0a-4a84-b475-75fe45eedd26', 'MergeConfirmationForSecondaryEpao', 'ee2c3edd-fa8c-4676-a7fc-92036f8bc80a')
+INSERT INTO #EMailTemplates VALUES('77B1999E-D200-4B57-8957-F5C1866A206C', 'EPAOStandardAdd', 'aa8e5092-4c02-47ba-ba2e-06818d30a344')
+INSERT INTO #EmailTemplates VALUES('D91E714D-79EC-42BF-A2D1-9B2EEFA4F27E', 'EPAOStandardConfimOptIn', 'd652be73-d5fa-41b9-ab22-b7cf3a2cd490')
+INSERT INTO #EmailTemplates VALUES('5E562AF8-D722-4BA8-9EFA-A9E377FC18E8', 'EPAOStandardConfimOptOut', 'e980f6d2-6ab6-40eb-a010-4ab557c45149')
 
 MERGE [EmailTemplates] [Target] USING #EmailTemplates [Source]
 ON ([Source].[Id] = [Target].[Id])

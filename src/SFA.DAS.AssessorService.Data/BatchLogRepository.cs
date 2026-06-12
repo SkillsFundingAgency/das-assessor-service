@@ -1,163 +1,129 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData.Printing;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class BatchLogRepository : Repository, IBatchLogRepository
+    public class BatchLogRepository : IBatchLogRepository
     {
-        public BatchLogRepository(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        private readonly IAssessorUnitOfWork _unitOfWork;
+        public BatchLogRepository(IAssessorUnitOfWork unitOfWork)
         {
-            SqlMapper.AddTypeHandler(typeof(BatchData), new BatchDataHandler());
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<BatchLog> Create(BatchLog batchLog)
         {
-            await _unitOfWork.Connection.ExecuteAsync(
-                @"INSERT INTO BatchLogs ([Period], [ScheduledDate], [BatchNumber]) 
-                  VALUES (@period, @scheduledDate, @batchNumber)",
-                param: new
-                {
-                    batchLog.Period,
-                    batchLog.ScheduledDate,
-                    batchLog.BatchNumber
-                },
-                transaction: _unitOfWork.Transaction);
-
+            await _unitOfWork.AssessorDbContext.BatchLogs.AddAsync(batchLog);
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
             return batchLog;
         }
+
         public async Task<ValidationResponse> UpdateBatchLogSentToPrinter(BatchLog updatedBatchLog)
         {
-            var rowsAffected = await _unitOfWork.Connection.ExecuteAsync(
-                @"UPDATE [BatchLogs] SET 
-                    [BatchCreated] = @batchCreated, 
-                    [NumberOfCertificates] = @numberOfCertificates, 
-                    [NumberOfCoverLetters] = @numberOfCoverLetters, 
-                    [CertificatesFileName] = @certificatesFileName, 
-                    [FileUploadStartTime] = @fileUploadStartTime, 
-                    [FileUploadEndTime] = @fileUploadEndTime, 
-                    [BatchData] = @batchData 
-                  WHERE 
-                    [BatchNumber] = @batchNumber",
-                param: new
-                {
-                    updatedBatchLog.BatchNumber,
-                    updatedBatchLog.BatchCreated,
-                    updatedBatchLog.NumberOfCertificates,
-                    updatedBatchLog.NumberOfCoverLetters,
-                    updatedBatchLog.CertificatesFileName,
-                    updatedBatchLog.FileUploadStartTime,
-                    updatedBatchLog.FileUploadEndTime,
-                    updatedBatchLog.BatchData
-                },
-                transaction: _unitOfWork.Transaction);
+            var batchLog = await _unitOfWork.AssessorDbContext.BatchLogs
+                .FirstOrDefaultAsync(b => b.BatchNumber == updatedBatchLog.BatchNumber);
 
             var response = new ValidationResponse();
-            if(rowsAffected == 0)
+            if (batchLog == null)
             {
-                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
+                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error: The batch log {updatedBatchLog.BatchNumber} does not exist."));
+                return response;
             }
-            
+
+            batchLog.BatchCreated = updatedBatchLog.BatchCreated;
+            batchLog.NumberOfCertificates = updatedBatchLog.NumberOfCertificates;
+            batchLog.NumberOfCoverLetters = updatedBatchLog.NumberOfCoverLetters;
+            batchLog.CertificatesFileName = updatedBatchLog.CertificatesFileName;
+            batchLog.FileUploadStartTime = updatedBatchLog.FileUploadStartTime;
+            batchLog.FileUploadEndTime = updatedBatchLog.FileUploadEndTime;
+            batchLog.BatchData = updatedBatchLog.BatchData;
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
             return response;
         }
 
         public async Task<ValidationResponse> UpdateBatchLogPrinted(BatchLog updatedBatchLog)
         {
-            var rowsAffected = await _unitOfWork.Connection.ExecuteAsync(
-                @"UPDATE [BatchLogs] SET 
-                    [BatchData] = @batchData 
-                  WHERE 
-                    [BatchNumber] = @batchNumber",
-                param: new
-                {
-                    updatedBatchLog.BatchNumber,
-                    updatedBatchLog.BatchData
-                },
-                transaction: _unitOfWork.Transaction);
+            var batchLog = await _unitOfWork.AssessorDbContext.BatchLogs
+                .FirstOrDefaultAsync(b => b.BatchNumber == updatedBatchLog.BatchNumber);
 
             var response = new ValidationResponse();
-            if (rowsAffected == 0)
+
+            if (batchLog == null)
             {
-                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error the batch log {updatedBatchLog.BatchNumber} does not exist."));
+                response.Errors.Add(new ValidationErrorDetail("BatchNumber", $"Error: The batch log {updatedBatchLog.BatchNumber} does not exist."));
+                return response;
             }
+
+            batchLog.BatchData = updatedBatchLog.BatchData;
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
 
             return response;
         }
 
-        public async Task UpsertCertificatesReadyToPrintInBatch(int batchNumber, Guid[] certificateIds)
+        public async Task UpsertCertificatesReadyToPrintInBatch(Guid[] certificateIds, int batchNumber)
         {
-            var certificateIdsToUpdate = await _unitOfWork.Connection.QueryAsync<Guid>(
-                @"SELECT 
-                    c.[Id] 
-                  FROM 
-                    [Certificates] c
-                  INNER JOIN 
-                    [CertificateBatchLogs] cbl 
-                    ON cbl.CertificateReference = c.CertificateReference 
-                  WHERE 
-                    c.Id IN @certificateIds 
-                    AND cbl.BatchNumber = @batchNumber",
-                param: new { certificateIds, batchNumber },
-                transaction: _unitOfWork.Transaction);
+            var certificateReferencesToUpdate = await _unitOfWork.AssessorDbContext.Set<CertificateBase>()
+                .Where(c => certificateIds.Contains(c.Id))
+                .Select(c => c.CertificateReference)
+                .ToListAsync();
 
-            if (certificateIdsToUpdate.Count() > 0)
+            var existingBatchLogs = await _unitOfWork.AssessorDbContext.CertificateBatchLogs
+                .Where(cbl => certificateReferencesToUpdate.Contains(cbl.CertificateReference) && cbl.BatchNumber == batchNumber)
+                .ToListAsync();
+
+            var certificateReferencesInBatchLog = existingBatchLogs.Select(cbl => cbl.CertificateReference).ToList();
+
+            if (certificateReferencesInBatchLog.Any())
             {
-                await _unitOfWork.Connection.ExecuteAsync(
-                    @"UPDATE [CertificateBatchLogs] 
-                      SET 
-                          CertificateData = c.CertificateData, 
-                          Status = c.Status, 
-                          StatusAt = ISNULL(c.UpdatedAt, c.CreatedAt), 
-                          UpdatedAt = GETUTCDATE(), 
-                          UpdatedBy = @updatedBy 
-                      FROM 
-                          [Certificates] c
-                      INNER JOIN 
-                          [CertificateBatchLogs] cbl 
-                          ON cbl.CertificateReference = c.CertificateReference
-                      WHERE 
-                          c.Id IN @certificateIdsToUpdate
-                          AND cbl.BatchNumber = @batchNumber",
-                    param: new { certificateIdsToUpdate, batchNumber, updatedBy = SystemUsers.PrintFunction },
-                    transaction: _unitOfWork.Transaction);
+                var certificatesToUpdate = await _unitOfWork.AssessorDbContext.Set<CertificateBase>()
+                    .Where(c => certificateReferencesInBatchLog.Contains(c.CertificateReference))
+                    .ToListAsync();
+
+                foreach (var batchLog in existingBatchLogs)
+                {
+                    var certificate = certificatesToUpdate.First(c => c.CertificateReference == batchLog.CertificateReference);
+                    batchLog.CertificateData = certificate.CertificateData;
+                    batchLog.Status = certificate.Status;
+                    batchLog.StatusAt = certificate.UpdatedAt ?? certificate.CreatedAt;
+                    batchLog.UpdatedAt = DateTime.UtcNow;
+                    batchLog.UpdatedBy = SystemUsers.PrintFunction;
+                }
+
+                _unitOfWork.AssessorDbContext.CertificateBatchLogs.UpdateRange(existingBatchLogs);
+                await _unitOfWork.AssessorDbContext.SaveChangesAsync();
             }
 
-            var certificateIdsToInsert = certificateIds.Except(certificateIdsToUpdate);
-            if (certificateIdsToInsert.Count() > 0)
+            var certificateReferencesToInsert = certificateReferencesToUpdate.Except(certificateReferencesInBatchLog).ToList();
+
+            if (certificateReferencesToInsert.Any())
             {
-                await _unitOfWork.Connection.ExecuteAsync(
-                    @"INSERT INTO [CertificateBatchLogs] 
-                      ( 
-                          CertificateReference, 
-                          BatchNumber, 
-                          CertificateData, 
-                          Status, 
-                          StatusAt, 
-                          CreatedAt, 
-                          CreatedBy 
-                      ) 
-                      SELECT 
-                        c.CertificateReference, 
-                        @batchNumber, 
-                        c.CertificateData, 
-                        c.Status, 
-                        ISNULL(c.UpdatedAt, c.CreatedAt) StatusAt, 
-                        GETUTCDATE(), 
-                        @createdBy 
-                      FROM 
-                        [Certificates] c 
-                      WHERE 
-                        c.Id IN @certificateIdsToInsert",
-                    param: new { certificateIdsToInsert, batchNumber, createdBy = SystemUsers.PrintFunction },
-                    transaction: _unitOfWork.Transaction);
+                var certificatesToInsert = await _unitOfWork.AssessorDbContext.Set<CertificateBase>()
+                    .Where(c => certificateReferencesToInsert.Contains(c.CertificateReference))
+                    .ToListAsync();
+
+                var newBatchLogs = certificatesToInsert.Select(c => new CertificateBatchLog
+                {
+                    Id = Guid.NewGuid(),
+                    CertificateReference = c.CertificateReference,
+                    BatchNumber = batchNumber,
+                    CertificateData = c.CertificateData,
+                    Status = c.Status,
+                    StatusAt = c.UpdatedAt ?? c.CreatedAt,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = SystemUsers.PrintFunction
+                }).ToList();
+
+                await _unitOfWork.AssessorDbContext.CertificateBatchLogs.AddRangeAsync(newBatchLogs);
+                await _unitOfWork.AssessorDbContext.SaveChangesAsync();
             }
         }
     }

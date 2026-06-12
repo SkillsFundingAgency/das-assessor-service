@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes;
+﻿using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 
 namespace SFA.DAS.AssessorService.Domain.DTOs

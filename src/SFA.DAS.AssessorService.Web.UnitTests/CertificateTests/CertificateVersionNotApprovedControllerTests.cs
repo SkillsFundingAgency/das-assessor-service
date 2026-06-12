@@ -1,8 +1,6 @@
 ﻿
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -17,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
     public class CertificateVersionNotApprovedControllerTests
     {
         private Mock<ISessionService> _mockSessionService;
-        private Mock<IStandardVersionClient> _mockStandardVersionClient;
+        private Mock<IStandardVersionApiClient> _mockStandardVersionClient;
 
         private CertificateVersionNotApprovedController _controller;
 
@@ -25,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         public void SetUp()
         {
             _mockSessionService = new Mock<ISessionService>();
-            _mockStandardVersionClient = new Mock<IStandardVersionClient>();
+            _mockStandardVersionClient = new Mock<IStandardVersionApiClient>();
 
             _mockSessionService.Setup(s => s.Get("AttemptedStandardVersion")).Returns("ST0001_1.2");
 

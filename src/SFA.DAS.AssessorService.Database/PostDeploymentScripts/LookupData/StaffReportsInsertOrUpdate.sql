@@ -20,7 +20,6 @@ CREATE TABLE #StaffReports(
 	[ReportType] [nvarchar](20) NULL,
 	[ReportDetails] [nvarchar](max) NULL
 ) 
-GO
 
 INSERT #StaffReports VALUES (N'54b434be-606b-49b2-afef-1f14c85c48b5', N'Provider and grade', N'StaffReports_ByProviderAndGrade', CAST(N'2018-10-24T13:51:17.8500000' AS DateTime2), NULL, NULL, 8, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'440e1959-20f6-44da-9543-32768057c56d', N'Provider', N'StaffReports_ByProvider', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 7, N'ViewOnScreen', NULL)
@@ -57,7 +56,13 @@ INSERT #StaffReports VALUES (N'37770d79-1733-43f9-90d5-88f0609dd7e2', N'Register
 	  "StoredProcedure":"EPAO_Register_list_of_standards"
 	  }
 	]}')
-INSERT #StaffReports VALUES (N'6ecd397a-f7d7-4a13-bb4f-8f8a74bbeace', N'EPAO, standard and grade', N'StaffReports_ByEpaoAndStandardAndGrade', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 6, N'ViewOnScreen', NULL)
+INSERT #StaffReports VALUES (N'6ecd397a-f7d7-4a13-bb4f-8f8a74bbeace', N'EPAO, standard and grade', N'', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 6, N'Download', N'{"Name":"EPAO, standard and grade","Worksheets": [
+	  {
+	  "worksheet":"EPAO, standard and grade",
+	  "order": 1,
+	  "StoredProcedure":"StaffReports_ByEpaoAndStandardAndGrade"
+	  }
+	]}')
 INSERT #StaffReports VALUES (N'3e230675-d61d-4ef0-a678-a254f77c58b7', N'Register List of Organisations', N'', CAST(N'2018-11-30T09:42:37.5633333' AS DateTime2), NULL, NULL, 13, N'Download', N'{"Name":"Register List Of Organisations","Worksheets": [
 	  {
 	  "worksheet":"Register List of Organisations",
@@ -70,6 +75,13 @@ INSERT #StaffReports VALUES (N'4ec6aa79-75ac-4dfe-b277-e2fac7096bda', N'Batch', 
 INSERT #StaffReports VALUES (N'd8d8aa09-74b1-4dc4-bbc6-f0b6e71a60cc', N'EPAO', N'StaffReports_ByEpao', CAST(N'2018-10-24T13:51:17.8333333' AS DateTime2), NULL, NULL, 5, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'ec0b30aa-1a6b-4de4-bebd-fb9aaf1a3331', N'Weekly summary', N'StaffReports_WeeklySummary', CAST(N'2018-10-24T13:51:17.8033333' AS DateTime2), NULL, NULL, 3, N'ViewOnScreen', NULL)
 INSERT #StaffReports VALUES (N'db48b407-6160-426a-9a45-693970d47edc', N'Missing certificate data', N'StaffReports_MissingCertificateData', CAST(N'2021-03-31T00:00:00.0000000' AS DateTime2), NULL, NULL, 15, N'ViewOnScreen', NULL)
+INSERT #StaffReports VALUES (N'3800291d-6209-4e65-be4d-e8d390997de8', N'Active Apprentices by Standard', N'', CAST(N'2022-08-22 00:00:00.0000000' AS DateTime2), NULL, NULL, 16, N'Download', N'{"Name":"List Of Active Apprentices by Standard","Worksheets": [
+	  {
+	  "worksheet": "List Of Active Apprentices",
+	  "order": 1,
+	  "StoredProcedure": "StaffReports_List_Approved_Standards"
+	  }
+	]}')
 
 MERGE [StaffReports] [Target] USING #StaffReports [Source]
 ON ([Source].[Id] = [Target].[Id])

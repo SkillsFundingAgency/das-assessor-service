@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
@@ -26,9 +27,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             var result = _validator.IsValidEpaOrganisationId(organisationIdToCheck);
             if (message != null)
-                Assert.AreEqual(matching, result, message);
+                result.Should().Be(matching, message);
             else
-                Assert.AreEqual(matching, result);
+                result.Should().Be(matching);
         }
 
         [TestCase("10000000", true)]
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         public void CheckUkprnIsValid(string stringToCheck, bool matching)
         {
             var result = _validator.IsValidUkprn(stringToCheck);
-            Assert.AreEqual(matching, result);
+            result.Should().Be(matching);
         }
     }
 }

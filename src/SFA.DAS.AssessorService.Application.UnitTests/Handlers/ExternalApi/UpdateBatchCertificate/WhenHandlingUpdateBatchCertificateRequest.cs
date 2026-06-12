@@ -1,20 +1,20 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.UpdateBatchCertificate
 {
@@ -27,10 +27,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
 
         private UpdateBatchCertificateHandler _handler;
 
-        private long uln = 12345678L;
-        private int stdCode = 123;
-        private string stdUId = "ST0123_1.0";
-        private DateTime achievementDate = new DateTime(2021, 7, 1);
+        private const long Uln = 12345678L;
+        private const int StandardCode = 123;
+        private const string StandardReference = "ST0123";
+        private const string Version = "1.0";
+
+        private string _stdUId = $"{StandardReference}_{Version}";
+        private DateTime _achievementDate = new DateTime(2021, 7, 1);
+
         private UpdateBatchCertificateRequest _request;
 
         [SetUp]
@@ -41,22 +45,32 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
             _logger = new Mock<ILogger<UpdateBatchCertificateHandler>>();
             _standardService = new Mock<IStandardService>();
 
-            _standardService.Setup(m => m.GetStandardOptionsByStandardId(stdUId)).ReturnsAsync(new StandardOptions());
+            _standardService
+                .Setup(m => m.GetStandardVersionById(_stdUId, It.IsAny<string>()))
+                .ReturnsAsync(new Standard { StandardUId = _stdUId, Title = "Standard Title" });
 
-            _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync(new Certificate()
-            {
-                Status = CertificateStatus.Approved,
-                CertificateData = @"{}"
-            });
+            _standardService
+                .Setup(m => m.GetStandardOptionsByStandardId(_stdUId))
+                .ReturnsAsync(new StandardOptions());
+
+            _certificateRepository
+                .Setup(m => m.GetCertificate(Uln, StandardCode))
+                .ReturnsAsync(new Certificate()
+                {
+                    Status = CertificateStatus.Approved,
+                    CertificateData = new CertificateData()
+                });
 
             _request = new UpdateBatchCertificateRequest()
             {
-                StandardCode = stdCode,
-                StandardUId = stdUId,
-                Uln = uln,
-                CertificateData = new Domain.JsonData.CertificateData()
+                StandardReference = StandardReference,
+                StandardCode = StandardCode,
+                StandardUId = _stdUId,
+                Uln = Uln,
+                CertificateData = new CertificateData()
                 {
-                    AchievementDate = achievementDate
+                    Version = Version,
+                    AchievementDate = _achievementDate
                 }
             };
 
@@ -66,20 +80,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
         [Test]
         public async Task ThenReturnsCertificate()
         {
-            // Arrange
-            
             // Act
             var result = await _handler.Handle(_request, CancellationToken.None);
 
+            // Assert
+            _certificateRepository.Verify(m => m.UpdateStandardCertificate(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
 
-            //Assert
-            _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
-
-            result.StandardUId.Should().Be(stdUId);
+            result.StandardUId.Should().Be(_stdUId);
             result.Status.Should().Be(CertificateStatus.Approved);
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(result.CertificateData);
-            certData.EpaDetails.LatestEpaDate.Should().Be(achievementDate);
+            result.CertificateData.EpaDetails.LatestEpaDate.Should().Be(_achievementDate);
         }
 
         [Test]
@@ -88,30 +97,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
             // Arrange
             var request = new UpdateBatchCertificateRequest()
             {
-                StandardCode = stdCode,
-                StandardUId = stdUId,
-                Uln = uln,
+                StandardCode = StandardCode,
+                StandardUId = _stdUId,
+                Uln = Uln,
                 CertificateData = new Domain.JsonData.CertificateData()
             };
 
             // Act
             var result = await _handler.Handle(request, CancellationToken.None);
 
-
-            //Assert
-            _certificateRepository.Verify(m => m.Update(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(result.CertificateData);
-            certData.EpaDetails.LatestEpaDate.Should().BeNull();
+            // Assert
+            _certificateRepository.Verify(m => m.UpdateStandardCertificate(It.IsAny<Certificate>(), ExternalApiConstants.ApiUserName, CertificateActions.Amend, true, null));
+            result.CertificateData.EpaDetails.LatestEpaDate.Should().BeNull();
         }
 
         [Test]
         public void AndThereIsNoOptionThenThrowNotFoundException()
         {
             // Arrange
-            _standardService.Setup(m => m.GetStandardOptionsByStandardId(stdUId)).ReturnsAsync((StandardOptions)null);
+            _standardService.Setup(m => m.GetStandardOptionsByStandardId(_stdUId)).ReturnsAsync((StandardOptions)null);
 
-            // Act
+            // Act & Assert
             Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(_request, CancellationToken.None));
         }
 
@@ -119,9 +125,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Upd
         public void AndThereIsNoCertificateThenThrowNotFoundException()
         {
             // Arrange
-            _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode)).ReturnsAsync((Certificate)null);
+            _certificateRepository.Setup(m => m.GetCertificate(Uln, StandardCode)).ReturnsAsync((Certificate)null);
 
-            // Act
+            // Act & Assert
             Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(_request, CancellationToken.None));
         }
     }

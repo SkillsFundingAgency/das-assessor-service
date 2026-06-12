@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -84,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
+                    new LearnerSearchRequest() { Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
 
             result.Count.Should().Be(1);
@@ -102,12 +99,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() { Surname = "Gamora", EpaOrgId = "12345", Uln = 2222222222, Username = "username" },
+                    new LearnerSearchRequest() { Surname = "Gamora", EpaOrgId = "12345", Uln = 2222222222, Username = "username" },
                     new CancellationToken()).Result;
 
             result.Count.Should().Be(1);
             result[0].Version.Should().Be("1.0");
-            result[0].Option.Should().BeEmpty();
+            result[0].Option.Should().BeNullOrEmpty();
             result[0].Versions.Count.Should().Be(1);
             result[0].Versions[0].Title.Should().Be("Standard Name 12");
             result[0].Versions[0].StandardUId.Should().Be("ST012_1.0");

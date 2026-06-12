@@ -1,14 +1,13 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -58,13 +57,12 @@ namespace SFA.DAS.AssessorService.Data
                     l.Uln,
                     l.GivenNames,
                     l.FamilyName,
-                    c.AchievementDate,
-                    c.LatestEPAOutcome as Outcome,
+                    l.LearnActEndDate,
+                    l.IsTransfer,
+                    l.DateTransferIdentified,
                     p.Name as ProviderName
                 FROM [Learner] l 
-                    LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn
-                    LEFT JOIN [Certificates] c on l.Uln = c.Uln AND l.StdCode = c.StandardCode AND c.Status NOT IN ('Deleted','Draft')
-                
+                    LEFT JOIN [Providers] p on l.UkPrn = p.Ukprn                
                 WHERE [ApprenticeshipId] = @apprenticeshipId",
                 param: new { apprenticeshipId },
                 transaction: _unitOfWork.Transaction);

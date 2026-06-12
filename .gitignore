@@ -295,3 +295,5 @@ src/global.json
 .sonarqube/
 SonarQube.Analysis.xml
 **/*.slconfig
+/src/UpgradeReport.sarif
+/src/upgrade-assistant.clef

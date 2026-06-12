@@ -18,16 +18,6 @@ DECLARE @Error_Code INT = 0
 BEGIN
 	BEGIN TRANSACTION T1;
 	
-	-- there are some specifically excluded Standards
-	DECLARE @Exclusions TABLE
-	(
-		StandardName nvarchar(500),
-		StandardReference nvarchar(10)
-	) 
-	
-	INSERT INTO @Exclusions(StandardName, StandardReference)
-	EXEC OppFinder_Exclusions 
-
 	DECLARE @StandardsCore TABLE
 	(
 		 StandardCode INT NULL, 
@@ -50,7 +40,7 @@ BEGIN
 			  ,AllVersions Versions
 			  ,ROW_NUMBER() OVER(PARTITION BY st1.IFateReferenceNumber ORDER BY VersionMajor DESC, VersionMinor DESC) AS RowNumber
 		FROM Standards st1
-		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ', ') WITHIN GROUP (ORDER BY VersionMajor , VersionMinor) AS AllVersions 
+		JOIN ( SELECT IFateReferenceNumber, STRING_AGG(CAST(Version AS VARCHAR(500)), ', ') WITHIN GROUP (ORDER BY VersionMajor DESC, VersionMinor DESC) AS AllVersions 
 			   FROM Standards 
 			   WHERE VersionApprovedForDelivery IS NOT NULL
 			   GROUP BY IFateReferenceNumber ) sv1 ON sv1.IFateReferenceNumber = st1.IFateReferenceNumber
@@ -62,9 +52,7 @@ BEGIN
 		   -- When LARS set LastDateStarts to EffectiveFrom Date this is because there is no EPAO for this standard, so we want EPAOs to see the Opportunity!
 		   AND (LastDateStarts IS NULL OR LastDateStarts = EffectiveFrom)
 	) stv 
-	LEFT JOIN @Exclusions ex1 ON ex1.StandardReference = stv.StandardReference
-	WHERE RowNumber = 1
-	  AND ex1.StandardName IS NULL;
+	WHERE RowNumber = 1;
 
 	BEGIN TRY;
 	
@@ -94,7 +82,7 @@ BEGIN
 				-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
 				SELECT le1.StandardReference, le1.DelLocPostCode
 				FROM Learner le1 
-				LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
+				LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
 				WHERE ce1.Uln IS NULL
 				AND le1.FundingModel != 99
 				AND le1.CompletionStatus = 1
@@ -123,8 +111,8 @@ BEGIN
 				FROM OrganisationStandard os2 
 				JOIN (SELECT DISTINCT OrganisationStandardId 
 						FROM OrganisationStandardVersion 
-					   WHERE status = 'Live' AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() ) 
-					 ) osv ON os2.id = osv.OrganisationStandardId
+					   WHERE [Status] = 'Live' AND (EffectiveTo IS NULL OR EffectiveTo > GETDATE() ) 
+					 ) osv ON os2.Id = osv.OrganisationStandardId
 				WHERE os2.Status = 'Live' 
 				  AND (os2.EffectiveTo IS NULL OR os2.EffectiveTo > GETDATE() ) 
 			) os1 
@@ -151,7 +139,7 @@ BEGIN
 		FROM (
 
 			SELECT JSON_VALUE(ce1.CertificateData,'$.StandardReference') StandardReference,  ISNULL(ISNULL(le1.DelLocPostCode, JSON_VALUE(ce1.CertificateData,'$.ContactPostCode')),'ZZ99 9ZZ') DelLocPostCode
-			  FROM Certificates ce1
+			  FROM StandardCertificates ce1
 			LEFT JOIN Learner le1 ON le1.StdCode = ce1.StandardCode AND le1.Uln = ce1.Uln
 			WHERE  ce1.Status NOT IN ('Deleted','Draft')
 			  AND IsPrivatelyFunded = 0
@@ -164,7 +152,7 @@ BEGIN
 	WHERE NOT (Region = 'Other' AND Learners = 0 AND Assessments = 0)
 	GROUP BY StandardReference, Region, Ordering
 	) Total On Total.StandardReference = ac.StandardReference
-	ORDER BY StandardReference, Ordering
+	ORDER BY Total.StandardReference, Total.Ordering
 	
 	
 	-- populate the StandardVersionSummary table
@@ -172,15 +160,15 @@ BEGIN
 	
 	INSERT INTO StandardVersionSummary
 	(StandardCode, StandardReference, Version, ActiveApprentices, CompletedAssessments, EndPointAssessors, UpdatedAt)
-	SELECT st1.Larscode StandardCode
-		,st1.IfateReferenceNumber StandardReference
+	SELECT st1.LarsCode StandardCode
+		,st1.IFateReferenceNumber StandardReference
 		,st1.Version
 		,ActiveApprentices
 		,CompletedAssessments
 		,EndPointAssessors
 		,GETDATE() UpdatedAt
 	FROM Standards st1 
-	JOIN @StandardsCore ac ON ac.StandardReference = st1.IfateReferenceNumber
+	JOIN @StandardsCore ac ON ac.StandardReference = st1.IFateReferenceNumber
 	JOIN (
 		SELECT StandardUId
 			  ,MAX(ActiveApprentices) ActiveApprentices
@@ -201,7 +189,7 @@ BEGIN
 			
 			-- Assessments
 			SELECT StandardUId, 0 EndPointAssessors, COUNT(*) AS CompletedAssessments, 0 ActiveApprentices
-			FROM Certificates 
+			FROM StandardCertificates 
 			WHERE IsPrivatelyFunded = 0
 			  AND Status NOT IN ('Deleted','Draft')
 			GROUP BY StandardUId
@@ -211,7 +199,7 @@ BEGIN
 			-- learner data that is in the future (has not been completed or withdrawn and does not have a cert)
 			SELECT le1.StandardUId, 0 EndPointAssessors, 0 AS CompletedAssessments, COUNT(*) AS ActiveApprentices
 			FROM Learner le1
-			LEFT JOIN Certificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
+			LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = le1.StdCode and ce1.Uln = le1.Uln 
 			WHERE ce1.Uln IS NULL
 			  AND le1.FundingModel != 99
 			  AND le1.CompletionStatus = 1

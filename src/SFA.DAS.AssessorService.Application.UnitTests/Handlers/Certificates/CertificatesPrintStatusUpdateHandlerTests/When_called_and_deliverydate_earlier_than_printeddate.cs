@@ -15,6 +15,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         private ValidationResponse _response;
         
         private const string CertificateReference = "00123456";
+        private Guid CertificateId = Guid.NewGuid();
+
         private const int BatchNumber = 222;
 
         private static readonly DateTime PrintedAt = DateTime.Now;
@@ -25,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Arrange
             _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
-                .WithCertificate(CertificateReference, CertificateStatus.Printed, PrintedAt, BatchNumber, PrintedAt.AddMinutes(-5))
+                .WithCertificate(CertificateId, CertificateReference, CertificateStatus.Printed, PrintedAt, BatchNumber, PrintedAt.AddMinutes(-5))
                 .WithCertificateBatchLog(BatchNumber, CertificateReference, CertificateStatus.Printed, PrintedAt, null, PrintedAt.AddMinutes(5))
                 .WithBatchLog(BatchNumber);
 
@@ -55,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Assert
             _fixture.VerifyUpdatePrintStatusCalled(
-                CertificateReference,
+                CertificateId,
                 BatchNumber, CertificateStatus.Delivered, DeliveredAt, null, false, false);
         }
     }

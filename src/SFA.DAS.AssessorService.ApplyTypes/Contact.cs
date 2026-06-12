@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
@@ -9,7 +7,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string Email { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        public Guid? SigninId { get; set; }
+        public string GovUkIdentifier { get; set; }
         public string SigninType { get; set; }
         public Guid? ApplyOrganisationId { get; set; }
         public bool IsApproved { get; set; }

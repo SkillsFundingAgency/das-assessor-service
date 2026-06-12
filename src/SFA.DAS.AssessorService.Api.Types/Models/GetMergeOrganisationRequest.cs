@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetMergeOrganisationRequest : IRequest<MergeLogEntry>
+    public class GetMergeOrganisationRequest
     {
         public int Id { get; set; }
     }

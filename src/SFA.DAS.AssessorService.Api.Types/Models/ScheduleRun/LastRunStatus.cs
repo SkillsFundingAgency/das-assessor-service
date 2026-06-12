@@ -2,7 +2,7 @@
 {
     public enum LastRunStatus
     {
-        Restarted = 0,
+        Restarting = 0,
         Started = 1,
         Completed = 2,
         Failed = 3

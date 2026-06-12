@@ -20,14 +20,14 @@ RUN $client = New-Object System.Net.WebClient; \
     powershell cp -Path "c:/dotnet-sdk-2.2.207-win-x64/shared/Microsoft.AspNetCore.App/2.2.8" -Destination "c:/Program`` Files/dotnet/shared/Microsoft.AspNetCore.App/2.2.8" -Recurse;
 
 # Download OpenJDK
-ENV JAVA_URL https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_windows-x64_bin.zip   
+ENV JAVA_URL https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_windows-x64_bin.zip
 RUN $client = New-Object System.Net.WebClient; \
-    $client.DownloadFile("$env:JAVA_URL", \"\openjdk-13.0.2_windows-x64_bin.zip\")
+    $client.DownloadFile("$env:JAVA_URL", \"\openjdk-17_windows-x64_bin.zip\")
 
 # Install Java
-RUN Expand-Archive openjdk-13.0.2_windows-x64_bin.zip
-RUN SetX /M PATH "\"\openjdk-13.0.2_windows-x64_bin\jdk-13.0.2\bin;$env:PATH\""
-RUN SetX /M JAVA_HOME "\"\openjdk-13.0.2_windows-x64_bin\jdk-13.0.2\""
+RUN Expand-Archive openjdk-17_windows-x64_bin.zip
+RUN SetX /M PATH "\"\openjdk-17_windows-x64_bin\jdk-17\bin;$env:PATH\""
+RUN SetX /M JAVA_HOME "\"\openjdk-17_windows-x64_bin\jdk-17\""
 
 ENV SONARSCANNER_URL https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/4.7.1.2311/sonar-scanner-msbuild-4.7.1.2311-net46.zip
 RUN $client = New-Object System.Net.WebClient; \

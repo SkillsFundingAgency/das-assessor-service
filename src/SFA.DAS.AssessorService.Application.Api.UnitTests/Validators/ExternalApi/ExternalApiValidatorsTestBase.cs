@@ -1,14 +1,14 @@
-﻿using FizzWare.NBuilder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FizzWare.NBuilder;
 using Moq;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
@@ -50,9 +50,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             certificateRepositoryMock.Setup(q => q.GetCertificate(9876543211, 101)).ReturnsAsync(GenerateEpaCertificate(9876543211, 101, "test", new Guid("99999999999999999999999999999999"), false, overallGrade: "Pass"));
 
             // This allows us to test, retrieving by ilr/learner data if the calling organisation was not the one that created it
-            certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "99999999", "Test", 1))
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1, "Test", "99999999"))
                 .ReturnsAsync((Certificate)null);
-            certificateRepositoryMock.Setup(q => q.GetCertificateByUlnOrgIdLastnameAndStandardCode(1234567890, "12345678", "Test", 1))
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1, "Test", "12345678"))
                 .ReturnsAsync(GenerateCertificate(1234567890, 1, "Test", CertificateStatus.Draft, new Guid("12345678123456781234567812345678")));
 
             // This is for SV-1255 testing standard and option validation on updates 
@@ -213,12 +213,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Status = status)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = reference)
-                                .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
-                                .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = CertificateGrade.Pass)
-                                .With(cd => cd.EpaDetails = epaDetails)
-                                .With(cd => cd.Version = "1.0")
-                                .Build()))
+                .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
+                    .With(cd => cd.LearnerFamilyName = familyName)
+                    .With(cd => cd.OverallGrade = CertificateGrade.Pass)
+                    .With(cd => cd.EpaDetails = epaDetails)
+                    .With(cd => cd.Version = "1.0")
+                    .Build())
                 .Build();
         }
 
@@ -251,20 +251,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Status = CertificateStatus.Draft)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
-                                .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
-                                .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = overallGrade)
-                                .With(cd => cd.AchievementDate = null)
-                                .With(cd => cd.EpaDetails = epaDetails)
-                                .With(cd => cd.ContactName = null)
-                                .With(cd => cd.ContactOrganisation = null)
-                                .With(cd => cd.Department = null)
-                                .With(cd => cd.ContactAddLine1 = null)
-                                .With(cd => cd.ContactAddLine2 = null)
-                                .With(cd => cd.ContactAddLine3 = null)
-                                .With(cd => cd.ContactAddLine4 = null)
-                                .With(cd => cd.ContactPostCode = null)
-                                .Build()))
+                .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
+                    .With(cd => cd.LearnerFamilyName = familyName)
+                    .With(cd => cd.OverallGrade = overallGrade)
+                    .With(cd => cd.AchievementDate = null)
+                    .With(cd => cd.EpaDetails = epaDetails)
+                    .With(cd => cd.ContactName = null)
+                    .With(cd => cd.ContactOrganisation = null)
+                    .With(cd => cd.Department = null)
+                    .With(cd => cd.ContactAddLine1 = null)
+                    .With(cd => cd.ContactAddLine2 = null)
+                    .With(cd => cd.ContactAddLine3 = null)
+                    .With(cd => cd.ContactAddLine4 = null)
+                    .With(cd => cd.ContactPostCode = null)
+                    .Build())
                 .Build();
         }
 
@@ -297,20 +297,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
                 .With(i => i.Status = status)
                 .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = reference)
-                                .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
-                                .With(cd => cd.LearnerFamilyName = familyName)
-                                .With(cd => cd.OverallGrade = overallGrade)
-                                .With(cd => cd.AchievementDate = null)
-                                .With(cd => cd.EpaDetails = epaDetails)
-                                .With(cd => cd.ContactName = null)
-                                .With(cd => cd.ContactOrganisation = null)
-                                .With(cd => cd.Department = null)
-                                .With(cd => cd.ContactAddLine1 = null)
-                                .With(cd => cd.ContactAddLine2 = null)
-                                .With(cd => cd.ContactAddLine3 = null)
-                                .With(cd => cd.ContactAddLine4 = null)
-                                .With(cd => cd.ContactPostCode = null)
-                                .Build()))
+                .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
+                    .With(cd => cd.LearnerFamilyName = familyName)
+                    .With(cd => cd.OverallGrade = overallGrade)
+                    .With(cd => cd.AchievementDate = null)
+                    .With(cd => cd.EpaDetails = epaDetails)
+                    .With(cd => cd.ContactName = null)
+                    .With(cd => cd.ContactOrganisation = null)
+                    .With(cd => cd.Department = null)
+                    .With(cd => cd.ContactAddLine1 = null)
+                    .With(cd => cd.ContactAddLine2 = null)
+                    .With(cd => cd.ContactAddLine3 = null)
+                    .With(cd => cd.ContactAddLine4 = null)
+                    .With(cd => cd.ContactPostCode = null)
+                    .Build())
                 .Build();
         }
 

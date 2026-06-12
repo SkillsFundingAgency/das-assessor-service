@@ -1,10 +1,11 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _validationRepository = new RegisterValidationRepository(unitOfWork);
@@ -67,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void CheckEpaOrganisationIsntAlreadyUsingUkprnWhereUsingOrganisationsCurrentUkprn()
         {
             var exists = _validationRepository.EpaOrganisationAlreadyUsingUkprn(_ukprn1, _organisationId1).Result;
-            Assert.IsFalse(exists);
+            exists.Should().BeFalse();
         }
 
         [TestCase(876533, true)]
@@ -76,21 +77,21 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void CheckEpaOrganisationIsAlreadyUsingUkprn(long ukprn, bool doesExist)
         {
             var exists = _validationRepository.EpaOrganisationExistsWithUkprn(ukprn).Result;
-            Assert.AreEqual(doesExist,exists);
+            exists.Should().Be(doesExist);
         }
 
         [Test]
         public void CheckEpaOrganisationIsntAlreadyUsingUkprnWhenCheckingUnusedUkprn()
         {
             var exists = _validationRepository.EpaOrganisationAlreadyUsingUkprn(323454, _organisationId1).Result;
-            Assert.IsFalse(exists);
+            exists.Should().BeFalse();
         }
 
         [Test]
         public void CheckEpaOrganisationIsAlreadyUsingUkprnWhenCheckingUkprnUsedByAnotherOrganisation()
         {
             var exists = _validationRepository.EpaOrganisationAlreadyUsingUkprn(_ukprn2, _organisationId1).Result;
-            Assert.IsTrue(exists);
+            exists.Should().BeTrue();
         }
 
         [OneTimeTearDown]

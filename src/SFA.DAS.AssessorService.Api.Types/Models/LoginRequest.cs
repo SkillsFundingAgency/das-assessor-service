@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         public string Email { get; set; }
         public string DisplayName { get; set; }
-        public Guid SignInId { get; set; }
+        public string GovUkIdentifier { get; set; }
         public List<string> Roles { get; set; }
         public int UkPrn { get; set; }
         public string Username { get; set; }

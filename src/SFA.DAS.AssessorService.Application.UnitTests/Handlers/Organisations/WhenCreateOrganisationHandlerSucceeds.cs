@@ -6,12 +6,12 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 {
- public class WhenCreateOrganisationHandlerSucceeds
+    public class WhenCreateOrganisationHandlerSucceeds : MapperBase
     {
         private Mock<IOrganisationRepository> _organisationRepositoryMock;
         private Mock<IContactRepository> _contactRepositoryMock;
@@ -20,8 +20,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         [SetUp]
         public void Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             CreateContractRepositoryMock();
             CreateOrganisationRepositoryMock();
 
@@ -30,7 +28,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             var createOrganisationHandler = new CreateOrganisationHandler(_organisationRepositoryMock.Object, 
                 organisationQueryRepository.Object,
-                _contactRepositoryMock.Object);
+                _contactRepositoryMock.Object,
+                Mapper);
             _result = createOrganisationHandler.Handle(createOrganisationRequest, new CancellationToken()).Result;
         }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -13,8 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.Annotations;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
@@ -29,18 +27,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
+        private readonly IMapper _mapper;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
             IMediator mediator,
-            ILogger<ContactQueryController> logger, IWebConfiguration config)
+            ILogger<ContactQueryController> logger, IApiConfiguration config, IMapper mapper)
         {
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _config = config;
             _searchOrganisationForContactsValidator = searchOrganisationForContactsValidator;
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet("privileges")]
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException(result.Errors[0].ErrorMessage);
 
             var contacts =
-                Mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetContactsForEpao(endPointAssessorOrganisationId)).ToList();
+                _mapper.Map<List<ContactResponse>>(await _contactQueryRepository.GetContactsForEpao(endPointAssessorOrganisationId)).ToList();
             return Ok(contacts);
         }
 
@@ -130,9 +130,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var contact = await _contactQueryRepository.GetContact(userName);
             if (contact == null)
                 throw new ResourceNotFoundException();
-            return Ok(Mapper.Map<ContactResponse>(contact));
+            return Ok(_mapper.Map<ContactResponse>(contact));
         }
 
+        
+        [HttpGet("email/{email}", Name = "SearchContactByEmail")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound)]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SearchContactByEmail(string email)
+        {
+            var contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
+            if (contact == null)
+                throw new ResourceNotFoundException();
+            return Ok(_mapper.Map<ContactResponse>(contact));
+        }
+
+        [HttpGet("govidentifier/{govIdentifier}", Name = "SearchContactByGovIdentifier")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound)]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SearchContactByGovIdentifier(string govIdentifier)
+        {
+            var contact = await _contactQueryRepository.GetContactByGovIdentifier(govIdentifier);
+            if (contact == null)
+                return NotFound();
+            return Ok(_mapper.Map<ContactResponse>(contact));
+        }
+        
         [HttpGet("user/{id}", Name = "GetContactById")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
@@ -155,7 +180,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 throw new ResourceNotFoundException();
             }
          
-            return Ok(Mapper.Map<ContactResponse>(contact));
+            return Ok(_mapper.Map<ContactResponse>(contact));
         }
 
         [HttpGet("user/{id}/haveprivileges", Name = "DoesContactHavePrivileges")]
@@ -181,59 +206,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(new ContactBoolResponse(havePrivileges));
         }
-
-        [HttpGet("signInId/{signInId}", Name = "GetContactBySignInId")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactBySignInId(string signInId)
-        {
-            Contact contact = null;
-            _logger.LogInformation($" Get Request using signin id = {signInId}");
-            try
-            {
-                var guidId = Guid.Parse(signInId);
-                contact = await _contactQueryRepository.GetBySignInId(guidId);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Failed to retrieve contact with signin id : {signInId}");
-            }
-
-            if (contact == null)
-            {
-                throw new ResourceNotFoundException();
-            }
-
-            return Ok(Mapper.Map<ContactResponse>(contact));
-        }
         
-        [HttpPost("MigrateUsers", Name= "MigrateUsers")]
-        public async Task<ActionResult> MigrateUsers()
-        {
-            var endpoint = new Uri(new Uri(_config.LoginService.MetadataAddress), "/Migrate"); 
-            using (var httpClient = new HttpClient())
-            {
-                var usersToMigrate = await _contactQueryRepository.GetUsersToMigrate();
-                foreach (var user in usersToMigrate)
-                {
-                    var result = await httpClient.PostAsJsonAsync(endpoint, new
-                    {
-                        ClientId = _config.LoginService.ClientId, 
-                        GivenName = user.GivenNames, 
-                        FamilyName = user.FamilyName, 
-                        Email = user.Email
-                    });
-
-                    var migrateResult = await result.Content.ReadAsAsync<MigrateUserResult>();
-
-                    await _contactQueryRepository.UpdateMigratedContact(user.Id, migrateResult.NewUserId);
-                }
-            }
-            
-            
-            return Ok(); 
-        }
         
         private void ValidateEndPointAssessorOrganisation(string endPointAssessorOrganisationId)
         {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -18,8 +16,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         {
             var sql =
                 "INSERT INTO [Organisations] ([Id] ,[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId],  " +
-                "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES " +
-                $@"(@id,@createdAt, @deletedAt, @endPointAssessorName, @endPointAssessorOrganisationId, @endPointAssessorUkprn, @primaryContact, @status, @updatedAt, @organisationTypeId, @organisationData); ";
+                "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData],[RecognitionNumber]) VALUES " +
+                "(@id,@createdAt, @deletedAt, @endPointAssessorName, @endPointAssessorOrganisationId, @endPointAssessorUkprn, @primaryContact, @status, " +
+                "@updatedAt, @organisationTypeId, @organisationData, @recognitionNumber); ";
 
             DatabaseService.Execute(sql,organisation);
         }
@@ -38,6 +37,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var organisation = DatabaseService.Get<EpaOrganisation>($@"select id,createdAt,deletedAt, EndpointAssessorName as Name, EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, PrimaryContact, Status, UpdatedAt,OrganisationTypeId, OrganisationData  from Organisations where endpointassessororganisationid = '{orgId}'");
             return organisation;
         }
+
         public static bool EpaOrganisationExistsWithOrganisationId(string organisationId)
         {
             var sqlToCheckExists =

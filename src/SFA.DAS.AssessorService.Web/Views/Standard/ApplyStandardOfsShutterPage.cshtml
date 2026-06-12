@@ -1,0 +1,44 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
+@using SFA.DAS.AssessorService.Web.ViewModels.Standard
+@model ApplyStandardOfsShutterPageViewModel
+
+@{
+    ViewBag.Title = "OfS Shutter Page";
+    Layout = "_Layout";
+}
+
+<a asp-route="@StandardController.ApplyStandardSearchResultsRouteGet" asp-route-id="@Model.Id" asp-route-search="@Model.Search" class="govuk-back-link">Return to search results</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            @if (Model.ShowNeedToRegisterPage)
+            {
+                <p class="govuk-heading-l">
+                    You aren't registered with the Office for Students
+                </p>
+                <p class="govuk-body">
+                    OFS regulate this standard. To award a grade against this standard on our service, you'll need to register with the OFS. You'll also need to submit at least one Individualised Learner Record (ILR).
+                </p>
+                <p class="govuk-body">
+                    It can take up to 14 working days for the standard to show in your apprenticeship service account.
+                </p>
+            }
+            else if (Model.ShowNeedToSubmitIlrPage)
+            {
+                <p class="govuk-heading-l">
+                    You haven't submitted an Individualised Learner Record
+                </p>
+                <p class="govuk-body">
+                    You need to submit at least one Individualised Learner Record (ILR) to assess this standard. After you've submitted an ILR, we'll add this standard to your apprenticeship service account.
+                </p>
+                <p class="govuk-body">
+                    It can take up to 14 working days for a standard to show in your account.
+                </p>
+            }
+
+        </div>
+    </div>
+</main>

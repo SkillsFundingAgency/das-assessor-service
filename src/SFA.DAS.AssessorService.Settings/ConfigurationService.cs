@@ -1,40 +1,50 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+using Azure;
+using Azure.Data.Tables;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Settings
 {
     public static class ConfigurationService
     {
-        public static async Task<IWebConfiguration> GetConfig(string environment, string storageConnectionString, string version, string serviceName)
+        public static async Task<IApiConfiguration> GetConfigApi(string environment, string storageConnectionString, string version, string serviceName)
+        {
+            var config = await GetConfig<ApiConfiguration>(environment, storageConnectionString, version, serviceName);
+            config.Environment = environment;
+            return config;
+        }
+
+        public static async Task<IExternalApiConfiguration> GetConfigExternalApi(string environment, string storageConnectionString, string version, string serviceName)
+        {
+            var config = await GetConfig<ExternalApiConfiguration>(environment, storageConnectionString, version, serviceName);
+            return config;
+        }
+
+        private static async Task<T> GetConfig<T>(string environment, string storageConnectionString, string version, string serviceName)
         {
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
 
-            var conn = CloudStorageAccount.Parse(storageConnectionString);
-            var tableClient = conn.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("Configuration");
+            var tableServiceClient = new TableServiceClient(storageConnectionString);
+            var tableClient = tableServiceClient.GetTableClient("Configuration");
 
-            var operation = TableOperation.Retrieve(environment, $"{serviceName}_{version}");
-            TableResult result;
+            var rowKey = $"{serviceName}_{version}";
             try
             {
-                result = await table.ExecuteAsync(operation);
+                var response = await tableClient.GetEntityAsync<TableEntity>(environment, rowKey);
+                var data = response.Value.GetString("Data");
+                var webConfig = JsonConvert.DeserializeObject<T>(data);
+                return webConfig;
+            }
+            catch (RequestFailedException e) when (e.Status == 404)
+            {
+                throw new Exception("The specified configuration was not found.", e);
             }
             catch (Exception e)
             {
                 throw new Exception("Could not connect to Storage to retrieve settings.", e);
             }
-
-            var dynResult = result.Result as DynamicTableEntity;
-            var data = dynResult.Properties["Data"].StringValue;
-
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
-            webConfig.Environment = environment;
-
-            return webConfig;
         }
     }
 }

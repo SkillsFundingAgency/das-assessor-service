@@ -7,14 +7,13 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
 {
-    public class SendEmailHandler : IRequestHandler<SendEmailRequest>
+    public class SendEmailHandler : IRequestHandler<SendEmailRequest, Unit>
     {
         private const string SystemId = "AssessorService";
         private const string ReplyToAddress = "digital.apprenticeship.service@notifications.service.gov.uk";
@@ -49,7 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
             else
             {
                 _logger.LogError($"Cannot send email template {emailTemplateSummary.TemplateName} to '{message.Email}'");
-            };
+            }
+
             return Unit.Value;
         }      
 

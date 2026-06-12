@@ -23,20 +23,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         private readonly ILogger<StandardQueryController> _logger;
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public StandardQueryController(IMediator mediator, ILogger<StandardQueryController> logger)
+        public StandardQueryController(IMediator mediator, ILogger<StandardQueryController> logger, IMapper mapper)
         {
             _mediator = mediator;
             _logger = logger;
+            _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get the standards which the given organisation is assessing.
+        /// </summary>
+        /// <param name="epaoId">The organisation for which standards are returned</param>
+        /// <param name="requireAtLeastOneVersion">When true the organisation must be assessing atleast one version of the standard</param>
+        /// <param name="pageIndex">The index of the page of results to return</param>
+        /// <param name="pageSize">The number of results to return in a single page</param>
+        /// <returns></returns>
         [HttpGet("{epaoId}", Name = "GetEpaoRegisteredStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = 1, int? pageSize = 10)
+        public async Task<IActionResult> GetEpaoRegisteredStandards(string epaoId, bool? requireAtLeastOneVersion = true, int? pageIndex = 1, int? pageSize = 10)
         {
             _logger.LogInformation($"Received request to retrieve Standards for Organisation {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoRegisteredStandardsRequest(epaoId, pageIndex.Value, pageSize.Value)));
+            return Ok(await _mediator.Send(new GetEpaoRegisteredStandardsRequest(epaoId, requireAtLeastOneVersion.Value, pageIndex.Value, pageSize.Value)));
         }
 
         [HttpGet("pipelines/{epaoId}", Name = "GetEpaoPipelineStandards")]
@@ -96,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return NotFound();
             }
 
-            var result = epaOrganisationResponse.EpaOrganisations.Select(Mapper.Map<OrganisationStandardResponse>).ToList();
+            var result = _mapper.Map<List<OrganisationStandardResponse>>(epaOrganisationResponse.EpaOrganisations);
 
             return Ok(result);
 

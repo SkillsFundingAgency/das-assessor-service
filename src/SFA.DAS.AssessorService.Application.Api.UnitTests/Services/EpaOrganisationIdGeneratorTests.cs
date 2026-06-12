@@ -1,10 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 {
@@ -30,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         {
             _registerQueryRepository.Setup(r => r.EpaOrganisationIdCurrentMaximum()).Returns(Task.FromResult(currentId));
            var returnedId = _generator.GetNextOrganisationId();
-            Assert.AreEqual(returnedId, newId);
+            newId.Should().Be(returnedId);
         }
     }
 }

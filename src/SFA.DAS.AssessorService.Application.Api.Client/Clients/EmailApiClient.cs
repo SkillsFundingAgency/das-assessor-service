@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -11,14 +11,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<EmailApiClient> _logger;
 
-        public EmailApiClient(string baseUri, ITokenService tokenService, ILogger<EmailApiClient> logger) : base(baseUri, tokenService, logger)
+        public EmailApiClient(IAssessorApiClientFactory clientFactory, ILogger<EmailApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
             _logger = logger;
         }
 
-        public EmailApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
-        {
-        }
         public async Task<EmailTemplateSummary> GetEmailTemplate(string templateName)
         {
 
@@ -34,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/emailTemplates/"))
             {
                 _logger.LogInformation("Sending Email");
-                 await PostPutRequest(request,sendEmailRequest);
+                 await PostPutRequestAsync(request,sendEmailRequest);
             }
         }
     }

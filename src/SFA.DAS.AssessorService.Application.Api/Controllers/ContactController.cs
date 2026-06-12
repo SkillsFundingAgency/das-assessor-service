@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.UserManagement;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -78,6 +78,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return NoContent();
         }
+        
+        [HttpPut("govlogin", Name = "UpdateGovLogin")]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<ActionResult<Contact>> UpdateGovLoginContactDetails([FromBody] UpdateContactGovLoginRequest updateContactStatusRequest)
+        {
+            _logger.LogInformation("Received Update Gov Login Contact Request");
+
+            var result = await _mediator.Send(updateContactStatusRequest);
+
+            return Ok(result.Contact);
+        }
 
         [HttpDelete(Name = "Delete")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
@@ -121,8 +134,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("callback", Name = "Callback")]
         public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
-            _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
-            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
+            _logger.LogInformation($"Received callback from Gov UK: GovUkIdentifier: {callback.GovIdentifier} SourceId: {callback.SourceId}");
+            await _mediator.Send(new UpdateGovUkIdentifierRequest(Guid.Parse(callback.SourceId), callback.GovIdentifier));
             await _mediator.Send(new InvitationCheckRequest(Guid.Parse(callback.SourceId)));
             return NoContent();
         }
@@ -189,6 +202,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             await _mediator.Send(request, CancellationToken.None);
             return Ok();
+        }
+
+        [HttpPut("updateEmail",Name = "UpdateEmail")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailRequest updateEmailRequest)
+        {
+            _logger.LogInformation("Received Update Email Request");
+
+            await _mediator.Send(updateEmailRequest);
+
+            return NoContent();
         }
     }
 }

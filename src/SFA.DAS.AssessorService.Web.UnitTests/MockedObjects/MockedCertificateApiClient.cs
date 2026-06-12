@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using FizzWare.NBuilder;
-using Microsoft.Extensions.Hosting;
+﻿using FizzWare.NBuilder;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Settings;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -17,13 +15,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
     {
         public static CertificateApiClient Setup(Certificate certificate, Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
         {
-            var webConfigMock = new Mock<IWebConfiguration>();
-            var hostMock = new Mock<IHostingEnvironment>();
-            hostMock
-                .Setup(m => m.EnvironmentName)
-                .Returns(EnvironmentName.Development);
-            var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object, false);
-
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
 
@@ -31,6 +22,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 
             var client = mockHttp.ToHttpClient();
             client.BaseAddress = new Uri("http://localhost:59022/");
+
+            var assessorApiClientFactory = new Mock<IAssessorApiClientFactory>();
+            assessorApiClientFactory
+                .Setup(m => m.CreateHttpClient())
+                .Returns(client);
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/{certificate.Id}?includeLogs={false}")
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
@@ -51,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new CertificateApiClient(client, tokenServiceMock, apiClientLoggerMock.Object);
+            var apiClient = new CertificateApiClient(assessorApiClientFactory.Object, apiClientLoggerMock.Object);
 
             return apiClient;
         }

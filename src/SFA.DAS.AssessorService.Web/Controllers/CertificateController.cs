@@ -9,9 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Shared;
 
@@ -24,19 +22,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly ILogger<CertificateController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IMapper _mapper;
         private readonly ICertificateApiClient _certificateApiClient;
-        private readonly IStandardVersionClient _standardVersionClient;
+        private readonly IStandardVersionApiClient _standardVersionClient;
         private readonly ISessionService _sessionService;
         private readonly IApprovalsLearnerApiClient _learnerApiClient;
 
-        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, IMapper mapper,
             ICertificateApiClient certificateApiClient,
-            IStandardVersionClient standardVersionClient,
+            IStandardVersionApiClient standardVersionClient,
             ISessionService sessionService,
             IApprovalsLearnerApiClient learnerApiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _mapper = mapper;
             _certificateApiClient = certificateApiClient;
             _standardVersionClient = standardVersionClient;
             _sessionService = sessionService;
@@ -116,13 +116,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var cert = await _certificateApiClient.Start(startCertificateRequest);
 
+            System.Diagnostics.Debug.WriteLine($"Type of versions: {versions?.GetType()}");
+
             var certificateSession = new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
                 StandardCode = vm.StdCode,
                 StandardUId = startCertificateRequest.StandardUId,
-                Versions = Mapper.Map<List<StandardVersionViewModel>>(versions),
+                Versions = _mapper.Map<List<StandardVersionViewModel>>(versions),
                 Options = options
             };
 

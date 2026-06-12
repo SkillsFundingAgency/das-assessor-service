@@ -2,15 +2,15 @@
 using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Request.Epa;
 using SFA.DAS.AssessorService.Domain.Consts;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class CreateEpaExample : IExamplesProvider
+    public class CreateEpaExample : IExamplesProvider<List<CreateEpaRequest>>
     {
-        public object GetExamples()
+        public List<CreateEpaRequest> GetExamples()
         {
             return new List<CreateEpaRequest>
             {

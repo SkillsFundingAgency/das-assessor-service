@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
@@ -15,12 +15,12 @@ namespace SFA.DAS.AssessorService.Data
     public class SandboxDbRepository : Repository, ISandboxDbRepository
     {
         private readonly SqlBulkCopyOptions _bulkCopyOptions;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly ILogger<SandboxDbRepository> _logger;
 
         private const string AzureResource = "https://database.windows.net/";
 
-        public SandboxDbRepository(IUnitOfWork unitOfWork, IWebConfiguration config, ILogger<SandboxDbRepository> logger)
+        public SandboxDbRepository(IUnitOfWork unitOfWork, IApiConfiguration config, ILogger<SandboxDbRepository> logger)
             : base(unitOfWork)
         {
             _config = config;
@@ -156,7 +156,7 @@ namespace SFA.DAS.AssessorService.Data
                                         , Email = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
                                         , Username = CONVERT(VARCHAR(36), Id) + '@TEST.TEST'
                                         , PhoneNumber = NULL
-                                        , SignInId = NULL;", transaction: transaction);
+                                        , GovUkIdentifier = NULL;", transaction: transaction);
 
             transaction.Connection.Execute(@" UPDATE Organisations
                                     SET PrimaryContact = NULL
@@ -177,8 +177,8 @@ namespace SFA.DAS.AssessorService.Data
                           FROM CTE 
                           WHERE Number < 9 
                         ),
-                WITH Standards_CTE as(
-                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor, VersionMinor) seq, * FROM Standards WHERE LarsCode != 0)
+                 Standards_CTE as(
+                SELECT ROW_NUMBER() OVER (PARTITION BY Ifatereferencenumber ORDER BY VersionMajor DESC, VersionMinor DESC) seq, * FROM Standards WHERE LarsCode != 0)
 
                         INSERT INTO [Ilrs](Id, CreatedAt, Uln, FamilyName ,GivenNames, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId, EmployerAccountId, Source, LearnRefNumber, CompletionStatus, EventId, PlannedEndDate)
                         SELECT
@@ -202,18 +202,31 @@ namespace SFA.DAS.AssessorService.Data
                         FROM (
                           SELECT 
                             '1'+ SUBSTRING(ogs.EndPointAssessorOrganisationId,4,4) + RIGHT('000'+CAST(ogs.StandardCode AS VARCHAR(3)),3) +RIGHT('00'+CAST(CTE.Number AS VARCHAR(2)),2) AS Uln, 
-	                        og1.EndPointAssessorUkprn AS UkPrn,
-	                        ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
+                            og1.EndPointAssessorUkprn AS UkPrn,
+                            ogs.EndPointAssessorOrganisationId AS EndPointAssessorOrganisationId,
                             ogs.StandardCode,
-	                        CTE.*,
-	                        CONVERT(NUMERIC, JSON_VALUE(sc1.StandardData,'$.Duration')) AS Duration 
+                            CTE.*,
+                            TypicalDuration AS Duration 
                         FROM CTE
                           CROSS JOIN OrganisationStandard ogs 
                           JOIN Organisations og1 ON og1.EndPointAssessorOrganisationId = ogs.EndPointAssessorOrganisationId AND og1.Status <> 'Deleted'
-                          JOIN Standards_CTE scte ON ogs.StandardCode = scte.LarsCode
+                          JOIN Standards_CTE scte ON ogs.StandardCode = scte.LarsCode AND seq = 1
                         WHERE  ogs.Status NOT IN ( 'Deleted','New') AND (ogs.EffectiveTo IS NULL OR ogs.EffectiveTo > GETDATE()) AND og1.EndPointAssessorUkprn IS NOT NULL
                         ) ab1
                         ORDER BY Uln, EndPointAssessorOrganisationId, StandardCode, Number", transaction: transaction);
+
+            // the Ilrs test data uses the EPAO UKPRN as the training provider's UKPRN - this is not usual so need to add these UKPRNs to the Providers table
+            transaction.Connection.Execute(@" MERGE INTO Providers pemain
+                        USING (
+                        SELECT DISTINCT il1.[Ukprn], og1.[EndPointAssessorName] [Name]
+                        FROM [dbo].[Ilrs] il1
+                        JOIN [dbo].[Organisations] og1 on og1.[EndPointAssessorOrganisationId] = il1.[EpaOrgId]
+                        LEFT JOIN [dbo].[Providers] pe1 on pe1.[Ukprn] = il1.[Ukprn]
+                        WHERE pe1.[Name] is null
+                        ) upd
+                        ON (pemain.[Ukprn] = upd.[Ukprn])
+                        WHEN NOT MATCHED THEN
+                        INSERT ([Ukprn], [Name], [UpdatedOn]) VALUES (upd.[Ukprn], upd.[Name], GETUTCDATE() );", transaction: transaction);
 
             _logger.LogInformation("Step 6: Completed");
         }
@@ -222,22 +235,19 @@ namespace SFA.DAS.AssessorService.Data
         {
             _logger.LogInformation("Step 7: Populating learner data");
 
-            transaction.Connection.Execute("EXEC PopulateLearner", transaction: transaction);
+            transaction.Connection.Execute("EXEC PopulateLearner", transaction: transaction, commandTimeout: 600);
 
             _logger.LogInformation("Step 7: Completed");
         }
 
         private void BulkCopyData(SqlTransaction transaction, List<string> tablesToCopy)
         {
-            // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlbulkcopy
             if (transaction is null) throw new ArgumentNullException(nameof(transaction));
             if (tablesToCopy is null) throw new ArgumentNullException(nameof(tablesToCopy));
 
-
-
             foreach (var table in tablesToCopy)
             {
-                _logger.LogDebug($"\tSyncing table: {table}");
+                _logger.LogInformation($"\tSyncing table: {table}");
 
                 using (var commandSourceData = new SqlCommand(
                     @"SELECT @subQuery = 'SELECT @sort_column = MAX(column_name) FROM INFORMATION_SCHEMA.COLUMNS 

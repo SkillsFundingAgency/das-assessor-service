@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class NotifyUserManagementUsersRequest : IRequest
+    public class NotifyUserManagementUsersRequest : IRequest<Unit>
     {
         public NotifyUserManagementUsersRequest(string displayName, string endPointAssessorOrganisationId, string serviceLink)
         {

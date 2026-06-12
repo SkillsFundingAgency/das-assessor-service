@@ -2,10 +2,11 @@
 using System;
 using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.CompaniesHouse;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class CompaniesHouseCompanyProfile : Profile
+    public class CompaniesHouseCompanyProfile : ExplicitMappingProfileBase    
     {
         public CompaniesHouseCompanyProfile()
         {
@@ -19,24 +20,22 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.date_of_cessation))
                 .ForMember(dest => dest.IsLiquidated, opt => opt.MapFrom(source => source.has_been_liquidated))
                 .ForMember(dest => dest.PreviousNames, opt => opt.ResolveUsing(source => source.previous_company_names?.Select(pc => pc.name)))
-                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<RegisteredOfficeAddress, AssessorService.Api.Types.CompaniesHouse.Address>(source.registered_office_address))) 
-                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<CompanyDetails, AssessorService.Api.Types.CompaniesHouse.Accounts>(source)))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => source.registered_office_address)) 
+                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => source));
         }
     }
 
-    public class CompaniesHouseAccountsProfile : Profile
+    public class CompaniesHouseAccountsProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseAccountsProfile()
         {
             CreateMap<CompanyDetails, AssessorService.Api.Types.CompaniesHouse.Accounts>()
                 .ForMember(dest => dest.LastConfirmationStatementDate, opt => opt.ResolveUsing(source => source.confirmation_statement?.last_made_up_to))
-                .ForMember(dest => dest.LastAccountsDate, opt => opt.ResolveUsing(source => source.accounts?.last_accounts?.made_up_to))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.LastAccountsDate, opt => opt.ResolveUsing(source => source.accounts?.last_accounts?.made_up_to));
         }
     }
 
-    public class CompaniesHouseRegisteredOfficeAddressProfile : Profile
+    public class CompaniesHouseRegisteredOfficeAddressProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseRegisteredOfficeAddressProfile()
         {
@@ -46,12 +45,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
                 .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.region))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(source => source.country))
-                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code));
         }
     }
 
-    public class CompaniesHouseOfficerAddressProfile : Profile
+    public class CompaniesHouseOfficerAddressProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseOfficerAddressProfile()
         {
@@ -61,12 +59,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
                 .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.region))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(source => source.country))
-                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code));
         }
     }
 
-    public class CompaniesHouseOfficerProfile : Profile
+    public class CompaniesHouseOfficerProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseOfficerProfile()
         {
@@ -77,12 +74,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.year, source.date_of_birth.month, source.date_of_birth.day ?? 1)))
                 .ForMember(dest => dest.AppointedOn, opt => opt.MapFrom(source => source.appointed_on))
                 .ForMember(dest => dest.ResignedOn, opt => opt.MapFrom(source => source.resigned_on))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<OfficerAddress, AssessorService.Api.Types.CompaniesHouse.Address>(source.address)))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => source.address));
         }
     }
 
-    public class CompaniesHouseOfficerDisqualificationProfile : Profile
+    public class CompaniesHouseOfficerDisqualificationProfile : ExplicitMappingProfileBase
     {
         public CompaniesHouseOfficerDisqualificationProfile()
         {
@@ -91,12 +87,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.DisqualifiedUntil, opt => opt.MapFrom(source => source.disqualified_until))
                 .ForMember(dest => dest.CaseIdentifier, opt => opt.MapFrom(source => source.case_identifier))
                 .ForMember(dest => dest.Reason, opt => opt.ResolveUsing(source => source.reason?.act))
-                .ForMember(dest => dest.ReasonDescription, opt => opt.ResolveUsing(source => source.reason?.description_identifier))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.ReasonDescription, opt => opt.ResolveUsing(source => source.reason?.description_identifier));
         }
     }
 
-    public class CompaniesHousePersonWithSignificantControlProfile : Profile
+    public class CompaniesHousePersonWithSignificantControlProfile : ExplicitMappingProfileBase
     {
         public CompaniesHousePersonWithSignificantControlProfile()
         {
@@ -107,12 +102,11 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.NaturesOfControl, opt => opt.MapFrom(source => source.natures_of_control))
                 .ForMember(dest => dest.NotifiedOn, opt => opt.MapFrom(source => source.notified_on))
                 .ForMember(dest => dest.CeasedOn, opt => opt.MapFrom(source => source.ceased_on))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<PersonWithSignificantControlAddress, AssessorService.Api.Types.CompaniesHouse.Address>(source.address)))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => source.address));
         }
     }
 
-    public class CompaniesHousePersonWithSignificantControlAddressProfile : Profile
+    public class CompaniesHousePersonWithSignificantControlAddressProfile : ExplicitMappingProfileBase
     {
         public CompaniesHousePersonWithSignificantControlAddressProfile()
         {
@@ -122,8 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
                 .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.region))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(source => source.country))
-                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code));
         }
     }
 }

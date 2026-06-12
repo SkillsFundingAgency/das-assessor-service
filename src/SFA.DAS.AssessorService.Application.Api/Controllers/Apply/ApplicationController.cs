@@ -82,23 +82,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             return Ok(await _mediator.Send(new GetApplicationRequest(Guid.Parse(id))));
         }
 
-
-        [HttpGet("{orgId}/application/withdrawn/{standardCode}", Name = "GetAllWithdrawnApplicationsForStandard")]
+        [HttpGet("{organisationId}/application/latest-withdrawal-date/{standardCode}", Name = "GetLatestWithdrawalDateForStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<List<ApplicationResponse>>> GetAllWithdrawnApplicationsForStandard(string orgId, int? standardCode)
+        public async Task<ActionResult<DateTime?>> GetLatestWithdrawalDateForStandard(string organisationId, int? standardCode)
         {
-            _logger.LogInformation($"Received request to retrieve withdrawn applications with OrganisationId {orgId}");
-            return Ok(await _mediator.Send(new GetAllWithdrawnApplicationsForStandardRequest(Guid.Parse(orgId), standardCode)));
-        }
-
-        [HttpGet("{orgId}/application/previous/{standardReference}", Name = "GetPreviousApplications")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ApplicationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<ActionResult<List<ApplicationResponse>>> GetApplicationsPrevious(Guid orgId, string standardReference)
-        {
-            _logger.LogInformation($"Received request to retrieve previous applications with OrganisationId {orgId}");
-            return Ok(await _mediator.Send(new GetPreviousApplicationsRequest(orgId, standardReference)));
+            _logger.LogInformation($"Received request to retrieve withdrawal applications for Organisation {organisationId} with standard {standardCode}");
+            return Ok(await _mediator.Send(new GetLatestWithdrawalDateForStandardRequest(Guid.Parse(organisationId), standardCode)));
         }
 
         [HttpGet("user/{userId}/application/{id}", Name = "GetApplicationForUser")]

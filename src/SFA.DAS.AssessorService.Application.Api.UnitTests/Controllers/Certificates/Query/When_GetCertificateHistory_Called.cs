@@ -22,8 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
         public void Arrange()
         {
             var mediator = new Mock<IMediator>();
-
-            MappingBootstrapper.Initialize();
             var certificateHistoryResponses = Builder<CertificateSummaryResponse>.CreateListOfSize(10).Build().ToList();
 
             var certificateHistoryPaginatedList =

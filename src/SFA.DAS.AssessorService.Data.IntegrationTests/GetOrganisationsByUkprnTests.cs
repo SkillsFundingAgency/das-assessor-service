@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
@@ -25,7 +23,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterQueryRepository(unitOfWork);
@@ -72,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string ukprn, int expectedCount)
         {
             var organisationsReturned = _repository.GetAssessmentOrganisationsByUkprn(ukprn).Result.ToList();
-            Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
+            organisationsReturned.Count.Should().Be(expectedCount, $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count}");
         }
 
         [OneTimeTearDown]

@@ -15,7 +15,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         private ValidationResponse _response;
 
         private const string CertificateReferenceExists = "00123456";
+        private Guid CertificateIdExists = Guid.NewGuid();
+
         private const string CertificateReferenceNotExists = "00123457";
+        private Guid CertificateIdNotExists = Guid.NewGuid();
+
         private const int BatchNumber = 111;
 
         private static readonly DateTime SentToPrinterAt = DateTime.UtcNow.AddHours(-1);
@@ -25,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Arrange
             _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
-                .WithCertificate(CertificateReferenceExists, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
+                .WithCertificate(CertificateIdExists, CertificateReferenceExists, CertificateStatus.SentToPrinter, SentToPrinterAt, BatchNumber, SentToPrinterAt.AddMinutes(-5))
                 .WithCertificateBatchLog(BatchNumber, CertificateReferenceExists, CertificateStatus.SentToPrinter, SentToPrinterAt, null, SentToPrinterAt.AddMinutes(5))
                 .WithBatchLog(BatchNumber);
         }
@@ -68,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _response = await _fixture.Handle(request);
 
             // Assert
-            _fixture.VerifyUpdatePrintStatusNotCalled(CertificateReferenceNotExists, BatchNumber);
+            _fixture.VerifyUpdatePrintStatusNotCalled(CertificateIdNotExists, BatchNumber);
         }
     }
 }

@@ -6,29 +6,26 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
-    using OrganisationResponse = Api.Types.Models.OrganisationResponse;
-   
     public class WhenCreateOrganisationPersistsData
     {
-        private  OrganisationRepository _organisationRepository;
-        private Mock<AssessorDbContext> _mockDbContext;
-        private  Organisation _result;
+        private OrganisationRepository _organisationRepository;
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
+        private Organisation _result;
         
         [SetUp]
         public void Arrange()
         { 
-            MappingBootstrapper.Initialize();
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _mockAssessorUnitOfWork.Setup(p => p.AssessorDbContext).Returns(CreateMockDbContext(CreateMockDbSet()).Object);
 
-            var organisation = Builder<Organisation>.CreateNew().Build();           
-                       
-            var mockSet = CreateMockDbSet();
-            _mockDbContext = CreateMockDbContext(mockSet);
-
-            _organisationRepository = new OrganisationRepository(_mockDbContext.Object);
+            _organisationRepository = new OrganisationRepository(_mockAssessorUnitOfWork.Object);
+            
+            var organisation = Builder<Organisation>.CreateNew().Build();
             _result = _organisationRepository.CreateNewOrganisation(organisation).Result;
         }     
 
@@ -47,7 +44,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [Test]
         public void ItShouldPersistTheData()
         {
-            _mockDbContext.Verify(q => q.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockAssessorUnitOfWork.Verify(q => q.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         private static Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Organisation>> mockSet)

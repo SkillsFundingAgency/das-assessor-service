@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class UpdateStandardSummaryRequest : IRequest
+    public class UpdateStandardSummaryRequest : IRequest<Unit>
     {
     }
 }

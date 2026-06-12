@@ -62,16 +62,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = GetUsernameFromClaim();
 
-            Logger.LogDebug($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
-
             var certificate = await GetCertificate(vm.Id);
-            var certData = GetCertificateData(certificate);
+            var certData = certificate.CertificateData;
 
             if (!ModelState.IsValid)
             {
                 vm.FamilyName = certData.LearnerFamilyName;
                 vm.GivenNames = certData.LearnerGivenNames;
-                Logger.LogDebug($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
 
@@ -93,15 +91,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
-
             if(SessionService.GetRedirectToCheck())
             {
-                Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            Logger.LogDebug($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 
@@ -139,12 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         protected async Task<CertificateData> GetCertificateData(Guid certificateId)
         {
             var certificate = await GetCertificate(certificateId);
-            return GetCertificateData(certificate);
-        }
-
-        protected CertificateData GetCertificateData(Certificate certificate)
-        {
-            return JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return certificate.CertificateData;
         }
 
         private string GetModelValues<T>(T viewModel)

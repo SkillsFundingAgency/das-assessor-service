@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             string orderDirection,
             int pageSize,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             string orderDirection,
             int pageSize,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             string orderDirection,
             int pageSize,
             [Frozen] Mock<IMediator> mediator,
-            StandardQueryController controller)
+            [Greedy] StandardQueryController controller)
         {
             // Arrange
 

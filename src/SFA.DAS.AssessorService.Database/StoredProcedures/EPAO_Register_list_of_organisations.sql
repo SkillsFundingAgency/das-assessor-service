@@ -139,7 +139,7 @@ select o.EndPointAssessorOrganisationId as OrganisationId, ss2.StandardLevel + '
 into #StandardDetails
 from OrganisationStandard os 
 inner join  OrganisationStandardVersion osv on osv.OrganisationStandardId = os.Id and osv.StandardUId like os.StandardReference+'%' AND ( osv.EffectiveTo is null OR osv.EffectiveTo > GETDATE() )
-inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.status = 'Live'
+inner join Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.Status = 'Live'
 inner join 
 (
 select IFateReferenceNumber, Title + ' - Level ' + CAST(ss.Level as varchar)  as StandardLevel

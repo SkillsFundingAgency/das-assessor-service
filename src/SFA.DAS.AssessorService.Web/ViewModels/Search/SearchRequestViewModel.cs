@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }
+        public bool CoronationEmblem { get; set; }
         public string Version { get; set; }
         public bool VersionConfirmed { get; set; }
         public string SubmittedAt { get; set; }

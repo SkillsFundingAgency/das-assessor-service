@@ -1,16 +1,13 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Newtonsoft.Json;
-using System.Linq;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -32,9 +29,9 @@ namespace SFA.DAS.AssessorService.Data
             var orgData = JsonConvert.SerializeObject(org.OrganisationData);
             await _unitOfWork.Connection.ExecuteAsync(
                 "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
-                    "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
-                    new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
+                    "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData],[RecognitionNumber]) " +
+                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData, @recognitionNumber)",
+                    new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData, org.RecognitionNumber}
                 );
 
             return org.OrganisationId;
@@ -46,8 +43,9 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.Connection.ExecuteAsync(
                 "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
-                    "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
+                    "[OrganisationData] = @orgData, Status = @status, RecognitionNumber = @recognitionNumber " +
+                    "WHERE [EndPointAssessorOrganisationId] = @organisationId",
+                    new { org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId, org.RecognitionNumber});
 
             _logger.LogInformation($"Updated EPAO Organisation {org.OrganisationId} with status = {org.Status}");
 
@@ -125,7 +123,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandardAndOrganisationStandardVersions(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas, bool applyFollowingWithdrawal=false)
+            List<int> deliveryAreas)
         {
             var osdaId = (await _unitOfWork.Connection.QueryAsync<string>(
                 "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
@@ -160,7 +158,7 @@ namespace SFA.DAS.AssessorService.Data
                     new { osdaId });
 
 
-            if (null != orgStandard.StandardVersions && applyFollowingWithdrawal)
+            if (null != orgStandard.StandardVersions)
             {
                 foreach (var version in orgStandard.StandardVersions)
                 {
@@ -208,10 +206,10 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<string> CreateEpaOrganisationContact(EpaContact contact)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
+                $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [GovUkIdentifier], [SigninType]) " +
                     $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
                     $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
-                    $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @SigninId, @SigninType);",
+                    $@"'Live', @username, @PhoneNumber, @FirstName, @LastName, @govUkIdentifier, @SigninType);",
                     new
                     {
                         contact.Id,
@@ -222,7 +220,7 @@ namespace SFA.DAS.AssessorService.Data
                         contact.PhoneNumber,
                         firstName = string.IsNullOrEmpty(contact.FirstName) ? " " : contact.FirstName,
                         lastName = string.IsNullOrEmpty(contact.LastName) ? " " : contact.LastName,
-                        contact.SigninId,
+                        contact.GovUkIdentifier,
                         contact.SigninType
                     });
 

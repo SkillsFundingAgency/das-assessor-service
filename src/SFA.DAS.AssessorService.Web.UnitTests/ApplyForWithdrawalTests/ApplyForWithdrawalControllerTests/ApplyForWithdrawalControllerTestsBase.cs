@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         protected Mock<IContactsApiClient> _mockContactsApiClient;
         protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         protected Mock<IStandardsApiClient> _mockStandardsApiClient;
-        protected Mock<IStandardVersionClient> _mockStandardVersionApiClient;
+        protected Mock<IStandardVersionApiClient> _mockStandardVersionApiClient;
         protected Mock<IWebConfiguration> _mockWebConfiguration;
 
         [SetUp]
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
             _mockContactsApiClient = new Mock<IContactsApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockStandardsApiClient = new Mock<IStandardsApiClient>();
-            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
+            _mockStandardVersionApiClient = new Mock<IStandardVersionApiClient>();
             _mockWebConfiguration = new Mock<IWebConfiguration>();
 
             _mockHttpContextAccessor
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
                 .Returns(SetupHttpContextSubAuthorityClaim());
 
             _mockContactsApiClient
-                .Setup(r => r.GetContactBySignInId(It.IsAny<string>()))
+                .Setup(r => r.GetContactByGovIdentifier(It.IsAny<string>()))
                 .ReturnsAsync(new ContactResponse { });
 
             _mockOrganisationsApiClient
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         {
             var fakeClaims = new List<Claim>()
             {
-                new Claim("sub", "")
+                new Claim(ClaimTypes.NameIdentifier, "urn:fdc:gov.uk:2022:2zQE1QeShp-Dmy1sNvzXnVyW9FrOcH5H91YmhEu7szo")
             };
 
             var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");

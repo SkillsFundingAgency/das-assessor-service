@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {

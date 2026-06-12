@@ -1,16 +1,16 @@
-﻿using NUnit.Framework;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
-using SFA.DAS.AssessorService.Domain.Entities;
-using FluentAssertions;
-using System;
 using System.Threading.Tasks;
-using Moq;
-using SFA.DAS.AssessorService.Application.Infrastructure;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -18,16 +18,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class ApprovalsExtractRepositoryTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        private UnitOfWork _unitOfWork;
+        private IUnitOfWork _unitOfWork;
         private ApprovalsExtractRepository _repository;
 
         [OneTimeSetUp]
         public void SetupApprovalsExtractTests()
         {
-            var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            option.UseSqlServer(_databaseService.WebConfiguration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
-
-            _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString));
+            _unitOfWork = new UnitOfWork(new SqlConnection(_databaseService.SqlConnectionStringTest));
 
             _repository = new ApprovalsExtractRepository(_unitOfWork, new Mock<IRoatpApiClient>().Object, new Mock<ILogger<ApprovalsExtractRepository>>().Object);
         }
@@ -36,12 +33,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public async Task When_Empty_Then_NewExtractIsInserted()
         {
             // Arrange
-
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
-                new ApprovalsExtract() { ApprenticeshipId = 123 }
+                new ApprovalsExtract() { ApprenticeshipId = 123, ULN = "123456789" }
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
@@ -62,10 +58,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             // Arrange
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
-            _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName) VALUES (123, 'TestName');");
+            _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, Uln) VALUES (123, 'TestName', '123456789');");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
-                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated" }
+                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated", ULN = "123456789" }
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);
@@ -87,11 +83,11 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             // Arrange
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract_Staging;");
             _databaseService.Execute("TRUNCATE TABLE ApprovalsExtract;");
-            _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName) VALUES (123, 'TestName');");
+            _databaseService.Execute("INSERT INTO ApprovalsExtract (ApprenticeshipId, FirstName, ULN) VALUES (123, 'TestName', '123456789');");
             var approvalsExtractInput = new List<ApprovalsExtract>()
             {
-                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated" },
-                new ApprovalsExtract() { ApprenticeshipId = 456, FirstName = "SecondTestName" }
+                new ApprovalsExtract() { ApprenticeshipId = 123, FirstName = "TestNameUpdated", ULN = "123456789" },
+                new ApprovalsExtract() { ApprenticeshipId = 456, FirstName = "SecondTestName", ULN = "87654321" }
             };
 
             await _repository.UpsertApprovalsExtractToStaging(approvalsExtractInput);

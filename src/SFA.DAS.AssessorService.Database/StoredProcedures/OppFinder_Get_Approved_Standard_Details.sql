@@ -42,14 +42,14 @@ BEGIN
 		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
 		SUM(ActiveApprentices) TotalActiveApprentices, 
 		SUM(CompletedAssessments) TotalCompletedAssessments, 
-		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactName, EqaProviderContactEmail
 	INTO
 		#Details
 	FROM 
 		#Results
 	GROUP BY
 		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
-		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactName, EqaProviderContactEmail
 	ORDER BY
 		CONVERT(DATE, ApprovedForDelivery) DESC
 
@@ -57,7 +57,7 @@ BEGIN
 	SELECT
 		StandardCode, StandardName, OverviewOfRole, StandardLevel, StandardReference, 
 		TotalActiveApprentices, TotalCompletedAssessments, 
-		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactEmail
+		Sector, TypicalDuration, ApprovedForDelivery, MaxFunding, Trailblazer, StandardPageUrl, EqaProviderName, EqaProviderContactName, EqaProviderContactEmail
 	FROM
 		#Details
 

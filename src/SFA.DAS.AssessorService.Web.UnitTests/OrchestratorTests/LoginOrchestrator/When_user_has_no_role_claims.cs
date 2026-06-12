@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -19,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
 
             contextAccessor.SetupGet(a => a.HttpContext.User.Claims).Returns(new List<Claim>
             {
-                new Claim("sub", Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, "urn:fdc:gov.uk:2022:2zQE1QeShp-Dmy1sNvzXnVyW9FrOcH5H91YmhEu7szo"),
                 new Claim("email", "email@domain.com"),
                 new Claim("given_name", "Jones"),
                 new Claim("family_name","Peter")

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class UpdateContactWithOrgAndStausRequest: IRequest
+    public class UpdateContactWithOrgAndStausRequest: IRequest<Unit>
     {
         public UpdateContactWithOrgAndStausRequest(string contactId, string orgId, string epaOrgId, string status)
         {

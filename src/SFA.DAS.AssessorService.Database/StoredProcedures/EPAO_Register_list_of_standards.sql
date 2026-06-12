@@ -20,7 +20,7 @@ FROM
 			JOIN (SELECT OrganisationStandardId, StandardUId, Version FROM OrganisationStandardVersion WHERE (EffectiveTo is null OR EffectiveTo > GETDATE()) AND [Status] = 'Live' ) osv on osv.OrganisationStandardId = os.Id
 			AND osv.StandardUId LIKE os.StandardReference+'%'
 			JOIN Organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
-			JOIN (SELECT DISTINCT TRIM(IFateReferenceNumber) IFateReferenceNumber, EffectiveFrom, EffectiveTo FROM Standards WHERE Larscode != 0 AND (EffectiveTo is null OR EffectiveTo > GETDATE()))  sc on os.StandardReference = sc.IFateReferenceNumber
+			JOIN (SELECT DISTINCT TRIM(IFateReferenceNumber) IFateReferenceNumber, EffectiveFrom, EffectiveTo FROM Standards WHERE LarsCode != 0 AND (EffectiveTo is null OR EffectiveTo > GETDATE()))  sc on os.StandardReference = sc.IFateReferenceNumber
 		WHERE
 			o.EndPointAssessorOrganisationId <> 'EPA0000'
 			AND (os.EffectiveTo is null OR os.EffectiveTo > GETDATE())

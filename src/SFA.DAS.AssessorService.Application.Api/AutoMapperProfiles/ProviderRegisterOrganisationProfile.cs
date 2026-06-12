@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Mapping.CustomResolvers;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class ProviderRegisterOrganisationProfile : Profile
+    public class ProviderRegisterOrganisationProfile : ExplicitMappingProfileBase
     {
         public ProviderRegisterOrganisationProfile()
         {
@@ -17,21 +19,18 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source =>
-                    Mapper.Map<AssessorService.Api.Types.Models.ProviderRegister.Address, OrganisationAddress>(source.Addresses.FirstOrDefault())))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source =>source.Addresses.FirstOrDefault()));
         }
     }
 
-    public class ProviderRegisterOrganisationAddressProfile : Profile
+    public class ProviderRegisterOrganisationAddressProfile : ExplicitMappingProfileBase
     {
         public ProviderRegisterOrganisationAddressProfile()
         {
             CreateMap<AssessorService.Api.Types.Models.ProviderRegister.Address, OrganisationAddress>()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Street))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.Town))
-                .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.PostCode))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Postcode, opt => opt.MapFrom(source => source.PostCode));
         }
     }
 }

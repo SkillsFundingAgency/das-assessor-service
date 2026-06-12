@@ -1,6 +1,7 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
@@ -8,19 +9,12 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
     public class CertificateTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        
-        private AssessorDbContext _context;
-        private UnitOfWork _unitOfWork;
         
         private CertificateRepository _repository;
         
@@ -34,12 +28,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public async Task SetupCertificateTests()
         {
-            var option = new DbContextOptionsBuilder<AssessorDbContext>();
-            var sqlConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
-            _context = new AssessorDbContext(sqlConnection, option.Options);
-            _unitOfWork = new UnitOfWork(sqlConnection);
-
-            _repository = new CertificateRepository(_unitOfWork, _context);
+            _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext));
 
             OrganisationTypeHandler.InsertRecord(
                 new OrganisationTypeModel
@@ -89,14 +78,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 ProviderUkPrn = _organisation.EndPointAssessorUkprn.Value,
                 OrganisationId = _organisation.Id,
                 CreatedBy = "Tester",
-                CertificateData = JsonConvert.SerializeObject(certData),
+                CertificateData = certData,
                 Status = CertificateStatus.Draft,
                 CertificateReference = string.Empty,
                 LearnRefNumber = "1234567890",
                 CreateDay = DateTime.UtcNow.Date
             };
 
-            _createdCertificate = await _repository.New(certificate);
+            _createdCertificate = await _repository.NewStandardCertificate(certificate);
         }
 
         [Test]
@@ -111,8 +100,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void Then_the_EpaReference_is_updated_with_CertificateReference()
         {
-            var returnedCertificateData = JsonConvert.DeserializeObject<CertificateData>(_createdCertificate.CertificateData);
-            returnedCertificateData.
+            _createdCertificate.CertificateData.
                 EpaDetails.
                 EpaReference.
                 Should().

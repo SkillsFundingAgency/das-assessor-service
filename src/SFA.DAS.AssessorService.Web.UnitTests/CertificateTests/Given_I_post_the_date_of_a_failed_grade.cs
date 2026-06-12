@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -49,11 +48,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         private Certificate SetupCertificate()
         {
             var certificate = new Builder().CreateNew<Certificate>()
-                .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder()
+                .With(q => q.CertificateData = new Builder()
                     .CreateNew<CertificateData>()
                     .With(x => x.OverallGrade = CertificateGrade.Fail)
                     .With(x => x.AchievementDate = null)
-                    .Build()))
+                    .Build())
                 .Build();
 
             var organisaionId = Guid.NewGuid();

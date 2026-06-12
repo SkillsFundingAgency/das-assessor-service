@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 using NUnit.Framework;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void GetCleansedStringFromOriginalString(string inputString, string outputString)
         {
             var returnedString = _cleanser.CleanseStringForSpecialCharacters(inputString);
-            Assert.AreEqual(outputString, returnedString);
+            returnedString.Should().Be(outputString);
         }
         
         [TestCase("Colleges' ","Colleges")]
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         public void GetStringWithNonAlphanumericCharactersRemoved(string inputString, string outputString)
         {
             var returnedString = _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(inputString);
-            Assert.AreEqual(outputString, returnedString);
+            returnedString.Should().Be(outputString);
         }
     }
 }

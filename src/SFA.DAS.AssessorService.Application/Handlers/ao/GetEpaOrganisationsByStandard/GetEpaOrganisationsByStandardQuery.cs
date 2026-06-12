@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao.GetEpaOrganisationsByStandard
 {

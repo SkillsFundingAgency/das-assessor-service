@@ -1,9 +1,9 @@
-﻿using Dapper;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -30,10 +30,18 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version)
         {
             await _unitOfWork.Connection.ExecuteAsync(
-                @"INSERT INTO OrganisationStandardVersion 
-                    (StandardUId, Version ,OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status)
+                @"INSERT INTO OrganisationStandardVersion (StandardUId, Version ,OrganisationStandardId, EffectiveFrom, EffectiveTo, DateVersionApproved, Comments, Status)
                   VALUES (@StandardUId, @Version ,@OrganisationStandardId, @EffectiveFrom, @EffectiveTo, @DateVersionApproved, @Comments, @Status)",
-                param: new { version.StandardUId, version.Version, version.OrganisationStandardId, version.EffectiveFrom, version.EffectiveTo, version.DateVersionApproved, version.Comments, version.Status },
+                param: new { 
+                    version.StandardUId, 
+                    version.Version, 
+                    version.OrganisationStandardId, 
+                    version.EffectiveFrom, 
+                    version.EffectiveTo, 
+                    version.DateVersionApproved, 
+                    version.Comments, 
+                    version.Status 
+                },
                 transaction: _unitOfWork.Transaction);
 
             return version;
@@ -54,33 +62,35 @@ namespace SFA.DAS.AssessorService.Data
             return results.FirstOrDefault();
         }
 
-        public async Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion orgStandardVersion)
+        public async Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion organisationStandardVersion)
         {
             var sql = @"UPDATE [OrganisationStandardVersion] 
                         SET
                             [EffectiveFrom] = @effectiveFrom,
                             [EffectiveTo] = @effectiveTo,
-                            [DateVersionApproved] = @dateVersionApproved,
+                            [DateVersionApproved] = COALESCE(DateVersionApproved, @dateVersionApproved),
+                            [Comments] = @comments,
                             [Status] = @status
                         WHERE
-                            [OrganisationStandardId] = @orgStandardId AND [Version] = @version";
+                            [OrganisationStandardId] = @organisationStandardId AND [Version] = @version";
 
             await _unitOfWork.Connection.ExecuteAsync(
                 sql,
-                param: new { 
-                        effectiveFrom = orgStandardVersion.EffectiveFrom,
-                        effectiveTo = orgStandardVersion.EffectiveTo,
-                        dateVersionApproved = orgStandardVersion.DateVersionApproved,
-                        Status = orgStandardVersion.Status,
-                        orgStandardId = orgStandardVersion.OrganisationStandardId,
-                        version = orgStandardVersion.Version
-                    },
+                param: new {
+                        version = organisationStandardVersion.Version,
+                        organisationStandardId = organisationStandardVersion.OrganisationStandardId,
+                        effectiveFrom = organisationStandardVersion.EffectiveFrom,
+                        effectiveTo = organisationStandardVersion.EffectiveTo,
+                        dateVersionApproved = organisationStandardVersion.DateVersionApproved,
+                        comments = organisationStandardVersion.Comments,
+                        status = organisationStandardVersion.Status
+                },
                 transaction: _unitOfWork.Transaction);
 
-            return orgStandardVersion;
+            return organisationStandardVersion;
         }
 
-        public async Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
+        public async Task WithdrawOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
         {
             var sql = @"UPDATE osv
 	                    SET
@@ -100,8 +110,37 @@ namespace SFA.DAS.AssessorService.Data
                 sql,
                 param: new
                 {
-                    endPointAssessorOrganisationId = endPointAssessorOrganisationId,
-                    withdrawalDate = withdrawalDate
+                    endPointAssessorOrganisationId,
+                    withdrawalDate
+                },
+                transaction: _unitOfWork.Transaction);
+        }
+
+        public async Task WithdrawStandard(string endPointAssessorOrganisationId, int standardCode, DateTime withdrawalDate)
+        {
+            var sql = @"UPDATE osv
+	                    SET
+		                    [EffectiveTo] = @withdrawalDate
+	                    FROM [OrganisationStandardVersion] osv 
+		                    INNER JOIN [OrganisationStandard] os ON os.[Id] = osv.[OrganisationStandardId]
+	                    WHERE os.[EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+                            AND os.[StandardCode] = @standardCode
+		                    AND (osv.[EffectiveTo] IS NULL OR osv.[EffectiveTo] > @withdrawalDate);
+
+                        UPDATE [OrganisationStandard]
+	                    SET
+		                    [EffectiveTo] = @withdrawalDate
+	                    WHERE [EndPointAssessorOrganisationId] = @endPointAssessorOrganisationId
+                            AND [StandardCode] = @standardCode
+		                    AND ([EffectiveTo] IS NULL OR [EffectiveTo] > @withdrawalDate)";
+
+            await _unitOfWork.Connection.ExecuteAsync(
+                sql,
+                param: new
+                {
+                    endPointAssessorOrganisationId,
+                    standardCode,
+                    withdrawalDate
                 },
                 transaction: _unitOfWork.Transaction);
         }

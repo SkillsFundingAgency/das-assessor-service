@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Extensions;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Helpers
         {
             var result = status.FormatStatus();
 
-            Assert.AreEqual(expected, result);
+            result.Should().Be(expected);
         }
     }
 }

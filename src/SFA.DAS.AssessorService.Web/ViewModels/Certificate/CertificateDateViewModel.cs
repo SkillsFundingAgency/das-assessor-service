@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         {
             certData.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
 
             return certificate;
         }

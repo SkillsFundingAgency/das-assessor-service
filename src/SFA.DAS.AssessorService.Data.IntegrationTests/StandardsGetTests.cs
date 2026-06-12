@@ -1,11 +1,13 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -23,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupStandardsTable()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _repository = new StandardRepository(_unitOfWork);
             
@@ -42,7 +44,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var standard = await _repository.GetStandardVersionByIFateReferenceNumber(standardReference, version);
 
-            Assert.AreEqual(expectedStandard.StandardUId, standard.StandardUId);
+            standard.StandardUId.Should().Be(expectedStandard.StandardUId);
         }
 
         [OneTimeTearDown]
@@ -74,7 +76,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    EPAChanged = false
+                    EPAChanged = false,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -91,7 +94,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    EPAChanged = false
+                    EPAChanged = false,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                  new StandardModel
                 {
@@ -108,7 +112,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    EPAChanged = false
+                    EPAChanged = false,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -125,7 +130,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    EPAChanged = false
+                    EPAChanged = false,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -142,7 +148,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
                     ProposedTypicalDuration = 12,
-                    EPAChanged = false
+                    EPAChanged = false,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
             };
         }

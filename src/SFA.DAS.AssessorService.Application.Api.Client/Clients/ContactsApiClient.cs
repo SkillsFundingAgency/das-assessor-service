@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -16,13 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<ContactsApiClient> _logger;
 
-        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
+        public ContactsApiClient(IAssessorApiClientFactory clientFactory, ILogger<ContactsApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
             _logger = logger;
-        }
-
-        public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
-        {
         }
 
         public async Task<List<Privilege>> GetPrivileges()
@@ -48,6 +45,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
+        public async Task<ContactResponse> GetContactByGovIdentifier(string govIdentifier)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/govidentifier/{WebUtility.UrlEncode(govIdentifier)}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
 
         public async Task<ContactResponse> GetById(Guid id)
         {
@@ -62,7 +66,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
             {
-                return await PostPutRequestWithResponse<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
+            }
+        }
+        
+        public async Task<ContactResponse> UpdateFromGovLogin(UpdateContactGovLoginRequest updateContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/govlogin"))
+            {
+                return await PostPutRequestWithResponseAsync<UpdateContactGovLoginRequest, ContactResponse>(request, updateContactRequest);
             }
         }
 
@@ -70,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/status"))
             {
-                return await PostPutRequestWithResponse<UpdateContactStatusRequest, ContactResponse>(request, updateContactStatusRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactStatusRequest, ContactResponse>(request, updateContactStatusRequest);
             }
         }
 
@@ -82,11 +94,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> GetContactBySignInId(string signInId)
+        public async Task<ContactResponse> GetContactByGovUkIdentifier(string govUkIdentifier)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/signInId/{signInId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/govUkIdentifier/{govUkIdentifier}"))
             {
-                var result = await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {signInId}");
+                var result = await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {govUkIdentifier}");
                 return result;
             }
         }
@@ -95,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll"))
             {
-                var response = await PostPutRequestWithResponse<GetAllContactsRequest, List<ContactResponse>>(request,
+                var response = await PostPutRequestWithResponseAsync<GetAllContactsRequest, List<ContactResponse>>(request,
                         new GetAllContactsRequest(epaoId, withUser));
 
                 return response;
@@ -106,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll/includePrivileges"))
             {
-                var response = await PostPutRequestWithResponse<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>(request,
+                var response = await PostPutRequestWithResponseAsync<GetAllContactsIncludePrivilegesRequest, List<ContactIncludePrivilegesResponse>>(request,
                         new GetAllContactsIncludePrivilegesRequest(epaoId, withUser));
 
                 return response;
@@ -125,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateContactWithOrgAndStatus"))
             {
-                return await PostPutRequestWithResponse<UpdateContactWithOrgAndStausRequest, ContactResponse>(request, updateContactWithOrgAndStausRequest);
+                return await PostPutRequestWithResponseAsync<UpdateContactWithOrgAndStausRequest, ContactResponse>(request, updateContactWithOrgAndStausRequest);
             }
         }
 
@@ -134,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts"))
             {
                 var response =
-                    await PostPutRequestWithResponse<CreateContactRequest, ContactBoolResponse>(request,
+                    await PostPutRequestWithResponseAsync<CreateContactRequest, ContactBoolResponse>(request,
                         createContactRequest);
 
                 return response;
@@ -145,29 +157,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {
-                await PostPutRequest(request, callback);
+                await PostPutRequestAsync(request, callback);
             }
         }
 
-        public async Task MigrateUsers()
+        public async Task MigrateSingleContactToApply(string govUkIdentifier)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateUsers"))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
-                request.Headers.Add("Accept", "application/json");
-                request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
-
-                await HttpClient.SendAsync(request);
-            }
-        }
-
-        public async Task MigrateSingleContactToApply(System.Guid signinId)
-        {
-            var signinIdWrapper = new SigninIdWrapper(signinId);
-            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
+            var govUkIdentifierWrapper = new GovUkIdentifierWrapper(govUkIdentifier);
+            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(govUkIdentifierWrapper)}");
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
             {
-                await PostPutRequest(request, signinIdWrapper);
+                await PostPutRequestAsync(request, govUkIdentifierWrapper);
             }
         }
 
@@ -176,7 +176,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/createNewContactWithGivenId"))
             {
                 var response =
-                     await PostPutRequestWithResponse<Contact,ContactResponse>(request,contact);
+                     await PostPutRequestWithResponseAsync<Contact,ContactResponse>(request,contact);
 
                 return response;
             }
@@ -186,7 +186,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/associateDefaultRolesAndPrivileges"))
             {
-                 await PostPutRequest(request, contact);
+                 await PostPutRequestAsync(request, contact);
                 
             }
         }
@@ -195,7 +195,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/setContactPrivileges"))
             {
-                return await PostPutRequestWithResponse<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
+                return await PostPutRequestWithResponseAsync<SetContactPrivilegesRequest,SetContactPrivilegesResponse>(request, privilegesRequest);
             }
         }
 
@@ -205,7 +205,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/removeContactFromOrganisation"))
             {
-                return await PostPutRequestWithResponse<RemoveContactFromOrganisationRequest,RemoveContactFromOrganisationResponse>(request, removeContactRequest);
+                return await PostPutRequestWithResponseAsync<RemoveContactFromOrganisationRequest,RemoveContactFromOrganisationResponse>(request, removeContactRequest);
             }
         }
 
@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/inviteContactToOrganisation"))
             {
-                return await PostPutRequestWithResponse<InviteContactToOrganisationRequest,InviteContactToOrganisationResponse>(request, invitationRequest);
+                return await PostPutRequestWithResponseAsync<InviteContactToOrganisationRequest,InviteContactToOrganisationResponse>(request, invitationRequest);
             }
         }
 
@@ -221,7 +221,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/requestForPrivilege"))
             {
-                await PostPutRequest(request, new RequestForPrivilegeRequest {ContactId = contactId, PrivilegeId = privilegeId});
+                await PostPutRequestAsync(request, new RequestForPrivilegeRequest {ContactId = contactId, PrivilegeId = privilegeId});
             }
         }
 
@@ -229,7 +229,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/approve"))
             {
-                await PostPutRequest(request, new ApproveContactRequest {ContactId = contactId});
+                await PostPutRequestAsync(request, new ApproveContactRequest {ContactId = contactId});
             }
         }
         
@@ -237,8 +237,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/reject"))
             {
-                await PostPutRequest(request, new RejectContactRequest {ContactId = contactId});
+                await PostPutRequestAsync(request, new RejectContactRequest {ContactId = contactId});
             }
+        }
+
+        public async Task<ContactResponse> GetContactByEmail(string emailAddress)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/email/{WebUtility.UrlEncode(emailAddress)}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
+
+        public async Task UpdateEmail(UpdateEmailRequest updateEmailRequest)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateEmail");
+            await PostPutRequestAsync(request, updateEmailRequest);
         }
     }
 }

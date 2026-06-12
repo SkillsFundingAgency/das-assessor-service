@@ -1,3 +1,5 @@
+using SFA.DAS.AssessorService.Domain.Entities;
+
 namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public class OrganisationDetails

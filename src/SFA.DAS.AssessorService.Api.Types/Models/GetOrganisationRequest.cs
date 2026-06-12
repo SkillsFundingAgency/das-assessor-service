@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using MediatR;
 using SFA.DAS.AssessorService.Domain.Entities;
 

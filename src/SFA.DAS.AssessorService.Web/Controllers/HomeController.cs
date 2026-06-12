@@ -1,13 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Models;
 
@@ -15,22 +9,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IDistributedCache _cache;
         private readonly ISessionService _sessionService;
-        private readonly IStandardsApiClient _standardsApiClient;
+        private readonly IWebConfiguration _webConfiguration;
 
-        public HomeController(IDistributedCache cache, ISessionService sessionService, IStandardsApiClient standardsApiClient)
+        public HomeController(ISessionService sessionService, IWebConfiguration webConfiguration)
         {
-            _cache = cache;
             _sessionService = sessionService;
-            _standardsApiClient = standardsApiClient;
+            _webConfiguration = webConfiguration;
         }
 
         [HttpGet]
         [Route("/")]
         public IActionResult Index()
         {
-            return View();
+            return View(new HomeIndexViewModel { });
         }
 
         public IActionResult Error()
@@ -50,22 +42,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> NotActivated()
+        public IActionResult NotActivated()
         {
-            GetEpaoRegisteredStandardsResponse standard;
-
-            try
-            {
-                var epaoId = _sessionService.Get("EndPointAssessorOrganisationId");
-                var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1, 10);
-                standard = standards.Items.FirstOrDefault(s => !string.IsNullOrEmpty(s.StandardName));
-            }
-            catch (Exception ex) when (ex is EntityNotFoundException || ex is NullReferenceException)
-            {
-                standard = null;
-            }
-
-            return View(standard);
+            return View();
         }
 
         [Authorize]
@@ -90,6 +69,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Accessibility()
         {
             return View();
         }

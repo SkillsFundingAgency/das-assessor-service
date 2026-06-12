@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Apply

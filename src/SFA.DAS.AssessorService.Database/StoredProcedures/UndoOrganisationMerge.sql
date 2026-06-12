@@ -112,7 +112,7 @@ WHEN MATCHED
 
 -- Mark the merge as being undone
 
-UPDATE MergeOrganisations SET Status = 'Reverted', UpdatedAt = SYSDATETIME(), UpdatedBy = @UpdatedBy WHERE Id = @mergeOrganisationId
+UPDATE MergeOrganisations SET Status = 'Reverted', UpdatedAt = SYSDATETIME(), UpdatedBy = @updatedBy WHERE Id = @mergeOrganisationId
 
 -- Done
 

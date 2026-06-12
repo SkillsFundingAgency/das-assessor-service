@@ -7,9 +7,9 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Learner;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Web.UnitTests;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -24,9 +24,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
-    public class CertificateControllerTests
+    public class CertificateControllerTests : MapperBase
     {
-        private Mock<IStandardVersionClient> _mockStandardVersionClient;
+        private Mock<IStandardVersionApiClient> _mockStandardVersionClient;
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
         private Mock<IApprovalsLearnerApiClient> _mockLearnerApiClient;
         private Mock<IHttpContextAccessor> _mockContextAccessor;
@@ -39,14 +39,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 
         [SetUp]
         public void SetUp()
-        {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<StandardVersionViewModel, StandardVersion>();
-            });
-
-            _mockStandardVersionClient = new Mock<IStandardVersionClient>();
+        {       
+            _mockStandardVersionClient = new Mock<IStandardVersionApiClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
             _mockLearnerApiClient = new Mock<IApprovalsLearnerApiClient>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
@@ -64,6 +58,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _certificateController = new CertificateController(
                 Mock.Of<ILogger<CertificateController>>(),
                 _mockContextAccessor.Object,
+                Mapper,
                 _mockCertificateApiClient.Object,
                 _mockStandardVersionClient.Object,
                 _mockSessionService.Object,

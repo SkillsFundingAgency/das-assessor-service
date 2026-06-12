@@ -1,6 +1,4 @@
-﻿@model SFA.DAS.AssessorService.Api.Types.Models.GetEpaoRegisteredStandardsResponse
-
-@{
+﻿@{
     ViewBag.Title = "Not activated";
     Layout = "_Layout";
 }
@@ -8,19 +6,12 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if (Model != null)
-            {
-                <h1 class="govuk-heading-xl">Your application to assess @Model.StandardName has been approved.</h1>
-            }
-            else
-            {
-                <h1 class="govuk-heading-xl">Your application has been approved.</h1>
-            }
-            <p class="govuk-body">You will be added to the next updated listing of the Register of end-point assessment organisations.</p>
-
-            <p class="govuk-body">We will contact you to discuss your readiness to start assessing this Standard, around the time you indicated in your application.</p>
-
-            <p class="govuk-body">In your application you agreed to the <a class="govuk-link" href="https://www.gov.uk/guidance/conditions-for-being-on-the-register-of-end-point-assessment-organisations" target="_blank" rel="noopener noreferrer">Conditions for being on the register of end-point assessment organisations</a>.</p>
-</div>
+            <h1 class="govuk-heading-xl">Your application is currently being reviewed</h1>
+            
+            <p class="govuk-body">We are in the process of onboarding your organisation</p>
+            <p class="govuk-body">If you have any further queries contact our helpdesk:</p>
+            <p class="govuk-body">Email: <a class="govuk-link" href=mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a></p>
+            <p class="govuk-body">Telephone: 08000 150 600</p>
+        </div>
     </div>
 </main>

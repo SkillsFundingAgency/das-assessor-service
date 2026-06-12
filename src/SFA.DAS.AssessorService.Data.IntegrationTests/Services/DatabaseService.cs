@@ -1,128 +1,138 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-     
         public DatabaseService()
         {
-            Configuration = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
-            
-            WebConfiguration = new TestWebConfiguration
-            {
-                SqlConnectionString = Configuration.GetConnectionString("SqlConnectionStringTest")
-            };
+
+            SqlConnectionString = configuration.GetConnectionString("SqlConnectionString");
+            SqlConnectionStringTest = configuration.GetConnectionString("SqlConnectionStringTest");
         }
 
         public AssessorDbContext TestContext
         {
             get
             {
-                var sqlConnectionStringTest = Configuration.GetConnectionString("SqlConnectionStringTest");
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(sqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
-                return new AssessorDbContext(new SqlConnection(sqlConnectionStringTest), option.Options);
+                option.UseSqlServer(SqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
+                return new AssessorDbContext(new SqlConnection(SqlConnectionStringTest), option.Options);
             }
         }
 
+        public string SqlConnectionString { get; }
+        public string SqlConnectionStringTest { get; }
 
-        public IConfiguration Configuration { get; }
-        public TestWebConfiguration WebConfiguration;
-
-        public void SetupDatabase()
+        public async Task SetupDatabase()
         {
             DropDatabase();
 
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
-                    connection.Open();
+                    await connection.OpenAsync();
 
                 var comm = new SqlCommand
                 {
                     Connection = connection,
                     CommandText =
-                        $@"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
+                        @"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.Database.Test'); " + 
+                         "ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET READ_WRITE;"
                 };
-                var reader = comm.ExecuteReader();
-                reader.Close();
+                var reader = await comm.ExecuteReaderAsync();
+                await reader.CloseAsync();
             }
+
+            await LookupDataHelper.AddLookupData();
         }
 
         public void Execute(string sql)
         {
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 connection.Execute(sql);
-                connection.Close();
+            }
+        }
+
+        public void Execute<T>(string sql, T model)
+        {
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
+            {
+                connection.Execute(sql, model);
+            }
+        }
+
+        public object ExecuteScalar(string sql)
+        {
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
+            {
+                var result = connection.ExecuteScalar(sql);
+                return result;
+            }
+        }
+
+        public async Task<List<T>> ExecuteStoredProcedure<T>(string name, object parameters = null)
+        {
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
+            {
+                var results = await connection.QueryAsync<T>(
+                    name,
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return results.AsList();
             }
         }
 
         public T Get<T>(string sql)
         {
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 var result = connection.Query<T>(sql);
-                connection.Close();
                 return result.FirstOrDefault();
             }    
         }
 
         public IEnumerable<T> GetList<T>(string sql)
         {
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
                 var result = connection.Query<T>(sql);
-                connection.Close();
                 return result;
             }
         }
 
-        public object ExecuteScalar(string sql)
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, object model) //where T : TestModel
         {
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
-                var result = connection.ExecuteScalar(sql);
-                connection.Close();
-
-                return result;
+                return await connection.QueryFirstOrDefaultAsync<T>(sql, param: model);
             }
         }
 
-        public void Execute(string sql, TestModel model)
+        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql)
         {
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(SqlConnectionStringTest))
             {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
-                connection.Execute(sql, model);
-                connection.Close();
+                return await connection.QueryFirstOrDefaultAsync<T>(sql);
             }
         }
 
         public void DropDatabase()
         {
-            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
+            using (var connection = new SqlConnection(SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();

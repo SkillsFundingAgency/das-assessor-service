@@ -23,7 +23,7 @@ ce1.CreatedAt,
 ce1.UpdatedAt,
 learner1.LearnRefNumber,
 LearnerFamilyName AS CertFamilyName	
-FROM Certificates ce1 
+FROM StandardCertificates ce1 
 JOIN Organisations org ON ce1.OrganisationId = org.Id
 LEFT JOIN Learner learner1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 WHERE ce1.LearnerFamilyName = @Search
@@ -50,7 +50,7 @@ learner1.LearnRefNumber,
 NULL CertFamilyName	
 FROM Learner learner1
 JOIN Standards sc ON learner1.StdCode = sc.LarsCode
-LEFT JOIN Certificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
+LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 WHERE 
 ce1.Uln IS  NULL
 AND(learner1.FamilyName = @Search 

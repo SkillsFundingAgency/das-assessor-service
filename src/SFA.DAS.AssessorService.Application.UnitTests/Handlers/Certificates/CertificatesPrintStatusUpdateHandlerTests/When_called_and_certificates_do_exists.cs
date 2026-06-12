@@ -19,8 +19,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         private ValidationResponse _response;
 
         private const string CertificateReferenceFirst = "00123456";
+        private Guid CertificateIdFirst = Guid.NewGuid();
+
         private const string CertificateReferenceSecond = "00123457";
+        private Guid CertificateIdSecond = Guid.NewGuid();
+
         private const string CertificateReferenceThird = "00123458";
+        private Guid CertificateIdThird = Guid.NewGuid();
+        
         private const int BatchNumberFirst = 111;
         private const int BatchNumberSecond = 222;
 
@@ -32,9 +38,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Arrange
             _fixture = new CertificatePrintStatusUpdateHandlerTestsFixture()
-                .WithCertificate(CertificateReferenceFirst, CertificateStatus.SentToPrinter, BatchNumberFirstSentToPrinterAt, BatchNumberFirst, BatchNumberFirstSentToPrinterAt.AddMinutes(-5))
-                .WithCertificate(CertificateReferenceSecond, CertificateStatus.Printed, BatchNumberSecondPrintedAt, BatchNumberSecond, BatchNumberSecondPrintedAt.AddMinutes(-5))
-                .WithCertificate(CertificateReferenceThird, CertificateStatus.Printed, BatchNumberSecondPrintedAt, BatchNumberSecond, BatchNumberSecondPrintedAt.AddMinutes(-5))
+                .WithCertificate(CertificateIdFirst, CertificateReferenceFirst, CertificateStatus.SentToPrinter, BatchNumberFirstSentToPrinterAt, BatchNumberFirst, BatchNumberFirstSentToPrinterAt.AddMinutes(-5))
+                .WithCertificate(CertificateIdSecond, CertificateReferenceSecond, CertificateStatus.Printed, BatchNumberSecondPrintedAt, BatchNumberSecond, BatchNumberSecondPrintedAt.AddMinutes(-5))
+                .WithCertificate(CertificateIdThird, CertificateReferenceThird, CertificateStatus.Printed, BatchNumberSecondPrintedAt, BatchNumberSecond, BatchNumberSecondPrintedAt.AddMinutes(-5))
                 .WithCertificateBatchLog(BatchNumberFirst, CertificateReferenceFirst, CertificateStatus.SentToPrinter, BatchNumberFirstSentToPrinterAt, null, BatchNumberFirstSentToPrinterAt.AddMinutes(5))
                 .WithCertificateBatchLog(BatchNumberSecond, CertificateReferenceSecond, CertificateStatus.Printed, BatchNumberSecondPrintedAt, null, BatchNumberSecondPrintedAt.AddMinutes(5))
                 .WithCertificateBatchLog(BatchNumberSecond, CertificateReferenceThird, CertificateStatus.Printed, BatchNumberSecondPrintedAt, null, BatchNumberSecondPrintedAt.AddMinutes(5))
@@ -78,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _response = await _fixture.Handle(request);
 
             // Assert
-            _fixture.VerifyUpdatePrintStatusCalled(CertificateReferenceFirst, BatchNumberFirst, request.Status, request.StatusAt, null, true, true);
+            _fixture.VerifyUpdatePrintStatusCalled(CertificateIdFirst, BatchNumberFirst, request.Status, request.StatusAt, null, true, true);
         }
 
         [Test]
@@ -117,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _response = await _fixture.Handle(request);
 
             // Assert
-            _fixture.VerifyUpdatePrintStatusCalled(CertificateReferenceSecond, BatchNumberSecond, request.Status, request.StatusAt, null, true, true);
+            _fixture.VerifyUpdatePrintStatusCalled(CertificateIdSecond, BatchNumberSecond, request.Status, request.StatusAt, null, true, true);
         }
 
         [Test]
@@ -156,7 +162,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _response = await _fixture.Handle(request);
 
             // Assert
-            _fixture.VerifyUpdatePrintStatusCalled(CertificateReferenceThird, BatchNumberSecond, request.Status, request.StatusAt, null, true, true);
+            _fixture.VerifyUpdatePrintStatusCalled(CertificateIdThird, BatchNumberSecond, request.Status, request.StatusAt, null, true, true);
         }
     }
 }

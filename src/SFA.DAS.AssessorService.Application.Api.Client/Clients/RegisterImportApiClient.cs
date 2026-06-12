@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class RegisterImportApiClient : ApiClientBase
     {
-        public RegisterImportApiClient(string baseUri, ITokenService tokenService, ILogger<RegisterImportApiClient> logger) : base(baseUri, tokenService, logger)
-        {
-        }
-
-        public RegisterImportApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public RegisterImportApiClient(IAssessorApiClientFactory clientFactory, ILogger<RegisterImportApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
@@ -19,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/register-import/"))
             {
-                await PostPutRequest(request);
+                await PostPutRequestAsync(request);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Infrastructure
+@using SFA.DAS.AssessorService.Web.Helpers;
 @model SFA.DAS.AssessorService.Web.ViewModels.Dashboard.DashboardViewModel
 @inject ISessionService SessionService
 @{
@@ -9,6 +10,10 @@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
+
+        <h1 class="govuk-visually-hidden">
+            Use this dashboard to manage your apprenticeship assessment service account
+        </h1>
 
         <div class="govuk-grid-column-full">
             <div class="dashboard-boxes">
@@ -83,7 +88,7 @@
                                     <a class="govuk-link" asp-controller="Organisation" asp-action="OrganisationDetails" asp-fragment="api-subscription">API subscription</a>
                                 </li>
                                 <li>
-                                    <a class="govuk-link" asp-controller="ApplyForWithdrawal" asp-action="Index">Withdraw from the register</a>
+                                    <a class="govuk-link" asp-controller="ApplyForWithdrawal" asp-action="Index">Withdraw from all standards</a>
                                 </li>
                             </ul>
                         </div>
@@ -111,7 +116,7 @@
                                 </li>
                             </ul>
                             <p class="govuk-body">
-                                <a class="govuk-link" href="https://www.gov.uk/guidance/record-a-grade-api" target="_blank">Read more</a>
+                                <a class="govuk-link" href="https://www.gov.uk/guidance/record-a-grade-api" target="_blank">Read more<span class="govuk-visually-hidden">Read more on recording multiple assessments</span></a>
                             </p>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionNotApprovedViewModel;
+﻿@using SFA.DAS.AssessorService.Web.Controllers;
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateVersionNotApprovedViewModel;
 
 @{
     ViewBag.Title = $"Error: Your Organisation is not currently approved to assess version {Model.AttemptedVersion}";
@@ -24,10 +25,9 @@
                     </div>
                     <div class="govuk-notification-banner__content">
                         <p class="govuk-notification-banner__heading">
-                            Your organisation is not currently approved to assess version @Model.AttemptedVersion
-
+                            Your organisation is not currently approved to assess version @Model.AttemptedVersion of @Model.StandardName (@Model.IFateReferenceNumber)
                         </p>
-                        <p class="govuk-body">When your organisation has been approved to assess this standard version, you can return here to record a grade.</p>
+                        <p class="govuk-body">To record outcomes for this standard version, you need to <a asp-route="@OrganisationStandardsController.OrganisationStandardsIndexGetRoute" class="govuk-link--no-visited-state">opt in for this version in your account</a>.</p>
                     </div>
                 </div>
                 <h2 class="govuk-heading-m">What do you want to do next?</h2>

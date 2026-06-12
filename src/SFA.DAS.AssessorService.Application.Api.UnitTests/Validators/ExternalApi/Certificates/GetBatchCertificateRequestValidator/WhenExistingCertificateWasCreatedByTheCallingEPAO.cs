@@ -32,8 +32,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.ExternalA
             OrganisationQueryRepositoryMock.Setup(o => o.GetByUkPrn(_request.UkPrn))
                 .ReturnsAsync(organisationResponse);
 
-            CertificateRepositoryMock.Setup(c => c.GetCertificateByUlnOrgIdLastnameAndStandardCode(_request.Uln,
-                organisationResponse.EndPointAssessorOrganisationId, _request.FamilyName, _request.StandardCode))
+            CertificateRepositoryMock.Setup(c => c.GetCertificate(_request.Uln, _request.StandardCode, _request.FamilyName,
+                organisationResponse.EndPointAssessorOrganisationId))
                 .ReturnsAsync(certificateResponse);
 
             _validationResult = await Validator.ValidateAsync(_request);

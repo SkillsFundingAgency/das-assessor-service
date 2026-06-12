@@ -11,10 +11,7 @@ using SFA.DAS.AssessorService.Web.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Web.UnitTests.MockedObjects;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {

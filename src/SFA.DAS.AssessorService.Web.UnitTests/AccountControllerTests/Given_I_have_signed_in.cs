@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
                 _loginOrchestrator.Object, new Mock<ISessionService>().Object, _webConfigurationMock.Object, _contactsApiClientMock.Object,
-                _contextAccessor.Object, _validatorMock.Object, _organisationClientMock.Object);
+                _contextAccessor.Object, _validatorMock.Object, _organisationClientMock.Object, null, null);
         }
 
         [Test]

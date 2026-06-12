@@ -1,32 +1,34 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/ao")]
     [ValidateBadRequest]
-    public class RegisterQueryController : Controller
+    public class RegisterQueryController : BaseController
     {
         private readonly ILogger<RegisterQueryController> _logger;
         private readonly IMediator _mediator;
 
-        public RegisterQueryController(IMediator mediator, ILogger<RegisterQueryController> logger
-        )
+        public RegisterQueryController(IMediator mediator, IBackgroundTaskQueue taskQueue, ILogger<RegisterQueryController> logger)
+            : base(taskQueue, logger)
         {
             _mediator = mediator;
             _logger = logger;
@@ -134,15 +136,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("assessment-organisations/contacts/signInId/{signInId}", Name = "GetEpaContactBySignInId")]
+        [HttpGet("assessment-organisations/contacts/govUkIdentifier/{govUKIdentifier}", Name = "GetEpaContactByGovUkIdentifier")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaContactBySignInId(string signInId)
+        public async Task<IActionResult> GetEpaContactByGovUkIdentifier(string govUkIdentifier)
         {
-            _logger.LogInformation($@"Get EpaContact from SignInId [{signInId}]");
-            var result = await _mediator.Send(new GetEpaContactBySignInIdRequest { SignInId = signInId });
+            _logger.LogInformation($@"Get EpaContact from GovUkIdentifier [{govUkIdentifier}]");
+            var result = await _mediator.Send(new GetEpaContactByGovUkIdentifierRequest { GovUkIdentifier = govUkIdentifier });
             if (result == null) return BadRequest();
             return Ok(result);
         }
@@ -215,6 +217,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var results = await _mediator.Send(new SearchStandardsRequest { SearchTerm = searchstring });
 
             return Ok(results.Select(s => (StandardVersion)s).ToList());
+        }
+
+        [HttpGet("assessments")]
+        public async Task<IActionResult> GetAssessments([FromQuery] string standard, [FromQuery] long ukprn)
+        {
+            _logger.LogInformation("Get assessments for Ukprn {Ukprn} with IfATE reference number {Standard}", ukprn, standard ?? "not specified");
+
+            var result = await _mediator.Send(new GetAssessmentsRequest { Ukprn = ukprn, StandardReference = standard });
+
+            return Ok(result);
+        }
+
+        [HttpPost("assessments/update-assessments-summary", Name = "UpdateAssessmentsSummary")]
+        [SwaggerResponse((int)HttpStatusCode.Accepted, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public IActionResult UpdateStandardSummary()
+        {
+            var requestName = "update assessments summary";
+            return QueueBackgroundRequest(new UpdateAssessmentsSummaryRequest(), requestName, (response, duration, log) =>
+            {
+                log.LogInformation($"Completed request to {requestName} in {duration.ToReadableString()}");
+            });
         }
     }
 }

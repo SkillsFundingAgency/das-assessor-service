@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
@@ -45,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         }
 
         [HttpPost("/Financial/{Id}/Return")]
-        public async Task<ActionResult> ReturnReview(Guid Id, [FromBody] FinancialGrade updatedGrade)
+        public async Task<ActionResult> ReturnReview(Guid Id, [FromBody] Domain.Entities.FinancialGrade updatedGrade)
         {
             await _mediator.Send(new ReturnFinancialReviewRequest(Id, updatedGrade));
             return Ok();

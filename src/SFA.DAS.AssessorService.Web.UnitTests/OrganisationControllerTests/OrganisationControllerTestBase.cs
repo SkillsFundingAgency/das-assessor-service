@@ -1,36 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-
-using SFA.DAS.AssessorService.Web.Controllers;
-using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Azure;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
-using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Azure;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Controllers;
+using SFA.DAS.AssessorService.Web.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using OrganisationData = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationData;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
-    
+
     public class OrganisationControllerTestBase
     {
         protected OrganisationController sut;
         protected IActionResult _actionResult;
 
         protected Mock<IHttpContextAccessor> HttpContextAssessor;
-        protected Mock<ITokenService> TokenService;
         protected Mock<ISessionService> SessionService;
         protected Mock<IOrganisationsApiClient> OrganisationApiClient;
         protected Mock<IContactsApiClient> ContactsApiClient;
@@ -93,9 +89,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 
             Logger = new Mock<ILogger<OrganisationController>>();
             SessionService = new Mock<ISessionService>();
-            TokenService = new Mock<ITokenService>();
-            TokenService.Setup(s => s.GetToken()).Returns("jwt");
-
+            
             OrganisationApiClient = new Mock<IOrganisationsApiClient>();
             OrganisationApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 
@@ -120,7 +114,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             OrganisationApiClient.Setup(c => c.GetEpaOrganisation(EpaoId)).ReturnsAsync(EpaOrganisation);
 
             WebConfiguration = new Mock<IWebConfiguration>();
-            WebConfiguration.Setup(c => c.AzureApiAuthentication).Returns(new AzureApiAuthentication
+            WebConfiguration.Setup(c => c.AzureApiAuthentication).Returns(new AzureApiClientConfiguration
             {
                 ProductId = "1234567"
             });

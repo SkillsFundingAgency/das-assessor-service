@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.OppFinder
 {

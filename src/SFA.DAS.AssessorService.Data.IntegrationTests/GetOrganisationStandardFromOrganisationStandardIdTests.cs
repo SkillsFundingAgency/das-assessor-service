@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
@@ -34,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterQueryRepository(unitOfWork);
@@ -125,7 +122,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 TypicalDuration = 12,
                 TrailblazerContact = "Contact name",
                 StandardPageUrl = "www.standard.com",
-                OverviewOfRole = "Explanation of apprenticeship job role"
+                OverviewOfRole = "Explanation of apprenticeship job role",
+                VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
             };
 
             var standardModel2 = new StandardModel
@@ -139,7 +137,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 TypicalDuration = 12,
                 TrailblazerContact = "Contact name",
                 StandardPageUrl = "www.standard.com",
-                OverviewOfRole = "Explanation of apprenticeship job role"
+                OverviewOfRole = "Explanation of apprenticeship job role",
+                VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
             };
 
             OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1 });
@@ -161,16 +160,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             if (expectedCount > 0)
             {
-                Assert.IsNotNull(organisationStandardReturned, "Expected OrganisationStandardRecord but found none");
+                organisationStandardReturned.Should().NotBeNull("Expected OrganisationStandardRecord but found none");
 
                 if (expectedVersionCount > 0)
                 {
-                    Assert.AreEqual(expectedVersionCount, organisationStandardReturned.Versions.Count(), $@"Expected {expectedVersionCount} organisations back but got {organisationStandardReturned.Versions.Count()}");
+                    organisationStandardReturned.Versions.Count.Should().Be(expectedVersionCount,  $@"Expected {expectedVersionCount} organisations back but got {organisationStandardReturned.Versions.Count}");
                 }
             }
             else
             {
-                Assert.IsNull(organisationStandardReturned, "Did not expect OrganisationStandardRecord but found one");
+                organisationStandardReturned.Should().BeNull("Did not expect OrganisationStandardRecord but found one");
             }
 
 

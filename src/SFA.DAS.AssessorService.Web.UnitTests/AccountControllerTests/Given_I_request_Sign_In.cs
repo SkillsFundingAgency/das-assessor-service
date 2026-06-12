@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -40,9 +41,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 .Returns("callbackUrl")
                 .Verifiable();
 
+            var configuration = new Mock<IConfiguration>();
+            configuration.Setup(x => x["StubAuth"]).Returns("false");
+
             _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object,
                 new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object, _webConfigurstionMock.Object, _contactsApiClientMock.Object,
-                new Mock<IHttpContextAccessor>().Object, _validatorMock.Object, _organisationClientMock.Object);
+                new Mock<IHttpContextAccessor>().Object, _validatorMock.Object, _organisationClientMock.Object, null, configuration.Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }

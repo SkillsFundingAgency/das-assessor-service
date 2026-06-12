@@ -1,17 +1,17 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Query
 {
-    public class WhenGetLastBatchLogHandler
+    public class WhenGetLastBatchLogHandler : MapperBase
     {
         private Mock<IBatchLogQueryRepository> _batchLogQueryRepository;
         
@@ -21,12 +21,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Query
         [SetUp]
         public async Task Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             _batchLogQueryRepository = new Mock<IBatchLogQueryRepository>();
             _batchLogQueryRepository.Setup(r => r.GetLastBatchLog()).Returns(Task.FromResult(_batchLog));
 
-            var getBatchLogHandler = new GetLastBatchLogHandler(_batchLogQueryRepository.Object);
+            var getBatchLogHandler = new GetLastBatchLogHandler(_batchLogQueryRepository.Object, Mapper);
 
             _response = await getBatchLogHandler.Handle(new GetLastBatchLogRequest(), new CancellationToken());
         }

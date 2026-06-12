@@ -7,7 +7,7 @@ BEGIN
 	FROM
 	(
 		SELECT COUNT(ce1.Id) AS 'Count'
-		FROM Certificates ce1 
+		FROM StandardCertificates ce1 
 		JOIN Organisations org ON ce1.OrganisationId = org.Id
 		LEFT JOIN Learner learner1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 		WHERE ce1.LearnerFamilyName = @Search 
@@ -17,7 +17,7 @@ BEGIN
 		SELECT COUNT(learner1.Id) AS 'Count'
 		FROM Learner learner1
 		JOIN Standards sc ON learner1.StdCode = sc.LarsCode
-		LEFT JOIN Certificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
+		LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
 		WHERE 
 		ce1.Uln IS NULL AND
 		(learner1.FamilyName = @Search OR learner1.GivenNames = @Search  OR learner1.LearnerFullNameNoSpaces =  @SearchNoSpaces)  

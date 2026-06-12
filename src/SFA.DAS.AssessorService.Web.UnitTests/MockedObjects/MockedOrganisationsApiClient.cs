@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Settings;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -66,17 +65,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             mockHttp.When($"/api/ao/assessment-organisations/EPA00001/standards")
                 .Respond("application/json", JsonConvert.SerializeObject(standardOrganisartionSummaries));
 
-            var webConfigMock = new Mock<IWebConfiguration>();
-            var hostMock = new Mock<IHostingEnvironment>();
-            hostMock
-                .Setup(m => m.EnvironmentName)
-                .Returns(EnvironmentName.Development);
+            var assessorApiClientFactory = new Mock<IAssessorApiClientFactory>();
+            assessorApiClientFactory
+                .Setup(m => m.CreateHttpClient())
+                .Returns(clientlocal);
 
-            var mockTokenService = new Mock<TokenService>(webConfigMock.Object, hostMock.Object, false);
-
-            var apiBaseLogger = new Mock<ILogger<ApiClientBase>>();
-
-            var apiClient = new OrganisationsApiClient(clientlocal, mockTokenService.Object, apiBaseLogger.Object);
+            var apiClient = new OrganisationsApiClient(assessorApiClientFactory.Object, Mock.Of<ILogger<OrganisationsApiClient>>());
 
             return apiClient;
         }

@@ -1,18 +1,18 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 {
@@ -38,6 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
         private async Task<Certificate> UpdateCertificate(UpdateBatchCertificateRequest request)
         {
+            var standard = await _standardService.GetStandardVersionById(request.StandardUId);
+
             _logger.LogInformation("CreateNewCertificate Before Get StandardOptions from API");
             var options = await _standardService.GetStandardOptionsByStandardId(request.StandardUId);
 
@@ -46,13 +48,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
 
             if (options != null && certificate != null)
             {
-                var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData, options);
+                var coronationEmblem = await _standardService.GetCoronationEmblemForStandardReferenceAndVersion(request.StandardReference, request.CertificateData.Version);
+
+                var certificateData = CombineCertificateData(certificate.CertificateData, 
+                    request.CertificateData, coronationEmblem, standard, options);
 
                 _logger.LogInformation("UpdateCertificate Before Update CertificateData");
 
                 // need to update EPA Reference too
-                certData.EpaDetails.EpaReference = certificate.CertificateReference;
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                certificateData.EpaDetails.EpaReference = certificate.CertificateReference;
+                certificate.CertificateData = certificateData;
                 certificate.StandardUId = request.StandardUId;
 
                 // adjust Status appropriately
@@ -62,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 }
 
                 _logger.LogInformation("UpdateCertificate Before Update Cert in db");
-                await _certificateRepository.Update(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Amend);
+                await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Amend);
 
                 return await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
             }
@@ -73,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             }
         }
 
-        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData, StandardOptions options)
+        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData, bool coronationEmblem, Standard standard, StandardOptions options)
         {
             var epaDetails = certData.EpaDetails ?? new EpaDetails();
             if (epaDetails.Epas is null) epaDetails.Epas = new List<EpaRecord>();
@@ -100,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 LearnerFamilyName = certData.LearnerFamilyName,
                 LearningStartDate = certData.LearningStartDate,
                 StandardReference = certData.StandardReference,
-                StandardName = certData.StandardName,
+                StandardName = standard.Title,
                 StandardLevel = certData.StandardLevel,
                 StandardPublicationDate = certData.StandardPublicationDate,
                 FullName = certData.FullName,
@@ -118,6 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
                 AchievementDate = requestData.AchievementDate,
                 CourseOption = CertificateHelpers.NormalizeCourseOption(options, requestData.CourseOption),
                 Version = requestData.Version,
+                CoronationEmblem = coronationEmblem,
                 OverallGrade = CertificateHelpers.NormalizeOverallGrade(requestData.OverallGrade),
 
                 EpaDetails = epaDetails

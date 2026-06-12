@@ -47,9 +47,6 @@
         "internalApiSandboxAppServiceCertificateName": {
             "type": "string"
         },
-        "sandboxSqlDbConnectionString": {
-            "type": "string"
-        },
         "sharedEnvResourceGroup": {
             "type": "string"
         },
@@ -96,6 +93,19 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
         }
     },
     "variables": {
@@ -106,13 +116,16 @@
         "externalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acextapi-sbox-as')]",
         "internalApiActiveSandboxAppServiceName": "[concat(variables('resourceNamePrefix'), 'acintapi-sbox-as')]",
         "instanceName": "[if(equals(toUpper(parameters('environmentName')),'PROD'),'',parameters('environmentName'))]",
-        "sandboxDatabaseName": "[concat(variables('resourceNamePrefix'), '-sbox-db')]"
-
+        "sandboxDatabaseName": "[concat(variables('resourceNamePrefix'), '-sbox-db')]",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
+        },
+        "emptyObject": {}
     },
     "resources": [
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('activeSandboxAppServicePlanName'), '-app-service-plan-', parameters('utcValue'))]",
+            "name": "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
@@ -161,6 +174,9 @@
                     },
                     "delegations": {
                         "value": "[parameters('subnetDelegations')]"
+                    },
+                    "routeTable": {
+                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
                     }
                 }
             }
@@ -188,7 +204,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
@@ -213,7 +229,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))]",
+            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0)]",
@@ -266,7 +282,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -302,7 +318,7 @@
                         "value": "[parameters('externalActiveApiSandboxCustomHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -310,7 +326,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-service-plan-', parameters('utcValue'))]"
+                "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]"
             ]
         },
         {
@@ -343,7 +359,7 @@
                             "array": [
                                 {
                                     "name": "ApplicationInsights:InstrumentationKey",
-                                    "value": "[reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "value": "[reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -375,11 +391,6 @@
                                     "name": "Redis",
                                     "connectionString": "[parameters('loggingRedisConnectionString')]",
                                     "type": "Custom"
-                                },
-                                {
-                                    "name": "SandboxSqlDbConnectionString",
-                                    "connectionString": "[parameters('sandboxSqlDbConnectionString')]",
-                                    "type": "Custom"
                                 }
                             ]
                         }
@@ -388,7 +399,7 @@
                         "value": "[parameters('internalApiSandboxCustomHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('internalApiSandboxAppServiceCertificateName')), 0), reference(concat(variables('internalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
@@ -398,7 +409,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
@@ -420,7 +431,7 @@
         },
         {
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-application-insights-', parameters('utcValue'))]",
+            "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[parameters('deploySandbox')]",
@@ -496,6 +507,6 @@
         "SandboxDatabaseName": {
             "type": "string",
             "value": "[variables('sandboxDatabaseName')]"
-        }        
+        }
     }
 }

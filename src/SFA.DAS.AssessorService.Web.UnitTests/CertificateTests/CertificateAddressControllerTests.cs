@@ -48,26 +48,26 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateAddressTests
             var certificateWithoutPreviousAddress = new Certificate
             {
                 Id = CertificateIdWithoutPreviousAddress,
-                CertificateData = JsonConvert.SerializeObject(new CertificateData
+                CertificateData = new CertificateData
                 {
                     EmployerAccountId = 10
-                })
+                }
             };
 
             var certificateWithPreviousAddress = new Certificate
             {
                 Id = CertificateIdWithPreviousAddress,
-                CertificateData = JsonConvert.SerializeObject(new CertificateData
+                CertificateData = new CertificateData
                 {
                     EmployerAccountId = 11
-                })
+                }
             };
 
             _mockCertificateApiClient.Setup(s => s.GetCertificate(CertificateIdWithPreviousAddress, false)).ReturnsAsync(certificateWithPreviousAddress);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(CertificateIdWithoutPreviousAddress, false)).ReturnsAsync(certificateWithoutPreviousAddress);
 
-            _mockCertificateApiClient.Setup(s => s.GetContactPreviousAddress(EpaoId, 10.ToString())).ReturnsAsync((CertificateAddress)null);
-            _mockCertificateApiClient.Setup(s => s.GetContactPreviousAddress(EpaoId, 11.ToString())).ReturnsAsync(
+            _mockCertificateApiClient.Setup(s => s.GetContactPreviousAddress(EpaoId, 10)).ReturnsAsync((CertificateAddress)null);
+            _mockCertificateApiClient.Setup(s => s.GetContactPreviousAddress(EpaoId, 11)).ReturnsAsync(
                 new CertificateAddress
                 {
                     ContactOrganisation = "Previous Organisation Name"

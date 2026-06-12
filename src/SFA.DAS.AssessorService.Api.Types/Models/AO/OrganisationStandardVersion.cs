@@ -1,4 +1,3 @@
-using SFA.DAS.AssessorService.Domain.Extensions;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO

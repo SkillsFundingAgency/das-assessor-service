@@ -41,7 +41,7 @@
                     <h1 class="govuk-heading-xl">
                         Search for your organisation
                     </h1>
-                    <label class="govuk-label">
+                    <label for="search-string" class="govuk-label">
                         <p class="govuk-body">Search using either the:</p>
                         <ul class="govuk-list govuk-list--bullet">
                             <li>organisation name</li>
@@ -60,7 +60,7 @@
                             </span>
                         }
                     </label>
-                    <input class="govuk-input govuk-!-width-two-thirds" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-input--error" asp-for="SearchString" minlength="2" />
+                    <input id="search-string" class="govuk-input govuk-!-width-two-thirds" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-input--error" asp-for="SearchString" minlength="2" />
 
                 </div>
                 <button type="submit" class="govuk-button">Search</button>

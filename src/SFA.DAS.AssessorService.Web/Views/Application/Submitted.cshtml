@@ -29,7 +29,13 @@
 
                         @if (Model.IsOrganisationWithdrawalApplication)
                         {
-                            <p class="govuk-panel__body"> You have requested to withdraw from the register of end-point assessment organisations.</p>
+                            <p class="govuk-panel__body">You've requested to withdraw from all standards.</p>
+                        }
+                        else if(Model.IsStandardWithdrawalApplication)
+                        {
+                            <p class="govuk-panel__body">
+                                You have requested to withdraw from assessing @Model.StandardName (@Model.StandardReference).
+                            </p>
                         }
 
                         <div class="govuk-panel__body">
@@ -41,7 +47,7 @@
                     </div>
 
                     <p class="govuk-body">
-                        We have sent you a confirmation email.
+                        We've sent you a confirmation email.
                     </p>
 
                     <h2 class="govuk-heading-m govuk-!-margin-top-6">
@@ -57,10 +63,6 @@
 
                         <p class="govuk-body">
                             You must not agree to assess any new learners while we review your withdrawal.
-                        </p>
-
-                        <p class="govuk-body">
-                            Once you withdraw, your organisation cannot reapply to join the register for at least 12 months.
                         </p>
                     }
 

@@ -11,7 +11,7 @@ BEGIN
 		-- 
 		UNION ALL
 		-- add in the created certificates (by epaOrgId)
-		SELECT COUNT(*) Assessments, 0 Pipeline, 0 Standards FROM Certificates ce2
+		SELECT COUNT(*) Assessments, 0 Pipeline, 0 Standards FROM StandardCertificates ce2
 		JOIN Organisations os2 ON ce2.OrganisationId = os2.Id AND EndPointAssessorOrganisationId = @epaOrgId
 		WHERE ce2.[Status] NOT IN ('Deleted','Draft')
 		--

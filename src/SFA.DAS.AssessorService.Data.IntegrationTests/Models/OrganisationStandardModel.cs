@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
     public class OrganisationStandardModel: TestModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
         public int StandardCode { get; set; }
         public DateTime? EffectiveFrom { get; set; }
@@ -12,5 +12,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public DateTime? DateStandardApprovedOnRegister { get; set; }
         public string Comments { get; set; }
         public string Status { get; set; }
+        public Guid? ContactId { get; set; }
+        public string StandardReference { get; set; }
     }
 }

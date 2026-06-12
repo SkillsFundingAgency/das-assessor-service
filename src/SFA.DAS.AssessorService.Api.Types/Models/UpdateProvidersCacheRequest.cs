@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         RefreshExistingProviders = 2
     }
 
-    public class UpdateProvidersCacheRequest : IRequest
+    public class UpdateProvidersCacheRequest : IRequest<Unit>
     {
         public ProvidersCacheUpdateType UpdateType { get; set; }
     }

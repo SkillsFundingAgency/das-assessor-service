@@ -1,13 +1,13 @@
-﻿using FluentAssertions;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Learner;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Settings;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.GetPipelinesCountHandlerTests
 {
@@ -15,14 +15,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.LearnerDetails.
     public class When_called
     {
         private GetPipelinesCountHandler _sut;
-        private Mock<IWebConfiguration> _mockConfig;
+        private Mock<IApiConfiguration> _mockConfig;
         private Mock<ILearnerRepository> _mockLearnerRepository;
         private Mock<ILogger<GetPipelinesCountHandler>> _mockLogger;
 
         [SetUp]
         public void Arrange()
         {
-            _mockConfig = new Mock<IWebConfiguration>();
+            _mockConfig = new Mock<IApiConfiguration>();
             _mockLearnerRepository = new Mock<ILearnerRepository>();
             _mockLogger = new Mock<ILogger<GetPipelinesCountHandler>>();
             

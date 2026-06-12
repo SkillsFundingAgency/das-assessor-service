@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
         public const string NoCertificate = "NoCertificate";
         public const string Deleted = "Deleted";
         public const string Reprint = "Reprint";
+        public const string PrintRequested = "PrintRequested";
         public const string Error = "Error";
 
         public static string[] PrintProcessStatus = new[] { SentToPrinter, Printed, Delivered, NotDelivered, Reprint };
@@ -60,7 +61,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
                     return "Sent to printer";
 
                 case NotDelivered:
-                    return "Not delivered";
+                    return "Delivery attempted";
 
                 case Reprint:
                     return "Reprint requested";
@@ -87,7 +88,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
                     return "Date sent to printer";
 
                 case NotDelivered:
-                    return "Date not delivered";
+                    return "Date delivery attempted";
 
                 case Reprint:
                     return "Date reprint requested";

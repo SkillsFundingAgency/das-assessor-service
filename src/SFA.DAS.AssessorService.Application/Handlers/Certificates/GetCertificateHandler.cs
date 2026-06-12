@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
+namespace SFA.DAS.AssessorService.Handlers.Certificates
 {
     public class GetCertificateHandler : IRequestHandler<GetCertificateRequest, Certificate>
     {
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<Certificate> Handle(GetCertificateRequest request, CancellationToken cancellationToken)
         {
-            return await _certificateRepository.GetCertificate(request.CertificateId, request.IncludeLogs);
+            return await _certificateRepository.GetCertificate<Certificate>(request.CertificateId, request.IncludeLogs);
         }
     }
 }

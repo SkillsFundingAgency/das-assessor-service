@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Learners;
 using SFA.DAS.AssessorService.Application.Api.Client;
@@ -6,7 +7,6 @@ using SFA.DAS.AssessorService.Application.Api.External.Models.Internal;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using GetBatchLearnerRequest = SFA.DAS.AssessorService.Application.Api.External.Models.Internal.GetBatchLearnerRequest;
 
@@ -15,7 +15,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
     public sealed class SandboxApiClient : ApiClient
     {
         private readonly ILogger<SandboxApiClient> _logger;
-        public SandboxApiClient(HttpClient client, ILogger<SandboxApiClient> logger, ITokenService tokenService) : base(client, logger, tokenService)
+        
+        public SandboxApiClient(IAssessorApiClientFactory clientFactory, ILogger<SandboxApiClient> logger, IMapper mapper)
+            : base(clientFactory, logger, mapper)
         {
             _logger = logger;
         }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -26,16 +25,17 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         protected Guid PrivilegeId2;
         protected Guid PrivilegeId1;
         protected Guid PrivilegeId3;
+        protected IMapper _mapper;
 
         [SetUp]
         public void SetUp()
         {
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
+            var config = new MapperConfiguration(opts =>
             {
-                cfg.CreateMap<ContactResponse, UserViewModel>();
+                opts.CreateMap<ContactResponse, UserViewModel>();
             });
-            
+            _mapper = config.CreateMapper();
+           
             UserId = Guid.NewGuid();
             CallingUserId = Guid.NewGuid();
             var requestedContactOrganisationId = Guid.NewGuid();
@@ -89,13 +89,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
 
             httpContextAccessor.Setup(a => a.HttpContext).Returns(context);
             
-            Controller = new UserDetailsController(ContactsApiClient.Object, httpContextAccessor.Object, new Mock<IOrganisationsApiClient>().Object);
+            Controller = new UserDetailsController(ContactsApiClient.Object, httpContextAccessor.Object, _mapper, new Mock<IOrganisationsApiClient>().Object);
         }
         
         [TearDown]
         public void TearDown()
         {
-            Mapper.Reset();
         }
     }
 }

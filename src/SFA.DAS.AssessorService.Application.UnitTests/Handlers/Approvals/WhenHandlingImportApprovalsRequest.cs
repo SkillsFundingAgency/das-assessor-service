@@ -1,19 +1,20 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Approvals;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
 {
     [TestFixture]
-    public class WhenHandlingImportApprovalsRequest
+    public class WhenHandlingImportApprovalsRequest : MapperBase
     {
         private Mock<ILogger<ImportApprovalsHandler>> _loggerMock;
         private Mock<IApprovalsExtractRepository> _approvalsExtractRepoMock;
@@ -29,23 +30,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportApprovals
             _settingRepositoryMock = new Mock<ISettingRepository>();
             _outerApiServiceMock = new Mock<IOuterApiService>();
             _outerApiServiceMock.Setup(m => m.GetAllLearners(It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>()))
-                                .ReturnsAsync(new Application.Infrastructure.OuterApi.GetAllLearnersResponse()
+                                .ReturnsAsync(new GetAllLearnersResponse()
                                 {
                                     BatchNumber = 1,
                                     BatchSize = 1,
                                     TotalNumberOfBatches = 1,
-                                    Learners = new System.Collections.Generic.List<Application.Infrastructure.OuterApi.Learner>()
+                                    Learners = new List<AssessorService.Infrastructure.ApiClients.OuterApi.Learner>()
                                     {
-                                        new Application.Infrastructure.OuterApi.Learner() { ApprenticeshipId = 1, FirstName = "Test", LastName = "Test1" }
+                                        new AssessorService.Infrastructure.ApiClients.OuterApi.Learner() { ApprenticeshipId = 1, FirstName = "Test", LastName = "Test1" }
                                     }
                                 });
-            Mapper.Reset();
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<List<Application.Infrastructure.OuterApi.Learner>, List<Domain.Entities.ApprovalsExtract>>();
-            });
 
-            _sut = new ImportApprovalsHandler(_loggerMock.Object, _approvalsExtractRepoMock.Object, _settingRepositoryMock.Object, _outerApiServiceMock.Object);
+            _sut = new ImportApprovalsHandler(_loggerMock.Object, _approvalsExtractRepoMock.Object, _settingRepositoryMock.Object, _outerApiServiceMock.Object, Mapper);
         }
 
         [Test]

@@ -1,18 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class LoginApiClient : ApiClientBase, ILoginApiClient
     {
-        public LoginApiClient(string baseUri,ITokenService tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
-        {
-        }
-
-        public LoginApiClient(HttpClient httpClient,ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public LoginApiClient(IAssessorApiClientFactory clientFactory, ILogger<LoginApiClient> logger) 
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
@@ -20,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/login"))
             {
-                return await PostPutRequestWithResponse<LoginRequest, LoginResponse>(request, searchQuery);
+                return await PostPutRequestWithResponseAsync<LoginRequest, LoginResponse>(request, searchQuery);
             }
         }
     }

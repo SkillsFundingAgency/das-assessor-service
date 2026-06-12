@@ -85,9 +85,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var isOrgStandardPresentAfterInsert = _validationRepository.EpaOrganisationStandardExists(_organisationIdCreated, _standardCode).Result;
             var returnedOrganisationStandardByIds = OrganisationStandardHandler.GetOrganisationStandardByOrgIdStandardCode(_organisationIdCreated, _standardCode);
 
-            Assert.IsFalse(isOrgStandardPresentBeforeInsert);
-            Assert.IsTrue(isOrgStandardPresentAfterInsert);
-            Assert.AreEqual(returnedOrganisationStandardId, returnedOrganisationStandardByIds.Id.ToString());
+            isOrgStandardPresentBeforeInsert.Should().BeFalse();
+            valid.Should().BeTrue();
+            returnedOrganisationStandardByIds.Id.ToString().Should().Be(returnedOrganisationStandardId);
         }
 
         [OneTimeTearDown]

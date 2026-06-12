@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
         public Learner Learner { get; set; }
         public LearningDetails LearningDetails { get; set; }
         public PostalContact PostalContact { get; set; }
+        public bool CoronationEmblem { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()

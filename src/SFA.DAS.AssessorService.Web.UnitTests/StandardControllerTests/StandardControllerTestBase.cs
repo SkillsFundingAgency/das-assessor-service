@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers.Apply;
 using System;
@@ -22,10 +24,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
         protected Mock<IOrganisationsApiClient> _mockOrgApiClient;
         protected Mock<IQnaApiClient> _mockQnaApiClient;
         protected Mock<IContactsApiClient> _mockContactsApiClient;
-        protected Mock<IStandardVersionClient> _mockStandardVersionApiClient;
+        protected Mock<IStandardVersionApiClient> _mockStandardVersionApiClient;
         protected Mock<IHttpContextAccessor> _mockHttpContextAccessor;
-        protected Mock<IApplicationService> _mockApplicationService;
         protected Mock<IWebConfiguration> _mockConfig;
+
+        protected string GovUkIdentifier = "urn:fdc:gov.uk:2022:2zQE1QeShp-Dmy1sNvzXnVyW9FrOcH5H91YmhEu7szo";
+        protected Guid UserId = Guid.NewGuid();
+        protected string EpaOrgId = "EPA0001";
 
         [SetUp]
         public void Arrange()
@@ -34,41 +39,31 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
             _mockOrgApiClient = new Mock<IOrganisationsApiClient>();
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _mockContactsApiClient = new Mock<IContactsApiClient>();
-            _mockStandardVersionApiClient = new Mock<IStandardVersionClient>();
+            _mockStandardVersionApiClient = new Mock<IStandardVersionApiClient>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockApplicationService = new Mock<IApplicationService>();
             _mockConfig = new Mock<IWebConfiguration>();
 
-        _mockHttpContextAccessor
+            _mockHttpContextAccessor
                 .Setup(r => r.HttpContext)
-                .Returns(SetupHttpContextSubAuthorityClaim());
+                .Returns(SetupHttpContextSubAuthorityClaim(GovUkIdentifier, EpaOrgId));
 
             _mockApiClient
-             .Setup(r => r.GetApplication(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationResponse()
-             {
-                 ApplicationStatus = ApplicationStatus.InProgress,
-                 ApplyData = new ApplyData()
-                 {
-                     Sequences = new List<ApplySequence>()
-                     {
-                         new ApplySequence()
-                         {
-                             IsActive = true,
-                             SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,
-                             Status = ApplicationSequenceStatus.Draft
-                         }
+                .Setup(r => r.GetApplication(It.IsAny<Guid>()))
+                .ReturnsAsync(new ApplicationResponse()
+                {
+                    ApplicationStatus = ApplicationStatus.InProgress,
+                    ApplyData = new Domain.Entities.ApplyData()
+                    {
+                        Sequences = new List<Domain.Entities.ApplySequence>()
+                        {
+                            new Domain.Entities.ApplySequence()
+                            {
+                                IsActive = true,
+                                SequenceNo = ApplyConst.STANDARD_SEQUENCE_NO,
+                                Status = ApplicationSequenceStatus.Draft
+                            }
+                        }
                     }
-                 }
-             });
-
-            _mockApiClient
-                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<ApplicationResponse>()
-                { 
-                    new ApplicationResponse { StandardCode = 59, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
-                    new ApplicationResponse { StandardCode = 131, StandardApplicationType = StandardApplicationTypes.StandardWithdrawal },
-                    new ApplicationResponse { StandardCode = 354, StandardApplicationType = StandardApplicationTypes.VersionWithdrawal },
                 });
 
             _mockApiClient
@@ -76,51 +71,56 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.StandardControllerTests
                 .ReturnsAsync(new List<ApplicationResponse>());
 
             _mockQnaApiClient
-             .Setup(r => r.GetApplicationData(It.IsAny<Guid>()))
-             .ReturnsAsync(new ApplicationData()
-             {
-                 OrganisationReferenceId = "12345"
-             });
+                .Setup(r => r.GetApplicationData<ApplicationData>(It.IsAny<Guid>()))
+                .ReturnsAsync(new ApplicationData()
+                {
+                    OrganisationReferenceId = "12345"
+                });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
+                .Setup(r => r.GetEpaOrganisationById(It.IsAny<String>()))
+                .ReturnsAsync(new EpaOrganisation()
+                {
+                    OrganisationId = "12345"
+                });
 
             _mockOrgApiClient
-             .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
-             .ReturnsAsync(new EpaOrganisation()
-             {
-                 OrganisationId = "12345"
-             });
+                .Setup(r => r.GetEpaOrganisation(It.IsAny<String>()))
+                .ReturnsAsync(new EpaOrganisation()
+                {
+                    OrganisationId = "12345"
+                });
+
+            _mockContactsApiClient
+                .Setup(r => r.GetContactByGovIdentifier(GovUkIdentifier))
+                .ReturnsAsync(new ContactResponse { Id = UserId, GovUkIdentifier =  GovUkIdentifier});
 
             _mockOrgApiClient
-            .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
-            .ReturnsAsync(new List<OrganisationStandardSummary>());
+                .Setup(r => r.GetOrganisationStandardsByOrganisation(It.IsAny<String>()))
+                .ReturnsAsync(new List<OrganisationStandardSummary>());
 
-            _mockApiClient
-                .Setup(r => r.GetAllWithdrawnApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<int?>()))
-                .ReturnsAsync(new List<ApplicationResponse>());
+            _mockContactsApiClient
+                .Setup(r => r.GetContactByEmail(GovUkIdentifier))
+                .ReturnsAsync(new ContactResponse { Id = UserId, GovUkIdentifier = GovUkIdentifier });
 
-            _mockApiClient
-                .Setup(r => r.GetPreviousApplicationsForStandard(It.IsAny<Guid>(), It.IsAny<string>()))
-                .ReturnsAsync(new List<ApplicationResponse>());
+            _mockConfig
+                .Setup(r => r.FeedbackUrl)
+                .Returns("http://feedback-url.com");
 
             _sut = new StandardController(_mockApiClient.Object, _mockOrgApiClient.Object, _mockQnaApiClient.Object,
-               _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockApplicationService.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)
+                _mockContactsApiClient.Object, _mockStandardVersionApiClient.Object, _mockHttpContextAccessor.Object, _mockConfig.Object)
             {
                 TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
             };
         }
 
 
-        private HttpContext SetupHttpContextSubAuthorityClaim()
+        private static HttpContext SetupHttpContextSubAuthorityClaim(string govUkIdentifier, string epaOrgId)
         {
             var fakeClaims = new List<Claim>()
             {
-                new Claim("sub", "")
+                new Claim(ClaimTypes.NameIdentifier, govUkIdentifier),
+                new Claim("http://schemas.portal.com/epaoid", epaOrgId)
             };
 
             var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");

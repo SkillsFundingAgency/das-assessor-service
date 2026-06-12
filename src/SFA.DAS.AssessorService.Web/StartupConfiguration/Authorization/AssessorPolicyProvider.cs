@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
@@ -32,11 +32,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 return Task.FromResult(policy.Build());
             }
             
-            
             return FallbackPolicyProvider.GetPolicyAsync(policyName);
         }
 
         public Task<AuthorizationPolicy> GetDefaultPolicyAsync()=> 
             Task.FromResult(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
+        public Task<AuthorizationPolicy> GetFallbackPolicyAsync()
+        {
+            return FallbackPolicyProvider.GetFallbackPolicyAsync();
+        }
     }
 }

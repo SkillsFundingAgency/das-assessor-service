@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Controllers.OppFinder;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.OppFinder;
@@ -73,16 +73,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OppFinderControllerTests
 
             // Assert
             var vm = results.Model as OppFinderApprovedDetailsViewModel;
-            vm.StandardCode.Should().Equals(999);
-            vm.StandardReference.Should().Equals("ST0001");
+            using (new AssertionScope())
+            {
+                vm.StandardCode.Should().Be(999);
+                vm.StandardReference.Should().Be("ST0001");
+            }
 
-            vm.RegionResults.Count.Should().Equals(2);
-            vm.RegionResults[0].Region.Should().Equals("REGION1");
-            vm.RegionResults[1].Region.Should().Equals("REGION2");
+            vm.RegionResults.Count.Should().Be(2);
+            using (new AssertionScope())
+            {
+                vm.RegionResults[0].Region.Should().Be("REGION1");
+                vm.RegionResults[1].Region.Should().Be("REGION2");
+            }
 
-            vm.VersionResults.Count.Should().Equals(2);
-            vm.VersionResults[0].Version.Should().Equals("1.0");
-            vm.VersionResults[1].Version.Should().Equals("1.1");
+            vm.VersionResults.Count.Should().Be(2);
+            using (new AssertionScope())
+            {
+                vm.VersionResults[0].Version.Should().Be("1.0");
+                vm.VersionResults[1].Version.Should().Be("1.1");
+            }
         }
     }
 }

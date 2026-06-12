@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Helpers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -27,24 +28,31 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 {
     [Authorize]
-    public class ApplicationController : AssessorController
+    public class ApplicationController : BaseController
     {
         private readonly IApiValidationService _apiValidationService;
         private readonly IApplicationService _applicationService;
         private readonly IOrganisationsApiClient _orgApiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IRegisterApiClient _registerApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebConfiguration _config;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient, IWebConfiguration config,
-            IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
+        #region Routes
+        public const string StandardApplicationsRouteGet = nameof(StandardApplicationsRouteGet);
+        public const string SequenceRouteGet = nameof(SequenceRouteGet);
+        #endregion
+
+        public ApplicationController(IApiValidationService apiValidationService, IApplicationService applicationService, IOrganisationsApiClient orgApiClient, IQnaApiClient qnaApiClient,
+            IRegisterApiClient registerApiClient, IWebConfiguration config, IApplicationApiClient applicationApiClient, IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, ILogger<ApplicationController> logger)
             : base(applicationApiClient, contactsApiClient, httpContextAccessor)
         {
             _apiValidationService = apiValidationService;
             _applicationService = applicationService;
             _orgApiClient = orgApiClient;
             _qnaApiClient = qnaApiClient;
+            _registerApiClient = registerApiClient;
             _contextAccessor = httpContextAccessor;
             _config = config;
             _logger = logger;
@@ -53,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpGet("/Application")]
         public async Task<IActionResult> Applications()
         {
-            _logger.LogInformation($"Got LoggedInUser from Session: { User.Identity.Name}");
+            _logger.LogInformation($"Got LoggedInUser from Session: {_contextAccessor.HttpContext.User.Identity.Name}");
 
             var userId = await GetUserId();
             var org = await _orgApiClient.GetOrganisationByUserId(userId);
@@ -105,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         }
 
         [PrivilegeAuthorize(Privileges.ApplyForStandard)]
-        [HttpGet("/Application/StandardApplications")]
+        [HttpGet("/Application/StandardApplications", Name = StandardApplicationsRouteGet)]
         public async Task<IActionResult> StandardApplications()
         {
             var userId = await GetUserId();
@@ -130,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         [HttpPost("/Application")]
         public async Task<IActionResult> StartApplication()
         {
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var org = await _orgApiClient.GetOrganisationByUserId(contact.Id);
 
             var existingApplications = (await _applicationApiClient.GetStandardApplications(contact.Id))?
@@ -150,7 +158,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return RedirectToAction("SequenceSignPost", new { Id = id });
         }
 
-        
+
         [HttpGet("/Application/Finance", Name = "StartOrResumeApplication")]  // Need to differentiate ourselves from the other Get
         public async Task<IActionResult> StartOrResumeApplication()
         {
@@ -198,28 +206,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
+            else if (IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_SEQUENCE_NO))
             {
                 if (string.IsNullOrWhiteSpace(standardName))
                 {
-                    var org = await _orgApiClient.GetOrganisationByUserId(userId);
-                    if (org.RoEPAOApproved)
-                    {
-                        return RedirectToAction("Index", "Standard", new { Id });
-                    }
-
-                    return View("~/Views/Application/Stage2Intro.cshtml", application.Id);
+                    return RedirectToRoute(StandardController.ApplyStandardSearchRouteGet, new { Id });
                 }
-                else if (!string.IsNullOrWhiteSpace(standardName))
-                {
-                    return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
-                }
+                
+                return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
+            else if (IsSequenceActive(application.ApplyData, ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO });
             }
-            else if(IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+            else if (IsSequenceActive(application.ApplyData, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
             {
                 return RedirectToAction("Sequence", new { Id, sequenceNo = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO });
             }
@@ -227,7 +227,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}")]
+        [HttpGet("/Application/{Id}/Sequence/{sequenceNo}", Name = SequenceRouteGet)]
         [ApplicationAuthorize(routeId: "Id")]
         public async Task<IActionResult> Sequence(Guid Id, int sequenceNo)
         {
@@ -297,7 +297,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 return View(new ApplicationCancelledViewModel { Id = id, StandardWithReference = standardWithReference });
             }
-            
+
             return RedirectToAction(nameof(SequenceSignPost), new { Id = id });
         }
 
@@ -311,9 +311,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (GetAllowCancelApplication(application))
                 {
-                    return View(new ConfirmCancelApplicationViewModel 
-                    { 
-                        Id = application.Id, 
+                    return View(new ConfirmCancelApplicationViewModel
+                    {
+                        Id = application.Id,
                         StandardWithReference =
                         application.ApplyData.Apply.StandardWithReference,
                         BackAction = application.ApplicationStatus == ApplicationStatus.FeedbackAdded
@@ -354,13 +354,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                     else if (viewModel.AreYouSure == "No")
                     {
-                        switch(application.ApplicationStatus)
+                        switch (application.ApplicationStatus)
                         {
                             case ApplicationStatus.FeedbackAdded:
-                                return RedirectToAction(nameof(Feedback), 
+                                return RedirectToAction(nameof(Feedback),
                                     new { viewModel.Id });
                             default:
-                                return RedirectToAction(nameof(SequenceSignPost), 
+                                return RedirectToAction(nameof(SequenceSignPost),
                                     new { viewModel.Id });
                         }
                     }
@@ -451,15 +451,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 {
                     if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                         return RedirectToAction("Applications");
-                    throw ex;
+                    throw;
                 }
             }
 
             var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
             ReplaceApplicationDataPropertyPlaceholdersInQuestions(viewModel.Questions, applicationData);
-
-            // the standard name preamble answer is currently stored in the application, instead of the application data
-            ProcessPageVmQuestionsForStandardName(viewModel.Questions, application);
 
             if (viewModel.AllowMultipleAnswers)
             {
@@ -508,7 +505,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                         var nextAction = pageAddResponse.Page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
-                        if (!string.IsNullOrEmpty(nextAction.Action))
+                        if (!string.IsNullOrEmpty(nextAction?.Action))
                             return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction);
                     }
                     else if (page.PageOfAnswers?.Count > 0 && formAction != "Add")
@@ -523,21 +520,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                             }
                             return RedirectToAction("Feedback", new { Id });
                         }
-                        else if (pageAddResponse.ValidationErrors?.Count == 0 || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$")))
+                        else if ((pageAddResponse != null && pageAddResponse.ValidationErrors?.Count == 0) || answers.All(x => x.Value == string.Empty || Regex.IsMatch(x.Value, "^[,]+$")))
                         {
                             var nextAction = page.Next.SingleOrDefault(x => x.Action == "NextPage");
 
-                            if (!string.IsNullOrEmpty(nextAction.Action))
+                            if (!string.IsNullOrEmpty(nextAction?.Action))
                             {
                                 if (__redirectAction == "Feedback")
                                 {
-                                    foreach (var answer in answers)
+                                    var answer = answers.FirstOrDefault();
+
+                                    if (answer != null && page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                                     {
-                                        if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
-                                        {
-                                            return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction, "Hide");
-                                        }
-                                        break;
+                                        return RedirectToNextAction(Id, sequenceNo, sectionNo, nextAction.Action, nextAction.ReturnId, __redirectAction, "Hide");
                                     }
 
                                     return RedirectToAction("Feedback", new { Id });
@@ -564,7 +559,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             {
                 if (ex.Message.Equals("Could not find the page", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Applications");
-                throw ex;
+                throw;
             }
         }
 
@@ -619,7 +614,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         }
                         else if (FileValidator.AllRequiredFilesArePresent(page, errorMessages, ModelState))
                         {
-                            return ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
+                            return await ForwardToNextSectionOrPage(page, Id, sequenceNo, sectionNo, __redirectAction);
                         }
                     }
                     else
@@ -650,19 +645,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                     if (__redirectAction == "Feedback")
                     {
-                        foreach (var answer in answers)
+                        var answer = answers.FirstOrDefault();
+                        if (answer != null && page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
                         {
-                            if (page.Next.Exists(y => y.Conditions.Exists(x => x.QuestionId == answer.QuestionId || x.QuestionTag == answer.QuestionId)))
-                            {
-                                return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction, "Hide");
-                            }
-                            break;
+                            return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction, "Hide");
                         }
 
                         return RedirectToAction("Feedback", new { Id });
                     }
 
-                    if (!string.IsNullOrEmpty(updatePageResult.NextAction))
+                    if (!string.IsNullOrEmpty(updatePageResult?.NextAction))
                         return RedirectToNextAction(Id, sequenceNo, sectionNo, updatePageResult.NextAction, updatePageResult.NextActionId, __redirectAction);
                 }
 
@@ -682,7 +674,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
                 _logger.LogError(ex, ex.Message);
 
-                throw ex;
+                throw;
             }
         }
 
@@ -748,7 +740,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             if (!CanUpdateApplication(application, sequenceNo))
             {
                 return RedirectToAction("Applications");
-            }        
+            }
 
             var sequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -773,7 +765,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             }
 
             //If financial review is outstanding then redirect - for Feedback added or In-Progress applications
-            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO) {
+            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+            {
                 bool qnaFinancialQuestionsComplete = false;
                 var financialQnAComplete = sections.Where(w => w.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && w.SequenceNo == ApplyConst.FINANCIAL_SEQUENCE_NO);
                 if (financialQnAComplete != null)
@@ -795,7 +788,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var dictRequestedFeedbackAnswered = sections.Select(t => new { t.SectionNo, t.QnAData.RequestedFeedbackAnswered })
                .ToDictionary(t => t.SectionNo, t => t.RequestedFeedbackAnswered);
 
-            var contact = await GetUserContact();
+            var contact = await GetUser();
             var submitRequest = BuildSubmitApplicationSequenceRequest(application.Id, dictRequestedFeedbackAnswered, _config.ReferenceFormat, sequence.SequenceNo, contact.Id);
 
             if (await _applicationApiClient.SubmitApplicationSequence(submitRequest))
@@ -814,10 +807,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName,
-                Versions = application?.ApplyData?.Apply?.Versions
+                Versions = application?.ApplyData?.Apply?.Versions,
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -828,9 +819,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var application = await _applicationApiClient.GetApplication(Id);
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel(application)
             {
-                ReferenceNumber = application?.ApplyData?.Apply?.ReferenceNumber,
-                FeedbackUrl = _config.FeedbackUrl,
-                StandardName = application?.ApplyData?.Apply?.StandardName
+                FeedbackUrl = _config.FeedbackUrl
             });
         }
 
@@ -856,22 +845,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
-        [HttpGet("/application/{id}/opt-in/confirmation")]
-        [ApplicationAuthorize(routeId: "Id")]
-        public async Task<IActionResult> OptInConfirmation(Guid id)
-        {
-            var application = await _applicationApiClient.GetApplication(id);
-
-            var model = new OptInConfirmationViewModel()
-            {
-                StandardTitle = application?.ApplyData?.Apply?.StandardName,
-                Version = application?.ApplyData?.Apply?.Versions.FirstOrDefault(),
-                FeedbackUrl = _config.FeedbackUrl,
-            };
-
-            return View("~/Views/Application/OptInConfirmation.cshtml", model);
-        }
-
         private async Task<Page> GetDataFedOptions(Page page)
         {
             if (page != null)
@@ -883,9 +856,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                         // Get data from API using question.Input.DataEndpoint
                         // var questionOptions = await _applicationApiClient.GetQuestionDataFedOptions();
 
-                        // NOTE: For now it seems the only DataFed type is delivery areas and someone has coded it that way in the api client
-                        var deliveryAreas = await _applicationApiClient.GetQuestionDataFedOptions();
-                        var questionOptions = deliveryAreas.Select(da => new Option() { Label = da.Area, Value = da.Area }).ToList();
+                        // NOTE: For now it seems the only DataFed type is delivery areas
+                        var deliveryAreas = await _registerApiClient.GetDeliveryAreas();
+                        var questionOptions = deliveryAreas.Select(da => new QnA.Api.Types.Page.Option() { Label = da.Area, Value = da.Area }).ToList();
 
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
@@ -911,7 +884,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         private bool HasAtLeastOneAnswerChanged(Page page, List<Answer> answers)
         {
             _logger.LogInformation($"HasAtLeastOneAnswerChanged -> Is page null? {(page == null ? "Yes" : "No")}");
-            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page.Questions == null ? "Yes" : "No")}");
+            _logger.LogInformation($"HasAtLeastOneAnswerChanged -> page.Questions null? {(page?.Questions == null ? "Yes" : "No")}");
+
+            if (page == null)
+            {
+                return false;
+            }
 
             foreach (var pageQuestion in page.Questions)
             {
@@ -958,15 +936,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                     }
                 }
             }
-
+            
             return atLeastOneAnswerChanged;
         }
 
-        private RedirectToActionResult ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
+        private async Task<IActionResult> ForwardToNextSectionOrPage(Page page, Guid Id, int sequenceNo, int sectionNo, string __redirectAction)
         {
-            var next = page.Next.FirstOrDefault(x => x.Action == "NextPage");
+            var application = await _applicationApiClient.GetApplication(Id);
+            var next = await _qnaApiClient.SkipPage(application.ApplicationId, page.SectionId.Value, page.PageId);
             if (next != null)
-                return RedirectToNextAction(Id, sequenceNo, sectionNo, next.Action, next.ReturnId, __redirectAction);
+                return RedirectToNextAction(Id, sequenceNo, sectionNo, next.NextAction, next.NextActionId, __redirectAction);
+
             return RedirectToAction("Section", new { Id, sequenceNo, sectionNo });
         }
 
@@ -975,11 +955,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             string pageContext = string.Empty;
             if (sequence.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO || sequence.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
             {
-                pageContext = $"{application?.ApplyData?.Apply?.StandardReference } {application?.ApplyData?.Apply?.StandardName}";
+                pageContext = $"{application?.ApplyData?.Apply?.StandardReference} {application?.ApplyData?.Apply?.StandardName}";
             }
             else if (sequence.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                pageContext = "Withdrawing from register";
+                pageContext = "Withdrawing from all standards";
             }
             return pageContext;
         }
@@ -1159,38 +1139,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return answers;
         }
 
-        private static void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, ApplicationResponse application)
-        {
-            if (pageVmQuestions == null) return;
-
-            var placeholderString = "StandardName";
-            var isPlaceholderPresent = false;
-
-            foreach (var question in pageVmQuestions)
-
-                if (question.Label.Contains($"[{placeholderString}]") ||
-                   question.Hint.Contains($"[{placeholderString}]") ||
-                    question.QuestionBodyText.Contains($"[{placeholderString}]") ||
-                    question.ShortLabel.Contains($"[{placeholderString}]")
-                   )
-                    isPlaceholderPresent = true;
-
-            if (!isPlaceholderPresent) return;
-
-            var standardName = application?.ApplyData?.Apply?.StandardName;
-
-            if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
-
-            foreach (var question in pageVmQuestions)
-            {
-                question.Label = question.Label?.Replace($"[{placeholderString}]", standardName);
-                question.Hint = question.Hint?.Replace($"[{placeholderString}]", standardName);
-                question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
-                question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
-            }
-        }
-
-        private void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
+        private static void ReplaceApplicationDataPropertyPlaceholdersInQuestions(List<QuestionViewModel> questions, Dictionary<string, object> applicationData)
         {
             if (questions == null) return;
 
@@ -1215,7 +1164,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             };
         }
 
-        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<ApplySection> applySections)
+        private static List<ValidationErrorDetail> ValidateSubmit(List<Section> qnaSections, List<Domain.Entities.ApplySection> applySections)
         {
             var validationErrors = new List<ValidationErrorDetail>();
 
@@ -1279,7 +1228,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             return canUpdate;
         }
 
-        public bool IsSequenceActive(ApplyData applyData, int sequenceNo)
+        public bool IsSequenceActive(Domain.Entities.ApplyData applyData, int sequenceNo)
         {
             // a sequence can be considered active even if it does not exist in the ApplyData, since it has not yet been submitted and is in progress.
             return applyData?.Sequences?.Any(x => x.SequenceNo == sequenceNo && x.IsActive) ?? true;

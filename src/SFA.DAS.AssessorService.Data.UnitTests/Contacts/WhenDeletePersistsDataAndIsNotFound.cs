@@ -1,28 +1,27 @@
-﻿using FizzWare.NBuilder;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FizzWare.NBuilder;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
 {
     public class WhenDeletePersistsDataAndIsNotFound
     {
         private Exception _exception;
+        private Mock<IAssessorUnitOfWork> _mockAssessorUnitOfWork;
 
         [SetUp]
         public async Task Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             var userNameToFind = "NotFoundUser";
            
             var contacts = new List<Contact>
@@ -32,10 +31,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
                     .Build()
             }.AsQueryable();
 
-            var mockSet = contacts.CreateMockSet(contacts);
-            var mockDbContext = CreateMockDbContext(mockSet);
+            _mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            _mockAssessorUnitOfWork.Setup(p => p.AssessorDbContext).Returns(CreateMockDbContext(contacts.CreateMockSet()).Object);
 
-            var contactRepository = new ContactRepository(mockDbContext.Object, new Mock<IUnitOfWork>().Object);
+            var contactRepository = new ContactRepository(_mockAssessorUnitOfWork.Object, new Mock<IUnitOfWork>().Object);
 
             try
             {
@@ -45,7 +44,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             {
                 _exception = exception;
             }
-        
         }
 
         [Test]

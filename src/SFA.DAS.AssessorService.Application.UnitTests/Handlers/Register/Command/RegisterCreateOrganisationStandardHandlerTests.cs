@@ -1,4 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -8,17 +12,17 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Exceptions;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
     [TestFixture]
     public class RegisterCreateOrganisationStandardHandlerTests
     {
+        private Mock<IMediator> _mediator;
         private Mock<IRegisterRepository> _registerRepository;
+        private Mock<IOrganisationStandardRepository> _organisationStandardRepository;
         private CreateEpaOrganisationStandardHandler _createEpaOrganisationStandardHandler;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<IEpaOrganisationValidator> _validator;
@@ -31,7 +35,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [SetUp]
         public void Setup()
         {
+            _mediator = new Mock<IMediator>();
             _registerRepository = new Mock<IRegisterRepository>();
+            _organisationStandardRepository = new Mock<IOrganisationStandardRepository>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _validator = new Mock<IEpaOrganisationValidator>();
             _logger = new Mock<ILogger<CreateEpaOrganisationStandardHandler>>();
@@ -48,7 +54,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
-            _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object, _cleanserService.Object);
+            _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(
+                _mediator.Object,
+                _registerRepository.Object, 
+                _organisationStandardRepository.Object, 
+                _validator.Object, 
+                _logger.Object, 
+                _cleanserService.Object);
         }
 
         [Test]
@@ -80,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId));
         }
@@ -93,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.NotFound);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<NotFoundException>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgNotFound, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound));
         }
@@ -106,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.AlreadyExists);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
+            ex.Message.Should().Be(errorMessage + "; ");
             _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId));
         }       

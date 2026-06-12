@@ -1,8 +1,8 @@
-﻿using Moq;
+﻿using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImportServiceTests
 {

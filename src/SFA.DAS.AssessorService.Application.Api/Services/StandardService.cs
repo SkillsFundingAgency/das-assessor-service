@@ -1,12 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Mapping.Structs;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Mapping.Structs;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using OrganisationStandardVersion = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationStandardVersion;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
@@ -186,6 +187,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             return options;
+        }
+
+        public async Task<bool> GetCoronationEmblemForStandardReferenceAndVersion(string iFateReferenceNumber, string version)
+        {
+            var result = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(iFateReferenceNumber, version);
+            return result;
         }
 
         public async Task<StandardOptions> GetStandardOptionsByStandardIdAndVersion(string id, string version)

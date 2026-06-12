@@ -1,37 +1,36 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.DataSync;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.ExternalApi
 {
     [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/externalapidatasync")]
     [ValidateBadRequest]
-    public class ExternalApiDataSyncController : Controller
+    public class ExternalApiDataSyncController : BaseController
     {
-        private readonly IMediator _mediator;
-
-        public ExternalApiDataSyncController(IMediator mediator)
+        public ExternalApiDataSyncController(IBackgroundTaskQueue taskQueue, ILogger<ExternalApiDataSyncController> logger)
+            : base(taskQueue, logger)
         {
-            _mediator = mediator;
         }
 
         [HttpPost("rebuild-sandbox", Name = "RebuildExternalApiSandbox")]
-        [SwaggerResponse((int)HttpStatusCode.OK)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.Accepted)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> RebuildExternalApiSandbox()
+        public IActionResult RebuildExternalApiSandbox()
         {
-            var request = new RebuildExternalApiSandboxRequest();
-            await _mediator.Send(request);
-            return Ok();
+            var requestName = "rebuild external api sandbox";
+            return QueueBackgroundRequest(new RebuildExternalApiSandboxRequest(), requestName, (response, duration, log) =>
+            {
+                log.LogInformation($"Completed request to {requestName} in {duration.ToReadableString()}");
+            });
         }
     }
 }

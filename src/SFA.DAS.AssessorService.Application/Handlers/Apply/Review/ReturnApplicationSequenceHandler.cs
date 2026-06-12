@@ -1,29 +1,29 @@
-﻿using MediatR;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Consts;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
 {
-    public class ReturnApplicationSequenceHandler : IRequestHandler<ReturnApplicationSequenceRequest>
+    public class ReturnApplicationSequenceHandler : IRequestHandler<ReturnApplicationSequenceRequest, Unit>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
         private readonly IEMailTemplateQueryRepository _eMailTemplateQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
 
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
-        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository, IWebConfiguration config, IMediator mediator)
+        public ReturnApplicationSequenceHandler(IApplyRepository applyRepository, IEMailTemplateQueryRepository eMailTemplateQueryRepository, IContactQueryRepository contactQueryRepository, IApiConfiguration config, IMediator mediator)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     if (lastSubmission != null)
                     {
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedbackNotification);
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOWithdrawalFeedback);
 
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new
@@ -131,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Review
                     {                        
                         var contactToNotify = await _contactQueryRepository.GetContactById(lastSubmission.SubmittedBy);
 
-                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAORegisterWithdrawalApproval);
+                        var emailTemplate = await _eMailTemplateQueryRepository.GetEmailTemplate(EmailTemplateNames.EPAOOrganisationWithdrawalApproval);
                         await _mediator.Send(new SendEmailRequest(contactToNotify.Email, emailTemplate,
                             new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.DisplayName,  LoginLink = loginLink }), cancellationToken);
                     }

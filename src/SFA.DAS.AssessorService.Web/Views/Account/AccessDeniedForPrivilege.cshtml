@@ -25,6 +25,12 @@
                 @Html.HiddenFor(m => m.UserHasUserManagement)
                 @Html.HiddenFor(m => m.ReturnController)
                 @Html.HiddenFor(m => m.ReturnAction)
+                @Html.HiddenFor(m => m.ReturnRouteName)
+                @foreach (var item in Model.ReturnRouteValues)
+                {
+                    <input type="hidden" name="ReturnRouteValues[@item.Key]" value="@item.Value" />
+                }
+
                 @if (Model.UserHasUserManagement && Model.IsUsersOrganisationLive)
                 {
                     <h2 class="govuk-heading-m">

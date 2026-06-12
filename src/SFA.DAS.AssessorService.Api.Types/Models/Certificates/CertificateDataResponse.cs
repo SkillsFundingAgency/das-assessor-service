@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
+        public bool CoronationEmblem { get; set; }
         public DateTime? StandardPublicationDate { get; set; }
         public string ContactName { get; set; }
         public string ContactOrganisation { get; set; }
@@ -25,5 +26,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string OverallGrade { get; set; }
         public string Department { get; set; }
         public string FullName { get; set; }
+        public string FrameworkCertificateNumber { get; set; }
+        public string FrameworkName { get; set; }
+        public string FrameworkLevelName { get; set; }
+        public string PathwayName { get; set; }
+        public string TrainingCode { get; set; }
     }
 }

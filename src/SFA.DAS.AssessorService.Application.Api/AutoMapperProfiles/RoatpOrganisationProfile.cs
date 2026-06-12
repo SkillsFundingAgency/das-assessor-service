@@ -1,14 +1,15 @@
-﻿using AutoMapper;
+﻿using System;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using System;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp.Types;
 
 namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
 {
-    public class RoatpOrganisationProfile : Profile
+    public class RoatpOrganisationProfile : ExplicitMappingProfileBase
     {
         public RoatpOrganisationProfile()
         {
-            CreateMap<AssessorService.Api.Types.Models.Roatp.Organisation, OrganisationSearchResult>()
+            CreateMap<Organisation, OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
                 .BeforeMap((source, dest) => dest.RoATPApproved = true)
@@ -19,9 +20,8 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.UKPRN))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.LegalName))
                 .ForMember(dest => dest.TradingName, opt => opt.ResolveUsing(source => string.IsNullOrEmpty(source.TradingName) || "NULL".Equals(source.TradingName, StringComparison.InvariantCultureIgnoreCase) ? null : source.TradingName))
-                .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CompanyNumber))
-                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.CompanyNumber))
+                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.CharityNumber));
         }
     }
 }

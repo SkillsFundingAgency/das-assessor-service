@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System.Threading;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
-        [TestFixture]
+    [TestFixture]
         public class RegisterUpdateOrganisationStandardHandlerTests
         {
             private Mock<IRegisterRepository> _registerRepository;
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 _requestNoIssues = BuildRequest(_organisationId, 123321, new List<int> { 1 });
                 _expectedOrganisationStandardNoIssues = BuildOrganisationStandard(_requestNoIssues, _requestNoIssuesId);
 
-                _registerRepository.Setup(r => r.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}, It.IsAny<bool>()))
+                _registerRepository.Setup(r => r.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}))
                     .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
                 _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse());
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void UpdateOrganisationStandardDetailsRepoIsCalledWhenHandlerInvoked()
             {
                 var res = _updateEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>(), It.IsAny<bool>()));
+                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()));
             }
 
             [Test]
@@ -81,8 +82,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
                 _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
                   var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
-                Assert.AreEqual(errorMessage + "; ", ex.Message);
-                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(It.IsAny<EpaOrganisationStandard>(), new List<int>(), It.IsAny<bool>()), Times.Never);
+                ex.Message.Should().Be(errorMessage + "; ");
+                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandardAndOrganisationStandardVersions(It.IsAny<EpaOrganisationStandard>(), new List<int>()), Times.Never);
                 _validator.Verify(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId));
             }
 

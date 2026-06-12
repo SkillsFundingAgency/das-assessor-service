@@ -1,13 +1,14 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetupStandardOptionsTable()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _repository = new StandardRepository(_unitOfWork);
 
@@ -111,7 +112,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -126,7 +128,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                  new StandardModel
                 {
@@ -141,7 +144,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 },
                 new StandardModel
                 {
@@ -156,7 +160,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     MaxFunding = 10000,
                     TypicalDuration = 12,
                     ProposedMaxFunding = 10000,
-                    ProposedTypicalDuration = 12
+                    ProposedTypicalDuration = 12,
+                    VersionApprovedForDelivery = DateTime.Now.AddMonths(-3)
                 }
             };
         }

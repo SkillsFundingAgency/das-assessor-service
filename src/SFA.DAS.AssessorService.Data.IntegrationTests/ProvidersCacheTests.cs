@@ -1,16 +1,16 @@
-﻿using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using Dapper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Dapper;
 using FluentAssertions;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void CommonSetup()
         {
-            _databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            _databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             _unitOfWork = new UnitOfWork(_databaseConnection);
             _roatpApiClientMock = new Mock<IRoatpApiClient>();
             _repository = new ApprovalsExtractRepository(_unitOfWork, _roatpApiClientMock.Object, new Mock<ILogger<ApprovalsExtractRepository>>().Object);

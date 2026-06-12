@@ -11,10 +11,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/version")]
     public class CertificateVersionNotApprovedController : Controller
     {
-        private readonly IStandardVersionClient _standardVersionClient;
+        private readonly IStandardVersionApiClient _standardVersionClient;
         private readonly ISessionService _sessionService;
 
-        public CertificateVersionNotApprovedController(IStandardVersionClient standardVersionClient, ISessionService sessionService)
+        public CertificateVersionNotApprovedController(IStandardVersionApiClient standardVersionClient, ISessionService sessionService)
         {
             _standardVersionClient = standardVersionClient;
             _sessionService = sessionService;
@@ -35,7 +35,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var viewModel = new CertificateVersionNotApprovedViewModel()
             {
                 AttemptedVersion = standardVersion.Version,
-                BackToCheckPage = redirectToCheck.Value
+                BackToCheckPage = redirectToCheck.Value,
+                StandardName = standardVersion.Title,
+                IFateReferenceNumber = standardVersion.IFateReferenceNumber
             };
            
             return View("~/Views/Certificate/VersionNotApproved.cshtml", viewModel);

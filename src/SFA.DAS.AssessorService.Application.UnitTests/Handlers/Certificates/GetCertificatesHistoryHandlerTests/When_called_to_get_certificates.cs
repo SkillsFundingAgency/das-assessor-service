@@ -1,24 +1,21 @@
-﻿using Moq;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
-using SFA.DAS.AssessorService.Application.Infrastructure;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.Domain.Paging;
-using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.Roatp;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificatesHistoryHandlerTests
 {
@@ -39,8 +36,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         [SetUp]
         public void Arrange()
         {
-            MappingBootstrapper.Initialize();
-
             var certificates = Builder<CertificateHistoryModel>.CreateListOfSize(10)
                 .All()
                 .With(x => x.CertificateLogs = Builder<CertificateLog>.CreateListOfSize(2)

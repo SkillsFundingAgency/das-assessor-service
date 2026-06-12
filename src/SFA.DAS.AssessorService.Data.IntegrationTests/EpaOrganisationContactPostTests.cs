@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using FluentAssertions;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -6,8 +9,6 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
-using System;
-using System.Data.SqlClient;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            var databaseConnection = new SqlConnection(_databaseService.WebConfiguration.SqlConnectionString);
+            var databaseConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
             var unitOfWork = new UnitOfWork(databaseConnection);
 
             _repository = new RegisterRepository(unitOfWork, new Mock<ILogger<RegisterRepository>>().Object);
@@ -41,7 +42,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _ukprnCreated = 123321;
             _org2IdCreated = "EPA0001";
             _organisationTypeId = 5;
-            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
             _id = Guid.NewGuid();
 
             _organisation = new OrganisationModel
@@ -99,9 +99,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             var isContactPresenAfterInsert =
                 _validationRepository.ContactIdIsValidForOrganisationId(_contactId, _contact.EndPointAssessorOrganisationId).Result;
          
-            Assert.IsFalse(isContactPresentBeforeInsert);
-            Assert.IsTrue(isContactPresenAfterInsert);
-            Assert.AreEqual(returnedContactId, _contactId.ToString());
+            isContactPresentBeforeInsert.Should().BeFalse();
+            isContactPresenAfterInsert.Should().BeTrue();
+            returnedContactId.Should().Be(_contactId.ToString());
         }
 
         [OneTimeTearDown]

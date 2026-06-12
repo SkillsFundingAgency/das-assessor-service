@@ -19,16 +19,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/version")]
     public class CertificateVersionController : CertificateBaseController
     {
-        private readonly IStandardVersionClient _standardVersionClient;
+        private readonly IStandardVersionApiClient _standardVersionClient;
         public CertificateVersionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, IStandardVersionClient standardVersionClient, ISessionService sessionService)
+            ICertificateApiClient certificateApiClient, IStandardVersionApiClient standardVersionClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _standardVersionClient = standardVersionClient;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Version(bool? redirectToCheck = false)
+        public async Task<IActionResult> Version(bool? redirectToCheck = false) 
         {
             var sessionString = SessionService.Get(nameof(CertificateSession));
             if (sessionString == null)
@@ -42,8 +42,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private async Task<IActionResult> LoadViewModel(string view)
         {
             var username = GetUsernameFromClaim();
-
-            Logger.LogDebug($"Load View Model for CertificateVersionViewModel for {username}");
 
             var viewModel = new CertificateVersionViewModel();
 
@@ -66,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 // Only 1 version no need for a selection
                 var singularStandard = certSession.Versions.First();
                 var options = await _standardVersionClient.GetStandardOptions(singularStandard.StandardUId);
-                if (options != null & options.HasOptions())
+                if (options?.HasOptions() ?? false)
                 {
                     certSession.StandardUId = singularStandard.StandardUId;
                     certSession.Options = options.CourseOption.ToList();
@@ -77,8 +75,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Declare", "CertificateDeclaration");
             }
 
-            Logger.LogDebug($"Got Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id}");
-
             viewModel.FromCertificate(certificate, certSession.Versions);
 
             var attemptedStandardVersion = SessionService.Get("AttemptedStandardVersion");
@@ -88,8 +84,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.StandardUId = attemptedStandardVersion;
                 SessionService.Remove("AttemptedStandardVersion");
             }
-
-            Logger.LogDebug($"Got View Model of type CertificateVersionViewModel requested by {username}");
 
             return View(view, viewModel);
         }
@@ -106,10 +100,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var epaoid = GetEpaOrgIdFromClaim();
             var redirectToCheck = SessionService.GetRedirectToCheck();
 
-            Logger.LogDebug($"Save View Model for CertificateVersionViewModel for {username} with values: {GetModelValues(vm)}");
-
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = certificate.CertificateData;
 
             if (!TryGetCertificateSession("CertificateVersionViewModel", username, out var certSession))
             {
@@ -118,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                Logger.LogDebug($"Model State not valid for CertificateVersionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogInformation($"Model State not valid for CertificateVersionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View("~/Views/Certificate/Version.cshtml", vm);
             }
 
@@ -129,7 +121,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!approvedStandardVersions.Any(v => v.StandardUId == vm.StandardUId))
             {
                 SessionService.Set("AttemptedStandardVersion", vm.StandardUId);
-                
+
                 return RedirectToAction("NotApprovedToAssess", "CertificateVersionNotApproved", redirectToCheck ? new { redirectToCheck } : null);
             }
 
@@ -144,7 +136,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             certSession.StandardUId = vm.StandardUId;
-                        
+
             // To pass in to inherited method.
             vm.SelectedStandardVersion = standardVersion;
             vm.SelectedStandardOptions = options;
@@ -159,8 +151,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Logger.LogError($"Unable to update certificate with Id {certificate.Id}.");
                 return RedirectToAction("Error", "Home");
             }
-
-            Logger.LogDebug($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} updated.");
 
             if (options != null && options.HasOptions())
             {
@@ -194,11 +184,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (redirectToCheck)
             {
-                Logger.LogDebug($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            Logger.LogDebug($"Certificate for CertificateVersionViewModel requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 

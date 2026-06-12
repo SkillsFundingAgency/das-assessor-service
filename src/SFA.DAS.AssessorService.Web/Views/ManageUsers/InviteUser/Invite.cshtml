@@ -45,21 +45,21 @@
             <form asp-controller="InviteUser" asp-action="Invite">
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="@Model.GivenName">
+                    <label class="govuk-label" for="@Model.GivenName" asp-for="@Model.GivenName">
                         Given name
                     </label>
                     <input class="govuk-input" sfa-validation-for="@Model.GivenName" sfa-validationerror-class="govuk-input--error" type="text" asp-for="@Model.GivenName"/>
                 </div>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="@Model.FamilyName">
+                    <label class="govuk-label" for="@Model.FamilyName" asp-for="@Model.FamilyName">
                         Family name
                     </label>
                     <input class="govuk-input" sfa-validation-for="@Model.FamilyName" sfa-validationerror-class="govuk-input--error" type="text" asp-for="@Model.FamilyName"/>
                 </div>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="@Model.Email">
+                    <label class="govuk-label" for="@Model.Email" asp-for="@Model.Email">
                         Email address
                     </label>
                     <input class="govuk-input" sfa-validation-for="@Model.Email" sfa-validationerror-class="govuk-input--error" type="text" asp-for="@Model.Email"/>

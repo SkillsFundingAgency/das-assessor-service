@@ -1,6 +1,5 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation.Results;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -68,7 +67,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         {
             _viewModel.Version = version;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Version, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.Version);
         }
 
         [Test]
@@ -76,7 +76,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         {
             _viewModel.SelectedGrade = null;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.SelectedGrade, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.SelectedGrade);
         }
 
         [Test]
@@ -84,7 +85,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
         {
             _viewModel.AchievementDate = null;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.AchievementDate, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.AchievementDate);
         }
 
         [Test]
@@ -141,7 +143,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _viewModel.StandardHasOptions = true;
             _viewModel.Option = null;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Option, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.Option);
         }
 
         [Test]
@@ -172,8 +175,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.Validators
             _viewModel.City = null;
             _viewModel.Postcode = null;
 
-            _validator.ShouldHaveValidationErrorFor(vm => vm.Name, _viewModel);
-            _validator.ShouldHaveValidationErrorFor(vm => vm.AddressLine1, _viewModel);
+            var result = _validator.TestValidate(_viewModel);
+            result.ShouldHaveValidationErrorFor(x => x.Name);
+            result.ShouldHaveValidationErrorFor(x => x.AddressLine1);
         }
 
         [Test]

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using FluentAssertions;
@@ -14,8 +13,7 @@ using SFA.DAS.AssessorService.Web.ViewModels;
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     [TestFixture]
-    public class WhenPostSelectOrChangeContactNameSaveWithoutErrors
-        : OrganisationControllerTestBaseForModel<SelectOrChangeContactNameViewModel>
+    public class WhenPostSelectOrChangeContactNameSaveWithoutErrors : OrganisationControllerTestBase
     {
         private const string ValidPrimaryContactSameOrganisation = "another@valid.com";
         private const string ActionChoiceSave = "Save";
@@ -50,8 +48,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 });
         }
 
-        public override async Task<IActionResult> Act()
-        {            
+        public async Task<IActionResult> Act()
+        {
             return await sut.SelectOrChangeContactName(new SelectOrChangeContactNameViewModel
             {
                 PrimaryContact = ValidPrimaryContactSameOrganisation,
@@ -59,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
         }
 
-        public override async Task<IActionResult> Act(SelectOrChangeContactNameViewModel viewModel)
+        public async Task<IActionResult> Act(SelectOrChangeContactNameViewModel viewModel)
         {
             return await sut.SelectOrChangeContactName(viewModel);
         }

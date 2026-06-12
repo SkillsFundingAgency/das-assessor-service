@@ -7,42 +7,51 @@
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](256) NULL,
 	[CertificateReference] NVARCHAR(50) NOT NULL,
-	[OrganisationId] [uniqueidentifier] NOT NULL,
+	[OrganisationId] [uniqueidentifier] NULL,
 	[BatchNumber] [int] NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[UpdatedBy] [nvarchar](256) NULL, 
-    [Uln] BIGINT NOT NULL, 
-    [StandardCode] INT NOT NULL, 
-    [ProviderUkPrn] INT NOT NULL, 
+    [Uln] BIGINT NULL, 
+    [StandardCode] INT NULL, 
+    [ProviderUkPrn] INT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
 	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
 	[PrivatelyFundedStatus] NVARCHAR(20) NULL, 
-    [StandardUId] VARCHAR(20)  NULL ,
+    [StandardUId] VARCHAR(20) NULL,
+	[Type] VARCHAR(9) NOT NULL DEFAULT 'Standard',
+	[FrameworkLearnerId] UNIQUEIDENTIFIER NULL,
+	[DateOfBirth] DATE NULL,
+	[PrintRequestedAt] [datetime2](7) NULL,
+	[PrintRequestedBy] [nvarchar](256) NULL,
+	[OverrideFamilyName] NVARCHAR(100) NULL,
+	[OverrideGivenNames] NVARCHAR(100) NULL,
 	
-	[LearnerFamilyName] as CAST(JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS NVARCHAR(255)),
-	[LearnerGivenNames] as CAST(JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS NVARCHAR(255)),
-	[LearnerFullNameNoSpaces] as CAST(REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS NVARCHAR(255)),
-	[FullName] as CAST(JSON_VALUE(CertificateData, '$.FullName') AS NVARCHAR(255)),
-	[ContactOrganisation] as CAST(JSON_VALUE(CertificateData, '$.ContactOrganisation') AS NVARCHAR(255)),
-	[ProviderName] as CAST(JSON_VALUE(CertificateData, '$.ProviderName') AS NVARCHAR(255)),
-	[ContactName] as CAST(JSON_VALUE(CertificateData, '$.ContactName') AS NVARCHAR(255)),
-	[CourseOption] as CAST(JSON_VALUE(CertificateData, '$.CourseOption') AS NVARCHAR(255)),
-	[OverallGrade] as CAST(JSON_VALUE(CertificateData, '$.OverallGrade') AS NVARCHAR(255)),
-	[StandardReference] as CAST(JSON_VALUE(CertificateData, '$.StandardReference') AS NVARCHAR(255)),
-	[StandardName] as CAST(JSON_VALUE(CertificateData, '$.StandardName') AS NVARCHAR(255)),
-	[Version] as CAST(JSON_VALUE(CertificateData, '$.Version') AS NVARCHAR(255)),
-	[StandardLevel] as CAST(JSON_VALUE(CertificateData, '$.StandardLevel') AS INT),
-	[AchievementDate] as CAST(JSON_VALUE(CertificateData, '$.AchievementDate') AS [datetime2](7)),
-	[LearningStartDate] as CAST(JSON_VALUE(CertificateData, '$.LearningStartDate') AS [datetime2](7)),
-	[ContactAddLine1] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine1') AS NVARCHAR(255)),
-	[ContactAddLine2] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine2') AS NVARCHAR(255)),
-	[ContactAddLine3] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine3') AS NVARCHAR(255)),
-	[ContactAddLine4] as CAST(JSON_VALUE(CertificateData, '$.ContactAddLine4') AS NVARCHAR(255)),
-	[ContactPostCode] as CAST(JSON_VALUE(CertificateData, '$.ContactPostCode') AS NVARCHAR(255)),
-	[LatestEPAOutcome] as CAST(JSON_VALUE(CertificateData, '$.EpaDetails.LatestEpaOutcome') AS NVARCHAR(15)),
+	[LearnerFamilyName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName'))) PERSISTED,
+	[LearnerGivenNames] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames'))) PERSISTED,
+	[LearnerFullNameNoSpaces] as CONVERT(NVARCHAR(255),REPLACE([dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')+JSON_VALUE(CertificateData, '$.LearnerFamilyName')),' ','')) PERSISTED,
+	[FullName] as CONVERT(NVARCHAR(255),[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.FullName'))) PERSISTED,
+	[ContactOrganisation] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactOrganisation')) PERSISTED,
+	[ProviderName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ProviderName')) PERSISTED,
+	[ContactName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactName')) PERSISTED,
+	[CourseOption] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.CourseOption')) PERSISTED,
+	[OverallGrade] as CONVERT(NVARCHAR(20),JSON_VALUE(CertificateData, '$.OverallGrade')) PERSISTED,
+	[StandardReference] as CONVERT(NVARCHAR(20),JSON_VALUE(CertificateData, '$.StandardReference')) PERSISTED,
+	[StandardName] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.StandardName')) PERSISTED,
+	[Version] as CONVERT(NVARCHAR(5),JSON_VALUE(CertificateData, '$.Version')) PERSISTED,
+	[StandardLevel] as CONVERT(INT,JSON_VALUE(CertificateData, '$.StandardLevel')) PERSISTED,
+	[AchievementDate] as CONVERT(date,JSON_VALUE(CertificateData, '$.AchievementDate'),121) PERSISTED,
+	[LearningStartDate] as CONVERT(date,JSON_VALUE(CertificateData, '$.LearningStartDate'),121) PERSISTED,
+	[ContactAddLine1] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine1')) PERSISTED,
+	[ContactAddLine2] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine2')) PERSISTED,
+	[ContactAddLine3] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine3')) PERSISTED,
+	[ContactAddLine4] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactAddLine4')) PERSISTED,
+	[ContactPostCode] as CONVERT(NVARCHAR(255),JSON_VALUE(CertificateData, '$.ContactPostCode')) PERSISTED,
+	[LatestEPAOutcome] as CONVERT(NVARCHAR(15),JSON_VALUE(CertificateData, '$.EpaDetails.LatestEpaOutcome')) PERSISTED,
+	[CertificateFamilyName] AS CONVERT(NVARCHAR(255),ISNULL([OverrideFamilyName],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerFamilyName')))) PERSISTED,
+	[CertificateGivenNames] AS CONVERT(NVARCHAR(255),ISNULL([OverrideGivenNames],[dbo].[CleanseName](JSON_VALUE(CertificateData, '$.LearnerGivenNames')))) PERSISTED,
 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
@@ -58,13 +67,37 @@ ALTER TABLE [dbo].[Certificates]  ADD  CONSTRAINT [FK_Certificates_CertificateBa
 REFERENCES [dbo].[CertificateBatchLogs] ([CertificateReference], [BatchNumber])
 GO
 
-ALTER TABLE [dbo].[Certficates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+ALTER TABLE [dbo].[Certificates] CHECK CONSTRAINT [FK_Certificates_CertificateBatchLogs]
+GO
+
+ALTER TABLE [dbo].[Certificates] ADD CONSTRAINT [CHK_Type]
+CHECK (
+    (Type = 'Standard' AND Uln IS NOT NULL AND StandardCode IS NOT NULL AND FrameworkLearnerId IS NULL)
+    OR 
+    (Type = 'Framework' AND FrameworkLearnerId IS NOT NULL AND Uln IS NULL AND StandardCode IS NULL)
+)
 GO
 
 CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode])
+WHERE [Uln] IS NOT NULL AND [StandardCode] IS NOT NULL;
 GO
 
-CREATE INDEX [IX_Certificates_CreateDay] ON [Certificates] ([CreateDay]) INCLUDE ([Status], [CertificateData])
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardMasks_Uln
+ON [dbo].[Certificates] (Uln)
+INCLUDE (Id, Status, StandardCode, StandardName, StandardLevel, ProviderUkPrn, ProviderName, StandardUId)
+WHERE [Type] = 'Standard'
+GO
+
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardMasks_CreateDay
+ON dbo.Certificates (CreateDay DESC)
+INCLUDE (Status, Uln, StandardCode, ProviderUkPrn, StandardUId, ProviderName, StandardName, StandardLevel, LearningStartDate)
+WHERE [Type] = 'Standard'
+GO
+
+CREATE NONCLUSTERED INDEX IX_Certificates_StandardSearch
+ON dbo.Certificates (CertificateFamilyName, DateOfBirth, Uln)
+INCLUDE (LatestEPAOutcome, Status, StandardCode, StandardName, StandardLevel, AchievementDate, ProviderName, ProviderUkPrn)
+WHERE [Type] = 'Standard'
 GO
 
 CREATE INDEX [IX_Certificates_CertificateReference] ON [Certificates] ([CertificateReference]) INCLUDE ([Id])
@@ -77,4 +110,9 @@ CREATE INDEX [IX_Certificates_LearnerNames] ON [Certificates] ([LearnerFamilyNam
 GO
 
 CREATE INDEX [IX_Certificates_Search] ON [Certificates] ([FullName],[ContactOrganisation],[ProviderName])
+GO
+
+CREATE INDEX IX_Certificates_Reporting ON [Certificates] ([OrganisationId]) 
+INCLUDE ([StandardName], [StandardReference], [StandardCode], [StandardLevel], [OverallGrade], [Version], [CertificateReferenceId], [CreatedBy], [DeletedAt], [Status])
+WHERE Type = 'Standard'
 GO

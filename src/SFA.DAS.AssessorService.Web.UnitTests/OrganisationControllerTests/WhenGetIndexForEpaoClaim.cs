@@ -1,13 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     using Api.Types.Models;
-    using Microsoft.AspNetCore.Http;
-    using System.Security.Claims;
     using System.Threading.Tasks;
 
     [TestFixture]

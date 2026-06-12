@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -80,6 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
             request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
             request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
+            request.RecognitionNumber = _cleanser.CleanseStringForSpecialCharacters(request.RecognitionNumber);
             
             request.OrganisationReferenceType =
                 _cleanser.CleanseStringForSpecialCharacters(request.OrganisationReferenceType);
@@ -105,6 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Ukprn = request.Ukprn,
                 Status = string.IsNullOrEmpty(request.Status) ? "New" : request.Status,
                 Id = Guid.NewGuid(),
+                RecognitionNumber = request.RecognitionNumber,
                 OrganisationData = new OrganisationData
                 {
                     Address1 = request.Address1,
@@ -127,7 +130,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoATPApproved = request.RoATPApproved,
                     RoEPAOApproved = request.RoEPAOApproved,
                     EndPointAssessmentOrgId = request.EndPointAssessmentOrgId,
-                    FinancialGrades = new List<ApplyTypes.FinancialGrade>(),
+                    FinancialGrades = new List<Domain.Entities.FinancialGrade>(),
                     FHADetails = new FHADetails
                     {
                         FinancialDueDate = request.FinancialDueDate,

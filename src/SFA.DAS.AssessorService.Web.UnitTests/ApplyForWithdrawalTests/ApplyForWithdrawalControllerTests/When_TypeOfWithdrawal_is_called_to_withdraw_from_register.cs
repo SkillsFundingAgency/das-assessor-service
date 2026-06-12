@@ -1,11 +1,11 @@
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Controllers;
-using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.ViewModels.ApplyForWithdrawal;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyForWithdrawalControllerTests
 {
@@ -16,11 +16,15 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ApplyForWithdrawalTests.ApplyFor
         public void Then_Redirect_To_CheckWithdrawalRequest()
         {
             // Act
-            var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToActionResult;
+            var result = _sut.TypeOfWithdrawal(new TypeOfWithdrawalViewModel { TypeOfWithdrawal = ApplicationTypes.OrganisationWithdrawal }) as RedirectToRouteResult;
 
             // Assert
-            result.ActionName.Should().Be(nameof(ApplyForWithdrawalController.CheckWithdrawalRequest));
-            result.ControllerName.Should().Be(nameof(ApplyForWithdrawalController).RemoveController());
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.RouteName.Should().Be(ApplyForWithdrawalController.CheckWithdrawalRequestRouteGet);
+                Assert.That(result.RouteValues, Contains.Item(new KeyValuePair<string, object>("backRouteName", ApplyForWithdrawalController.TypeofWithdrawalRouteGet)));
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         [HttpGet("Review/ApplicationReviewStatusCounts")]
         public async Task<ActionResult> ApplicationReviewStatusCounts()
         {
+            _logger.LogInformation("ApplicationReviewStatusCounts called");
             var applicationReviewStatusCounts = await _mediator.Send(new ApplicationReviewStatusCountsRequest());
             return Ok(applicationReviewStatusCounts);
         }

@@ -1,16 +1,16 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
@@ -21,24 +21,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly ILearnerRepository _learnerRepository;
         private readonly IProvidersRepository _providersRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly IStandardRepository _standardRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
         private readonly IStandardService _standardService;
+        private readonly ICertificateNameCapitalisationService _certificateNameCapitalisationService;
         private readonly int PrivateFundingModelNumber = 99;
 
         public StartCertificateHandler(ICertificateRepository certificateRepository, ILearnerRepository learnerRepository, IProvidersRepository providersRepository,
-            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService)
+            IOrganisationQueryRepository organisationQueryRepository, IStandardRepository standardRepository, ILogger<StartCertificateHandler> logger, IStandardService standardService, ICertificateNameCapitalisationService certificateNameCapitalisationService)
         {
             _certificateRepository = certificateRepository;
             _learnerRepository = learnerRepository;
             _providersRepository = providersRepository;
             _organisationQueryRepository = organisationQueryRepository;
+            _standardRepository = standardRepository;
             _logger = logger;
             _standardService = standardService;
+            _certificateNameCapitalisationService = certificateNameCapitalisationService;
         }
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Starting new certificate for EPAO UkPrn:{request.UkPrn}");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
@@ -56,28 +59,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Certificate> UpdateExistingCertificate(StartCertificateRequest request, Organisation organisation, Certificate certificate)
         {
-            _logger.LogDebug($"Updating existing certificate for Uln:{request.Uln} StandardCode:{request.StandardCode} StandardUId{request.StandardUId}");
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             if(certificate.Status == CertificateStatus.Deleted)
             {
                 // Rehydrate cert data when the certificate is deleted
-                certData = new CertificateData();
-            };
+                certificate.CertificateData = new CertificateData();
+            }
 
-            certificate = await PopulateCertificateData(certificate, certData, request, organisation);
+            certificate = await PopulateCertificateData(certificate, request, organisation);
             
             // If the certificate was a fail, reset back to draft and reset achievement date and grade
-            if (certificate.Status == CertificateStatus.Submitted && certData.OverallGrade == CertificateGrade.Fail)
+            if (certificate.Status == CertificateStatus.Submitted && certificate.CertificateData.OverallGrade == CertificateGrade.Fail)
             {
-                certData.AchievementDate = null;
-                certData.OverallGrade = null;
+                certificate.CertificateData.AchievementDate = null;
+                certificate.CertificateData.OverallGrade = null;
                 certificate.Status = CertificateStatus.Draft;
-                certificate.CertificateData = JsonConvert.SerializeObject(certData);
-                certificate = await _certificateRepository.Update(certificate, request.Username, CertificateActions.Restart, updateLog: true);
+                certificate = await _certificateRepository.UpdateStandardCertificate(certificate, request.Username, CertificateActions.Restart, updateLog: true);
             }
             else
             {
-                certificate = await _certificateRepository.Update(certificate, request.Username, null);
+                certificate = await _certificateRepository.UpdateStandardCertificate(certificate, request.Username, null);
             }
             
             return certificate;
@@ -85,26 +85,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request, Organisation organisation)
         {
-            _logger.LogDebug($"Creating new certificate for Uln:{request.Uln} StandardCode:{request.StandardCode} StandardUId{request.StandardUId}");
-
-            var certificate = new Certificate();
-            var certificateData = new CertificateData
+            var certificate = new Certificate
             {
-                EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
+                CertificateData = new CertificateData
+                {
+                    EpaDetails = new EpaDetails { Epas = new List<EpaRecord>() }
+                },
+                Uln = request.Uln,
+                StandardCode = request.StandardCode,
+                Status = CertificateStatus.Draft,
+                CreatedBy = request.Username,
+                CertificateReference = string.Empty,
+                CreateDay = DateTime.UtcNow.Date
             };
 
-            certificate.Uln = request.Uln;
-            certificate.StandardCode = request.StandardCode;
-            certificate.Status = CertificateStatus.Draft;
-            certificate.CreatedBy = request.Username;
-            certificate.CertificateReference = string.Empty;
-            certificate.CreateDay = DateTime.UtcNow.Date;
+            certificate = await PopulateCertificateData(certificate, request, organisation);
+            var newCertificate = await _certificateRepository.NewStandardCertificate(certificate);
 
-            certificate = await PopulateCertificateData(certificate, certificateData, request, organisation);
-            var newCertificate = await _certificateRepository.New(certificate);
-
-            _logger.LogDebug($"Created new certificate with Id:{newCertificate.Id} CertificateReference:{newCertificate.CertificateReference}");
-            
             return newCertificate;
         }
 
@@ -117,23 +114,37 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         /// <param name="request"></param>
         /// <param name="organisation"></param>
         /// <returns></returns>
-        private async Task<Certificate> PopulateCertificateData(Certificate certificate, CertificateData certData, StartCertificateRequest request, Organisation organisation)
+        private async Task<Certificate> PopulateCertificateData(Certificate certificate, StartCertificateRequest request, Organisation organisation)
         {
-            _logger.LogDebug($"Populating certificate data for Uln:{request.Uln} StandardCode:{request.StandardCode}");
             var learner = await _learnerRepository.Get(request.Uln, request.StandardCode);
             
-            _logger.LogDebug($"Populating certificate data with provider UkPrn:{learner.UkPrn}");
             var provider = await GetProviderFromUkprn(learner.UkPrn);
 
-            certData.LearnerGivenNames = learner.GivenNames;
-            certData.LearnerFamilyName = learner.FamilyName;
+            if ((learner.GivenNames.ToLower() == learner.GivenNames) || (learner.GivenNames.ToUpper() == learner.GivenNames))
+            {
+                certificate.CertificateData.LearnerGivenNames = _certificateNameCapitalisationService.ProperCase(learner.GivenNames);
+            }
+            else
+            {
+                certificate.CertificateData.LearnerGivenNames = learner.GivenNames;
+            }
 
-            certData.EmployerAccountId = learner.EmployerAccountId;
-            certData.EmployerName = learner.EmployerName;
+            if ((learner.FamilyName.ToLower() == learner.FamilyName) || (learner.FamilyName.ToUpper() == learner.FamilyName))
+            {
+                certificate.CertificateData.LearnerFamilyName = _certificateNameCapitalisationService.ProperCase(learner.FamilyName, true);
+            }
+            else
+            {
+                certificate.CertificateData.LearnerFamilyName = learner.FamilyName;
+            }
 
-            certData.LearningStartDate = learner.LearnStartDate;
-            certData.FullName = $"{learner.GivenNames} {learner.FamilyName}";
-            certData.ProviderName = provider.Name;
+            certificate.CertificateData.EmployerAccountId = learner.EmployerAccountId;
+            certificate.CertificateData.EmployerName = learner.EmployerName;
+
+            certificate.CertificateData.LearningStartDate = learner.LearnStartDate;
+            certificate.CertificateData.FullName = $"{certificate.CertificateData.LearnerGivenNames} {certificate.CertificateData.LearnerFamilyName}";
+            certificate.CertificateData.ProviderName = provider.Name;
+            certificate.CertificateData.CoronationEmblem = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(learner.StandardReference, learner.Version);
 
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;
@@ -150,30 +161,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     throw new InvalidOperationException($"StandardUId:{request.StandardUId} not found, unable to populate certificate data");
                 }
 
-                certData.StandardName = standardVersion.Title;
-                certData.StandardReference = standardVersion.IfateReferenceNumber;
-                certData.StandardLevel = standardVersion.Level;
-                certData.StandardPublicationDate = standardVersion.VersionApprovedForDelivery;
-                certData.Version = standardVersion.Version;
+                certificate.CertificateData.StandardName = standardVersion.Title;
+                certificate.CertificateData.StandardReference = standardVersion.IfateReferenceNumber;
+                certificate.CertificateData.StandardLevel = standardVersion.Level;
+                certificate.CertificateData.StandardPublicationDate = standardVersion.VersionApprovedForDelivery;
+                certificate.CertificateData.Version = standardVersion.Version;
 
                 if (!string.IsNullOrWhiteSpace(request.CourseOption))
                 {
-                    certData.CourseOption = request.CourseOption;
+                    certificate.CertificateData.CourseOption = request.CourseOption;
                 }
 
                 certificate.StandardUId = standardVersion.StandardUId;
             }
             else
             {
-                _logger.LogDebug($"Populating certificate data for standard versions of StdCode:{learner.StdCode}");
+                _logger.LogInformation($"Populating certificate data for standard versions of StdCode:{learner.StdCode}");
                 var standardVersions = await _standardService.GetStandardVersionsByLarsCode(learner.StdCode);
                 var latestStandardVersion = standardVersions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor).First();
                 
-                certData.StandardName = latestStandardVersion.Title;
-                certData.StandardReference = latestStandardVersion.IfateReferenceNumber;
+                certificate.CertificateData.StandardName = latestStandardVersion.Title;
+                certificate.CertificateData.StandardReference = latestStandardVersion.IfateReferenceNumber;
             }
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;
         }
 

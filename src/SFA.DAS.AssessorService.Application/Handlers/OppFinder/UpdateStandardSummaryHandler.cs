@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class UpdateStandardSummaryHandler : IRequestHandler<UpdateStandardSummaryRequest>
+    public class UpdateStandardSummaryHandler : IRequestHandler<UpdateStandardSummaryRequest, Unit>
     {
         private readonly ILogger<UpdateStandardSummaryHandler> _logger;
         private readonly IOppFinderRepository _oppFinderRepository;
@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<Unit> Handle(UpdateStandardSummaryRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Updating standard summary data");
             await _oppFinderRepository.UpdateStandardSummary();
 			return Unit.Value;
 		}

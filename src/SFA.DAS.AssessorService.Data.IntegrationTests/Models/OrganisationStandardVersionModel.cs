@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
     {
         public string StandardUId { get; set; }
         public string Version { get; set; }
-        public int OrganisationStandardId { get; set; }
+        public int? OrganisationStandardId { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? DateVersionApproved { get; set; }

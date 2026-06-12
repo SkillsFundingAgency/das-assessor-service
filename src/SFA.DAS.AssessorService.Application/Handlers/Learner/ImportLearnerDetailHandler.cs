@@ -1,14 +1,12 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 {
@@ -34,8 +32,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
             foreach (var importLearnerDetail in request.ImportLearnerDetails)
             {
-                _logger.LogDebug($"Handling Import Learner Detail Request Uln:{importLearnerDetail.Uln}, StdCode:{importLearnerDetail.StdCode}");
-
                 response.LearnerDetailResults.Add(
                     CheckMissingMandatoryFields(importLearnerDetail) ?? new ImportLearnerDetailResult
                     {
@@ -108,8 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                     }
                     else
                     {
-                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                        if (certificate.Status == CertificateStatus.Submitted && certificateData.OverallGrade == CertificateGrade.Fail)
+                        if (certificate.Status == CertificateStatus.Submitted && certificate.CertificateData.OverallGrade == CertificateGrade.Fail)
                         {
                             ignore = false;
                         }
@@ -137,8 +132,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private async Task<string> CreateIlrRecord(ImportLearnerDetail importLearnerDetail)
         {
-            _logger.LogDebug("Handling Import Learner Detail Request - Create Ilr");
-
             await _ilrRepository.Create(new Ilr
             {
                 Source = importLearnerDetail.Source,
@@ -166,8 +159,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private async Task<string> UpdateIlrRecord(ImportLearnerDetail importLearnerDetail, bool isUpdate, Ilr currentLearner = null)
         {
-            _logger.LogDebug("Handling Import Learner Detail Request - Update Ilr");
-
             // for an update to certain fields if the request is null then the currrent value will be
             // retained, otherwise the request value will be used
             var updatedIlr = new Ilr
@@ -204,8 +195,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         private ImportLearnerDetailResult CheckMissingMandatoryFields(ImportLearnerDetail request)
         {
-            _logger.LogDebug("Handling Import Learner Detail Request - Checking for missing mandatory fields");
-
             var result = new ImportLearnerDetailResult
             {
                 Uln = request.Uln,

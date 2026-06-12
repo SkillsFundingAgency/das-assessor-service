@@ -126,6 +126,9 @@
   <data name="EmailIsMissing" xml:space="preserve">
     <value>Enter an email address</value>
   </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>This email is already used by another contact</value>
+  </data>
   <data name="ContactIdIsRequired" xml:space="preserve">
     <value>A valid contact is required</value>
   </data>
@@ -134,6 +137,12 @@
   </data>
   <data name="DisplayNameIsMissing" xml:space="preserve">
     <value>Enter a contact name</value>
+  </data>
+  <data name="LastNameIsMissing" xml:space="preserve">
+    <value>Enter a last name</value>
+  </data>
+  <data name="FirstNameIsMissing" xml:space="preserve">
+    <value>Enter a first name</value>
   </data>
   <data name="NoOrganisationId" xml:space="preserve">
     <value>Enter an organisation ID</value>
@@ -156,6 +165,9 @@
   <data name="OrganisationStandardAlreadyExists" xml:space="preserve">
     <value>This organisation/standard already exists</value>
   </data>
+  <data name="OrganisationStandardVersionAlreadyExists" xml:space="preserve">
+    <value>One or more versions already exist</value>
+  </data>
   <data name="OrganisationStandardDoesNotExist" xml:space="preserve">
     <value>This organisation/standard does not exist</value>
   </data>
@@ -176,6 +188,12 @@
   </data>
   <data name="DisplayNameTooShort" xml:space="preserve">
     <value>Enter a name that is 2 or more characters</value>
+  </data>
+  <data name="FirstNameTooShort" xml:space="preserve">
+    <value>Enter a first name that is 2 or more characters</value>
+  </data>
+  <data name="LastNameTooShort" xml:space="preserve">
+    <value>Enter a last name that is 2 or more characters</value>
   </data>
   <data name="ContactIdDoesntExist" xml:space="preserve">
     <value>The Contact Id is invalid</value>
@@ -269,5 +287,14 @@
   </data>
   <data name="OrganisationStandardIdIsRequired" xml:space="preserve">
     <value>Organisation standard id is required</value>
+  </data>
+  <data name="ApplicationIdIsRequired" xml:space="preserve">
+    <value>The ApplicationId is required</value>
+  </data>
+  <data name="RecognitionNumberAlreadyInUse" xml:space="preserve">
+    <value>The Ofqual Recognition Number you have entered is already assigned to another organisation</value>
+  </data>
+  <data name="RecognitionNumberNotFound" xml:space="preserve">
+    <value>The Ofqual Recognition Number you have entered does not match Ofqual records</value>
   </data>
 </root>

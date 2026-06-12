@@ -101,27 +101,27 @@
 //        [Test]
 //        public void UpdateOrganisationStandardCheckIsPresentBeforeUpdating()
 //        {
-//            Assert.IsTrue(_isOrgStandardPresentBeforeUpdate);
+//            valid.Should().BeTrue();
 //        }
 //
 //        [Test]
 //        public void UpdateOrganisationStandardAndCheckTheBeforeValuesAreAsExpected()
 //        { 
-//            Assert.AreEqual(_orgStandardModel.EffectiveFrom, _organisationStandardBeforeUpdate.EffectiveFrom);
-//            Assert.AreEqual(_orgStandardModel.EffectiveTo, _organisationStandardBeforeUpdate.EffectiveTo);
-//            Assert.AreEqual(_orgStandardModel.EffectiveFrom, _organisationStandardBeforeUpdate.EffectiveFrom);
-//            Assert.AreEqual(_orgStandardModel.DateStandardApprovedOnRegister, _organisationStandardBeforeUpdate.DateStandardApprovedOnRegister);
-//            Assert.AreEqual(_orgStandardModel.Comments, _organisationStandardBeforeUpdate.Comments);
+//            _organisationStandardBeforeUpdate.EffectiveFrom.Should().Be(_orgStandardModel.EffectiveFrom);
+//            _organisationStandardBeforeUpdate.EffectiveTo.Should().Be(_orgStandardModel.EffectiveTo);
+//            _organisationStandardBeforeUpdate.EffectiveFrom.Should().Be(_orgStandardModel.EffectiveFrom);
+//            _organisationStandardBeforeUpdate.DateStandardApprovedOnRegister.Should().Be(_orgStandardModel.DateStandardApprovedOnRegister);
+//            _organisationStandardBeforeUpdate.Comments.Should().Be(_orgStandardModel.Comments);
 //        }
 //
 //        [Test]
 //        public void UpdateOrganisationStandardAndCheckAfterValuesAreAsExpected()
 //        {
-//            Assert.AreEqual(_returnedOrganisationStandardId, _organisationStandardAfterUpdate.Id.ToString());
-//            Assert.AreEqual(_organisationStandardAfterUpdate.EffectiveFrom, _organisationStandardUpdates.EffectiveFrom);
-//            Assert.AreEqual(_organisationStandardAfterUpdate.EffectiveTo, _organisationStandardUpdates.EffectiveTo);
+//            _organisationStandardAfterUpdate.Id.ToString().Should().Be(_returnedOrganisationStandardId);
+//            _organisationStandardUpdates.EffectiveFrom.Should().Be(_organisationStandardAfterUpdate.EffectiveFrom);
+//            _organisationStandardUpdates.EffectiveTo.Should().Be(_organisationStandardAfterUpdate.EffectiveTo);
 //            Assert.AreNotEqual(_organisationStandardAfterUpdate.DateStandardApprovedOnRegister, _organisationStandardUpdates.DateStandardApprovedOnRegister);
-//            Assert.AreEqual(_organisationStandardAfterUpdate.Comments, _organisationStandardUpdates.Comments);
+//            _organisationStandardUpdates.Comments.Should().Be(_organisationStandardAfterUpdate.Comments);
 //        }
 //
 //        [Test]
@@ -129,7 +129,7 @@
 //        {
 //            Assert.AreNotEqual(_organisationStandardBeforeUpdate.EffectiveFrom, _organisationStandardAfterUpdate.EffectiveFrom);
 //            Assert.AreNotEqual(_organisationStandardBeforeUpdate.EffectiveTo, _organisationStandardAfterUpdate.EffectiveTo);
-//            Assert.AreEqual(_organisationStandardBeforeUpdate.DateStandardApprovedOnRegister, _organisationStandardAfterUpdate.DateStandardApprovedOnRegister);
+//            _organisationStandardAfterUpdate.DateStandardApprovedOnRegister.Should().Be(_organisationStandardBeforeUpdate.DateStandardApprovedOnRegister);
 //            Assert.AreNotEqual(_organisationStandardBeforeUpdate.Comments, _organisationStandardAfterUpdate.Comments);
 //        }
 //

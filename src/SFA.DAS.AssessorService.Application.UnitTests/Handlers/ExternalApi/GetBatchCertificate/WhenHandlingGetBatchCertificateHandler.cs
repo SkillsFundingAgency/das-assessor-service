@@ -1,19 +1,18 @@
-﻿using FizzWare.NBuilder;
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Newtonsoft.Json;
-using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
-using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FizzWare.NBuilder;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.GetBatchCertificate
 {
@@ -48,13 +47,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
                     .Build())
                 .Build();
 
-            var certDataJson = JsonConvert.SerializeObject(_certificateData);
-
             _organisationResponse = Builder<Organisation>.CreateNew().Build();
 
             _certResponse = Builder<Certificate>.CreateNew()
                 .With(c => c.Status = "Submitted")
-                .With(c => c.CertificateData = certDataJson)
+                .With(c => c.CertificateData = _certificateData)
                 .Build();
 
             _registeredStandards = Builder<EpoRegisteredStandardsResult>.CreateNew()
@@ -97,6 +94,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             result.Should()
                 .BeEquivalentTo(_certResponse, opt => opt
                  .Excluding(c => c.UpdatedAt)
+                 .Excluding(c => c.LearnerGivenNames)
+                 .Excluding(c => c.LearnerFamilyName)
+                 .Excluding(c => c.LearnerFullNameNoSpaces)
                  .Excluding(c => c.FullName)
                  .Excluding(c => c.ContactOrganisation)
                  .Excluding(c => c.ProviderName)
@@ -116,7 +116,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
                  .Excluding(c => c.ContactAddLine2)
                  .Excluding(c => c.ContactAddLine3)
                  .Excluding(c => c.ContactAddLine4)
-                 .Excluding(c => c.ContactPostCode));
+                 .Excluding(c => c.ContactPostCode)
+                 .Excluding(c => c.LatestEPAOutcome));
         }
 
         [Test]
@@ -216,9 +217,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
 
         private void RefreshCertificateResponse()
         {
-            var certDataJson = JsonConvert.SerializeObject(_certificateData);
-
-            _certResponse.CertificateData = certDataJson;
+            _certResponse.CertificateData = _certificateData;
         }
 
         private void VerifyRedactedCertificate(Certificate result)
@@ -235,9 +234,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Get
             result.ToBePrinted.Should().BeNull();
             result.BatchNumber.Should().BeNull();
 
-            var resultCertificateData = JsonConvert.DeserializeObject<CertificateData>(result.CertificateData);
-
-            resultCertificateData.Should().BeEquivalentTo(_certificateData, opt => opt.Including(cd => cd.LearnerGivenNames)
+            result.CertificateData.Should().BeEquivalentTo(_certificateData, opt => opt.Including(cd => cd.LearnerGivenNames)
                 .Including(cd => cd.LearnerFamilyName)
                 .Including(cd => cd.StandardReference)
                 .Including(cd => cd.StandardName)

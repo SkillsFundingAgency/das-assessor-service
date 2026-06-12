@@ -19,5 +19,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public bool ApiEnabled { get; set; }
         public string ApiUser { get; set; }
         public string FinancialReviewStatus { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }

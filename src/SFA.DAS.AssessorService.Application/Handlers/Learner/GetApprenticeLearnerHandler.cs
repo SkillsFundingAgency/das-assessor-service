@@ -1,11 +1,9 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Settings;
-using System.Threading;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 {
@@ -23,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
 
         public async Task<GetApprenticeLearnerResponse> Handle(GetApprenticeLearnerRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Retrieving Learner with Apprentice Commitments Id = {request.ApprenticeshipId}");
             var learner = await _learnerRepository.Get(request.ApprenticeshipId);
 
             if (learner == null)
@@ -43,14 +40,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Learner
                 StandardReference = learner.StandardReference,
                 StandardName = learner.StandardName,
                 CompletionStatus = learner.CompletionStatus,
-                Outcome = learner.Outcome,
                 ApprovalsStopDate = learner.ApprovalsStopDate,
                 ApprovalsPauseDate = learner.ApprovalsPauseDate,
                 EstimatedEndDate = learner.EstimatedEndDate,
                 Uln = learner.Uln,
                 GivenNames = learner.GivenNames,
                 FamilyName = learner.FamilyName,
-                AchievementDate = learner.AchievementDate,
+                LearnActEndDate = learner.LearnActEndDate,
+                IsTransfer = learner.IsTransfer,
+                DateTransferIdentified = learner.DateTransferIdentified,
                 ProviderName = learner.ProviderName
             };
 

@@ -6,8 +6,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
@@ -32,24 +31,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
             if (result.OverviewResult == null)
                 return null;
-
+            string eqaProviderContactEmail = result.OverviewResult?.EqaProviderContactEmail;
+            string eqaProviderContactName = result.OverviewResult?.EqaProviderContactName;
             string eqaProvider;
 
-            if (await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactEmail }))
+            if (!string.IsNullOrEmpty(eqaProviderContactEmail) && await _mediator.Send(new ValidationRequest { Type = "email", Value = eqaProviderContactEmail }))
             {
-                eqaProvider = result.OverviewResult?.EqaProviderContactEmail;
+                eqaProvider = eqaProviderContactEmail;
             }
-            else if (await _mediator.Send(new ValidationRequest { Type = "email", Value = result.OverviewResult?.EqaProviderContactName }))
+            else if (!string.IsNullOrEmpty(eqaProviderContactName) && await _mediator.Send(new ValidationRequest { Type = "email", Value = eqaProviderContactName }))
             {
-                eqaProvider = result.OverviewResult?.EqaProviderContactName;
+                eqaProvider = eqaProviderContactName;
             }
             else
             {
                 eqaProvider = result.OverviewResult?.EqaProviderName;
             }
 
-            var approvedForDeliveryValidDate = DateTime
-                .TryParse(result.OverviewResult?.ApprovedForDelivery, out DateTime approvedForDelivery);
+            var formattedApprovedForDelivery = result.OverviewResult?.ApprovedForDelivery
+                .ToString("d MMMM yyyy", CultureInfo.InvariantCulture)
+                ?? string.Empty;
 
             return new GetOppFinderApprovedStandardDetailsResponse
             {
@@ -64,9 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 TotalCompletedAssessments = result.OverviewResult?.TotalCompletedAssessments ?? 0,
                 Sector = result.OverviewResult?.Sector,
                 TypicalDuration = result.OverviewResult?.TypicalDuration,
-                ApprovedForDelivery = approvedForDeliveryValidDate
-                    ? approvedForDelivery.ToString("d MMMM yyyy")
-                    : string.Empty,
+                ApprovedForDelivery = formattedApprovedForDelivery,
                 MaxFunding = result.OverviewResult?.MaxFunding != null
                     ? int.Parse(result.OverviewResult?.MaxFunding).ToString("C", CultureInfo.CreateSpecificCulture("en-GB"))
                     : null,

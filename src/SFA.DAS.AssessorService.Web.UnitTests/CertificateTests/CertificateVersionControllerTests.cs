@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
 {
     public class CertificateVersionControllerTests
     {
-        private Mock<IStandardVersionClient> _mockStandardVersionClient;
+        private Mock<IStandardVersionApiClient> _mockStandardVersionClient;
         private Mock<ICertificateApiClient> _mockCertificateApiClient;
         private Mock<IHttpContextAccessor> _mockContextAccessor;
         private Mock<ISessionService> _mockSessionService;
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
         [SetUp]
         public void SetUp()
         {
-            _mockStandardVersionClient = new Mock<IStandardVersionClient>();
+            _mockStandardVersionClient = new Mock<IStandardVersionApiClient>();
             _mockCertificateApiClient = new Mock<ICertificateApiClient>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
             _mockSessionService = new Mock<ISessionService>();
@@ -48,15 +48,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.CertificateTests
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Returns(new Claim("", Username));
             _mockContextAccessor.Setup(s => s.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")).Returns(new Claim("", EpaoId));
             _mockContextAccessor.Setup(s => s.HttpContext.Request.Query).Returns(Mock.Of<IQueryCollection>());
-
-            var certData = new CertificateData();
-            var certDataString = JsonConvert.SerializeObject(certData);
             _mockCertificateApiClient.Setup(s => s.GetCertificate(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(
                 new Domain.Entities.Certificate
                 {
                     Id = CertificateId,
                     StandardUId = StandardUId,
-                    CertificateData = certDataString
+                    CertificateData = new CertificateData()
                 });
 
             _certificateVersionController = new CertificateVersionController(

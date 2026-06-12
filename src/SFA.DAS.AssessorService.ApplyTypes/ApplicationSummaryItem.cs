@@ -25,5 +25,25 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string SequenceStatus { get; set; } // NOTE: Only used for Closed Applications
         public string StandardApplicationType { get; set; }
         public string WithdrawalType { get; set; }
+
+        public string DateValueForReviewStatus()
+        {
+            DateTime? dateValue = null;
+
+            if (ReviewStatus == ApplicationReviewStatus.New || ReviewStatus == ApplicationReviewStatus.InProgress)
+            {
+                dateValue = SubmittedDate;
+            }
+            else if (ReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                dateValue = FeedbackAddedDate;
+            }
+            else if (ReviewStatus == ApplicationReviewStatus.Approved)
+            {
+                dateValue = ClosedDate;
+            }
+
+            return dateValue?.ToString("dd MMMM yyyy");
+        }
     }
 }

@@ -11,8 +11,6 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
@@ -23,26 +21,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
 
     [Authorize]
-    public class OrganisationSearchController : Controller
+    public class OrganisationSearchController : BaseController
     {
         private const int PageSize = 10;
-        private readonly IContactsApiClient _contactsApiClient;
-        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IMapper _mapper;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ILogger<OrganisationSearchController> _logger;
         private readonly IWebConfiguration _config;
         private readonly ISessionService _sessionService;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger,
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, IMapper mapper,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient,
+            IApplicationApiClient applicationApiClient,
             IContactsApiClient contactsApiClient,
             IWebConfiguration config,
             ISessionService sessionService)
+            : base(applicationApiClient, contactsApiClient, contextAccessor)
         {
             _logger = logger;
-            _contextAccessor = contextAccessor;
+            _mapper = mapper;
             _organisationsApiClient = organisationsApiClient;
-            _contactsApiClient = contactsApiClient;
             _config = config;
             _sessionService = sessionService;
         }
@@ -175,15 +173,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.CompanyNumber != null)
-                {
-                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
-
-                    if (!isActivelyTrading)
-                    {
-                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
-                    }
-                }
 
                 viewModel.Organisations = new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult> { organisationSearchResult },1,1,1);
                 viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
@@ -293,16 +282,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode, viewModel.PageIndex);
             if (organisationSearchResult != null)
             { 
-                if (organisationSearchResult.CompanyNumber != null)
-                {
-                    var isActivelyTrading = await _organisationsApiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
-
-                    if (!isActivelyTrading)
-                    {
-                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
-                    }
-                }
-
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
                     if (organisationSearchResult.OrganisationIsLive)
@@ -381,9 +360,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 TradingName = organisationSearchResult.TradingName,
                 ProviderName = organisationSearchResult.ProviderName,
                 CompanyNumber = organisationSearchResult.CompanyNumber,
-                CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails),
+                CompanySummary = _mapper.Map<Domain.Entities.CompaniesHouseSummary>(companyDetails),
                 CharityNumber = organisationSearchResult.CharityNumber,
-                CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails),
+                CharitySummary = _mapper.Map<Domain.Entities.CharityCommissionSummary>(charityDetails),
                 Address1 = organisationSearchResult.Address?.Address1,
                 Address2 = organisationSearchResult.Address?.Address2,
                 Address3 = organisationSearchResult.Address?.Address3,
@@ -426,7 +405,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private ViewResult RequestAccess(OrganisationSearchViewModel viewModel, OrganisationSearchResult organisationSearchResult)
         {
-            var newViewModel = Mapper.Map<RequestAccessOrgSearchViewModel>(viewModel);
+            var newViewModel = _mapper.Map<RequestAccessOrgSearchViewModel>(viewModel);
             var addressArray = new[] { organisationSearchResult.Address?.Address1, organisationSearchResult.Address?.City, organisationSearchResult.Address.Postcode };
             newViewModel.Address = string.Join(", ", addressArray.Where(s => !string.IsNullOrEmpty(s)));
             newViewModel.RoEPAOApproved = organisationSearchResult.RoEPAOApproved;
@@ -450,10 +429,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return (pageIndex ?? 1) < 0 ? 1 : pageIndex ?? 1;
         }
 
-        private async Task<ContactResponse> GetUser()
-        {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            return await _contactsApiClient.GetContactBySignInId(signinId ?? Guid.Empty.ToString());
-        }
+        
     }
 }

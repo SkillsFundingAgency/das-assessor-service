@@ -1,15 +1,15 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Models.Response;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
-using Swashbuckle.AspNetCore.Examples;
+using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Examples
 {
-    public class UpdateCertificateResponseExample : IExamplesProvider
+    public class UpdateCertificateResponseExample : IExamplesProvider<List<UpdateCertificateResponse>>
     {
-        public object GetExamples()
+        public List<UpdateCertificateResponse> GetExamples()
         {
             return new List<UpdateCertificateResponse>
             {

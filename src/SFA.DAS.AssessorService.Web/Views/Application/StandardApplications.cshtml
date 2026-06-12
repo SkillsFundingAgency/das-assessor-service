@@ -1,8 +1,13 @@
 @using SFA.DAS.AssessorService.Web.ViewModels.Apply
+@using SFA.DAS.AssessorService.Web.Controllers
+@using SFA.DAS.AssessorService.Web.Controllers.Apply
 @model ApplicationResponseViewModel
 @{
     ViewBag.Title = "Applications";
+    Layout = "_DashboardLayout";
 }
+
+<a asp-route="@ApplyToAssessStandardController.ApplyToAssessStandardRouteGet" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -37,24 +42,13 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <!-- <h1 class="govuk-heading-xl">Signed in</h1> -->
             <h1 class="govuk-heading-xl">
                 Select application
             </h1>
 
-            @if (Model.FinancialInfoStage1Expired)
-            {
-                <form asp-action="FinancialExpiredRedir" asp-controller="Application" method="post">
-                    <button class="govuk-button" type="submit">Start new application</button>
-                </form>
-
-            }
-            else
-            {
-                <form asp-action="StartApplication" asp-controller="Application" method="post">
-                    <button class="govuk-button" type="submit">Start new application</button>
-                </form>
-            }
+            <form asp-action="StartApplication" asp-controller="Application" method="post">
+                <button class="govuk-button" type="submit">Start new application</button>
+            </form>
 
             <table class="govuk-table">
                 <thead class="govuk-table__head">

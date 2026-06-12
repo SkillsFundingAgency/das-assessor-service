@@ -5,6 +5,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
     public class CertificatesForBatchNumberResponse
     {
-        public List<CertificatePrintSummary> Certificates { get; set; }
+        public List<CertificatePrintSummaryBase> Certificates { get; set; }
     }
 }

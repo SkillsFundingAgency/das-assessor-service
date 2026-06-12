@@ -17,13 +17,14 @@
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <IsEncryptionOn>True</IsEncryptionOn>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -73,6 +74,8 @@
     <Folder Include="Security\Roles\DatabaseRoles" />
     <Folder Include="Security\Schemas" />
     <Folder Include="StoredProcedures\DashboardReporting" />
+    <Folder Include="PostDeploymentScripts\TemporaryPatches" />
+    <Folder Include="Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -157,7 +160,6 @@
     <None Include="PostDeploymentScripts\GrantOrDenyPermissions.sql" />
     <Build Include="StoredProcedures\StaffReports_MissingCertificateData.sql" />
     <Build Include="Tables\StandardOptions.sql" />
-    <None Include="PostDeploymentScripts\CON-3359_Remove_IlrsImport.sql" />
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Security\Roles\DatabaseRoles\DashboardReporting.sql" />
     <Build Include="Security\Schemas\DashboardReporting.sql" />
@@ -175,15 +177,39 @@
     <Build Include="StoredProcedures\DashboardReporting\IlrImportSummary.sql" />
     <Build Include="Tables\ApprovalsExtract_Staging.sql" />
     <Build Include="StoredProcedures\ImportIntoApprovalsExtract_FromApprovalsExtract_Staging.sql" />
-    <None Include="PreDeploymentScripts\ClearOrgStandardVersionColumn.sql" />
-    <None Include="PostDeploymentScripts\SV-1290-RemoveOldStandardCollationTables.sql" />
     <Build Include="Tables\MergeOrganisations.sql" />
     <Build Include="Tables\MergeOrganisationStandard.sql" />
     <Build Include="Tables\MergeOrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\MergeOrganisationStandardVersion.sql" />
     <Build Include="Tables\MergeApply.sql" />
     <Build Include="StoredProcedures\UndoOrganisationMerge.sql" />
-    <None Include="PostDeploymentScripts\SV-889-UpdateApplyViaOptInStatus.sql" />
+    <Build Include="StoredProcedures\StaffReports_List_Approved_Standards.sql" />
+    <Build Include="Tables\OfqualOrganisation.sql" />
+    <Build Include="Tables\StagingOfqualOrganisation.sql" />
+    <Build Include="Tables\OfqualStandard.sql" />
+    <Build Include="Tables\StagingOfqualStandard.sql" />
+    <Build Include="StoredProcedures\Load_Ofqual_Standards.sql" />
+    <Build Include="Tables\StagingOfsOrganisation.sql" />
+    <Build Include="Tables\OfsOrganisation.sql" />
+    <Build Include="StoredProcedures\Load_Ofs_Standards.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetMinDateTime.sql" />
+    <Build Include="Functions\Scalar-valued Functions\GetMaxDateTime.sql" />
+    <None Include="PostDeploymentScripts\TemporaryPatches\P2-2241_Drop_apar_tables.sql" />
+    <Build Include="StoredProcedures\PopulateLearner_WithdrawSupersededIlrs.sql" />
+    <Build Include="StoredProcedures\PopulateLearner_RemoveSupersededLearners.sql" />
+    <Build Include="StoredProcedures\PopulateLearner_WithdrawOverlappingIlrsAndLearners.sql" />
+    <Build Include="Security\Schemas\Frameworks.sql" />
+    <None Include="PostDeploymentScripts\TemporaryPatches\P2-2340_Create_framework_tables.sql" />
+    <Build Include="Tables\FrameworkLearner.sql" />
+    <Build Include="Views\StandardCertificates.sql" />
+    <None Include="PostDeploymentScripts\LookupData\FrameworkDelete.sql" />
+    <None Include="PostDeploymentScripts\LookupData\FrameworkInsertOrUpdate.sql" />
+    <Build Include="Tables\Framework.sql" />
+    <Build Include="Tables\AssessmentsSummary.sql" />
+    <Build Include="StoredProcedures\AssessmentsSummaryUpdate.sql" />
+    <Build Include="Functions\Scalar-valued Functions\CleanseName.sql" />
+    <Build Include="StoredProcedures\Certificates_GetFrameworkMasks.sql" />
+    <Build Include="StoredProcedures\Certificates_GetStandardMasks.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
@@ -207,6 +233,7 @@
     <None Include="PostDeploymentScripts\LookupData\StaffReportsInsertOrUpdate.sql" />
     <None Include="PostDeploymentScripts\LookupData\StaffReportsDelete.sql" />
     <None Include="PostDeploymentScripts\LookupData\PrePopulateProviders.sql" />
+    <None Include="PostDeploymentScripts\TemporaryPatches\ON-613_Patch_standard_reference.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

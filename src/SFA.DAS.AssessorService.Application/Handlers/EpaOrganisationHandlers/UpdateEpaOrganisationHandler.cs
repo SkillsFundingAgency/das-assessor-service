@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
@@ -111,7 +112,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationTypeId = request.OrganisationTypeId,
                 Ukprn = request.Ukprn,
                 Status = status,
-                OrganisationData = new OrganisationData
+                RecognitionNumber = request.RecognitionNumber ?? existingOrganisation?.RecognitionNumber,
+                OrganisationData = new AssessorService.Api.Types.Models.AO.OrganisationData
                 {
                     Address1 = request.Address1,
                     Address2 = request.Address2,
@@ -133,7 +135,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     RoATPApproved = existingOrganisation?.OrganisationData?.RoATPApproved ?? false,
                     RoEPAOApproved = roEPAOApproved,
                     EndPointAssessmentOrgId = existingOrganisation?.OrganisationData?.EndPointAssessmentOrgId,
-                    FinancialGrades = existingOrganisation?.OrganisationData?.FinancialGrades ?? new List<ApplyTypes.FinancialGrade>(),
+                    FinancialGrades = existingOrganisation?.OrganisationData?.FinancialGrades ?? new List<Domain.Entities.FinancialGrade>(),
                     FHADetails = new FHADetails
                     {
                         FinancialDueDate = request.FinancialDueDate,

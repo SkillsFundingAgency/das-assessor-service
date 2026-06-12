@@ -2,53 +2,52 @@
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates;
+using SFA.DAS.AssessorService.AutoMapperExtensions;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
-    public class CertificateProfile : Profile
+    public class CertificateProfile : ExplicitMappingProfileBase
     {
         public CertificateProfile()
         {
             CreateMap<Domain.Entities.Certificate, Certificate>()
-                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Domain.JsonData.CertificateData, CertificateData>(JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(source.CertificateData ?? ""))))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Status>(source)))
-                .ForMember(dest => dest.Created, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Created>(source)))
-                .ForMember(dest => dest.Submitted, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Submitted>(source)))
-                .ForMember(dest => dest.Printed, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Printed>(source)))
-                .ForMember(dest => dest.Delivered, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.CertificateLog, Delivered>(source.CertificateLogs
+                .ForMember(dest => dest.CertificateData, opt => opt.MapFrom(source => source.CertificateData ?? new Domain.JsonData.CertificateData()))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Created, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Submitted, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Printed, opt => opt.MapFrom(source => source))
+                .ForMember(dest => dest.Delivered, opt => opt.MapFrom(source => source.CertificateLogs
                     .Where(log => log.Status == CertificateStatus.Delivered || log.Status == CertificateStatus.NotDelivered)
                     .OrderByDescending(log => log.EventTime)
-                    .FirstOrDefault())))
+                    .FirstOrDefault()))
                 .ForPath(dest => dest.CertificateData.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
                 .ForPath(dest => dest.CertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
                 .ForPath(dest => dest.CertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
                 .AfterMap<MapProviderUkPrnAction>()
-                .AfterMap<CollapseNullsAction>()
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .AfterMap<CollapseNullsAction>();
 
             CreateMap<Domain.Entities.CertificateLog, Delivered>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
-                .ForMember(dest => dest.DeliveryDate, opt => opt.MapFrom(source => source.EventTime.DropMilliseconds()))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.DeliveryDate, opt => opt.MapFrom(source => source.EventTime.DropMilliseconds()));
         }
 
         public class MapProviderUkPrnAction : IMappingAction<Domain.Entities.Certificate, Certificate>
         {
-            public void Process(Domain.Entities.Certificate source, Certificate destination)
+            public void Process(Domain.Entities.Certificate source, Certificate destination, ResolutionContext context)
             {
                 if (destination.CertificateData.LearningDetails != null)
                 {
-                    destination.CertificateData.LearningDetails.ProviderUkPrn = source.ProviderUkPrn;
+                    destination.CertificateData.LearningDetails.ProviderUkPrn = source.ProviderUkPrn.GetValueOrDefault();
                 }
             }
         }
 
         public class CollapseNullsAction : IMappingAction<Domain.Entities.Certificate, Certificate>
         {
-            public void Process(Domain.Entities.Certificate source, Certificate destination)
+            public void Process(Domain.Entities.Certificate source, Certificate destination, ResolutionContext context)
             {
                 if (destination.Created.CreatedBy is null)
                 {

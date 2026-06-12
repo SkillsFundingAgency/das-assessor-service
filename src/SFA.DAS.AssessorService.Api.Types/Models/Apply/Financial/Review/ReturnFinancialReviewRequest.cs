@@ -1,15 +1,14 @@
 ﻿using MediatR;
-using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply.Financial.Review
 {
-    public class ReturnFinancialReviewRequest : IRequest
+    public class ReturnFinancialReviewRequest : IRequest<Unit>
     {
         public Guid Id { get; }
-        public FinancialGrade UpdatedGrade { get; }
+        public Domain.Entities.FinancialGrade UpdatedGrade { get; }
 
-        public ReturnFinancialReviewRequest(Guid id, FinancialGrade updatedGrade)
+        public ReturnFinancialReviewRequest(Guid id, Domain.Entities.FinancialGrade updatedGrade)
         {
             Id = id;
             UpdatedGrade = updatedGrade;

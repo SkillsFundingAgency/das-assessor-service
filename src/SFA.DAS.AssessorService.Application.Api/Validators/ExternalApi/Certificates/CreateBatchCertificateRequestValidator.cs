@@ -1,12 +1,11 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certificates
 {
@@ -31,20 +30,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
 
                     if (existingCertificate != null && existingCertificate.Status != CertificateStatus.Deleted)
                     {
-                        var certData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
-
                         if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
                         {
                             context.AddFailure(new ValidationFailure("CertificateData", $"Your organisation is not the creator of the EPA"));
                         }
                         else if (existingCertificate.Status == CertificateStatus.Draft)
                         {
-                            if (!string.IsNullOrEmpty(certData.OverallGrade))
+                            if (!string.IsNullOrEmpty(existingCertificate.CertificateData.OverallGrade))
                             {
                                 context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
                             }
                         }
-                        else if (existingCertificate.Status == CertificateStatus.Submitted && !string.IsNullOrWhiteSpace(certData.OverallGrade) && certData.OverallGrade.Equals(CertificateGrade.Fail, StringComparison.OrdinalIgnoreCase))
+                        else if (
+                            existingCertificate.Status == CertificateStatus.Submitted && 
+                            !string.IsNullOrWhiteSpace(existingCertificate.CertificateData.OverallGrade) && 
+                            existingCertificate.CertificateData.OverallGrade.Equals(CertificateGrade.Fail, StringComparison.OrdinalIgnoreCase))
                         { 
                             // A submitted fail can be re-created
                         }

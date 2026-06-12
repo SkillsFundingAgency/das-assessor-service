@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        
+        Task<ContactResponse> UpdateFromGovLogin(UpdateContactGovLoginRequest updateRequest); 
 
         Task<ContactBoolResponse> DoesContactHavePrivileges(string userId);
 
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> GetById(Guid id);
 
-        Task<ContactResponse> GetContactBySignInId(string signInId);
+        Task<ContactResponse> GetContactByGovUkIdentifier(string govUkIdentifier);
 
         Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId, bool? withUser = null);
         Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null);
@@ -38,9 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
         Task Callback(SignInCallback callback);
 
-        Task MigrateUsers();
-
-        Task MigrateSingleContactToApply(System.Guid signinId);
+        Task MigrateSingleContactToApply(string govUkIdentifier);
 
         Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);
 
@@ -51,5 +49,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task RequestForPrivilege(Guid contactId, Guid privilegeId);
         Task ApproveContact(Guid contactId);
         Task RejectContact(Guid contactId);
+        Task<ContactResponse> GetContactByEmail(string emailAddress);
+        Task<ContactResponse> GetContactByGovIdentifier(string govIdentifier);
+        Task UpdateEmail(UpdateEmailRequest updateEmailRequest);
     }
 }

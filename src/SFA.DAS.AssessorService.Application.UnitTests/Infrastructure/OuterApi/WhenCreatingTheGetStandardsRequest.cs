@@ -1,6 +1,6 @@
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Infrastructure.OuterApi;
+using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Infrastructure.OuterApi
 {

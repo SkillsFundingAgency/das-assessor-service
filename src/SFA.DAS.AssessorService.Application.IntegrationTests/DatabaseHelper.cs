@@ -1,10 +1,10 @@
-﻿using Dapper;
+﻿using System.Data;
+using System.Linq;
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.AssessorService.Data;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.IntegrationTests
 {

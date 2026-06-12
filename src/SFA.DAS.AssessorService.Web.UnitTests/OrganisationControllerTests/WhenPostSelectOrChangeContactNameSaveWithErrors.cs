@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Controllers;
-using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     [TestFixture]
-    public class WhenPostSelectOrChangeContactNameSaveWithErrors
-        : OrganisationControllerTestBaseForInvalidModel<SelectOrChangeContactNameViewModel>
+    public class WhenPostSelectOrChangeContactNameSaveWithErrors : OrganisationControllerTestBase
     {
         private const string InvalidPrimaryContactEmpty = "";
         private const string InvalidPrimaryContactSame = ValidPrimaryContact;
@@ -59,8 +53,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 });
         }
 
-        public override async Task<IActionResult> Act()
-        {            
+        public async Task<IActionResult> Act()
+        {
             return await sut.SelectOrChangeContactName(new SelectOrChangeContactNameViewModel
             {
                 PrimaryContact = InvalidPrimaryContactEmpty,
@@ -68,9 +62,23 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             });
         }
 
-        public override async Task<IActionResult> Act(SelectOrChangeContactNameViewModel viewModel)
+        public async Task<IActionResult> Act(SelectOrChangeContactNameViewModel viewModel)
         {
             return await sut.SelectOrChangeContactName(viewModel);
+        }
+
+        [Test]
+        public async Task Should_get_an_organisation_by_epao()
+        {
+            _actionResult = await Act();
+            OrganisationApiClient.Verify(a => a.GetEpaOrganisation(EpaoId));
+        }
+
+        [Test]
+        public async Task Should_return_a_redirecttoaction()
+        {
+            _actionResult = await Act();
+            _actionResult.Should().BeOfType<RedirectToActionResult>();
         }
 
         [TestCase(InvalidPrimaryContactEmpty)]

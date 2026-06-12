@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 
 namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
 {

@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationStandards;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -52,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             var result = await _handler.Handle(request, new CancellationToken());
 
-            _orgStandardRepository.Verify(r => r.WithdrawalOrganisation("EPA0123", withdrawDate));
+            _orgStandardRepository.Verify(r => r.WithdrawOrganisation("EPA0123", withdrawDate));
             _unitOfWork.Verify(r => r.Commit());
         }
 
@@ -95,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
 
             Assert.ThrowsAsync<BadRequestException>(() => _handler.Handle(request, new CancellationToken()));
 
-            _orgStandardRepository.Verify(r => r.WithdrawalOrganisation(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+            _orgStandardRepository.Verify(r => r.WithdrawOrganisation(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
         }
     }
 }

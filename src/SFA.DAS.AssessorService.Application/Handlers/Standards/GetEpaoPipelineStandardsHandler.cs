@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Settings;
@@ -13,11 +13,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
     public class GetEpaoPipelineStandardsHandler : IRequestHandler<EpaoPipelineStandardsRequest, PaginatedList<EpaoPipelineStandardsResponse>>
     {
-        private readonly IWebConfiguration _config;
+        private readonly IApiConfiguration _config;
         private readonly IStandardRepository _standardRepository;
         private readonly ILogger<GetEpaoPipelineStandardsHandler> _logger;
 
-        public GetEpaoPipelineStandardsHandler(IWebConfiguration config, IStandardRepository standardRepository, ILogger<GetEpaoPipelineStandardsHandler> logger)
+        public GetEpaoPipelineStandardsHandler(IApiConfiguration config, IStandardRepository standardRepository, ILogger<GetEpaoPipelineStandardsHandler> logger)
         {
             _config = config;
             _standardRepository = standardRepository;
@@ -26,8 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<PaginatedList<EpaoPipelineStandardsResponse>> Handle(EpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"GetEpaoPipelineStandardsHandler: EpaoId = {request.EpaoId}, OrderBy = {request.OrderBy}, OrderDirection = {request.OrderDirection}, PageSize = {request.PageSize}, PageIndex = {request.PageIndex}");
-
             var result =
                 await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.StandardFilterId, request.ProviderFilterId, request.EPADateFilterId,
                     _config.PipelineCutoff, request.OrderBy, request.OrderDirection, request.PageSize, request.PageIndex);
