@@ -84,6 +84,12 @@
         "subnetDelegations": {
             "type": "array"
         },
+        "sharedBackEndAppServicePlanName": {
+            "type": "string"
+        },
+        "sharedBackEndSubnetResourceId": {
+            "type": "string"
+        },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
@@ -199,7 +205,6 @@
         {
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('externalApiActiveSandboxAppServiceName'), '-app-service-cert-', parameters('utcValue'))]",
-
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "condition": "[greater(length(parameters('externalApiSandboxAppServiceCertificateName')), 0)]",
@@ -264,13 +269,13 @@
                         "value": "[variables('externalApiActiveSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('activeSandboxAppServicePlanName')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[variables('resourceGroupName')]"
+                        "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference(concat(parameters('activeSandboxSubnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
@@ -319,10 +324,7 @@
                         "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
             "name": "[concat(variables('internalApiActiveSandboxAppServiceName'), '-', parameters('utcValue'))]",
@@ -341,13 +343,13 @@
                         "value": "[variables('internalApiActiveSandboxAppServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('activeSandboxAppServicePlanName')]"
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[variables('resourceGroupName')]"
+                        "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference(concat(parameters('activeSandboxSubnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
@@ -400,10 +402,7 @@
                         "value": "[parameters('appServiceAllowedIPs')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(variables('activeSandboxAppServicePlanName'), '-app-srvce-plan-', parameters('utcValue'))]"
-            ]
+            }
         },
         {
             "apiVersion": "2020-10-01",
