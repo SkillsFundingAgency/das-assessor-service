@@ -49,6 +49,11 @@
     [CreatedOn] DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     [ApprenticeNameMatch] NVARCHAR(70) NOT NULL,
     [ULNConfirmed] BIT NOT NULL DEFAULT 0,-- if Unique_number matched to ULN in Approvals
+    [OverrideFamilyName] NVARCHAR(100) NULL,
+    [OverrideGivenNames]  NVARCHAR(100) NULL,
+    [CertificateFamilyName] AS ISNULL([OverrideFamilyName],[dbo].[CleanseName]([ApprenticeSurname])) PERSISTED,
+    [CertificateGivenNames] AS ISNULL([OverrideGivenNames],[dbo].[CleanseName]([ApprenticeForename]+CASE WHEN ISNULL([ApprenticeMiddleName],'') NOT IN ('','''') THEN ' '+[ApprenticeMiddleName] ELSE '' END)) PERSISTED,
+
     CONSTRAINT [PK_FrameworkLearner] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
@@ -62,4 +67,20 @@ CREATE UNIQUE INDEX [IXU_FrameworkLearner_NameMatch] ON [dbo].[FrameworkLearner]
     ([ApprenticeNameMatch], [ApprenticeDoB], [CertificationYear], [Framework], [Pathway], [ApprenticeshipLevelName], [ApprenticeshipLevel],
     [CompetenceQualificationId], [KnowledgeQualificationId], [CombinedQualificationId], [ULNConfirmed])
 INCLUDE ([Id],[ApprenticeSurname],[ApprenticeForename]);
+GO
+
+CREATE NONCLUSTERED INDEX IX_FrameworkLearner_Masks_Uln
+ON dbo.FrameworkLearner (ApprenticeULN)
+INCLUDE (Id, TrainingCode, FrameworkName, ApprenticeshipLevelName, ProviderName)
+GO
+
+CREATE NONCLUSTERED INDEX IX_FrameworkLearner_Masks_CreatedOn
+ON dbo.FrameworkLearner (CreatedOn DESC)
+INCLUDE (ApprenticeULN, TrainingCode, FrameworkName, PathwayName, ProviderName, ApprenticeStartdate, ApprenticeshipLevelName, Ukprn)
+WHERE Ukprn IS NOT NULL;
+GO
+
+CREATE NONCLUSTERED INDEX IX_FrameworkLearner_Search
+ON dbo.FrameworkLearner (CertificateFamilyName, ApprenticeDoB, ApprenticeULN)
+INCLUDE (TrainingCode, FrameworkName, ApprenticeshipLevelName, CertificationDate, ProviderName, Ukprn)
 GO

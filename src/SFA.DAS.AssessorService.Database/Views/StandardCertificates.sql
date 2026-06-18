@@ -42,7 +42,10 @@ SELECT
     ContactAddLine3,
     ContactAddLine4,
     ContactPostCode,
-    LatestEPAOutcome
+    LatestEPAOutcome,
+    DateOfBirth,
+    CertificateFamilyName,
+    CertificateGivenNames
 FROM [dbo].[Certificates]
 WHERE Type = 'Standard';
 

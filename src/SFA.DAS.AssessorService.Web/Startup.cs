@@ -57,9 +57,8 @@ namespace SFA.DAS.AssessorService.Web
             try
             {
                 services.AddMappings();
-                    
+
                 services.AddConfigurationServices(Configuration, _config)
-                    .AddApplicationInsightsTelemetry()
                     .AddLocalizationConfiguration()
                     .AddAuthenticationAndAuthorization(_config, Configuration)
                     .AddApplicationServices()

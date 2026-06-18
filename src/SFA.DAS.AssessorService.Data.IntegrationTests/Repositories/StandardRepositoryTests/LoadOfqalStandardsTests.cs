@@ -1,11 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRepositoryTests
 {
@@ -138,6 +140,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
@@ -157,6 +161,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard("RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001")
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
@@ -167,6 +173,31 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                     currentDateTime.AddDays(-1), null));
 
                 await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(null, recognitionNumber, operationalStartDate, operationalEndDate,
+                    ifateReferenceNumber, currentDateTime, null));
+            }
+        }
+
+        [TestCase("RN0002", "2020-01-01", "2021-02-01", "ST0001 1234567890")]
+        [TestCase("RN0001", "2020-01-01", "2021-02-01", "ST0002 1234567890")]
+        public async Task LoadOfqualStandards_DoNoAddInValidReferenceNumberedOfqualStandards_WhenStagingContainsAddedData(
+            string recognitionNumber, DateTime operationalStartDate, DateTime? operationalEndDate, string ifateReferenceNumber)
+        {
+            var ofqualStandardId = Guid.NewGuid();
+            var currentDateTime = DateTime.Now;
+
+            using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
+                .WithStagingOfqualStandard("RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001")
+                .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
+            {
+                var results = await fixture.LoadOfqualStandards(currentDateTime);
+
+                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001",
+                    currentDateTime.AddDays(-1), null));
+
+                await results.VerifyOfqualStandardDoesNotExist(OfqualStandardHandler.Create(null, recognitionNumber, operationalStartDate, operationalEndDate,
                     ifateReferenceNumber, currentDateTime, null));
             }
         }
@@ -205,6 +236,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber, currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate.AddDays(operationalStartDateOffsetDays), operationalEndDate, ifateReferenceNumber))
@@ -236,6 +269,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
+                .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
+                .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithOfqualStandard(ofqualStandardId, recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber, currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate.AddDays(5), operationalEndDate?.AddDays(operationalEndDateOffsetDays), ifateReferenceNumber))

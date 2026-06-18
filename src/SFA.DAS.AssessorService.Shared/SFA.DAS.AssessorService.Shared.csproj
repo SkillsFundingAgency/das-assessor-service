@@ -117,7 +117,6 @@
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatesForBatchNumberResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificatesForBatchNumberResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateSummaryResponse.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\CertificateSummaryResponse.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\DeleteCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\DeleteCertificateRequest.cs" />
-    <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateForUlnRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateForUlnRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateHistoryRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateHistoryRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificateRequest.cs" />
     <Compile Include="..\SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesForBatchNumberRequest.cs" Link="SFA.DAS.AssessorService.Api.Types\Models\Certificates\GetCertificatesForBatchNumberRequest.cs" />

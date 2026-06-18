@@ -347,6 +347,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
+        public async Task<T> VerifyOfqualStandardDoesNotExist(OfqualStandardModel ofqualStandard)
+        {
+            var result = await OfqualStandardHandler.QueryFirstOrDefaultAsync(ofqualStandard);
+            result.Should().BeNull();
+
+            return this as T;
+        }
+
         public T WithIlr(
             Guid id, long uln, string givenNames, string familyName, int ukprn, int stdCode, DateTime? learnStartDate, string source, DateTime? createdOn, int completionStatus, DateTime? plannedEndDate)
         {
@@ -403,6 +411,54 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
                 string.Empty, null, string.Empty, createdAt.Date);
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
+            return this as T;
+        }
+
+        public T WithCertificateForStoredProcedure(Guid id, string certificateData, DateTime createdAt, long uln, int standardCode,
+            int providerUkPrn, string endPointAssessorOrganisationId, string status, string standardUId, int certificateReferenceId = 10001)
+        {
+            var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+
+            var certificate = CertificateHandler.Create(id, certificateData, null, createdAt, string.Empty, string.Empty,
+                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty, createdAt.Date,
+                certificateReferenceId: certificateReferenceId, standardUId: standardUId);
+            _certificates.Add(certificate);
+            CertificateHandler.InsertRecord(certificate);
+            return this as T;
+        }
+
+        public T WithFrameworkLearner(Guid id, string frameworkCertificateNumber, string certificationYear,
+            DateTime certificationDate, string apprenticeFullname, string apprenticeSurname, string apprenticeForename,
+            DateTime apprenticeDoB, long apprenticeULN, string trainingCode, string frameworkName, string pathwayName,
+            int apprenticeshipLevel, string providerName, string ukprn, string framework, string pathway,
+            string apprenticeshipLevelName, long apprenticeId, DateTime createdOn, string apprenticeNameMatch)
+        {
+            var frameworkLearner = new FrameworkLearnerModel
+            {
+                Id = id,
+                FrameworkCertificateNumber = frameworkCertificateNumber,
+                CertificationYear = certificationYear,
+                CertificationDate = certificationDate,
+                ApprenticeFullname = apprenticeFullname,
+                ApprenticeSurname = apprenticeSurname,
+                ApprenticeForename = apprenticeForename,
+                ApprenticeDoB = apprenticeDoB,
+                ApprenticeULN = apprenticeULN,
+                TrainingCode = trainingCode,
+                FrameworkName = frameworkName,
+                PathwayName = pathwayName,
+                ApprenticeshipLevel = apprenticeshipLevel,
+                ProviderName = providerName,
+                Ukprn = ukprn,
+                Framework = framework,
+                Pathway = pathway,
+                ApprenticeshipLevelName = apprenticeshipLevelName,
+                ApprenticeId = apprenticeId,
+                CreatedOn = createdOn,
+                ApprenticeNameMatch = apprenticeNameMatch
+            };
+
+            FrameworkLearnerHandler.InsertRecord(frameworkLearner);
             return this as T;
         }
 
@@ -591,6 +647,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             StagingOfqualOrganisationHandler.DeleteAllRecords();
             StagingOfqualStandardHandler.DeleteAllRecords();
             StagingOfsOrganisationHandler.DeleteAllRecords();
+            FrameworkLearnerHandler.DeleteAllRecords();
         }
     }
 }

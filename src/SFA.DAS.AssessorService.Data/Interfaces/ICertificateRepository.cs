@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AssessorService.Data.Interfaces
 {
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         Task<T> GetCertificate<T>(string certificateReference, string familyName, DateTime? achievementDate) where T : CertificateBase;
 
         Task<List<Certificate>> GetDraftAndCompletedCertificatesFor(long uln);
+        Task<List<ApprenticeCertificateSummary>> GetPrintableCertificates(long uln);
 
         Task<FrameworkCertificate> GetFrameworkCertificate(Guid frameworkLearnerId);
 
@@ -54,12 +56,13 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId);
-        Task<bool> CertificateExistsForUln(long uln);
-
-        Task<Certificate> GetCertificateDeletedByUln(long uln);
 
         Task<AssessmentsResult> GetAssessments(long ukprn, string standardReference);
 
         Task UpdateAssessmentsSummary();
+
+        Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns);
+        Task<List<CertificateMask>> GetStandardMasks(IEnumerable<long> excludeUlns, int top = 5);
+        Task<List<CertificateMask>> GetFrameworkMasks(IEnumerable<long> excludeUlns, int top = 5);
     }
 }

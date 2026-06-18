@@ -123,7 +123,8 @@ BEGIN
                     SELECT *
                         ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IfateReferenceNumber] ORDER BY [OperationalStartDate]) Earliest
                         ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IfateReferenceNumber] ORDER BY [OperationalStartDate] DESC, CASE WHEN [OperationalEndDate] IS NULL THEN 0 ELSE 1 END, [OperationalEndDate] DESC) Latest
-                    FROM [dbo].[StagingOfqualStandard]
+                    FROM [dbo].[StagingOfqualStandard] Sos
+                    WHERE EXISTS (SELECT NULL FROM [dbo].[Standards] WHERE [IfateReferenceNumber] = Sos.[IfateReferenceNumber])
                 ) [OperationalDates]
                 GROUP BY [RecognitionNumber], [IfateReferenceNumber]
             ),
