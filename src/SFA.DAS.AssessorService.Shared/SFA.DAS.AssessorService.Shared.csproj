@@ -583,7 +583,6 @@
   <ItemGroup>
     <!--These packages are required to override transient package vulnerabilities-->
 
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.8" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" />
     <PackageReference Include="System.Formats.Asn1" Version="10.0.8" />

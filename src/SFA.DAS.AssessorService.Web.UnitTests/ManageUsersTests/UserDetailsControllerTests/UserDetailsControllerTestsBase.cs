@@ -33,6 +33,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         public void SetUp()
         {
             var services = new ServiceCollection();
+            services.AddLogging();
             services.AddAutoMapper(cfg => { cfg.CreateMap<ContactResponse, UserViewModel>(); }, typeof(CharityCommissionSummaryProfile).Assembly);
             var serviceProvider = services.BuildServiceProvider();
             _mapper = serviceProvider.GetRequiredService<IMapper>();
