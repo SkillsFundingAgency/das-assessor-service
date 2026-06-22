@@ -133,6 +133,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.Certificate
 
             public async Task<GetAssessmentsTestsFixture> GetAssessments(long ukprn, string standardReference)
             {
+                await _databaseService.ExecuteStoredProcedure<int>("AssessmentsSummaryUpdate");
                 _result = await _repository.GetAssessments(ukprn, standardReference);
                 return this;
             }

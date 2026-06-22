@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests
             services.AddLogging();
 
             // pass assemblies as params
-            services.AddAutoMapper(cfg => { }, typeof(TestBase).Assembly, typeof(ApplicationResponseProfile).Assembly);
+            services.AddAutoMapper(cfg => { }, typeof(TestBase).Assembly, typeof(ApplicationResponseProfile).Assembly, typeof(AssessorServiceOrganisationProfile).Assembly);
 
             var serviceProvider = services.BuildServiceProvider();
             Mapper = serviceProvider.GetRequiredService<IMapper>();
