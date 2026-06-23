@@ -282,6 +282,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
 
         private void VerifyLogger(LogLevel logLevel, EventId eventId, string message)
         {
+            #pragma warning disable S2629 // Logging arguments are not evaluated here; this is a Moq verification expression.
             _mockLogger.Verify(logger => logger.Log(
                 It.Is<LogLevel>(p => p == logLevel),
                 It.Is<EventId>(p => p == eventId),
