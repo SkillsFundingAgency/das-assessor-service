@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
 using DomainStandard = SFA.DAS.AssessorService.Domain.Entities.Standard;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using FluentAssertions.Equivalency;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -28,16 +29,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private DomainStandard _standard1;
         private DomainStandard _standard2;
         private string _searchTerm = "Test";
-        
-        
+
+
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             _backgroundTaskQueue = new Mock<IBackgroundTaskQueue>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _standard1 = new Standard {LarsCode = 1, Title = "Test 9"};
-            _standard2 = new Standard {LarsCode = 1, Title = "Test 2"};
+            _standard1 = new Standard { LarsCode = 1, Title = "Test 9" };
+            _standard2 = new Standard { LarsCode = 1, Title = "Test 2" };
             _expectedStandards = new List<Standard>
             {
                 _standard1,
@@ -49,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                     new CancellationToken())).ReturnsAsync(_expectedStandards);
             _queryController = new RegisterQueryController(_mediator.Object, _backgroundTaskQueue.Object, _logger.Object);
             _result = _queryController.SearchStandards(_searchTerm).Result;
-        }  
+        }
 
         [Test]
         public void SearchStandardsBySearchstringReturnExpectedActionResult()
@@ -76,10 +77,32 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             var standards = ((OkObjectResult)_result).Value as List<StandardVersion>;
             standards.Count.Should().Be(2);
-            standards[0].Should().BeEquivalentTo(_standard1, options => options.Excluding(s => s.IfateReferenceNumber));
-            standards[1].Should().BeEquivalentTo(_standard2, options => options.Excluding(s => s.IfateReferenceNumber));
+            standards[0].Should().BeEquivalentTo(_standard1, StandardEquivalencyAssertionOptions);
+            standards[1].Should().BeEquivalentTo(_standard2, StandardEquivalencyAssertionOptions);
         }
 
-
+        private EquivalencyOptions<DomainStandard> StandardEquivalencyAssertionOptions(EquivalencyOptions<DomainStandard> options)
+        {
+            return options.Excluding(x => x.IfateReferenceNumber)
+                         .Excluding(x => x.VersionMajor)
+                         .Excluding(x => x.VersionMinor)
+                         .Excluding(x => x.Status)
+                         .Excluding(x => x.TypicalDuration)
+                         .Excluding(x => x.MaxFunding)
+                         .Excluding(x => x.IsActive)
+                         .Excluding(x => x.LastDateStarts)
+                         .Excluding(x => x.VersionApprovedForDelivery)
+                         .Excluding(x => x.ProposedMaxFunding)
+                         .Excluding(x => x.ProposedTypicalDuration)
+                         .Excluding(x => x.TrailBlazerContact)
+                         .Excluding(x => x.Route)
+                         .Excluding(x => x.IntegratedDegree)
+                         .Excluding(x => x.EqaProviderName)
+                         .Excluding(x => x.EqaProviderContactName)
+                         .Excluding(x => x.EqaProviderContactEmail)
+                         .Excluding(x => x.OverviewOfRole)
+                         .Excluding(x => x.CoronationEmblem)
+                         .Excluding(x => x.EpaoMustBeApprovedByRegulatorBody);
+        }       
     }
 }

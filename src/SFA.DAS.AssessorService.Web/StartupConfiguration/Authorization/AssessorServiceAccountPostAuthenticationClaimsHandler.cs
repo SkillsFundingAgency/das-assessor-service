@@ -38,12 +38,19 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         }
         
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
-        {
-            // Keep existing behaviour for TokenValidatedContext calls
-            return await GetClaims(tokenValidatedContext.Principal);
-        }
+        {            
+            var claims = await GetClaims(tokenValidatedContext.Principal);
 
-        // Newer ICustomClaims interface expects a ClaimsPrincipal - implement that and reuse logic.
+            if (claims.Any(claim => claim.Type == "ContactStatus" && string.Equals(claim.Value,ContactStatus.Deleted, StringComparison.OrdinalIgnoreCase)))
+            {
+                tokenValidatedContext.Response.Redirect("/Home/AccessDenied");
+                tokenValidatedContext.HandleResponse();               
+            }
+
+            return claims;
+           
+        }
+        
         public async Task<IEnumerable<Claim>> GetClaims(ClaimsPrincipal principal)
         {
             var claims = new List<Claim>();
@@ -72,6 +79,12 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     _logger.LogInformation("Failed to retrieve user by email.");
                 }
 
+                if (user?.Status == ContactStatus.Deleted)
+                {
+                    claims.Add(new Claim("ContactStatus", user.Status));
+                    return claims;
+                }
+
                 if (user != null 
                     && !string.Equals(user.Email, email, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -85,7 +98,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 }
 
                 if (user != null)
-                {
+                {                   
                     var primaryIdentity = principal.Identities.FirstOrDefault();
                     if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
                     {
