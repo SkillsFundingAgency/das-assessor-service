@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Hosting;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
-using SFA.DAS.Telemetry.Startup;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -19,8 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 .ConfigureServices((context, services) =>
                 {
                     services
-                        .AddOpenTelemetryRegistration(context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!)
-                        .AddTelemetryUriRedaction("dob,name");
+                        .AddOpenTelemetryRegistration(context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!, "dob,name");
                 })
                 .UseStartup<Startup>();
         }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33213.308
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11801.241 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api", "SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj", "{7D3308DD-5535-49B4-BC33-2F8030027592}"
 EndProject
@@ -45,8 +45,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Api.Types", "SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj", "{C6D53D77-B520-426F-B5D5-00AEDC0FE4E0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.UnitTests", "SFA.DAS.AssessorService.Data.UnitTests\SFA.DAS.AssessorService.Data.UnitTests.csproj", "{C6966220-9CF5-41CA-92CD-DF428AD66AB5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.IntegrationTests", "SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.Data.IntegrationTests.csproj", "{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}"
 EndProject
@@ -128,10 +126,6 @@ Global
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
