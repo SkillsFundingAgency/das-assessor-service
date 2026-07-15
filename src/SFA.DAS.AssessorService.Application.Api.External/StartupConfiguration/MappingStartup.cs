@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles;
-using SFA.DAS.AssessorService.AutoMapperExtensions;
-using System.Reflection;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
 {
@@ -10,9 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
     {
         public static void AddMappings(this IServiceCollection services)
         {
-            services.AddAutoMapper(
-                typeof(CertificateDataProfile).Assembly
-            );
+            services.AddAutoMapper(cfg => { }, typeof(CertificateDataProfile).Assembly);
         }
     }
 }

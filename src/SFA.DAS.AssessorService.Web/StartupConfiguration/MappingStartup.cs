@@ -7,9 +7,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
     {
         public static void AddMappings(this IServiceCollection services)
         {
-            services.AddAutoMapper(
-                typeof(CharityCommissionSummaryProfile).Assembly
-            );
+            services.AddAutoMapper(cfg => { }, typeof(CharityCommissionSummaryProfile).Assembly);
         }
     }
 }

@@ -17,10 +17,9 @@ namespace SFA.DAS.AssessorService.Application.Web.UnitTests
         public MapperBase()
         {
             var services = new ServiceCollection();
+            services.AddLogging();
 
-            services.AddAutoMapper(
-                typeof(CharityCommissionSummaryProfile).Assembly
-            );
+            services.AddAutoMapper(cfg => { }, typeof(CharityCommissionSummaryProfile).Assembly);
 
             var serviceProvider = services.BuildServiceProvider();
             Mapper = serviceProvider.GetRequiredService<IMapper>();

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Web.AutoMapperProfiles;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers;
 using SFA.DAS.AssessorService.Web.Controllers.ManageUsers.ViewModels;
 
@@ -30,11 +32,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.ManageUsersTests.UserDetailsCont
         [SetUp]
         public void SetUp()
         {
-            var config = new MapperConfiguration(opts =>
-            {
-                opts.CreateMap<ContactResponse, UserViewModel>();
-            });
-            _mapper = config.CreateMapper();
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddAutoMapper(cfg => { cfg.CreateMap<ContactResponse, UserViewModel>(); }, typeof(CharityCommissionSummaryProfile).Assembly);
+            var serviceProvider = services.BuildServiceProvider();
+            _mapper = serviceProvider.GetRequiredService<IMapper>();
            
             UserId = Guid.NewGuid();
             CallingUserId = Guid.NewGuid();
