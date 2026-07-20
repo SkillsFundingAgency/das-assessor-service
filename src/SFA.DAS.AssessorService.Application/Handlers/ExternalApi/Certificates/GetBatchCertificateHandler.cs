@@ -103,8 +103,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             cert.CertificateData = redactedData;
             cert.CertificateReference = null;
             cert.CertificateReferenceId = null;
-            cert.CreateDay = DateTime.MinValue;
             cert.CreatedAt = DateTime.MinValue;
+            cert.CreateDay = cert.CreatedAt;
             cert.CreatedBy = null;
             cert.UpdatedAt = null;
             cert.UpdatedBy = null;

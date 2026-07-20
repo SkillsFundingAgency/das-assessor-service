@@ -57,7 +57,10 @@ namespace SFA.DAS.AssessorService.Web
             try
             {
                 services.AddMappings();
-
+                services.AddHsts(options =>
+                {
+                    options.MaxAge = TimeSpan.FromDays(90);
+                });
                 services.AddConfigurationServices(Configuration, _config)
                     .AddLocalizationConfiguration()
                     .AddAuthenticationAndAuthorization(_config, Configuration)
@@ -88,6 +91,7 @@ namespace SFA.DAS.AssessorService.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // HSTS configured to 90 days in ConfigureServices.
                 app.UseHsts();
             }
 

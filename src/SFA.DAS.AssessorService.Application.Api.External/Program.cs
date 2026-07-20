@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using NLog;
-using NLog.Web;
+using SFA.DAS.AssessorService.Application.Api.External.Extenstions;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -13,31 +10,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
         public static void Main(string[] args)
         {
-            var logger = LogManager.Setup()
-                       .LoadConfigurationFromFile("nlog.config")
-                       .GetCurrentClassLogger();
-
-            try
-            {
-                logger.Info("Starting up host");
-                CreateWebHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                //NLog: catch setup errors
-                logger.Error(ex, "Could not start host");
-                throw;
-            }
+            CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .ConfigureServices(
-                    services =>
-                    {
-                        services.AddApplicationInsightsTelemetry();
-                    })
-                .UseStartup<Startup>()
-                .UseNLog();
+                .ConfigureServices((context, services) =>
+                {
+                    services
+                        .AddOpenTelemetryRegistration(context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+                })
+                .UseStartup<Startup>();
     }
 }

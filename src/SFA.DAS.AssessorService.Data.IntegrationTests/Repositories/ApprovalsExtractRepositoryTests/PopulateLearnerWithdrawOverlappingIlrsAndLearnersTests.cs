@@ -68,8 +68,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
                 .WithOrganisation("Organisation1", "EPA0001", 123456, null)
                 .WithStandard("Standard 1", "ST00001", 111, "1.0", currentDateTime.AddYears(-1).Date, null, null, null, null)
                 .WithStandard("Standard 2", "ST00002", 222, "1.0", currentDateTime.AddYears(-1).Date, null, null, null, null)
-                .WithIlr(ilrId, uln, givenNames, familyName, ukprn, 111, learnStart, HandlerBase.GetAcademicYear(currentDateTime), currentDateTime, 1, end)
-                .WithIlr(ilrIdNext, uln, givenNames, familyName, ukprn, 222, nextLearnStart, HandlerBase.GetAcademicYear(currentDateTime), currentDateTime.AddDays(1), 1, nextEnd))
+                .WithIlr(ilrId, uln, givenNames, familyName, ukprn, 111, learnStart, HandlerBase.GetAcademicYear(currentDateTime), currentDateTime, 1, end, null)
+                .WithIlr(ilrIdNext, uln, givenNames, familyName, ukprn, 222, nextLearnStart, HandlerBase.GetAcademicYear(currentDateTime), currentDateTime.AddDays(1), 1, nextEnd, null))
             {
                 if (hasCertificate)
                 {

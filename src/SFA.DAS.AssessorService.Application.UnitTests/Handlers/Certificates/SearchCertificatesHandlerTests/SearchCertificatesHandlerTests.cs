@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using FluentAssertions;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
@@ -45,9 +47,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(2222222222, result[0].Uln);
+            result.Should().NotBeNull();
+            result.Should().HaveCount(1);
+            result[0].Uln.Should().Be(2222222222);
+            result.Should().BeEquivalentTo(repoResults);
+
+            _certificateRepository.Verify(r => r.SearchByDobAndFamilyName(
+                dob,
+                name,
+                It.Is<IEnumerable<long>>(x => x.SequenceEqual(exclude))), Times.Once);
         }
     }
 }

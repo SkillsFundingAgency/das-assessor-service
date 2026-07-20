@@ -14,17 +14,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
     [TestFixture]
     public class When_called_with_missing_mandatory_fields : ImportLearnerDetailHandlerTestsBase
     {
-        public void Arrange(string source, int? ukprn, long? uln, int? stdCode,
-            int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
+        public void Arrange(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
+            int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode)
         {
             BaseArrange();
 
             // Arrange
-            ImportLearnerDetail = CreateImportLearnerDetail(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName,
-                (learnStartDate == null ? (DateTime?)null : DateTime.Parse(learnStartDate, CultureInfo.InvariantCulture)),
-                (plannedEndDate == null ? (DateTime?)null : DateTime.Parse(plannedEndDate, CultureInfo.InvariantCulture)),
-                completionStatus, learnRefNumber, delLocPostCode);
+            ImportLearnerDetail = CreateImportLearnerDetail(source, ukprn, uln, stdCode, dateOfBirth, fundingModel, givenNames, familyName,
+                learnStartDate, plannedEndDate, completionStatus, learnRefNumber, delLocPostCode);
 
             // Arrange
             Request = new ImportLearnerDetailRequest
@@ -37,12 +35,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         }
 
         [TestCaseSource(nameof(TestSource))]
-        public async Task Then_learner_records_are_not_created(string source, int? ukprn, long? uln, int? stdCode,
-            int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
+        public async Task Then_learner_records_are_not_created(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
+            int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, string missingFieldNames)
         {
             // Arrange
-            Arrange(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName, learnStartDate, plannedEndDate,
+            Arrange(source, ukprn, uln, stdCode, dateOfBirth, fundingModel, givenNames, familyName, learnStartDate, plannedEndDate,
                 completionStatus, learnRefNumber, delLocPostCode);
 
             // Act
@@ -53,12 +51,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         }
 
         [TestCaseSource(nameof(TestSource))]
-        public async Task Then_learner_records_are_not_updated(string source, int? ukprn, long? uln, int? stdCode,
-            int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
+        public async Task Then_learner_records_are_not_updated(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
+            int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, string missingFieldNames)
         {
             // Arrange
-            Arrange(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName, learnStartDate, plannedEndDate,
+            Arrange(source, ukprn, uln, stdCode, dateOfBirth, fundingModel, givenNames, familyName, learnStartDate, plannedEndDate,
                 completionStatus, learnRefNumber, delLocPostCode);
 
             // Act
@@ -69,12 +67,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
         }
 
         [TestCaseSource(nameof(TestSource))]
-        public async Task Then_result_is_error_missing_mandatory_field(string source, int? ukprn, long? uln, int? stdCode,
-            int? fundingModel, string givenNames, string familyName, string learnStartDate, string plannedEndDate,
+        public async Task Then_result_is_error_missing_mandatory_field(string source, int? ukprn, long? uln, int? stdCode, DateTime? dateOfBirth,
+            int? fundingModel, string givenNames, string familyName, DateTime? learnStartDate, DateTime? plannedEndDate,
             int? completionStatus, string learnRefNumber, string delLocPostCode, string missingFieldNames)
         {
             // Arrange
-            Arrange(source, ukprn, uln, stdCode, fundingModel, givenNames, familyName, learnStartDate, plannedEndDate,
+            Arrange(source, ukprn, uln, stdCode, dateOfBirth, fundingModel, givenNames, familyName, learnStartDate, plannedEndDate,
                 completionStatus, learnRefNumber, delLocPostCode);
 
             // Act
@@ -91,21 +89,25 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Learner
 
         static IEnumerable<object[]> TestSource()
         {
+            var dateOfBirth = DateTime.Parse("01/01/2002", CultureInfo.InvariantCulture);
+            var learnStartDate = DateTime.Parse("01/01/2020", CultureInfo.InvariantCulture);
+            var plannedEndDate = DateTime.Parse("01/12/2010", CultureInfo.InvariantCulture);
+
             return new[]
             {
-                new object[] { null, 111111, (long?)111111, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1", "Source" },
-                new object[] { "1920", null, (long?)111111, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1", "Ukprn" },
-                new object[] { "1920", 111111, null, 11, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1", "Uln" },
-                new object[] { "1920", 111111, (long?)11111, null, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1", "StdCode" },
-                new object[] { "1920", 111111, (long?)11111, 1111, null, "given", "family", "01/01/2000", "01/01/2000", 1, "1", "1", "FundingModel" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, null, "family", "01/01/2000", "01/01/2000", 1, "1", "1", "GivenNames" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, "given", null, "01/01/2000", "01/01/2000", 1, "1", "1", "FamilyName" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, "given", "family", null, "01/01/2000", 1, "1", "1", "LearnStartDate" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, "given", "family", "01/01/2000", null, 1, "1", "1", "PlannedEndDate" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", null, "1", "1", "CompletionStatus" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, null, "1", "LearnRefNumber" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, "given", "family", "01/01/2000", "01/01/2000", 1, "1", null, "DelLocPostCode" },
-                new object[] { "1920", 111111, (long?)11111, 1111, 11, null, "family", null, "01/01/2000", 1, "1", "1", "GivenNames,LearnStartDate" }
+                new object[] { null, 111111, (long?)111111, 11, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, 1, "1", "1", "Source" },
+                new object[] { "1920", null, (long?)111111, 11, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, 1, "1", "1", "Ukprn" },
+                new object[] { "1920", 111111, null, 11, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, 1, "1", "1", "Uln" },
+                new object[] { "1920", 111111, (long?)11111, null, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, 1, "1", "1", "StdCode" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, null, "given", "family", learnStartDate, plannedEndDate, 1, "1", "1", "FundingModel" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, null, "family", learnStartDate, plannedEndDate, 1, "1", "1", "GivenNames" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, "given", null, learnStartDate, plannedEndDate, 1, "1", "1", "FamilyName" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, "given", "family", null, plannedEndDate, 1, "1", "1", "LearnStartDate" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, "given", "family", learnStartDate, null, 1, "1", "1", "PlannedEndDate" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, null, "1", "1", "CompletionStatus" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, 1, null, "1", "LearnRefNumber" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, "given", "family", learnStartDate, plannedEndDate, 1, "1", null, "DelLocPostCode" },
+                new object[] { "1920", 111111, (long?)11111, 1111, dateOfBirth, 11, null, "family", null, plannedEndDate, 1, "1", "1", "GivenNames,LearnStartDate" }
             };
         }
     }

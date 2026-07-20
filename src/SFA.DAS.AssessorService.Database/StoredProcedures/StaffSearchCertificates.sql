@@ -6,15 +6,15 @@ AS
 BEGIN
 DECLARE @SearchNoSpaces nvarchar(50) = REPLACE(@Search, ' ','')
 SELECT 
-REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') AS x,
+ce1.LearnerFullNameNoSpaces,
 ce1.Uln,
 LearnerFamilyName FamilyName, 
 LearnerGivenNames GivenNames, 
 ce1.StandardCode StdCode,
-JSON_VALUE(CertificateData, '$.StandardName') AS StandardName,
+ce1.StandardName,
 ce1.CertificateReference, 
 ce1.Status, 
-JSON_VALUE(CertificateData, '$.LearningStartDate') LearnStartDate, 
+ce1.LearningStartDate LearnStartDate, 
 org.[EndPointAssessorOrganisationId]  EPAOrgID,
 learner1.FundingModel,
 learner1.ApprenticeshipId,
@@ -22,7 +22,7 @@ learner1.Source,
 ce1.CreatedAt,
 ce1.UpdatedAt,
 learner1.LearnRefNumber,
-LearnerFamilyName AS CertFamilyName	
+ce1.[CertificateFamilyName] AS CertFamilyName
 FROM StandardCertificates ce1 
 JOIN Organisations org ON ce1.OrganisationId = org.Id
 LEFT JOIN Learner learner1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
@@ -30,8 +30,8 @@ WHERE ce1.LearnerFamilyName = @Search
    OR ce1.LearnerGivenNames = @Search
    OR ce1.LearnerFullNameNoSpaces = @SearchNoSpaces 
 UNION ALL
-SELECT 
-REPLACE(GivenNames,' ','') + REPLACE(FamilyName,' ','') AS x,
+SELECT DISTINCT
+learner1.LearnerFullNameNoSpaces,
 learner1.Uln ,
 learner1.FamilyName, 
 learner1.GivenNames, 
@@ -49,14 +49,13 @@ NULL UpdatedAt,
 learner1.LearnRefNumber,
 NULL CertFamilyName	
 FROM Learner learner1
-JOIN Standards sc ON learner1.StdCode = sc.LarsCode
+JOIN Standards sc ON learner1.StandardUId = sc.StandardUId
 LEFT JOIN StandardCertificates ce1 ON ce1.StandardCode = learner1.StdCode AND ce1.Uln = learner1.Uln
-WHERE 
-ce1.Uln IS  NULL
-AND(learner1.FamilyName = @Search 
-    OR learner1.GivenNames = @Search 
-    OR learner1.LearnerFullNameNoSpaces = @SearchNoSpaces)  
-ORDER BY x, CreatedAt
+WHERE ce1.Id IS NULL
+AND (learner1.FamilyName = @Search 
+  OR learner1.GivenNames = @Search 
+  OR learner1.LearnerFullNameNoSpaces = @SearchNoSpaces)
+ORDER BY LearnerFullNameNoSpaces, CreatedAt
         OFFSET @Skip ROWS 
         FETCH NEXT @Take ROWS ONLY
 END
