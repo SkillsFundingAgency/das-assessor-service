@@ -39,7 +39,7 @@ SELECT ce1.[Id]
 ,AllCerts
 AS
 (
-SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
+SELECT ce1.[CreateDay] CreatedDate
       ,ROW_NUMBER() OVER (PARTITION BY ce1.[StandardCode] ORDER BY ce1.[CreateDay] DESC) Stseqn
       ,ROW_NUMBER() OVER (PARTITION BY ce1.[ProviderUkPrn] ORDER BY ce1.[CreateDay] DESC) Prseqn
       ,ROW_NUMBER() OVER (PARTITION BY ce1.[LearningStartDate] ORDER BY ce1.[CreateDay] DESC) LsSeqn
@@ -51,6 +51,7 @@ SELECT CONVERT(char(10),ce1.[CreateDay],121) CreatedDate
   JOIN [dbo].[Standards] st1 on st1.[StandardUId] = ce1.[StandardUId]
   WHERE 1=1
   AND ce1.[Status] NOT IN ('draft','deleted')
+  AND ce1.[ProviderUkPrn] > 0
   AND ce1.[ULN] > 10000000     -- there are invalid ULNs (these should be fixed if possible)
   AND ce1.[CreateDay] >= @CutoffDay  -- for performance
   AND NOT EXISTS (
@@ -71,11 +72,9 @@ SELECT TOP (@Top) 'masks' Result
       ,ProviderName
 FROM AllCerts a1
 WHERE 1=1 
-AND StSeqn = 1 -- unique Standard
-AND PrSeqn <= 2 -- unique Provider
-AND LsSeqn <= 3 -- unique Start
+AND StSeqn = 1 
+AND PrSeqn <= 1 
+AND LsSeqn <= 3 
 
 END
 GO
-
-

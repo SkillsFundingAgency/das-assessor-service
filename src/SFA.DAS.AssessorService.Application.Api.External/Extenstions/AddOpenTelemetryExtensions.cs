@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
-using SFA.DAS.Telemetry.Telemetry;
 
-namespace SFA.DAS.AssessorService.Application.Api.Extensions
+namespace SFA.DAS.AssessorService.Application.Api.External.Extenstions
 {
     public static class AddOpenTelemetryExtensions
     {
@@ -11,24 +10,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
         /// </summary>
         /// <param name="services">Service Collection</param>
         /// <param name="appInsightsConnectionString">Azure app insights connection string.</param>
-        /// <param name="keysForRedaction">Keys which will be redacted when writing telemetry</param>
-        public static IServiceCollection AddOpenTelemetryRegistration(this IServiceCollection services, string appInsightsConnectionString, string keysForRedaction = null)
+        public static void AddOpenTelemetryRegistration(this IServiceCollection services, string appInsightsConnectionString)
         {
             if (!string.IsNullOrEmpty(appInsightsConnectionString))
             {
                 // This service will collect and send telemetry data to Azure Monitor.
-                var openTelemetry = services.AddOpenTelemetry().UseAzureMonitor(options =>
+                services.AddOpenTelemetry().UseAzureMonitor(options =>
                 {
                     options.ConnectionString = appInsightsConnectionString;
                 });
-
-                if (!string.IsNullOrEmpty(keysForRedaction))
-                { 
-                    openTelemetry.WithTracing(builder => builder.AddUriRedaction(keysForRedaction));
-                }
             }
-
-            return services;
         }
     }
 }

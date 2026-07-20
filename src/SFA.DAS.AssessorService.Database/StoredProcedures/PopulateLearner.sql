@@ -241,6 +241,7 @@ BEGIN
 				CASE WHEN ISNULL(ax2.LastUpdated,ax1.LastUpdated) < il1.LastUpdated
 					 THEN il1.FamilyName
 					 ELSE ax1.LastName END FamilyName,
+				il1.DateOfBirth,
 				il1.UkPrn,
 				il1.StdCode,
 				il1.LearnStartDate,
@@ -356,6 +357,7 @@ BEGIN
 				il1.Uln,
 				il1.GivenNames,
 				il1.FamilyName,
+				il1.DateOfBirth,
 				il1.UkPrn,
 				il1.StdCode,
 				il1.LearnStartDate,
@@ -407,6 +409,7 @@ BEGIN
 		SET
 			 lm1.GivenNames = upd.GivenNames,
 			 lm1.FamilyName = upd.FamilyName,
+			 lm1.DateOfBirth = upd.DateOfBirth,
 			 lm1.UkPrn = upd.UKPRN,
 			 lm1.LearnStartDate = upd.LearnStartDate,
 			 lm1.EpaOrgId = upd.EpaOrgId,
@@ -450,13 +453,13 @@ BEGIN
 											   ELSE ISNULL(lm1.DateTransferIdentified,upd.DateTransferIdentified) END
 			
 		WHEN NOT MATCHED THEN
-		INSERT (Id, Uln, GivenNames, FamilyName, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId,
+		INSERT (Id, Uln, GivenNames, FamilyName, DateOfBirth, UkPrn, StdCode, LearnStartDate, EpaOrgId, FundingModel, ApprenticeshipId,
 				Source, LearnRefNumber, CompletionStatus, PlannedEndDate, DelLocPostCode, LearnActEndDate, WithdrawReason,
 				Outcome, AchDate, OutGrade, Version, VersionConfirmed, CourseOption, StandardUId, StandardReference, StandardName,
 				LastUpdated, EstimatedEndDate, ApprovalsStopDate, ApprovalsPauseDate, ApprovalsCompletionDate, ApprovalsPaymentStatus,
 				LatestIlrs, LatestApprovals, EmployerAccountId, EmployerName,
 				IsTransfer, DateTransferIdentified)
-		VALUES (upd.Id, upd.Uln, upd.GivenNames, upd.FamilyName, upd.UkPrn, upd.StdCode, upd.LearnStartDate, upd.EpaOrgId, upd.FundingModel, upd.ApprenticeshipId,
+		VALUES (upd.Id, upd.Uln, upd.GivenNames, upd.FamilyName, upd.DateOfBirth, upd.UkPrn, upd.StdCode, upd.LearnStartDate, upd.EpaOrgId, upd.FundingModel, upd.ApprenticeshipId,
 				upd.Source, upd.LearnRefNumber, upd.CompletionStatus, upd.PlannedEndDate, upd.DelLocPostCode, upd.LearnActEndDate, upd.WithdrawReason,
 				upd.Outcome, upd.AchDate, upd.OutGrade, upd.Version, upd.VersionConfirmed, upd.CourseOption, upd.StandardUId, upd.StandardReference, upd.StandardName,
 				upd.LastUpdated, upd.EstimatedEndDate, upd.ApprovalsStopDate, upd.ApprovalsPauseDate, upd.ApprovalsCompletionDate, upd.ApprovalsPaymentStatus,
