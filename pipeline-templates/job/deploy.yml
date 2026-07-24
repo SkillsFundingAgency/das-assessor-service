@@ -191,6 +191,9 @@ jobs:
             DatabaseName: $(SandboxDatabaseName)
             OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
             Environment: ${{ parameters.Environment }}
+            FailoverGroupName: $(SharedSQLServerFailoverGroupName)
+            SqlServerResourceGroupName: $(SharedEnvResourceGroup)
+            SharedSQLServerName: $(SharedSQLServerName)
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
