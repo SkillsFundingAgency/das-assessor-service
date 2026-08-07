@@ -52,7 +52,7 @@
     [OverrideFamilyName] NVARCHAR(100) NULL,
     [OverrideGivenNames]  NVARCHAR(100) NULL,
     [CertificateFamilyName] AS ISNULL([OverrideFamilyName],[dbo].[CleanseName]([ApprenticeSurname])) PERSISTED,
-    [CertificateGivenNames] AS ISNULL([OverrideGivenNames],[dbo].[CleanseName]([ApprenticeForename]+CASE WHEN ISNULL([ApprenticeMiddleName],'') NOT IN ('','''') THEN ' '+[ApprenticeMiddleName] ELSE '' END)) PERSISTED,
+    [CertificateGivenNames] AS ISNULL([OverrideGivenNames],[dbo].[CleanseName]([ApprenticeForename]+CASE WHEN ISNULL([ApprenticeMiddlename],'') NOT IN ('','''') THEN ' '+[ApprenticeMiddlename] ELSE '' END)) PERSISTED,
 
     CONSTRAINT [PK_FrameworkLearner] PRIMARY KEY CLUSTERED ([Id])
 );

@@ -26,5 +26,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public bool? IsPrivatelyFunded { get; set; }
         public string PrivatelyFundedStatus { get; set; }
         public string StandardUId { get; set; }
+        public string Type { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string OverrideFamilyName { get; set; }
+        public string OverrideGivenNames { get; set; }
     }
 }

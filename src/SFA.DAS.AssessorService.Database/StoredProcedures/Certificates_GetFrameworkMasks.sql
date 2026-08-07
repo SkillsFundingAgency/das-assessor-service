@@ -9,59 +9,59 @@ BEGIN
     SET NOCOUNT ON;
 
 DECLARE @CutoffDay date,
-        @UlnJSON VARCHAR(4000);
+        @ExcludeUlnsJSON VARCHAR(4000);
 
 -- this is to prevent a full scan of all history to get masks
 SET @CutoffDay = '2021-01-01';
 
 -- ensure that the ULN(s) input are a list of values
-SET @UlnJSON = '['+@ExcludeUlns+']';
+SET @ExcludeUlnsJSON = '['+@ExcludeUlns+']';
 
 WITH MatchCerts
 AS
 (
-SELECT [Uln]
-      ,[CourseCode] 
-      ,[ProviderName]
-  FROM [dbo].[FrameworkCertificateSearchView]
-  JOIN OPENJSON(@UlnJSON,'$') ulns on ulns.[value] = [Uln] 
+    SELECT 
+        [Uln],
+        [CourseCode],
+        [ProviderName]
+    FROM [dbo].[FrameworkCertificateSearchView]
+    JOIN OPENJSON(@ExcludeUlnsJSON,'$') ExcludedUlns on ExcludedUlns.[value] = [Uln] 
 )
 
 ,AllCerts
 AS
 (
-SELECT ROW_NUMBER() OVER (PARTITION BY [CourseCode] ORDER BY [CreateDay] DESC) Tcseqn
-      ,ROW_NUMBER() OVER (PARTITION BY [ProviderName] ORDER BY [CreateDay] DESC) Prseqn
-      ,ROW_NUMBER() OVER (PARTITION BY [DateAwarded] ORDER BY [CreateDay] DESC) DaSeqn
-      ,CourseCode
-      ,CourseName
-      ,CourseLevel
-      ,[ProviderName]
-      ,ISNULL([Uln],0) Uln
+    SELECT 
+        ROW_NUMBER() OVER (PARTITION BY [CourseCode] ORDER BY [CreateDay] DESC) Ccseqn,
+        ROW_NUMBER() OVER (PARTITION BY [ProviderName] ORDER BY [CreateDay] DESC) Prseqn,
+        ROW_NUMBER() OVER (PARTITION BY [DateAwarded] ORDER BY [CreateDay] DESC) DaSeqn,
+        CourseCode,
+        CourseName,
+        CourseLevel,
+        [ProviderName],
+        ISNULL([Uln],0) Uln
   FROM [dbo].[FrameworkCertificateSearchView] fe1
-  WHERE 1=1
-  AND [CreateDay] > @CutoffDay 
-  AND Ukprn IS NOT NULL 
-
+  WHERE [CreateDay] > @CutoffDay 
+    AND Ukprn IS NOT NULL 
 )
 
-SELECT TOP (@Top) 'masks' Result
-      ,'Framework' CertificateType
-      ,CourseCode
-      ,CourseName
-      ,CourseLevel
-      ,ProviderName
-FROM AllCerts a1
-WHERE 1=1 
-AND TcSeqn = 1
-AND PrSeqn = 1
-AND DaSeqn = 1
-AND NOT EXISTS (
-    SELECT NULL FROM MatchCerts m1 
-    WHERE 1=0
-    OR a1.[Uln] = m1.[Uln]
-    OR a1.CourseCode = m1.CourseCode
-    OR a1.ProviderName = m1.ProviderName
-  )
+SELECT TOP (@Top) 
+    'masks' Result,
+    'Framework' CertificateType,
+    CourseCode,
+    CourseName,
+    CourseLevel,
+    ProviderName
+FROM AllCerts ac
+WHERE CcSeqn = 1
+    AND PrSeqn = 1
+    AND DaSeqn = 1
+    AND NOT EXISTS 
+    (
+        SELECT NULL FROM MatchCerts mc 
+        WHERE ac.[Uln] = mc.[Uln]
+            OR ac.CourseCode = mc.CourseCode
+            OR ac.ProviderName = mc.ProviderName
+    )
 END
 GO

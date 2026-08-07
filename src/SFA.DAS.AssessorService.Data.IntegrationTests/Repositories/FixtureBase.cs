@@ -553,14 +553,34 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
-        public T WithCertificateForStoredProcedure(Guid id, string certificateData, DateTime createdAt, long uln, int standardCode,
-            int providerUkPrn, string endPointAssessorOrganisationId, string status, string standardUId, int certificateReferenceId = 10001)
+        public T WithCertificate(
+            string endPointAssessorOrganisationId,
+            Action<CertificateModel> certificateAction,
+            Action<CertificateData> certificateDataAction = null)
         {
             var organisation = _organisations.First(p => p.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
-            var certificate = CertificateHandler.Create(id, certificateData, null, createdAt, string.Empty, string.Empty,
-                organisation.Id, uln, standardCode, providerUkPrn, status, null, string.Empty,
-                certificateReferenceId: certificateReferenceId, standardUId: standardUId);
+            var certificateData = new CertificateData();
+            certificateDataAction?.Invoke(certificateData);
+
+            var certificate = CertificateHandler.Create(
+                Guid.NewGuid(),
+                JsonConvert.SerializeObject(certificateData),
+                null,
+                DateTime.UtcNow,
+                string.Empty,
+                string.Empty,
+                organisation.Id,
+                1000000001,
+                1,
+                10000001,
+                CertificateStatus.Printed,
+                null,
+                string.Empty);
+
+            certificateAction?.Invoke(certificate);
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+
             _certificates.Add(certificate);
             CertificateHandler.InsertRecord(certificate);
             return this as T;
