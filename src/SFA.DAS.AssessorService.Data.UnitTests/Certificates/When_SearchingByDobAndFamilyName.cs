@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                     CourseCode = "200",
                     CourseName = "Standard B",
                     CourseLevel = "2",
-                    DateAwarded = new DateTime(2023, 1, 1),
+                    DateAwarded = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     ProviderName = "ProvStd",
                     Ukprn = 8888
                 }

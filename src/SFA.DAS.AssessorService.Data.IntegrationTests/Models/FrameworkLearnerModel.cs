@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public string ApprenticeSurname { get; set; }
         public string ApprenticeForename { get; set; }
         public DateTime ApprenticeDoB { get; set; }
-        public long ApprenticeULN { get; set; }
+        public long? ApprenticeULN { get; set; }
         public string TrainingCode { get; set; }
         public string FrameworkName { get; set; }
         public string PathwayName { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -144,13 +145,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.Certificate
                 _result.EndpointAssessmentCount.Should().Be(endpointAssessmentCount);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                Dispose(true);
             }
 
-            protected virtual void Dispose(bool disposing)
+            public void Dispose()
             {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
     }

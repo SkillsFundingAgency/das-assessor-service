@@ -19,15 +19,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 "([Id], [CertificateData], [ToBePrinted], [CreatedAt], [CreatedBy], [DeletedAt], [DeletedBy], " +
                 "[CertificateReference], [OrganisationId], [BatchNumber], [Status], [UpdatedAt], [UpdatedBy], " +
                 "[Uln], [StandardCode], [ProviderUkPrn], [CertificateReferenceId], [LearnRefNumber], " +
-                "[IsPrivatelyFunded], [PrivatelyFundedStatus], [StandardUId], [Type], [DateOfBirth], " +
-                "[OverrideFamilyName], [OverrideGivenNames]) " +
+                "[IsPrivatelyFunded], [PrivatelyFundedStatus], [StandardUId], [Type], [FrameworkLearnerId], " +
+                "[DateOfBirth], [OverrideFamilyName], [OverrideGivenNames]) " +
                 "VALUES " +
                 "(@Id, @CertificateData, @ToBePrinted, @CreatedAt, @CreatedBy, @DeletedAt, @DeletedBy, " +
                 "@CertificateReference, @OrganisationId, @BatchNumber, @Status, @UpdatedAt, @UpdatedBy, " +
                 "@Uln, @StandardCode, @ProviderUkPrn, @CertificateReferenceId, @LearnRefNumber, " +
-                "@IsPrivatelyFunded, @PrivatelyFundedStatus, @StandardUId, @Type, @DateOfBirth, " +
-                "@OverrideFamilyName, @OverrideGivenNames);" +
-                "SET IDENTITY_INSERT [Certificates] OFF; ";
+                "@IsPrivatelyFunded, @PrivatelyFundedStatus, @StandardUId, @Type, @FrameworkLearnerId, " +
+                "@DateOfBirth, @OverrideFamilyName, @OverrideGivenNames); " +
+                "SET IDENTITY_INSERT [Certificates] OFF;";
 
             DatabaseService.Execute(sql, certificate);
         }
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             "[CertificateReference], [OrganisationId], [BatchNumber], [Status], [UpdatedAt], [UpdatedBy], " +
             "[Uln], [StandardCode], [ProviderUkPrn], [CertificateReferenceId], [LearnRefNumber], [CreateDay], " +
             "[IsPrivatelyFunded], [PrivatelyFundedStatus], [StandardUId] " +
-            "FROM [StandardCertificates] " +
+            "FROM [Certificates] " +
             $"WHERE (Id = @id OR @id IS NULL) " +
             $"AND {NullQueryParam(certificate, p => p.CertificateData)} " +
             $"AND {NullQueryParam(certificate, p => p.ToBePrinted)} " +
@@ -112,19 +112,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 
         public static async Task<int> QueryCountAllAsync()
         {
-            var sqlToQuery = "SELECT COUNT(1) FROM [StandardCertificates]";
+            var sqlToQuery = "SELECT COUNT(1) FROM [Certificates]";
             return await DatabaseService.QueryFirstOrDefaultAsync<int>(sqlToQuery);
         }
 
         public static void DeleteRecord(Guid id)
         {
-            var sql = "DELETE FROM [StandardCertificates] WHERE [Id] = @id";
+            var sql = "DELETE FROM [Certificates] WHERE [Id] = @id";
             DatabaseService.Execute(sql, new { id });
         }
 
         public static void DeleteAllRecords()
         {
-            var sql = "DELETE FROM [StandardCertificates]";
+            var sql = "DELETE FROM [Certificates]";
             DatabaseService.Execute(sql);
         }
     }

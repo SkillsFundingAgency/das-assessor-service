@@ -107,13 +107,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
             {
                 _overlappingIlrsResults.Should().Contain(p => p.Id == id && p.PossibleOverlap == possibleOverlap);
             }
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                Dispose(true);
             }
 
-            protected virtual void Dispose(bool disposing)
+            public void Dispose()
             {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
 
             private class OverlappingIlrs

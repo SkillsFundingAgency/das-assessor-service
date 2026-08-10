@@ -588,7 +588,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
         public T WithFrameworkLearner(Guid id, string frameworkCertificateNumber, string certificationYear,
             DateTime certificationDate, string apprenticeFullname, string apprenticeSurname, string apprenticeForename,
-            DateTime apprenticeDoB, long apprenticeULN, string trainingCode, string frameworkName, string pathwayName,
+            DateTime apprenticeDoB, long? apprenticeULN, string trainingCode, string frameworkName, string pathwayName,
             int apprenticeshipLevel, string providerName, string ukprn, string framework, string pathway,
             string apprenticeshipLevelName, long apprenticeId, DateTime createdOn, string apprenticeNameMatch)
         {
@@ -765,7 +765,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             return this as T;
         }
 
-        public virtual void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
             DeleteAllRecords();
         }

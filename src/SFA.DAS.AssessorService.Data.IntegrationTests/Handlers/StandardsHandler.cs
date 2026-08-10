@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", [ProposedMaxFunding]" +
                     ", [EPAChanged]" +
                     ", [StandardPageUrl]" +
+                    ", [Route]" +
                     ", [TrailblazerContact]" +
                     ", [VersionMajor]" +
                     ", [VersionMinor]" +
@@ -59,6 +60,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     ", @proposedMaxFunding" +
                     ", @epaChanged" +
                     ", @standardPageUrl" +
+                    ", @route" +
                     ", @trailblazerContact" +
                     ", @versionMajor" +
                     ", @versionMinor" +
