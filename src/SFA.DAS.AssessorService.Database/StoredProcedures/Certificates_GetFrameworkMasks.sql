@@ -8,67 +8,60 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-DECLARE @CutoffDay date;
+DECLARE @CutoffDay date,
+        @ExcludeUlnsJSON VARCHAR(4000);
+
 -- this is to prevent a full scan of all history to get masks
 SET @CutoffDay = '2021-01-01';
+
+-- ensure that the ULN(s) input are a list of values
+SET @ExcludeUlnsJSON = '['+@ExcludeUlns+']';
 
 WITH MatchCerts
 AS
 (
-SELECT fl1.[Id]
-      ,fl1.[ApprenticeULN] [Uln]
-      ,fl1.[TrainingCode] 
-	  ,fl1.[FrameworkName]
-      ,fl1.[ApprenticeshipLevelName] 
-      ,fl1.[ProviderName]
-   FROM [dbo].[FrameworkLearner] fl1
-  WHERE 1=1
-  AND (
-			@ExcludeUlns IS NOT NULL
-			AND fl1.[ApprenticeULN] IN
-                (
-                    SELECT TRY_CAST(value AS BIGINT)
-                    FROM STRING_SPLIT(@ExcludeUlns, ',')
-                    WHERE TRY_CAST(value AS BIGINT) IS NOT NULL
-                )
-	  )
+    SELECT 
+        [Uln],
+        [CourseCode],
+        [ProviderName]
+    FROM [dbo].[FrameworkCertificateSearchView]
+    JOIN OPENJSON(@ExcludeUlnsJSON,'$') ExcludedUlns on ExcludedUlns.[value] = [Uln] 
 )
+
 ,AllCerts
 AS
 (
-SELECT CONVERT(char(10),fl1.[CreatedOn],121) CreatedDate
-      ,ROW_NUMBER() OVER (PARTITION BY fl1.[PathwayName] ORDER BY fl1.createdOn DESC) Tcseqn
-      ,ROW_NUMBER() OVER (PARTITION BY fl1.[ProviderName] ORDER BY fl1.createdOn DESC) Prseqn
-      ,ROW_NUMBER() OVER (PARTITION BY fl1.[ApprenticeStartDate] ORDER BY fl1.createdOn DESC) StSeqn
-      ,fl1.[TrainingCode] CourseCode
-      ,fl1.[FrameworkName] CourseName
-      ,fl1.[ApprenticeshipLevelName] CourseLevel
-      ,fl1.[ProviderName]
-  FROM [dbo].[FrameworkLearner] fl1
-  WHERE 1=1
-  AND fl1.[CreatedOn] > @CutoffDay 
-  AND fl1.Ukprn IS NOT NULL 
-  AND NOT EXISTS (
-	  SELECT NULL FROM MatchCerts m1 
-	  WHERE 1=0
-	  OR fl1.[ApprenticeUln] = m1.[Uln]
-	  OR fl1.TrainingCode = m1.TrainingCode
-	  OR fl1.ProviderName = m1.ProviderName
-  )
+    SELECT 
+        ROW_NUMBER() OVER (PARTITION BY [CourseCode] ORDER BY [CreateDay] DESC) Ccseqn,
+        ROW_NUMBER() OVER (PARTITION BY [ProviderName] ORDER BY [CreateDay] DESC) Prseqn,
+        ROW_NUMBER() OVER (PARTITION BY [DateAwarded] ORDER BY [CreateDay] DESC) DaSeqn,
+        CourseCode,
+        CourseName,
+        CourseLevel,
+        [ProviderName],
+        ISNULL([Uln],0) Uln
+  FROM [dbo].[FrameworkCertificateSearchView] fe1
+  WHERE [CreateDay] > @CutoffDay 
+    AND Ukprn IS NOT NULL 
 )
 
-SELECT TOP (@Top) 'masks' Result
-      ,'Framework' CertificateType
-	  ,null [ULN]
-      ,CourseCode
-      ,CourseName
-      ,CourseLevel
-      ,ProviderName
-FROM AllCerts a1
-WHERE 1=1 
-AND TcSeqn = 1
-AND PrSeqn <= 1
-AND StSeqn <= 3
-
+SELECT TOP (@Top) 
+    'masks' Result,
+    'Framework' CertificateType,
+    CourseCode,
+    CourseName,
+    CourseLevel,
+    ProviderName
+FROM AllCerts ac
+WHERE CcSeqn = 1
+    AND PrSeqn = 1
+    AND DaSeqn = 1
+    AND NOT EXISTS 
+    (
+        SELECT NULL FROM MatchCerts mc 
+        WHERE ac.[Uln] = mc.[Uln]
+            OR ac.CourseCode = mc.CourseCode
+            OR ac.ProviderName = mc.ProviderName
+    )
 END
 GO

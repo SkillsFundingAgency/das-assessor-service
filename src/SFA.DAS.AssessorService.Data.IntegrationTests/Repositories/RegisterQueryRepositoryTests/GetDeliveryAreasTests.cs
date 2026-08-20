@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
 
-            private RegisterQueryRepository _repository;
+            private readonly RegisterQueryRepository _repository;
             private IEnumerable<DeliveryArea> _results;
 
             public GetDeliveryAreasTestsFixture()
@@ -66,6 +66,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.RegisterQue
             {
                 _results.Should().Contain(o => o.Area == area);
                 return this;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
     }

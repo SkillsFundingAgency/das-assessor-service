@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             using (var fixture = new LoadOfqualStandardsTestsFixture()
                 .WithOfqualOrganisation(ofqualOrganisationId, "RN0001", "Name", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
                     "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
-                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 1, 2), currentDateTime.AddDays(-1), null)
+                    "OfqualStatus", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 1, 2, 0, 0, 0, DateTimeKind.Utc), currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualOrganisation(recognitionNumber, name, legalName, acronym, email, website, headOfficeAddressLine1,
                     headOfficeAddressLine2, headOfficeAddressTown, headOfficeAddressCounty, headOfficeAddressPostcode,
                     headOfficeAddressCountry, headOfficeAddressTelephone, ofqualStatus, ofqualRecognisedFrom, ofqualRecognisedTo))
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             using (var fixture = new LoadOfqualStandardsTestsFixture()
                 .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
-                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
+                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001", currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
@@ -163,13 +163,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             using (var fixture = new LoadOfqualStandardsTestsFixture()
                 .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
-                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
-                .WithStagingOfqualStandard("RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001")
+                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001", currentDateTime.AddDays(-1), null)
+                .WithStagingOfqualStandard("RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001")
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
 
-                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", 
+                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001", 
                     currentDateTime.AddDays(-1), null));
 
                 await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(null, recognitionNumber, operationalStartDate, operationalEndDate,
@@ -188,13 +188,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             using (var fixture = new LoadOfqualStandardsTestsFixture()
                 .WithStandard("Title", "ST0001", 1, "1.0", operationalStartDate, operationalEndDate)
                 .WithStandard("Title", "ST0002", 1, "1.0", operationalStartDate, operationalEndDate)
-                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
-                .WithStagingOfqualStandard("RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001")
+                .WithOfqualStandard(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001", currentDateTime.AddDays(-1), null)
+                .WithStagingOfqualStandard("RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001")
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
 
-                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001",
+                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardId, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001",
                     currentDateTime.AddDays(-1), null));
 
                 await results.VerifyOfqualStandardDoesNotExist(OfqualStandardHandler.Create(null, recognitionNumber, operationalStartDate, operationalEndDate,
@@ -212,16 +212,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             var currentDateTime = DateTime.Now;
 
             using (var fixture = new LoadOfqualStandardsTestsFixture()
-                .WithOfqualStandard(ofqualStandardIdOne, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0002", currentDateTime.AddDays(-1), null)
-                .WithOfqualStandard(ofqualStandardIdTwo, "RN0002", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001", currentDateTime.AddDays(-1), null)
+                .WithOfqualStandard(ofqualStandardIdOne, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0002", currentDateTime.AddDays(-1), null)
+                .WithOfqualStandard(ofqualStandardIdTwo, "RN0002", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001", currentDateTime.AddDays(-1), null)
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
 
-                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardIdOne, "RN0001", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0002",
+                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardIdOne, "RN0001", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0002",
                     currentDateTime.AddDays(-1), null));
 
-                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardIdTwo, "RN0002", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1), "ST0001",
+                await results.VerifyOfqualStandardExists(OfqualStandardHandler.Create(ofqualStandardIdTwo, "RN0002", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc), "ST0001",
                     currentDateTime.AddDays(-1), null));
             }
         }
@@ -301,7 +301,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
                     "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
-                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1))
+                    "OfqualStatus", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc))
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
@@ -329,7 +329,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
                     "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
-                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1))
+                    "OfqualStatus", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc))
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
@@ -354,7 +354,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithOrganisationStandard(1, "EPA0001", 101, ifateReferenceNumber, operationalStartDate.AddDays(-15), operationalEndDate?.AddDays(5), currentDateTime.Date.AddDays(-10))
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
                     "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
-                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1))
+                    "OfqualStatus", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc))
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
@@ -410,7 +410,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
                     "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
-                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1))
+                    "OfqualStatus", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc))
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
@@ -441,7 +441,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 .WithContact("DisplayName", "displayname@organisationone.com", "EPA0001", "username")
                 .WithStagingOfqualOrganisation(recognitionNumber, "OrganisationOne", "LegalName", "Acronym", "Email", "Website", "HeadOfficeAddressLine1", "HeadOfficeAddressLine2",
                     "HeadOfficeAddressTown", "HeadOfficeAddressCounty", "Postcode", "HeadOfficeAddressCountry", "HeadOfficeAddressTelephone",
-                    "OfqualStatus", new DateTime(2020, 1, 1), new DateTime(2020, 2, 1))
+                    "OfqualStatus", new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc))
                 .WithStagingOfqualStandard(recognitionNumber, operationalStartDate, operationalEndDate, ifateReferenceNumber))
             {
                 var results = await fixture.LoadOfqualStandards(currentDateTime);
@@ -457,7 +457,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
 
-            private StandardRepository _repository;
+            private readonly StandardRepository _repository;
             public int _updated;
 
             public LoadOfqualStandardsTestsFixture()
@@ -476,6 +476,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             {
                 _updated.Should().Be(updated);
                 return this;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
     }

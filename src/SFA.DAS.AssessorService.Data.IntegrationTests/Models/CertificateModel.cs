@@ -17,14 +17,21 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public string Status { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
-        public long Uln { get; set; }
-        public int StandardCode { get; set; }
-        public int ProviderUkPrn { get; set; }
+        public long? Uln { get; set; }
+
+        public int? StandardCode { get; set; }
+
+        public Guid? FrameworkLearnerId { get; set; }
+        public int? ProviderUkPrn { get; set; }
         public int CertificateReferenceId { get; set; }
         public string LearnRefNumber { get; set; }
         public DateTime CreateDay { get; set; }
         public bool? IsPrivatelyFunded { get; set; }
         public string PrivatelyFundedStatus { get; set; }
         public string StandardUId { get; set; }
+        public string Type { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string OverrideFamilyName { get; set; }
+        public string OverrideGivenNames { get; set; }
     }
 }

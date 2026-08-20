@@ -7,74 +7,71 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-DECLARE @CutoffDay date;
+DECLARE @CutOffCount int = 20000,
+        @CutOffCertificate int,
+        @ExcludeUlnsJSON VARCHAR(MAX);
+
 -- this sets limits for the search for performance
-SELECT @CutoffDay = dateadd(month,-6,MAX([CreateDay])) FROM [dbo].[Certificates];
+SELECT TOP 1 @CutOffCertificate=[CertificateReferenceId] FROM 
+(
+    SELECT TOP (@CutOffCount) 
+        [CertificateReferenceId] 
+    FROM [dbo].[StandardCertificateSearchView] 
+    ORDER BY [CertificateReferenceId] DESC
+) [CutOffCertificates] 
+ORDER BY [CertificateReferenceId];
+
+-- ensure that the ULN(s) input is a list of values
+SET @ExcludeUlnsJSON = '['+@ExcludeUlns+']';
 
 WITH MatchCerts
 AS
 (
-SELECT ce1.[Id]
-      ,ce1.[Uln]
-      ,ce1.[StandardCode]
-	  ,ce1.[StandardName] 
-	  ,CONVERT(varchar,ce1.[StandardLevel]) CourseLevel
-      ,ce1.[ProviderUkPrn] Ukprn
-	  ,ce1.[ProviderName]
-      ,st1.[Route] Sector
-  FROM [dbo].[StandardCertificates] ce1
-  JOIN [dbo].[Standards] st1 on st1.[StandardUId] = ce1.[StandardUId]
-  WHERE 1=1
-  AND ce1.[Status] NOT IN ('draft','deleted')
-  AND (
-			@ExcludeUlns IS NOT NULL
-			AND ce1.[ULN] IN
-                (
-                    SELECT TRY_CAST(value AS BIGINT)
-                    FROM STRING_SPLIT(@ExcludeUlns, ',')
-                    WHERE TRY_CAST(value AS BIGINT) IS NOT NULL
-                )
-	  )
+    SELECT 
+        [Uln],
+        [CourseCode],
+        [Ukprn],
+        [Sector]
+    FROM [dbo].[StandardCertificateSearchView]
+    JOIN OPENJSON(@ExcludeUlnsJSON,'$') ExcludeUlns on ExcludeUlns.[value] = [Uln] 
 )
+
 ,AllCerts
 AS
 (
-SELECT ce1.[CreateDay] CreatedDate
-      ,ROW_NUMBER() OVER (PARTITION BY ce1.[StandardCode] ORDER BY ce1.[CreateDay] DESC) Stseqn
-      ,ROW_NUMBER() OVER (PARTITION BY ce1.[ProviderUkPrn] ORDER BY ce1.[CreateDay] DESC) Prseqn
-      ,ROW_NUMBER() OVER (PARTITION BY ce1.[LearningStartDate] ORDER BY ce1.[CreateDay] DESC) LsSeqn
-      ,CONVERT(varchar,ce1.[StandardCode]) CourseCode
-      ,ce1.[StandardName] CourseName
-      ,CONVERT(varchar,ce1.[StandardLevel]) CourseLevel
-      ,ce1.[ProviderName]
-  FROM [dbo].[StandardCertificates] ce1
-  JOIN [dbo].[Standards] st1 on st1.[StandardUId] = ce1.[StandardUId]
-  WHERE 1=1
-  AND ce1.[Status] NOT IN ('draft','deleted')
-  AND ce1.[ProviderUkPrn] > 0
-  AND ce1.[ULN] > 10000000     -- there are invalid ULNs (these should be fixed if possible)
-  AND ce1.[CreateDay] >= @CutoffDay  -- for performance
-  AND NOT EXISTS (
-	  SELECT NULL FROM MatchCerts m1 
-	  WHERE 1=0
-	  OR ce1.StandardCode = m1.StandardCode
-	  OR ce1.ProviderUkPrn = m1.UkPrn
-	  OR ce1.Uln = m1.Uln
-	  OR st1.[Route] = m1.Sector
-  )
+    SELECT 
+        ROW_NUMBER() OVER (PARTITION BY [CourseCode] ORDER BY [CreateDay] DESC) Ccseqn,
+        ROW_NUMBER() OVER (PARTITION BY [UkPrn] ORDER BY [CreateDay] DESC) Prseqn,
+        ROW_NUMBER() OVER (PARTITION BY [Sector] ORDER BY [CreateDay] DESC) SeSeqn,
+        [CourseCode],
+        [CourseName],
+        [CourseLevel],
+        [ProviderName],
+        [Ukprn],
+        [Uln],
+        [Sector]
+    FROM [dbo].[StandardCertificateSearchView]
+    WHERE [CertificateReferenceId] >= @CutOffCertificate  -- for performance
 )
 
-SELECT TOP (@Top) 'masks' Result
-      ,'Standard' CertificateType
-      ,CourseCode
-      ,CourseName
-      ,CourseLevel
-      ,ProviderName
+SELECT TOP (@Top) 
+    'masks' Result,
+    'Standard' CertificateType,
+    CourseCode,
+    CourseName,
+    CourseLevel,
+    ProviderName
 FROM AllCerts a1
-WHERE 1=1 
-AND StSeqn = 1 
-AND PrSeqn <= 1 
-AND LsSeqn <= 3 
-
+WHERE CcSeqn = 1 -- unique Standard
+    AND PrSeqn = 1 -- unique Provider
+    AND SeSeqn = 1 -- unique Sector
+    AND NOT EXISTS 
+    (
+        SELECT NULL FROM MatchCerts m1 
+        WHERE a1.CourseCode = m1.CourseCode
+            OR a1.UkPrn = m1.UkPrn
+            OR a1.Uln = m1.Uln
+            OR a1.Sector = m1.Sector
+    )
 END
 GO

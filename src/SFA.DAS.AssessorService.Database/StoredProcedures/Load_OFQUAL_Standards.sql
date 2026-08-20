@@ -115,7 +115,7 @@ BEGIN
                 -- Ofqual that they are assessing multiple standards, so a later Operational Start date indicates a later version which
                 -- should be taken as the Operational End date in preference to earlier ones even when this date would be earlier than others
                 SELECT 
-                    [RecognitionNumber], [IfateReferenceNumber]
+                    [RecognitionNumber], [IfateReferenceNumber] [IFateReferenceNumber]
                     ,MAX(CASE WHEN Earliest = 1 THEN [OperationalStartDate] ELSE NULL END) [OperationalStartDate]
                     ,MAX(CASE WHEN Latest = 1 THEN [OperationalEndDate] ELSE NULL END) [OperationalEndDate]
                 FROM 
@@ -124,13 +124,13 @@ BEGIN
                         ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IfateReferenceNumber] ORDER BY [OperationalStartDate]) Earliest
                         ,ROW_NUMBER() OVER (PARTITION BY [RecognitionNumber], [IfateReferenceNumber] ORDER BY [OperationalStartDate] DESC, CASE WHEN [OperationalEndDate] IS NULL THEN 0 ELSE 1 END, [OperationalEndDate] DESC) Latest
                     FROM [dbo].[StagingOfqualStandard] Sos
-                    WHERE EXISTS (SELECT NULL FROM [dbo].[Standards] WHERE [IfateReferenceNumber] = Sos.[IfateReferenceNumber])
+                    WHERE EXISTS (SELECT NULL FROM [dbo].[Standards] WHERE [IFateReferenceNumber] = Sos.[IfateReferenceNumber])
                 ) [OperationalDates]
                 GROUP BY [RecognitionNumber], [IfateReferenceNumber]
             ),
             OfqualStandardsChanged_CTE AS
             (
-                SELECT DISTINCT [RecognitionNumber], [IfateReferenceNumber]
+                SELECT DISTINCT [RecognitionNumber], [IFateReferenceNumber]
                 FROM 
                 (
                     SELECT 
@@ -138,13 +138,13 @@ BEGIN
                     FROM [dbo].[OfqualStandard]
                     EXCEPT
                     SELECT 
-                        [RecognitionNumber], [OperationalStartDate], [OperationalEndDate], [IfateReferenceNumber]
+                        [RecognitionNumber], [OperationalStartDate], [OperationalEndDate], [IFateReferenceNumber]
                     FROM OfqualQualifications_CTE
             
                     UNION
             
                     SELECT 
-                        [RecognitionNumber], [OperationalStartDate], [OperationalEndDate], [IfateReferenceNumber]
+                        [RecognitionNumber], [OperationalStartDate], [OperationalEndDate], [IFateReferenceNumber]
                     FROM OfqualQualifications_CTE
                     EXCEPT
                     SELECT 
@@ -160,13 +160,13 @@ BEGIN
                 FROM
                 (
                     SELECT 
-                        [RecognitionNumber], [OperationalStartDate], [OperationalEndDate], [IfateReferenceNumber] 
+                        [RecognitionNumber], [OperationalStartDate], [OperationalEndDate], [IFateReferenceNumber] 
                     FROM OfqualQualifications_CTE
                 ) soo
-                JOIN OfqualStandardsChanged_CTE ofsc on ofsc.[RecognitionNumber] = soo.[RecognitionNumber] AND ofsc.[IfateReferenceNumber] = soo.[IfateReferenceNumber]
+                JOIN OfqualStandardsChanged_CTE ofsc on ofsc.[RecognitionNumber] = soo.[RecognitionNumber] AND ofsc.[IFateReferenceNumber] = soo.[IFateReferenceNumber]
             ) upd 
             ON 
-            (tar.[RecognitionNumber] = upd.[RecognitionNumber] AND tar.[IfateReferenceNumber] = upd.[IfateReferenceNumber])
+            (tar.[RecognitionNumber] = upd.[RecognitionNumber] AND tar.[IfateReferenceNumber] = upd.[IFateReferenceNumber])
             WHEN MATCHED THEN 
             UPDATE SET 
                    tar.[OperationalStartDate] = upd.[OperationalStartDate]
@@ -192,7 +192,7 @@ BEGIN
                 (
                     SELECT 
                         IFateReferenceNumber, LarsCode
-                        ,ROW_NUMBER() OVER (PARTITION BY IfateReferenceNumber, LarsCode ORDER BY VersionMajor DESC, VersionMinor DESC) RowNumber 
+                        ,ROW_NUMBER() OVER (PARTITION BY IFateReferenceNumber, LarsCode ORDER BY VersionMajor DESC, VersionMinor DESC) RowNumber 
                     FROM 
                         [dbo].[Standards] 
                     WHERE 
@@ -247,9 +247,9 @@ BEGIN
                 ,'Live' [Status]
                 ,[ContactId]
                 ,'{"DeliveryAreasComments":null}' [OrganisationStandardData]
-                ,os.[IfateReferenceNumber] [StandardReference]
+                ,os.[IFateReferenceNumber] [StandardReference]
             FROM OfqualStandards_CTE os
-                JOIN LatestStandardsWithOfqualEqap_CTE lswoe ON lswoe.[IfateReferenceNumber] = os.[IfateReferenceNumber]
+                JOIN LatestStandardsWithOfqualEqap_CTE lswoe ON lswoe.[IFateReferenceNumber] = os.[IFateReferenceNumber]
                 JOIN OrganisationFirstLiveContacts_CTE oflc ON oflc.[OrganisationId] = os.OrganisationId
                 LEFT JOIN CurrentOfqualStandards_CTE cofs on cofs.[RecognitionNumber] = os.[RecognitionNumber] 
                     AND cofs.[StandardReference] = os.[IFateReferenceNumber]
@@ -306,13 +306,13 @@ BEGIN
                 FROM
                 (
                     SELECT *  
-                        ,MIN(CASE WHEN EPAChanged = 1 THEN RowNumber ELSE NULL END) OVER (PARTITION BY IfateReferenceNumber) LatestEPARowNumber
-                        ,SUM(CASE WHEN EPAChanged = 1 THEN 1 ElSE 0 END) OVER (PARTITION BY IfateReferenceNumber) EPAChanges
+                        ,MIN(CASE WHEN EPAChanged = 1 THEN RowNumber ELSE NULL END) OVER (PARTITION BY IFateReferenceNumber) LatestEPARowNumber
+                        ,SUM(CASE WHEN EPAChanged = 1 THEN 1 ElSE 0 END) OVER (PARTITION BY IFateReferenceNumber) EPAChanges
                     FROM 
                     (
                         SELECT 
                             [IFateReferenceNumber], [Version], [StandardUId], [LarsCode], [VersionEarliestStartDate], [EPAChanged]
-                            ,ROW_NUMBER() OVER (PARTITION BY [IfateReferenceNumber] ORDER BY [VersionMajor] DESC, [VersionMinor] DESC) RowNumber 
+                            ,ROW_NUMBER() OVER (PARTITION BY [IFateReferenceNumber] ORDER BY [VersionMajor] DESC, [VersionMinor] DESC) RowNumber 
                         FROM 
                             [dbo].[Standards]
                         WHERE 
@@ -331,7 +331,7 @@ BEGIN
                 (CASE WHEN [VersionEarliestStartDate] > [EffectiveFrom] THEN [VersionEarliestStartDate] ELSE [EffectiveFrom] END) [EffectiveFrom], 
                 NULL [EffectiveTo], [DateStandardApprovedOnRegister] [DateVersionApproved], [Comments], 'Live' [Status]
             FROM [StandardVersionsWithLatestEpaPlan] sv
-                JOIN [AddedOfqualStandardsWithNoStandardVersions_CTE] aofs on aofs.[StandardReference] = sv.[IfateReferenceNumber]
+                JOIN [AddedOfqualStandardsWithNoStandardVersions_CTE] aofs on aofs.[StandardReference] = sv.[IFateReferenceNumber]
             WHERE 
                 AddVersion = 1;
 

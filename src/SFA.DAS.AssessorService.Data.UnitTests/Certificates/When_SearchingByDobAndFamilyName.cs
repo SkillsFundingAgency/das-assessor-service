@@ -5,169 +5,245 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Moq.EntityFrameworkCore;
-using FizzWare.NBuilder;
-using SFA.DAS.AssessorService.TestHelper;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Data.Interfaces;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
     public class When_SearchingByDobAndFamilyName
     {
-        private CertificateRepository _certificateRepository;
+        private Mock<AssessorDbContext> _mockDbContext;
+        private CertificateRepository _sut;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _mockDbContext = new Mock<AssessorDbContext>();
+
+            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
+            mockAssessorUnitOfWork
+                .SetupGet(x => x.AssessorDbContext)
+                .Returns(_mockDbContext.Object);
+
+            _sut = new CertificateRepository(mockAssessorUnitOfWork.Object);
+        }
 
         [Test]
         public async Task Returns_Standard_And_Framework_Matches_And_Respects_Exclude()
         {
-            // Arrange
-            var dob = new DateTime(1990, 1, 1);
-            var familyName = "Smith";
+            var dateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            const string familyName = "SMITH";
 
-            var frameworkLearners = Builder<FrameworkLearner>.CreateListOfSize(2)
-                .TheFirst(1)
-                    .With(l => l.Id = Guid.NewGuid())
-                    .With(l => l.ApprenticeULN = 1111111111)
-                    .With(l => l.CertificateFamilyName = "Smith")
-                    .With(l => l.ApprenticeDoB = dob)
-                    .With(l => l.TrainingCode = "T100")
-                    .With(l => l.FrameworkName = "Framework A")
-                    .With(l => l.ApprenticeshipLevelName = "2")
-                    .With(l => l.CertificationDate = new DateTime(2020,1,1))
-                    .With(l => l.ProviderName = "ProvA")
-                    .With(l => l.Ukprn = "12345")
-                .TheNext(1)
-                    .With(l => l.Id = Guid.NewGuid())
-                    .With(l => l.ApprenticeULN = (long?)null)
-                    .With(l => l.CertificateFamilyName = "Smith")
-                    .With(l => l.ApprenticeDoB = dob)
-                    .With(l => l.TrainingCode = "T200")
-                    .With(l => l.FrameworkName = "Framework B")
-                    .With(l => l.ApprenticeshipLevelName = "3")
-                    .With(l => l.CertificationDate = new DateTime(2019,1,1))
-                    .With(l => l.ProviderName = "ProvB")
-                    .With(l => l.Ukprn = "54321")
-                .Build().ToList();
+            var frameworkSearches = new List<FrameworkCertificateSearchResult>
+            {
+                new()
+                {
+                    Uln = 1111111111,
+                    DateOfBirth = dateOfBirth,
+                    CertificateFamilyName = familyName,
+                    CourseCode = "T100",
+                    CourseName = "Framework A",
+                    CourseLevel = "2",
+                    DateAwarded = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    ProviderName = "ProvA",
+                    Ukprn = "12345"
+                }
+            };
 
-            var standardCertificates = Builder<Certificate>.CreateListOfSize(2)
-                .TheFirst(1)
-                    .With(c => c.Uln = 2222222222)
-                    .With(c => c.DateOfBirth = dob)
-                    .WithPrivate(c => c.LatestEPAOutcome, "Pass")
-                    .WithPrivate(c => c.AchievementDate, new DateTime(2021,1,1))
-                    .WithPrivate(c => c.ProviderName, "ProvStd")
-                    .With(c => c.ProviderUkPrn = 9999)
-                    .With(c => c.Status = "Completed")
-                    .With(c => c.StandardCode = 100)
-                    .WithPrivate(c => c.StandardName, "Standard A")
-                    .WithPrivate(c => c.StandardLevel, 3)
-                    .With(c => c.Type = CertificateTypes.Standard)
-                    .WithPrivate(c => c.CertificateFamilyName, "Smith")
-                .TheNext(1)
-                    .With(c => c.Uln = 0)
-                    .With(c => c.DateOfBirth = dob)
-                    .WithPrivate(c => c.LatestEPAOutcome, "Pass")
-                    .WithPrivate(c => c.AchievementDate, new DateTime(2018,1,1))
-                    .WithPrivate(c => c.ProviderName, "ProvStd2")
-                    .With(c => c.ProviderUkPrn = 8888)
-                    .With(c => c.Status = "Completed")
-                    .With(c => c.StandardCode = 200)
-                    .WithPrivate(c => c.StandardName, "Standard B")
-                    .WithPrivate(c => c.StandardLevel, 2)
-                    .With(c => c.Type = CertificateTypes.Standard)
-                    .WithPrivate(c => c.CertificateFamilyName, "Smith")
-                .Build().ToList();
+            var standardSearches = new List<StandardCertificateSearchResult>
+            {
+                new()
+                {
+                    Uln = 2222222222,
+                    DateOfBirth = dateOfBirth,
+                    CertificateFamilyName = familyName,
+                    CourseCode = "100",
+                    CourseName = "Standard A",
+                    CourseLevel = "3",
+                    DateAwarded = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    ProviderName = "ProvStd",
+                    Ukprn = 9999
+                }
+            };
 
-            var mockDbContext = new Mock<AssessorDbContext>();
-            mockDbContext.Setup(c => c.FrameworkLearners).ReturnsDbSet(frameworkLearners.AsQueryable());
-            mockDbContext.Setup(c => c.StandardCertificates).ReturnsDbSet(standardCertificates.AsQueryable());
+            _mockDbContext
+                .Setup(x => x.FrameworkCertificateSearchResults)
+                .ReturnsDbSet(frameworkSearches);
 
-            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
-            mockAssessorUnitOfWork.SetupGet(x => x.AssessorDbContext).Returns(mockDbContext.Object);
+            _mockDbContext
+                .Setup(x => x.StandardCertificateSearchResults)
+                .ReturnsDbSet(standardSearches);
 
-            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
+            var results = await _sut.SearchByDobAndFamilyName(
+                dateOfBirth,
+                familyName,
+                new[] { 1111111111L });
 
-            // Act
-            var results = await _certificateRepository.SearchByDobAndFamilyName(dob, familyName, new long[] { 1111111111 });
-
-            // Assert
-            results.Should().NotBeNull();
-            results.Any(r => r.Uln == 2222222222).Should().BeTrue();
-            results.Any(r => r.Uln == 1111111111).Should().BeFalse();
-            results.All(r => r.Uln > 0).Should().BeTrue();
+            results.Should().BeEquivalentTo(
+                [
+                    new SearchCertificatesResponse
+                    {
+                        Uln = 2222222222L,
+                        CertificateType = CertificateTypes.Standard,
+                        CourseCode = "100",
+                        CourseName = "Standard A",
+                        CourseLevel = "3",
+                        DateAwarded = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        ProviderName = "ProvStd",
+                        Ukprn = "9999"
+                    }
+                ]);
         }
 
         [Test]
         public async Task Returns_Framework_Match_When_Not_Excluded()
         {
-            // Arrange
-            var dob = new DateTime(1990, 1, 1);
-            var familyName = "Smith";
+            var dateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            const string familyName = "SMITH";
 
-            var frameworkLearners = new List<FrameworkLearner>
+            var frameworkSearches = new List<FrameworkCertificateSearchResult>
             {
-                new FrameworkLearner
+                new()
                 {
-                    Id = Guid.NewGuid(),
-                    ApprenticeULN = 3333333333,
-                    CertificateFamilyName = "Smith",
-                    ApprenticeDoB = dob,
-                    TrainingCode = "T300",
-                    FrameworkName = "Framework C",
-                    ApprenticeshipLevelName = "4",
-                    CertificationDate = new DateTime(2022,1,1),
+                    Uln = 3333333333,
+                    DateOfBirth = dateOfBirth,
+                    CertificateFamilyName = familyName,
+                    CourseCode = "T300",
+                    CourseName = "Framework C",
+                    CourseLevel = "4",
+                    DateAwarded = new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     ProviderName = "ProvC",
                     Ukprn = "77777"
                 }
             };
 
-            var mockDbContext = new Mock<AssessorDbContext>();
-            mockDbContext.Setup(c => c.FrameworkLearners).ReturnsDbSet(frameworkLearners.AsQueryable());
-            mockDbContext.Setup(c => c.StandardCertificates).ReturnsDbSet(new List<Certificate>().AsQueryable());
+            _mockDbContext
+                .Setup(x => x.FrameworkCertificateSearchResults)
+                .ReturnsDbSet(frameworkSearches);
 
-            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
-            mockAssessorUnitOfWork.SetupGet(x => x.AssessorDbContext).Returns(mockDbContext.Object);
+            _mockDbContext
+                .Setup(x => x.StandardCertificateSearchResults)
+                .ReturnsDbSet(new List<StandardCertificateSearchResult>());
 
-            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
+            var results = await _sut.SearchByDobAndFamilyName(
+                dateOfBirth,
+                familyName,
+                null);
 
-            // Act
-            var results = await _certificateRepository.SearchByDobAndFamilyName(dob, familyName, null);
-
-            // Assert
-            results.Should().ContainSingle(r => r.Uln == 3333333333);
+            results.Should().BeEquivalentTo(
+                [
+                    new SearchCertificatesResponse
+                    {
+                        Uln = 3333333333L,
+                        CertificateType = CertificateTypes.Framework,
+                        CourseCode = "T300",
+                        CourseName = "Framework C",
+                        CourseLevel = "4",
+                        DateAwarded = new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        ProviderName = "ProvC",
+                        Ukprn = "77777"
+                    }
+                ]);
         }
 
         [Test]
         public async Task Returns_Standard_Match_When_Not_Excluded()
         {
-            // Arrange
-            var dob = new DateTime(1990, 1, 1);
-            var familyName = "Smith";
+            var dateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            const string familyName = "SMITH";
 
-            var standardCertificates = Builder<Certificate>.CreateListOfSize(1)
-                .TheFirst(1)
-                    .With(c => c.Uln = 4444444444)
-                    .With(c => c.DateOfBirth = dob)
-                    .WithPrivate(c => c.LatestEPAOutcome, "Pass")
-                    .WithPrivate(c => c.CertificateFamilyName, "Smith")
-                    .With(c => c.Type = CertificateTypes.Standard)
-                .Build().ToList();
+            var standardSearches = new List<StandardCertificateSearchResult>
+            {
+                new()
+                {
+                    Uln = 4444444444,
+                    DateOfBirth = dateOfBirth,
+                    CertificateFamilyName = familyName,
+                    CourseCode = "200",
+                    CourseName = "Standard B",
+                    CourseLevel = "2",
+                    DateAwarded = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    ProviderName = "ProvStd",
+                    Ukprn = 8888
+                }
+            };
 
-            var mockDbContext = new Mock<AssessorDbContext>();
-            mockDbContext.Setup(c => c.FrameworkLearners).ReturnsDbSet(new List<FrameworkLearner>().AsQueryable());
-            mockDbContext.Setup(c => c.StandardCertificates).ReturnsDbSet(standardCertificates.AsQueryable());
+            _mockDbContext
+                .Setup(x => x.FrameworkCertificateSearchResults)
+                .ReturnsDbSet(new List<FrameworkCertificateSearchResult>());
 
-            var mockAssessorUnitOfWork = new Mock<IAssessorUnitOfWork>();
-            mockAssessorUnitOfWork.SetupGet(x => x.AssessorDbContext).Returns(mockDbContext.Object);
+            _mockDbContext
+                .Setup(x => x.StandardCertificateSearchResults)
+                .ReturnsDbSet(standardSearches);
 
-            _certificateRepository = new CertificateRepository(mockAssessorUnitOfWork.Object);
+            var results = await _sut.SearchByDobAndFamilyName(
+                dateOfBirth,
+                familyName,
+                null);
 
-            // Act
-            var results = await _certificateRepository.SearchByDobAndFamilyName(dob, familyName, null);
+            results.Should().BeEquivalentTo(
+                [ 
+                    new SearchCertificatesResponse
+                    {
+                        Uln = 4444444444L,
+                        CertificateType = CertificateTypes.Standard,
+                        CourseCode = "200",
+                        CourseName = "Standard B",
+                        CourseLevel = "2",
+                        DateAwarded = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        ProviderName = "ProvStd",
+                        Ukprn = "8888"
+                    } 
+                ]);
+        }
 
-            // Assert
-            results.Should().ContainSingle(r => r.Uln == 4444444444);
+        [Test]
+        public async Task Returns_Matches_Ordered_By_DateAwarded_Descending()
+        {
+            var dateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            const string familyName = "SMITH";
+
+            var frameworkSearches = new List<FrameworkCertificateSearchResult>
+            {
+                new()
+                {
+                    Uln = 1111111111,
+                    DateOfBirth = dateOfBirth,
+                    CertificateFamilyName = familyName,
+                    DateAwarded = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            };
+
+            var standardSearches = new List<StandardCertificateSearchResult>
+            {
+                new()
+                {
+                    Uln = 2222222222,
+                    DateOfBirth = dateOfBirth,
+                    CertificateFamilyName = familyName,
+                    DateAwarded = new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            };
+
+            _mockDbContext
+                .Setup(x => x.FrameworkCertificateSearchResults)
+                .ReturnsDbSet(frameworkSearches);
+
+            _mockDbContext
+                .Setup(x => x.StandardCertificateSearchResults)
+                .ReturnsDbSet(standardSearches);
+
+            var results = await _sut.SearchByDobAndFamilyName(
+                dateOfBirth,
+                familyName,
+                null);
+
+            results.Select(x => x.Uln)
+                .Should()
+                .ContainInOrder(2222222222L, 1111111111L);
         }
     }
 }

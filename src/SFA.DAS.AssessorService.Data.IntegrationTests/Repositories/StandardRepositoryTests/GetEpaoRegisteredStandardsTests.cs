@@ -174,7 +174,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
 
-            private StandardRepository _repository;
+            private readonly StandardRepository _repository;
             private EpoRegisteredStandardsResult _result;
 
             public GetEpaoRegisteredStandardsTestsFixture()
@@ -201,6 +201,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             public void Verify(int numberOfResults)
             {
                 _result.PageOfResults.Count().Should().Be(numberOfResults);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
     }

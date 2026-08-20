@@ -369,7 +369,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
 
-            private StandardRepository _repository;
+            private readonly StandardRepository _repository;
             public int _updated;
 
             public LoadOfsStandardsTestsFixture()
@@ -388,6 +388,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
             {
                 _updated.Should().Be(updated);
                 return this;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
     }

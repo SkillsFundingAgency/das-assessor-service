@@ -205,56 +205,54 @@ namespace SFA.DAS.AssessorService.Data
                  .SingleOrDefaultAsync(c => c.FrameworkLearnerId == frameworkLearnerId);
         }
 
-        public async Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(DateTime dateOfBirth, string familyName, IEnumerable<long> excludeUlns)
+        public async Task<List<SearchCertificatesResponse>> SearchByDobAndFamilyName(
+            DateTime dateOfBirth,
+            string familyName,
+            IEnumerable<long> excludeUlns)
         {
-            var cleansed = NameCleaner.CleanseName(familyName);
-            var cleansedUpper = cleansed != null ? cleansed.ToUpperInvariant() : null;
-            var excludeList = excludeUlns?.ToList() ?? new List<long>();
+            var cleansedFamilyName = NameCleaner.CleanseName(familyName);
+            var excludeList = excludeUlns?.ToArray() ?? Array.Empty<long>();
 
-            var frameworkMatches = await _unitOfWork.AssessorDbContext.FrameworkLearners
-                .Where(l => l.ApprenticeULN > 0
-                            && !string.IsNullOrEmpty(l.CertificateFamilyName)
-                            && l.CertificateFamilyName.ToUpper() == cleansedUpper
-                            && l.ApprenticeDoB == dateOfBirth
-                            && (excludeList.Count == 0 || !excludeList.Contains(l.ApprenticeULN.Value)))
-                .Select(l => new SearchCertificatesResponse
+            var frameworkMatches = await _unitOfWork.AssessorDbContext
+                .FrameworkCertificateSearchResults
+                .Where(x =>
+                    x.DateOfBirth == dateOfBirth &&
+                    x.CertificateFamilyName == cleansedFamilyName &&
+                    !excludeList.Contains(x.Uln))
+                .Select(x => new SearchCertificatesResponse
                 {
-                    Uln = l.ApprenticeULN.Value,
+                    Uln = x.Uln,
                     CertificateType = CertificateTypes.Framework,
-                    CourseCode = l.TrainingCode,
-                    CourseName = l.FrameworkName,
-                    CourseLevel = l.ApprenticeshipLevelName,
-                    DateAwarded = l.CertificationDate,
-                    ProviderName = l.ProviderName,
-                    Ukprn = l.Ukprn
+                    CourseCode = x.CourseCode,
+                    CourseName = x.CourseName,
+                    CourseLevel = x.CourseLevel,
+                    DateAwarded = x.DateAwarded,
+                    ProviderName = x.ProviderName,
+                    Ukprn = x.Ukprn
                 })
                 .ToListAsync();
 
-            var statusesToExclude = new[] { CertificateStatus.Draft, CertificateStatus.Deleted };
-
-            var standardMatches = await _unitOfWork.AssessorDbContext.StandardCertificates
-                .Where(c => !statusesToExclude.Contains(c.Status)
-                            && c.LatestEPAOutcome == EpaOutcome.Pass
-                            && c.DateOfBirth == dateOfBirth
-                            && c.Uln > 0
-                            && c.ProviderUkPrn != null && c.ProviderUkPrn > 0
-                            && !string.IsNullOrEmpty(c.CertificateFamilyName)
-                            && c.CertificateFamilyName.ToUpper() == cleansedUpper
-                            && (excludeList.Count == 0 || !excludeList.Contains(c.Uln)))
-                .Select(c => new SearchCertificatesResponse
+            var standardMatches = await _unitOfWork.AssessorDbContext
+                .StandardCertificateSearchResults
+                .Where(x =>
+                    x.DateOfBirth == dateOfBirth &&
+                    x.CertificateFamilyName == cleansedFamilyName &&
+                    !excludeList.Contains(x.Uln))
+                .Select(x => new SearchCertificatesResponse
                 {
-                    Uln = c.Uln,
+                    Uln = x.Uln,
                     CertificateType = CertificateTypes.Standard,
-                    CourseCode = c.StandardCode.ToString(),
-                    CourseName = c.StandardName,
-                    CourseLevel = c.StandardLevel.ToString(),
-                    DateAwarded = c.AchievementDate,
-                    ProviderName = c.ProviderName,
-                    Ukprn = c.ProviderUkPrn != null ? c.ProviderUkPrn.ToString() : null
+                    CourseCode = x.CourseCode,
+                    CourseName = x.CourseName,
+                    CourseLevel = x.CourseLevel,
+                    DateAwarded = x.DateAwarded,
+                    ProviderName = x.ProviderName,
+                    Ukprn = x.Ukprn.ToString()
                 })
                 .ToListAsync();
 
-            return frameworkMatches.Concat(standardMatches)
+            return frameworkMatches
+                .Concat(standardMatches)
                 .OrderByDescending(x => x.DateAwarded)
                 .ToList();
         }

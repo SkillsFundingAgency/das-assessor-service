@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Data.Config;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -55,6 +56,9 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<ApplyEF> Applications { get; set; }
         public virtual DbSet<MergeApply> MergeApplications { get; set; }
         public virtual DbSet<AssessmentsSummary> AssessmentsSummary { get; set; }
+
+        public virtual DbSet<StandardCertificateSearchResult> StandardCertificateSearchResults { get; set; }
+        public virtual DbSet<FrameworkCertificateSearchResult> FrameworkCertificateSearchResults { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -174,8 +178,11 @@ namespace SFA.DAS.AssessorService.Data
             modelBuilder.Entity<MergeApply>()
                 .ToTable("MergeApply");
 
-            modelBuilder.Entity<FrameworkLearner>()
-                .ToTable("FrameworkLearner");
+            modelBuilder.ApplyConfiguration(
+                new StandardCertificateSearchResultConfiguration());
+
+            modelBuilder.ApplyConfiguration(
+                new FrameworkCertificateSearchResultConfiguration());
 
             SetUpJsonToEntityTypeHandlers(modelBuilder);
         }

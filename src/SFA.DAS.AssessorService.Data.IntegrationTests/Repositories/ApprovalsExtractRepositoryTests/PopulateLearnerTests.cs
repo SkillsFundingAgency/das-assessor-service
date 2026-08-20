@@ -401,6 +401,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
                 _updated.Should().Be(updated);
                 return this;
             }
+
+            protected override void Dispose(bool disposing)
+            {
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
         }
     }
 }
