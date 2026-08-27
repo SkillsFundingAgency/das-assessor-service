@@ -213,5 +213,57 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Cre
             // Assert
             existingCertificate.DateOfBirth.Should().Be(learnerDateOfBirth);
         }
+
+        [Test]
+        public async Task WhenReusingCertificate_AndLearnerDateOfBirthIsNull_ThenCertificateDateOfBirthIsUpdatedToNull()
+        {
+            // Arrange
+            var learner = new Domain.Entities.Learner
+            {
+                UkPrn = LearnerUkprn,
+                DateOfBirth = null
+            };
+
+            var existingCertificate = new Certificate
+            {
+                DateOfBirth =
+                    new DateTime(2000, 2, 3, 0, 0, 0, DateTimeKind.Utc),
+                ProviderUkPrn = UkPrn,
+                CertificateData = new Domain.JsonData.CertificateData()
+            };
+
+            _learnerRepository
+                .Setup(x => x.Get(Uln, StdCode))
+                .ReturnsAsync(learner);
+
+            _certificateRepository
+                .Setup(x => x.GetCertificate(Uln, StdCode))
+                .ReturnsAsync(existingCertificate);
+
+            _certificateRepository
+                .Setup(x => x.UpdateStandardCertificate(
+                    It.IsAny<Certificate>(),
+                    ExternalApiConstants.ApiUserName,
+                    CertificateActions.Start,
+                    true,
+                    null))
+                .ReturnsAsync(existingCertificate);
+
+            // Act
+            await _sut.Handle(_request, CancellationToken.None);
+
+            // Assert
+            existingCertificate.DateOfBirth.Should().BeNull();
+
+            _certificateRepository.Verify(
+                x => x.UpdateStandardCertificate(
+                    It.Is<Certificate>(certificate =>
+                        certificate.DateOfBirth == null),
+                    ExternalApiConstants.ApiUserName,
+                    CertificateActions.Start,
+                    true,
+                    null),
+                Times.Once);
+        }
     }
 }

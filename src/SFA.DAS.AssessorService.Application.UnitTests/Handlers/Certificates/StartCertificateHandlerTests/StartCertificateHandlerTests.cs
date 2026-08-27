@@ -562,6 +562,69 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             updatedCertificate.DateOfBirth.Should().Be(learnerDateOfBirth);
         }
 
+        [Test, RecursiveMoqAutoData]
+        public async Task WhenReusingCertificate_AndLearnerDateOfBirthIsNull_ThenCertificateDateOfBirthIsUpdatedToNull(
+            StartCertificateRequest request,
+            Domain.Entities.Learner learner,
+            Organisation organisation,
+            Provider provider,
+            Standard standard,
+            Certificate existingCertificate,
+            CertificateData certificateData)
+        {
+            // Arrange
+            learner.DateOfBirth = null;
+
+            existingCertificate.DateOfBirth =
+                new DateTime(2000, 2, 3, 0, 0, 0, DateTimeKind.Utc);
+
+            existingCertificate.Status = CertificateStatus.Draft;
+            existingCertificate.CertificateData = certificateData;
+
+            SetupCertificateNameCapitalisationService(learner.GivenNames);
+            SetupCertificateNameCapitalisationService(learner.FamilyName);
+
+            _mockLearnerRepository
+                .Setup(x => x.Get(request.Uln, request.StandardCode))
+                .ReturnsAsync(learner);
+
+            _mockOrganisationQueryRepository
+                .Setup(x => x.GetByUkPrn(request.UkPrn))
+                .ReturnsAsync(organisation);
+
+            _mockProvidersRepository
+                .Setup(x => x.GetProvider(learner.UkPrn))
+                .ReturnsAsync(provider);
+
+            _mockStandardService
+                .Setup(x => x.GetStandardVersionById(request.StandardUId, null))
+                .ReturnsAsync(standard);
+
+            _mockCertificateRepository
+                .Setup(x => x.GetCertificate(request.Uln, request.StandardCode))
+                .ReturnsAsync(existingCertificate);
+
+            Certificate updatedCertificate = null;
+
+            _mockCertificateRepository
+                .Setup(x => x.UpdateStandardCertificate(
+                    It.IsAny<Certificate>(),
+                    request.Username,
+                    null,
+                    true,
+                    null))
+                .Callback<Certificate, string, string, bool, string>(
+                    (certificate, username, action, updateLog, reason) =>
+                        updatedCertificate = certificate)
+                .ReturnsAsync(existingCertificate);
+
+            // Act
+            await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            updatedCertificate.DateOfBirth.Should().BeNull();
+        }
+
         private void SetupCertificateNameCapitalisationService(string name)
         {
             _mockCertificateNameCapitalisationService.Setup(s => s.ProperCase(name, It.IsAny<bool>())).Returns(name);
