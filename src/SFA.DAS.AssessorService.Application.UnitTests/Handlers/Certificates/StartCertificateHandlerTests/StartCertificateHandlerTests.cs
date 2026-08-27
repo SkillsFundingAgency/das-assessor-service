@@ -59,8 +59,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             request.StandardUId = null;
             learnerRecord.FundingModel = 81;
+
             SetupCertificateNameCapitalisationService(learnerRecord.GivenNames);
             SetupCertificateNameCapitalisationService(learnerRecord.FamilyName);
+
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -83,6 +85,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             {
                 request.Uln,
                 request.StandardCode,
+                DateOfBirth = learnerRecord.DateOfBirth,
                 ProviderUkPrn = learnerRecord.UkPrn,
                 OrganisationId = organisationRecord.Id,
                 CreatedBy = request.Username,
@@ -115,8 +118,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             request.StandardUId = null;
             learnerRecord.FundingModel = 99;
+
             SetupCertificateNameCapitalisationService(learnerRecord.GivenNames);
             SetupCertificateNameCapitalisationService(learnerRecord.FamilyName);
+            
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -139,6 +144,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             {
                 request.Uln,
                 request.StandardCode,
+                DateOfBirth = learnerRecord.DateOfBirth,
                 ProviderUkPrn = learnerRecord.UkPrn,
                 OrganisationId = organisationRecord.Id,
                 CreatedBy = request.Username,
@@ -171,6 +177,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             SetupCertificateNameCapitalisationService(learnerRecord.GivenNames);
             SetupCertificateNameCapitalisationService(learnerRecord.FamilyName);
+
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -195,8 +202,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         {
             // Arrange
             learnerRecord.FundingModel = 81;
+
             SetupCertificateNameCapitalisationService(learnerRecord.GivenNames);
             SetupCertificateNameCapitalisationService(learnerRecord.FamilyName);
+
             _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync((Certificate)null);
             _mockLearnerRepository.Setup(s => s.Get(request.Uln, request.StandardCode)).ReturnsAsync(learnerRecord);
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -219,6 +228,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             {
                 request.Uln,
                 request.StandardCode,
+                DateOfBirth = learnerRecord.DateOfBirth,
                 ProviderUkPrn = learnerRecord.UkPrn,
                 OrganisationId = organisationRecord.Id,
                 CreatedBy = request.Username,
@@ -258,6 +268,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             // Arrange
             SetupCertificateNameCapitalisationService(learnerRecord.GivenNames);
             SetupCertificateNameCapitalisationService(learnerRecord.FamilyName);
+
             existingCertificate.Status = CertificateStatus.Submitted;
             certificateData.OverallGrade = CertificateGrade.Fail;
             existingCertificate.CertificateData = certificateData;
@@ -296,8 +307,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         {
             // Arrange
             learnerRecord.FundingModel = 81;
+
             SetupCertificateNameCapitalisationService(learnerRecord.GivenNames);
             SetupCertificateNameCapitalisationService(learnerRecord.FamilyName);
+
             existingCertificate.Status = CertificateStatus.Deleted;
             existingCertificate.CertificateData = certificateData;
             _mockOrganisationQueryRepository.Setup(s => s.GetByUkPrn(request.UkPrn)).ReturnsAsync(organisationRecord);
@@ -314,7 +327,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                     }).ReturnsAsync(stubCertificate);
 
             // Act
-            var response = await _sut.Handle(request, new CancellationToken());
+            await _sut.Handle(request, new CancellationToken());
 
             // Assertions
             updatedCertficate.IsPrivatelyFunded.Should().BeFalse();
@@ -354,7 +367,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
 
             // Act
-            var response = await _sut.Handle(request, new CancellationToken());
+            await _sut.Handle(request, new CancellationToken());
 
             // Assertions
             using (new AssertionScope())
@@ -391,7 +404,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
 
             // Act
-            var response = await _sut.Handle(request, new CancellationToken());
+            await _sut.Handle(request, new CancellationToken());
 
             // Assertions
             using (new AssertionScope())
@@ -427,7 +440,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             }).ReturnsAsync(stubCertificate);
 
             // Act
-            var response = await _sut.Handle(request, new CancellationToken());
+            await _sut.Handle(request, new CancellationToken());
 
             // Assertions
             using (new AssertionScope())
@@ -437,9 +450,121 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             }
         }
 
+        [Test, RecursiveMoqAutoData]
+        public async Task WhenCreatingNewCertificate_AndLearnerDateOfBirthIsNull_ThenCertificateDateOfBirthIsNull(
+            StartCertificateRequest request,
+            Domain.Entities.Learner learner,
+            Organisation organisation,
+            Provider provider,
+            Standard standard,
+            Certificate savedCertificate)
+        {
+            // Arrange
+            learner.DateOfBirth = null;
+
+            SetupCertificateNameCapitalisationService(learner.GivenNames);
+            SetupCertificateNameCapitalisationService(learner.FamilyName);
+
+            _mockLearnerRepository
+                .Setup(x => x.Get(request.Uln, request.StandardCode))
+                .ReturnsAsync(learner);
+
+            _mockOrganisationQueryRepository
+                .Setup(x => x.GetByUkPrn(request.UkPrn))
+                .ReturnsAsync(organisation);
+
+            _mockProvidersRepository
+                .Setup(x => x.GetProvider(learner.UkPrn))
+                .ReturnsAsync(provider);
+
+            _mockStandardService
+                .Setup(x => x.GetStandardVersionById(request.StandardUId, null))
+                .ReturnsAsync(standard);
+
+            _mockCertificateRepository
+                .Setup(x => x.GetCertificate(request.Uln, request.StandardCode))
+                .ReturnsAsync((Certificate)null);
+
+            Certificate createdCertificate = null;
+
+            _mockCertificateRepository
+                .Setup(x => x.NewStandardCertificate(It.IsAny<Certificate>()))
+                .Callback<Certificate>(certificate => createdCertificate = certificate)
+                .ReturnsAsync(savedCertificate);
+
+            // Act
+            await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            createdCertificate.DateOfBirth.Should().BeNull();
+        }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task WhenReusingCertificate_ThenDateOfBirthIsUpdatedFromLearner(
+            StartCertificateRequest request,
+            Domain.Entities.Learner learner,
+            Organisation organisation,
+            Provider provider,
+            Standard standard,
+            Certificate existingCertificate,
+            CertificateData certificateData)
+        {
+            // Arrange
+            var learnerDateOfBirth = new DateTime(2000, 2, 3, 0, 0, 0, DateTimeKind.Utc);
+
+            learner.DateOfBirth = learnerDateOfBirth;
+
+            existingCertificate.DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            existingCertificate.Status = CertificateStatus.Draft;
+            existingCertificate.CertificateData = certificateData;
+
+            SetupCertificateNameCapitalisationService(learner.GivenNames);
+            SetupCertificateNameCapitalisationService(learner.FamilyName);
+
+            _mockLearnerRepository
+                .Setup(x => x.Get(request.Uln, request.StandardCode))
+                .ReturnsAsync(learner);
+
+            _mockOrganisationQueryRepository
+                .Setup(x => x.GetByUkPrn(request.UkPrn))
+                .ReturnsAsync(organisation);
+
+            _mockProvidersRepository
+                .Setup(x => x.GetProvider(learner.UkPrn))
+                .ReturnsAsync(provider);
+
+            _mockStandardService
+                .Setup(x => x.GetStandardVersionById(request.StandardUId, null))
+                .ReturnsAsync(standard);
+
+            _mockCertificateRepository
+                .Setup(x => x.GetCertificate(request.Uln, request.StandardCode))
+                .ReturnsAsync(existingCertificate);
+
+            Certificate updatedCertificate = null;
+
+            _mockCertificateRepository
+                .Setup(x => x.UpdateStandardCertificate(
+                    It.IsAny<Certificate>(),
+                    request.Username,
+                    null,
+                    true,
+                    null))
+                .Callback<Certificate, string, string, bool, string>(
+                    (certificate, username, action, updateLog, reason) =>
+                        updatedCertificate = certificate)
+                .ReturnsAsync(existingCertificate);
+
+            // Act
+            await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            updatedCertificate.DateOfBirth.Should().Be(learnerDateOfBirth);
+        }
+
         private void SetupCertificateNameCapitalisationService(string name)
         {
-            _mockCertificateNameCapitalisationService.Setup(s => s.ProperCase(It.IsAny<string>(), true)).Returns(name);
+            _mockCertificateNameCapitalisationService.Setup(s => s.ProperCase(name, It.IsAny<bool>())).Returns(name);
         }
     }
 }
