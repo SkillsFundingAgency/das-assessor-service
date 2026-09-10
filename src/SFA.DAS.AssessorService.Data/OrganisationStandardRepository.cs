@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -14,17 +15,15 @@ namespace SFA.DAS.AssessorService.Data
         {
         }
 
-        public async Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardReference(string organisationId, string standardReference)
+        public async Task<IEnumerable<OrganisationStandard>> GetOrganisationStandardsByOrganisationIdAndStandardReference(string organisationId, string standardReference)
         {
-            var results =  await _unitOfWork.Connection.QueryAsync<OrganisationStandard>(
-                @"SELECT Id, EndPointAssessorOrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, 
+            return await _unitOfWork.Connection.QueryAsync<OrganisationStandard>(
+                @"SELECT Id, EndPointAssessorOrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister,
                   Comments, Status, ContactId, StandardReference
                 FROM OrganisationStandard
                 WHERE EndPointAssessorOrganisationId = @OrganisationId AND StandardReference = @StandardReference",
                 param: new { OrganisationId = organisationId, StandardReference = standardReference },
                 transaction: _unitOfWork.Transaction);
-
-            return results.SingleOrDefault();
         }
 
         public async Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version)

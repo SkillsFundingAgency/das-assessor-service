@@ -68,8 +68,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new Exception(message);
             }
 
-            var standardExists = (await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(
-                request.OrganisationId, request.StandardReference) != null);
+            var standardExists = (await _organisationStandardRepository.GetOrganisationStandardsByOrganisationIdAndStandardReference(
+                request.OrganisationId, request.StandardReference)).Any();
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
             var deliveryAreas = !(request.DeliveryAreas?.Any() ?? false) ? await GetDeliveryAreas() : request.DeliveryAreas;

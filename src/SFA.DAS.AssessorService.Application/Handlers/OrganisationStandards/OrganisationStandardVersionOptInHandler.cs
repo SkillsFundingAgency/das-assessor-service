@@ -7,7 +7,6 @@ using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,17 +17,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         private readonly IOrganisationStandardRepository _organisationStandardRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IStandardService _standardService;
+        private readonly IOrganisationStandardSelector _organisationStandardSelector;
         private readonly IMediator _mediator;
         private readonly ILogger<OrganisationStandardVersionOptInHandler> _logger;
 
-        public OrganisationStandardVersionOptInHandler(IOrganisationStandardRepository organisationStandardRepository, 
+        public OrganisationStandardVersionOptInHandler(IOrganisationStandardRepository organisationStandardRepository,
             IContactQueryRepository contactQueryRepository, IMediator mediator,
             IStandardService standardService,
+            IOrganisationStandardSelector organisationStandardSelector,
             ILogger<OrganisationStandardVersionOptInHandler> logger)
         {
             _organisationStandardRepository = organisationStandardRepository;
             _contactQueryRepository = contactQueryRepository;
             _standardService = standardService;
+            _organisationStandardSelector = organisationStandardSelector;
             _mediator = mediator;
             _logger = logger;
         }
@@ -43,18 +45,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     throw new NotFoundException($"Cannot opt in to StandardReference {request.StandardReference} as ContactId {request.ContactId} cannot be found");
                 }
 
-                var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
-                if (organisationStandard == null)
-                {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
-                }
-
-                var allVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
-                var optInVersion = allVersions.FirstOrDefault(x => x.Version.Equals(request.Version, StringComparison.InvariantCultureIgnoreCase));
+                var optInVersion = await _standardService.GetStandardVersionById(request.StandardReference, request.Version);
                 if (optInVersion == null)
                 {
                     throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
                 }
+
+                var organisationStandards = await _organisationStandardRepository
+                    .GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
+                var selection = _organisationStandardSelector.Select(organisationStandards, optInVersion.LarsCode);
+
+                if (selection.Result == OrganisationStandardSelectionResult.NotFound)
+                {
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
+                }
+
+                if (selection.Result == OrganisationStandardSelectionResult.Ambiguous)
+                {
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} LarsCode {optInVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} is ambiguous ({selection.TotalRowCount} records found, {selection.MatchingLarsCodeCount} matched the LarsCode)");
+                }
+
+                var organisationStandard = selection.OrganisationStandard;
 
                 var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);
                 var newComment = $"Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}";
