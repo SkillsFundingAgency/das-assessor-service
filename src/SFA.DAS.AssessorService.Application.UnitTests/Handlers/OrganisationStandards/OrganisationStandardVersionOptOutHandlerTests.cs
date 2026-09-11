@@ -154,7 +154,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             await func.Should().ThrowAsync<NotFoundException>()
                 .WithMessage($"Cannot opt out as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
 
-            // Should fail before ever needing to resolve the OrganisationStandard row
             _organisationStandardRepositoryMock.Verify(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -191,11 +190,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
 
             // Assert
             await func.Should().ThrowAsync<NotFoundException>()
-                .WithMessage($"Cannot opt out as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
+                .WithMessage($"Cannot opt out as StandardReference {request.StandardReference} LarsCode {standard.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found (0 existing OrganisationStandard records)");
         }
 
         [Test]
-        public async Task Handle_Should_Throw_NotFoundException_When_OrganisationStandard_Is_Ambiguous()
+        public async Task Handle_Should_Throw_NotFoundException_When_SelectionRequiresNewRecord()
         {
             // Arrange
             var request = new OrganisationStandardVersionOptOutRequest
@@ -211,9 +210,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
 
             var contact = new Contact { Id = request.ContactId, Email = "emailaddress@test.com" };
             var standard = new Standard { StandardUId = $"{request.StandardReference}_{request.Version}", Version = request.Version, LarsCode = 12345 };
+            var template = new OrganisationStandard { Id = 101, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = 99999 };
             var organisationStandards = new List<OrganisationStandard>
             {
-                new OrganisationStandard { Id = 101, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = 99999 },
+                template,
                 new OrganisationStandard { Id = 102, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = 88888 }
             };
 
@@ -224,14 +224,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
                 .ReturnsAsync(organisationStandards);
             _organisationStandardSelectorMock.Setup(x => x.Select(organisationStandards, standard.LarsCode))
-                .Returns(new OrganisationStandardSelectionOutcome { Result = OrganisationStandardSelectionResult.Ambiguous, TotalRowCount = 2, MatchingLarsCodeCount = 0 });
+                .Returns(new OrganisationStandardSelectionOutcome { Result = OrganisationStandardSelectionResult.RequiresNewRecord, TemplateOrganisationStandard = template, TotalRowCount = 2, MatchingLarsCodeCount = 0 });
 
             // Act
             Func<Task<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> func = async () => await _handler.Handle(request, CancellationToken.None);
 
             // Assert
             await func.Should().ThrowAsync<NotFoundException>()
-                .WithMessage($"Cannot opt out as StandardReference {request.StandardReference} LarsCode {standard.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} is ambiguous (2 records found, 0 matched the LarsCode)");
+                .WithMessage($"Cannot opt out as StandardReference {request.StandardReference} LarsCode {standard.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found (2 existing OrganisationStandard records)");
+
+            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandard(It.IsAny<OrganisationStandard>()), Times.Never);
         }
 
         [Test]

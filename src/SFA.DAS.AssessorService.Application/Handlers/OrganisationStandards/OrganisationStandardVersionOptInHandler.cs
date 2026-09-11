@@ -57,15 +57,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
                 if (selection.Result == OrganisationStandardSelectionResult.NotFound)
                 {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} LarsCode {optInVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found ({selection.TotalRowCount} existing OrganisationStandard records)");
                 }
 
-                if (selection.Result == OrganisationStandardSelectionResult.Ambiguous)
+                Domain.Entities.OrganisationStandard organisationStandard;
+                if (selection.Result == OrganisationStandardSelectionResult.RequiresNewRecord)
                 {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} LarsCode {optInVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} is ambiguous ({selection.TotalRowCount} records found, {selection.MatchingLarsCodeCount} matched the LarsCode)");
+                    organisationStandard = MapNewOrganisationStandard(request, optInVersion, contact, selection.TemplateOrganisationStandard);
+                    await _organisationStandardRepository.CreateOrganisationStandard(organisationStandard);
                 }
-
-                var organisationStandard = selection.OrganisationStandard;
+                else
+                {
+                    organisationStandard = selection.OrganisationStandard;
+                }
 
                 var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);
                 var newComment = $"Opted in by EPAO {contact.Email} at {request.OptInRequestedAt}";
@@ -109,6 +113,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 _logger.LogError(ex, $"Failed to opt-in StandardReference {request.StandardReference} Version {request.Version} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId}");
                 throw;
             }
+        }
+
+        private static Domain.Entities.OrganisationStandard MapNewOrganisationStandard(OrganisationStandardVersionOptInRequest request,
+            Domain.Entities.Standard optInVersion, Domain.Entities.Contact contact, Domain.Entities.OrganisationStandard template)
+        {
+            return new Domain.Entities.OrganisationStandard
+            {
+                EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId,
+                StandardCode = optInVersion.LarsCode,
+                EffectiveFrom = request.OptInRequestedAt,
+                EffectiveTo = null,
+                DateStandardApprovedOnRegister = template.DateStandardApprovedOnRegister,
+                Comments = $"Added by EPAO {contact.Email} at {request.OptInRequestedAt:dd/MM/yyyy HH:mm:ss}",
+                Status = OrganisationStatus.Live,
+                ContactId = template.ContactId,
+                OrganisationStandardData = null,
+                StandardReference = request.StandardReference
+            };
         }
     }
 }

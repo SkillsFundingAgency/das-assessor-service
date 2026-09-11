@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _selector = new OrganisationStandardSelector(_loggerMock.Object);
         }
 
-        private static OrganisationStandard CreateRow(int id, int standardCode, System.DateTime? effectiveTo = null)
+        private static OrganisationStandard CreateRow(int id, int standardCode, DateTime? effectiveFrom = null, DateTime? effectiveTo = null)
         {
             return new OrganisationStandard
             {
@@ -34,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
                 EndPointAssessorOrganisationId = OrganisationId,
                 StandardReference = StandardReference,
                 StandardCode = standardCode,
+                EffectiveFrom = effectiveFrom,
                 EffectiveTo = effectiveTo
             };
         }
@@ -51,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test]
         public void Select_ShouldReturnTheOnlyRow_WhenExactlyOneRowExists_RegardlessOfLarsCode()
         {
-            var row = CreateRow(id: 101, standardCode: 999); 
+            var row = CreateRow(id: 101, standardCode: 999);
 
             var result = _selector.Select(new List<OrganisationStandard> { row }, LarsCode);
 
@@ -61,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test]
-        public void Select_ShouldReturnTheMatchingRow_WhenMultipleRowsExist_AndExactlyOneMatchesLarsCode()
+        public void Select_ShouldReturnTheMatchingRow_WhenMultipleRowsExist_AndTheStandardCodeOrganisationCombinationIsFound()
         {
             var matchingRow = CreateRow(id: 101, standardCode: LarsCode);
             var otherRow = CreateRow(id: 102, standardCode: 999);
@@ -75,15 +77,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test]
-        public void Select_ShouldReturnAmbiguous_WhenMultipleRowsExist_AndNoneMatchLarsCode()
+        public void Select_ShouldReturnRequiresNewRecord_WithTheMostRecentRowAsTemplate_WhenMultipleRowsExist_AndTheStandardCodeOrganisationCombinationIsNotFound()
         {
-            var rowA = CreateRow(id: 101, standardCode: 111);
-            var rowB = CreateRow(id: 102, standardCode: 222);
+            var olderRow = CreateRow(id: 101, standardCode: 111, effectiveFrom: new DateTime(2024, 1, 1));
+            var mostRecentRow = CreateRow(id: 102, standardCode: 222, effectiveFrom: new DateTime(2025, 6, 1));
 
-            var result = _selector.Select(new List<OrganisationStandard> { rowA, rowB }, LarsCode);
+            var result = _selector.Select(new List<OrganisationStandard> { olderRow, mostRecentRow }, LarsCode);
 
-            result.Result.Should().Be(OrganisationStandardSelectionResult.Ambiguous);
+            result.Result.Should().Be(OrganisationStandardSelectionResult.RequiresNewRecord);
             result.OrganisationStandard.Should().BeNull();
+            result.TemplateOrganisationStandard.Should().Be(mostRecentRow);
             result.TotalRowCount.Should().Be(2);
             result.MatchingLarsCodeCount.Should().Be(0);
         }
@@ -91,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [Test]
         public void Select_ShouldReturnTheActiveRow_WhenMultipleRowsMatchTheSameLarsCode_AndOnlyOneIsActive()
         {
-            var withdrawnRow = CreateRow(id: 101, standardCode: LarsCode, effectiveTo: System.DateTime.Today.AddDays(-1));
+            var withdrawnRow = CreateRow(id: 101, standardCode: LarsCode, effectiveTo: DateTime.Today.AddDays(-1));
             var activeRow = CreateRow(id: 102, standardCode: LarsCode, effectiveTo: null);
 
             var result = _selector.Select(new List<OrganisationStandard> { withdrawnRow, activeRow }, LarsCode);
@@ -102,15 +105,28 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [Test]
-        public void Select_ShouldReturnAmbiguous_WhenMultipleRowsMatchTheSameLarsCode_AndNoneOrMoreThanOneIsActive()
+        public void Select_ShouldReturnTheMostRecentMatch_WhenMultipleRowsMatchTheSameLarsCode_AndTheActiveTieBreakDoesNotResolve()
         {
-            var rowA = CreateRow(id: 101, standardCode: LarsCode, effectiveTo: null);
-            var rowB = CreateRow(id: 102, standardCode: LarsCode, effectiveTo: null);
+            var olderRow = CreateRow(id: 101, standardCode: LarsCode, effectiveFrom: new DateTime(2024, 1, 1), effectiveTo: null);
+            var mostRecentRow = CreateRow(id: 102, standardCode: LarsCode, effectiveFrom: new DateTime(2025, 6, 1), effectiveTo: null);
 
-            var result = _selector.Select(new List<OrganisationStandard> { rowA, rowB }, LarsCode);
+            var result = _selector.Select(new List<OrganisationStandard> { olderRow, mostRecentRow }, LarsCode);
 
-            result.Result.Should().Be(OrganisationStandardSelectionResult.Ambiguous);
-            result.OrganisationStandard.Should().BeNull();
+            result.Result.Should().Be(OrganisationStandardSelectionResult.Found);
+            result.OrganisationStandard.Should().Be(mostRecentRow);
+            result.MatchingLarsCodeCount.Should().Be(2);
+        }
+
+        [Test]
+        public void Select_ShouldPreferAnActiveRow_OverAMoreRecentlyDatedWithdrawnRow_WhenMultipleRowsMatchTheSameLarsCode()
+        {
+            var withdrawnButMostRecent = CreateRow(id: 101, standardCode: LarsCode, effectiveFrom: new DateTime(2025, 6, 1), effectiveTo: DateTime.Today.AddDays(-1));
+            var olderButActive = CreateRow(id: 102, standardCode: LarsCode, effectiveFrom: new DateTime(2024, 1, 1), effectiveTo: null);
+
+            var result = _selector.Select(new List<OrganisationStandard> { withdrawnButMostRecent, olderButActive }, LarsCode);
+
+            result.Result.Should().Be(OrganisationStandardSelectionResult.Found);
+            result.OrganisationStandard.Should().Be(olderButActive);
             result.MatchingLarsCodeCount.Should().Be(2);
         }
     }

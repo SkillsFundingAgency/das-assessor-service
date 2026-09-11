@@ -55,28 +55,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             if (matches.Count > 1)
             {
-                var active = matches.Where(r => r.EffectiveTo == null).ToList();
-                if (active.Count == 1)
+                var activeCount = matches.Count(r => r.EffectiveTo == null);
+                if (activeCount != 1)
                 {
-                    return new OrganisationStandardSelectionOutcome
-                    {
-                        Result = OrganisationStandardSelectionResult.Found,
-                        OrganisationStandard = active[0],
-                        TotalRowCount = rows.Count,
-                        MatchingLarsCodeCount = matches.Count
-                    };
+                    _logger.LogWarning(
+                        "OrganisationStandard selection for EndPointAssessorOrganisationId {OrganisationId}, StandardReference {StandardReference}, LarsCode {LarsCode} matched {MatchingLarsCodeCount} records with no single active record - falling back to the most recent",
+                        rows[0].EndPointAssessorOrganisationId, rows[0].StandardReference, larsCode, matches.Count);
                 }
+
+                var selected = matches
+                    .OrderByDescending(r => r.EffectiveTo == null)
+                    .ThenByDescending(r => r.EffectiveFrom)
+                    .First();
+
+                return new OrganisationStandardSelectionOutcome
+                {
+                    Result = OrganisationStandardSelectionResult.Found,
+                    OrganisationStandard = selected,
+                    TotalRowCount = rows.Count,
+                    MatchingLarsCodeCount = matches.Count
+                };
             }
 
-            _logger.LogWarning(
-                "OrganisationStandard selection was ambiguous for EndPointAssessorOrganisationId {OrganisationId}, StandardReference {StandardReference}, LarsCode {LarsCode}: {TotalRowCount} records found, {MatchingLarsCodeCount} matched the LarsCode",
-                rows[0].EndPointAssessorOrganisationId, rows[0].StandardReference, larsCode, rows.Count, matches.Count);
+            var template = rows.OrderByDescending(r => r.EffectiveFrom).First();
 
             return new OrganisationStandardSelectionOutcome
             {
-                Result = OrganisationStandardSelectionResult.Ambiguous,
+                Result = OrganisationStandardSelectionResult.RequiresNewRecord,
+                TemplateOrganisationStandard = template,
                 TotalRowCount = rows.Count,
-                MatchingLarsCodeCount = matches.Count
+                MatchingLarsCodeCount = 0
             };
         }
     }

@@ -26,6 +26,35 @@ namespace SFA.DAS.AssessorService.Data
                 transaction: _unitOfWork.Transaction);
         }
 
+        public async Task<int> CreateOrganisationStandard(OrganisationStandard organisationStandard)
+        {
+            var sql = @"INSERT INTO OrganisationStandard
+                            (EndPointAssessorOrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, Comments, Status, ContactId, OrganisationStandardData, StandardReference)
+                        VALUES
+                            (@EndPointAssessorOrganisationId, @StandardCode, @EffectiveFrom, @EffectiveTo, @DateStandardApprovedOnRegister, @Comments, @Status, @ContactId, @OrganisationStandardData, @StandardReference);
+                        SELECT CAST(SCOPE_IDENTITY() as int)";
+
+            var newId = await _unitOfWork.Connection.QuerySingleAsync<int>(
+                sql,
+                param: new
+                {
+                    organisationStandard.EndPointAssessorOrganisationId,
+                    organisationStandard.StandardCode,
+                    organisationStandard.EffectiveFrom,
+                    organisationStandard.EffectiveTo,
+                    organisationStandard.DateStandardApprovedOnRegister,
+                    organisationStandard.Comments,
+                    organisationStandard.Status,
+                    organisationStandard.ContactId,
+                    organisationStandard.OrganisationStandardData,
+                    organisationStandard.StandardReference
+                },
+                transaction: _unitOfWork.Transaction);
+
+            organisationStandard.Id = newId;
+            return newId;
+        }
+
         public async Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version)
         {
             await _unitOfWork.Connection.ExecuteAsync(

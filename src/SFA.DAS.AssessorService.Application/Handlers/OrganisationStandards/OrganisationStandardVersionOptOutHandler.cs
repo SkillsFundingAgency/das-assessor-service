@@ -55,14 +55,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     .GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
                 var selection = _organisationStandardSelector.Select(organisationStandards, optOutVersion.LarsCode);
 
-                if (selection.Result == OrganisationStandardSelectionResult.NotFound)
+                if (selection.Result == OrganisationStandardSelectionResult.NotFound
+                    || selection.Result == OrganisationStandardSelectionResult.RequiresNewRecord)
                 {
-                    throw new NotFoundException($"Cannot opt out as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
-                }
-
-                if (selection.Result == OrganisationStandardSelectionResult.Ambiguous)
-                {
-                    throw new NotFoundException($"Cannot opt out as StandardReference {request.StandardReference} LarsCode {optOutVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} is ambiguous ({selection.TotalRowCount} records found, {selection.MatchingLarsCodeCount} matched the LarsCode)");
+                    throw new NotFoundException($"Cannot opt out as StandardReference {request.StandardReference} LarsCode {optOutVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found ({selection.TotalRowCount} existing OrganisationStandard records)");
                 }
 
                 var organisationStandard = selection.OrganisationStandard;
