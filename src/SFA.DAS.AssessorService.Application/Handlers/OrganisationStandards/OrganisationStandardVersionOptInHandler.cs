@@ -43,17 +43,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     throw new NotFoundException($"Cannot opt in to StandardReference {request.StandardReference} as ContactId {request.ContactId} cannot be found");
                 }
 
-                var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference);
-                if (organisationStandard == null)
-                {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
-                }
-
                 var allVersions = await _standardService.GetStandardVersionsByIFateReferenceNumber(request.StandardReference);
                 var optInVersion = allVersions.FirstOrDefault(x => x.Version.Equals(request.Version, StringComparison.InvariantCultureIgnoreCase));
                 if (optInVersion == null)
                 {
                     throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
+                }
+
+                var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardCode(request.EndPointAssessorOrganisationId, optInVersion.LarsCode);
+                if (organisationStandard == null)
+                {
+                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} with StandardCode {optInVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
                 }
 
                 var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);

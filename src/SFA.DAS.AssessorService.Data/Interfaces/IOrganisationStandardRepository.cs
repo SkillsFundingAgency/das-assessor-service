@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
     public interface IOrganisationStandardRepository
     {
         Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardReference(string organisationId, string standardReference);
+        Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardCode(string organisationId, int standardCode);
         Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version);
         Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, string version);
         Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion organisationStandardVersion);

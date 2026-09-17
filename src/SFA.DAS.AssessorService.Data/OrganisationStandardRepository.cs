@@ -27,6 +27,19 @@ namespace SFA.DAS.AssessorService.Data
             return results.SingleOrDefault();
         }
 
+        public async Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardCode(string organisationId, int standardCode)
+        {
+            var results = await _unitOfWork.Connection.QueryAsync<OrganisationStandard>(
+                @"SELECT Id, EndPointAssessorOrganisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, 
+                  Comments, Status, ContactId, StandardReference
+                FROM OrganisationStandard
+                WHERE EndPointAssessorOrganisationId = @OrganisationId AND StandardCode = @StandardCode",
+                param: new { OrganisationId = organisationId, StandardCode = standardCode },
+                transaction: _unitOfWork.Transaction);
+
+            return results.SingleOrDefault();
+        }
+
         public async Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version)
         {
             await _unitOfWork.Connection.ExecuteAsync(
