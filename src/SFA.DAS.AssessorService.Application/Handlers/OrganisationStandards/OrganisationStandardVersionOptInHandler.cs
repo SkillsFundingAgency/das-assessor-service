@@ -1,15 +1,16 @@
-﻿using MediatR;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Exceptions;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
@@ -50,10 +51,40 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                     throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
                 }
 
-                var organisationStandard = await _organisationStandardRepository.GetOrganisationStandardByOrganisationIdAndStandardCode(request.EndPointAssessorOrganisationId, optInVersion.LarsCode);
-                if (organisationStandard == null)
+                var organisationStandards = await _organisationStandardRepository.GetOrganisationStandardsByOrganisationIdAndStandardReference(
+                    request.EndPointAssessorOrganisationId,
+                    request.StandardReference);
+
+                if (organisationStandards.Count == 0)
                 {
-                    throw new NotFoundException($"Cannot opt in as StandardReference {request.StandardReference} with StandardCode {optInVersion.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
+                    throw new NotFoundException(
+                        $"Cannot opt in as StandardReference {request.StandardReference} " +
+                        $"for EndPointAssessorOrganisationId " +
+                        $"{request.EndPointAssessorOrganisationId} cannot be found");
+                }
+
+                Domain.Entities.OrganisationStandard organisationStandard;
+
+                if (organisationStandards.Count == 1)
+                {
+                    organisationStandard = organisationStandards.Single();
+                }
+                else
+                {
+                    var matchingOrganisationStandards = organisationStandards
+                        .Where(x => x.StandardCode == optInVersion.LarsCode)
+                        .ToList();
+
+                    if (matchingOrganisationStandards.Count != 1)
+                    {
+                        throw new BadRequestException(
+                            $"Cannot uniquely identify OrganisationStandard for " +
+                            $"{request.EndPointAssessorOrganisationId}, " +
+                            $"{request.StandardReference} and StandardCode " +
+                            $"{optInVersion.LarsCode}");
+                    }
+
+                    organisationStandard = matchingOrganisationStandards.Single();
                 }
 
                 var existingVersion = await _organisationStandardRepository.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version);

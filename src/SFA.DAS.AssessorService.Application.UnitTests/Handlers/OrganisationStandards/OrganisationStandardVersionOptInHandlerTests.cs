@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.Apply;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Mapping.Structs;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
 
             var contact = new Contact { Id = request.ContactId, Email = "emailaddress@test.com" };
             var standard = new Standard { StandardUId = $"{request.StandardReference}_{request.Version}", Version = request.Version, LarsCode = 123 };
-            var organisationStandard = new OrganisationStandard { Id = 101, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = standard.LarsCode };
+            var organisationStandard = new OrganisationStandard { Id = 101, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = 456 };
 
             _contactQueryRepositoryMock.Setup(x => x.GetContactById(request.ContactId))
                 .ReturnsAsync(contact);
@@ -67,8 +67,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .ReturnsAsync(new List<Standard> { standard });
 
-            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardByOrganisationIdAndStandardCode(request.EndPointAssessorOrganisationId, standard.LarsCode))
-                .ReturnsAsync(organisationStandard);
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
+                .ReturnsAsync(new List<OrganisationStandard> { organisationStandard });
 
             _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version))
                 .ReturnsAsync((OrganisationStandardVersion)null);
@@ -90,7 +90,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
 
             // Assert
             entity.Should().BeEquivalentTo(result);
-            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Once);
+            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandardVersion(It.Is<OrganisationStandardVersion>(
+                version => version.OrganisationStandardId == organisationStandard.Id)), Times.Once);
             _mediatorMock.Verify(x => x.Send(It.IsAny<SendOptInStandardVersionEmailRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -120,8 +121,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .ReturnsAsync(new List<Standard> { standard });
 
-            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardByOrganisationIdAndStandardCode(request.EndPointAssessorOrganisationId, standard.LarsCode))
-                .ReturnsAsync(organisationStandard);
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
+                .ReturnsAsync(new List<OrganisationStandard> { organisationStandard });
 
             _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(organisationStandard.Id, request.Version))
                 .ReturnsAsync(organisationStandardVersion);
@@ -145,6 +146,53 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             entity.Should().BeEquivalentTo(result);
             _organisationStandardRepositoryMock.Verify(x => x.UpdateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Once);
             _mediatorMock.Verify(x => x.Send(It.IsAny<SendOptInStandardVersionEmailRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Handle_ShouldOptInSuccessfully_WhenMultipleOrganisationStandardsExistAndOneMatchesStandardCode()
+        {
+            // Arrange
+            var request = new OrganisationStandardVersionOptInRequest
+            {
+                EndPointAssessorOrganisationId = "EPA0001",
+                StandardReference = "ST0001",
+                Version = "1.0",
+                EffectiveFrom = DateTime.Now.AddDays(-100),
+                EffectiveTo = null,
+                ContactId = Guid.NewGuid(),
+                OptInRequestedAt = DateTime.Now
+            };
+
+            var contact = new Contact { Id = request.ContactId, Email = "emailaddress@test.com" };
+            var standard = new Standard { StandardUId = $"{request.StandardReference}_{request.Version}", Version = request.Version, LarsCode = 123 };
+            var nonMatchingOrganisationStandard = new OrganisationStandard { Id = 101, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = 456 };
+            var matchingOrganisationStandard = new OrganisationStandard { Id = 102, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId, StandardCode = standard.LarsCode };
+
+            _contactQueryRepositoryMock.Setup(x => x.GetContactById(request.ContactId))
+                .ReturnsAsync(contact);
+
+            _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
+                .ReturnsAsync(new List<Standard> { standard });
+
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
+                .ReturnsAsync(new List<OrganisationStandard>
+                {
+                    nonMatchingOrganisationStandard,
+                    matchingOrganisationStandard
+                });
+
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(matchingOrganisationStandard.Id, request.Version))
+                .ReturnsAsync((OrganisationStandardVersion)null);
+
+            // Act
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            // Assert
+            result.OrganisationStandardId.Should().Be(matchingOrganisationStandard.Id);
+            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandardVersion(It.Is<OrganisationStandardVersion>(
+                version => version.OrganisationStandardId == matchingOrganisationStandard.Id)), Times.Once);
+            _organisationStandardRepositoryMock.Verify(x => x.GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(
+                nonMatchingOrganisationStandard.Id, It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -197,15 +245,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .ReturnsAsync(new List<Standard> { standard });
 
-            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
-                .ReturnsAsync((OrganisationStandard)null);
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
+                .ReturnsAsync(new List<OrganisationStandard>());
 
             // Act
             Func<Task<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> func = async () => await _handler.Handle(request, CancellationToken.None);
 
             // Assert
             await func.Should().ThrowAsync<NotFoundException>()
-                .WithMessage($"Cannot opt in as StandardReference {request.StandardReference} with StandardCode {standard.LarsCode} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
+                .WithMessage($"Cannot opt in as StandardReference {request.StandardReference} for EndPointAssessorOrganisationId {request.EndPointAssessorOrganisationId} cannot be found");
         }
 
         [Test]
@@ -224,12 +272,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             };
 
             var contact = new Contact { Id = request.ContactId, Email = "emailaddress@test.com" };
-            var organisationStandard = new OrganisationStandard { Id = 101, EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId };
 
             _contactQueryRepositoryMock.Setup(x => x.GetContactById(request.ContactId))
                 .ReturnsAsync(contact);
-            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
-                .ReturnsAsync(organisationStandard);
+
             _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
                 .ReturnsAsync(new List<Standard>());
 
@@ -240,7 +286,89 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.OrganisationSta
             await func.Should().ThrowAsync<NotFoundException>()
                 .WithMessage($"Cannot opt in as StandardReference {request.StandardReference} Version {request.Version} cannot be found");
         }
+
+        [Test]
+        public async Task Handle_Should_Throw_BadRequestException_When_MultipleOrganisationStandardsExistAndNoneMatchStandardCode()
+        {
+            // Arrange
+            var request = new OrganisationStandardVersionOptInRequest
+            {
+                EndPointAssessorOrganisationId = "EPA0001",
+                StandardReference = "ST0001",
+                Version = "1.0",
+                EffectiveFrom = DateTime.Now.AddDays(-100),
+                EffectiveTo = null,
+                ContactId = Guid.NewGuid(),
+                OptInRequestedAt = DateTime.Now
+            };
+
+            var contact = new Contact { Id = request.ContactId, Email = "emailaddress@test.com" };
+            var standard = new Standard { StandardUId = $"{request.StandardReference}_{request.Version}", Version = request.Version, LarsCode = 123 };
+
+            _contactQueryRepositoryMock.Setup(x => x.GetContactById(request.ContactId))
+                .ReturnsAsync(contact);
+
+            _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
+                .ReturnsAsync(new List<Standard> { standard });
+
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
+                .ReturnsAsync(new List<OrganisationStandard>
+                {
+                    new OrganisationStandard { Id = 101, StandardCode = 456 },
+                    new OrganisationStandard { Id = 102, StandardCode = 789 }
+                });
+
+            // Act
+            Func<Task<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> func = async () => await _handler.Handle(request, CancellationToken.None);
+
+            // Assert
+            await func.Should().ThrowAsync<BadRequestException>()
+                .WithMessage($"Cannot uniquely identify OrganisationStandard for {request.EndPointAssessorOrganisationId}, {request.StandardReference} and StandardCode {standard.LarsCode}");
+
+            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Never);
+            _organisationStandardRepositoryMock.Verify(x => x.UpdateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Handle_Should_Throw_BadRequestException_When_MultipleOrganisationStandardsMatchStandardCode()
+        {
+            // Arrange
+            var request = new OrganisationStandardVersionOptInRequest
+            {
+                EndPointAssessorOrganisationId = "EPA0001",
+                StandardReference = "ST0001",
+                Version = "1.0",
+                EffectiveFrom = DateTime.Now.AddDays(-100),
+                EffectiveTo = null,
+                ContactId = Guid.NewGuid(),
+                OptInRequestedAt = DateTime.Now
+            };
+
+            var contact = new Contact { Id = request.ContactId, Email = "emailaddress@test.com" };
+            var standard = new Standard { StandardUId = $"{request.StandardReference}_{request.Version}", Version = request.Version, LarsCode = 123 };
+
+            _contactQueryRepositoryMock.Setup(x => x.GetContactById(request.ContactId))
+                .ReturnsAsync(contact);
+
+            _standardServiceMock.Setup(x => x.GetStandardVersionsByIFateReferenceNumber(request.StandardReference))
+                .ReturnsAsync(new List<Standard> { standard });
+
+            _organisationStandardRepositoryMock.Setup(x => x.GetOrganisationStandardsByOrganisationIdAndStandardReference(request.EndPointAssessorOrganisationId, request.StandardReference))
+                .ReturnsAsync(new List<OrganisationStandard>
+                {
+                    new OrganisationStandard { Id = 101, StandardCode = standard.LarsCode },
+                    new OrganisationStandard { Id = 102, StandardCode = standard.LarsCode }
+                });
+
+            // Act
+            Func<Task<AssessorService.Api.Types.Models.AO.OrganisationStandardVersion>> func = async () => await _handler.Handle(request, CancellationToken.None);
+
+            // Assert
+            await func.Should().ThrowAsync<BadRequestException>()
+                .WithMessage($"Cannot uniquely identify OrganisationStandard for {request.EndPointAssessorOrganisationId}, {request.StandardReference} and StandardCode {standard.LarsCode}");
+
+            _organisationStandardRepositoryMock.Verify(x => x.CreateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Never);
+            _organisationStandardRepositoryMock.Verify(x => x.UpdateOrganisationStandardVersion(It.IsAny<OrganisationStandardVersion>()), Times.Never);
+        }
     }
 }
-
-

@@ -1,13 +1,14 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.Interfaces
 {
     public interface IOrganisationStandardRepository
     {
         Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardReference(string organisationId, string standardReference);
-        Task<OrganisationStandard> GetOrganisationStandardByOrganisationIdAndStandardCode(string organisationId, int standardCode);
+        Task<IReadOnlyCollection<OrganisationStandard>> GetOrganisationStandardsByOrganisationIdAndStandardReference(string organisationId, string standardReference);
         Task<OrganisationStandardVersion> CreateOrganisationStandardVersion(OrganisationStandardVersion version);
         Task<OrganisationStandardVersion> GetOrganisationStandardVersionByOrganisationStandardIdAndVersion(int organisationStandardId, string version);
         Task<OrganisationStandardVersion> UpdateOrganisationStandardVersion(OrganisationStandardVersion organisationStandardVersion);
