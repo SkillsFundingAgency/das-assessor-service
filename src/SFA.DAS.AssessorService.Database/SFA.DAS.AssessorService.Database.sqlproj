@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -93,6 +93,10 @@
     <Build Include="Tables\DeliveryArea.sql" />
     <Build Include="Tables\OrganisationStandard.sql" />
     <Build Include="Tables\Standards.sql" />
+    <Build Include="Tables\StagingStandards.sql" />
+    <Build Include="Tables\StagingStandardOptions.sql" />
+    <Build Include="StoredProcedures\PrepareStandardsImport.sql" />
+    <Build Include="StoredProcedures\MergeStandardsFromStaging.sql" />
     <Build Include="Tables\OrganisationStandardVersion.sql" />
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />

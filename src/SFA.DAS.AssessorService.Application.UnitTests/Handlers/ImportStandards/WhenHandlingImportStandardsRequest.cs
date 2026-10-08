@@ -17,34 +17,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
 {
     public class WhenHandlingImportStandardsRequest
     {
-        Fixture fixture = new Fixture();
         const string ActiveStatus = "approved for delivery";
         const string DraftStatus = "in development";
-        Mock<IUnitOfWork> _unitOfWorkMock = new Mock<IUnitOfWork>();
-        Mock<IOuterApiService> _outerApiServiceMock = new Mock<IOuterApiService>();
-        Mock<IStandardImportService> _standardServiceMock = new Mock<IStandardImportService>();
-        Mock<ILogger<ImportStandardsHandler>> _loggerMock = new Mock<ILogger<ImportStandardsHandler>>();
-        List<GetStandardsListItem> _allStandards;
-        List<StandardDetailResponse> _allStandardDetails;
-        ImportStandardsHandler _sut;
+
+        private readonly Fixture fixture = new Fixture();
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock = new Mock<IUnitOfWork>();
+        private readonly Mock<IOuterApiService> _outerApiServiceMock = new Mock<IOuterApiService>();
+        private readonly Mock<IStandardImportService> _standardServiceMock = new Mock<IStandardImportService>();
+        private readonly Mock<ILogger<ImportStandardsHandler>> _loggerMock = new Mock<ILogger<ImportStandardsHandler>>();
+        
+        private List<StandardDetailResponse> _allStandardDetails;
+        private ImportStandardsHandler _sut;
 
         [SetUp]
         public async Task Initialize()
         {
-            var activeStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, ActiveStatus).CreateMany();
-            var draftStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, DraftStatus).CreateMany();
-            var otherStandards = fixture.CreateMany<GetStandardsListItem>();
-
-            _allStandards = new List<GetStandardsListItem>();
-            _allStandards.AddRange(activeStandards);
-            _allStandards.AddRange(draftStandards);
-            _allStandards.AddRange(otherStandards);
-            _allStandardDetails = _allStandards.Select(ConvertToStandardDetailResponse).ToList();
-
+            _allStandardDetails = fixture.CreateMany<StandardDetailResponse>().ToList();
             _outerApiServiceMock.Setup(o => o.GetAllStandards()).ReturnsAsync(_allStandardDetails);
-            _outerApiServiceMock.Setup(o => o.GetActiveStandards()).ReturnsAsync(activeStandards);
-            _outerApiServiceMock.Setup(o => o.GetDraftStandards()).ReturnsAsync(draftStandards);
-
+            
             _sut = new ImportStandardsHandler(_unitOfWorkMock.Object, _outerApiServiceMock.Object, _standardServiceMock.Object, _loggerMock.Object);
 
             await _sut.Handle(new ImportStandardsRequest(), new CancellationToken() );
@@ -63,33 +53,15 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
         }
 
         [Test]
-        public void Then_Gets_Active_Standards_From_Outer_Api()
-        {
-            _outerApiServiceMock.Verify(o => o.GetActiveStandards());
-        }
-
-        [Test]
-        public void Then_Gets_Draft_Standards_From_Outer_Api()
-        {
-            _outerApiServiceMock.Verify(o => o.GetDraftStandards());
-        }
-
-        [Test]
         public void Then_Deletes_Existing_Standards()
         {
-            _standardServiceMock.Verify(s => s.DeleteAllStandardsAndOptions(), Times.Once);
+            _standardServiceMock.Verify(s => s.PrepareImport(), Times.Once);
         }
 
         [Test]
         public void Then_Load_Standards()
         {
-            _standardServiceMock.Verify(s => s.LoadStandards(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails))));
+            _standardServiceMock.Verify(s => s.StageStandards(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails))));
         }
-
-        private StandardDetailResponse ConvertToStandardDetailResponse(GetStandardsListItem source) => new StandardDetailResponse
-        {
-            StandardUId = source.StandardUId,
-            Status = source.Status
-        };
     }
 }

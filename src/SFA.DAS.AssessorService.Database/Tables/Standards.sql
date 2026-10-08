@@ -32,6 +32,7 @@
 	[OverviewOfRole] VARCHAR(500),
 	[CoronationEmblem] BIT NOT NULL DEFAULT 0,
 	[EpaoMustBeApprovedByRegulatorBody] BIT NOT NULL Default 0,
+	[UpdatedAt] DATETIME NOT NULL CONSTRAINT [DF_Standards_UpdatedAt] DEFAULT ('20260824')
 )
 GO
 

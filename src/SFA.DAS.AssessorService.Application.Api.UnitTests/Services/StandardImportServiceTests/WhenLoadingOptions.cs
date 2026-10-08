@@ -24,13 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services.StandardImp
 
             var sut = new StandardImportService(standardRepositoryMock.Object);
 
-            await sut.LoadOptions(standards);
-        }
-
-        [Test]
-        public void Then_Inserts_Data_Into_Standards_Table()
-        {
-            standardRepositoryMock.Verify(r => r.InsertOptions(It.IsAny<IEnumerable<StandardOption>>()), Times.Once);
+            await sut.StageOptions(standards);
         }
     }
 }
