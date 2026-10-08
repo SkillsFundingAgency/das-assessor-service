@@ -24,6 +24,7 @@ BEGIN
         WHEN MATCHED AND EXISTS
         (
             SELECT
+                stn.[IFateReferenceNumber],
                 stn.[LarsCode],
                 stn.[Title],
                 stn.[Version],
@@ -58,6 +59,7 @@ BEGIN
             EXCEPT
 
             SELECT
+                upd.[IFateReferenceNumber],
                 upd.[LarsCode],
                 upd.[Title],
                 upd.[Version],
@@ -90,6 +92,7 @@ BEGIN
                 upd.[EpaoMustBeApprovedByRegulatorBody]
         )
         THEN UPDATE SET
+            stn.[IFateReferenceNumber] = upd.[IFateReferenceNumber],
             stn.[LarsCode] = upd.[LarsCode],
             stn.[Title] = upd.[Title],
             stn.[Version] = upd.[Version],
