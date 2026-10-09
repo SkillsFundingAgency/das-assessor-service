@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -22,38 +22,64 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(StandardNonApprovedData), new StandardNonApprovedDataHandler());
         }
 
-        public async Task InsertStandards(IEnumerable<Standard> standards)
-        {
-            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
-            var dataTable = ConstructStandardsDataTable(standards);
+        private const int StandardsImportTimeoutSeconds = 120;
 
-            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
+        public async Task PrepareStandardsImport()
+        {
+            await _unitOfWork.Connection.ExecuteAsync(
+                "dbo.PrepareStandardsImport",
+                transaction: _unitOfWork.Transaction,
+                commandTimeout: StandardsImportTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task InsertStandardsIntoStaging(IEnumerable<Standard> standards)
+        {
+            using (var dataTable = ConstructStandardsDataTable(standards))
             {
-                bulkCopy.DestinationTableName = "Standards";
-                await bulkCopy.WriteToServerAsync(dataTable);
+                await BulkCopyStaging(dataTable, "dbo.StagingStandards");
             }
         }
 
-        public async Task InsertOptions(IEnumerable<StandardOption> optionsToInsert)
+        public async Task InsertOptionsIntoStaging(IEnumerable<StandardOption> options)
         {
-            var bulkCopyOptions = SqlBulkCopyOptions.TableLock;
-            var dataTable = ConstructStandardOptionsDataTable(optionsToInsert);
-
-            using (var bulkCopy = new SqlBulkCopy(_unitOfWork.Connection as SqlConnection, bulkCopyOptions, _unitOfWork.Transaction as SqlTransaction))
+            using (var dataTable = ConstructStandardOptionsDataTable(options))
             {
-                bulkCopy.DestinationTableName = "StandardOptions";
-                await bulkCopy.WriteToServerAsync(dataTable);
+                await BulkCopyStaging(dataTable, "dbo.StagingStandardOptions");
             }
         }
 
-        public async Task DeleteAllStandards()
+        public async Task MergeStandardsFromStaging()
         {
-            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM Standards", transaction: _unitOfWork.Transaction);
+            await _unitOfWork.Connection.ExecuteAsync(
+                "dbo.MergeStandardsFromStaging",
+                transaction: _unitOfWork.Transaction,
+                commandTimeout: StandardsImportTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
         }
 
-        public async Task DeleteAllOptions()
+        private async Task BulkCopyStaging(DataTable dataTable, string destinationTableName)
         {
-            await _unitOfWork.Connection.ExecuteAsync("DELETE FROM StandardOptions", transaction: _unitOfWork.Transaction);
+            if (dataTable.Rows.Count == 0)
+            {
+                return;
+            }
+
+            using (var bulkCopy = new SqlBulkCopy(
+                (SqlConnection)_unitOfWork.Connection,
+                SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.KeepNulls,
+                (SqlTransaction)_unitOfWork.Transaction))
+            {
+                bulkCopy.DestinationTableName = destinationTableName;
+                bulkCopy.BulkCopyTimeout = StandardsImportTimeoutSeconds;
+
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    bulkCopy.ColumnMappings.Add(column.ColumnName, column.ColumnName);
+                }
+
+                await bulkCopy.WriteToServerAsync(dataTable);
+            }
         }
 
         public async Task Update(Standard standard)
@@ -643,38 +669,38 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
         {
             var dataTable = new DataTable();
 
-            dataTable.Columns.Add("StandardUId");
-            dataTable.Columns.Add("IfateReferenceNumber");
-            dataTable.Columns.Add("LarsCode");
-            dataTable.Columns.Add("Title");
-            dataTable.Columns.Add("Version");
-            dataTable.Columns.Add("Level");
-            dataTable.Columns.Add("Status");
-            dataTable.Columns.Add("TypicalDuration");
-            dataTable.Columns.Add("MaxFunding");
-            dataTable.Columns.Add("IsActive");
-            dataTable.Columns.Add("LastDateStarts");
-            dataTable.Columns.Add("EffectiveFrom");
-            dataTable.Columns.Add("EffectiveTo");
-            dataTable.Columns.Add("VersionEarliestStartDate");
-            dataTable.Columns.Add("VersionLatestStartDate");
-            dataTable.Columns.Add("VersionLatestEndDate");
-            dataTable.Columns.Add("VersionApprovedForDelivery");
-            dataTable.Columns.Add("ProposedTypicalDuration");
-            dataTable.Columns.Add("ProposedMaxFunding");
-            dataTable.Columns.Add("EPAChanged");
-            dataTable.Columns.Add("StandardPageUrl");
-            dataTable.Columns.Add("TrailBlazerContact");
-            dataTable.Columns.Add("Route");
-            dataTable.Columns.Add("VersionMajor");
-            dataTable.Columns.Add("VersionMinor");
-            dataTable.Columns.Add("IntegratedDegree");
-            dataTable.Columns.Add("EqaProviderName");
-            dataTable.Columns.Add("EqaProviderContactName");
-            dataTable.Columns.Add("EqaProviderContactEmail]");
-            dataTable.Columns.Add("OverviewOfRole]");
-            dataTable.Columns.Add("CoronationEmblem");
-            dataTable.Columns.Add("EpaoMustBeApprovedByRegulatorBody");
+            dataTable.Columns.Add("StandardUId", typeof(string));
+            dataTable.Columns.Add("IFateReferenceNumber", typeof(string));
+            dataTable.Columns.Add("LarsCode", typeof(int));
+            dataTable.Columns.Add("Title", typeof(string));
+            dataTable.Columns.Add("Version", typeof(string));
+            dataTable.Columns.Add("Level", typeof(int));
+            dataTable.Columns.Add("Status", typeof(string));
+            dataTable.Columns.Add("TypicalDuration", typeof(int));
+            dataTable.Columns.Add("MaxFunding", typeof(int));
+            dataTable.Columns.Add("IsActive", typeof(bool));
+            dataTable.Columns.Add("LastDateStarts", typeof(DateTime));
+            dataTable.Columns.Add("EffectiveFrom", typeof(DateTime));
+            dataTable.Columns.Add("EffectiveTo", typeof(DateTime));
+            dataTable.Columns.Add("VersionEarliestStartDate", typeof(DateTime));
+            dataTable.Columns.Add("VersionLatestStartDate", typeof(DateTime));
+            dataTable.Columns.Add("VersionLatestEndDate", typeof(DateTime));
+            dataTable.Columns.Add("VersionApprovedForDelivery", typeof(DateTime));
+            dataTable.Columns.Add("ProposedTypicalDuration", typeof(int));
+            dataTable.Columns.Add("ProposedMaxFunding", typeof(int));
+            dataTable.Columns.Add("EPAChanged", typeof(bool));
+            dataTable.Columns.Add("StandardPageUrl", typeof(string));
+            dataTable.Columns.Add("TrailBlazerContact", typeof(string));
+            dataTable.Columns.Add("Route", typeof(string));
+            dataTable.Columns.Add("VersionMajor", typeof(int));
+            dataTable.Columns.Add("VersionMinor", typeof(int));
+            dataTable.Columns.Add("IntegratedDegree", typeof(string));
+            dataTable.Columns.Add("EqaProviderName", typeof(string));
+            dataTable.Columns.Add("EqaProviderContactName", typeof(string));
+            dataTable.Columns.Add("EqaProviderContactEmail", typeof(string));
+            dataTable.Columns.Add("OverviewOfRole", typeof(string));
+            dataTable.Columns.Add("CoronationEmblem", typeof(bool));
+            dataTable.Columns.Add("EpaoMustBeApprovedByRegulatorBody", typeof(bool));
 
             foreach (var standard in standards)
             {
@@ -694,8 +720,8 @@ FROM [Standards] Where [IFateReferenceNumber] = @iFateReferenceNumber";
         {
             var dataTable = new DataTable();
 
-            dataTable.Columns.Add("StandardUId");
-            dataTable.Columns.Add("Option");
+            dataTable.Columns.Add("StandardUId", typeof(string));
+            dataTable.Columns.Add("OptionName", typeof(string));
 
             foreach (var option in options)
             {

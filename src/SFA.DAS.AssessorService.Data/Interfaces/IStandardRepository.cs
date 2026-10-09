@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -40,16 +40,16 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         /// <param name="version">optional parameter for specific version</param>
         /// <returns></returns>
         Task<Standard> GetStandardVersionByIFateReferenceNumber(string iFateReferenceNumber, string version = null);
-        Task InsertStandards(IEnumerable<Standard> standards);
-        Task InsertOptions(IEnumerable<StandardOption> optionsToInsert);
+        Task PrepareStandardsImport();
+        Task InsertStandardsIntoStaging(IEnumerable<Standard> standards);
+        Task InsertOptionsIntoStaging(IEnumerable<StandardOption> options);
+        Task MergeStandardsFromStaging();
         Task<IEnumerable<StandardOptions>> GetAllStandardOptions();
         Task<IEnumerable<StandardOptions>> GetStandardOptionsForLatestStandardVersions();
         Task<StandardOptions> GetStandardOptionsByStandardUId(string standardUId);
         Task<StandardOptions> GetStandardOptionsByLarsCode(int larsCode);
         Task<StandardOptions> GetStandardOptionsByIFateReferenceNumber(string iFateReferenceNumber);
         Task Update(Standard standard);
-        Task DeleteAllStandards();
-        Task DeleteAllOptions();
         Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId);
         Task<IEnumerable<OrganisationStandardVersion>> GetEpaoRegisteredStandardVersions(string endPointAssessorOrganisationId, int larsCode);
         Task<IEnumerable<StandardVersion>> GetEpaoRegisteredStandardVersionsByIFateReferenceNumber(string endPointAssessorOrganisationId, string iFateReferenceNumber);
@@ -81,3 +81,4 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
         public IEnumerable<EpaoPipelineStandardFilter> EPADateFilterItems { get; set; }
     }
 }
+

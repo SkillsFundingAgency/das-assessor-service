@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
-    public class StandardsHandler : HandlerBase
+    public static class StagingStandardsHandler
     {
         private static readonly DatabaseService DatabaseService =
             new DatabaseService();
@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         public static void InsertRecord(StandardModel standard)
         {
             const string sql = @"
-                INSERT INTO [dbo].[Standards]
+                INSERT INTO [dbo].[StagingStandards]
                 (
                     [StandardUId],
                     [IFateReferenceNumber],
@@ -46,8 +46,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     [EqaProviderContactEmail],
                     [OverviewOfRole],
                     [CoronationEmblem],
-                    [EpaoMustBeApprovedByRegulatorBody],
-                    [UpdatedAt]
+                    [EpaoMustBeApprovedByRegulatorBody]
                 )
                 VALUES
                 (
@@ -82,30 +81,21 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                     @EqaProviderContactEmail,
                     @OverviewOfRole,
                     @CoronationEmblem,
-                    @EpaoMustBeApprovedByRegulatorBody,
-                    @UpdatedAt
+                    @EpaoMustBeApprovedByRegulatorBody
                 );";
 
             DatabaseService.Execute(sql, standard);
         }
 
-        public static void InsertRecords(List<StandardModel> standards)
-        {
-            foreach (var standard in standards)
-            {
-                InsertRecord(standard);
-            }
-        }
-
         public static List<StandardModel> GetRecords()
         {
             return DatabaseService.GetList<StandardModel>(
-                "SELECT * FROM [dbo].[Standards]").ToList();
+                "SELECT * FROM [dbo].[StagingStandards]").ToList();
         }
 
         public static void DeleteAllRecords()
         {
-            DatabaseService.Execute("DELETE FROM [dbo].[Standards]");
+            DatabaseService.Execute("DELETE FROM [dbo].[StagingStandards]");
         }
     }
 }

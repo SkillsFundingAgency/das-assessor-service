@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
-using Microsoft.Extensions.Logging;
+using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -15,81 +14,250 @@ using SFA.DAS.AssessorService.Infrastructure.ApiClients.OuterApi;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ImportStandards
 {
+    [TestFixture]
     public class WhenHandlingImportStandardsRequest
     {
-        Fixture fixture = new Fixture();
-        const string ActiveStatus = "approved for delivery";
-        const string DraftStatus = "in development";
-        Mock<IUnitOfWork> _unitOfWorkMock = new Mock<IUnitOfWork>();
-        Mock<IOuterApiService> _outerApiServiceMock = new Mock<IOuterApiService>();
-        Mock<IStandardImportService> _standardServiceMock = new Mock<IStandardImportService>();
-        Mock<ILogger<ImportStandardsHandler>> _loggerMock = new Mock<ILogger<ImportStandardsHandler>>();
-        List<GetStandardsListItem> _allStandards;
-        List<StandardDetailResponse> _allStandardDetails;
-        ImportStandardsHandler _sut;
+        private Mock<IUnitOfWork> _unitOfWork;
+        private Mock<IOuterApiService> _outerApi;
+        private Mock<IStandardImportService> _importService;
+        private ImportStandardsHandler _sut;
+        private List<StandardDetailResponse> _standards;
 
         [SetUp]
-        public async Task Initialize()
+        public void SetUp()
         {
-            var activeStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, ActiveStatus).CreateMany();
-            var draftStandards = fixture.Build<GetStandardsListItem>().With(t => t.Status, DraftStatus).CreateMany();
-            var otherStandards = fixture.CreateMany<GetStandardsListItem>();
+            _unitOfWork = new Mock<IUnitOfWork>(MockBehavior.Strict);
+            _outerApi = new Mock<IOuterApiService>(MockBehavior.Strict);
+            _importService = new Mock<IStandardImportService>(MockBehavior.Strict);
 
-            _allStandards = new List<GetStandardsListItem>();
-            _allStandards.AddRange(activeStandards);
-            _allStandards.AddRange(draftStandards);
-            _allStandards.AddRange(otherStandards);
-            _allStandardDetails = _allStandards.Select(ConvertToStandardDetailResponse).ToList();
+            _standards = new List<StandardDetailResponse>
+            {
+                new StandardDetailResponse
+                {
+                    StandardUId = "ST0001_1.0"
+                }
+            };
 
-            _outerApiServiceMock.Setup(o => o.GetAllStandards()).ReturnsAsync(_allStandardDetails);
-            _outerApiServiceMock.Setup(o => o.GetActiveStandards()).ReturnsAsync(activeStandards);
-            _outerApiServiceMock.Setup(o => o.GetDraftStandards()).ReturnsAsync(draftStandards);
+            _outerApi.Setup(a => a.GetAllStandards())
+                .ReturnsAsync(_standards);
 
-            _sut = new ImportStandardsHandler(_unitOfWorkMock.Object, _outerApiServiceMock.Object, _standardServiceMock.Object, _loggerMock.Object);
+            _unitOfWork.Setup(u => u.Begin());
+            _unitOfWork.Setup(u => u.Commit());
+            _unitOfWork.Setup(u => u.Rollback());
 
-            await _sut.Handle(new ImportStandardsRequest(), new CancellationToken() );
-        }
+            _importService.Setup(s => s.PrepareImport())
+                .Returns(Task.CompletedTask);
 
-        [TearDown]
-        public void ClearAll()
-        {
-            _allStandardDetails.Clear();
-        }
+            _importService.Setup(s => s.StageStandards(_standards))
+                .Returns(Task.CompletedTask);
 
-        [Test]
-        public void Then_Gets_All_Standards_From_Outer_Api()
-        {
-            _outerApiServiceMock.Verify(o => o.GetAllStandards());
-        }
+            _importService.Setup(s => s.StageOptions(_standards))
+                .Returns(Task.CompletedTask);
 
-        [Test]
-        public void Then_Gets_Active_Standards_From_Outer_Api()
-        {
-            _outerApiServiceMock.Verify(o => o.GetActiveStandards());
-        }
+            _importService.Setup(s => s.MergeStandardsFromStaging())
+                .Returns(Task.CompletedTask);
 
-        [Test]
-        public void Then_Gets_Draft_Standards_From_Outer_Api()
-        {
-            _outerApiServiceMock.Verify(o => o.GetDraftStandards());
+            _sut = new ImportStandardsHandler(
+                _unitOfWork.Object,
+                _outerApi.Object,
+                _importService.Object,
+                NullLogger<ImportStandardsHandler>.Instance);
         }
 
         [Test]
-        public void Then_Deletes_Existing_Standards()
+        public async Task Then_imports_the_standards_and_commits()
         {
-            _standardServiceMock.Verify(s => s.DeleteAllStandardsAndOptions(), Times.Once);
+            // Arrange
+            var request = new ImportStandardsRequest();
+
+            // Act
+            await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            _outerApi.Verify(a => a.GetAllStandards(), Times.Once);
+            _importService.Verify(s => s.PrepareImport(), Times.Once);
+            _importService.Verify(s => s.StageStandards(_standards), Times.Once);
+            _importService.Verify(s => s.StageOptions(_standards), Times.Once);
+            _importService.Verify(s => s.MergeStandardsFromStaging(), Times.Once);
+
+            _unitOfWork.Verify(u => u.Begin(), Times.Once);
+            _unitOfWork.Verify(u => u.Commit(), Times.Once);
+            _unitOfWork.Verify(u => u.Rollback(), Times.Never);
+
+            _outerApi.VerifyNoOtherCalls();
+            _importService.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
         [Test]
-        public void Then_Load_Standards()
+        public async Task Then_does_not_import_when_no_standards_are_returned()
         {
-            _standardServiceMock.Verify(s => s.LoadStandards(It.Is<IEnumerable<StandardDetailResponse>>(list => list.SequenceEqual(_allStandardDetails))));
+            // Arrange
+            _standards.Clear();
+            var request = new ImportStandardsRequest();
+
+            // Act
+            await _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            _outerApi.Verify(a => a.GetAllStandards(), Times.Once);
+            _importService.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
-        private StandardDetailResponse ConvertToStandardDetailResponse(GetStandardsListItem source) => new StandardDetailResponse
+        [Test]
+        public async Task Then_propagates_an_outer_api_failure_without_starting_a_transaction()
         {
-            StandardUId = source.StandardUId,
-            Status = source.Status
-        };
+            // Arrange
+            var exception = new InvalidOperationException("Outer API failed");
+
+            _outerApi.Setup(a => a.GetAllStandards())
+                .ThrowsAsync(exception);
+
+            var request = new ImportStandardsRequest();
+
+            // Act
+            Func<Task> act = () => _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            var result = await act.Should().ThrowAsync<InvalidOperationException>();
+            result.Which.Should().BeSameAs(exception);
+
+            _importService.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task Then_rolls_back_when_preparation_fails()
+        {
+            // Arrange
+            var exception = new InvalidOperationException("Preparation failed");
+
+            _importService.Setup(s => s.PrepareImport())
+                .ThrowsAsync(exception);
+
+            var request = new ImportStandardsRequest();
+
+            // Act
+            Func<Task> act = () => _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            var result = await act.Should().ThrowAsync<InvalidOperationException>();
+            result.Which.Should().BeSameAs(exception);
+
+            _unitOfWork.Verify(u => u.Begin(), Times.Once);
+            _unitOfWork.Verify(u => u.Rollback(), Times.Once);
+            _unitOfWork.Verify(u => u.Commit(), Times.Never);
+
+            _importService.Verify(
+                s => s.StageStandards(It.IsAny<IEnumerable<StandardDetailResponse>>()),
+                Times.Never);
+
+            _importService.Verify(
+                s => s.StageOptions(It.IsAny<IEnumerable<StandardDetailResponse>>()),
+                Times.Never);
+
+            _importService.Verify(s => s.MergeStandardsFromStaging(), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_rolls_back_when_staging_standards_fails()
+        {
+            // Arrange
+            var exception = new InvalidOperationException("Standards staging failed");
+
+            _importService.Setup(s => s.StageStandards(_standards))
+                .ThrowsAsync(exception);
+
+            var request = new ImportStandardsRequest();
+
+            // Act
+            Func<Task> act = () => _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            var result = await act.Should().ThrowAsync<InvalidOperationException>();
+            result.Which.Should().BeSameAs(exception);
+
+            _unitOfWork.Verify(u => u.Begin(), Times.Once);
+            _unitOfWork.Verify(u => u.Rollback(), Times.Once);
+            _unitOfWork.Verify(u => u.Commit(), Times.Never);
+
+            _importService.Verify(
+                s => s.StageOptions(It.IsAny<IEnumerable<StandardDetailResponse>>()),
+                Times.Never);
+
+            _importService.Verify(s => s.MergeStandardsFromStaging(), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_rolls_back_when_staging_options_fails()
+        {
+            // Arrange
+            var exception = new InvalidOperationException("Options staging failed");
+
+            _importService.Setup(s => s.StageOptions(_standards))
+                .ThrowsAsync(exception);
+
+            var request = new ImportStandardsRequest();
+
+            // Act
+            Func<Task> act = () => _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            var result = await act.Should().ThrowAsync<InvalidOperationException>();
+            result.Which.Should().BeSameAs(exception);
+
+            _unitOfWork.Verify(u => u.Begin(), Times.Once);
+            _unitOfWork.Verify(u => u.Rollback(), Times.Once);
+            _unitOfWork.Verify(u => u.Commit(), Times.Never);
+
+            _importService.Verify(s => s.MergeStandardsFromStaging(), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_rolls_back_when_merging_fails()
+        {
+            // Arrange
+            var exception = new InvalidOperationException("Merge failed");
+
+            _importService.Setup(s => s.MergeStandardsFromStaging())
+                .ThrowsAsync(exception);
+
+            var request = new ImportStandardsRequest();
+
+            // Act
+            Func<Task> act = () => _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            var result = await act.Should().ThrowAsync<InvalidOperationException>();
+            result.Which.Should().BeSameAs(exception);
+
+            _unitOfWork.Verify(u => u.Begin(), Times.Once);
+            _unitOfWork.Verify(u => u.Rollback(), Times.Once);
+            _unitOfWork.Verify(u => u.Commit(), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_rolls_back_when_committing_fails()
+        {
+            // Arrange
+            var exception = new InvalidOperationException("Commit failed");
+
+            _unitOfWork.Setup(u => u.Commit())
+                .Throws(exception);
+
+            var request = new ImportStandardsRequest();
+
+            // Act
+            Func<Task> act = () => _sut.Handle(request, CancellationToken.None);
+
+            // Assert
+            var result = await act.Should().ThrowAsync<InvalidOperationException>();
+            result.Which.Should().BeSameAs(exception);
+
+            _unitOfWork.Verify(u => u.Begin(), Times.Once);
+            _unitOfWork.Verify(u => u.Commit(), Times.Once);
+            _unitOfWork.Verify(u => u.Rollback(), Times.Once);
+        }
     }
 }
