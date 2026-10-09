@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRepositoryTests
 {
@@ -105,6 +106,37 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 _unitOfWork.Rollback();
                 throw;
             }
+
+            return this;
+        }
+
+        public async Task<MergeStandardsFromStagingTestsFixture> ImportStandardsAndOptions(
+            IEnumerable<Standard> standards,
+            IEnumerable<StandardOption> options)
+        {
+            _unitOfWork.Begin();
+
+            try
+            {
+                await _sut.PrepareStandardsImport();
+                await _sut.InsertStandardsIntoStaging(standards);
+                await _sut.InsertOptionsIntoStaging(options);
+
+                MergeStartedAt = Convert.ToDateTime(
+                    _databaseService.ExecuteScalar("SELECT GETDATE()"));
+
+                await _sut.MergeStandardsFromStaging();
+
+                _unitOfWork.Commit();
+            }
+            catch
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
+
+            MergeFinishedAt = Convert.ToDateTime(
+                _databaseService.ExecuteScalar("SELECT GETDATE()"));
 
             return this;
         }

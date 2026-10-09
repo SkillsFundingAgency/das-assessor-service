@@ -13,7 +13,6 @@ BEGIN
         ------------------------------------------------------------------------------------
         -- Standards - insert new standards and update changed existing standards
         -- Standards absent from staging are retained
-        -- IFateReferenceNumber is treated as immutable and populated only on insertion
         -- If the entire standards staging table is empty, this section is skipped
         ------------------------------------------------------------------------------------
 
@@ -24,12 +23,12 @@ BEGIN
         WHEN MATCHED AND EXISTS
         (
             SELECT
-                stn.[IFateReferenceNumber],
+                stn.[IFateReferenceNumber] COLLATE Latin1_General_100_CS_AS,
                 stn.[LarsCode],
-                stn.[Title],
+                stn.[Title] COLLATE Latin1_General_100_CS_AS,
                 stn.[Version],
                 stn.[Level],
-                stn.[Status],
+                stn.[Status] COLLATE Latin1_General_100_CS_AS,
                 stn.[TypicalDuration],
                 stn.[MaxFunding],
                 stn.[IsActive],
@@ -43,28 +42,28 @@ BEGIN
                 stn.[ProposedTypicalDuration],
                 stn.[ProposedMaxFunding],
                 stn.[EPAChanged],
-                stn.[StandardPageUrl],
-                stn.[TrailBlazerContact],
-                stn.[Route],
+                stn.[StandardPageUrl] COLLATE Latin1_General_100_CS_AS,
+                stn.[TrailBlazerContact] COLLATE Latin1_General_100_CS_AS,
+                stn.[Route] COLLATE Latin1_General_100_CS_AS,
                 stn.[VersionMajor],
                 stn.[VersionMinor],
                 stn.[IntegratedDegree],
-                stn.[EqaProviderName],
-                stn.[EqaProviderContactName],
-                stn.[EqaProviderContactEmail],
-                stn.[OverviewOfRole],
+                stn.[EqaProviderName] COLLATE Latin1_General_100_CS_AS,
+                stn.[EqaProviderContactName] COLLATE Latin1_General_100_CS_AS,
+                stn.[EqaProviderContactEmail] COLLATE Latin1_General_100_CS_AS,
+                stn.[OverviewOfRole] COLLATE Latin1_General_100_CS_AS,
                 stn.[CoronationEmblem],
                 stn.[EpaoMustBeApprovedByRegulatorBody]
 
             EXCEPT
 
             SELECT
-                upd.[IFateReferenceNumber],
+                upd.[IFateReferenceNumber] COLLATE Latin1_General_100_CS_AS,
                 upd.[LarsCode],
-                upd.[Title],
+                upd.[Title] COLLATE Latin1_General_100_CS_AS,
                 upd.[Version],
                 upd.[Level],
-                upd.[Status],
+                upd.[Status] COLLATE Latin1_General_100_CS_AS,
                 upd.[TypicalDuration],
                 upd.[MaxFunding],
                 upd.[IsActive],
@@ -78,16 +77,16 @@ BEGIN
                 upd.[ProposedTypicalDuration],
                 upd.[ProposedMaxFunding],
                 upd.[EPAChanged],
-                upd.[StandardPageUrl],
-                upd.[TrailBlazerContact],
-                upd.[Route],
+                upd.[StandardPageUrl] COLLATE Latin1_General_100_CS_AS,
+                upd.[TrailBlazerContact] COLLATE Latin1_General_100_CS_AS,
+                upd.[Route] COLLATE Latin1_General_100_CS_AS,
                 upd.[VersionMajor],
                 upd.[VersionMinor],
                 upd.[IntegratedDegree],
-                upd.[EqaProviderName],
-                upd.[EqaProviderContactName],
-                upd.[EqaProviderContactEmail],
-                upd.[OverviewOfRole],
+                upd.[EqaProviderName] COLLATE Latin1_General_100_CS_AS,
+                upd.[EqaProviderContactName] COLLATE Latin1_General_100_CS_AS,
+                upd.[EqaProviderContactEmail] COLLATE Latin1_General_100_CS_AS,
+                upd.[OverviewOfRole] COLLATE Latin1_General_100_CS_AS,
                 upd.[CoronationEmblem],
                 upd.[EpaoMustBeApprovedByRegulatorBody]
         )

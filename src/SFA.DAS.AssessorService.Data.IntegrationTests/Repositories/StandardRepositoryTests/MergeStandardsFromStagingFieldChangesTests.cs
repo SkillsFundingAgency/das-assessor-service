@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Factories;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRepositoryTests
 {
@@ -10,13 +11,86 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
     [NonParallelizable]
     public class MergeStandardsFromStagingFieldChangesTests : TestBase
     {
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesLarsCode_WhenChanged()
+        [TestCase(nameof(StandardModel.IFateReferenceNumber))]
+        [TestCase(nameof(StandardModel.LarsCode))]
+        [TestCase(nameof(StandardModel.Title))]
+        [TestCase(nameof(StandardModel.Version))]
+        [TestCase(nameof(StandardModel.Level))]
+        [TestCase(nameof(StandardModel.Status))]
+        [TestCase(nameof(StandardModel.TypicalDuration))]
+        [TestCase(nameof(StandardModel.MaxFunding))]
+        [TestCase(nameof(StandardModel.IsActive))]
+        [TestCase(nameof(StandardModel.LastDateStarts))]
+        [TestCase(nameof(StandardModel.EffectiveFrom))]
+        [TestCase(nameof(StandardModel.EffectiveTo))]
+        [TestCase(nameof(StandardModel.VersionEarliestStartDate))]
+        [TestCase(nameof(StandardModel.VersionLatestStartDate))]
+        [TestCase(nameof(StandardModel.VersionLatestEndDate))]
+        [TestCase(nameof(StandardModel.VersionApprovedForDelivery))]
+        [TestCase(nameof(StandardModel.ProposedTypicalDuration))]
+        [TestCase(nameof(StandardModel.ProposedMaxFunding))]
+        [TestCase(nameof(StandardModel.EPAChanged))]
+        [TestCase(nameof(StandardModel.StandardPageUrl))]
+        [TestCase(nameof(StandardModel.TrailblazerContact))]
+        [TestCase(nameof(StandardModel.Route))]
+        [TestCase(nameof(StandardModel.VersionMajor))]
+        [TestCase(nameof(StandardModel.VersionMinor))]
+        [TestCase(nameof(StandardModel.IntegratedDegree))]
+        [TestCase(nameof(StandardModel.EqaProviderName))]
+        [TestCase(nameof(StandardModel.EqaProviderContactName))]
+        [TestCase(nameof(StandardModel.EqaProviderContactEmail))]
+        [TestCase(nameof(StandardModel.OverviewOfRole))]
+        [TestCase(nameof(StandardModel.CoronationEmblem))]
+        [TestCase(nameof(StandardModel.EpaoMustBeApprovedByRegulatorBody))]
+        public async Task MergeStandardsFromStaging_UpdatesPropertyAndTimestamp_WhenChanged(
+            string propertyName)
         {
             // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
+            var live = StandardFactory.CreateFull(
+                updatedAt: new DateTime(2000, 1, 1));
+
             var staged = StandardFactory.CreateFull();
-            staged.LarsCode = 456;
+
+            // these values are different to what the CreateFull sets by default
+            var changedValues = new StandardModel
+            {
+                IFateReferenceNumber = "ST9999",
+                LarsCode = 456,
+                Title = "Updated standard",
+                Version = "2.0",
+                Level = 4,
+                Status = "In development",
+                TypicalDuration = 36,
+                MaxFunding = 22000,
+                IsActive = 0,
+                LastDateStarts = new DateTime(2029, 1, 1),
+                EffectiveFrom = new DateTime(2021, 2, 1),
+                EffectiveTo = new DateTime(2029, 3, 1),
+                VersionEarliestStartDate = new DateTime(2021, 4, 1),
+                VersionLatestStartDate = new DateTime(2029, 5, 1),
+                VersionLatestEndDate = new DateTime(2031, 6, 1),
+                VersionApprovedForDelivery = new DateTime(2021, 7, 1),
+                ProposedTypicalDuration = 42,
+                ProposedMaxFunding = 25000,
+                EPAChanged = true,
+                StandardPageUrl = "https://example.org/updated-standard",
+                TrailblazerContact = "updated-trailblazer@example.org",
+                Route = "Construction",
+                VersionMajor = 2,
+                VersionMinor = 1,
+                IntegratedDegree = "Integrated degree",
+                EqaProviderName = "Updated EQA provider",
+                EqaProviderContactName = "Updated contact",
+                EqaProviderContactEmail = "updated-eqa@example.org",
+                OverviewOfRole = "Updated overview",
+                CoronationEmblem = true,
+                EpaoMustBeApprovedByRegulatorBody = true
+            };
+
+            var property = typeof(StandardModel).GetProperty(propertyName);
+            var changedValue = property.GetValue(changedValues);
+
+            property.SetValue(staged, changedValue);
 
             using (var fixture = new MergeStandardsFromStagingTestsFixture()
                 .WithStandard(live)
@@ -26,21 +100,52 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 await fixture.MergeStandardsFromStaging();
 
                 // Assert
+                changedValue.Should().NotBe(property.GetValue(live), "the test must change the selected property");
+
                 var actual = fixture.GetStandard(live.StandardUId);
                 actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
+
                 actual.UpdatedAt.Should().NotBeNull();
                 actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
                 actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
             }
         }
 
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesTitle_WhenChanged()
+
+        [TestCase(nameof(StandardModel.IFateReferenceNumber))]
+        [TestCase(nameof(StandardModel.Title))]
+        [TestCase(nameof(StandardModel.Status))]
+        [TestCase(nameof(StandardModel.StandardPageUrl))]
+        [TestCase(nameof(StandardModel.TrailblazerContact))]
+        [TestCase(nameof(StandardModel.Route))]
+        [TestCase(nameof(StandardModel.EqaProviderName))]
+        [TestCase(nameof(StandardModel.EqaProviderContactName))]
+        [TestCase(nameof(StandardModel.EqaProviderContactEmail))]
+        [TestCase(nameof(StandardModel.OverviewOfRole))]
+        public async Task MergeStandardsFromStaging_UpdatesPropertyAndTimestamp_WhenOnlyCaseChanges(
+            string propertyName)
         {
             // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
+            var live = StandardFactory.CreateFull(
+                updatedAt: new DateTime(2000, 1, 1));
+
             var staged = StandardFactory.CreateFull();
-            staged.Title = "Updated standard";
+
+            var property = typeof(StandardModel).GetProperty(propertyName);
+            var originalValue = (string)property.GetValue(staged);
+            var changedValue = originalValue.ToUpperInvariant();
+
+            // Already-uppercase values, such as the reference number,
+            // must be changed to lowercase instead.
+            if (string.Equals(
+                originalValue,
+                changedValue,
+                StringComparison.Ordinal))
+            {
+                changedValue = originalValue.ToLowerInvariant();
+            }
+
+            property.SetValue(staged, changedValue);
 
             using (var fixture = new MergeStandardsFromStagingTestsFixture()
                 .WithStandard(live)
@@ -50,685 +155,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.StandardRep
                 await fixture.MergeStandardsFromStaging();
 
                 // Assert
+                changedValue.Should().NotBe(originalValue, "the test must change the letter case");
+
                 var actual = fixture.GetStandard(live.StandardUId);
+                ((string)property.GetValue(actual)).Should().Be(changedValue);
                 actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
+
                 actual.UpdatedAt.Should().NotBeNull();
+                actual.UpdatedAt.Should().NotBe(live.UpdatedAt);
                 actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
                 actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
             }
         }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersion_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.Version = "2.0";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesLevel_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.Level = 4;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesStatus_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.Status = "In development";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesTypicalDuration_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.TypicalDuration = 36;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesMaxFunding_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.MaxFunding = 22000;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesIsActive_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.IsActive = 0;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesLastDateStarts_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.LastDateStarts = new DateTime(2029, 1, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEffectiveFrom_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EffectiveFrom = new DateTime(2021, 2, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEffectiveTo_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EffectiveTo = new DateTime(2029, 3, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersionEarliestStartDate_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.VersionEarliestStartDate = new DateTime(2021, 4, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersionLatestStartDate_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.VersionLatestStartDate = new DateTime(2029, 5, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersionLatestEndDate_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.VersionLatestEndDate = new DateTime(2031, 6, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersionApprovedForDelivery_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.VersionApprovedForDelivery = new DateTime(2021, 7, 1);
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesProposedTypicalDuration_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.ProposedTypicalDuration = 42;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesProposedMaxFunding_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.ProposedMaxFunding = 25000;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEPAChanged_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EPAChanged = true;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesStandardPageUrl_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.StandardPageUrl = "https://example.org/updated-standard";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesTrailBlazerContact_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.TrailblazerContact = "updated-trailblazer@example.org";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesRoute_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.Route = "Construction";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersionMajor_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.VersionMajor = 2;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesVersionMinor_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.VersionMinor = 1;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesIntegratedDegree_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.IntegratedDegree = "Integrated degree";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEqaProviderName_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EqaProviderName = "Updated EQA provider";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEqaProviderContactName_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EqaProviderContactName = "Updated contact";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEqaProviderContactEmail_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EqaProviderContactEmail = "updated-eqa@example.org";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesOverviewOfRole_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.OverviewOfRole = "Updated overview";
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesCoronationEmblem_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.CoronationEmblem = true;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
-        [Test]
-        public async Task MergeStandardsFromStaging_UpdatesEpaoMustBeApprovedByRegulatorBody_WhenChanged()
-        {
-            // Arrange
-            var live = StandardFactory.CreateFull(updatedAt: new DateTime(2000, 1, 1));
-            var staged = StandardFactory.CreateFull();
-            staged.EpaoMustBeApprovedByRegulatorBody = true;
-
-            using (var fixture = new MergeStandardsFromStagingTestsFixture()
-                .WithStandard(live)
-                .WithStagingStandard(staged))
-            {
-                // Act
-                await fixture.MergeStandardsFromStaging();
-
-                // Assert
-                var actual = fixture.GetStandard(live.StandardUId);
-                actual.Should().BeEquivalentTo(staged, options => options.Excluding(s => s.UpdatedAt));
-                actual.UpdatedAt.Should().NotBeNull();
-                actual.UpdatedAt.Value.Should().BeOnOrAfter(fixture.MergeStartedAt);
-                actual.UpdatedAt.Value.Should().BeOnOrBefore(fixture.MergeFinishedAt);
-            }
-        }
-
     }
 }
