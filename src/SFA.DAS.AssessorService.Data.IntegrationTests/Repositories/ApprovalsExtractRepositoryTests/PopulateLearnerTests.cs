@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
@@ -345,12 +345,52 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task PopulateLearner_WhenOnlyApprovalsExtractIsUnapproved_ThenExistingLearnerDateOfBirthIsUpdatedFromIlr(bool hasIncorrectDateOfBirth)
+        {
+            var now = DateTime.UtcNow.Date;
+            var dateOfBirthFromIlr = new DateTime(2000, 3, 7);
+            var standard = StandardFactory.Create("Standard", "ST0001", 123, "1.0")
+                .WithEffectiveFrom(now.AddYears(-10))
+                .WithVersionApprovedForDelivery(now.AddYears(-10));
+
+            var ilr = IlrFactory.ForStandard(standard, now)
+                .WithDateOfBirth(dateOfBirthFromIlr);
+
+            var unapproved = ApprovalsExtractFactory.ForIlrAndStandard(ilr, standard, now.AddDays(-2));
+            unapproved.PaymentStatus = 0;
+
+            var existingLearner = LearnerFactory.From(ilr, standard);
+            existingLearner.Id = ilr.Id;
+            existingLearner.LatestIlrs = now.AddDays(-1);
+            existingLearner.LastUpdated = now.AddDays(-1);
+            existingLearner.DateOfBirth = hasIncorrectDateOfBirth ? new DateTime(1999, 3, 7) : (DateTime?)null;
+
+            using (var fixture = new PopulateLearnerTestsFixture()
+                .WithStandard(standard)
+                .WithIlr(ilr)
+                .WithLearner(existingLearner)
+                .WithApprovalsExtract(unapproved))
+            {
+                var results = await fixture.PopulateLearner();
+
+                var expected = LearnerFactory.From(ilr, standard)
+                    .WithDateOfBirth(dateOfBirthFromIlr);
+                expected.Id = existingLearner.Id;
+
+                results.VerifyUpdated(1);
+                await results.VerifyLearnerRowCount(1);
+                await results.VerifyLearnerExists(expected);
+            }
+        }
+
         private class PopulateLearnerTestsFixture : FixtureBase<PopulateLearnerTestsFixture>, IDisposable
         {
             private readonly DatabaseService _databaseService = new DatabaseService();
             private readonly SqlConnection _sqlConnection;
 
-            private readonly ApprovalsExtractRepository _repository;
+            private readonly ApprovalsExtractRepository _sut;
             private readonly Mock<IRoatpApiClient> _roatpApiClient;
             private readonly Mock<ILogger<ApprovalsExtractRepository>> _logger;
             
@@ -363,12 +403,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
                 _sqlConnection = new SqlConnection(_databaseService.SqlConnectionStringTest);
                 _roatpApiClient = new Mock<IRoatpApiClient>();
                 _logger = new Mock<ILogger<ApprovalsExtractRepository>>();
-                _repository = new ApprovalsExtractRepository(new UnitOfWork(_sqlConnection), _roatpApiClient.Object, _logger.Object);
+                _sut = new ApprovalsExtractRepository(new UnitOfWork(_sqlConnection), _roatpApiClient.Object, _logger.Object);
             }
 
             public async Task<PopulateLearnerTestsFixture> PopulateLearner()
             {
-                _updated = await _repository.PopulateLearner();
+                _updated = await _sut.PopulateLearner();
                 return this;
             }
 
@@ -414,3 +454,4 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.ApprovalsEx
         }
     }
 }
+

@@ -159,6 +159,18 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
         }
 
 
+        public static Task<LearnerModel> GetByUlnAndStdCodeAsync(long? uln, int? stdCode)
+        {
+            const string sql = @"
+                SELECT *
+                FROM [dbo].[Learner]
+                WHERE ([Uln] = @Uln OR ([Uln] IS NULL AND @Uln IS NULL))
+                  AND ([StdCode] = @StdCode OR ([StdCode] IS NULL AND @StdCode IS NULL))";
+
+            return DatabaseService.QueryFirstOrDefaultAsync<LearnerModel>(
+                sql, new { Uln = uln, StdCode = stdCode });
+        }
+
         public static async Task<LearnerModel> QueryFirstOrDefaultAsync(LearnerModel learner)
         {
             var sqlToQuery =
