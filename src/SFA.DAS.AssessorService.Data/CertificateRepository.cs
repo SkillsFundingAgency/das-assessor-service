@@ -478,6 +478,7 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.Uln = updatedCertificate.Uln;
             certificate.StandardUId = updatedCertificate.StandardUId;
+            certificate.DateOfBirth = updatedCertificate.DateOfBirth;
             certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
             certificate.Status = updatedCertificate.Status;
             certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;

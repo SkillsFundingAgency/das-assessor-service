@@ -97,15 +97,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates
             else
             {
                 _logger.LogInformation("CreateNewCertificate Before resurrecting deleted Certificate");
+                certificate.StandardUId = request.StandardUId;
                 certificateData.EpaDetails.EpaReference = certificate.CertificateReference;
                 certificate.CertificateData = certificateData;
-                certificate.StandardUId = request.StandardUId;
+                certificate.DateOfBirth = learner.DateOfBirth;
                 certificate.Status = CertificateStatus.Draft;
                 await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, CertificateActions.Start);
             }
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
-            _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
+            _logger.LogInformation("Certificate with ID: {CertificateId} Started with reference of {CertificateReference}", certificate.Id, certificate.CertificateReference);
 
             return await CertificateHelpers.ApplyStatusInformation(_certificateRepository, _contactQueryRepository, certificate);
         }
