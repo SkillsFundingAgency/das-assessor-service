@@ -56,14 +56,21 @@ namespace SFA.DAS.AssessorService.Application.Events
             _logger.LogInformation("Publishing OutcomeRecordedEvent for certificate {CertificateId}, apprenticeship {ApprenticeshipId}, outcome {Outcome}",
                 updated.Id, learner.ApprenticeshipId, outcome);
 
-            await _messageSession.Publish(new OutcomeRecordedEvent
+            try
             {
-                ApprenticeshipId = learner.ApprenticeshipId.Value,
-                AchievementDate = achievementDate.Value,
-                Outcome = outcome,
-                StandardName = updated.CertificateData.StandardName,
-                CertificateId = updated.Id
-            });
+                await _messageSession.Publish(new OutcomeRecordedEvent
+                {
+                    ApprenticeshipId = learner.ApprenticeshipId.Value,
+                    AchievementDate = achievementDate.Value,
+                    Outcome = outcome,
+                    StandardName = updated.CertificateData.StandardName,
+                    CertificateId = updated.Id
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to publish OutcomeRecordedEvent for certificate {CertificateId}", updated.Id);
+            }
         }
 
         private static bool TryMapOutcome(string latestEpaOutcome, out OutcomeType outcome)
