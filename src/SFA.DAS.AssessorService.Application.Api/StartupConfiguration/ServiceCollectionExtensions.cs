@@ -23,6 +23,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Application.Api.TaskQueue;
+using SFA.DAS.AssessorService.Application.Events;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
@@ -198,6 +199,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddTransient<ICertificateNameCapitalisationService, CertificateNameCapitalisationService>();
             services.AddTransient<IOuterApiService, OuterApiService>();
             services.AddTransient<IEpaOrganisationIdGenerator, EpaOrganisationIdGenerator>();
+            services.AddTransient<IOutcomeRecordedEventPublisher, OutcomeRecordedEventPublisher>();
             return services;
         }
 

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Certificates;
+using SFA.DAS.AssessorService.Application.Events;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
@@ -21,6 +22,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
         private Mock<IContactQueryRepository> _contactQueryRepository;
         private Mock<ILogger<SubmitBatchCertificateHandler>> _logger;
 
+        private Mock<IOutcomeRecordedEventPublisher> _outcomeRecordedEventPublisher;
         private SubmitBatchCertificateHandler _handler;
 
         private Guid certId = Guid.NewGuid();
@@ -35,6 +37,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
             _certificateRepository = new Mock<ICertificateRepository>();
             _contactQueryRepository = new Mock<IContactQueryRepository>();
             _logger = new Mock<ILogger<SubmitBatchCertificateHandler>>();
+            _outcomeRecordedEventPublisher = new Mock<IOutcomeRecordedEventPublisher>();
 
             _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode))
                 .ReturnsAsync(new Certificate()
@@ -59,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
                 Uln = uln,
             };
 
-            _handler = new SubmitBatchCertificateHandler(_certificateRepository.Object, _contactQueryRepository.Object, _logger.Object);
+            _handler = new SubmitBatchCertificateHandler(_certificateRepository.Object, _contactQueryRepository.Object, _outcomeRecordedEventPublisher.Object, _logger.Object);
         }
 
         [Test]
@@ -132,6 +135,34 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.ExternalApi.Sub
 
             //Assert
             result.Should().BeNull();
+        }
+
+        [Test]
+        public async Task ThenPublishesOutcomeRecordedEventAfterSubmission()
+        {
+            // Arrange
+
+            // Act
+            var result = await _handler.Handle(_request, CancellationToken.None);
+
+            // Assert
+            _outcomeRecordedEventPublisher.Verify(p => p.PublishIfOutcomeRecorded(
+                It.Is<Certificate>(c => c.Id == certId && c.Status == CertificateStatus.Submitted),
+                CertificateActions.Submit), Times.Once);
+        }
+
+        [Test]
+        public async Task AndTheCertificateDoesNotExistThenDoesNotPublishOutcomeRecordedEvent()
+        {
+            // Arrange
+            _certificateRepository.Setup(m => m.GetCertificate(uln, stdCode))
+                .ReturnsAsync((Certificate)null);
+
+            // Act
+            await _handler.Handle(_request, CancellationToken.None);
+
+            // Assert
+            _outcomeRecordedEventPublisher.Verify(p => p.PublishIfOutcomeRecorded(It.IsAny<Certificate>(), It.IsAny<string>()), Times.Never);
         }
     }
 }
