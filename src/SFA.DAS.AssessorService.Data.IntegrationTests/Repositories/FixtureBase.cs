@@ -789,6 +789,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
             StagingOfqualOrganisationHandler.DeleteAllRecords();
             StagingOfqualStandardHandler.DeleteAllRecords();
             StagingOfsOrganisationHandler.DeleteAllRecords();
+            StagingStandardOptionsHandler.DeleteAllRecords();
+            StagingStandardsHandler.DeleteAllRecords();
+            StandardOptionsHandler.DeleteAllRecords();
             FrameworkLearnerHandler.DeleteAllRecords();
         }
     }
