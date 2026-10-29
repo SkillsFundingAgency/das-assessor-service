@@ -30,5 +30,8 @@ namespace SFA.DAS.AssessorService.Settings
         int MasksMaxCount { get; set; }
         string ServiceLink { get; set; }
         EmailTemplatesConfig EmailTemplatesConfig { get; set; }
+
+        string NServiceBusConnectionString { get; set; }
+        string NServiceBusLicense { get; set; }
     }
 }
