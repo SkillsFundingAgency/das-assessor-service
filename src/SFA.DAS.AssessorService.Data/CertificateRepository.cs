@@ -510,12 +510,7 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.DeletedAt = null;
             }
 
-            // the certificate data has changed since any previous print request/batch was created,
-            // clear the print state because the previous print details may no longer represent the
-            // current version of the certificate.
-            // TODO: How does this affect what would be shown in Digital Certificate??
-            certificate.ToBePrinted = null;
-            certificate.BatchNumber = null;
+            await ClearBatchNumberIfPrintedCertificateChanged(certificate);
 
             if (updateLog)
             {
@@ -535,11 +530,11 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
             certificate.Status = updatedCertificate.Status;
+            
             certificate.UpdatedBy = username;
             certificate.UpdatedAt = DateTime.UtcNow;
 
-            certificate.ToBePrinted = null;
-            certificate.BatchNumber = null;
+            await ClearBatchNumberIfPrintedCertificateChanged(certificate);
 
             AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
                 certificate.CertificateData, certificate.UpdatedBy, certificate.BatchNumber, null);
@@ -589,6 +584,28 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
+        public async Task UpdateReprintRequested(Guid certificateId, DateTime printRequestedAt, string printRequestedBy)
+        {
+            var certificate = await GetCertificate<Certificate>(certificateId)
+                    ?? throw new NotFoundException();
+
+            certificate.PrintRequestedAt = printRequestedAt;
+            certificate.PrintRequestedBy = printRequestedBy;
+            certificate.Status = CertificateStatus.Reprint;
+
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
+
+            certificate.UpdatedBy = printRequestedBy;
+            certificate.UpdatedAt = DateTime.UtcNow;
+
+            AddSingleCertificateLog(certificate.Id, CertificateActions.PrintRequest, certificate.Status, printRequestedAt,
+                certificate.CertificateData, printRequestedBy,
+                certificate.BatchNumber);
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+        }
+
         public async Task UpdatePrintRequested(Guid certificateId, CertificatePrintAddress address, DateTime printRequestedAt, string printRequestedBy)
         {
             var certificate = await GetCertificate<Certificate>(certificateId)
@@ -606,10 +623,14 @@ namespace SFA.DAS.AssessorService.Data
             certificate.PrintRequestedBy = printRequestedBy;
             certificate.Status = CertificateStatus.PrintRequested;
 
-            var userName = certificate.CertificateData.ContactName;
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
+
+            certificate.UpdatedBy = printRequestedBy;
+            certificate.UpdatedAt = DateTime.UtcNow;
 
             AddSingleCertificateLog(certificate.Id, CertificateActions.PrintRequest, certificate.Status, printRequestedAt,
-                certificate.CertificateData, userName,
+                certificate.CertificateData, printRequestedBy,
                 certificate.BatchNumber);
 
             await _unitOfWork.AssessorDbContext.SaveChangesAsync();
@@ -726,6 +747,88 @@ namespace SFA.DAS.AssessorService.Data
             {
                 EarliestAssessment = null,
                 EndpointAssessmentCount = 0
+            };
+        }
+
+        /// <summary>
+        /// When the certificate data has changed since any previous print request/batch was created,
+        /// clear the print state because the previous print details may no longer represent the
+        /// current version of the certificate.
+        /// </summary>
+        /// <param name="certificate"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private async Task ClearBatchNumberIfPrintedCertificateChanged(
+            CertificateBase certificate)
+        {
+            if (!certificate.BatchNumber.HasValue)
+                return;
+
+            var batchLog = await _unitOfWork.AssessorDbContext.CertificateBatchLogs
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x =>
+                    x.BatchNumber == certificate.BatchNumber.Value &&
+                    x.CertificateReference == certificate.CertificateReference);
+
+            if (batchLog?.CertificateData == null)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot find the print snapshot for certificate " +
+                    $"{certificate.CertificateReference} in batch {certificate.BatchNumber}.");
+            }
+
+            var isFramework = certificate is FrameworkCertificate;
+
+            var previousContent = GetPrintedCertificateContent(
+                batchLog.CertificateData, isFramework);
+
+            var currentContent = GetPrintedCertificateContent(
+                certificate.CertificateData, isFramework);
+
+            if (!Equals(previousContent, currentContent))
+            {
+                certificate.ToBePrinted = null;
+                certificate.BatchNumber = null;
+            }
+        }
+
+        private static object GetPrintedCertificateContent(
+            CertificateData data,
+            bool isFramework)
+        {
+            if (isFramework)
+            {
+                return new
+                {
+                    ApprenticeName = data.FullName,
+                    data.FrameworkName,
+                    PathwayName = string.Equals(
+                        data.PathwayName,
+                        data.FrameworkName,
+                        StringComparison.OrdinalIgnoreCase)
+                            ? string.Empty
+                            : data.PathwayName,
+                    LevelName = $"{data.FrameworkLevelName} Level",
+                    data.FrameworkCertificateNumber,
+                    AchievementDate = data.AchievementDate?.Date
+                };
+            }
+
+            return new
+            {
+                ApprenticeName =
+                    $"{data.LearnerGivenNames} {data.LearnerFamilyName}",
+                data.StandardName,
+                data.StandardLevel,
+                CourseOption = string.IsNullOrWhiteSpace(data.CourseOption)
+                    ? string.Empty
+                    : data.CourseOption,
+                OverallGrade = string.IsNullOrWhiteSpace(data.OverallGrade) ||
+                               data.OverallGrade == "No grade awarded"
+                    ? string.Empty
+                    : data.OverallGrade,
+                AchievementDate = data.AchievementDate?.Date,
+                data.CoronationEmblem
             };
         }
 
