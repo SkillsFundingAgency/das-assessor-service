@@ -471,23 +471,34 @@ namespace SFA.DAS.AssessorService.Data
             return certificatesQuery;
         }
 
+        /// <summary>
+        /// Updates a standard certificate by copying values from the supplied certificate instance.
+        /// </summary>
+        /// <remarks>
+        /// Do not add new update behaviour to this method. This is a legacy, broad update method that takes a
+        /// Certificate entity and copies selected values onto the persisted certificate with limited validation.
+        /// New update scenarios should be implemented as specific methods/handlers with explicit request models,
+        /// validation, logging and clear ownership of the fields being changed.
+        /// </remarks>
         public async Task<Certificate> UpdateStandardCertificate(Certificate updatedCertificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
             var certificate = await GetCertificate<Certificate>(updatedCertificate.Id)
                 ?? throw new NotFoundException();
 
             certificate.Uln = updatedCertificate.Uln;
-            certificate.StandardUId = updatedCertificate.StandardUId;
-            certificate.DateOfBirth = updatedCertificate.DateOfBirth;
-            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
-            certificate.Status = updatedCertificate.Status;
-            certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;
             certificate.StandardCode = updatedCertificate.StandardCode;
-            certificate.UpdatedBy = username;
-            certificate.UpdatedAt = DateTime.UtcNow;
-            certificate.IsPrivatelyFunded = updatedCertificate.IsPrivatelyFunded;
             certificate.StandardUId = updatedCertificate.StandardUId;
 
+            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
+            
+            certificate.Status = updatedCertificate.Status;
+            certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;
+            certificate.DateOfBirth = updatedCertificate.DateOfBirth;
+
+            certificate.UpdatedBy = username;
+            certificate.UpdatedAt = DateTime.UtcNow;
+            
+            certificate.IsPrivatelyFunded = updatedCertificate.IsPrivatelyFunded;
             if (certificate.IsPrivatelyFunded)
             {
                 certificate.PrivatelyFundedStatus = updatedCertificate.PrivatelyFundedStatus;
@@ -499,11 +510,12 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.DeletedAt = null;
             }
 
+            // the certificate data has changed since any previous print request/batch was created,
+            // clear the print state because the previous print details may no longer represent the
+            // current version of the certificate.
+            // TODO: How does this affect what would be shown in Digital Certificate??
             certificate.ToBePrinted = null;
             certificate.BatchNumber = null;
-
-            certificate.PrintRequestedAt = updatedCertificate.PrintRequestedAt;
-            certificate.PrintRequestedBy = updatedCertificate.PrintRequestedBy;
 
             if (updateLog)
             {
@@ -575,6 +587,32 @@ namespace SFA.DAS.AssessorService.Data
             await _unitOfWork.AssessorDbContext.SaveChangesAsync();
 
             return certificate;
+        }
+
+        public async Task UpdatePrintRequested(Guid certificateId, CertificatePrintAddress address, DateTime printRequestedAt, string printRequestedBy)
+        {
+            var certificate = await GetCertificate<Certificate>(certificateId)
+                    ?? throw new NotFoundException();
+
+            certificate.CertificateData.ContactName = address.ContactName;
+            certificate.CertificateData.ContactOrganisation = address.ContactOrganisation;
+            certificate.CertificateData.ContactAddLine1 = address.ContactAddLine1;
+            certificate.CertificateData.ContactAddLine2 = address.ContactAddLine2;
+            certificate.CertificateData.ContactAddLine3 = address.ContactAddLine3;
+            certificate.CertificateData.ContactAddLine4 = address.ContactAddLine4;
+            certificate.CertificateData.ContactPostCode = address.ContactPostCode;
+
+            certificate.PrintRequestedAt = printRequestedAt;
+            certificate.PrintRequestedBy = printRequestedBy;
+            certificate.Status = CertificateStatus.PrintRequested;
+
+            var userName = certificate.CertificateData.ContactName;
+
+            AddSingleCertificateLog(certificate.Id, CertificateActions.PrintRequest, certificate.Status, printRequestedAt,
+                certificate.CertificateData, userName,
+                certificate.BatchNumber);
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
         }
 
         public async Task UpdatePrintStatus(Guid certificateId, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,

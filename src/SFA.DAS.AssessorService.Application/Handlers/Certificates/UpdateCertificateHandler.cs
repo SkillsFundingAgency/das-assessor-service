@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
+    [Obsolete("Do not use this handler. It takes a Certificate database entity and updates selected values with little or no validation.")]
     public class UpdateCertificateHandler : IRequestHandler<UpdateCertificateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
