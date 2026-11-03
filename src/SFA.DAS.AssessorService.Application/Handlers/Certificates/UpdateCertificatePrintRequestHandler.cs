@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 throw new ArgumentException("Certificate is not in a valid state to request print");
             }
 
-            await _certificateRepository.UpdatePrintRequested(certificate.Id, request.Address, request.PrintRequestedAt, request.PrintRequestedBy);
+            await _certificateRepository.UpdatePrintRequested<Certificate>(certificate.Id, request.Address, request.PrintRequestedAt, request.PrintRequestedBy);
 
             return Unit.Value;
         }

@@ -81,7 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 CertificateReference = string.Empty,
                 FrameworkLearnerId = request.FrameworkLearnerId,
                 DateOfBirth = frameworkLearner.ApprenticeDoB,
-                ProviderUkPrn = int.TryParse(frameworkLearner.Ukprn, out int result ) ? result : null
+                ProviderUkPrn = int.TryParse(frameworkLearner.Ukprn, out int result ) ? result : null,
+                PrintRequestedAt = _dateTimeHelper.DateTimeUtcNow,
+                PrintRequestedBy = request.Username,
             };
 
             certificate = await _certificateRepository.NewFrameworkCertificate(certificate);
