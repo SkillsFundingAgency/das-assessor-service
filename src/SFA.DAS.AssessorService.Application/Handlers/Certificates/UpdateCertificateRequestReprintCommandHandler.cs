@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             if (certificate.Status != CertificateStatus.Reprint && CertificateStatus.CanRequestReprintCertificate(certificate.Status))
             {
-                await _certificateRepository.UpdateReprintRequested(certificate.Id, _dateTimeHelper.DateTimeUtcNow, request.Username);
+                await _certificateRepository.UpdateReprintRequested<Certificate>(certificate.Id, _dateTimeHelper.DateTimeUtcNow, request.Username);
             }
 
             return certificate;

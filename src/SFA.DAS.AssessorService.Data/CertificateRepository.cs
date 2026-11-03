@@ -584,9 +584,9 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task UpdateReprintRequested(Guid certificateId, DateTime printRequestedAt, string printRequestedBy)
+        public async Task<T> UpdateReprintRequested<T>(Guid certificateId, DateTime printRequestedAt, string printRequestedBy) where T : CertificateBase
         {
-            var certificate = await GetCertificate<Certificate>(certificateId)
+            var certificate = await GetCertificate<T>(certificateId)
                     ?? throw new NotFoundException();
 
             certificate.PrintRequestedAt = printRequestedAt;
@@ -604,11 +604,13 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.BatchNumber);
 
             await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
+            return certificate;
         }
 
-        public async Task UpdatePrintRequested(Guid certificateId, CertificatePrintAddress address, DateTime printRequestedAt, string printRequestedBy)
+        public async Task<T> UpdatePrintRequested<T>(Guid certificateId, CertificatePrintAddress address, DateTime printRequestedAt, string printRequestedBy) where T : CertificateBase
         {
-            var certificate = await GetCertificate<Certificate>(certificateId)
+            var certificate = await GetCertificate<T>(certificateId)
                     ?? throw new NotFoundException();
 
             certificate.CertificateData.ContactName = address.ContactName;
@@ -634,6 +636,8 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.BatchNumber);
 
             await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
+            return certificate;
         }
 
         public async Task UpdatePrintStatus(Guid certificateId, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,
