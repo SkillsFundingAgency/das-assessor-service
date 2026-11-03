@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -70,8 +71,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.FrameworkSearch
 
                 frameworkLearnerResponse.CertificateReference = certificate.CertificateReference;
                 frameworkLearnerResponse.CertificateStatus = certificate.Status;
-                frameworkLearnerResponse.CertificatePrintStatusAt = certificate.CertificateBatchLog?.StatusAt;
-                frameworkLearnerResponse.CertificatePrintReasonForChange = certificate.CertificateBatchLog?.ReasonForChange;
+
+                frameworkLearnerResponse.CertificatePrintRequestedAt = certificate.PrintRequestedAt;
+                frameworkLearnerResponse.CertificatePrintRequestedBy = certificate.PrintRequestedBy;
+                frameworkLearnerResponse.CertificatePrintStatus = certificate.PrintStatus;
+                frameworkLearnerResponse.CertificatePrintStatusAt = certificate.PrintStatusAt;
+                frameworkLearnerResponse.CertificatePrintReasonForChange = certificate.PrintReasonForChange;
+
                 frameworkLearnerResponse.CertificateLastUpdatedAt = certificate.LatestChange();
                 frameworkLearnerResponse.CertificateLogs = logs;
             }

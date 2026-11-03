@@ -76,16 +76,20 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<T> GetCertificate<T>(Guid id, bool includeLogs = false) where T : CertificateBase
         {
-            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+            var query = _unitOfWork.AssessorDbContext
+                .Set<T>()
+                .Include(c => c.CertificateBatchLog)
+                .AsQueryable();
 
             if (includeLogs)
             {
                 query = query.Include(c => c.CertificateLogs);
             }
 
-            return await query.OfType<T>().SingleOrDefaultAsync(c => c.Id == id);
+            return await query
+                .OfType<T>()
+                .SingleOrDefaultAsync(c => c.Id == id);
         }
-
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)
         {
