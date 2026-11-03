@@ -34,6 +34,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
 
             var endpointConfiguration = new EndpointConfiguration(EndpointName)
+                .UseErrorQueue($"{EndpointName}-errors")
+                .UseInstallers()
                 .UseMessageConventions()
                 .UseNewtonsoftJsonSerializer()
                 .UseServicesBuilder(serviceProvider)
