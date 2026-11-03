@@ -45,10 +45,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         [NotMapped]
         public string PrintReasonForChange =>
-            (BatchNumber.HasValue &&
+            BatchNumber.HasValue &&
             CertificateBatchLog?.BatchNumber == BatchNumber
                 ? CertificateBatchLog.ReasonForChange
-                : null) ?? "No reason entered";
+                : null;
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

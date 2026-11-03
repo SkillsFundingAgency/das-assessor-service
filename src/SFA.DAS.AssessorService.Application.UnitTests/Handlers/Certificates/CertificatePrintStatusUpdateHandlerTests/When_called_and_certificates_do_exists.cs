@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintStatusHandlerTests
 {
     [TestFixture]
     public class When_called_and_certificates_do_exists : UpdateCertificatesPrintStatusHandlerTestsBase

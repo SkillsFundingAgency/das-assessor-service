@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintStatusHandlerTests
 {
     [TestFixture]
     public class When_called_and_update_duplicated : UpdateCertificatesPrintStatusHandlerTestsBase
