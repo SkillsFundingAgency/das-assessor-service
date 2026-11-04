@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintStatusHandlerTests
 {
     [TestFixture]
     public class When_called_and_certificate_does_not_exist_in_the_batch : UpdateCertificatesPrintStatusHandlerTestsBase

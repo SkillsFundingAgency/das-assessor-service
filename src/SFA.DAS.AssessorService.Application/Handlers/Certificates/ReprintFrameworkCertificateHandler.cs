@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Application.Extensions;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
@@ -17,12 +18,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IFrameworkLearnerRepository _frameworkLearnerRepository;
+        private readonly IDateTimeHelper _dateTimeHelper;
 
-        public ReprintFrameworkCertificateHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, 
+        public ReprintFrameworkCertificateHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, IDateTimeHelper dateTimeHelper,
             ILogger<ReprintFrameworkCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _frameworkLearnerRepository = frameworkLearnerRepository;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         public async Task<FrameworkCertificate> Handle(ReprintFrameworkCertificateRequest request, CancellationToken cancellationToken)
@@ -78,7 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 CertificateReference = string.Empty,
                 FrameworkLearnerId = request.FrameworkLearnerId,
                 DateOfBirth = frameworkLearner.ApprenticeDoB,
-                ProviderUkPrn = int.TryParse(frameworkLearner.Ukprn, out int result ) ? result : null
+                ProviderUkPrn = int.TryParse(frameworkLearner.Ukprn, out int result ) ? result : null,
+                PrintRequestedAt = _dateTimeHelper.DateTimeUtcNow,
+                PrintRequestedBy = request.Username,
             };
 
             certificate = await _certificateRepository.NewFrameworkCertificate(certificate);
@@ -98,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             certificate.CertificateData.ContactAddLine4 = request.ContactAddLine4;
             certificate.CertificateData.ContactPostCode = request.ContactPostcode;
 
-            certificate = await _certificateRepository.UpdateFrameworkCertificate(certificate, request.Username, CertificateActions.Reprint);
+            certificate = await _certificateRepository.UpdateReprintRequested<FrameworkCertificate>(certificate.Id, _dateTimeHelper.DateTimeUtcNow, request.Username);
 
             return certificate;
         }

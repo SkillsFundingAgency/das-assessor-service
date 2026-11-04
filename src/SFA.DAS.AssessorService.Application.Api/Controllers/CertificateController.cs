@@ -50,6 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [Obsolete("Do not use this endpoint. It takes a Certificate database entity and updates selected values with little or no validation.")]
         public async Task<IActionResult> Update([FromBody] UpdateCertificateRequest certificate)
         {
             return Ok(await _mediator.Send(certificate));
@@ -74,6 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 command.CertificateId = id;
                 await _mediator.Send(command);
+                
                 return NoContent();
             }
             catch (NotFoundException)

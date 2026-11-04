@@ -47,6 +47,9 @@ namespace SFA.DAS.AssessorService.Data.Interfaces
 
         Task<CertificateBase> UpdateProviderName(Guid certificateId, string providerName);
 
+        Task<T> UpdateReprintRequested<T>(Guid certificateId, DateTime printRequestedAt, string printRequestedBy) where T : CertificateBase;
+        Task<T> UpdatePrintRequested<T>(Guid certificateId, CertificatePrintAddress address, DateTime printRequestedAt, string printRequestedBy) where T : CertificateBase;
+
         Task UpdatePrintStatus(Guid certificateId, int batchNumber, string printStatus, DateTime statusAt, string reasonForChange,
             bool updateCertificate, bool updateCertificateBatchLog);
 

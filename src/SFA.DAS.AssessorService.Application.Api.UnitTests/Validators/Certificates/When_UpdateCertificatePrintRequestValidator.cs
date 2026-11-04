@@ -29,7 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                     ContactAddLine1 = "Line1",
                     ContactPostCode = "PC"
                 },
-                PrintRequestedAt = DateTime.UtcNow,
                 PrintRequestedBy = "Apprentice"
             };
 
@@ -47,7 +46,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             var cmd = new UpdateCertificatePrintRequestCommand
             {
                 CertificateId = Guid.NewGuid(),
-                PrintRequestedAt = DateTime.UtcNow,
                 PrintRequestedBy = "Apprentice"
             };
 
@@ -71,7 +69,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                     ContactAddLine1 = "Line1",
                     ContactPostCode = "PC"
                 },
-                PrintRequestedAt = DateTime.UtcNow,
                 PrintRequestedBy = "Apprentice"
             };
 
@@ -95,7 +92,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                     ContactName = "Name",
                     ContactAddLine1 = "Line1"
                 },
-                PrintRequestedAt = DateTime.UtcNow,
                 PrintRequestedBy = "Apprentice"
             };
 
@@ -105,30 +101,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             // Assert
             Assert.IsFalse(result.IsValid);
             Assert.IsTrue(result.Errors.Exists(e => e.PropertyName == "Address.ContactPostCode"));
-        }
-
-        [Test]
-        public void Validator_Should_Fail_When_PrintRequestedAt_Missing()
-        {
-            // Arrange
-            var cmd = new UpdateCertificatePrintRequestCommand
-            {
-                CertificateId = Guid.NewGuid(),
-                Address = new CertificatePrintAddress
-                {
-                    ContactName = "Name",
-                    ContactAddLine1 = "Line1",
-                    ContactPostCode = "PC"
-                },
-                PrintRequestedBy = "Apprentice"
-            };
-
-            // Act
-            ValidationResult result = _validator.Validate(cmd);
-
-            // Assert
-            Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(result.Errors.Exists(e => e.PropertyName == "PrintRequestedAt"));
         }
 
         [Test]
@@ -144,7 +116,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                     ContactAddLine1 = "Line1",
                     ContactPostCode = "PC"
                 },
-                PrintRequestedAt = DateTime.UtcNow
             };
 
             // Act

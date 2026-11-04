@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatesPrintStatusHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintStatusHandlerTests
 {
     public class UpdateCertificatesPrintStatusHandlerTestsBase
     {
