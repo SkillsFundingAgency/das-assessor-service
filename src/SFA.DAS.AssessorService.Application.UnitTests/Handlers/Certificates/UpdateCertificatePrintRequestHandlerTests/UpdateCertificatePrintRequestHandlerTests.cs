@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Mono.Cecil.Cil;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -87,7 +86,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 _certificateRepository.Object,
                 Mock.Of<ILogger<UpdateCertificatePrintRequestHandler>>());
         }
-
+        
+        [Test]
         public async Task WhenCertificateIsEligible_ThenPrintRequestIsPassedToRepository()
         {
             // Arrange
