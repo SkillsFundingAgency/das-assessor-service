@@ -75,6 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 command.CertificateId = id;
                 await _mediator.Send(command);
+                
                 return NoContent();
             }
             catch (NotFoundException)

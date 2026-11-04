@@ -8,20 +8,21 @@ using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Domain.Helpers;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class UpdateCertificatePrintRequestHandler : IRequestHandler<UpdateCertificatePrintRequestCommand, Unit>
+    public class UpdateCertificatePrintRequestCommandHandler : IRequestHandler<UpdateCertificatePrintRequestCommand, Unit>
     {
         private readonly IMediator _mediator;
         private readonly ICertificateRepository _certificateRepository;
-        private readonly ILogger<UpdateCertificatePrintRequestHandler> _logger;
+        private readonly IDateTimeHelper _dateTimeHelper;
 
-        public UpdateCertificatePrintRequestHandler(IMediator mediator, ICertificateRepository certificateRepository, ILogger<UpdateCertificatePrintRequestHandler> logger)
+        public UpdateCertificatePrintRequestCommandHandler(IMediator mediator, ICertificateRepository certificateRepository, IDateTimeHelper dateTimeHelper)
         {
             _mediator = mediator;
             _certificateRepository = certificateRepository;
-            _logger = logger;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         public async Task<Unit> Handle(UpdateCertificatePrintRequestCommand request, CancellationToken cancellationToken)
@@ -36,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 throw new ArgumentException("Certificate is not in a valid state to request print");
             }
 
-            await _certificateRepository.UpdatePrintRequested<Certificate>(certificate.Id, request.Address, request.PrintRequestedAt, request.PrintRequestedBy);
+            await _certificateRepository.UpdatePrintRequested<Certificate>(certificate.Id, request.Address, _dateTimeHelper.DateTimeUtcNow, request.PrintRequestedBy);
 
             return Unit.Value;
         }

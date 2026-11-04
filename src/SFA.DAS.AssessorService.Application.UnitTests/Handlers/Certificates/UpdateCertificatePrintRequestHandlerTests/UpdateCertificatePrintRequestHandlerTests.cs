@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintRequestHandlerTests
@@ -21,16 +22,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
     {
         private Mock<IMediator> _mediator;
         private Mock<ICertificateRepository> _certificateRepository;
-        private UpdateCertificatePrintRequestHandler _sut;
+        private Mock<IDateTimeHelper> _dateTimeHelper;
+        
+        private UpdateCertificatePrintRequestCommandHandler _sut;
 
         private Certificate _certificate;
         private UpdateCertificatePrintRequestCommand _request;
+        private DateTime _dateTimeUtcNow;
 
         [SetUp]
         public void SetUp()
         {
             _mediator = new Mock<IMediator>();
             _certificateRepository = new Mock<ICertificateRepository>();
+            
+            _dateTimeHelper = new Mock<IDateTimeHelper>();
+            _dateTimeUtcNow = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            _dateTimeHelper.Setup(p => p.DateTimeUtcNow).Returns(_dateTimeUtcNow);
 
             _certificate = new Certificate
             {
@@ -51,7 +59,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             _request = new UpdateCertificatePrintRequestCommand
             {
                 CertificateId = _certificate.Id,
-                PrintRequestedAt = new DateTime(2026, 11, 3, 12, 0, 0, DateTimeKind.Utc),
                 PrintRequestedBy = "Apprentice",
                 Address = new CertificatePrintAddress
                 {
@@ -81,10 +88,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                     It.IsAny<string>()))
                 .ReturnsAsync(_certificate);
 
-            _sut = new UpdateCertificatePrintRequestHandler(
+            _sut = new UpdateCertificatePrintRequestCommandHandler(
                 _mediator.Object,
                 _certificateRepository.Object,
-                Mock.Of<ILogger<UpdateCertificatePrintRequestHandler>>());
+                _dateTimeHelper.Object);
         }
         
         [Test]
@@ -113,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 x => x.UpdatePrintRequested<Certificate>(
                     _request.CertificateId,
                     _request.Address,
-                    _request.PrintRequestedAt,
+                    _dateTimeUtcNow,
                     _request.PrintRequestedBy),
                 Times.Once);
 
@@ -176,7 +183,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
         {
             // Arrange
             _certificate.PrintRequestedAt =
-                _request.PrintRequestedAt.AddDays(-1);
+                _dateTimeUtcNow.AddDays(-1);
 
             Func<Task> act = () => _sut.Handle(
                 _request,
