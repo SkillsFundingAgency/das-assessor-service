@@ -61,3 +61,4 @@ jobs:
     parameters:
       DotNetStandardPackagesToPack: |
         src/SFA.DAS.AssessorService.Shared/SFA.DAS.AssessorService.Shared.csproj
+        src/SFA.DAS.AssessorService.Messages/SFA.DAS.AssessorService.Messages.csproj
