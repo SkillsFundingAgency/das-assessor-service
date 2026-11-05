@@ -34,11 +34,9 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
 
         public string FullName { get; set; }
 
-        public string ContactOrganisation { get; set; }
+        public string EmployerName { get; set; }
 
         public string ProviderName { get; set; }
-
-        public string ContactName { get; set; }
 
         public string CourseOption { get; set; }
 
@@ -56,19 +54,10 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
 
         public DateTime? LearningStartDate { get; set; }
 
-        public string ContactAddLine1 { get; set; }
-
-        public string ContactAddLine2 { get; set; }
-
-        public string ContactAddLine3 { get; set; }
-
-        public string ContactAddLine4 { get; set; }
-
-        public string ContactPostCode { get; set; }
-
         public int? EndPointAssessorUkprn { get; set; }
 
         public DateTime? StatusAt { get; set; }
+
         public string ReasonForChange { get; set; }
     }
 }

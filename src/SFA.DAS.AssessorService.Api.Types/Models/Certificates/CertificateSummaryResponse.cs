@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string RecordedByEmail { get; set; }
         public long Uln { get; set; }
         public string FullName { get; set; }
+        public string EmployerName { get; set; }
         public string TrainingProvider { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime CreatedDay { get; set; }
@@ -25,13 +26,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public DateTime? LearningStartDate { get; set; }
         public DateTime? AchievementDate { get; set; }
 
-        public string ContactOrganisation { get; set; }
-        public string ContactName { get; set; }
-        public string ContactAddLine1 { get; set; }
-        public string ContactAddLine2 { get; set; }
-        public string ContactAddLine3 { get; set; }
-        public string ContactAddLine4 { get; set; }
-        public string ContactPostCode { get; set; }
         public string Status { get; set; }
         public string PrivatelyFundedStatus { get; set; }
         public string FirstName { get; set; }

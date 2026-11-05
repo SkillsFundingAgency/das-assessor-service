@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
@@ -46,15 +47,21 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             result.CreatedAt.Should().Be(originalCreatedAt);
         }
 
-        [Test]
-        public async Task ThenAddressIsUpdatedAndAssessmentDataIsPreserved()
+        [TestCase(CertificateSendTo.None)]
+        [TestCase(CertificateSendTo.Apprentice)]
+        [TestCase(CertificateSendTo.Employer)]
+        public async Task ThenAddressIsUpdatedAndAssessmentDataIsPreserved(
+            CertificateSendTo previousSendTo)
         {
             // Arrange
+            _certificate.CertificateData.SendTo = previousSendTo;
+
             var expectedData = Clone(_certificate.CertificateData);
             var originalReference = _certificate.CertificateReference;
             var originalDateOfBirth = _certificate.DateOfBirth;
             var originalProviderUkPrn = _certificate.ProviderUkPrn;
 
+            expectedData.SendTo = CertificateSendTo.Apprentice;
             expectedData.ContactName = _address.ContactName;
             expectedData.ContactOrganisation = _address.ContactOrganisation;
             expectedData.ContactAddLine1 = _address.ContactAddLine1;
