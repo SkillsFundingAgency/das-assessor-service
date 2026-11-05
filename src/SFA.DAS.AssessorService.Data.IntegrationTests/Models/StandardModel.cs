@@ -1,7 +1,4 @@
-﻿
-using Moq;
-using NUnit.Framework.Constraints;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
@@ -9,7 +6,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
     {
         public string StandardUId { get; set; }
         public string IFateReferenceNumber { get; set; }
-        public int LarsCode { get; set; }
+        public int? LarsCode { get; set; }
         public string Title { get; set; }
         public string Version { get; set; }
         public int Level { get; set; }
@@ -17,6 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public int TypicalDuration { get; set; }
         public int MaxFunding { get; set; }
         public int IsActive { get; set; }
+        public DateTime? LastDateStarts { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? VersionEarliestStartDate { get; set; }
@@ -31,8 +29,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
         public string Route { get; set; }
         public int VersionMajor { get; set; }
         public int VersionMinor { get; set; }
+        public string IntegratedDegree { get; set; }
         public string EqaProviderName { get; set; }
+        public string EqaProviderContactName { get; set; }
+        public string EqaProviderContactEmail { get; set; }
         public string OverviewOfRole { get; set; }
+        public bool CoronationEmblem { get; set; }
         public bool EpaoMustBeApprovedByRegulatorBody { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }
