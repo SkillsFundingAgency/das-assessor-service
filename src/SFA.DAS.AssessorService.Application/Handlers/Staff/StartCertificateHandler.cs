@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.CompaniesHouse;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -105,7 +106,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 },
                 Uln = request.Uln,
                 StandardCode = request.StandardCode,
-                DateOfBirth = learner.DateOfBirth,
                 Status = CertificateStatus.Draft,
                 CreatedBy = request.Username,
                 CertificateReference = string.Empty
@@ -151,6 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             certificate.CertificateData.ProviderName = provider.Name;
             certificate.CertificateData.CoronationEmblem = await _standardRepository.GetCoronationEmblemForStandardReferenceAndVersion(learner.StandardReference, learner.Version);
 
+            certificate.DateOfBirth = learner.DateOfBirth;
             certificate.ProviderUkPrn = learner.UkPrn;
             certificate.OrganisationId = organisation.Id;
             certificate.LearnRefNumber = learner.LearnRefNumber;
