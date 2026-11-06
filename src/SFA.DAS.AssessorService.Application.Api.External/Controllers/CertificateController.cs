@@ -90,7 +90,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<CreateCertificateResponse>))]
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
-        [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.")]
+        [SwaggerOperation("Create Certificates",
+            "Creates a new certificate for each valid item in the request. " +
+            "The postalContact property is optional and is retained for backwards compatibility. " +
+            "Supplied delivery details are ignored and are not saved. " +
+            "Certificate responses return postalContact as null.")]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CreateCertificateRequest> request)
         {
             if(request.Count() > MAX_CERTIFICATES_IN_REQUEST)
@@ -107,8 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                     {
                         Standard = req.Standard,
                         Learner = req.Learner,
-                        LearningDetails = req.LearningDetails,
-                        PostalContact = req.PostalContact
+                        LearningDetails = req.LearningDetails
                     }
                 });
 
@@ -131,7 +134,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The updated Certificate if valid, else a list of validation errors.", typeof(IEnumerable<UpdateCertificateResponse>))]
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
-        [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.")]
+        [SwaggerOperation("Update Certificates",
+            "Updates the specified certificate for each valid item in the request. " +
+            "The postalContact property is optional and is retained for backwards compatibility. " +
+            "Supplied delivery details are ignored. Existing delivery details are preserved. " +
+            "Certificate responses return postalContact as null.")]
         public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<UpdateCertificateRequest> request)
         {
             if (request.Count() > MAX_CERTIFICATES_IN_REQUEST)
@@ -150,8 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                         CertificateReference = req.CertificateReference,
                         Standard = req.Standard,
                         Learner = req.Learner,
-                        LearningDetails = req.LearningDetails,
-                        PostalContact = req.PostalContact
+                        LearningDetails = req.LearningDetails
                     }
                 });
 
@@ -174,7 +180,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitCertificateResponse>))]
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.TooManyRequestsResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are too many certificates specified within the request.", typeof(ApiResponse))]
-        [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.")]
+        [SwaggerOperation("Submit Certificates",
+            "Submits the specified certificate for each valid item in the request. " +
+            "An eligible certificate can be submitted without delivery details. " +
+            "Certificate responses return postalContact as null.")]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificateRequest> request)
         {
             if (request.Count() > MAX_CERTIFICATES_IN_REQUEST)

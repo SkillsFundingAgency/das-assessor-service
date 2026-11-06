@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request
         public Learner Learner { get; set; }
         [SwaggerRequired]
         public LearningDetails LearningDetails { get; set; }
-        [SwaggerRequired]
+        
         public PostalContact PostalContact { get; set; }
 
         #region GetHashCode, Equals and IEquatable
