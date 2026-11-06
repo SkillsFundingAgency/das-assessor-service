@@ -74,6 +74,9 @@
         "sharedEnvResourceGroup": {
             "type": "string"
         },
+        "sharedServiceBusName": {
+            "type": "string"
+        },
         "sharedSQLServerName": {
             "type": "string"
         },
@@ -421,6 +424,34 @@
                     },
                     "vnetRouteAllEnabled": {
                         "value": "[parameters('vnetRouteAllEnabled')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('apiAppServiceName'), '-sb-role-', copyIndex(), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "copy": {
+                "name": "api-sb-role-assignments",
+                "count": 2
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[createArray(reference(concat(variables('apiAppServiceName'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value, reference(concat(variables('apiAppServiceName'), '-', parameters('utcValue'))).outputs.stagingManagedServiceIdentityId.value)[copyIndex()]]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusSender"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
                     }
                 }
             }
