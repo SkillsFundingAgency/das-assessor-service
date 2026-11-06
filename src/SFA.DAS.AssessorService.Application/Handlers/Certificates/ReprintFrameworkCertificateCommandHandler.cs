@@ -17,14 +17,14 @@ using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatu
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class FrameworkCertificateReprintCommandHandler : IRequestHandler<FrameworkCertificateReprintCommand, FrameworkCertificate>
+    public class ReprintFrameworkCertificateCommandHandler : IRequestHandler<ReprintFrameworkCertificateCommand, FrameworkCertificate>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IFrameworkLearnerRepository _frameworkLearnerRepository;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IValidator<PrintDeliveryAddress> _validator;
 
-        public FrameworkCertificateReprintCommandHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, 
+        public ReprintFrameworkCertificateCommandHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, 
             IDateTimeHelper dateTimeHelper, IValidator<PrintDeliveryAddress> validator)
         {
             _certificateRepository = certificateRepository;
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _validator = validator;
         }
 
-        public async Task<FrameworkCertificate> Handle(FrameworkCertificateReprintCommand request, CancellationToken cancellationToken)
+        public async Task<FrameworkCertificate> Handle(ReprintFrameworkCertificateCommand request, CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetFrameworkCertificate(request.FrameworkLearnerId);
 
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return certificate;
         }
 
-        private async Task<FrameworkCertificate> CreateNewFrameworkCertificate(FrameworkCertificateReprintCommand request, FrameworkLearner frameworkLearner)
+        private async Task<FrameworkCertificate> CreateNewFrameworkCertificate(ReprintFrameworkCertificateCommand request, FrameworkLearner frameworkLearner)
         {
             var certificate = new FrameworkCertificate
             {
@@ -111,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return certificate;
         }
 
-        private async Task<FrameworkCertificate> ReprintFrameworkCertificate(FrameworkCertificateReprintCommand request, FrameworkCertificate certificate)
+        private async Task<FrameworkCertificate> ReprintFrameworkCertificate(ReprintFrameworkCertificateCommand request, FrameworkCertificate certificate)
         {
             certificate.Status = CertificateStatus.Reprint;
             certificate.CertificateData.ReprintReasons = request.Reasons.ToFlagsList();

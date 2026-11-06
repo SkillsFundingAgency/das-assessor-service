@@ -18,17 +18,17 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 {
     [TestFixture]
-    public class WhenRequestingStandardCertificateReprint
+    public class WhenRequestingReprintCertificate
     {
         private static DateTime RequestedAt =>
             new DateTime(2026, 11, 3, 10, 0, 0, DateTimeKind.Utc);
 
         private Mock<ICertificateRepository> _repository;
         private Mock<IDateTimeHelper> _dateTimeHelper;
-        private CertificateReprintCommandHandler _sut;
+        private ReprintCertificateCommandHandler _sut;
 
         private Certificate _certificate;
-        private CertificateReprintCommand _request;
+        private ReprintCertificateCommand _request;
 
         [SetUp]
         public void SetUp()
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 }
             };
 
-            _request = new CertificateReprintCommand
+            _request = new ReprintCertificateCommand
             {
                 CertificateId = _certificate.Id,
                 Username = "Admin user"
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 .SetupGet(x => x.DateTimeUtcNow)
                 .Returns(RequestedAt);
 
-            _sut = new CertificateReprintCommandHandler(
+            _sut = new ReprintCertificateCommandHandler(
                 _repository.Object,
                 _dateTimeHelper.Object,
                 new PrintDeliveryAddressValidator());

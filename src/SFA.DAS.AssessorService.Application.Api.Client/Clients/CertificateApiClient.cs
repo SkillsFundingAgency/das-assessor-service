@@ -69,11 +69,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Certificate> UpdateCertificateRequestReprint(CertificateReprintCommand command)
+        public async Task<Certificate> ReprintCertificate(ReprintCertificateCommand command)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/request-reprint"))
             {
-                return await PostPutRequestWithResponseAsync<CertificateReprintCommand, Certificate>(httpRequest, command);
+                return await PostPutRequestWithResponseAsync<ReprintCertificateCommand, Certificate>(httpRequest, command);
             }
         }
 
@@ -93,11 +93,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<FrameworkCertificate> ReprintFramework(FrameworkCertificateReprintCommand request)
+        public async Task<FrameworkCertificate> ReprintFrameworkCertificate(ReprintFrameworkCertificateCommand request)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/reprint-framework"))
             {
-                return await PostPutRequestWithResponseAsync<FrameworkCertificateReprintCommand, FrameworkCertificate>(httpRequest, request);
+                return await PostPutRequestWithResponseAsync<ReprintFrameworkCertificateCommand, FrameworkCertificate>(httpRequest, request);
             }
         }
     }

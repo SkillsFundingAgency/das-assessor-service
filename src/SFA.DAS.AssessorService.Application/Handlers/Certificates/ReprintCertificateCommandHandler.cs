@@ -15,20 +15,20 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class CertificateReprintCommandHandler : IRequestHandler<CertificateReprintCommand, Certificate>
+    public class ReprintCertificateCommandHandler : IRequestHandler<ReprintCertificateCommand, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IValidator<PrintDeliveryAddress> _validator;
 
-        public CertificateReprintCommandHandler(ICertificateRepository certificateRepository, IDateTimeHelper dateTimeHelper, IValidator<PrintDeliveryAddress> validator)
+        public ReprintCertificateCommandHandler(ICertificateRepository certificateRepository, IDateTimeHelper dateTimeHelper, IValidator<PrintDeliveryAddress> validator)
         {
             _certificateRepository = certificateRepository;
             _dateTimeHelper = dateTimeHelper;
             _validator = validator;
         }
 
-        public async Task<Certificate> Handle(CertificateReprintCommand request, CancellationToken cancellationToken)
+        public async Task<Certificate> Handle(ReprintCertificateCommand request, CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate<Certificate>(request.CertificateId);
             if (certificate == null)

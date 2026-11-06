@@ -20,7 +20,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 {
     [TestFixture]
-    public class WhenRequestingFrameworkCertificateReprint
+    public class WhenRequestingReprintFrameworkCertificate
     {
         private static DateTime RequestedAt =>
             new DateTime(2026, 11, 3, 10, 0, 0, DateTimeKind.Utc);
@@ -28,9 +28,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
         private Mock<ICertificateRepository> _repository;
         private Mock<IFrameworkLearnerRepository> _learnerRepository;
         private Mock<IDateTimeHelper> _dateTimeHelper;
-        private FrameworkCertificateReprintCommandHandler _sut;
+        private ReprintFrameworkCertificateCommandHandler _sut;
 
-        private FrameworkCertificateReprintCommand _request;
+        private ReprintFrameworkCertificateCommand _request;
         private FrameworkLearner _learner;
         private FrameworkCertificate _certificate;
         private FrameworkCertificate _createdCertificate;
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             _learnerRepository = new Mock<IFrameworkLearnerRepository>();
             _dateTimeHelper = new Mock<IDateTimeHelper>();
 
-            _request = new FrameworkCertificateReprintCommand
+            _request = new ReprintFrameworkCertificateCommand
             {
                 FrameworkLearnerId = Guid.NewGuid(),
                 Username = "Admin user",
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 .SetupGet(x => x.DateTimeUtcNow)
                 .Returns(RequestedAt);
 
-            _sut = new FrameworkCertificateReprintCommandHandler(
+            _sut = new ReprintFrameworkCertificateCommandHandler(
                 _repository.Object,
                 _learnerRepository.Object,
                 _dateTimeHelper.Object,
