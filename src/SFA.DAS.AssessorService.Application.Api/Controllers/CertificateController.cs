@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> ReprintFramework([FromBody] ReprintFrameworkCertificateRequest request)
+        public async Task<IActionResult> ReprintFramework([FromBody] ReprintFrameworkCertificateCommand request)
         {
             return Ok(await _mediator.Send(request));
         }
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> RequestReprint([FromBody] UpdateCertificateRequestReprintCommand command)
+        public async Task<IActionResult> RequestReprint([FromBody] ReprintCertificateCommand command)
         {
             try
             {

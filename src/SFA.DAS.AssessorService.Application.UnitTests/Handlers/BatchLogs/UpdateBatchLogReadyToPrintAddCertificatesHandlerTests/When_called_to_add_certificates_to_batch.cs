@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.BatchLogs;
 using SFA.DAS.AssessorService.Application.UnitTests.Fakes;
 using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.UpdateBatchLogReadyToPrinterAddCertificatesHandlerTests
 {
@@ -86,13 +87,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.BatchLogs.Updat
         public async Task Then_next_certificates_ready_to_print_valid_included_status()
         {
             // Act
-            await _sut.Handle(new UpdateBatchLogReadyToPrintAddCertificatesRequest { MaxCertificatesToBeAdded = 1 }, CancellationToken.None);
+            await _sut.Handle(
+                new UpdateBatchLogReadyToPrintAddCertificatesRequest
+                {
+                    MaxCertificatesToBeAdded = 1
+                },
+                CancellationToken.None);
 
             // Assert
-            _mockCertificateRepository.Verify(v => v.GetCertificatesReadyToPrint(
-                It.IsAny<int>(),
-                It.IsAny<string[]>(),
-                It.Is<string[]>(s => s.Contains("Submitted") && s.Contains("Reprint") && s.Length == 2)),
+            _mockCertificateRepository.Verify(
+                x => x.GetCertificatesReadyToPrint(
+                    It.IsAny<int>(),
+                    It.IsAny<string[]>(),
+                    It.Is<string[]>(statuses =>
+                        statuses.Length == 2 &&
+                        statuses.Contains(CertificateStatus.PrintRequested) &&
+                        statuses.Contains(CertificateStatus.Reprint))),
                 Times.Once);
         }
 

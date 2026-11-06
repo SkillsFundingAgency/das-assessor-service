@@ -93,11 +93,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                             trainingProviderName = certificate.ProviderName;
                         }
                     }
-                    catch (EntityNotFoundException)
+                    catch (EntityNotFoundException ex)
                     {
                         if (certificate.EndPointAssessorUkprn != null)
-                            _logger.LogInformation(
-                                $"Cannot find training provider for ukprn {certificate.EndPointAssessorUkprn.Value}");
+                            _logger.LogInformation(ex, "Cannot find training provider for ukprn {EndPointAssessorUkprn}", certificate.EndPointAssessorUkprn.Value);
                     }
 
                     return new CertificateSummaryResponse
@@ -108,8 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CreatedDay = certificate.CreateDay,
                         UpdatedAt = certificate.UpdatedAt,
                         PrintStatusAt = printStatusAt,
-                        ContactOrganisation = certificate.ContactOrganisation,
-                        ContactName = certificate.ContactName,
+                        EmployerName = certificate.EmployerName,
                         TrainingProvider = trainingProviderName,
                         RecordedBy = recordedBy,
                         CourseOption = certificate.CourseOption,
@@ -121,11 +119,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         Level = certificate.StandardLevel,
                         AchievementDate = certificate.AchievementDate,
                         LearningStartDate = certificate.LearningStartDate,
-                        ContactAddLine1 = certificate.ContactAddLine1,
-                        ContactAddLine2 = certificate.ContactAddLine2,
-                        ContactAddLine3 = certificate.ContactAddLine3,
-                        ContactAddLine4 = certificate.ContactAddLine4,
-                        ContactPostCode = certificate.ContactPostCode,
                         Status = certificate.Status,
                         ReasonForChange = printReasonForChange,
                         LatestStatusDatetime = latestCertificateStatusDate

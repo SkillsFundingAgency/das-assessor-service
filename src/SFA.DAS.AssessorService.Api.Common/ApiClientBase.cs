@@ -144,8 +144,8 @@ namespace SFA.DAS.AssessorService.Api.Common
             }
             else
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                throw new HttpRequestException(json);
+                _logger.LogInformation("HttpRequestException: Status Code: {StatusCode} Body: {Json}", response.StatusCode, json);
+                throw new HttpRequestException(json, null, response.StatusCode);
             }
         }
 
@@ -247,8 +247,8 @@ namespace SFA.DAS.AssessorService.Api.Common
             }
             else
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                throw new HttpRequestException(json);
+                _logger.LogInformation("HttpRequestException: Status Code: {StatusCode} Body: {Json}", response.StatusCode, json);
+                throw new HttpRequestException(json, null, response.StatusCode);
             }
         }
 

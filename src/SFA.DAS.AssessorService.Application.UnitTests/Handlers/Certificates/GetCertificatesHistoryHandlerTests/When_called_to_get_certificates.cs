@@ -38,6 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         {
             var certificates = Builder<CertificateHistoryModel>.CreateListOfSize(10)
                 .All()
+                .With(x => x.EmployerName = "Assessment employer")
                 .With(x => x.CertificateLogs = Builder<CertificateLog>.CreateListOfSize(2)
                     .TheFirst(1)
                         .With(q => q.Status = CertificateStatus.Submitted)
@@ -103,6 +104,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         public void Then_recorded_by_has_submit_user()
         {
             _result.Items.ForEach(x => x.RecordedBy.Should().Be(SubmitDisplayname));
+        }
+
+        [Test]
+        public void Then_assessment_employer_is_returned()
+        {
+            _result.Items.Should().OnlyContain(
+                certificate => certificate.EmployerName == "Assessment employer");
         }
     }
 }
