@@ -4,7 +4,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class UpdateCertificateRequestReprintCommand : IRequest<Certificate>
+    public class CertificateReprintCommand : IRequest<Certificate>
     {
         public Guid CertificateId { get; set; }
         

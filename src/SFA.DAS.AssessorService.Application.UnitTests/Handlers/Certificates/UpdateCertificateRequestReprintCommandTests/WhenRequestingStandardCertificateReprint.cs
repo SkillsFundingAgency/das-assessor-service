@@ -5,12 +5,15 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Application.Validators;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.Helpers;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 {
@@ -22,10 +25,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 
         private Mock<ICertificateRepository> _repository;
         private Mock<IDateTimeHelper> _dateTimeHelper;
-        private UpdateCertificateRequestReprintCommandHandler _sut;
+        private CertificateReprintCommandHandler _sut;
 
         private Certificate _certificate;
-        private UpdateCertificateRequestReprintCommand _request;
+        private CertificateReprintCommand _request;
 
         [SetUp]
         public void SetUp()
@@ -39,10 +42,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 Status = CertificateStatus.Delivered,
                 PrintRequestedAt = RequestedAt.AddMonths(-1),
                 PrintRequestedBy = "Previous user",
-                BatchNumber = 42
+                BatchNumber = 42,
+                CertificateData = new CertificateData
+                {
+                    SendTo = CertificateSendTo.Apprentice,
+                    ContactName = "Test Recipient",
+                    ContactAddLine1 = "1 Example Road",
+                    ContactPostCode = "CV1 2WT"
+                }
             };
 
-            _request = new UpdateCertificateRequestReprintCommand
+            _request = new CertificateReprintCommand
             {
                 CertificateId = _certificate.Id,
                 Username = "Admin user"
@@ -64,9 +74,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 .SetupGet(x => x.DateTimeUtcNow)
                 .Returns(RequestedAt);
 
-            _sut = new UpdateCertificateRequestReprintCommandHandler(
+            _sut = new CertificateReprintCommandHandler(
                 _repository.Object,
-                _dateTimeHelper.Object);
+                _dateTimeHelper.Object,
+                new PrintDeliveryAddressValidator());
         }
 
         [TestCase(CertificateStatus.SentToPrinter)]
@@ -99,10 +110,54 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
         }
 
         [Test]
+        public async Task AndDeliveryDetailsAreInvalidThenNoReprintIsRequested(
+            [Values(
+                nameof(CertificateData.SendTo),
+                nameof(CertificateData.ContactName),
+                nameof(CertificateData.ContactAddLine1),
+                nameof(CertificateData.ContactPostCode),
+                nameof(CertificateData.ContactOrganisation))]
+            string invalidField)
+        {
+            // Arrange
+            var data = _certificate.CertificateData;
+
+            switch (invalidField)
+            {
+                case nameof(CertificateData.SendTo):
+                    data.SendTo = CertificateSendTo.None;
+                    break;
+                case nameof(CertificateData.ContactName):
+                    data.ContactName = null;
+                    break;
+                case nameof(CertificateData.ContactAddLine1):
+                    data.ContactAddLine1 = " ";
+                    break;
+                case nameof(CertificateData.ContactPostCode):
+                    data.ContactPostCode = null;
+                    break;
+                case nameof(CertificateData.ContactOrganisation):
+                    data.SendTo = CertificateSendTo.Employer;
+                    data.ContactOrganisation = null;
+                    break;
+            }
+
+            // Act
+            Func<Task> act = () =>
+                _sut.Handle(_request, CancellationToken.None);
+
+            // Assert
+            await act.Should().ThrowAsync<BadRequestException>();
+
+            VerifyNoReprintRequested();
+        }
+
+        [Test]
         public async Task AndReprintIsAlreadyPendingThenRequestDateIsNotReset()
         {
             // Arrange
             _certificate.Status = CertificateStatus.Reprint;
+            _certificate.CertificateData.ContactPostCode = null;
             var previousDate = _certificate.PrintRequestedAt;
             var previousUser = _certificate.PrintRequestedBy;
 
@@ -150,10 +205,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             // Arrange
             _certificate = null;
 
+            // Act
             Func<Task> act = () =>
                 _sut.Handle(_request, CancellationToken.None);
 
-            // Act / Assert
+            // Assert
             await act.Should().ThrowAsync<NotFoundException>();
 
             VerifyNoReprintRequested();

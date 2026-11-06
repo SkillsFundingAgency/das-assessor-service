@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Extensions;
+using SFA.DAS.AssessorService.Application.Validators;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -14,23 +17,40 @@ using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatu
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class ReprintFrameworkCertificateHandler : IRequestHandler<ReprintFrameworkCertificateRequest, FrameworkCertificate>
+    public class FrameworkCertificateReprintCommandHandler : IRequestHandler<FrameworkCertificateReprintCommand, FrameworkCertificate>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IFrameworkLearnerRepository _frameworkLearnerRepository;
         private readonly IDateTimeHelper _dateTimeHelper;
+        private readonly IValidator<PrintDeliveryAddress> _validator;
 
-        public ReprintFrameworkCertificateHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, IDateTimeHelper dateTimeHelper,
-            ILogger<ReprintFrameworkCertificateHandler> logger)
+        public FrameworkCertificateReprintCommandHandler(ICertificateRepository certificateRepository, IFrameworkLearnerRepository frameworkLearnerRepository, 
+            IDateTimeHelper dateTimeHelper, IValidator<PrintDeliveryAddress> validator)
         {
             _certificateRepository = certificateRepository;
             _frameworkLearnerRepository = frameworkLearnerRepository;
             _dateTimeHelper = dateTimeHelper;
+            _validator = validator;
         }
 
-        public async Task<FrameworkCertificate> Handle(ReprintFrameworkCertificateRequest request, CancellationToken cancellationToken)
+        public async Task<FrameworkCertificate> Handle(FrameworkCertificateReprintCommand request, CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetFrameworkCertificate(request.FrameworkLearnerId);
+
+            var address = new PrintDeliveryAddress(
+                CertificateSendTo.Apprentice,
+                request.ContactName,
+                OrganisationName: null,
+                AddressLine1: request.ContactAddLine1,
+                Postcode: request.ContactPostcode);
+
+            var validation = _validator.Validate(address);
+
+            if (!validation.IsValid)
+            {
+                var message = string.Join("; ", validation.Errors.Select(error => error.ErrorMessage));
+                throw new BadRequestException(message);
+            }
 
             if (certificate == null)
             {
@@ -48,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return certificate;
         }
 
-        private async Task<FrameworkCertificate> CreateNewFrameworkCertificate(ReprintFrameworkCertificateRequest request, FrameworkLearner frameworkLearner)
+        private async Task<FrameworkCertificate> CreateNewFrameworkCertificate(FrameworkCertificateReprintCommand request, FrameworkLearner frameworkLearner)
         {
             var certificate = new FrameworkCertificate
             {
@@ -91,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return certificate;
         }
 
-        private async Task<FrameworkCertificate> ReprintFrameworkCertificate(ReprintFrameworkCertificateRequest request, FrameworkCertificate certificate)
+        private async Task<FrameworkCertificate> ReprintFrameworkCertificate(FrameworkCertificateReprintCommand request, FrameworkCertificate certificate)
         {
             certificate.Status = CertificateStatus.Reprint;
             certificate.CertificateData.ReprintReasons = request.Reasons.ToFlagsList();
