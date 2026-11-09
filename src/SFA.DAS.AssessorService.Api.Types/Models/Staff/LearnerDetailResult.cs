@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Staff
         public List<CertificateLogSummary> CertificateLogs { get; set; }
         public string ReasonForChange { get; set; }
         public DateTime? PrintStatusAt { get; set; }
+        public DateTime? PrintRequestedAt { get; set; }
 
         public string CertificateSendTo { get; set; }
         public string ContactName { get; set; }

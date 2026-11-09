@@ -57,6 +57,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
         public int? EndPointAssessorUkprn { get; set; }
 
         public DateTime? StatusAt { get; set; }
+        public DateTime? PrintRequestedAt { get; set; }
 
         public string ReasonForChange { get; set; }
     }

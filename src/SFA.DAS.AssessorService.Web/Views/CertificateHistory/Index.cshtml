@@ -195,6 +195,7 @@
 
                                     @if (Model.CanShowCertificateDetails(item))
                                     {
+                                        var statusDate = Model.GetCertificateStatusDate(item);
                                         <h2 class="govuk-heading-m">@Localizer["LatestCertificateDetails"]</h2>
 
                                         <dl class="govuk-summary-list govuk-summary-list--no-border">
@@ -216,14 +217,17 @@
                                                 </dd>
                                             </div>
 
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">
-                                                    @CertificateStatus.GetStatusDateDisplayName(item.Status)
-                                                </dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    @item.LatestStatusDatetime.ToString("dd/MM/yyyy HH:mm:ss")
-                                                </dd>
-                                            </div>
+                                            @if (statusDate.HasValue)
+                                            {
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">
+                                                        @CertificateStatus.GetStatusDateDisplayName(item.Status)
+                                                    </dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        @statusDate.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                                                    </dd>
+                                                </div>
+                                            }
                                         </dl>
                                     }
                                 </div>

@@ -392,8 +392,15 @@ namespace SFA.DAS.AssessorService.Data
                      UpdatedBy = q.UpdatedBy,
                      Version = q.Version,
                      EndPointAssessorUkprn = q.Organisation.EndPointAssessorUkprn,
-                     StatusAt = q.CertificateBatchLog.StatusAt,
-                     ReasonForChange = q.CertificateBatchLog.ReasonForChange,
+                     PrintRequestedAt = q.PrintRequestedAt,
+                     StatusAt = q.BatchNumber.HasValue &&
+                                q.CertificateBatchLog.BatchNumber == q.BatchNumber
+                         ? q.CertificateBatchLog.StatusAt
+                         : null,
+                     ReasonForChange = q.BatchNumber.HasValue &&
+                                       q.CertificateBatchLog.BatchNumber == q.BatchNumber
+                         ? q.CertificateBatchLog.ReasonForChange
+                         : null,
                      CertificateLogs = q.CertificateLogs
                  })
                 .Skip((pageIndex - 1) * pageSize)
@@ -613,6 +620,7 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.CertificateData.SendTo = CertificateSendTo.Apprentice;
 
+            certificate.CertificateData.Department = string.Empty;
             certificate.CertificateData.ContactName = address.ContactName;
             certificate.CertificateData.ContactOrganisation = address.ContactOrganisation;
             certificate.CertificateData.ContactAddLine1 = address.ContactAddLine1;

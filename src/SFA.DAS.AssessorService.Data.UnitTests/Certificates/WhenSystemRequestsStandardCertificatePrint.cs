@@ -62,6 +62,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var originalProviderUkPrn = _certificate.ProviderUkPrn;
 
             expectedData.SendTo = CertificateSendTo.Apprentice;
+            expectedData.Department = string.Empty;
             expectedData.ContactName = _address.ContactName;
             expectedData.ContactOrganisation = _address.ContactOrganisation;
             expectedData.ContactAddLine1 = _address.ContactAddLine1;

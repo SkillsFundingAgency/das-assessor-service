@@ -107,6 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CreatedDay = certificate.CreateDay,
                         UpdatedAt = certificate.UpdatedAt,
                         PrintStatusAt = printStatusAt,
+                        PrintRequestedAt = certificate.PrintRequestedAt,
                         EmployerName = certificate.EmployerName,
                         TrainingProvider = trainingProviderName,
                         RecordedBy = recordedBy,
