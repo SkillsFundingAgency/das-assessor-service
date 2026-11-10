@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
+using SFA.DAS.AssessorService.Application.Events;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi._HelperClasses;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -19,12 +20,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
         private readonly IMediator _mediator;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<CreateBatchEpaHandler> _logger;
+        private readonly IOutcomeRecordedEventPublisher _outcomeRecordedEventPublisher;
 
-        public CreateBatchEpaHandler(ICertificateRepository certificateRepository, ILogger<CreateBatchEpaHandler> logger, IMediator mediator)
+        public CreateBatchEpaHandler(ICertificateRepository certificateRepository, ILogger<CreateBatchEpaHandler> logger, IMediator mediator, IOutcomeRecordedEventPublisher outcomeRecordedEventPublisher)
         {
             _certificateRepository = certificateRepository;
             _logger = logger;
             _mediator = mediator;
+            _outcomeRecordedEventPublisher = outcomeRecordedEventPublisher;
         }
 
         public async Task<EpaDetails> Handle(CreateBatchEpaRequest request, CancellationToken cancellationToken)
@@ -86,7 +89,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas
 
             _logger.LogInformation("CreateNewEpa Before Update Cert in db");
             
-            await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, epaAction);
+            var updatedCertificate = await _certificateRepository.UpdateStandardCertificate(certificate, ExternalApiConstants.ApiUserName, epaAction);
+            await _outcomeRecordedEventPublisher.PublishIfOutcomeRecorded(updatedCertificate, epaAction);
 
             return certificate.CertificateData.EpaDetails;
         }

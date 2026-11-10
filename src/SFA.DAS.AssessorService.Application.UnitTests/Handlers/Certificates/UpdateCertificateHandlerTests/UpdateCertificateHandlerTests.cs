@@ -9,6 +9,7 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Events;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -70,6 +71,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             fixture.VerifyUpdatedEpaDetails(expectedLatestEpaOutcome, expectedLatestEpaDate, expectedEpasCount);
         }
 
+        [TestCase(CertificateActions.Submit, CertificateStatus.Submitted, EpaOutcome.Pass)]
+        [TestCase(CertificateActions.Submit, CertificateStatus.Submitted, EpaOutcome.Fail)]
+        [TestCase(CertificateActions.Grade, CertificateStatus.Submitted, EpaOutcome.Pass)]
+        public async Task WhenCertificateIsUpdated_ThenOutcomeRecordedEventPublisherIsInvokedWithRequestAction(
+            string action, string updatedStatus, string updatedOverallGrade)
+        {
+            // Arrange
+            var fixture = new TheFixture()
+                .WithCertificate(CertificateId, CertificateReference, CertificateStatus.Draft, null, null);
+
+            // Act
+            await fixture.Handle(updatedStatus, updatedOverallGrade, new DateTime(2024, 1, 1), action);
+
+            // Assert
+            fixture.VerifyOutcomeRecordedEventPublisherInvocation(action);
+        }
+
         static IEnumerable<object[]> TestSource()
         {
             return new[]
@@ -98,6 +116,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
             private Mock<ICertificateRepository> _certificateRepository;
             private Mock<IStandardRepository> _standardRepository;
             private Mock<IMediator> _mediator;
+
+            private Mock<IOutcomeRecordedEventPublisher> _outcomeRecordedEventPublisher;
             private UpdateCertificateHandler _sut;
 
             private Certificate _certificate;
@@ -108,7 +128,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
                 _certificateRepository = new Mock<ICertificateRepository>();
                 _mediator = new Mock<IMediator>();
                 _standardRepository = new Mock<IStandardRepository>();
-                _sut = new UpdateCertificateHandler(_certificateRepository.Object, _standardRepository.Object, _mediator.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
+                _outcomeRecordedEventPublisher = new Mock<IOutcomeRecordedEventPublisher>();
+                _sut = new UpdateCertificateHandler(_certificateRepository.Object, _standardRepository.Object, _mediator.Object, _outcomeRecordedEventPublisher.Object, new Mock<ILogger<UpdateCertificateHandler>>().Object);
             }
 
             public TheFixture WithCertificate(Guid id, string certficateReference, string status, string grade, DateTime? achievementDate)
@@ -194,6 +215,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Up
 
                 _updatedCertificate = await _sut.Handle(new UpdateCertificateRequest(updateCertificate) { Username = "user" }, new CancellationToken());
                 return _updatedCertificate;
+            }
+
+            public async Task<Certificate> Handle(string updatedStatus, string updatedOverallGrade, DateTime? updatedAchievementDate, string action)
+            {
+                var updateCertificate = CloneCertificate(_certificate);
+                updateCertificate.Status = updatedStatus;
+                updateCertificate.CertificateData.OverallGrade = updatedOverallGrade;
+                updateCertificate.CertificateData.AchievementDate = updatedAchievementDate;
+
+                _updatedCertificate = await _sut.Handle(new UpdateCertificateRequest(updateCertificate) { Username = "user", Action = action }, new CancellationToken());
+                return _updatedCertificate;
+            }
+
+            public void VerifyOutcomeRecordedEventPublisherInvocation(string action)
+            {
+                _outcomeRecordedEventPublisher.Verify(p => p.PublishIfOutcomeRecorded(
+                    It.IsAny<Certificate>(),
+                    action), Times.Once());
             }
 
             public async Task<Certificate> Handle(string updatedStatus, CertificateSendTo updatedSendTo)
