@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.ExternalApi.Epas;
+using SFA.DAS.AssessorService.Application.Events;
 using SFA.DAS.AssessorService.Application.Handlers.ExternalApi.Epas;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -21,12 +22,52 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Epas
     {
         UpdateBatchEpaHandler _sut;
         Mock<ICertificateRepository> _mockCertificateRepository;
+        Mock<IOutcomeRecordedEventPublisher> _mockOutcomeRecordedEventPublisher;
 
         [SetUp]
         public void Setup()
         {
             _mockCertificateRepository = new Mock<ICertificateRepository>();
-            _sut = new UpdateBatchEpaHandler(_mockCertificateRepository.Object, Mock.Of<ILogger<UpdateBatchEpaHandler>>());
+            _mockOutcomeRecordedEventPublisher = new Mock<IOutcomeRecordedEventPublisher>();
+            _sut = new UpdateBatchEpaHandler(_mockCertificateRepository.Object, Mock.Of<ILogger<UpdateBatchEpaHandler>>(), _mockOutcomeRecordedEventPublisher.Object);
+        }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task AndOutcomeIsFail_PublishesOutcomeRecordedEvent(
+            UpdateBatchEpaRequest request,
+            Certificate certificate,
+            CertificateData certificateData)
+        {
+            //Arrange
+            certificate.CertificateData = certificateData;
+            _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(certificate);
+            _mockCertificateRepository.Setup(s => s.UpdateStandardCertificate(It.IsAny<Certificate>(), "API", CertificateActions.Submit, true, null)).ReturnsAsync(certificate);
+            request.EpaDetails.Epas.OrderByDescending(s => s.EpaDate).First().EpaOutcome = EpaOutcome.Fail;
+
+            //Act
+            await _sut.Handle(request, new CancellationToken());
+
+            //Assert
+            _mockOutcomeRecordedEventPublisher.Verify(p => p.PublishIfOutcomeRecorded(certificate, CertificateActions.Submit), Times.Once);
+        }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task AndOutcomeIsPass_DoesNotPublishOutcomeRecordedEvent(
+            UpdateBatchEpaRequest request,
+            Certificate certificate,
+            CertificateData certificateData)
+        {
+            //Arrange
+            certificate.CertificateData = certificateData;
+            _mockCertificateRepository.Setup(s => s.GetCertificate(request.Uln, request.StandardCode)).ReturnsAsync(certificate);
+            _mockCertificateRepository.Setup(s => s.UpdateStandardCertificate(It.IsAny<Certificate>(), "API", CertificateActions.Epa, true, null)).ReturnsAsync(certificate);
+            request.EpaDetails.Epas.OrderByDescending(s => s.EpaDate).First().EpaOutcome = EpaOutcome.Pass;
+
+            //Act
+            await _sut.Handle(request, new CancellationToken());
+
+            //Assert
+            _mockOutcomeRecordedEventPublisher.Verify(p => p.PublishIfOutcomeRecorded(It.IsAny<Certificate>(), CertificateActions.Submit), Times.Never);
         }
 
         [Test, MoqAutoData]

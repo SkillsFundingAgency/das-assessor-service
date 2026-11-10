@@ -32,32 +32,32 @@ namespace SFA.DAS.AssessorService.Application.Events
                 return;
             }
 
-            var epaDetails = updated.CertificateData?.EpaDetails;
-            if (!TryMapOutcome(epaDetails?.LatestEpaOutcome, out var outcome))
-            {
-                _logger.LogInformation("OutcomeRecordedEvent skipped for certificate {CertificateId}: unsupported outcome {Outcome}", updated.Id, epaDetails?.LatestEpaOutcome);
-                return;
-            }
-
-            var achievementDate = updated.CertificateData.AchievementDate;
-            if (achievementDate == null)
-            {
-                _logger.LogWarning("OutcomeRecordedEvent skipped for certificate {CertificateId}: no achievement date", updated.Id);
-                return;
-            }
-
-            var learner = await _learnerRepository.Get(updated.Uln, updated.StandardCode);
-            if (learner?.ApprenticeshipId == null)
-            {
-                _logger.LogInformation("OutcomeRecordedEvent skipped for certificate {CertificateId}: no learner apprenticeship id", updated.Id);
-                return;
-            }
-
-            _logger.LogInformation("Publishing OutcomeRecordedEvent for certificate {CertificateId}, apprenticeship {ApprenticeshipId}, outcome {Outcome}",
-                updated.Id, learner.ApprenticeshipId, outcome);
-
             try
             {
+                var epaDetails = updated.CertificateData?.EpaDetails;
+                if (!TryMapOutcome(epaDetails?.LatestEpaOutcome, out var outcome))
+                {
+                    _logger.LogInformation("OutcomeRecordedEvent skipped for certificate {CertificateId}: unsupported outcome {Outcome}", updated.Id, epaDetails?.LatestEpaOutcome);
+                    return;
+                }
+
+                var achievementDate = updated.CertificateData?.AchievementDate;
+                if (achievementDate == null)
+                {
+                    _logger.LogWarning("OutcomeRecordedEvent skipped for certificate {CertificateId}: no achievement date", updated.Id);
+                    return;
+                }
+
+                var learner = await _learnerRepository.Get(updated.Uln, updated.StandardCode);
+                if (learner?.ApprenticeshipId == null)
+                {
+                    _logger.LogInformation("OutcomeRecordedEvent skipped for certificate {CertificateId}: no learner apprenticeship id", updated.Id);
+                    return;
+                }
+
+                _logger.LogInformation("Publishing OutcomeRecordedEvent for certificate {CertificateId}, apprenticeship {ApprenticeshipId}, outcome {Outcome}",
+                    updated.Id, learner.ApprenticeshipId, outcome);
+
                 await _messageSession.Publish(new OutcomeRecordedEvent
                 {
                     ApprenticeshipId = learner.ApprenticeshipId.Value,
