@@ -10,6 +10,7 @@ using Moq.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates;
@@ -18,6 +19,7 @@ public class WhenSystemCreatesStandardCertificate
 {
     private Mock<IAssessorDbContext> _mockDbContext;
     private Mock<IAssessorUnitOfWork> _mockUnitOfWork;
+    private Mock<IDateTimeHelper> _mockDateTimeHelper;
     private Mock<DbSet<CertificateBase>> _mockCertificateSet;
     private CertificateRepository _sut;
 
@@ -26,6 +28,7 @@ public class WhenSystemCreatesStandardCertificate
     {
         _mockDbContext = new Mock<IAssessorDbContext>();
         _mockUnitOfWork = new Mock<IAssessorUnitOfWork>();
+        _mockDateTimeHelper = new Mock<IDateTimeHelper>();
         _mockCertificateSet = new Mock<DbSet<CertificateBase>>();
 
         _mockDbContext
@@ -69,7 +72,11 @@ public class WhenSystemCreatesStandardCertificate
                 (Func<Task> action, CancellationToken cancellationToken) =>
                     action());
 
-        _sut = new CertificateRepository(_mockUnitOfWork.Object);
+        _mockDateTimeHelper
+            .Setup(x => x.DateTimeUtcNow)
+            .Returns(DateTime.UtcNow);
+
+        _sut = new CertificateRepository(_mockUnitOfWork.Object, _mockDateTimeHelper.Object);
     }
 
     [Test]

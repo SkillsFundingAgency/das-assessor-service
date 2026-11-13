@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -15,10 +14,10 @@ using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
-namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintRequestHandlerTests
+namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.UpdateCertificatePrintRequestCommandHandlerTests
 {
     [TestFixture]
-    public class UpdateCertificatePrintRequestHandlerTests
+    public class UpdateCertificatePrintRequestCommandHandlerTests
     {
         private Mock<IMediator> _mediator;
         private Mock<ICertificateRepository> _certificateRepository;

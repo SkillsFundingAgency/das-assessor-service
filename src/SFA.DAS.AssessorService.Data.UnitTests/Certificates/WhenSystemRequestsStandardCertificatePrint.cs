@@ -25,23 +25,18 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         {
             // Arrange
             var originalCreatedAt = _certificate.CreatedAt;
-            var beforeUpdatedAt = DateTime.UtcNow;
 
             // Act
             var result = await _sut.UpdatePrintRequested<Certificate>(
                 _certificate.Id,
                 _address,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
-
-            var afterUpdatedAt = DateTime.UtcNow;
 
             // Assert
             AssertPrintState(
                 result,
-                CertificateStatus.PrintRequested,
-                beforeUpdatedAt,
-                afterUpdatedAt);
+                CertificateStatus.PrintRequested);
 
             result.CreatedAt.Should().Be(originalCreatedAt);
         }
@@ -67,7 +62,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var result = await _sut.UpdatePrintRequested<Certificate>(
                 _certificate.Id,
                 _address,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
 
             // Assert
@@ -86,13 +81,14 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var result = await _sut.UpdatePrintRequested<Certificate>(
                 _certificate.Id,
                 _address,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
 
             // Assert
             AssertIndependentAuditSnapshot(
                 result,
-                CertificateStatus.PrintRequested);
+                CertificateStatus.PrintRequested,
+                CertificateActions.PrintRequest);
         }
 
         [Test]
@@ -103,7 +99,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 _sut.UpdatePrintRequested<Certificate>(
                     Guid.NewGuid(),
                     _address,
-                    RequestedAt,
+                    DateTimeUtcNow,
                     RequestedBy);
 
             // Act / Assert
@@ -126,7 +122,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 _sut.UpdatePrintRequested<Certificate>(
                     _otherCertificate.Id,
                     _address,
-                    RequestedAt,
+                    DateTimeUtcNow,
                     RequestedBy);
 
             // Act / Assert

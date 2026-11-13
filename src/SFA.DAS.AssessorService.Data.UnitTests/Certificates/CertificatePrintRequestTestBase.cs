@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
@@ -20,10 +21,11 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         protected const string RequestedBy = "Requesting user";
 
-        protected static DateTime RequestedAt =>
+        protected static DateTime DateTimeUtcNow =>
             new DateTime(2026, 11, 3, 10, 0, 0, DateTimeKind.Utc);
 
         protected Mock<IAssessorDbContext> _dbContext;
+        protected Mock<IDateTimeHelper> _dateTimeHelper;
         protected Mock<DbSet<CertificateLog>> _logSet;
         protected List<CertificateLog> _logs;
         protected CertificateRepository _sut;
@@ -35,6 +37,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         public void SetUp()
         {
             _dbContext = new Mock<IAssessorDbContext>();
+            _dateTimeHelper = new Mock<IDateTimeHelper>();
             _logSet = new Mock<DbSet<CertificateLog>>();
             _logs = new List<CertificateLog>();
 
@@ -43,6 +46,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _dbContext
                 .Setup(x => x.Set<T>())
                 .ReturnsDbSet(new List<T> { _certificate });
+
+            _dateTimeHelper
+                .Setup(x => x.DateTimeUtcNow)
+                .Returns(DateTimeUtcNow);
 
             if (typeof(T) == typeof(Certificate))
             {
@@ -86,7 +93,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                 .SetupGet(x => x.AssessorDbContext)
                 .Returns(_dbContext.Object);
 
-            _sut = new CertificateRepository(unitOfWork.Object);
+            _sut = new CertificateRepository(unitOfWork.Object, _dateTimeHelper.Object);
 
             _address = new CertificatePrintAddress
             {
@@ -102,13 +109,11 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
         protected void AssertPrintState(
             CertificateBase result,
-            string expectedStatus,
-            DateTime beforeUpdatedAt,
-            DateTime afterUpdatedAt)
+            string expectedStatus)
         {
             result.Should().BeSameAs(_certificate);
             result.Status.Should().Be(expectedStatus);
-            result.PrintRequestedAt.Should().Be(RequestedAt);
+            result.PrintRequestedAt.Should().Be(DateTimeUtcNow);
             result.PrintRequestedBy.Should().Be(RequestedBy);
 
             result.BatchNumber.Should().BeNull();
@@ -118,24 +123,23 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             result.UpdatedBy.Should().Be(RequestedBy);
             result.UpdatedAt.Should().NotBeNull();
-            result.UpdatedAt.Value.Should()
-                .BeOnOrAfter(beforeUpdatedAt)
-                .And.BeOnOrBefore(afterUpdatedAt);
+            result.UpdatedAt.Value.Should().Be(DateTimeUtcNow);
 
             VerifySavedOnce();
         }
 
         protected void AssertIndependentAuditSnapshot(
             CertificateBase result,
-            string expectedStatus)
+            string expectedStatus,
+            string certificateAction)
         {
             var log = _logs.Should().ContainSingle().Which;
 
             log.Id.Should().NotBeEmpty();
             log.CertificateId.Should().Be(result.Id);
-            log.Action.Should().Be(CertificateActions.PrintRequest);
+            log.Action.Should().Be(certificateAction);
             log.Status.Should().Be(expectedStatus);
-            log.EventTime.Should().Be(RequestedAt);
+            log.EventTime.Should().Be(DateTimeUtcNow);
             log.Username.Should().Be(RequestedBy);
             log.BatchNumber.Should().BeNull();
 
@@ -192,7 +196,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             string reference)
             where T : CertificateBase, new()
         {
-            var previousRequestedAt = RequestedAt.AddMonths(-1);
+            var previousRequestedAt = DateTimeUtcNow.AddMonths(-1);
 
             var data = new CertificateData
             {

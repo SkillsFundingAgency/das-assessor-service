@@ -22,10 +22,12 @@ namespace SFA.DAS.AssessorService.Data
     public class CertificateRepository : ICertificateRepository
     {
         private readonly IAssessorUnitOfWork _unitOfWork;
+        private readonly IDateTimeHelper _dateTimeHelper;
 
-        public CertificateRepository(IAssessorUnitOfWork unitOfWork)
+        public CertificateRepository(IAssessorUnitOfWork unitOfWork, IDateTimeHelper dateTimeHelper)
         {
             _unitOfWork = unitOfWork;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         public async Task<Certificate> NewStandardCertificate(Certificate certificate)
@@ -67,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
                 // ensure the EpaDetails are kept in sychronization with the certificate reference
                 certificate.CertificateData.EpaDetails.EpaReference = certificate.CertificateReference;
 
-                AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
+                AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, _dateTimeHelper.DateTimeUtcNow,
                     certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
             });
 
@@ -324,7 +326,7 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var certificate in certificates)
             {
-                certificate.UpdatedAt = DateTime.UtcNow;
+                certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
                 certificate.UpdatedBy = SystemUsers.PrintFunction;
                 certificate.BatchNumber = batchNumber;
             }
@@ -500,7 +502,7 @@ namespace SFA.DAS.AssessorService.Data
             certificate.DateOfBirth = updatedCertificate.DateOfBirth;
 
             certificate.UpdatedBy = username;
-            certificate.UpdatedAt = DateTime.UtcNow;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
             
             certificate.IsPrivatelyFunded = updatedCertificate.IsPrivatelyFunded;
             if (certificate.IsPrivatelyFunded)
@@ -536,7 +538,7 @@ namespace SFA.DAS.AssessorService.Data
             certificate.Status = updatedCertificate.Status;
             
             certificate.UpdatedBy = username;
-            certificate.UpdatedAt = DateTime.UtcNow;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
 
             await ClearBatchNumberIfPrintedCertificateChanged(certificate);
 
@@ -560,7 +562,7 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.Status = CertificateStatus.Deleted;
             certificate.DeletedBy = username;
-            certificate.DeletedAt = DateTime.UtcNow;
+            certificate.DeletedAt = _dateTimeHelper.DateTimeUtcNow;
 
             if (incidentNumber != null)
             {
@@ -588,23 +590,23 @@ namespace SFA.DAS.AssessorService.Data
             return certificate;
         }
 
-        public async Task<T> UpdateReprintRequested<T>(Guid certificateId, DateTime printRequestedAt, string printRequestedBy) where T : CertificateBase
+        public async Task<T> UpdateReprintRequested<T>(Guid certificateId, DateTime reprintRequestedAt, string reprintRequestedBy) where T : CertificateBase
         {
             var certificate = await GetCertificate<T>(certificateId)
                     ?? throw new NotFoundException();
 
-            certificate.PrintRequestedAt = printRequestedAt;
-            certificate.PrintRequestedBy = printRequestedBy;
+            certificate.PrintRequestedAt = reprintRequestedAt;
+            certificate.PrintRequestedBy = reprintRequestedBy;
             certificate.Status = CertificateStatus.Reprint;
 
             certificate.ToBePrinted = null;
             certificate.BatchNumber = null;
 
-            certificate.UpdatedBy = printRequestedBy;
-            certificate.UpdatedAt = DateTime.UtcNow;
+            certificate.UpdatedBy = reprintRequestedBy;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
 
-            AddSingleCertificateLog(certificate.Id, CertificateActions.PrintRequest, certificate.Status, printRequestedAt,
-                certificate.CertificateData, printRequestedBy,
+            AddSingleCertificateLog(certificate.Id, CertificateActions.Reprint, certificate.Status, reprintRequestedAt,
+                certificate.CertificateData, reprintRequestedBy,
                 certificate.BatchNumber);
 
             await _unitOfWork.AssessorDbContext.SaveChangesAsync();
@@ -633,7 +635,7 @@ namespace SFA.DAS.AssessorService.Data
             certificate.BatchNumber = null;
 
             certificate.UpdatedBy = printRequestedBy;
-            certificate.UpdatedAt = DateTime.UtcNow;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
 
             AddSingleCertificateLog(certificate.Id, CertificateActions.PrintRequest, certificate.Status, printRequestedAt,
                 certificate.CertificateData, printRequestedBy,

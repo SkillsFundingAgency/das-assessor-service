@@ -19,22 +19,17 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         {
             // Arrange
             var originalCreatedAt = _certificate.CreatedAt;
-            var beforeUpdatedAt = DateTime.UtcNow;
 
             // Act
             var result = await _sut.UpdateReprintRequested<T>(
                 _certificate.Id,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
-
-            var afterUpdatedAt = DateTime.UtcNow;
 
             // Assert
             AssertPrintState(
                 result,
-                CertificateStatus.Reprint,
-                beforeUpdatedAt,
-                afterUpdatedAt);
+                CertificateStatus.Reprint);
 
             result.CreatedAt.Should().Be(originalCreatedAt);
         }
@@ -51,7 +46,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             // Act
             var result = await _sut.UpdateReprintRequested<T>(
                 _certificate.Id,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
 
             // Assert
@@ -69,13 +64,14 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             // Act
             var result = await _sut.UpdateReprintRequested<T>(
                 _certificate.Id,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
 
             // Assert
             AssertIndependentAuditSnapshot(
                 result,
-                CertificateStatus.Reprint);
+                CertificateStatus.Reprint,
+                CertificateActions.Reprint);
         }
 
         [Test]
@@ -84,7 +80,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             // Arrange
             Func<Task> act = () => _sut.UpdateReprintRequested<T>(
                 Guid.NewGuid(),
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
 
             // Act / Assert
@@ -105,7 +101,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             Func<Task> act = () => _sut.UpdateReprintRequested<T>(
                 _otherCertificate.Id,
-                RequestedAt,
+                DateTimeUtcNow,
                 RequestedBy);
 
             // Act / Assert

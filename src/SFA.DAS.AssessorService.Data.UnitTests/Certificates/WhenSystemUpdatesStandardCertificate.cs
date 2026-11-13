@@ -8,6 +8,7 @@ using Moq.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates;
@@ -32,7 +33,12 @@ public class WhenSystemUpdatesStandardCertificate
             .SetupGet(x => x.AssessorDbContext)
             .Returns(_mockDbContext.Object);
 
-        _sut = new CertificateRepository(mockUnitOfWork.Object);
+        var mockDateTimeHelper = new Mock<IDateTimeHelper>();
+        mockDateTimeHelper
+            .Setup(x => x.DateTimeUtcNow)
+            .Returns(DateTime.UtcNow);
+
+        _sut = new CertificateRepository(mockUnitOfWork.Object, mockDateTimeHelper.Object);
     }
 
     [Test]
