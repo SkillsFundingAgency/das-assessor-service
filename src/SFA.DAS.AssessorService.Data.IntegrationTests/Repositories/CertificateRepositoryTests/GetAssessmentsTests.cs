@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs.Certificate;
+using SFA.DAS.AssessorService.Domain.Helpers;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.CertificateRepositoryTests
 {
@@ -129,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.Certificate
 
             public GetAssessmentsTestsFixture()
             {
-                _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext));
+                _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext), new DateTimeHelper());
             }
 
             public async Task<GetAssessmentsTestsFixture> GetAssessments(long ukprn, string standardReference)

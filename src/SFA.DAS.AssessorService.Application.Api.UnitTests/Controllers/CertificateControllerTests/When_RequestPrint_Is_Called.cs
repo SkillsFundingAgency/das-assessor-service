@@ -34,7 +34,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             var cmd = new UpdateCertificatePrintRequestCommand
             {
                 Address = new CertificatePrintAddress { ContactName = "ABC" },
-                PrintRequestedAt = DateTime.UtcNow,
                 PrintRequestedBy = "User"
             };
 

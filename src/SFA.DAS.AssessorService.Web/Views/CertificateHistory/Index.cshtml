@@ -105,7 +105,7 @@
                                     @Html.DisplayFor(modelItem => item.Uln)
                                 </td>
                                 <td class="govuk-table__cell" data-label="@Localizer["Employer"]">
-                                    @Html.DisplayFor(modelItem => item.ContactOrganisation)
+                                    @Html.DisplayFor(modelItem => item.EmployerName)
                                 </td>
                                 <td class="govuk-table__cell das-no-wrap" data-label="@Localizer["TrainingProvider"]">
                                     @Html.DisplayFor(modelItem => item.TrainingProvider)
@@ -195,97 +195,41 @@
 
                                     @if (Model.CanShowCertificateDetails(item))
                                     {
+                                        var statusDate = Model.GetCertificateStatusDate(item);
                                         <h2 class="govuk-heading-m">@Localizer["LatestCertificateDetails"]</h2>
 
                                         <dl class="govuk-summary-list govuk-summary-list--no-border">
                                             <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">
-                                                @Localizer["CertificateNumber"]
-                                            </dt>
-                                            <dd class="govuk-summary-list__value">@Html.DisplayFor(modelItem => item.CertificateReference)</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            @Localizer["CertificateStatus"]
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <text>@CertificateStatus.GetDisplayName(item.Status)</text>
-                        </dd>
-                    </div>
+                                                <dt class="govuk-summary-list__key">
+                                                    @Localizer["CertificateNumber"]
+                                                </dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    @Html.DisplayFor(modelItem => item.CertificateReference)
+                                                </dd>
+                                            </div>
 
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            @CertificateStatus.GetStatusDateDisplayName(item.Status)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <text> @item.LatestStatusDatetime.ToString("dd/MM/yyyy hh:MM:ss")</text>
-                        </dd>
-                    </div>
-                    </dl>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">
+                                                    @Localizer["CertificateStatus"]
+                                                </dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    @CertificateStatus.GetDisplayName(item.Status)
+                                                </dd>
+                                            </div>
 
-                    <div class="govuk-grid-column-full govuk-!-margin-bottom-3 govuk-!-margin-top-1">
-                        <div class="govuk-inset-text">
-                            @Localizer["DeliveryOfCertificates"]
-                        </div>
-                    </div>
-
-                    <p class="govuk-body">
-
-                        @if (Model.IsCertificateWaitingToBeDelivered(item))
-                        {
-                            <h3>@Localizer["WaitingToBeDelivered"]</h3>
-                        }
-                        else
-                        {
-                            var printStatusAtDate = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.UtcToTimeZoneTime().ToString("dd/MM/yyyy") : string.Empty;
-                            var printStatusAtTime = item.PrintStatusAt.HasValue ? item.PrintStatusAt.Value.UtcToTimeZoneTime().ToString("HH:mm:ss") : string.Empty;
-
-                            if (Model.IsCertificateNotDelivered(item))
-                            {
-                                <h3>@string.Format(Localizer["NotDelivered"].Value, printStatusAtDate, printStatusAtTime)</h3>
-                            }
-                            else if (Model.IsCertificateDelivered(item))
-                            {
-                                <h3>@string.Format(Localizer["Delivered"].Value, printStatusAtDate, printStatusAtTime)</h3>
-                            }
-                        }
-                    </p>
-
-                    <ul class="govuk-list">
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactName)
-                        </li>
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactOrganisation)
-                        </li>
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactAddLine1)
-                        </li>
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactAddLine2)
-                        </li>
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactAddLine3)
-                        </li>
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactAddLine4)
-                        </li>
-                        <li>
-                            @Html.DisplayFor(modelItem => item.ContactPostCode)
-                        </li>
-                    </ul>
-
-                    @if (Model.IsCertificateNotDelivered(item))
-                    {
-                        <p class="govuk-body">
-                            @{
-                                var reason = !string.IsNullOrEmpty(item.ReasonForChange) ? item.ReasonForChange : Localizer["NoReasonGiven"].Value;
-                                <text>@string.Format(Localizer["ReasonForNotDelivered"].Value, reason)</text>
-                            }
-                        </p>
-                    }
-
-                }
+                                            @if (statusDate.HasValue)
+                                            {
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">
+                                                        @CertificateStatus.GetStatusDateDisplayName(item.Status)
+                                                    </dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        @statusDate.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                                                    </dd>
+                                                </div>
+                                            }
+                                        </dl>
+                                    }
                                 </div>
                                 </td>
                                 </tr>

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
@@ -28,7 +30,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public async Task SetupCertificateTests()
         {
-            _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext));
+            var mockDateTimeHelper = new Mock<IDateTimeHelper>();
+            mockDateTimeHelper
+                .Setup(x => x.DateTimeUtcNow)
+                .Returns(DateTime.UtcNow);
+
+            _repository = new CertificateRepository(new AssessorUnitOfWork(_databaseService.TestContext), mockDateTimeHelper.Object);
 
             OrganisationTypeHandler.InsertRecord(
                 new OrganisationTypeModel

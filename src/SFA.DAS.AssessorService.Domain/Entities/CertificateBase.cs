@@ -29,6 +29,27 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string PrintRequestedBy { get; set; }
 
+        [NotMapped]
+        public string PrintStatus =>
+            BatchNumber.HasValue &&
+            CertificateBatchLog?.BatchNumber == BatchNumber
+                ? CertificateBatchLog.Status
+                : null;
+
+        [NotMapped]
+        public DateTime? PrintStatusAt =>
+            BatchNumber.HasValue &&
+            CertificateBatchLog?.BatchNumber == BatchNumber
+                ? CertificateBatchLog.StatusAt
+                : null;
+
+        [NotMapped]
+        public string PrintReasonForChange =>
+            BatchNumber.HasValue &&
+            CertificateBatchLog?.BatchNumber == BatchNumber
+                ? CertificateBatchLog.ReasonForChange
+                : null;
+
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }

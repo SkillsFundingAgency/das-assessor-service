@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Helpers;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
@@ -15,14 +17,15 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         private CertificateRepository _sut;
         private Mock<IAssessorUnitOfWork> _mockUnitOfWork;
+        private Mock<IDateTimeHelper> _mockDateTimeHelper;
         private DynamicParameters _capturedParameters;
 
         [SetUp]
         public void Arrange()
         {
             _mockUnitOfWork = new Mock<IAssessorUnitOfWork>();
-            _sut = new CertificateRepository(_mockUnitOfWork.Object);
-
+            _mockDateTimeHelper = new Mock<IDateTimeHelper>();
+            
             _mockUnitOfWork
                 .Setup(unitOfWork =>
                     unitOfWork.QueryStoredProcedureAsync<CertificateMask>(
@@ -44,6 +47,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
                         ProviderName = "Prov"
                     }
                 });
+
+            _mockDateTimeHelper
+                .Setup(x => x.DateTimeUtcNow)
+                .Returns(DateTime.UtcNow);
+
+            _sut = new CertificateRepository(_mockUnitOfWork.Object, _mockDateTimeHelper.Object);
         }
 
         [Test]

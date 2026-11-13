@@ -14,9 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string endPointAssessorOrganisationId, string searchTerm, string sortColumn, int sortDescending);
         Task<CertificateAddress> GetContactPreviousAddress(string epaOrgId, long? employerAccountId);
         Task Delete(DeleteCertificateRequest deleteCertificateRequest);
-        Task<Certificate> UpdateCertificateRequestReprint(UpdateCertificateRequestReprintCommand command);
+        Task<Certificate> ReprintCertificate(ReprintCertificateCommand command);
         Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command);
         Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command);
-        Task<FrameworkCertificate> ReprintFramework(ReprintFrameworkCertificateRequest request);
+        Task<FrameworkCertificate> ReprintFrameworkCertificate(ReprintFrameworkCertificateCommand request);
     }
 }

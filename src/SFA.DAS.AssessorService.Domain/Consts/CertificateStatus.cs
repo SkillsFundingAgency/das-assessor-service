@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Domain.Consts
 {
@@ -47,6 +48,20 @@ namespace SFA.DAS.AssessorService.Domain.Consts
             return allowed.Contains(status);
         }
 
+        public static DateTime? GetStatusDate(
+            string status,
+            DateTime? printRequestedAt,
+            DateTime? printStatusAt,
+            DateTime? lastUpdatedAt)
+        {
+            return status switch
+            {
+                PrintRequested or Reprint => printRequestedAt,
+                SentToPrinter or Printed or Delivered or NotDelivered => printStatusAt,
+                _ => lastUpdatedAt
+            };
+        }
+
         public static string GetDisplayName(string status)
         {
             switch (status)
@@ -65,6 +80,9 @@ namespace SFA.DAS.AssessorService.Domain.Consts
 
                 case Reprint:
                     return "Reprint requested";
+
+                case PrintRequested:
+                    return "Print requested";
 
                 default:
                     return status;
@@ -92,6 +110,9 @@ namespace SFA.DAS.AssessorService.Domain.Consts
 
                 case Reprint:
                     return "Date reprint requested";
+
+                case PrintRequested:
+                    return "Date print requested";
 
                 case Delivered:
                     return "Date delivered";

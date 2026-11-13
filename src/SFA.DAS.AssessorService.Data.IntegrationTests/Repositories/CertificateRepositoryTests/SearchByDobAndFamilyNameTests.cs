@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Factories;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.CertificateRepositoryTests
@@ -141,7 +142,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories.Certificate
             public SearchByDobAndFamilyNameFixture()
             {
                 var databaseService = new DatabaseService();
-                _sut = new CertificateRepository(new AssessorUnitOfWork(databaseService.TestContext));
+                _sut = new CertificateRepository(new AssessorUnitOfWork(databaseService.TestContext), new DateTimeHelper());
             }
 
             public SearchByDobAndFamilyNameFixture WithDefaultOrganisationAndStandard()

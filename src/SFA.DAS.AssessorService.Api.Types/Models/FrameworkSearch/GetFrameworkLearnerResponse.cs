@@ -26,8 +26,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch
         public DateTime CertificationDate { get; set; }
         public string CertificateReference { get; set; }
         public string CertificateStatus { get; set; }
+
+        public DateTime? CertificatePrintRequestedAt { get; set; }
+        public string CertificatePrintRequestedBy { get; set; }
+        public string CertificatePrintStatus { get; set; }
         public DateTime? CertificatePrintStatusAt { get; set; }
         public string CertificatePrintReasonForChange { get; set;  }
+
         public DateTime? CertificateLastUpdatedAt { get; set; }
         public List<CertificateLogSummary> CertificateLogs{ get; set; }
     }

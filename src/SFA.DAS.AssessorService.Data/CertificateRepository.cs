@@ -22,10 +22,12 @@ namespace SFA.DAS.AssessorService.Data
     public class CertificateRepository : ICertificateRepository
     {
         private readonly IAssessorUnitOfWork _unitOfWork;
+        private readonly IDateTimeHelper _dateTimeHelper;
 
-        public CertificateRepository(IAssessorUnitOfWork unitOfWork)
+        public CertificateRepository(IAssessorUnitOfWork unitOfWork, IDateTimeHelper dateTimeHelper)
         {
             _unitOfWork = unitOfWork;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         public async Task<Certificate> NewStandardCertificate(Certificate certificate)
@@ -67,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data
                 // ensure the EpaDetails are kept in sychronization with the certificate reference
                 certificate.CertificateData.EpaDetails.EpaReference = certificate.CertificateReference;
 
-                AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, DateTime.UtcNow,
+                AddSingleCertificateLog(certificate.Id, CertificateActions.Start, certificate.Status, _dateTimeHelper.DateTimeUtcNow,
                     certificate.CertificateData, certificate.CreatedBy, certificate.BatchNumber);
             });
 
@@ -76,16 +78,20 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<T> GetCertificate<T>(Guid id, bool includeLogs = false) where T : CertificateBase
         {
-            IQueryable<CertificateBase> query = _unitOfWork.AssessorDbContext.Set<T>();
+            var query = _unitOfWork.AssessorDbContext
+                .Set<T>()
+                .Include(c => c.CertificateBatchLog)
+                .AsQueryable();
 
             if (includeLogs)
             {
                 query = query.Include(c => c.CertificateLogs);
             }
 
-            return await query.OfType<T>().SingleOrDefaultAsync(c => c.Id == id);
+            return await query
+                .OfType<T>()
+                .SingleOrDefaultAsync(c => c.Id == id);
         }
-
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)
         {
@@ -320,7 +326,7 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var certificate in certificates)
             {
-                certificate.UpdatedAt = DateTime.UtcNow;
+                certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
                 certificate.UpdatedBy = SystemUsers.PrintFunction;
                 certificate.BatchNumber = batchNumber;
             }
@@ -366,13 +372,6 @@ namespace SFA.DAS.AssessorService.Data
                      Id = q.Id,
                      AchievementDate = q.AchievementDate,
                      CertificateReference = q.CertificateReference,
-                     ContactAddLine1 = q.ContactAddLine1,
-                     ContactAddLine2 = q.ContactAddLine2,
-                     ContactAddLine3 = q.ContactAddLine3,
-                     ContactAddLine4 = q.ContactAddLine4,
-                     ContactName = q.ContactName,
-                     ContactOrganisation = q.ContactOrganisation,
-                     ContactPostCode = q.ContactPostCode,
                      CourseOption = q.CourseOption,
                      CreateDay = q.CreateDay,
                      CreatedAt = q.CreatedAt,
@@ -382,6 +381,7 @@ namespace SFA.DAS.AssessorService.Data
                      LearningStartDate = q.LearningStartDate,
                      OrganisationId = q.OrganisationId,
                      OverallGrade = q.OverallGrade,
+                     EmployerName = q.CertificateData.EmployerName,
                      ProviderName = q.ProviderName,
                      ProviderUkPrn = q.ProviderUkPrn.GetValueOrDefault(),
                      StandardCode = q.StandardCode,
@@ -394,8 +394,15 @@ namespace SFA.DAS.AssessorService.Data
                      UpdatedBy = q.UpdatedBy,
                      Version = q.Version,
                      EndPointAssessorUkprn = q.Organisation.EndPointAssessorUkprn,
-                     StatusAt = q.CertificateBatchLog.StatusAt,
-                     ReasonForChange = q.CertificateBatchLog.ReasonForChange,
+                     PrintRequestedAt = q.PrintRequestedAt,
+                     StatusAt = q.BatchNumber.HasValue &&
+                                q.CertificateBatchLog.BatchNumber == q.BatchNumber
+                         ? q.CertificateBatchLog.StatusAt
+                         : null,
+                     ReasonForChange = q.BatchNumber.HasValue &&
+                                       q.CertificateBatchLog.BatchNumber == q.BatchNumber
+                         ? q.CertificateBatchLog.ReasonForChange
+                         : null,
                      CertificateLogs = q.CertificateLogs
                  })
                 .Skip((pageIndex - 1) * pageSize)
@@ -429,12 +436,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.ContactOrganisation);
+                            .OrderByDescending(x => x.CertificateData.EmployerName);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.ContactOrganisation);
+                            .OrderBy(x => x.CertificateData.EmployerName);
                     }
 
                     break;
@@ -471,23 +478,34 @@ namespace SFA.DAS.AssessorService.Data
             return certificatesQuery;
         }
 
+        /// <summary>
+        /// Updates a standard certificate by copying values from the supplied certificate instance.
+        /// </summary>
+        /// <remarks>
+        /// Do not add new update behaviour to this method. This is a legacy, broad update method that takes a
+        /// Certificate entity and copies selected values onto the persisted certificate with limited validation.
+        /// New update scenarios should be implemented as specific methods/handlers with explicit request models,
+        /// validation, logging and clear ownership of the fields being changed.
+        /// </remarks>
         public async Task<Certificate> UpdateStandardCertificate(Certificate updatedCertificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
             var certificate = await GetCertificate<Certificate>(updatedCertificate.Id)
                 ?? throw new NotFoundException();
 
             certificate.Uln = updatedCertificate.Uln;
-            certificate.StandardUId = updatedCertificate.StandardUId;
-            certificate.DateOfBirth = updatedCertificate.DateOfBirth;
-            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
-            certificate.Status = updatedCertificate.Status;
-            certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;
             certificate.StandardCode = updatedCertificate.StandardCode;
-            certificate.UpdatedBy = username;
-            certificate.UpdatedAt = DateTime.UtcNow;
-            certificate.IsPrivatelyFunded = updatedCertificate.IsPrivatelyFunded;
             certificate.StandardUId = updatedCertificate.StandardUId;
 
+            certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
+            
+            certificate.Status = updatedCertificate.Status;
+            certificate.ProviderUkPrn = updatedCertificate.ProviderUkPrn;
+            certificate.DateOfBirth = updatedCertificate.DateOfBirth;
+
+            certificate.UpdatedBy = username;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
+            
+            certificate.IsPrivatelyFunded = updatedCertificate.IsPrivatelyFunded;
             if (certificate.IsPrivatelyFunded)
             {
                 certificate.PrivatelyFundedStatus = updatedCertificate.PrivatelyFundedStatus;
@@ -499,11 +517,7 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.DeletedAt = null;
             }
 
-            certificate.ToBePrinted = null;
-            certificate.BatchNumber = null;
-
-            certificate.PrintRequestedAt = updatedCertificate.PrintRequestedAt;
-            certificate.PrintRequestedBy = updatedCertificate.PrintRequestedBy;
+            await ClearBatchNumberIfPrintedCertificateChanged(certificate);
 
             if (updateLog)
             {
@@ -523,11 +537,11 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.CertificateData = CloneCertificateData(updatedCertificate.CertificateData);
             certificate.Status = updatedCertificate.Status;
+            
             certificate.UpdatedBy = username;
-            certificate.UpdatedAt = DateTime.UtcNow;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
 
-            certificate.ToBePrinted = null;
-            certificate.BatchNumber = null;
+            await ClearBatchNumberIfPrintedCertificateChanged(certificate);
 
             AddSingleCertificateLog(certificate.Id, action, certificate.Status, certificate.UpdatedAt.Value,
                 certificate.CertificateData, certificate.UpdatedBy, certificate.BatchNumber, null);
@@ -549,7 +563,7 @@ namespace SFA.DAS.AssessorService.Data
 
             certificate.Status = CertificateStatus.Deleted;
             certificate.DeletedBy = username;
-            certificate.DeletedAt = DateTime.UtcNow;
+            certificate.DeletedAt = _dateTimeHelper.DateTimeUtcNow;
 
             if (incidentNumber != null)
             {
@@ -571,6 +585,65 @@ namespace SFA.DAS.AssessorService.Data
                 ?? throw new NotFoundException();
 
             certificate.CertificateData.ProviderName = providerName;
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
+            return certificate;
+        }
+
+        public async Task<T> UpdateReprintRequested<T>(Guid certificateId, DateTime reprintRequestedAt, string reprintRequestedBy) where T : CertificateBase
+        {
+            var certificate = await GetCertificate<T>(certificateId)
+                    ?? throw new NotFoundException();
+
+            certificate.PrintRequestedAt = reprintRequestedAt;
+            certificate.PrintRequestedBy = reprintRequestedBy;
+            certificate.Status = CertificateStatus.Reprint;
+
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
+
+            certificate.UpdatedBy = reprintRequestedBy;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
+
+            AddSingleCertificateLog(certificate.Id, CertificateActions.Reprint, certificate.Status, reprintRequestedAt,
+                certificate.CertificateData, reprintRequestedBy,
+                certificate.BatchNumber);
+
+            await _unitOfWork.AssessorDbContext.SaveChangesAsync();
+
+            return certificate;
+        }
+
+        public async Task<T> UpdatePrintRequested<T>(Guid certificateId, CertificatePrintAddress address, DateTime printRequestedAt, string printRequestedBy) where T : CertificateBase
+        {
+            var certificate = await GetCertificate<T>(certificateId)
+                    ?? throw new NotFoundException();
+
+            certificate.CertificateData.SendTo = CertificateSendTo.Apprentice;
+
+            certificate.CertificateData.Department = string.Empty;
+            certificate.CertificateData.ContactName = address.ContactName;
+            certificate.CertificateData.ContactOrganisation = address.ContactOrganisation;
+            certificate.CertificateData.ContactAddLine1 = address.ContactAddLine1;
+            certificate.CertificateData.ContactAddLine2 = address.ContactAddLine2;
+            certificate.CertificateData.ContactAddLine3 = address.ContactAddLine3;
+            certificate.CertificateData.ContactAddLine4 = address.ContactAddLine4;
+            certificate.CertificateData.ContactPostCode = address.ContactPostCode;
+
+            certificate.PrintRequestedAt = printRequestedAt;
+            certificate.PrintRequestedBy = printRequestedBy;
+            certificate.Status = CertificateStatus.PrintRequested;
+
+            certificate.ToBePrinted = null;
+            certificate.BatchNumber = null;
+
+            certificate.UpdatedBy = printRequestedBy;
+            certificate.UpdatedAt = _dateTimeHelper.DateTimeUtcNow;
+
+            AddSingleCertificateLog(certificate.Id, CertificateActions.PrintRequest, certificate.Status, printRequestedAt,
+                certificate.CertificateData, printRequestedBy,
+                certificate.BatchNumber);
 
             await _unitOfWork.AssessorDbContext.SaveChangesAsync();
 
@@ -688,6 +761,88 @@ namespace SFA.DAS.AssessorService.Data
             {
                 EarliestAssessment = null,
                 EndpointAssessmentCount = 0
+            };
+        }
+
+        /// <summary>
+        /// When the certificate data has changed since any previous print request/batch was created,
+        /// clear the print state because the previous print details may no longer represent the
+        /// current version of the certificate.
+        /// </summary>
+        /// <param name="certificate"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private async Task ClearBatchNumberIfPrintedCertificateChanged(
+            CertificateBase certificate)
+        {
+            if (!certificate.BatchNumber.HasValue)
+                return;
+
+            var batchLog = await _unitOfWork.AssessorDbContext.CertificateBatchLogs
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x =>
+                    x.BatchNumber == certificate.BatchNumber.Value &&
+                    x.CertificateReference == certificate.CertificateReference);
+
+            if (batchLog?.CertificateData == null)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot find the print snapshot for certificate " +
+                    $"{certificate.CertificateReference} in batch {certificate.BatchNumber}.");
+            }
+
+            var isFramework = certificate is FrameworkCertificate;
+
+            var previousContent = GetPrintedCertificateContent(
+                batchLog.CertificateData, isFramework);
+
+            var currentContent = GetPrintedCertificateContent(
+                certificate.CertificateData, isFramework);
+
+            if (!Equals(previousContent, currentContent))
+            {
+                certificate.ToBePrinted = null;
+                certificate.BatchNumber = null;
+            }
+        }
+
+        private static object GetPrintedCertificateContent(
+            CertificateData data,
+            bool isFramework)
+        {
+            if (isFramework)
+            {
+                return new
+                {
+                    ApprenticeName = data.FullName,
+                    data.FrameworkName,
+                    PathwayName = string.Equals(
+                        data.PathwayName,
+                        data.FrameworkName,
+                        StringComparison.OrdinalIgnoreCase)
+                            ? string.Empty
+                            : data.PathwayName,
+                    LevelName = $"{data.FrameworkLevelName} Level",
+                    data.FrameworkCertificateNumber,
+                    AchievementDate = data.AchievementDate?.Date
+                };
+            }
+
+            return new
+            {
+                ApprenticeName =
+                    $"{data.LearnerGivenNames} {data.LearnerFamilyName}",
+                data.StandardName,
+                data.StandardLevel,
+                CourseOption = string.IsNullOrWhiteSpace(data.CourseOption)
+                    ? string.Empty
+                    : data.CourseOption,
+                OverallGrade = string.IsNullOrWhiteSpace(data.OverallGrade) ||
+                               data.OverallGrade == "No grade awarded"
+                    ? string.Empty
+                    : data.OverallGrade,
+                AchievementDate = data.AchievementDate?.Date,
+                data.CoronationEmblem
             };
         }
 

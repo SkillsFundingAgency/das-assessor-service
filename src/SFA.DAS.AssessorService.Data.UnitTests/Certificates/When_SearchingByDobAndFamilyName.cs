@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
@@ -27,8 +28,13 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             mockAssessorUnitOfWork
                 .SetupGet(x => x.AssessorDbContext)
                 .Returns(_mockDbContext.Object);
+            
+            var mockDateTimeHelper = new Mock<IDateTimeHelper>();
+            mockDateTimeHelper
+                .Setup(x => x.DateTimeUtcNow)
+                .Returns(DateTime.UtcNow);
 
-            _sut = new CertificateRepository(mockAssessorUnitOfWork.Object);
+            _sut = new CertificateRepository(mockAssessorUnitOfWork.Object, mockDateTimeHelper.Object);
         }
 
         [Test]

@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Helpers;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
@@ -18,6 +19,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
         private CertificateRepository _certificateRepository;
         private Mock<IAssessorDbContext> _mockDbContext;
         private Mock<IAssessorUnitOfWork> _mockUnitOfWork;
+        private Mock<IDateTimeHelper> _mockDateTimeHelper;
         private long _uln;
 
         [SetUp]
@@ -116,7 +118,12 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _mockUnitOfWork = new Mock<IAssessorUnitOfWork>();
             _mockUnitOfWork.SetupGet(x => x.AssessorDbContext).Returns(_mockDbContext.Object);
 
-            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object);
+            _mockDateTimeHelper = new Mock<IDateTimeHelper>();
+            _mockDateTimeHelper
+                .Setup(x => x.DateTimeUtcNow)
+                .Returns(DateTime.UtcNow);
+
+            _certificateRepository = new CertificateRepository(_mockUnitOfWork.Object, _mockDateTimeHelper.Object);
         }
 
         [Test]

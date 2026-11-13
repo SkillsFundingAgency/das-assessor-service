@@ -35,7 +35,10 @@ namespace SFA.DAS.AssessorService.Application.Api.AutoMapperProfiles
     {
         public CertificateSummaryResponseProfile()
         {
-            CreateMap<Certificate, CertificateSummaryResponse>();
+            CreateMap<Certificate, CertificateSummaryResponse>()
+                .ForMember(
+                    destination => destination.EmployerName,
+                    options => options.MapFrom(source => source.CertificateData.EmployerName));
         }
     }
 }

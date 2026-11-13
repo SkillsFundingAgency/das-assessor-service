@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certificates
 {
@@ -8,7 +9,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Response.Certi
         public Standard Standard { get; set; }
         public Learner Learner { get; set; }
         public LearningDetails LearningDetails { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Include, DefaultValueHandling = DefaultValueHandling.Include)]
         public PostalContact PostalContact { get; set; }
+        
         public bool CoronationEmblem { get; set; }
 
         #region GetHashCode, Equals and IEquatable

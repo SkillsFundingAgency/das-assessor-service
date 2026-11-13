@@ -26,6 +26,7 @@ using SFA.DAS.AssessorService.Application.Api.TaskQueue;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+using SFA.DAS.AssessorService.Application.Validators;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Data.Apply;
 using SFA.DAS.AssessorService.Data.Interfaces;
@@ -303,6 +304,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             services.AddScoped<SearchOrganisationForContactsValidator>();
             services.AddScoped<IEpaOrganisationValidator, EpaOrganisationValidator>();
             services.AddScoped<IEpaOrganisationSearchValidator, EpaOrganisationSearchValidator>();
+            
+            services.AddTransient<IValidator<PrintDeliveryAddress>, PrintDeliveryAddressValidator>();
             return services;
 
         }

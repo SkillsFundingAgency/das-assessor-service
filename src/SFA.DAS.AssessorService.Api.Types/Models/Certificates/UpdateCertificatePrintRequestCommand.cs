@@ -11,8 +11,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 
         public CertificatePrintAddress Address { get; set; }
 
-        public DateTime PrintRequestedAt { get; set; }
-
         public string PrintRequestedBy { get; set; }
     }
 }
