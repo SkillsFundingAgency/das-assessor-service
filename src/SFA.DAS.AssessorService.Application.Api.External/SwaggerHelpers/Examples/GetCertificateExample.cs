@@ -19,8 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                         CertificateReference = "09876543",
                         Standard = new Standard { StandardCode = 1, StandardReference = "ST0001", Level = 1, StandardName = "Example Standard" },
                         Learner = new Learner { GivenNames = "John", FamilyName = "Smith", Uln = 1234567890 },
-                        LearningDetails = new LearningDetails { CourseOption = "French", Version="1.0",OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
-                        PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = "Human Resources", Organisation = "Contoso Ltd", AddressLine1 = "123 Test Road", AddressLine2 = "Green Park", City = "Townsville", PostCode = "ZY9 9ZZ" }
+                        LearningDetails = new LearningDetails { CourseOption = "French", Version="1.0",OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" }
                     },
                     Status = new Status { CurrentStatus = CertificateStatus.Submitted },
                     Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },
@@ -33,8 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                         CertificateReference = "333333333",
                         Standard = new Standard { StandardCode = 2, StandardReference = "ST0287", Level = 1, StandardName = "Other Example Standard" },
                         Learner = new Learner { FamilyName = "Jones", Uln = 6666666666 },
-                        LearningDetails = new LearningDetails { CourseOption = "Mechanics", Version="1.0", OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" },
-                        PostalContact = new PostalContact { ContactName = "Shreya Smith", Department = null, Organisation = null, AddressLine1 = "88 Thinking Road", AddressLine2 = "Green Lane", City = "Brillville", PostCode = "BR9 8YE" }
+                        LearningDetails = new LearningDetails { CourseOption = "Mechanics", Version="1.0", OverallGrade = CertificateGrade.Pass, AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderUkPrn = 12345678, ProviderName = "Example Provider" }
                     },
                     Status = new Status { CurrentStatus = CertificateStatus.Submitted },
                     Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = "Fred Bloggs" },

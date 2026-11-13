@@ -145,12 +145,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
                 {
                     request.Standard,
                     request.Learner,
-                    request.LearningDetails,
-                    request.PostalContact
+                    request.LearningDetails
                 }
             });
 
-            result.Value.Should().Be(response);        
+            request.PostalContact.Should().NotBeNull();
+            transformedRequest.CertificateData.PostalContact.Should().BeNull();
+
+            result.Value.Should().Be(response);
         }
 
         [Test, MoqAutoData]
@@ -194,10 +196,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
                 {
                     request.Standard,
                     request.Learner,
-                    request.LearningDetails,
-                    request.PostalContact
+                    request.LearningDetails
                 }
             });
+
+            request.PostalContact.Should().NotBeNull();
+            transformedRequest.CertificateData.PostalContact.Should().BeNull();
 
             result.Value.Should().Be(response);
         }
