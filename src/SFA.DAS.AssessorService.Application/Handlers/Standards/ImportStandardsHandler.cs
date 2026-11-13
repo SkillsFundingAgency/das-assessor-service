@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -27,35 +27,28 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<Unit> Handle(ImportStandardsRequest request, CancellationToken cancellationToken)
         {
-            var getAllStandardsTask = outerApiService.GetAllStandards();
-            var getActiveStandardsTask = outerApiService.GetActiveStandards();
-            var getDraftStandardsTask = outerApiService.GetDraftStandards();
-            await Task.WhenAll(getAllStandardsTask, getActiveStandardsTask, getDraftStandardsTask);
-
-            var allStandards = getAllStandardsTask.Result;
-            var activeStandardUIds = getActiveStandardsTask.Result.Select(s => s.StandardUId);
-            var draftStandardUIds = getDraftStandardsTask.Result.Select(s => s.StandardUId);
-
-            if (allStandards.Any() == false)
+            var allStandards = await outerApiService.GetAllStandards();
+            if (!allStandards.Any())
             {
                 logger.LogWarning("Outer API did not return any standards");
                 return Unit.Value;
             }
 
-            var activeStandardDetails = allStandards.Where(s => activeStandardUIds.Contains(s.StandardUId));
-            var draftStandardDetails = allStandards.Where(s => draftStandardUIds.Contains(s.StandardUId));
-
             try
             {
                 unitOfWork.Begin();
 
-                await standardImportService.DeleteAllStandardsAndOptions();
+                await standardImportService.PrepareImport();
 
-                await standardImportService.LoadStandards(allStandards);
+                await standardImportService.StageStandards(allStandards);
 
-                await standardImportService.LoadOptions(allStandards);
+                await standardImportService.StageOptions(allStandards);
+
+                await standardImportService.MergeStandardsFromStaging();
 
                 unitOfWork.Commit();
+
+                logger.LogInformation("Standards import completed.");
             }
             catch (Exception ex)
             {

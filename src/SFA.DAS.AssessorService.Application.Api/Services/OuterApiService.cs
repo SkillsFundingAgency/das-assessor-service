@@ -15,21 +15,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _outerApiClient = outerApiClient;
         }
 
-        public async Task<IEnumerable<GetStandardsListItem>> GetActiveStandards()
-        {
-            var response = await _outerApiClient.Get<GetStandardsListResponse>(new GetActiveStandardsRequest());
-            return response.Standards;
-        }       
-
         public async Task<IEnumerable<StandardDetailResponse>> GetAllStandards()
         {
             var response = await _outerApiClient.Get<GetStandardsExportListResponse>(new GetStandardsRequest());
-            return response.Standards;
-        }
-
-        public async Task<IEnumerable<GetStandardsListItem>> GetDraftStandards()
-        {
-            var response = await _outerApiClient.Get<GetStandardsListResponse>(new GetDraftStandardsRequest());
             return response.Standards;
         }
 
