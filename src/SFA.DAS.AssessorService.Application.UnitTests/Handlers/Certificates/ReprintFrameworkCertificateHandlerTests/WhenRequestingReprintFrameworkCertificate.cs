@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Application.Validators;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -19,7 +20,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
 {
     [TestFixture]
-    public class WhenRequestingFrameworkCertificateReprint
+    public class WhenRequestingReprintFrameworkCertificate
     {
         private static DateTime RequestedAt =>
             new DateTime(2026, 11, 3, 10, 0, 0, DateTimeKind.Utc);
@@ -27,9 +28,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
         private Mock<ICertificateRepository> _repository;
         private Mock<IFrameworkLearnerRepository> _learnerRepository;
         private Mock<IDateTimeHelper> _dateTimeHelper;
-        private ReprintFrameworkCertificateHandler _sut;
+        private ReprintFrameworkCertificateCommandHandler _sut;
 
-        private ReprintFrameworkCertificateRequest _request;
+        private ReprintFrameworkCertificateCommand _request;
         private FrameworkLearner _learner;
         private FrameworkCertificate _certificate;
         private FrameworkCertificate _createdCertificate;
@@ -42,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             _learnerRepository = new Mock<IFrameworkLearnerRepository>();
             _dateTimeHelper = new Mock<IDateTimeHelper>();
 
-            _request = new ReprintFrameworkCertificateRequest
+            _request = new ReprintFrameworkCertificateCommand
             {
                 FrameworkLearnerId = Guid.NewGuid(),
                 Username = "Admin user",
@@ -64,9 +65,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 ApprenticeForename = "Casey",
                 ApprenticeSurname = "Example",
                 ApprenticeFullname = "Casey Middle Example",
-                ApprenticeDoB = new DateTime(1990, 1, 1),
-                ApprenticeStartdate = new DateTime(2009, 9, 1),
-                CertificationDate = new DateTime(2012, 6, 1),
+                ApprenticeDoB = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                ApprenticeStartdate = new DateTime(2009, 9, 1, 0, 0, 0, DateTimeKind.Utc),
+                CertificationDate = new DateTime(2012, 6, 1, 0, 0, 0, DateTimeKind.Utc),
                 TrainingCode = "444-2-1",
                 FrameworkName = "Imported framework",
                 PathwayName = "Imported pathway",
@@ -128,11 +129,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
                 .SetupGet(x => x.DateTimeUtcNow)
                 .Returns(RequestedAt);
 
-            _sut = new ReprintFrameworkCertificateHandler(
+            _sut = new ReprintFrameworkCertificateCommandHandler(
                 _repository.Object,
                 _learnerRepository.Object,
                 _dateTimeHelper.Object,
-                Mock.Of<ILogger<ReprintFrameworkCertificateHandler>>());
+                new PrintDeliveryAddressValidator());
         }
 
         [Test]
@@ -296,6 +297,60 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates
             _dateTimeHelper.VerifyGet(
                 x => x.DateTimeUtcNow,
                 Times.Never);
+        }
+
+        [TestCase(null, "10 New Road", "AB1 2CD", "Enter the recipient's name")]
+        [TestCase("New recipient", " ", "AB1 2CD", "Enter address line 1")]
+        [TestCase("New recipient", "10 New Road", null, "Enter the postcode")]
+        public async Task AndRequiredDeliveryDetailsAreMissingThenReprintIsRejected(
+            string recipientName,
+            string addressLine1,
+            string postcode,
+            string expectedMessage)
+        {
+            // Arrange
+            _request.ContactName = recipientName;
+            _request.ContactAddLine1 = addressLine1;
+            _request.ContactPostcode = postcode;
+
+            // Act
+            Func<Task> act = () => _sut.Handle(_request, CancellationToken.None);
+
+            // Assert
+            await act.Should().ThrowAsync<BadRequestException>()
+                .WithMessage(expectedMessage);
+
+            VerifyNoExistingCertificateReprint();
+
+            _repository.Verify(
+                x => x.NewFrameworkCertificate(It.IsAny<FrameworkCertificate>()),
+                Times.Never);
+
+            _learnerRepository.Verify(
+                x => x.GetFrameworkLearner(It.IsAny<Guid>()),
+                Times.Never);
+
+            _dateTimeHelper.VerifyGet(x => x.DateTimeUtcNow, Times.Never);
+        }
+
+        [Test]
+        public async Task AndOptionalAddressLinesAreMissingThenReprintIsRequested()
+        {
+            // Arrange
+            _request.ContactAddLine2 = null;
+            _request.ContactAddLine3 = null;
+            _request.ContactAddLine4 = null;
+
+            // Act
+            await _sut.Handle(_request, CancellationToken.None);
+
+            // Assert
+            _repository.Verify(
+                x => x.UpdateReprintRequested<FrameworkCertificate>(
+                    _certificate.Id,
+                    RequestedAt,
+                    _request.Username),
+                Times.Once);
         }
 
         private void VerifyNoExistingCertificateReprint()

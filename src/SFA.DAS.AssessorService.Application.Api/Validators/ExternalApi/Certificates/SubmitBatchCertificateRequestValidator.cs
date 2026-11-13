@@ -89,11 +89,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.ExternalApi.Certifi
                     else
                     {
                         var certificateData = existingCertificate.CertificateData;
-                        if (certificateData.LearnerGivenNames is null || certificateData.LearnerFamilyName is null || certificateData.ContactName is null ||
-                            certificateData.ContactOrganisation is null || certificateData.ContactAddLine1 is null || certificateData.ContactAddLine4 is null ||
-                            certificateData.ContactPostCode is null || certificateData.OverallGrade is null || certificateData.AchievementDate is null)
+
+                        if (certificateData.LearnerGivenNames is null || certificateData.LearnerFamilyName is null ||
+                            certificateData.OverallGrade is null || certificateData.AchievementDate is null)
                         {
-                            context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is missing mandatory data"));
+                            context.AddFailure(new ValidationFailure("CertificateReference", "Certificate is missing mandatory data"));
                         }
 
                         var requestedLearner = await learnerRepository.Get(m.Uln, m.StandardCode);

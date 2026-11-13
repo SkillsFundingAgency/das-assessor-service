@@ -77,35 +77,35 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
         }
 
         [Test]
-        public void When_PostalContactIsNull_Then_ReturnFalse()
+        public void When_PostalContactIsNull_Then_ReturnTrue()
         {
             _certificate.CertificateData.PostalContact = null;
 
-            CheckHelperReturnsFalse();
+            CheckHelperReturnsTrue();
         }
 
         [Test]
-        public void When_ContactNameIsNull_Then_ReturnFalse()
+        public void When_ContactNameIsNull_Then_ReturnTrue()
         {
             _certificate.CertificateData.PostalContact.ContactName = null;
 
-            CheckHelperReturnsFalse();
+            CheckHelperReturnsTrue();
         }
 
         [Test]
-        public void When_CityIsNull_Then_ReturnFalse()
+        public void When_CityIsNull_Then_ReturnTrue()
         {
             _certificate.CertificateData.PostalContact.City = null;
 
-            CheckHelperReturnsFalse();
+            CheckHelperReturnsTrue();
         }
 
         [Test]
-        public void When_PostCodeIsNull_Then_ReturnFalse()
+        public void When_PostCodeIsNull_Then_ReturnTrue()
         {
             _certificate.CertificateData.PostalContact.PostCode = null;
 
-            CheckHelperReturnsFalse();
+            CheckHelperReturnsTrue();
         }
 
         [Test]
@@ -147,6 +147,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Helpers
             var result = CertificateHelpers.IsDraftCertificateDeemedAsReady(_certificate, hasOptions: true);
 
             result.Should().BeFalse();
+        }
+
+        private void CheckHelperReturnsTrue()
+        {
+            var result = CertificateHelpers.IsDraftCertificateDeemedAsReady(_certificate, hasOptions: true);
+
+            result.Should().BeTrue();
         }
     }
 }

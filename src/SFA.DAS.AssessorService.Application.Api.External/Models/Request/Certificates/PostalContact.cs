@@ -1,21 +1,16 @@
-﻿using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Attributes;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Request.Certificates
 {
     public sealed class PostalContact : IEquatable<PostalContact>
     {
-        [SwaggerRequired]
         public string ContactName { get; set; }
         public string Department { get; set; }
         public string Organisation { get; set; }
-        [SwaggerRequired]
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
-        [SwaggerRequired]
         public string City { get; set; }
-        [SwaggerRequired]
         public string PostCode { get; set; }
 
         #region GetHashCode, Equals and IEquatable

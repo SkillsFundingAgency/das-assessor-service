@@ -372,13 +372,6 @@ namespace SFA.DAS.AssessorService.Data
                      Id = q.Id,
                      AchievementDate = q.AchievementDate,
                      CertificateReference = q.CertificateReference,
-                     ContactAddLine1 = q.ContactAddLine1,
-                     ContactAddLine2 = q.ContactAddLine2,
-                     ContactAddLine3 = q.ContactAddLine3,
-                     ContactAddLine4 = q.ContactAddLine4,
-                     ContactName = q.ContactName,
-                     ContactOrganisation = q.ContactOrganisation,
-                     ContactPostCode = q.ContactPostCode,
                      CourseOption = q.CourseOption,
                      CreateDay = q.CreateDay,
                      CreatedAt = q.CreatedAt,
@@ -388,6 +381,7 @@ namespace SFA.DAS.AssessorService.Data
                      LearningStartDate = q.LearningStartDate,
                      OrganisationId = q.OrganisationId,
                      OverallGrade = q.OverallGrade,
+                     EmployerName = q.CertificateData.EmployerName,
                      ProviderName = q.ProviderName,
                      ProviderUkPrn = q.ProviderUkPrn.GetValueOrDefault(),
                      StandardCode = q.StandardCode,
@@ -400,8 +394,15 @@ namespace SFA.DAS.AssessorService.Data
                      UpdatedBy = q.UpdatedBy,
                      Version = q.Version,
                      EndPointAssessorUkprn = q.Organisation.EndPointAssessorUkprn,
-                     StatusAt = q.CertificateBatchLog.StatusAt,
-                     ReasonForChange = q.CertificateBatchLog.ReasonForChange,
+                     PrintRequestedAt = q.PrintRequestedAt,
+                     StatusAt = q.BatchNumber.HasValue &&
+                                q.CertificateBatchLog.BatchNumber == q.BatchNumber
+                         ? q.CertificateBatchLog.StatusAt
+                         : null,
+                     ReasonForChange = q.BatchNumber.HasValue &&
+                                       q.CertificateBatchLog.BatchNumber == q.BatchNumber
+                         ? q.CertificateBatchLog.ReasonForChange
+                         : null,
                      CertificateLogs = q.CertificateLogs
                  })
                 .Skip((pageIndex - 1) * pageSize)
@@ -435,12 +436,12 @@ namespace SFA.DAS.AssessorService.Data
                     if (sortDescending)
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderByDescending(x => x.ContactOrganisation);
+                            .OrderByDescending(x => x.CertificateData.EmployerName);
                     }
                     else
                     {
                         certificatesQuery = certificatesQuery
-                            .OrderBy(x => x.ContactOrganisation);
+                            .OrderBy(x => x.CertificateData.EmployerName);
                     }
 
                     break;
@@ -619,6 +620,9 @@ namespace SFA.DAS.AssessorService.Data
             var certificate = await GetCertificate<T>(certificateId)
                     ?? throw new NotFoundException();
 
+            certificate.CertificateData.SendTo = CertificateSendTo.Apprentice;
+
+            certificate.CertificateData.Department = string.Empty;
             certificate.CertificateData.ContactName = address.ContactName;
             certificate.CertificateData.ContactOrganisation = address.ContactOrganisation;
             certificate.CertificateData.ContactAddLine1 = address.ContactAddLine1;

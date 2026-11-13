@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Data.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
 {
@@ -34,7 +35,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
                 return await _unitOfWork.ExecuteInTransactionAsync(async () =>
                 {
                     var excludedOverallGrades = new[] { "Fail" };
-                    var includedStatus = new[] { "Submitted", "Reprint" };
+                    var includedStatus = new[]
+                    {
+                        CertificateStatus.PrintRequested,
+                        CertificateStatus.Reprint
+                    };
 
                     var certificateIds = await _certificateRepository.GetCertificatesReadyToPrint(
                         request.MaxCertificatesToBeAdded,
@@ -55,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.BatchLogs
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, $"Failed to add ready to print certificates to batch {request.BatchNumber}");
+                _logger.LogError(ex, "Failed to add ready to print certificates to batch {BatchNumber}", request.BatchNumber);
                 throw;
             }
         }

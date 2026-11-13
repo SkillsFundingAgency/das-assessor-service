@@ -103,6 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 IsPrivatelyFunded = certificate?.IsPrivatelyFunded,
                 CertificateId = certificate?.Id,
                 PrintStatusAt = certificate?.PrintStatusAt,
+                PrintRequestedAt = certificate?.PrintRequestedAt,
                 ReasonForChange = certificate?.PrintReasonForChange,
                 CertificateSendTo = certificateData.SendTo.ToString(),
                 ContactName = certificateData.ContactName,

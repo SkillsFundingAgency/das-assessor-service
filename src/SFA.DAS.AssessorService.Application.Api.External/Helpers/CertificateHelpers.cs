@@ -21,13 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Helpers
             {
                 return false;
             }
-            else if (certificate.CertificateData.PostalContact is null
-                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
-                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
-                    || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
-            {
-                return false;
-            }
             else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
                         || certificate.CertificateData.Learner.Uln <= 1000000000 || certificate.CertificateData.Learner.Uln >= 9999999999)
             {

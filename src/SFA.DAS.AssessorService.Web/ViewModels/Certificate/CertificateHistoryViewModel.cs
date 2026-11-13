@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
+using System;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -15,13 +16,26 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public PaginatedList<CertificateSummaryResponse> Certificates { get; set; }
 
+        public DateTime? GetCertificateStatusDate(CertificateSummaryResponse certificate)
+        {
+            return CertificateStatus.GetStatusDate(
+                certificate.Status,
+                certificate.PrintRequestedAt,
+                certificate.PrintStatusAt,
+                certificate.LatestStatusDatetime);
+        }
+
         public bool CanShowCertificateDetails(CertificateSummaryResponse certificateSummaryResponse)
         {
             var allowed = new[]
             {
-                CertificateStatus.Submitted, CertificateStatus.SentToPrinter,
-                CertificateStatus.Printed, CertificateStatus.Reprint,
-                CertificateStatus.Delivered, CertificateStatus.NotDelivered,
+                CertificateStatus.Submitted,
+                CertificateStatus.PrintRequested,
+                CertificateStatus.SentToPrinter,
+                CertificateStatus.Printed,
+                CertificateStatus.Reprint,
+                CertificateStatus.Delivered,
+                CertificateStatus.NotDelivered,
                 CertificateStatus.ToBeApproved
             };
 

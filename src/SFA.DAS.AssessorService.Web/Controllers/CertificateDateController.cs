@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await LoadViewModel<CertificateDateViewModel>("~/Views/Certificate/Date.cshtml");
         }
-        
+
         [HttpPost(Name = "Date")]
         public async Task<IActionResult> Date(CertificateDateViewModel vm)
         {
@@ -42,15 +42,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View("~/Views/Certificate/Date.cshtml", vm);
             }
 
-            var nextAction = vm.SelectedGrade == CertificateGrade.Fail 
-                ? RedirectToAction("Check", "CertificateCheck") 
-                : RedirectToAction("SendTo", "CertificateSendTo");
-
-            var actionResult = await SaveViewModel(vm, 
+            return await SaveViewModel(
+                vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Date.cshtml",
-                nextAction: nextAction, action: CertificateActions.Date);
-
-            return actionResult;
+                nextAction: RedirectToAction("Check", "CertificateCheck"),
+                action: CertificateActions.Date);
         }
     }
 }

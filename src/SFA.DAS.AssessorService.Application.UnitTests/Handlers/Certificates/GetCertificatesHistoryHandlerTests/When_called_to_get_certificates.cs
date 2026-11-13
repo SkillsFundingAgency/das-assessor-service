@@ -32,12 +32,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         private const string SubmitDisplayname = "SubmitUser";
         private const int ResultPageSize = 10;
         private readonly DateTime SubmitDateTime = DateTime.Now;
+        private readonly DateTime RequestedAt = new(2026, 10, 1, 9, 0, 0, DateTimeKind.Utc);
+        private readonly DateTime PrintStatusAt = new(2026, 10, 8, 10, 0, 0, DateTimeKind.Utc);
 
         [SetUp]
         public void Arrange()
         {
             var certificates = Builder<CertificateHistoryModel>.CreateListOfSize(10)
                 .All()
+                .With(x => x.EmployerName = "Assessment employer")
+                .With(x => x.PrintRequestedAt = RequestedAt)
+                .With(x => x.StatusAt = PrintStatusAt)
+                .With(x => x.UpdatedAt = PrintStatusAt.AddDays(1))
                 .With(x => x.CertificateLogs = Builder<CertificateLog>.CreateListOfSize(2)
                     .TheFirst(1)
                         .With(q => q.Status = CertificateStatus.Submitted)
@@ -103,6 +109,30 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.GetCertificates
         public void Then_recorded_by_has_submit_user()
         {
             _result.Items.ForEach(x => x.RecordedBy.Should().Be(SubmitDisplayname));
+        }
+
+        [Test]
+        public void Then_assessment_employer_is_returned()
+        {
+            _result.Items.Should().OnlyContain(
+                certificate => certificate.EmployerName == "Assessment employer");
+        }
+
+        [Test]
+        public void Then_request_and_print_event_dates_are_returned_separately_from_the_update_date()
+        {
+            // Arrange
+            var expectedRequestDate = RequestedAt;
+            var expectedEventDate = PrintStatusAt;
+
+            // Act
+            var certificates = _result.Items;
+
+            // Assert
+            certificates.Should().OnlyContain(certificate =>
+                certificate.PrintRequestedAt == expectedRequestDate &&
+                certificate.PrintStatusAt == expectedEventDate &&
+                certificate.UpdatedAt == expectedEventDate.AddDays(1));
         }
     }
 }
