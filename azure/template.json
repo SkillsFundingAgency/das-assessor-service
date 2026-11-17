@@ -295,17 +295,6 @@
                             ]
                         }
                     },
-                    "appServiceConnectionStrings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "Redis",
-                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                    "type": "Custom"
-                                }
-                            ]
-                        }
-                    },
                     "customHostName": {
                         "value": "[parameters('uiCustomHostname')]"
                     },
