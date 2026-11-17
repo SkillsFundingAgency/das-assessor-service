@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             this.standardRepository = standardRepository;
         }
 
-        public async Task DeleteAllStandardsAndOptions()
+        public async Task PrepareImport()
         {
-            await Task.WhenAll(standardRepository.DeleteAllStandards(), standardRepository.DeleteAllOptions());
+            await standardRepository.PrepareStandardsImport();
         }
 
-        public async Task LoadStandards(IEnumerable<StandardDetailResponse> standards)
+        public async Task StageStandards(IEnumerable<StandardDetailResponse> standards)
         {
             Func<StandardDetailResponse, Standard> MapGetStandardsListItemToStandard = source => new Standard
             {
@@ -61,20 +61,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 EpaoMustBeApprovedByRegulatorBody = source.EpaoMustBeApprovedByRegulatorBody,
             };
 
-            await standardRepository.InsertStandards(standards.Select(MapGetStandardsListItemToStandard));
+            await standardRepository.InsertStandardsIntoStaging(standards.Select(MapGetStandardsListItemToStandard));
         }
 
-        public async Task LoadOptions(IEnumerable<StandardDetailResponse> standards)
+        public async Task StageOptions(IEnumerable<StandardDetailResponse> standards)
         {
-            var standardsWithOptions = standards.Where(s => s.Options != null && s.Options.Any());
-            IEnumerable<StandardOption> optionsToInsert = new List<StandardOption>();
-            foreach(var standard in standardsWithOptions)
-            {
-                // Union to ensure no duplicates.
-                optionsToInsert = optionsToInsert.Union(standard.Options.Select(s => new StandardOption { StandardUId = standard.StandardUId, OptionName = s }));
-            }
+            var optionsToInsert = standards.SelectMany(standard =>
+                (standard.Options ?? new List<string>()).Select(option => new StandardOption
+                {
+                    StandardUId = standard.StandardUId,
+                    OptionName = option
+                }));
 
-            await standardRepository.InsertOptions(optionsToInsert);
+            await standardRepository.InsertOptionsIntoStaging(optionsToInsert);
+        }
+
+        public async Task MergeStandardsFromStaging()
+        {
+            await standardRepository.MergeStandardsFromStaging();
         }
     }
 }

@@ -1,75 +1,92 @@
-﻿using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
-using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
 {
     public class StandardsHandler : HandlerBase
     {
-        private static readonly DatabaseService DatabaseService = new DatabaseService();
+        private static readonly DatabaseService DatabaseService =
+            new DatabaseService();
 
         public static void InsertRecord(StandardModel standard)
         {
-            var sqlToInsertStandard =
-                "INSERT INTO [dbo].[Standards]" +
-                    "([StandardUId]" +
-                    ", [IFateReferenceNumber]" +
-                    ", [LarsCode]" +
-                    ", [Title]" +
-                    ", [Version]" +
-                    ", [Level]" +
-                    ", [Status]" +
-                    ", [TypicalDuration]" +
-                    ", [MaxFunding]" +
-                    ", [IsActive]" +
-                    ", [EffectiveFrom]" +
-                    ", [EffectiveTo]" +
-                    ", [VersionEarliestStartDate]" +
-                    ", [VersionLatestStartDate]" +
-                    ", [VersionLatestEndDate]" +
-                    ", [ProposedTypicalDuration]" +
-                    ", [ProposedMaxFunding]" +
-                    ", [EPAChanged]" +
-                    ", [StandardPageUrl]" +
-                    ", [Route]" +
-                    ", [TrailblazerContact]" +
-                    ", [VersionMajor]" +
-                    ", [VersionMinor]" +
-                    ", [EqaProviderName]" +
-                    ", [OverviewOfRole]" +
-                    ", [VersionApprovedForDelivery]" +
-                    ", [EpaoMustBeApprovedByRegulatorBody])" +
-                "VALUES " +
-                    "(@StandardUId" +
-                    ", @iFateReferenceNumber" +
-                    ", @larsCode" +
-                    ", @title" +
-                    ", @version" +
-                    ", @level" +
-                    ", @status" +
-                    ", @typicalDuration" +
-                    ", @maxFunding" +
-                    ", @isActive" +
-                    ", @effectiveFrom" +
-                    ", @effectiveTo" +
-                    ", @versionEarliestStartDate" +
-                    ", @versionLatestStartDate" +
-                    ", @versionLatestEndDate" +
-                    ", @proposedTypicalDuration" +
-                    ", @proposedMaxFunding" +
-                    ", @epaChanged" +
-                    ", @standardPageUrl" +
-                    ", @route" +
-                    ", @trailblazerContact" +
-                    ", @versionMajor" +
-                    ", @versionMinor" +
-                    ", @eqaProviderName" +
-                    ", @overviewOfRole" +
-                    ", @versionApprovedForDelivery" +
-                    ", @epaoMustBeApprovedByRegulatorBody)";
+            const string sql = @"
+                INSERT INTO [dbo].[Standards]
+                (
+                    [StandardUId],
+                    [IFateReferenceNumber],
+                    [LarsCode],
+                    [Title],
+                    [Version],
+                    [Level],
+                    [Status],
+                    [TypicalDuration],
+                    [MaxFunding],
+                    [IsActive],
+                    [LastDateStarts],
+                    [EffectiveFrom],
+                    [EffectiveTo],
+                    [VersionEarliestStartDate],
+                    [VersionLatestStartDate],
+                    [VersionLatestEndDate],
+                    [VersionApprovedForDelivery],
+                    [ProposedTypicalDuration],
+                    [ProposedMaxFunding],
+                    [EPAChanged],
+                    [StandardPageUrl],
+                    [TrailBlazerContact],
+                    [Route],
+                    [VersionMajor],
+                    [VersionMinor],
+                    [IntegratedDegree],
+                    [EqaProviderName],
+                    [EqaProviderContactName],
+                    [EqaProviderContactEmail],
+                    [OverviewOfRole],
+                    [CoronationEmblem],
+                    [EpaoMustBeApprovedByRegulatorBody],
+                    [UpdatedAt]
+                )
+                VALUES
+                (
+                    @StandardUId,
+                    @IFateReferenceNumber,
+                    @LarsCode,
+                    @Title,
+                    @Version,
+                    @Level,
+                    @Status,
+                    @TypicalDuration,
+                    @MaxFunding,
+                    @IsActive,
+                    @LastDateStarts,
+                    @EffectiveFrom,
+                    @EffectiveTo,
+                    @VersionEarliestStartDate,
+                    @VersionLatestStartDate,
+                    @VersionLatestEndDate,
+                    @VersionApprovedForDelivery,
+                    @ProposedTypicalDuration,
+                    @ProposedMaxFunding,
+                    @EPAChanged,
+                    @StandardPageUrl,
+                    @TrailblazerContact,
+                    @Route,
+                    @VersionMajor,
+                    @VersionMinor,
+                    @IntegratedDegree,
+                    @EqaProviderName,
+                    @EqaProviderContactName,
+                    @EqaProviderContactEmail,
+                    @OverviewOfRole,
+                    @CoronationEmblem,
+                    @EpaoMustBeApprovedByRegulatorBody,
+                    @UpdatedAt
+                );";
 
-            DatabaseService.Execute(sqlToInsertStandard, standard);
+            DatabaseService.Execute(sql, standard);
         }
 
         public static void InsertRecords(List<StandardModel> standards)
@@ -80,11 +97,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             }
         }
 
+        public static List<StandardModel> GetRecords()
+        {
+            return DatabaseService.GetList<StandardModel>(
+                "SELECT * FROM [dbo].[Standards]").ToList();
+        }
+
         public static void DeleteAllRecords()
         {
-            var sql = "DELETE FROM [Standards]";
-
-            DatabaseService.Execute(sql);
+            DatabaseService.Execute("DELETE FROM [dbo].[Standards]");
         }
     }
 }
