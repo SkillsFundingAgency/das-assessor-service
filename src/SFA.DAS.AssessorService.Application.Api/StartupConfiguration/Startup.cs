@@ -1,14 +1,16 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NServiceBus.ObjectBuilder.MSDependencyInjection;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Http.Configuration;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -135,6 +137,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             }
         }
 
+        public void ConfigureContainer(UpdateableServiceProvider serviceProvider)
+        {
+            serviceProvider.StartNServiceBus(Configuration).GetAwaiter().GetResult();
+        }
         private Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration NotificationConfiguration()
         {
             return new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration

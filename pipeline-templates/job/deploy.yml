@@ -78,6 +78,7 @@ jobs:
               QnaApiAuthenticationClientSecret: $(QnaApiAuthenticationClientSecret)
               QnaApiAuthenticationClientSecret_Api: $(QnaApiAuthenticationClientSecret_Api)
               QnaApiAuthenticationClientSecret_Web: $(QnaApiAuthenticationClientSecret_Web)
+              NServiceBusLicense: $(NServiceBusLicense)
         - template: azure-pipelines-templates/deploy/step/app-role-assignments.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.AppRoleAssignmentsServiceConnection }}

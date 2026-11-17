@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Events;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Data.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -19,13 +20,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private readonly ICertificateRepository _certificateRepository;
         private readonly IStandardRepository _standardRepository;
         private readonly IMediator _mediator;
+        private readonly IOutcomeRecordedEventPublisher _outcomeRecordedEventPublisher;
         private readonly ILogger<UpdateCertificateHandler> _logger;
 
-        public UpdateCertificateHandler(ICertificateRepository certificateRepository, IStandardRepository standardRepository, IMediator mediator, ILogger<UpdateCertificateHandler> logger)
+        public UpdateCertificateHandler(
+            ICertificateRepository certificateRepository,
+            IStandardRepository standardRepository,
+            IMediator mediator,
+            IOutcomeRecordedEventPublisher outcomeRecordedEventPublisher,
+            ILogger<UpdateCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _standardRepository = standardRepository;
             _mediator = mediator;
+            _outcomeRecordedEventPublisher = outcomeRecordedEventPublisher;
             _logger = logger;
         }
 
@@ -56,7 +64,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             request.Certificate.CertificateData = await CertificateDataVersionChangeUpdater.UpdateCoronationEmblemAndStandardIfNeeded(currentCertificate.CertificateData, request.Certificate.CertificateData, _standardRepository);
 
-            return await Update(request);
+            var updated = await Update(request);
+            await _outcomeRecordedEventPublisher.PublishIfOutcomeRecorded(updated, request.Action);
+
+            return updated;
         }
 
         private CertificateData HandleEpaDetailsUpdate(CertificateData updatedData, string certificateReference)

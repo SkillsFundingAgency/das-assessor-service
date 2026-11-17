@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net8.0</TargetFramework>
+	<LangVersion>latest</LangVersion>
+
+	<Description>Assessor Service integration messages</Description>
+	<Authors>ESFA</Authors>
+	<Company>ESFA</Company>
+	<PackageLicense>https://github.com/SkillsFundingAgency/das-assessor-service/master/LICENSE</PackageLicense>
+	<PackageProjectUrl>https://github.com/SkillsFundingAgency/das-assessor-service</PackageProjectUrl>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageOutputPath>$(SolutionDir)..\..\NugetPackages</PackageOutputPath>
+  </PropertyGroup>
+
+</Project>

@@ -12,6 +12,7 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.2.210" />
+    <PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.49" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.304-prerelease-3" />
   </ItemGroup>
 
@@ -22,6 +23,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Infrastructure\SFA.DAS.AssessorService.Infrastructure.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Messages\SFA.DAS.AssessorService.Messages.csproj" />
   </ItemGroup>
 
   <ItemGroup>
