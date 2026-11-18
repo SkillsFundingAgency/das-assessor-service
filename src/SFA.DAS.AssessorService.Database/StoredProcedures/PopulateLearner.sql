@@ -216,6 +216,7 @@ BEGIN
 					) ax2
 					WHERE 1=1
 					  AND NOT (UKPRN_1 !=0 AND StopDate IS NOT NULL AND EOMONTH(StopDate) = EOMONTH(StartDate) AND PaymentStatus = 3) -- cancelled, not started, effectively deleted and not the only record
+					  AND CompletionStatus != 0  -- ignore unapproved Apprenticeships
 				) ab2
 			) ab3 WHERE rownumber IN (1,2)
 			) Apx WHERE rownumber = 1
@@ -344,7 +345,6 @@ BEGIN
 		  -- except where privately funded or only Approvals record is in unknowm status
 		  -- otherwise take ILR only
 		  WHERE il1.FundingModel != 99
-			AND ax1.CompletionStatus != 0
 			AND (il1.UkPrn = ax1.UKPRN OR ax2.ApprenticeshipId IS NOT NULL)
 		
 		----------------------------------------------------------------------------------------------------------------------

@@ -759,8 +759,39 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Repositories
 
         public async Task<T> VerifyLearnerExists(LearnerModel learner)
         {
-            var result = await LearnerHandler.QueryFirstOrDefaultAsync(learner);
-            result.Should().NotBeNull();
+            var result = await LearnerHandler.GetByUlnAndStdCodeAsync(learner.Uln, learner.StdCode);
+            result.Should().NotBeNull(
+                "a learner with ULN {0} and standard code {1} should exist", learner.Uln, learner.StdCode);
+
+            result.Should().BeEquivalentTo(learner, options =>
+            {
+                // Existing callers can leave Id unset when they do not assert the stored ID.
+                if (!learner.Id.HasValue)
+                {
+                    options = options.Excluding(x => x.Id);
+                }
+
+                return options
+                    .Using<DateTime>(context =>
+                    {
+                        // Preserve HandlerBase.QueryParam: midnight expectations compare exactly;
+                        // other timestamps compare to whole seconds to allow for SQL rounding.
+                        if (context.Expectation.TimeOfDay == TimeSpan.Zero)
+                        {
+                            context.Subject.Should().Be(context.Expectation);
+                        }
+                        else
+                        {
+                            var actual = context.Subject.AddTicks(
+                                -(context.Subject.Ticks % TimeSpan.TicksPerSecond));
+                            var expected = context.Expectation.AddTicks(
+                                -(context.Expectation.Ticks % TimeSpan.TicksPerSecond));
+
+                            actual.Should().Be(expected);
+                        }
+                    })
+                    .WhenTypeIs<DateTime>();
+            });
 
             return this as T;
         }
